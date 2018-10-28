@@ -66,16 +66,16 @@ def models_converter(arg):
 				count += 1
 				command = arg[0] + ' --input_model ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
 				os.system(command)
-			if file.endswith(file_extensions[1]):
-				model = os.path.join(root, file)
-				count += 1
-				command = arg[0] + ' --input_model_is_text ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
-				os.system(command)
-			if file.endswith(file_extensions[2]):
-				model = os.path.join(root, file)
-				count += 1
-				command = arg[0] + ' --input_symbol ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
-				os.system(command)
+			#if file.endswith(file_extensions[1]):
+			#	model = os.path.join(root, file)
+			#	count += 1
+			#	command = arg[0] + ' --input_model_is_text ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
+			#	os.system(command)
+			#if file.endswith(file_extensions[2]):
+			#	model = os.path.join(root, file)
+			#	count += 1
+			#	command = arg[0] + ' --input_symbol ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
+			#	os.system(command)
 	if (count == 0):
 		print('No models')
 		sys.exit()
