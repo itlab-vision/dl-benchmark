@@ -2,86 +2,114 @@ import os
 import sys
 import argparse
 
-#---------------Парсер аргументов---------------
-parser = argparse.ArgumentParser()
-parser.add_argument('-m', '--mo_dir', action = 'store', type = str, dest = 'path_to_mo', help = 'Path to model optimizer')
-parser.add_argument('-i', '--input_dir', action = 'store', type = str, dest = 'path_to_models', help = 'Path to folder with models')
-parser.add_argument('-o', '--output_dir', action = 'store', type = str, dest = 'path_to_convert', help = 'Path for save')
-parser.add_argument('-d', '--data_type', action = 'store', type = str, dest = 'data_type', help = 'Data type for convert models')
-args = parser.parse_args()
+#---------------Расширения моделей--------------
+const_caffemodel = '.caffemodel'
+const_tfmodel = '.pb'
+valid_data_types = [ 'FP16', 'FP32', 'half', 'float' ]
 #-----------------------------------------------
 
-#---------------Расширения моделей--------------
-file_extensions = ['.caffemodel', '.pb', '.json']
-data_types = [ 'FP16', 'FP32', 'half', 'float']
+#---------------Парсер аргументов---------------
+def build_argparse():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-m', '--mo_dir', type = str, dest = 'path_to_mo', help = 'Path to folder with model optimizer')
+	parser.add_argument('-i', '--input_dir', type = str, dest = 'path_to_models', help = 'Path to folder with models')
+	parser.add_argument('-d', '--data_type', type = str, dest = 'data_type', help = 'Data type for convert models')
+	
+	args = parser.parse_args()
+	
+	return args
 #-----------------------------------------------
 
 #--------Проверка корректности аргументов-------
-def parse_arg():
+def parse_arg(args):
 	error = 0
-	if (os.path.exists(str(args.path_to_mo))):
-		if(os.path.isdir(str(args.path_to_mo))):
-			if('mo.py' not in os.listdir(args.path_to_mo)):
-				error += 1
-				print ('Model optimizer not found!')
-		else:
-			error += 1
-			print('Wrong path to model optimizer')
+	if ((args.path_to_mo == None) or (args.path_to_models == None) or (args.data_type == None)):
+		print ('Expression expected : converter.py --mo_dir <path to model oprimizer> --input_dir <path to folder with models> --data_type <data type for convert model>')
+		sys.exit()
 	
-	if(os.path.isdir(str(args.path_to_models))):
-		if not(os.path.exists(str(args.path_to_models))):
-			error += 1
-			print('Wrong path to folder with models')
-	else:
+	mo = os.path.join(args.path_to_mo, 'mo.py')
+	
+	if (not(os.path.isfile(mo))):
 		error += 1
-		print('Wrong path to folder with models')
-		
-	if(os.path.isdir(str(args.path_to_convert))):
-		if not(os.path.exists(str(args.path_to_convert))):
-			os.makedirs(path_to_convert)
-	else:
+		print ('Wrong path to folder with model optimizer')
+	
+	if (not(os.path.isdir(args.path_to_models))):
 		error += 1
-		print('Wrong path for save models')
+		print ('Wrong path to folder with models')
 		
-	if(args.data_type not in data_types):
+	if (args.data_type not in valid_data_types):
 		error += 1
-		print('Wrong data type')
+		print ('Wrong data type')
 		
-	if (error!=0):
-		print ('Expression expected : converter.py --mo_dir <path to model oprimizer> --input_dir <path to folder with models> --output_dir <path to save> --data_type <data type for convert model>')
+	if (error != 0):
+		print ('Expression expected : converter.py --mo_dir <path to model oprimizer> --input_dir <path to folder with models> --data_type <data type for convert model>')
 		sys.exit()
 
-	result = [args.path_to_mo, args.path_to_models, args.path_to_convert, args.data_type]
-	return result
+	return [args.path_to_mo, args.path_to_models, args.data_type]
+#--------------------------------------------
+
+#----Функция конвертации caffe моделей-------
+def caffe_converter(path_to_mo, path_to_models, data_type):
+	count = 0
+	
+	mo = os.path.join(path_to_mo, 'mo.py')
+	
+	for root, dirs, files in os.walk(path_to_models):
+		for file in files:
+			if file.endswith(const_caffemodel):
+				model = os.path.join(root, file)
+				output = os.path.join(root, 'ir', data_type)
+				
+				command = mo + ' --input_model ' + model + ' --output_dir ' + output + ' --data_type ' + data_type
+				
+				os.system(command)
+				
+				count += 1
+	
+	return count
+#--------------------------------------------
+
+#----Функция конвертации tf моделей----------
+def tf_converter(path_to_mo, path_to_models, data_type):
+	count = 0
+	
+	support_config = os.path.join(path_to_mo, 'extensions', 'front', 'tf', 'ssd_v2_support.json')
+	mo = os.path.join(path_to_mo, 'mo_tf.py')
+	
+	for root, dirs, files in os.walk(path_to_models):
+		for file in files:
+			if ((file != 'saved_model.pb') and (file.endswith(const_tfmodel))):
+				model = os.path.join(root, file)
+				pipeline_config = os.path.join(root, 'pipeline.config')
+				output = os.path.join(root, 'ir', data_type)
+				
+				command = mo + ' --input_model ' + model + ' --output_dir ' + output + ' --data_type ' + data_type 
+				command += ' --tensorflow_use_custom_operations_config ' + support_config + ' --tensorflow_object_detection_api_pipeline_config ' + pipeline_config
+				
+				os.system(command)
+				
+				count += 1
+	
+	return count
 #--------------------------------------------
 
 #---------Функция конвертации моделей--------
-def models_converter(arg):
+def models_converter(path_to_mo, path_to_models, data_type):
 	count = 0
-	arg[0] = arg[0] + '\\mo.py'
-	for root, dirs, files in os.walk(arg[1]):
-		for file in files:
-			if file.endswith(file_extensions[0]):
-				model = os.path.join(root, file)
-				count += 1
-				command = arg[0] + ' --input_model ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
-				os.system(command)
-			#if file.endswith(file_extensions[1]):
-			#	model = os.path.join(root, file)
-			#	count += 1
-			#	command = arg[0] + ' --input_model_is_text ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
-			#	os.system(command)
-			#if file.endswith(file_extensions[2]):
-			#	model = os.path.join(root, file)
-			#	count += 1
-			#	command = arg[0] + ' --input_symbol ' + model + ' --output_dir ' + arg[2] + ' --data_type ' + arg[3]
-			#	os.system(command)
+	
+	count += caffe_converter(path_to_mo, path_to_models, data_type)
+	count += tf_converter(path_to_mo, path_to_models, data_type)
+	
 	if (count == 0):
-		print('No models')
+		print ('No models in folder')
 		sys.exit()
+	
 	return 0
 #-------------------------------------------
 
-arg = parse_arg()
-models_converter(arg)
-print('Convert complited!')
+#-------------------Main--------------------
+if __name__ == '__main__':
+	[path_to_mo, path_to_models, data_type] = parse_arg(build_argparse())
+	models_converter(path_to_mo, path_to_models, data_type)
+	print ('Convert complited!')
+#-------------------------------------------
