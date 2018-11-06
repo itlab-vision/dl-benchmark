@@ -29,6 +29,6 @@ converter.py --mo_dir C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\m
 конвертера находятся в директории `<Путь до модели>/ir/<Точность, с которой модель была преобразована>`.
 
 Пример:
-`<...>\deployment_tools\model_downloader\object_detection\common\ssd_mobilenet_v2_coco\tf\ssd_mobilenet_v2_coco_2018_03_29\ir\FP32`
+`<...>\deployment_tools\model_downloader\object_detection\common\ssd_mobilenet_v2_coco\tf\ssd_mobilenet_v2_coco_2018_03_29\ir\FP32`.
 В этой директории лежит модель `ssd_mobilenet_v2_coco`
 в своем промежуточном состоянии с точностью `FP32`.
