@@ -28,32 +28,21 @@ def parse_arg(args):
     error = 0
     if ((args.path_to_mo == None) or (args.path_to_models == None) or
         (args.data_type == None)):
-        print('Expression expected : converter.py \
-              --mo_dir <path to model oprimizer> \
-              --input_dir <path to folder with models> 
-              --data_type <data type for convert model>')
-        sys.exit()
+        raise ValueError
     
     mo = os.path.join(args.path_to_mo, 'mo.py')
     
     if (not(os.path.isfile(mo))):
-        error += 1
         print('Wrong path to folder with model optimizer')
+        raise ValueError
     
     if (not(os.path.isdir(args.path_to_models))):
-        error += 1
         print('Wrong path to folder with models')
+        raise ValueError
         
     if (args.data_type not in valid_data_types):
-        error += 1
         print('Wrong data type')
-        
-    if (error != 0):
-        print('Expression expected : converter.py \
-            --mo_dir <path to model oprimizer> \
-            --input_dir <path to folder with models> \
-            --data_type <data type for convert model>')
-        sys.exit()
+        raise ValueError
 
     return [args.path_to_mo, args.path_to_models, args.data_type]
 #--------------------------------------------
@@ -97,11 +86,12 @@ def tf_converter(path_to_mo, path_to_models, data_type):
                 pipeline_config = os.path.join(root, 'pipeline.config')
                 output = os.path.join(root, 'ir', data_type)
                 
-                command = mo + ' --input_model ' + model +
-                    ' --output_dir ' + output + ' --data_type ' + data_type 
-                command += ' --tensorflow_use_custom_operations_config ' +
-                    support_config +
-                    ' --tensorflow_object_detection_api_pipeline_config ' +
+                command = mo + ' --input_model ' + model + \
+                    ' --output_dir ' + output + ' --data_type ' + \
+                    data_type + \
+                    ' --tensorflow_use_custom_operations_config ' + \
+                    support_config + \
+                    ' --tensorflow_object_detection_api_pipeline_config ' + \
                     pipeline_config
                 
                 os.system(command)
@@ -119,15 +109,25 @@ def models_converter(path_to_mo, path_to_models, data_type):
     count += tf_converter(path_to_mo, path_to_models, data_type)
     
     if (count == 0):
-        print ('No models in folder')
-        sys.exit()
+        raise ValueError
     
     return 0
 #-------------------------------------------
 
 #-------------------Main--------------------
 if __name__ == '__main__':
-    [path_to_mo, path_to_models, data_type] = parse_arg(build_argparse())
-    models_converter(path_to_mo, path_to_models, data_type)
+    try:
+        [path_to_mo, path_to_models, data_type] = parse_arg(build_argparse())
+    except ValueError:
+        print('Expression expected : converter.py \
+            --mo_dir <path to model oprimizer> \
+            --input_dir <path to folder with models> \
+            --data_type <data type for convert model>')
+        sys.exit()
+    try:
+        models_converter(path_to_mo, path_to_models, data_type)
+    except ValueError:
+        print ('No models in folder')
+        sys.exit()
     print ('Convert completed!')
 #-------------------------------------------
