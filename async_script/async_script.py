@@ -99,36 +99,36 @@ def start_true_infer_async(images, exec_net, model,  args):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     next_request_id  = 1
-    res = np.ndarray(shape = (len(images), 4, 1000))
-    j = 0
-    k = 0
+    res = np.ndarray(shape = (model.batch_size, model.batch_size, 1000))
     for i in range(args.number_iter):
-        for j in range(len(images)):
-            exec_net.start_async(request_id = next_request_id, inputs = {input_blob: images[j]})
+        for j, image in enumerate(images):
+            exec_net.start_async(request_id = next_request_id, inputs = {input_blob: image})
             if exec_net.requests[curr_request_id].wait(-1) == 0:
-                res[j] = exec_net.requests[curr_request_id].outputs[next(iter(model.outputs))]
-            elif exec_net.requests[next_request_id].wait(-1) == 0:
-                res[j] = exec_net.requests[next_request_id].outputs[next(iter(model.outputs))]
+                res[j - 1] = exec_net.requests[curr_request_id].outputs[next(iter(model.outputs))]
             curr_request_id, next_request_id = next_request_id, curr_request_id
-    log.info("Processing output blob")
-    #res = exec_net.requests[next_request_id].outputs[next(iter(model.outputs))] 
-    return res
+    
+    if exec_net.requests[curr_request_id].wait(-1) == 0:
+        res[model.batch_size - 1] = exec_net.requests[curr_request_id].outputs[next(iter(model.outputs))] 
+    result = np.ndarray(shape = (model.batch_size, 1000))
+    for i, r in enumerate(res):
+        result[i] = r[0]
+    return result
 
 def infer_output(res, data, args, log):
     log.info("Top {} results: \n".format(args.number_top))
     if not args.labels:
-    	args.labels = "image_net_synset.txt"
+        args.labels = "image_net_synset.txt"
     with open(args.labels, 'r') as f:
         labels_map = [x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f]
 
-    for i in range(len(res)):
-        probs = np.squeeze(res[i])
+    for i, probs in enumerate(res):
+        probs = np.squeeze(probs)
         top_ind = np.argsort(probs)[-args.number_top:][::-1]
         print("Image {}\n".format(os.path.split(data[i])[1]))
         for id in top_ind:
             det_label = labels_map[id] if labels_map else "#{}".format(id)
             print("{:.7f} {}".format(probs[id], det_label))
-        print("\n")   
+        print("\n")  
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s", level = log.INFO, stream = sys.stdout)
@@ -140,8 +140,7 @@ def main():
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res = start_true_infer_async(images, exec_net, net, args)
     del net
-    print(res)
-    #infer_output(res, data, args, log)
+    infer_output(res, data, args, log)
     del exec_net
     del plugin
 
