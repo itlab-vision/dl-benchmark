@@ -60,7 +60,7 @@ def caffe_converter(path_to_mo, path_to_models, data_type):
                 output = os.path.join(root, 'ir', data_type)
                 
                 command = '{0} --input_model {1} --output_dir {2} \
-                --data_type {3}'.format(mo, model, output, data_type)
+                    --data_type {3}'.format(mo, model, output, data_type)
                 
                 os.system(command)
                 
@@ -80,15 +80,15 @@ def tf_converter(path_to_mo, path_to_models, data_type):
     for root, dirs, files in os.walk(path_to_models):
         for file in files:
             if ((file != 'saved_model.pb') and 
-                (file.endswith(const_tfmodel))):
+                    (file.endswith(const_tfmodel))):
                 model = os.path.join(root, file)
                 pipeline_config = os.path.join(root, 'pipeline.config')
                 output = os.path.join(root, 'ir', data_type)
                 
                 command = '{0} --input_model {1} --output_dir {2} \
-                --data_type {3} --tensorflow_use_custom_operations_config \
-                {4} --tensorflow_object_detection_api_pipeline_config \
-                {5}'.format(mo, model, output, data_type, 
+                    --data_type {3} --tensorflow_use_custom_operations_config \
+                    {4} --tensorflow_object_detection_api_pipeline_config \
+                    {5}'.format(mo, model, output, data_type, 
                 support_config, pipeline_config)
                 
                 os.system(command)
@@ -108,7 +108,7 @@ def models_converter(path_to_mo, path_to_models, data_type):
     if (count == 0):
         raise ValueError('No models in folder')
     
-    return 0
+    return count
 #-------------------------------------------
 
 #-------------------Main--------------------
@@ -118,6 +118,5 @@ if __name__ == '__main__':
         models_converter(path_to_mo, path_to_models, data_type)
     except Exception as Exp:
         print('ERROR! : {0}'.format(str(Exp)))
-        sys.exit()
     print('Convert completed!')
 #-------------------------------------------
