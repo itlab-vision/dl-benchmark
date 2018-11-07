@@ -28,21 +28,21 @@ def parse_arg(args):
     error = 0
     if ((args.path_to_mo == None) or (args.path_to_models == None) or
         (args.data_type == None)):
-        raise ValueError
+        raise ValueError('Expression expected : converter.py \
+            --mo_dir <path to model oprimizer> \
+            --input_dir <path to folder with models> \
+            --data_type <data type for convert model>')
     
     mo = os.path.join(args.path_to_mo, 'mo.py')
     
     if (not(os.path.isfile(mo))):
-        print('Wrong path to folder with model optimizer')
-        raise ValueError
+        raise ValueError('Wrong path to folder with model optimizer')
     
     if (not(os.path.isdir(args.path_to_models))):
-        print('Wrong path to folder with models')
-        raise ValueError
+        raise ValueError('Wrong path to folder with models')
         
     if (args.data_type not in valid_data_types):
-        print('Wrong data type')
-        raise ValueError
+        raise ValueError('Wrong data type')
 
     return [args.path_to_mo, args.path_to_models, args.data_type]
 #--------------------------------------------
@@ -59,14 +59,13 @@ def caffe_converter(path_to_mo, path_to_models, data_type):
                 model = os.path.join(root, file)
                 output = os.path.join(root, 'ir', data_type)
                 
-                command = mo + ' --input_model ' + model + \
-                    ' --output_dir ' + output + ' --data_type ' + \
-                    data_type
+                command = '{0} --input_model {1} --output_dir {2} \
+                --data_type {3}'.format(mo, model, output, data_type)
                 
                 os.system(command)
                 
                 count += 1
-    
+
     return count
 #--------------------------------------------
 
@@ -86,13 +85,11 @@ def tf_converter(path_to_mo, path_to_models, data_type):
                 pipeline_config = os.path.join(root, 'pipeline.config')
                 output = os.path.join(root, 'ir', data_type)
                 
-                command = mo + ' --input_model ' + model + \
-                    ' --output_dir ' + output + ' --data_type ' + \
-                    data_type + \
-                    ' --tensorflow_use_custom_operations_config ' + \
-                    support_config + \
-                    ' --tensorflow_object_detection_api_pipeline_config ' + \
-                    pipeline_config
+                command = '{0} --input_model {1} --output_dir {2} \
+                --data_type {3} --tensorflow_use_custom_operations_config \
+                {4} --tensorflow_object_detection_api_pipeline_config \
+                {5}'.format(mo, model, output, data_type, 
+                support_config, pipeline_config)
                 
                 os.system(command)
                 
@@ -109,7 +106,7 @@ def models_converter(path_to_mo, path_to_models, data_type):
     count += tf_converter(path_to_mo, path_to_models, data_type)
     
     if (count == 0):
-        raise ValueError
+        raise ValueError('No models in folder')
     
     return 0
 #-------------------------------------------
@@ -118,16 +115,9 @@ def models_converter(path_to_mo, path_to_models, data_type):
 if __name__ == '__main__':
     try:
         [path_to_mo, path_to_models, data_type] = parse_arg(build_argparse())
-    except ValueError:
-        print('Expression expected : converter.py \
-            --mo_dir <path to model oprimizer> \
-            --input_dir <path to folder with models> \
-            --data_type <data type for convert model>')
-        sys.exit()
-    try:
         models_converter(path_to_mo, path_to_models, data_type)
-    except ValueError:
-        print ('No models in folder')
+    except Exception as Exp:
+        print('ERROR! : {0}'.format(str(Exp)))
         sys.exit()
-    print ('Convert completed!')
+    print('Convert completed!')
 #-------------------------------------------
