@@ -1,5 +1,4 @@
 import os
-import sys
 import argparse
 
 #---------------Расширения моделей--------------
@@ -118,5 +117,4 @@ if __name__ == '__main__':
         models_converter(path_to_mo, path_to_models, data_type)
     except Exception as Exp:
         print('ERROR! : {0}'.format(str(Exp)))
-    print('Convert completed!')
 #-------------------------------------------
