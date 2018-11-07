@@ -92,7 +92,26 @@ def start_infer_async(images, exec_net, model,  args):
         infer_status = infer_request_handle.wait()
 
     log.info("Processing output blob")
-    res = infer_request_handle.outputs[next(iter(model.outputs))]
+    res = infer_request_handle.outputs[next(iter(model.outputs))] 
+    return res
+
+def start_true_infer_async(images, exec_net, model,  args):
+    input_blob = next(iter(model.inputs))
+    curr_request_id = 0
+    next_request_id  = 1
+    res = np.ndarray(shape = (len(images), 4, 1000))
+    j = 0
+    k = 0
+    for i in range(args.number_iter):
+        for j in range(len(images)):
+            exec_net.start_async(request_id = next_request_id, inputs = {input_blob: images[j]})
+            if exec_net.requests[curr_request_id].wait(-1) == 0:
+                res[j] = exec_net.requests[curr_request_id].outputs[next(iter(model.outputs))]
+            elif exec_net.requests[next_request_id].wait(-1) == 0:
+                res[j] = exec_net.requests[next_request_id].outputs[next(iter(model.outputs))]
+            curr_request_id, next_request_id = next_request_id, curr_request_id
+    log.info("Processing output blob")
+    #res = exec_net.requests[next_request_id].outputs[next(iter(model.outputs))] 
     return res
 
 def infer_output(res, data, args, log):
@@ -102,8 +121,8 @@ def infer_output(res, data, args, log):
     with open(args.labels, 'r') as f:
         labels_map = [x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f]
 
-    for i, probs in enumerate(res):
-        probs = np.squeeze(probs)
+    for i in range(len(res)):
+        probs = np.squeeze(res[i])
         top_ind = np.argsort(probs)[-args.number_top:][::-1]
         print("Image {}\n".format(os.path.split(data[i])[1]))
         for id in top_ind:
@@ -119,9 +138,10 @@ def main():
     log.info("Loading model to the plugin")
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
-    res = start_infer_async(images, exec_net, net, args)
+    res = start_true_infer_async(images, exec_net, net, args)
     del net
-    infer_output(res, data, args, log)
+    print(res)
+    #infer_output(res, data, args, log)
     del exec_net
     del plugin
 
