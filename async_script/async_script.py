@@ -20,8 +20,7 @@ def build_parser():
     parser.add_argument("-w", "--weights", help = "Path to an .bin file \
         with a trained weights.", required = True, type = str)
     parser.add_argument("-i", "--input", help = "Path to a folder with \
-        images or path to an image files", required = True,
-                        type = str, nargs = "+")
+        images or path to an image files", required = True, type = str, nargs = "+")
     parser.add_argument("-r", "--Requests", help = "A positive integer value \
         of infer requests to be created. Number of infer requests may be \
         limited by device capabilities", required = True, type = int)
