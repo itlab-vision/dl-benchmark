@@ -58,7 +58,7 @@ def caffe_converter(path_to_mo, path_to_models, data_type):
                 model = os.path.join(root, file)
                 output = os.path.join(root, 'ir', data_type)
                 
-                command = '{0} --input_model {1} --output_dir {2} \
+                command = 'python {0} --input_model {1} --output_dir {2} \
                     --data_type {3}'.format(mo, model, output, data_type)
                 
                 os.system(command)
@@ -84,7 +84,7 @@ def tf_converter(path_to_mo, path_to_models, data_type):
                 pipeline_config = os.path.join(root, 'pipeline.config')
                 output = os.path.join(root, 'ir', data_type)
                 
-                command = '{0} --input_model {1} --output_dir {2} \
+                command = 'python {0} --input_model {1} --output_dir {2} \
                     --data_type {3} --tensorflow_use_custom_operations_config \
                     {4} --tensorflow_object_detection_api_pipeline_config \
                     {5}'.format(mo, model, output, data_type, 
