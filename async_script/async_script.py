@@ -45,7 +45,7 @@ def build_parser():
     return parser
 
 
-def model_preparation(log):
+def prepare_model(log):
     args = build_parser().parse_args()
     model_xml = args.model
     model_bin = args.weights
@@ -56,7 +56,7 @@ def model_preparation(log):
         plugin.add_cpu_extension(args.cpu_extension)
 
     log.info("Loading network files:\n\t {0}\n\t {1}".format(
-        model_xml, model_bin)
+        model_xml, model_bin))
     net = IENetwork.from_ir(model_xml, model_bin)
     if "CPU" in plugin.device:
         supported_layers = plugin.get_supported_layers(net)
@@ -83,32 +83,45 @@ def image_convert(model, data, log):
     images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
     for i in range(n):
         image = cv2.imread(data[i])
-        if (image.shape[:-1] != (h,w)):
+        if (image.shape[:-1] != (h, w)):
             log.warning("Image {} is resized from {} to {}.".
-                format(os.path.split(data[i])[1], image.shape[:-1], (h,w)))
+                format(os.path.split(data[i])[1], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (h, w))
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
 
 
-def video_convert(model, data, log):
+def video_convert(model, data):
     n, c, h, w  = model.inputs[next(iter(model.inputs))]
-    return n    
+    images = []
+    video = cv2.VideoCapture(data[0])
+    while video.isOpened():
+        ret, frame = video.read()
+        if not ret:
+            break
+        if (frame.shape[:-1] != (h, w)):
+            frame = cv2.resize(frame, (h, w))       
+        frame = frame.transpose((2, 0, 1))
+        images.append(frame)
+    print(i)
+    return images  
 
 
-def data_preparation(model, data, log):
-    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4}
+def prepare_data(model, data, log):
+    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
     image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4}
     file = str(os.path.splitext(data[0])[1])
     if file in image:
         prep_data = image_convert(model, data, log)
+    elif file in video:
+        prep_data = video_convert(model, data)
     return prep_data
 
 
-def start_infer_async(images, exec_net, model,  args):
+def start_infer_async(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
-    for i in range(args.number_iter):
+    for i in range(number_iter):
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images})
         infer_status = infer_request_handle.wait()
@@ -118,40 +131,41 @@ def start_infer_async(images, exec_net, model,  args):
     return res
 
 
-def start_true_infer_async(images, exec_net, model,  args):
+def start_true_infer_async(images, exec_net, model,  number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     next_request_id  = 1
-    res = np.ndarray(shape = (model.batch_size, model.batch_size, 1000))
-    for i in range(args.number_iter):
+    res = np.ndarray(shape = ((model.batch_size,) + 
+        exec_net.requests[0].outputs[next(iter(model.outputs))].shape))
+    for i in range(number_iter):
         for j, image in enumerate(images):
             exec_net.start_async(request_id = next_request_id,
                 inputs = {input_blob: image})
             if exec_net.requests[curr_request_id].wait(-1) == 0:
-                res[j - 1] = exec_net.requests[curr_request_id].
-                    outputs[next(iter(model.outputs))]
+                res[j -1] = (exec_net.requests[curr_request_id].
+                    outputs[next(iter(model.outputs))])
             curr_request_id, next_request_id = next_request_id, curr_request_id
     
     if exec_net.requests[curr_request_id].wait(-1) == 0:
-        res[model.batch_size - 1] = exec_net.requests[curr_request_id].
-            outputs[next(iter(model.outputs))] 
-    result = np.ndarray(shape = (model.batch_size, 1000))
+        res[model.batch_size - 1] = (exec_net.requests[curr_request_id].
+            outputs[next(iter(model.outputs))])
+    result = np.ndarray(shape = res.shape[1:])
     for i, r in enumerate(res):
         result[i] = r[0]
     return result
 
 
-def infer_output(res, data, args, log):
-    log.info("Top {} results: \n".format(args.number_top))
-    if not args.labels:
-        args.labels = "image_net_synset.txt"
-    with open(args.labels, 'r') as f:
+def infer_output(res, data, labels, number_top, log):
+    log.info("Top {} results: \n".format(number_top))
+    if not labels:
+        labels = "image_net_synset.txt"
+    with open(labels, 'r') as f:
         labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
             for x in f ]
 
     for i, probs in enumerate(res):
         probs = np.squeeze(probs)
-        top_ind = np.argsort(probs)[-args.number_top:][::-1]
+        top_ind = np.argsort(probs)[-number_top:][::-1]
         print("Image {}\n".format(os.path.split(data[i])[1]))
         for id in top_ind:
             det_label = labels_map[id] if labels_map else "#{}".format(id)
@@ -162,18 +176,19 @@ def infer_output(res, data, args, log):
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
         level = log.INFO, stream = sys.stdout)
-    net, plugin, data, args = model_preparation(log)
+    net, plugin, data, args = prepare_model(log)
     net.batch_size = len(data)
-    images = data_preparation(net, data, log)
+    images = prepare_data(net, data, log)
     log.info("Loading model to the plugin")
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
-    res = start_true_infer_async(images, exec_net, net, args)
+    res = start_true_infer_async(images, exec_net, net, args.number_iter)
+    infer_output(res, data, args.labels, args.number_top, log)
     del net
-    infer_output(res, data, args, log)
     del exec_net
     del plugin
 
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
+
