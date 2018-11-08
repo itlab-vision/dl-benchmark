@@ -104,8 +104,8 @@ def video_convert(model, data):
             frame = cv2.resize(frame, (h, w))       
         frame = frame.transpose((2, 0, 1))
         images.append(frame)
-    print(i)
-    return images  
+    print(np.asarray(images).shape) 
+    return np.asarray(images) 
 
 
 def prepare_data(model, data, log):
@@ -145,7 +145,6 @@ def start_true_infer_async(images, exec_net, model,  number_iter):
                 res[j -1] = (exec_net.requests[curr_request_id].
                     outputs[next(iter(model.outputs))])
             curr_request_id, next_request_id = next_request_id, curr_request_id
-    
     if exec_net.requests[curr_request_id].wait(-1) == 0:
         res[model.batch_size - 1] = (exec_net.requests[curr_request_id].
             outputs[next(iter(model.outputs))])
