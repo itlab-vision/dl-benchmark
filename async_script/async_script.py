@@ -134,19 +134,19 @@ def start_infer_async(images, exec_net, model, number_iter):
 def start_true_infer_async(images, exec_net, model,  number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
-    next_request_id  = 1
+    prev_request_id  = 1
     res = np.ndarray(shape = ((model.batch_size,) + 
         exec_net.requests[0].outputs[next(iter(model.outputs))].shape))
     for i in range(number_iter):
         for j, image in enumerate(images):
-            exec_net.start_async(request_id = next_request_id,
+            exec_net.start_async(request_id = curr_request_id,
                 inputs = {input_blob: image})
-            if exec_net.requests[curr_request_id].wait(-1) == 0:
-                res[j - 1] = (exec_net.requests[curr_request_id].
+            if exec_net.requests[prev_request_id].wait(-1) == 0:
+                res[j - 1] = (exec_net.requests[prev_request_id].
                     outputs[next(iter(model.outputs))])
-            curr_request_id, next_request_id = next_request_id, curr_request_id
-    if exec_net.requests[curr_request_id].wait(-1) == 0:
-        res[model.batch_size - 1] = (exec_net.requests[curr_request_id].
+            prev_request_id, curr_request_id = curr_request_id, prev_request_id
+    if exec_net.requests[prev_request_id].wait(-1) == 0:
+        res[model.batch_size - 1] = (exec_net.requests[prev_request_id].
             outputs[next(iter(model.outputs))])
     result = np.ndarray(shape = res.shape[1:])
     for i, r in enumerate(res):
