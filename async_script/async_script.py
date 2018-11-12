@@ -78,7 +78,7 @@ def prepare_model(log):
     return net, plugin, data, args
 
 
-def image_convert(model, data, log):
+def convert_image(model, data, log):
     n, c, h, w  = model.inputs[next(iter(model.inputs))]
     images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
     for i in range(n):
@@ -92,7 +92,7 @@ def image_convert(model, data, log):
     return images
 
 
-def video_convert(model, data):
+def convert_video(model, data):
     n, c, h, w  = model.inputs[next(iter(model.inputs))]
     images = []
     video = cv2.VideoCapture(data[0])
@@ -113,9 +113,9 @@ def prepare_data(model, data, log):
     image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4}
     file = str(os.path.splitext(data[0])[1])
     if file in image:
-        prep_data = image_convert(model, data, log)
+        prep_data = convert_image(model, data, log)
     elif file in video:
-        prep_data = video_convert(model, data)
+        prep_data = convert_video(model, data)
     return prep_data
 
 
@@ -142,7 +142,7 @@ def start_true_infer_async(images, exec_net, model,  number_iter):
             exec_net.start_async(request_id = next_request_id,
                 inputs = {input_blob: image})
             if exec_net.requests[curr_request_id].wait(-1) == 0:
-                res[j -1] = (exec_net.requests[curr_request_id].
+                res[j - 1] = (exec_net.requests[curr_request_id].
                     outputs[next(iter(model.outputs))])
             curr_request_id, next_request_id = next_request_id, curr_request_id
     if exec_net.requests[curr_request_id].wait(-1) == 0:
