@@ -7,7 +7,6 @@ import numpy as np
 import logging as log
 from openvino.inference_engine import IENetwork, IEPlugin
 
-
 def build_argparser():
     parser = ArgumentParser()
     parser.add_argument("-m", "--model", help = "Path to an .xml \
@@ -33,21 +32,18 @@ def build_argparser():
         iterations", default = 1, type = int)
     parser.add_argument("-pc", "--perf_counts", help = "Report performance \
         counters", action = "store_true", default = False)
-
     return parser
 
-def Convert_Image(net, args, log):
-	input_blob = next(iter(net.inputs))
-    n, c, h, w = net.inputs[input_blob]
+def Convert_Image(model, log):
+    n, c, h, w = model['net'].inputs[next(iter(model['net'].inputs))]
     images = np.ndarray(shape=(n, c, h, w))
     for i in range(n):
-        image = cv2.imread(args.input[i])
+        image = cv2.imread(model['args'].input[i])
         if image.shape[:-1] != (h, w):
-            log.warning("Image {} is resized from {} to {}".format(args.input[i], image.shape[:-1], (h, w)))
+            log.warning("Image {} is resized from {} to {}".format(model['args'].input[i], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (w, h))
         image = image.transpose((2, 0, 1))  # Change data layout from HWC to CHW
         images[i] = image
-    
     return images
 
 def Model_loading(log):
@@ -56,64 +52,56 @@ def Model_loading(log):
     model_bin =args.weights
     plugin = IEPlugin(device=args.device, plugin_dirs=args.plugin_dir)
     if args.cpu_extension and 'CPU' in args.device:
-    	plugin.add_cpu_extension(args.cpu_extension)
-	#log.info("Loading network files:\n\t{}\n\t{}".format(model_xml, model_bin))
+        plugin.add_cpu_extension(args.cpu_extension)
+    log.info("Loading network files:\n\t{}\n\t{}".format(model_xml, model_bin))
     net = IENetwork.from_ir(model=model_xml, weights=model_bin)
     if "CPU" in plugin.device:
         supported_layers = plugin.get_supported_layers(net)
-        not_supported_layers = [l for l in net.layers.keys() if l not in  supported_layers]
+        not_supported_layers = [l for l in net.layers.keys() if l not in supported_layers]
         if len(not_supported_layers) != 0:
-        	"""
-        	log.error("Following layers are not supported by the plugin for \
-            	specified device {}:\n {}". format(plugin.device, ',\
-            	'.join(not_supported_layers)))
-            log.error("Please try to specify cpu extensions library path in\
-            	sample's command line parameters using -l "
-            	"or --cpu_extension command line argument")
-            """
-            sys.exit(1)   
-             
-	#log.info("Preparing input blobs")
+            log.error("Following layers are not supported by the plugin for specified device {}:\n {}".
+                      format(plugin.device, ', '.join(not_supported_layers)))
+            log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
+                      "or --cpu_extension command line argument")
+            sys.exit(1)
     net.batch_size = len(args.input)
-	#log.info("Loading model to the plugin")
-    exec_net = plugin.load(network=net)
-    input_blob = next(iter(net.inputs))
-   
-    return {'net': net, 'exec_net': exec_net, 'args': args}
+    model={'net': net, 'plugin': plugin, 'args':args}
+    return model
 
-def Inference_sync(net,images,exec_net,args,log):
-	log.info("Starting inference ({} iterations)".format(args.number_iter))
-    input_blob = next(iter(net.inputs))
-    out_blob = next(iter(net.inputs))
-    for i in range(args.number_iter):
-    	res = exec_net.infer(inputs={input_blob: images})
-    res=res[out_blob]
-    
+def Inference_sync(model,images,log):
+    input_blob = next(iter(model['net'].inputs))
+    out_blob = next(iter(model['net'].outputs))
+    log.info("Loading model to the plugin")
+    exec_net=model['plugin'].load(network=model['net'])
+    log.info("Starting inference ({} iterations)".format(model['args'].number_iter))
+    for i in range(model['args'].number_iter):
+        res = exec_net.infer(inputs={input_blob: images})
+    res = res[out_blob]
     return res
 
-def Inference_out(res, args, log):
-    log.info("Top {} results: ".format(args.number_top))
-    if args.labels:
+def Inference_out(res, model, log):
+    log.info("Top {} results: ".format(model['args'].number_top))
+    if model['args'].labels:
         with open(args.labels, 'r') as f:
             labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
     else:
         labels_map = None
-    for i, probs in enumerate(res):
-        probs = np.squeeze(probs)
-        top_ind = np.argsort(probs)[-args.number_top:][::-1]
-        print("Image {}\n".format(args.input[i]))
-        for id in top_ind:
-            det_label = labels_map[id] if labels_map else "#{}".format(id)
-            print("{:.7f} label {}".format(probs[id], det_label))
-        print("\n")
+        for i, probs in enumerate(res):
+            probs = np.squeeze(probs)
+            top_ind = np.argsort(probs)[-model['args'].number_top:][::-1]
+            print("Image {}\n".format(model['args'].input[i]))
+            for id in top_ind:
+                det_label = labels_map[id] if labels_map else "#{}".format(id)
+                print("{:.7f} label {}".format(probs[id], det_label))
+            print("\n")
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
     level = log.INFO, stream = sys.stdout)
     model=Model_loading(log)
-    images=Convert_Image(model['input_blob'], model['net'], model['args'], log)
-    res=Inference_sync(model['net'], images, model['exec_net'], model['args'], log)
-    Inference_out(res, model['args'], log)
+    images=Convert_Image(model, log)
+    res=Inference_sync(model, images, log)
+    Inference_out(res, model, log)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
