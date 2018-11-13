@@ -128,7 +128,7 @@ def start_infer_video(path, exec_net, model, number_iter):
         exec_net.start_async(request_id = curr_request_id,
                 inputs = {input_blob: images})
         if exec_net.requests[prev_request_id].wait(-1) == 0:
-            res.append(copy.deepcopy(exec_net.requests[prev_request_id].
+            res.append(copy.copy(exec_net.requests[prev_request_id].
                     outputs[next(iter(model.outputs))]))
         prev_request_id, curr_request_id = curr_request_id, prev_request_id
         images_t.clear();
