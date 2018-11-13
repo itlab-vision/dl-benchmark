@@ -6,7 +6,7 @@ import os
 import argparse
 import numpy as np
 import logging as log
-import time
+from time import time
 import copy
 
 import cv2
@@ -41,7 +41,7 @@ def build_parser():
     parser.add_argument("-nt", "--number_top", help = "Number of top results",
         default = 10, type = int)
     parser.add_argument("-ni", "--number_iter", help = "Number of inference \
-        iterations", default = 1, type = int)
+        iterations", default = 2, type = int)
 
     return parser
 
@@ -111,6 +111,7 @@ def start_infer_video(path, exec_net, model, number_iter):
     video = cv2.VideoCapture(path)
     ret, frame = 1, 0
     z = 0
+    time_s = time()
     while video.isOpened():
         for k in range(n):
             ret, frame = video.read()
@@ -135,6 +136,7 @@ def start_infer_video(path, exec_net, model, number_iter):
     if exec_net.requests[prev_request_id].wait(-1) == 0:
         res.append(exec_net.requests[prev_request_id].
                  outputs[next(iter(model.outputs))])
+    time_e = (time() - time_s) * 1000    
     result = np.ndarray(shape = ((len(res) * n,) + 
         exec_net.requests[0].outputs[next(iter(model.outputs))].shape[1:]))
     for i, r in enumerate(res):
@@ -157,10 +159,13 @@ def infer_async(images, exec_net, model, number_iter):
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
+    infer_time = []
     for i in range(number_iter):
+        time_s = time()
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images})
         infer_status = infer_request_handle.wait()
+        infer_time.append((time() - time_s) * 1000)
 
     log.info("Processing output blob")
     res = infer_request_handle.outputs[next(iter(model.outputs))] 
@@ -171,24 +176,18 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     prev_request_id  = 1
-    res = np.ndarray(shape = ((model.batch_size,) + 
-        exec_net.requests[0].outputs[next(iter(model.outputs))].shape))
+    time_s = time()
     for i in range(number_iter):
-        for j, image in enumerate(images):
-            exec_net.start_async(request_id = curr_request_id,
-                inputs = {input_blob: image})
-            if exec_net.requests[prev_request_id].wait(-1) == 0:
-                res[j - 1] = (exec_net.requests[prev_request_id].
-                    outputs[next(iter(model.outputs))])
-            prev_request_id, curr_request_id = curr_request_id, prev_request_id
+        exec_net.start_async(request_id = curr_request_id,
+            inputs = {input_blob: images})
+        if exec_net.requests[prev_request_id].wait(-1) == 0:
+            pass
+        prev_request_id, curr_request_id = curr_request_id, prev_request_id
     if exec_net.requests[prev_request_id].wait(-1) == 0:
-        res[model.batch_size - 1] = (exec_net.requests[prev_request_id].
+        res = (exec_net.requests[prev_request_id].
             outputs[next(iter(model.outputs))])
-    result = np.ndarray(shape = res.shape[1:])
-    print(result.shape)
-    for i, r in enumerate(res):
-        result[i] = r[0]
-    return result
+    time_e = (time() - time_s) * 1000   
+    return res
 
 
 def infer_output(res, data, labels, number_top, log):
