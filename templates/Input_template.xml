@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Tests>
+    <Test>
+        <Model>  </Model>
+        <Path_to_model>  </Path_to_model>
+        <Dataset_name>  </Dataset_name>
+        <Path_to_dataset>  </Path_to_dataset>
+        <Batch>  </Batch>
+        <Mode>  </Mode> <!--  Sync or Async  -->
+        <Processor>  </Processor> <!--  CPU or GPU  -->
+        <Requests_amount>  </Requests_amount> <!--  Only for async mode!  -->
+        <Amount_time_measurement>  </Amount_time_measurement>
+        <Minimal_valid_time>  </Minimal_valid_time>
+    </Test>
+</Tests>
