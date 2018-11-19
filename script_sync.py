@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 import cv2
 import numpy as np
 import logging as log
+from time import time
 from openvino.inference_engine import IENetwork, IEPlugin
 
 def build_argparser():
@@ -34,15 +35,15 @@ def build_argparser():
         counters", action = "store_true", default = False)
     return parser
 
-def Convert_Image(model, log):
-    n, c, h, w = model['net'].inputs[next(iter(model['net'].inputs))]
+def Convert_Image(net, args, log):
+    n, c, h, w = net.inputs[next(iter(net.inputs))]
     images = np.ndarray(shape=(n, c, h, w))
     for i in range(n):
-        image = cv2.imread(model['args'].input[i])
+        image = cv2.imread(args.input[i])
         if image.shape[:-1] != (h, w):
-            log.warning("Image {} is resized from {} to {}".format(model['args'].input[i], image.shape[:-1], (h, w)))
+            log.warning("Image {} is resized from {} to {}".format(args.input[i], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (w, h))
-        image = image.transpose((2, 0, 1))  # Change data layout from HWC to CHW
+        image = image.transpose((2, 0, 1))
         images[i] = image
     return images
 
@@ -65,43 +66,86 @@ def Model_loading(log):
                       "or --cpu_extension command line argument")
             sys.exit(1)
     net.batch_size = len(args.input)
-    model={'net': net, 'plugin': plugin, 'args':args}
-    return model
+    return (net, plugin, args)
 
-def Inference_sync(model,images,log):
-    input_blob = next(iter(model['net'].inputs))
-    out_blob = next(iter(model['net'].outputs))
+def Inference_sync(net,plugin,images,args,log):
+    input_blob = next(iter(net.inputs))
+    out_blob = next(iter(net.outputs))
+    infer_time=[]
     log.info("Loading model to the plugin")
-    exec_net=model['plugin'].load(network=model['net'])
-    log.info("Starting inference ({} iterations)".format(model['args'].number_iter))
-    for i in range(model['args'].number_iter):
+    exec_net=plugin.load(network=net)
+    log.info("Starting inference ({} iterations)".format(args.number_iter))
+    for i in range(args.number_iter):
+        t0=time()
         res = exec_net.infer(inputs={input_blob: images})
+        infer_time.append((time()-t0))
     res = res[out_blob]
-    return res
+    return (res, infer_time)
 
-def Inference_out(res, model, log):
-    log.info("Top {} results: ".format(model['args'].number_top))
-    if model['args'].labels:
+def Inference_out_classification(res, net, args, log):
+    log.info("Top {} results: ".format(args.number_top))
+    if args.labels:
         with open(args.labels, 'r') as f:
             labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
     else:
         labels_map = None
         for i, probs in enumerate(res):
             probs = np.squeeze(probs)
-            top_ind = np.argsort(probs)[-model['args'].number_top:][::-1]
-            print("Image {}\n".format(model['args'].input[i]))
+            top_ind = np.argsort(probs)[-args.number_top:][::-1]
+            print("Image {}\n".format(args.input[i]))
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else "#{}".format(id)
                 print("{:.7f} label {}".format(probs[id], det_label))
             print("\n")
 
+def Inference_out_segmentation(res, net, log):
+    classes_color_map = [
+    (150, 150, 150),
+    (58, 55, 169),
+    (211, 51, 17),
+    (157, 80, 44),
+    (23, 95, 189),
+    (210, 133, 34),
+    (76, 226, 202),
+    (101, 138, 127),
+    (223, 91, 182),
+    (80, 128, 113),
+    (235, 155, 55),
+    (44, 151, 243),
+    (159, 80, 170),
+    (239, 208, 44),
+    (128, 50, 51),
+    (82, 141, 193),
+    (9, 107, 10),
+    (223, 90, 142),
+    (50, 248, 83),
+    (178, 101, 130),
+    (71, 30, 204)
+                        ]
+    n, c, h, w = net.inputs[next(iter(net.inputs))]                 
+    for batch, data in enumerate(res):
+        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
+        for i in range(h):
+            for j in range(w):
+                if len(data[:, i, j]) == 1:
+                    pixel_class = int(data[:, i, j])
+                else:
+                    pixel_class = np.argmax(data[:, i, j])
+                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+        out_img = os.path.join(os.path.dirname(__file__), "out_{}.bmp".format(batch))
+        cv2.imwrite(out_img, classes_map)
+        log.info("Result image was saved to {}".format(out_img))
+
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
     level = log.INFO, stream = sys.stdout)
-    model=Model_loading(log)
-    images=Convert_Image(model, log)
-    res=Inference_sync(model, images, log)
-    Inference_out(res, model, log)
+    net, plugin, args = Model_loading(log)
+    images=Convert_Image(net, args, log)
+    res, time=Inference_sync(net, plugin, images, args, log)
+    Inference_out_classification(res, net, args, log)
+    print(time)
+    #Inference_out_segmentation(res, net, log)
+    
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
