@@ -14,6 +14,30 @@ import cv2
 from openvino.inference_engine import IENetwork, IEPlugin
 
 
+classes_color_map = [
+    (128, 64,  128),
+    (232, 35,  244),
+    (70,  70,  70),
+    (156, 102, 102),
+    (153, 153, 190),
+    (153, 153, 153),
+    (30,  170, 250),
+    (0,   220, 220),
+    (35,  142, 107),
+    (152, 251, 152),
+    (180, 130, 70),
+    (60,  20,  220),
+    (0,   0,   255),
+    (142, 0,   0),
+    (70,  0,   0),
+    (100, 60,  0),
+    (90,  0,   0),
+    (230, 0,   0),
+    (32,  11,  119),
+    (0,   74,  111),
+    (81,  0,   81)
+]
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", help = "Path to an .xml \
@@ -26,7 +50,10 @@ def build_parser():
         of infer requests to be created. Number of infer requests may be \
         limited by device capabilities", required = True, type = int)
     parser.add_argument("-b", "--batch_size", help = "Size of the  \
-     processed pack", default = 1, type = int)
+        processed pack", default = 1, type = int)
+    parser.add_argument("-t", "--model_type", help = "Сhoose model type: \
+         1.classification  2.detection 3.segmentation",
+        required = True, type = str)
     parser.add_argument("-l", "--cpu_extension", help = "MKLDNN \
         (CPU)-targeted custom layers.Absolute path to a shared library \
         with the kernels implementation", type = str, default = None)
@@ -41,7 +68,7 @@ def build_parser():
     parser.add_argument("-nt", "--number_top", help = "Number of top results",
         default = 10, type = int)
     parser.add_argument("-ni", "--number_iter", help = "Number of inference \
-        iterations", default = 2, type = int)
+        iterations", default = 1, type = int)
 
     return parser
 
@@ -189,9 +216,7 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     time_e = (time() - time_s) * 1000   
     return res
 
-
-def infer_output(res, data, labels, number_top, log):
-
+def classification_output(res, data, labels, number_top, log):
     log.info("Top {} results: \n".format(number_top))
     if not labels:
         labels = "image_net_synset.txt"
@@ -211,6 +236,29 @@ def infer_output(res, data, labels, number_top, log):
             print("{:.7f} {}".format(probs[id], det_label))
         print("\n")  
 
+def segmentation_output(res, model, log):
+    c = 3
+    h, w = res.shape[2:]
+    for batch, data in enumerate(res):
+        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
+        for i in range(h):
+            for j in range(w):
+                if len(data[:, i, j]) == 1:
+                    pixel_class = int(data[:, i, j])
+                else:
+                    pixel_class = np.argmax(data[:, i, j])
+                classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+        out_img = os.path.join(os.path.dirname(__file__), "out_{}.bmp".format(batch))
+        cv2.imwrite(out_img, classes_map)
+        log.info("Result image was saved to {}".format(out_img))
+
+def infer_output(res, model,  data, labels, number_top, log, model_type):
+    if model_type == "classification": 
+        classification_output(res, data, labels, number_top, log)
+    elif model_type == "detection":
+        pass
+    elif model_type == "segmentation":
+        segmentation_output(res, model, log)
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
@@ -223,7 +271,7 @@ def main():
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, data, args.labels, args.number_top, log)
+    infer_output(res, net, data, args.labels, args.number_top, log, args.model_type)
     del net
     del exec_net
     del plugin
