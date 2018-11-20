@@ -236,7 +236,7 @@ def classification_output(res, data, labels, number_top, log):
             print("{:.7f} {}".format(probs[id], det_label))
         print("\n")  
 
-def segmentation_output(res, model, log):
+def segmentation_output(res, log):
     c = 3
     h, w = res.shape[2:]
     for batch, data in enumerate(res):
@@ -252,13 +252,13 @@ def segmentation_output(res, model, log):
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
 
-def infer_output(res, model,  data, labels, number_top, log, model_type):
+def infer_output(res, data, labels, number_top, log, model_type):
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
         pass
     elif model_type == "segmentation":
-        segmentation_output(res, model, log)
+        segmentation_output(res, log)
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
@@ -271,7 +271,7 @@ def main():
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, net, data, args.labels, args.number_top, log, args.model_type)
+    infer_output(res, data, args.labels, args.number_top, log, args.model_type)
     del net
     del exec_net
     del plugin
