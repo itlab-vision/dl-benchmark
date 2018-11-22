@@ -252,11 +252,28 @@ def segmentation_output(res, log):
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
 
-def infer_output(res, data, labels, number_top, log, model_type):
+def detection_outpyt(res, images):
+    initial_h, initial_w = res.shape[2:]
+    for i, r in enumerate(res):
+        for obj in r[0][0]:
+            if obj[2] > args.prob_threshold:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                color = (min(class_id * 12.5, 255), min(class_id * 7, 255), min(class_id * 5, 255))
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
+        cv2.imshow("Detection Results", images[i])
+        
+    cv2.wait(0)    
+    cv2.destroyAllWindows()
+
+def infer_output(res, images, data, labels, number_top, log, model_type):
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
-        pass
+        detection_outpyt(res, images)
     elif model_type == "segmentation":
         segmentation_output(res, log)
 
@@ -271,7 +288,7 @@ def main():
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, data, args.labels, args.number_top, log, args.model_type)
+    infer_output(res, images, data, args.labels, args.number_top, log, args.model_type)
     del net
     del exec_net
     del plugin
