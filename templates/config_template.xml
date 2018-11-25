@@ -16,6 +16,6 @@
             <AsyncRequestCount></AsyncRequestCount>
             <SyncIterationCount></SyncIterationCount>
             <MinInferenceTime></MinInferenceTime>
-        <Parameters>
+        </Parameters>
     </Test>
 </Tests>
