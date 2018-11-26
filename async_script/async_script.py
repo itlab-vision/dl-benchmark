@@ -73,15 +73,15 @@ def build_parser():
     return parser
 
 
-def prepare_model(log):
-    args = build_parser().parse_args()
-    model_xml = args.model
-    model_bin = args.weights
+def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
+                 input):
+    model_xml = model
+    model_bin = weights
 
     log.info("Plugin initialization.");
-    plugin = IEPlugin(device = args.device, plugin_dirs = args.plugin_dir)
-    if args.cpu_extension and 'CPU' in args.device:
-        plugin.add_cpu_extension(args.cpu_extension)
+    plugin = IEPlugin(device = device, plugin_dirs = plugin_dir)
+    if cpu_extension and 'CPU' in device:
+        plugin.add_cpu_extension(cpu_extension)
 
     log.info("Loading network files:\n\t {0}\n\t {1}".format(
         model_xml, model_bin))
@@ -98,12 +98,12 @@ def prepare_model(log):
                 sample's command line parameters using -l or --cpu_extension \
                 command line argument")
             sys.exit(1)      
-    if os.path.isdir(args.input[0]):
-        data = [args.input[0] + file for file in os.listdir(args.input[0])]
+    if os.path.isdir(input[0]):
+        data = [input[0] + file for file in os.listdir(input[0])]
     else:
-        data = args.input
+        data = input
 
-    return net, plugin, data, args
+    return net, plugin, data
 
 
 def convert_image(model, data):
@@ -252,7 +252,7 @@ def segmentation_output(res, log):
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
 
-def detection_outpyt(res, images):
+def detection_output(res, images):
     initial_h, initial_w = res.shape[2:]
     for i, r in enumerate(res):
         for obj in r[0][0]:
@@ -280,7 +280,9 @@ def infer_output(res, images, data, labels, number_top, log, model_type):
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
         level = log.INFO, stream = sys.stdout)
-    net, plugin, data, args = prepare_model(log)
+    args = build_parser().parse_args()
+    net, plugin, data = prepare_model(log, args.model, args.weights,
+        args.cpu_extension, args.device, args.plugin_dir, args.input)
     net.batch_size = (args.batch_size if args.batch_size > 1 
         else len(data))
     images = prepare_data(net, data)
