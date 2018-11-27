@@ -31,8 +31,8 @@
             <BatchSize>5</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
-            <AsyncRequestCount>No</AsyncRequestCount>
-            <SyncIterationCount>2</SyncIterationCount>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <SyncIterationCount>No</SyncIterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
