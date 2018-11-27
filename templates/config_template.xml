@@ -11,10 +11,10 @@
         </Dataset>
         <Parameters>
             <BatchSize></BatchSize>
-            <Mode></Mode> <!--  Sync or Async  -->
-            <Plugin></Plugin> <!--  CPU or GPU  -->
+            <Mode></Mode>
+            <Plugin></Plugin>
             <AsyncRequestCount></AsyncRequestCount>
-            <SyncIterationCount></SyncIterationCount>
+            <IterationCount></IterationCount>
             <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
