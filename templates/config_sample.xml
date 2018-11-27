@@ -3,7 +3,7 @@
     <Test>
         <Model>
             <Name>dansenet-121</Name>
-            <Path>path to file</Path>
+            <Path>path to folder with model</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
@@ -14,14 +14,14 @@
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>No</AsyncRequestCount>
-            <SyncIterationCount>10</SyncIterationCount>
+            <IterationCount>10</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
         <Model>
             <Name>dansenet-121</Name>
-            <Path>path to file</Path>
+            <Path>path to folder with model</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
@@ -32,7 +32,7 @@
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
-            <SyncIterationCount>No</SyncIterationCount>
+            <IterationCount>10</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
