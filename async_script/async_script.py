@@ -14,30 +14,6 @@ import cv2
 from openvino.inference_engine import IENetwork, IEPlugin
 
 
-classes_color_map = [
-    (128, 64,  128),
-    (232, 35,  244),
-    (70,  70,  70),
-    (156, 102, 102),
-    (153, 153, 190),
-    (153, 153, 153),
-    (30,  170, 250),
-    (0,   220, 220),
-    (35,  142, 107),
-    (152, 251, 152),
-    (180, 130, 70),
-    (60,  20,  220),
-    (0,   0,   255),
-    (142, 0,   0),
-    (70,  0,   0),
-    (100, 60,  0),
-    (90,  0,   0),
-    (230, 0,   0),
-    (32,  11,  119),
-    (0,   74,  111),
-    (81,  0,   81)
-]
-
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", help = "Path to an .xml \
@@ -63,13 +39,16 @@ def build_parser():
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)", default = "CPU", type = str)
-    parser.add_argument("--labels", help = "Labels mapping file",
-        default = None, type = str)
     parser.add_argument("-nt", "--number_top", help = "Number of top results",
         default = 10, type = int)
     parser.add_argument("-ni", "--number_iter", help = "Number of inference \
         iterations", default = 1, type = int)
-
+    parser.add_argument("--labels", help = "Labels mapping file",
+        default = None, type = str)
+    parser.add_argument("--prob_threshold", help="Probability threshold \
+        for detections filtering", default = 0.5, type = float)
+    parser.add_argument("--color_map", help="Classes color map", 
+        default = None, type = str)
     return parser
 
 
@@ -128,6 +107,7 @@ def prepare_data(model, data):
     return prep_data
 
 
+
 def start_infer_video(path, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
@@ -170,33 +150,21 @@ def start_infer_video(path, exec_net, model, number_iter):
         result[i * n : (i + 1) * n] = r
 
 
-    return result
-
-       
-
-def infer_async(images, exec_net, model, number_iter):
-    if type(images) is str:
-        res = start_infer_video(images, exec_net, model, number_iter)
-    elif len(exec_net.requests) == 1:
-        res = start_infer_one_req(images, exec_net, model, number_iter)
-    else:
-        res = start_infer_two_req(images, exec_net, model, number_iter)
-    
-    return res
+    return res, time_e
+     
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
-    infer_time = []
+    time_s = time()
     for i in range(number_iter):
-        time_s = time()
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images})
         infer_status = infer_request_handle.wait()
-        infer_time.append((time() - time_s) * 1000)
 
     log.info("Processing output blob")
     res = infer_request_handle.outputs[next(iter(model.outputs))] 
-    return res
+    time_e = (time() - time_s) * 1000  
+    return res, time_e
 
 
 def start_infer_two_req(images, exec_net, model,  number_iter):
@@ -214,7 +182,20 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
         res = (exec_net.requests[prev_request_id].
             outputs[next(iter(model.outputs))])
     time_e = (time() - time_s) * 1000   
+    return res, time_e
+
+
+def infer_async(images, exec_net, model, number_iter):
+    if type(images) is str:
+        res = start_infer_video(images, exec_net, model, number_iter)
+    elif len(exec_net.requests) == 1:
+        res = start_infer_one_req(images, exec_net, model, number_iter)
+    else:
+        res = start_infer_two_req(images, exec_net, model, number_iter)
+    
     return res
+
+
 
 def classification_output(res, data, labels, number_top, log):
     log.info("Top {} results: \n".format(number_top))
@@ -236,9 +217,15 @@ def classification_output(res, data, labels, number_top, log):
             print("{:.7f} {}".format(probs[id], det_label))
         print("\n")  
 
-def segmentation_output(res, log):
+def segmentation_output(res, color_map, log):
     c = 3
     h, w = res.shape[2:]
+    if not color_map:
+        color_map = "color_map.txt"
+    classes_color_map = []
+    with open(color_map, 'r') as f:
+        for line in f:
+            classes_color_map.append([int(x) for x in line.split()]) 
     for batch, data in enumerate(res):
         classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
         for i in range(h):
@@ -252,11 +239,11 @@ def segmentation_output(res, log):
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
 
-def detection_output(res, images):
+def detection_output(res, images, prob_threshold):
     initial_h, initial_w = res.shape[2:]
     for i, r in enumerate(res):
         for obj in r[0][0]:
-            if obj[2] > args.prob_threshold:
+            if obj[2] > prob_threshold:
                 xmin = int(obj[3] * initial_w)
                 ymin = int(obj[4] * initial_h)
                 xmax = int(obj[5] * initial_w)
@@ -269,13 +256,14 @@ def detection_output(res, images):
     cv2.wait(0)    
     cv2.destroyAllWindows()
 
-def infer_output(res, images, data, labels, number_top, log, model_type):
+def infer_output(res, images, data, labels, number_top, prob_threshold, 
+                color_map, log, model_type):
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
-        detection_outpyt(res, images)
+        detection_outpyt(res, images, prob_threshold)
     elif model_type == "segmentation":
-        segmentation_output(res, log)
+        segmentation_output(res, color_map, log)
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
@@ -289,12 +277,12 @@ def main():
     log.info("Loading model to the plugin")
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
-    res = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, images, data, args.labels, args.number_top, log, args.model_type)
+    res, time = infer_async(images, exec_net, net, args.number_iter)
+    infer_output(res, images, data, args.labels, args.number_top, args.prob_threshold, 
+                args.color_map, log, args.model_type)
     del net
     del exec_net
     del plugin
-
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
