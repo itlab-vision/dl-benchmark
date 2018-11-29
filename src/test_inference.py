@@ -1,4 +1,5 @@
 import argparse
+import os
 import readconfig as rc
      
 def build_parser():
@@ -29,7 +30,7 @@ def test_inference(test_list):
 if __name__ == "__main__":
     try:
         config = build_parser()
+        test_list = rc.process_config(config)
+        output = test_inference(test_list)
     except Exception as Error:
         print('Error! : {}'.format(str(Error)))
-    test_list = rc.process_config(config)
-    output = test_inference(test_list)
