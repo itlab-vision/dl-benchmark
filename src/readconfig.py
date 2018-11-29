@@ -4,9 +4,11 @@ from lxml import etree
 class model:
     def __init__(self, model):
         self.name = model[0]
-        file = os.listdir(model[1])
-        self.model = os.path.join(model[1], file.endswith('.bin'))
-        self.weigh = os.path.join(model[1], file.endswith('.xml'))
+        for file in os.listdir(model[1]):
+            if file.endswith('.bin'):
+                self.model = os.path.join(model[1], file)
+            if file.endswith('.xml'):            
+                self.weigh = os.path.join(model[1], file)
 
 class dataset:
     def __init__(self, dataset):
