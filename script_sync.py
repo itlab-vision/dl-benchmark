@@ -1,15 +1,19 @@
-from __future__ import print_function
+
+
 import sys
 import os
-from argparse import ArgumentParser
-import cv2
+import argparse 
 import numpy as np
 import logging as log
 from time import time
+
+import cv2
+
 from openvino.inference_engine import IENetwork, IEPlugin
 
+
 def build_argparser():
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", help = "Path to an .xml \
         file with a trained model.", required = True, type = str)
     parser.add_argument("-w", "--weights", help = "Path to an .bin file \
@@ -35,29 +39,33 @@ def build_argparser():
         counters", action = "store_true", default = False)
     parser.add_argument("-t", "--type_model", help = "Type model", required = True, 
         type = str)
+    parser.add_argument("--color_map", help = "Classes color map", type = str, default=None)
+    parser.add_argument("--prob_threshold", help="Probability threshold \
+        for detections filtering", default = 0.5, type = float)
     return parser
 
-def Convert_Image(net, args, log):
+
+def convert_image(net, inputs, log):
     n, c, h, w = net.inputs[next(iter(net.inputs))]
     images = np.ndarray(shape=(n, c, h, w))
     for i in range(n):
-        image = cv2.imread(args.input[i])
+        image = cv2.imread(inputs[i])
         if image.shape[:-1] != (h, w):
-            log.warning("Image {} is resized from {} to {}".format(args.input[i], image.shape[:-1], (h, w)))
+            log.warning("Image {} is resized from {} to {}".format(inputs[i], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (w, h))
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
 
-def Model_loading(log):
-    args=build_argparser().parse_args()
-    model_xml=args.model
-    if args.weights:
-        model_bin =args.weights
+
+def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log):
+    model_xml = model
+    if weights:
+        model_bin = weights
     else:
         model_bin = os.path.splitext(model_xml)[0] + ".bin"
-    plugin = IEPlugin(device=args.device, plugin_dirs=args.plugin_dir)
-    if args.cpu_extension and 'CPU' in args.device:
+    plugin = IEPlugin(device=device, plugin_dirs=plugin_dirs)
+    if cpu_extension and 'CPU' in device:
         plugin.add_cpu_extension(args.cpu_extension)
     log.info("Loading network files:\n\t{}\n\t{}".format(model_xml, model_bin))
     net = IENetwork.from_ir(model=model_xml, weights=model_bin)
@@ -70,91 +78,103 @@ def Model_loading(log):
             log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
                       "or --cpu_extension command line argument")
             sys.exit(1)
-    net.batch_size = len(args.input)
-    return (net, plugin, args)
+    net.batch_size = len(input)
+    return net, plugin
 
-def Inference_sync(net,plugin,images,args,log):
+
+def infer_sync(net, plugin, images, number_it, log):
     input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
-    infer_time=[]
+    time_infer=[]
     log.info("Loading model to the plugin")
     exec_net=plugin.load(network=net)
-    log.info("Starting inference ({} iterations)".format(args.number_iter))
-    for i in range(args.number_iter):
+    log.info("Starting inference ({} iterations)".format(number_it))
+    for i in range(number_it):
         t0=time()
         res = exec_net.infer(inputs={input_blob: images})
-        infer_time.append((time()-t0))
+        time_infer.append((time()-t0))
     res = res[out_blob]
-    return (res, infer_time)
-
-def Inference_out_classification(res, net, args, log):
-	log.info("Top {} results: ".format(args.number_top))
-	if args.labels:
-		with open(args.labels, 'r') as f:
-			labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
-	else:
-		labels_map=None
-	for i, probs in enumerate(res):
-		probs = np.squeeze(probs)
-		top_ind = np.argsort(probs)[-args.number_top:][::-1]
-		print("Image {}\n".format(args.input[i]))
-		for id in top_ind:
-			det_label = labels_map[id] if labels_map else "#{}".format(id)
-			print("{:.7f} label {}".format(probs[id], det_label))
-		print("\n")
-def Output(res, net, args, log):
-	log.info("Start output.")
-	if args.type_model=="c":
-		Inference_out_classification(res, net, args, log)
-	elif args.type_model=="s":
-		Inference_out_segmentation(res, net, args, log)
+    return res, time_infer
 
 
-def Inference_out_segmentation(res, net, args, log):
-	classes_color_map = [
-    (150, 150, 150),
-    (58, 55, 169),
-    (211, 51, 17),
-    (157, 80, 44),
-    (23, 95, 189),
-    (210, 133, 34),
-    (76, 226, 202),
-    (101, 138, 127),
-    (223, 91, 182),
-    (80, 128, 113),
-    (235, 155, 55),
-    (44, 151, 243),
-    (159, 80, 170),
-    (239, 208, 44),
-    (128, 50, 51),
-    (82, 141, 193),
-    (9, 107, 10),
-    (223, 90, 142),
-    (50, 248, 83),
-    (178, 101, 130),
-    (71, 30, 204)
-						]
-	n, c, h, w = net.inputs[next(iter(net.inputs))]					
-	for batch, data in enumerate(res):
-		classes_map = np.zeros(shape=(len(data[0]), len(data[0]), c), dtype=np.int)
-		for i in range(len(data[0])):
-			for j in range(len(data[0])):
-				if len(data[:, i, j]) == 1:
-					pixel_class = int(data[:, i, j])
-				else:
-					pixel_class = np.argmax(data[:, i, j])
-				classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-		out_img = os.path.join(os.path.dirname(__file__), "out_segmentation_{}.bmp".format(batch))
-		cv2.imwrite(out_img, classes_map)
-		log.info("Result image was saved to {}".format(out_img))
+def classification_output(res, number_top, inputs, labels, log):
+    log.info("Top {} results: ".format(number_top))
+    if labels:
+        with open(labels, 'r') as f:
+            labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
+    else:
+        labels_map=None
+    for i, probs in enumerate(res):
+        probs = np.squeeze(probs)
+        top_ind = np.argsort(probs)[-number_top:][::-1]
+        print("Image {}\n".format(inputs[i]))
+        for id in top_ind:
+            det_label = labels_map[id] if labels_map else "#{}".format(id)
+            print("{:.7f} label {}".format(probs[id], det_label))
+        print("\n")
+
+
+def segmentation_output(res, color_map, log):
+    c=3
+    h, w = res.shape[2:]
+    if not color_map:
+        color_map = "color_map.txt"
+    classes_color_map = []
+    with open(color_map, 'r') as f:
+        for line in f:
+            classes_color_map.append([int(x) for x in line.split()]) 
+    for batch, data in enumerate(res):
+        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
+        for i in range(h):
+            for j in range(w):
+                if len(data[:, i, j]) == 1:
+                    pixel_class = int(data[:, i, j])
+                else:
+                    pixel_class = np.argmax(data[:, i, j])
+                classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+        out_img = os.path.join(os.path.dirname(__file__), "out_segmentation_{}.bmp".format(batch))
+        cv2.imwrite(out_img, classes_map)
+        log.info("Result image was saved to {}".format(out_img))
+
+
+def detection_output(res, prob_threshold, images):
+    initial_h, initial_w = res.shape[2:]
+    for i, r in enumerate(res):
+        for obj in r[0][0]:
+            if obj[2] > prob_threshold:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                color = (min(class_id * 12.5, 255), min(class_id * 7, 255), min(class_id * 5, 255))
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
+        cv2.imshow("Detection Results", images[i])
+    cv2.wait(0)    
+    cv2.destroyAllWindows()		
+
+
+def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
+        prob_threshold, images, log):
+    log.info("Start output.")
+    if type_model=="classification":
+        classification_output(res, number_top, inputs, labels, log)
+    elif type_model=="segmentation":
+        segmentation_output(res, color_map, log)
+    elif type_model=="detection":
+        detection_output(res, prob_threshold, images)
+
 
 def main():
-	log.basicConfig(format = "[ %(levelname)s ] %(message)s",
-	level = log.INFO, stream = sys.stdout)
-	net, plugin, args = Model_loading(log)
-	images=Convert_Image(net, args, log)
-	res, time=Inference_sync(net, plugin, images, args, log)
-	Output(res, net, args, log)
+    log.basicConfig(format = "[ %(levelname)s ] %(message)s",
+        level = log.INFO, stream = sys.stdout)
+    args = build_argparser().parse_args()
+    net, plugin = prepare_model(args.model, args.weights,
+        args.cpu_extension, args.device, args.plugin_dir, args.input, log)
+    images = convert_image(net, args.input, log)
+    res, time = infer_sync(net, plugin, images, args.number_iter, log)
+    infer_output(res, net, args.type_model, args.labels, args.color_map, args.input, args.number_top, 
+        args.prob_threshold, images, log)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
