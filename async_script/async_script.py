@@ -53,7 +53,7 @@ def build_parser():
 
 
 def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
-                 input):
+                  input):
     model_xml = model
     model_bin = weights
 
@@ -86,8 +86,8 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
 
 
 def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))]
-    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
+    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
+    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
     for i in range(n):
         image = cv2.imread(data[i])
         if (image.shape[:-1] != (h, w)):
@@ -112,7 +112,7 @@ def start_infer_video(path, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     prev_request_id  = 1
-    n, c, h, w  = model.inputs[input_blob]
+    n, c, h, w  = model.inputs[input_blob].shape
     images_t = []
     res = []
     video = cv2.VideoCapture(path)
@@ -196,15 +196,15 @@ def infer_async(images, exec_net, model, number_iter):
     return res
 
 
-
 def classification_output(res, data, labels, number_top, log):
     log.info("Top {} results: \n".format(number_top))
-    if not labels:
+    if labels:
         labels = "image_net_synset.txt"
-    with open(labels, 'r') as f:
-        labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
-            for x in f ]
-
+        with open(labels, 'r') as f:
+            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
+                for x in f ]
+    else:
+	    labels_map = None
     for i, probs in enumerate(res):
         probs = np.squeeze(probs)
         top_ind = np.argsort(probs)[-number_top:][::-1]
@@ -216,6 +216,7 @@ def classification_output(res, data, labels, number_top, log):
             det_label = labels_map[id] if labels_map else "#{}".format(id)
             print("{:.7f} {}".format(probs[id], det_label))
         print("\n")  
+		
 
 def segmentation_output(res, color_map, log):
     c = 3
@@ -238,6 +239,7 @@ def segmentation_output(res, color_map, log):
         out_img = os.path.join(os.path.dirname(__file__), "out_{}.bmp".format(batch))
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
+		
 
 def detection_output(res, images, prob_threshold):
     initial_h, initial_w = res.shape[2:]
@@ -255,7 +257,8 @@ def detection_output(res, images, prob_threshold):
         
     cv2.wait(0)    
     cv2.destroyAllWindows()
-
+	
+	
 def infer_output(res, images, data, labels, number_top, prob_threshold, 
                 color_map, log, model_type):
     if model_type == "classification": 
@@ -264,6 +267,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         detection_outpyt(res, images, prob_threshold)
     elif model_type == "segmentation":
         segmentation_output(res, color_map, log)
+		
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
