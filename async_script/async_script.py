@@ -239,7 +239,6 @@ def segmentation_output(res, color_map, log):
 
 def detection_output(res, images, prob_threshold):
     initial_h, initial_w = res.shape[2:]
-    print(res.shape)
     for i, r in enumerate(res):
         for obj in r[0][0]:
             if obj[2] > prob_threshold:
