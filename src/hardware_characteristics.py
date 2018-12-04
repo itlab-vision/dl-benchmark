@@ -14,9 +14,11 @@ def get_cpu_name(ostype):
         text = text.split('=')
         cpuname = text[1].strip()
     elif (ostype == 'Linux'):
-        # TODO : write code for Linux
-        # cat /proc/cpuinfo | grep ‘model name’
-        cpuname = 'Underfined Linux CPU'
+        command = ['cat', '/proc/cpuinfo']
+        cpu_info = subprocess.check_output(command).strip().decode()
+        for line in cpu_info.split('\n'):
+            if 'model name' in line:
+                return line.split(':')[1].strip()
     elif (ostype == 'Darwin'):
         # TODO : write code for Mac OS
         #'sysctl -n machdep.cpu.brand_string'
@@ -35,6 +37,12 @@ def get_ram_size(ostype):
         p.wait()
         text = text.split('=')
         ramsize = text[1].strip() + ' KB'
+    elif (ostype == 'Linux'):
+        command = ['cat', '/proc/meminfo']
+        all_info = subprocess.check_output(command).strip().decode()
+        for line in all_info.split('\n'):
+            if 'MemTotal' in line:
+                return line.split(':')[1].strip()        
         
     return ramsize
         
