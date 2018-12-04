@@ -86,8 +86,8 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
 
 
 def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
-    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
+    n, c, h, w  = model.inputs[next(iter(model.inputs))]
+    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
     for i in range(n):
         image = cv2.imread(data[i])
         if (image.shape[:-1] != (h, w)):
@@ -95,6 +95,7 @@ def convert_image(model, data):
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
+
 
 def prepare_data(model, data):
     video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
@@ -105,7 +106,6 @@ def prepare_data(model, data):
     elif file in video:
         prep_data = data[0]
     return prep_data
-
 
 
 def start_infer_video(path, exec_net, model, number_iter):
@@ -148,10 +148,8 @@ def start_infer_video(path, exec_net, model, number_iter):
         exec_net.requests[0].outputs[next(iter(model.outputs))].shape[1:]))
     for i, r in enumerate(res):
         result[i * n : (i + 1) * n] = r
-
-
     return res, time_e
-     
+
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
@@ -160,7 +158,6 @@ def start_infer_one_req(images, exec_net, model, number_iter):
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images})
         infer_status = infer_request_handle.wait()
-
     log.info("Processing output blob")
     res = infer_request_handle.outputs[next(iter(model.outputs))] 
     time_e = (time() - time_s) * 1000  
@@ -181,7 +178,7 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     if exec_net.requests[prev_request_id].wait(-1) == 0:
         res = (exec_net.requests[prev_request_id].
             outputs[next(iter(model.outputs))])
-    time_e = (time() - time_s) * 1000   
+    time_e = (time() - time_s) * 1000
     return res, time_e
 
 
@@ -192,7 +189,6 @@ def infer_async(images, exec_net, model, number_iter):
         res = start_infer_one_req(images, exec_net, model, number_iter)
     else:
         res = start_infer_two_req(images, exec_net, model, number_iter)
-    
     return res
 
 
@@ -204,7 +200,7 @@ def classification_output(res, data, labels, number_top, log):
             labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
                 for x in f ]
     else:
-	    labels_map = None
+        labels_map = None
     for i, probs in enumerate(res):
         probs = np.squeeze(probs)
         top_ind = np.argsort(probs)[-number_top:][::-1]
@@ -216,7 +212,7 @@ def classification_output(res, data, labels, number_top, log):
             det_label = labels_map[id] if labels_map else "#{}".format(id)
             print("{:.7f} {}".format(probs[id], det_label))
         print("\n")  
-		
+
 
 def segmentation_output(res, color_map, log):
     c = 3
@@ -239,10 +235,11 @@ def segmentation_output(res, color_map, log):
         out_img = os.path.join(os.path.dirname(__file__), "out_{}.bmp".format(batch))
         cv2.imwrite(out_img, classes_map)
         log.info("Result image was saved to {}".format(out_img))
-		
+
 
 def detection_output(res, images, prob_threshold):
     initial_h, initial_w = res.shape[2:]
+    print(res.shape)
     for i, r in enumerate(res):
         for obj in r[0][0]:
             if obj[2] > prob_threshold:
@@ -251,23 +248,23 @@ def detection_output(res, images, prob_threshold):
                 xmax = int(obj[5] * initial_w)
                 ymax = int(obj[6] * initial_h)
                 class_id = int(obj[1])
-                color = (min(class_id * 12.5, 255), min(class_id * 7, 255), min(class_id * 5, 255))
+                color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
+                    min(class_id * 5, 255))
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
         cv2.imshow("Detection Results", images[i])
-        
-    cv2.wait(0)    
+    cv2.wait(0)
     cv2.destroyAllWindows()
-	
-	
-def infer_output(res, images, data, labels, number_top, prob_threshold, 
-                color_map, log, model_type):
+
+
+def infer_output(res, images, data, labels, number_top, prob_threshold,
+        color_map, log, model_type):
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
-        detection_outpyt(res, images, prob_threshold)
+        detection_output(res, images, prob_threshold)
     elif model_type == "segmentation":
         segmentation_output(res, color_map, log)
-		
+
 
 def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
@@ -282,11 +279,12 @@ def main():
     exec_net = plugin.load(network = net, num_requests = args.Requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res, time = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, images, data, args.labels, args.number_top, args.prob_threshold, 
-                args.color_map, log, args.model_type)
+    infer_output(res, images, data, args.labels, args.number_top,
+        args.prob_threshold, args.color_map, log, args.model_type)
     del net
     del exec_net
     del plugin
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
