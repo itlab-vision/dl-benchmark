@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Name>dansenet-121</Name>
+            <Path>path to folder with model</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>path to folder with dataset</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>5</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>No</AsyncRequestCount>
+            <IterationCount>10</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>dansenet-121</Name>
+            <Path>path to folder with model</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>path to folder with dataset</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>5</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>10</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+</Tests>
