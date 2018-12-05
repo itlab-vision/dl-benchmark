@@ -2,7 +2,7 @@
 <Tests>
     <Test>
         <Model>
-            <Name>dansenet-121</Name>
+            <Name>densenet-121</Name>
             <Path>path to folder with model</Path>
         </Model>
         <Dataset>
@@ -20,7 +20,7 @@
     </Test>
     <Test>
         <Model>
-            <Name>dansenet-121</Name>
+            <Name>densenet-121</Name>
             <Path>path to folder with model</Path>
         </Model>
         <Dataset>
