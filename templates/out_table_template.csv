@@ -1,1 +1,1 @@
-  Model;Dataset;BatchSize;Mode;Parameters;Infrastucture;Average time of single pass (s);Latency;FPS
+Model;Dataset;BatchSize;Mode;Parameters;Infrastucture;Average time of single pass (s);Latency;FPS
