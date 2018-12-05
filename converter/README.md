@@ -12,11 +12,11 @@
 Пример запуска:  
 ```Python
 python converter.py \
-    -m C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py \
-    -c C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
+    -m C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/model_optimizer/mo.py \
+    -c C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/config.xml
 python converter.py \
-    --mo C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py \
-    --config C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
+    --mo C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/model_optimizer/mo.py \
+    --config C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/config.xml
 ```
 
 Примечание: если агрументы не переданы или переданы
