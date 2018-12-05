@@ -2,13 +2,14 @@ import platform
 import os
 import subprocess
 
+
 def get_cpu_name(ostype):
     cpuname = 'Underfined'
     
     if (ostype == 'Windows'):
         command = ['wmic', 'cpu', 'get', 'name', '/Value']
-        p = subprocess.Popen(command, universal_newlines=True, shell=True, 
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command, universal_newlines = True, shell = True,
+            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         text = p.stdout.read()
         p.wait()
         text = text.split('=')
@@ -23,16 +24,16 @@ def get_cpu_name(ostype):
         # TODO : write code for Mac OS
         #'sysctl -n machdep.cpu.brand_string'
         cpuname = 'Underfined Macintosh CPU'
-        
     return cpuname
+
 
 def get_ram_size(ostype):
     ramsize = 'Underfined'
     
     if (ostype == 'Windows'):
         command = ['wmic', 'OS', 'get', 'TotalVisibleMemorySize', '/Value']
-        p = subprocess.Popen(command, universal_newlines=True, shell=True, 
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command, universal_newlines = True, shell = True, 
+            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         text = p.stdout.read()
         p.wait()
         text = text.split('=')
@@ -42,10 +43,9 @@ def get_ram_size(ostype):
         all_info = subprocess.check_output(command).strip().decode()
         for line in all_info.split('\n'):
             if 'MemTotal' in line:
-                return line.split(':')[1].strip()        
-        
+                return line.split(':')[1].strip()
     return ramsize
-        
+
 
 def get_system_characteristics():
     characteristics = {}
@@ -73,5 +73,6 @@ def get_system_characteristics():
     
     return characteristics
 
+
 if __name__ == '__main__':
-    print( get_system_characteristics() )
+    print(get_system_characteristics())
