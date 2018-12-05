@@ -9,6 +9,10 @@ class model:
                 self.model = os.path.join(model[1], file)
             if file.endswith('.xml'):            
                 self.weigh = os.path.join(model[1], file)
+        if not os.path.isfile(self.model):
+            raise ValueError('Wrong path to model file')
+        if not os.path.isfile(self.weigh):
+            raise ValueError('Wrong path to model weigh file')
 
 class dataset:
     def __init__(self, dataset):
@@ -16,51 +20,45 @@ class dataset:
         self.path = dataset[1]
 
 class parameter:
-    def __init__(self, parameters):
-        self.batchsize = parameters[0]
-        self.mode = parameters[1]
-        self.plugin = parameters[2]
-        self.asyncrequest = parameters[3]
-        self.iteration = parameters[4]
-        self.mininferencetime = parameters[5]
+    def __init__(self, parameter):
+        self.batchsize = parameter[0]
+        self.mode = parameter[1]
+        self.plugin = parameter[2]
+        self.asyncrequest = parameter[3]
+        self.iteration = parameter[4]
+        self.mininferencetime = parameter[5]
 
 class test:
-    def __init__(self, args):
-        self.model = args[0]
-        self.dataset = args[1]
-        self.parameters = args[2]
-    
+    def __init__(self, arg):
+        self.model = arg[0]
+        self.dataset = arg[1]
+        self.parameters = arg[2]
+
 def process_config(config):
     with open(config) as file:
         openconfig = file.read()
-    
     utf_parser = etree.XMLParser(encoding = 'utf-8')
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
-    
+
     test_list = []
-    
-    for tag in root.getchildren():
-    
-        tmp = []
-        
-        for test_parameter in tag.getchildren():
-            childrens = []
-            for param in test_parameter.getchildren():
-                childrens.append(param.text)
-                
-            if test_parameter.tag == 'Model':
-                mdl = model(childrens)
-                tmp.append(mdl)
-                
-            if test_parameter.tag == 'Dataset':
-                data = dataset(childrens)
-                tmp.append(data)
-                
-            if test_parameter.tag == 'Parameters':
-                param = parameter(childrens)
-                tmp.append(param)
-                
-        t = test(tmp)
-        test_list.append(t)
+    for test_tag in root.getchildren():
+        test_parameters = []
+        for test_parameter in test_tag.getchildren():
+            options = []
+            for option in test_parameter.getchildren():
+                if option.text is None:
+                    raise ValueError('Configuration parse failed')
+                options.append(option.text)
+            if test_parameter.test_tag == 'Model':
+                mdl = model(options)
+                test_parameters.append(mdl)
+            if test_parameter.test_tag == 'Dataset':
+                data = dataset(options)
+                test_parameters.append(data)
+            if test_parameter.test_tag == 'Parameters':
+                parameters = parameter(options)
+                test_parameters.append(parameters)
+        tmp_test = test(test_parameters)
+        test_list.append(tmp_test)
     
     return test_list
