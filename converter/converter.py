@@ -1,6 +1,6 @@
 import os
 import argparse
-import configparser as cp
+import configparse
 
 def build_argparse():
     parser = argparse.ArgumentParser()
@@ -40,7 +40,7 @@ def converter(mo, conversion_list):
 if __name__ == '__main__':
     try:
         mo, config = build_argparse()
-        conversion_list = cp.process_config(config)
+        conversion_list = configparse.process_config(config)
         converter(mo, conversion_list)
     except Exception as Exp:
         print('ERROR! : {0}'.format(str(Exp)))
