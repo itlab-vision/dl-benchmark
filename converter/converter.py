@@ -28,6 +28,7 @@ def converter(mo, conversion_list):
             command = 'python {} --input_model {} --output_dir {} {}'.format(mo,
                 conversion_list[i].modelfile, conversion_list[i].outdir,
                 conversion_list[i].additional_options)
+        print(command)
         os.system(command)
         i += 1
 
@@ -35,7 +36,7 @@ def converter(mo, conversion_list):
 if __name__ == '__main__':
     try:
         mo, config = build_argparse()
-        conversion_list = configparse.process_config(config)
+        conversion_list = config_parser.process_config(config)
         converter(mo, conversion_list)
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
