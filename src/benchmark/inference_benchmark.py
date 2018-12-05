@@ -1,5 +1,5 @@
-import argparse
 import os
+import argparse
 import config_parser
 
 def build_parser():
@@ -15,14 +15,16 @@ def build_parser():
 
 def inference_benchmark(test_list):
     output_data = []
-    for i in range(len(test_list)):
+    i = 0
+    while i < range(len(test_list)):
         if ((test_list[i].parameters.mode).lower()) == 'sync':
             #call sync test
             output_data.append([])
         else:
             #call async test
             output_data.append([])
-        
+        i += 1
+
     return output_data
     
 if __name__ == "__main__":
@@ -30,5 +32,5 @@ if __name__ == "__main__":
         config = build_parser()
         test_list = config_parser.process_config(config)
         output = inference_benchmark(test_list)
-    except Exception as Error:
-        print('Error! : {}'.format(str(Error)))
+    except Exception as exp:
+        print('Error! : {}'.format(str(exp)))

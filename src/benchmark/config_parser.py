@@ -49,13 +49,13 @@ def process_config(config):
                 if option.text is None:
                     raise ValueError('Configuration parse failed')
                 options.append(option.text)
-            if test_parameter.test_tag == 'Model':
+            if test_parameter.tag == 'Model':
                 mdl = model(options)
                 test_parameters.append(mdl)
-            if test_parameter.test_tag == 'Dataset':
+            if test_parameter.tag == 'Dataset':
                 data = dataset(options)
                 test_parameters.append(data)
-            if test_parameter.test_tag == 'Parameters':
+            if test_parameter.tag == 'Parameters':
                 parameters = parameter(options)
                 test_parameters.append(parameters)
         tmp_test = test(test_parameters)
