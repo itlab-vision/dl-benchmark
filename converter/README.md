@@ -10,7 +10,7 @@
   содержащего информацию о конвертируемых моделях.
 
 Пример запуска:  
-```Python
+```bash
 python converter.py \
     -m C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/model_optimizer/mo.py \
     -c C:/Intel/computer_vision_sdk_2018.3.343/deployment_tools/config.xml
