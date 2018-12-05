@@ -4,60 +4,73 @@
 
 **Тестовое изображение 1**
 
-﻿<img src="ILSVRC2012_val_00000023.JPEG" width="200">
+Источник: набор данных [ImageNet][imagenet]
+Разрешение: 709 x 510
+﻿
+<img src="ILSVRC2012_val_00000023.JPEG" width="150">
 
-   Название модели   |   C++(синхронный режим)   |  C++(асинхронный режим)   |   Python(синхронный режим)   |  Python(асинхронный режим) |
+   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |                           |                           |                              |                            |
-densenet 121         |                           |                           |                              |                            |
-densenet 161         |                           |                           |                              |                            |
-densenet 169         |                           |                           |                              |                            |
-densenet 201         |                           |                           |                              |                            |
-googlenet v1         |                           |                           |                              |                            |
-googlenet v2         |                           |                           |                              |                            |
-googlenet v4         |                           |                           |                              |                            |
+densenet-121         |                           |                           |                              |                            |
+densenet-161         |                           |                           |                              |                            |
+densenet-169         |                           |                           |                              |                            |
+densenet-201         |                           |                           |                              |                            |
+googlenet-v1         |                           |                           |                              |                            |
+googlenet-v2         |                           |                           |                              |                            |
+googlenet-v4         |                           |                           |                              |                            |
 inception-resnet v2  |                           |                           |                              |                            |
-squeezenet 1.0       |                           |                           |                              |                            |
-squeezenet 1.1       |                           |                           |                              |                            |
-vgg 16               |                           |                           |                              |                            |
-vgg 19               |                           |                           |                              |                            |
+squeezenet-1.0       |                           |                           |                              |                            |
+squeezenet-1.1       |                           |                           |                              |                            |
+vgg-16               |                           |                           |                              |                            |
+vgg-19               |                           |                           |                              |                            |
 
 **Тестовое изображение 2**
 
-<img src="ILSVRC2012_val_00000247.JPEG" width="200">
+<img src="ILSVRC2012_val_00000247.JPEG" width="150">
 
-   Название модели   |   C++(синхронный режим)   |  C++(асинхронный режим)   |   Python(синхронный режим)   |  Python(асинхронный режим) |
+Источник: набор данных [ImageNet][imagenet]
+Разрешение: 500 x 500
+﻿
+   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |                           |                           |                              |                            |
-densenet 121         |                           |                           |                              |                            |
-densenet 161         |                           |                           |                              |                            |
-densenet 169         |                           |                           |                              |                            |
-densenet 201         |                           |                           |                              |                            |
-googlenet v1         |                           |                           |                              |                            |
-googlenet v2         |                           |                           |                              |                            |
-googlenet v4         |                           |                           |                              |                            |
+densenet-121         |                           |                           |                              |                            |
+densenet-161         |                           |                           |                              |                            |
+densenet-169         |                           |                           |                              |                            |
+densenet-201         |                           |                           |                              |                            |
+googlenet-v1         |                           |                           |                              |                            |
+googlenet-v2         |                           |                           |                              |                            |
+googlenet-v4         |                           |                           |                              |                            |
 inception-resnet v2  |                           |                           |                              |                            |
-squeezenet 1.0       |                           |                           |                              |                            |
-squeezenet 1.1       |                           |                           |                              |                            |
-vgg 16               |                           |                           |                              |                            |
-vgg 19               |                           |                           |                              |                            |
+squeezenet-1.0       |                           |                           |                              |                            |
+squeezenet-1.1       |                           |                           |                              |                            |
+vgg-16               |                           |                           |                              |                            |
+vgg-19               |                           |                           |                              |                            |
 
 **Тестовое изображение 3**
 
-<img src="ILSVRC2012_val_00018592.JPEG" width="200">
+Источник: набор данных [ImageNet][imagenet]
+Разрешение: 333 x 500
+﻿
+<img src="ILSVRC2012_val_00018592.JPEG" width="150">
 
-   Название модели   |   C++(синхронный режим)   |  C++(асинхронный режим)   |   Python(синхронный режим)   |  Python(асинхронный режим) |
+   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |                           |                           |                              |                            |
-densenet 121         |                           |                           |                              |                            |
-densenet 161         |                           |                           |                              |                            |
-densenet 169         |                           |                           |                              |                            |
-densenet 201         |                           |                           |                              |                            |
-googlenet v1         |                           |                           |                              |                            |
-googlenet v2         |                           |                           |                              |                            |
-googlenet v4         |                           |                           |                              |                            |
+densenet-121         |                           |                           |                              |                            |
+densenet-161         |                           |                           |                              |                            |
+densenet-169         |                           |                           |                              |                            |
+densenet-201         |                           |                           |                              |                            |
+googlenet-v1         |                           |                           |                              |                            |
+googlenet-v2         |                           |                           |                              |                            |
+googlenet-v4         |                           |                           |                              |                            |
 inception-resnet v2  |                           |                           |                              |                            |
-squeezenet 1.0       |                           |                           |                              |                            |
-squeezenet 1.1       |                           |                           |                              |                            |
-vgg 16               |                           |                           |                              |                            |
-vgg 19               |                           |                           |                              |                            |
+squeezenet-1.0       |                           |                           |                              |                            |
+squeezenet-1.1       |                           |                           |                              |                            |
+vgg-16               |                           |                           |                              |                            |
+vgg-19               |                           |                           |                              |                            |
+
+
+<!-- LINKS -->
+[imagenet]: http://www.image-net.org
