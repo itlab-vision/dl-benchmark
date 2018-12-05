@@ -1,27 +1,30 @@
 # Конвертер моделей из формата инструментов в промежуточный формат OpenVINO
 
-**Использование конвертера**  
+## Использование конвертера
 
 Конвертер запускается из коммандной строки и принимает
 на вход 2 аргумента:
 
-- `-m / --mo` - путь до Model Optimizer.
+- `-m / --mo` - путь до компонента Model Optimizer.
 - `-с / --config` - путь до файла конфигурации,
-  необходимый для конвертации.
+  содержащего информацию о конвертируемых моделях.
 
 Пример запуска:  
-```
-python converter.py -m C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py
-                    -c C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
-python converter.py --mo C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py
-                    --config C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
+```Python
+python converter.py \
+    -m C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py \
+    -c C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
+python converter.py \
+    --mo C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\model_optimizer\mo.py \
+    --config C:\Intel\computer_vision_sdk_2018.3.343\deployment_tools\config.xml
 ```
 
-В случае, когда агрументы не переданы или переданы
+Примечание: если агрументы не переданы или переданы
 некорректно, конвертер сообщит об ошибке и закончит свою работу.
 
-**Результаты работы**  
+## Результаты работы конвертера
+
 Конвертер преобразует модели в промежуточное значение, с теми параметрами,
 которые были описаны в переданном файле конфигурации. Результаты работы
-конвертера находятся в директории, указанные в параметрах конкретной модели,
-в переданном файле кофигурации.
+конвертера находятся в директориях, указанных в описании конкретной модели
+в файле кофигурации.
