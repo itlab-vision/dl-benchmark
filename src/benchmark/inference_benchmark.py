@@ -1,6 +1,7 @@
 import os
 import argparse
 import config_parser
+import inference
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -14,18 +15,16 @@ def build_parser():
     return config
 
 def inference_benchmark(test_list):
-    output_data = []
-    i = 0
-    while i < range(len(test_list)):
-        if ((test_list[i].parameters.mode).lower()) == 'sync':
-            #call sync test
-            output_data.append([])
+    for i in range(len(test_list)):
+        mode = (test_list[i].parameter.mode).lower()
+        if mode == 'sync':
+            inference_time = inference.test_sync(test_list[i].model, 
+                test_list[i].dataset, test_list[i].parameter)
         else:
-            #call async test
-            output_data.append([])
-        i += 1
+            inference_time = inference.test_async(test_list[i].model,
+                test_list[i].dataset, test_list[i].parameter)
 
-    return output_data
+    return inference_time
     
 if __name__ == "__main__":
     try:
