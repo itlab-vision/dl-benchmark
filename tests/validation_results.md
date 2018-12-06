@@ -14,18 +14,18 @@
 
    Название модели   |            C++ (синхронный режим)              |            C++ (асинхронный режим)              |             Python (синхронный режим)             |             Python (асинхронный режим)             |
 ---------------------|------------------------------------------------|-------------------------------------------------|---------------------------------------------------|----------------------------------------------------|
-alexnet              |![](/res/с++/sync/img_1/alexnet.png)            |![](/res/c++/async/img_1/alexnet.png)            |![](/res/python/sync/img_1/alexnet.png)            |![](/res/python/async/img_1/alexnet.png)            |
-densenet-121         |![](/res/с++/sync/img_1/densenet-121.png)       |![](/res/c++/async/img_1/densenet-121.png)       |![](/res/python/sync/img_1/densenet-121.png)       |![](/res/python/async/img_1/densenet-121.png)       |
-densenet-161         |![](/res/с++/sync/img_1/densenet-161.png)       |![](/res/c++/async/img_1/densenet-161.png)       |![](/res/python/sync/img_1/densenet-161.png)       |![](/res/python/async/img_1/densenet-161.png)       |
-densenet-201         |![](/res/с++/sync/img_1/densenet-201.png)       |![](/res/c++/async/img_1/densenet-201.png)       |![](/res/python/sync/img_1/densenet-201.png)       |![](/res/python/async/img_1/densenet-201.png)       |
-googlenet-v1         |![](/res/с++/sync/img_1/googlenet-v1.png)       |![](/res/c++/async/img_1/googlenet-v1.png)       |![](/res/python/sync/img_1/googlenet-v1.png)       |![](/res/python/async/img_1/googlenet-v1.png.png)   |
-googlenet-v2         |![](/res/с++/sync/img_1/googlenet-v2.png)       |![](/res/c++/async/img_1/googlenet-v2.png)       |![](/res/python/sync/img_1/googlenet-v2.png)       |![](/res/python/async/img_1/googlenet-v2.png.png)   |
-googlenet-v4         |![](/res/с++/sync/img_1/googlenet-v4.png)       |![](/res/c++/async/img_1/googlenet-v4.png)       |![](/res/python/sync/img_1/googlenet-v4.png)       |![](/res/python/async/img_1/googlenet-v4.png.png)   |
-inception-resnet-v2  |![](/res/с++/sync/img_1/inception-resnet-v2.png)|![](/res/c++/async/img_1/inception-resnet-v2.png)|![](/res/python/sync/img_1/inception-resnet-v2.png)|![](/res/python/async/img_1/inception-resnet-v2.png)|
-squeezenet-1.0       |![](/res/с++/sync/img_1/squeezenet-1.0.png)     |![](/res/c++/async/img_1/squeezenet-1.0.png)     |![](/res/python/sync/img_1/squeezenet-1.0.png)     |![](/res/python/async/img_1/squeezenet-1.0.png)     |
-squeezenet-1.1       |![](/res/с++/sync/img_1/squeezenet-1.1.png)     |![](/res/c++/async/img_1/squeezenet-1.1.png)     |![](/res/python/sync/img_1/squeezenet-1.1.png)     |![](/res/python/async/img_1/squeezenet-1.1.png)     |
-vgg-16               |![](/res/с++/sync/img_1/vgg-16.png)             |![](/res/c++/async/img_1/vgg-16.png)             |![](/res/python/sync/img_1/vgg-16.png)             |![](/res/python/async/img_1/vgg-16.png)             |
-vgg-19               |![](/res/с++/sync/img_1/vgg-19.png)             |![](/res/c++/async/img_1/vgg-19.png)             |![](/res/python/sync/img_1/vgg-19.png)             |![](/res/python/async/img_1/vgg-19.png)             |
+alexnet              |![](/res/с++/sync/img_1/alexnet.png)            |![](/res/c++/async/img_1/alexnet.png)            |![](res/python/sync/img_1/alexnet.png)            |![](/res/python/async/img_1/alexnet.png)            |
+densenet-121         |![](/res/с++/sync/img_1/densenet-121.png)       |![](/res/c++/async/img_1/densenet-121.png)       |![](res/python/sync/img_1/densenet-121.png)       |![](/res/python/async/img_1/densenet-121.png)       |
+densenet-161         |![](/res/с++/sync/img_1/densenet-161.png)       |![](/res/c++/async/img_1/densenet-161.png)       |![](res/python/sync/img_1/densenet-161.png)       |![](/res/python/async/img_1/densenet-161.png)       |
+densenet-201         |![](/res/с++/sync/img_1/densenet-201.png)       |![](/res/c++/async/img_1/densenet-201.png)       |![](res/python/sync/img_1/densenet-201.png)       |![](/res/python/async/img_1/densenet-201.png)       |
+googlenet-v1         |![](/res/с++/sync/img_1/googlenet-v1.png)       |![](/res/c++/async/img_1/googlenet-v1.png)       |![](res/python/sync/img_1/googlenet-v1.png)       |![](/res/python/async/img_1/googlenet-v1.png.png)   |
+googlenet-v2         |![](/res/с++/sync/img_1/googlenet-v2.png)       |![](/res/c++/async/img_1/googlenet-v2.png)       |![](res/python/sync/img_1/googlenet-v2.png)       |![](/res/python/async/img_1/googlenet-v2.png.png)   |
+googlenet-v4         |![](/res/с++/sync/img_1/googlenet-v4.png)       |![](/res/c++/async/img_1/googlenet-v4.png)       |![](res/python/sync/img_1/googlenet-v4.png)       |![](/res/python/async/img_1/googlenet-v4.png.png)   |
+inception-resnet-v2  |![](/res/с++/sync/img_1/inception-resnet-v2.png)|![](/res/c++/async/img_1/inception-resnet-v2.png)|![](res/python/sync/img_1/inception-resnet-v2.png)|![](/res/python/async/img_1/inception-resnet-v2.png)|
+squeezenet-1.0       |![](/res/с++/sync/img_1/squeezenet-1.0.png)     |![](/res/c++/async/img_1/squeezenet-1.0.png)     |![](res/python/sync/img_1/squeezenet-1.0.png)     |![](/res/python/async/img_1/squeezenet-1.0.png)     |
+squeezenet-1.1       |![](/res/с++/sync/img_1/squeezenet-1.1.png)     |![](/res/c++/async/img_1/squeezenet-1.1.png)     |![](res/python/sync/img_1/squeezenet-1.1.png)     |![](/res/python/async/img_1/squeezenet-1.1.png)     |
+vgg-16               |![](/res/с++/sync/img_1/vgg-16.png)             |![](/res/c++/async/img_1/vgg-16.png)             |![](res/python/sync/img_1/vgg-16.png)             |![](/res/python/async/img_1/vgg-16.png)             |
+vgg-19               |![](/res/с++/sync/img_1/vgg-19.png)             |![](/res/c++/async/img_1/vgg-19.png)             |![](res/python/sync/img_1/vgg-19.png)             |![](/res/python/async/img_1/vgg-19.png)             |
  
 ### Тестовое изображение 2
 
