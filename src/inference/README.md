@@ -15,9 +15,9 @@ inference_sync_mode.py [TBD]
 **Командная строка для решения задачи классификации изображений**
 ```bash
 python inference_async_mode.py \
-    -t classification -i <path_to_image>/image.png \
+    -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
-    -r 1 --labels <path_to_labels>/image_net_synset.txt -ni 10
+    -r <step> --labels <path_to_labels>/image_net_synset.txt -ni <iteration_number>
 ```
 
 Результат выполнения: набор наиболее вероятных классов, которым принадлежит
@@ -27,9 +27,9 @@ python inference_async_mode.py \
 **Командная строка для решения задачи детектирования объектов**
 ```bash
 python inference_async_mode.py \
-    -t detection -i <path_to_image>/image.png \
+    -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
-    -r 1 -d GPU -ni 10
+    -r <step> -d <device> -ni <iteration_number>
 ```
 
 Результат выполнения: набор окаймляющих прямоугольников, соответствующих
@@ -39,9 +39,9 @@ python inference_async_mode.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 ```bash
 python inference_async_mode.py \
-    -t segmentation -i <path_to_image>/image.png \
+    -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
-    -r 1 --color_map <path_to_color_map>/color_map.txt -ni 10
+    -r step --color_map <path_to_color_map>/color_map.txt -ni <iteration_number>
 ```
 
 Результат выполнения: изображение, разрешение которого совпадает с разрешением
@@ -49,7 +49,7 @@ python inference_async_mode.py \
 которому принадлежит даннная точка на изображении.
 
 
-Параметры запуска:
+Обязательные параметры:
 - `-t / --model_type` - решаемая задача (`classification`, `detection`, `segmentation`).
 - `-i / --input` - путь до изображения или директории с изображениями,
   расширения картинок `.jpg`, `.png`, `.bmp` и т.д.
