@@ -7,9 +7,9 @@ class model:
         self.model = None
         self.weigh = None
         for file in os.listdir(mdl[1]):
-            if file.endswith('.bin'):
+            if file.endswith('.xml'):
                 self.model = os.path.join(mdl[1], file)
-            if file.endswith('.xml'):            
+            if file.endswith('.bin'):            
                 self.weigh = os.path.join(mdl[1], file)
         if self.model is None:
             raise ValueError('Wrong path to model file')
@@ -20,15 +20,37 @@ class dataset:
     def __init__(self, dataset):
         self.name = dataset[0]
         self.path = dataset[1]
+        if not os.path.isdir(self.path):
+            raise ValueError('Wrong path to folder with dataset')
 
 class parameters:
     def __init__(self, parameter):
-        self.batchsize = parameter[0]
-        self.mode = parameter[1]
-        self.plugin = parameter[2]
-        self.asyncrequest = parameter[3]
-        self.iteration = parameter[4]
-        self.mininferencetime = parameter[5]
+        const_correct_mode = ['sync', 'async']
+        const_correct_plugin = ['CPU', 'GPU', 'FPGA', 'MYRIAD']
+        if parameter[1].lower() in const_correct_mode:
+            self.mode = parameter[1].lower()
+        else:
+            raise ValueError('Wrong mode')
+        if parameter[0] == 'None':
+            if self.mode != 'async':
+                self.batchsize = 'None'
+            else:
+                raise ValueError('Wrong batch size')
+        else:
+            self.batchsize = int(parameter[0])
+        if parameter[2].upper() in const_correct_plugin:
+            self.plugin = parameter[2].upper()
+        else:
+            raise ValueError('Wrong plugin')
+        if parameter[3] == 'None':
+            if self.mode != 'async':
+                self.asyncrequest = 'None'
+            else:
+                raise ValueError('Wrong async request number')
+        else:
+            self.asyncrequest = int(parameter[3])
+        self.iteration = int(parameter[4])
+        self.mininferencetime = float(parameter[5])
 
 class test:
     def __init__(self, arg):
@@ -49,7 +71,7 @@ def process_config(config):
             options = []
             for option in test_parameter.getchildren():
                 if option.text is None:
-                    raise ValueError('Configuration parse failed')
+                    option.text = 'None'
                 options.append(option.text)
             if test_parameter.tag == 'Model':
                 mdl = model(options)
