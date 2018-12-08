@@ -1,7 +1,11 @@
+import os
 import sys
 import logging as log
 
-sys.path.append('E:\ITlab\openvino-dl-benchmark\src\inference')
+infer_path = os.path.dirname(os.path.abspath(__file__))
+infer_path = infer_path[0:-9]
+infer_path = os.path.join(infer_path, 'inference')
+sys.path.append(infer_path)
 
 import inference_async_mode as as_mode
 import inference_sync_mode as s_mode
