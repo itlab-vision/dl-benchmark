@@ -110,7 +110,7 @@ def prepare_data(model, data):
             prep_data = os.path.join(data, file)
             break
     if prep_data is None:
-        ValueError("Wrong input data")
+        raise ValueError("Wrong input data")
     return prep_data
 
 
