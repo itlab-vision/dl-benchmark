@@ -99,7 +99,7 @@ def convert_image(model, data):
 
 def prepare_data(model, data):
     video = [".mp4", ".avi", ".mvo", ".mpeg", ".mov"]
-    image = {".jpg", ".png", ".bmp", ".gif", ".jpeg"}
+    image = [".jpg", ".png", ".bmp", ".gif", ".jpeg"]
     prep_data = None
     
     for file in os.listdir(data):
