@@ -22,7 +22,7 @@ def build_parser():
         with a trained weights.", required = True, type = str)
     parser.add_argument("-i", "--input", help = "Path to a folder with \
         images or path to an image files", required = True, type = str, nargs = "+")
-    parser.add_argument("-r", "--Requests", help = "A positive integer value \
+    parser.add_argument("-r", "--requests", help = "A positive integer value \
         of infer requests to be created. Number of infer requests may be \
         limited by device capabilities", required = True, type = int)
     parser.add_argument("-b", "--batch_size", help = "Size of the  \
@@ -86,8 +86,8 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
 
 
 def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))]
-    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
+    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
+    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
     for i in range(n):
         image = cv2.imread(data[i])
         if (image.shape[:-1] != (h, w)):
@@ -98,13 +98,18 @@ def convert_image(model, data):
 
 
 def prepare_data(model, data):
-    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
-    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4}
-    file = str(os.path.splitext(data[0])[1]).lower()
-    if file in image:
-        prep_data = convert_image(model, data)
-    elif file in video:
-        prep_data = data[0]
+    video = [".mp4", ".avi", ".mvo", ".mpeg", ".mov"]
+    image = [".jpg", ".png", ".bmp", ".gif", ".jpeg"]
+    prep_data = None
+    for file in os.listdir(data):
+        if file.endswith(".*") in image:
+            prep_data = convert_image(model, data)
+            break
+        if file.endswith(".*") in video:
+            prep_data = os.path.join(data, file)
+            break
+    if prep_data is None:
+        raise ValueError("Wrong input data")
     return prep_data
 
 
@@ -275,7 +280,7 @@ def main():
         else len(data))
     images = prepare_data(net, data)
     log.info("Loading model to the plugin")
-    exec_net = plugin.load(network = net, num_requests = args.Requests)
+    exec_net = plugin.load(network = net, num_requests = args.requests)
     log.info("Starting inference ({} iterations)".format(args.number_iter))
     res, time = infer_async(images, exec_net, net, args.number_iter)
     infer_output(res, images, data, args.labels, args.number_top,
