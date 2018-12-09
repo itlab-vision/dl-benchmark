@@ -1,5 +1,3 @@
-
-
 import sys
 import os
 import argparse 
@@ -17,9 +15,11 @@ def build_argparser():
     parser.add_argument("-m", "--model", help = "Path to an .xml \
         file with a trained model.", required = True, type = str)
     parser.add_argument("-w", "--weights", help = "Path to an .bin file \
-        with a trained weights.",default=None, type = str)
+        with a trained weights.",default = None, type = str)
     parser.add_argument("-i", "--input", help = "Path to a folder with \
         images or path to an image files", required = True, type = str, nargs = "+")
+    parser.add_argument("-b", "--batch_size", help = "Size of the  \
+        processed pack", default = 1, type = int)
     parser.add_argument("-l", "--cpu_extension", help = "MKLDNN \
         (CPU)-targeted custom layers.Absolute path to a shared library \
         with the kernels implementation", type = str, default = None)
@@ -39,15 +39,15 @@ def build_argparser():
         counters", action = "store_true", default = False)
     parser.add_argument("-t", "--type_model", help = "Type model", required = True, 
         type = str)
-    parser.add_argument("--color_map", help = "Classes color map", type = str, default=None)
-    parser.add_argument("--prob_threshold", help="Probability threshold \
+    parser.add_argument("--color_map", help = "Classes color map", type = str, default = None)
+    parser.add_argument("--prob_threshold", help = "Probability threshold \
         for detections filtering", default = 0.5, type = float)
     return parser
 
 
 def convert_image(net, inputs, log):
-    n, c, h, w = net.inputs[next(iter(net.inputs))]
-    images = np.ndarray(shape=(n, c, h, w))
+    n, c, h, w = net.inputs[next(iter(net.inputs))].shape
+    images = np.ndarray(shape = (n, c, h, w))
     for i in range(n):
         image = cv2.imread(inputs[i])
         if image.shape[:-1] != (h, w):
@@ -60,15 +60,12 @@ def convert_image(net, inputs, log):
 
 def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log):
     model_xml = model
-    if weights:
-        model_bin = weights
-    else:
-        model_bin = os.path.splitext(model_xml)[0] + ".bin"
-    plugin = IEPlugin(device=device, plugin_dirs=plugin_dirs)
+    model_bin = weights
+    plugin = IEPlugin(device = device, plugin_dirs = plugin_dirs)
     if cpu_extension and 'CPU' in device:
         plugin.add_cpu_extension(args.cpu_extension)
     log.info("Loading network files:\n\t{}\n\t{}".format(model_xml, model_bin))
-    net = IENetwork.from_ir(model=model_xml, weights=model_bin)
+    net = IENetwork.from_ir(model = model_xml, weights = model_bin)
     if "CPU" in plugin.device:
         supported_layers = plugin.get_supported_layers(net)
         not_supported_layers = [l for l in net.layers.keys() if l not in supported_layers]
@@ -78,21 +75,20 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
             log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
                       "or --cpu_extension command line argument")
             sys.exit(1)
-    net.batch_size = len(input)
     return net, plugin
 
 
 def infer_sync(net, plugin, images, number_it, log):
     input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
-    time_infer=[]
+    time_infer = []
     log.info("Loading model to the plugin")
-    exec_net=plugin.load(network=net)
+    exec_net = plugin.load(network = net)
     log.info("Starting inference ({} iterations)".format(number_it))
     for i in range(number_it):
-        t0=time()
-        res = exec_net.infer(inputs={input_blob: images})
-        time_infer.append((time()-t0))
+        t0 = time()
+        res = exec_net.infer(inputs = {input_blob : images})
+        time_infer.append((time() - t0))
     res = res[out_blob]
     return res, time_infer
 
@@ -101,9 +97,9 @@ def classification_output(res, number_top, inputs, labels, log):
     log.info("Top {} results: ".format(number_top))
     if labels:
         with open(labels, 'r') as f:
-            labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
+            labels_map = [x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f]
     else:
-        labels_map=None
+        labels_map = None
     for i, probs in enumerate(res):
         probs = np.squeeze(probs)
         top_ind = np.argsort(probs)[-number_top:][::-1]
@@ -115,7 +111,7 @@ def classification_output(res, number_top, inputs, labels, log):
 
 
 def segmentation_output(res, color_map, log):
-    c=3
+    c = 3
     h, w = res.shape[2:]
     if not color_map:
         color_map = "color_map.txt"
@@ -124,7 +120,7 @@ def segmentation_output(res, color_map, log):
         for line in f:
             classes_color_map.append([int(x) for x in line.split()]) 
     for batch, data in enumerate(res):
-        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
+        classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
         for i in range(h):
             for j in range(w):
                 if len(data[:, i, j]) == 1:
@@ -157,11 +153,11 @@ def detection_output(res, prob_threshold, images):
 def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
     log.info("Start output.")
-    if type_model=="classification":
+    if type_model == "classification":
         classification_output(res, number_top, inputs, labels, log)
-    elif type_model=="segmentation":
+    elif type_model == "segmentation":
         segmentation_output(res, color_map, log)
-    elif type_model=="detection":
+    elif type_model == "detection":
         detection_output(res, prob_threshold, images)
 
 
@@ -171,6 +167,7 @@ def main():
     args = build_argparser().parse_args()
     net, plugin = prepare_model(args.model, args.weights,
         args.cpu_extension, args.device, args.plugin_dir, args.input, log)
+    net.batch_size = (args.batch_size if args.batch_size > 1 else len(net.inputs))
     images = convert_image(net, args.input, log)
     res, time = infer_sync(net, plugin, images, args.number_iter, log)
     infer_output(res, net, args.type_model, args.labels, args.color_map, args.input, args.number_top, 
