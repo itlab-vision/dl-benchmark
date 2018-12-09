@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Name></Name>
+            <Path></Path>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize></BatchSize>
+            <Mode></Mode>
+            <Plugin></Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount></IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+</Tests>
