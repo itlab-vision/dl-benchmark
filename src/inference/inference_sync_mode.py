@@ -45,13 +45,13 @@ def build_argparser():
     return parser
 
 
-def convert_image(net, inputs, log):
+def convert_image(net, data, log):
     n, c, h, w = net.inputs[next(iter(net.inputs))].shape
     images = np.ndarray(shape = (n, c, h, w))
     for i in range(n):
-        image = cv2.imread(inputs[i])
+        image = cv2.imread(data[i])
         if image.shape[:-1] != (h, w):
-            log.warning("Image {} is resized from {} to {}".format(inputs[i], image.shape[:-1], (h, w)))
+            log.warning("Image {} is resized from {} to {}".format(data[i], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (w, h))
         image = image.transpose((2, 0, 1))
         images[i] = image
@@ -75,7 +75,11 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
             log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
                       "or --cpu_extension command line argument")
             sys.exit(1)
-    return net, plugin
+    if os.path.isdir(input[0]):
+        data = [input[0] + file for file in os.listdir(input[0])]
+    else:
+        data = input
+    return net, plugin, data
 
 
 def infer_sync(net, plugin, images, number_it, log):
@@ -165,12 +169,12 @@ def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
-    net, plugin = prepare_model(args.model, args.weights,
+    net, plugin, data = prepare_model(args.model, args.weights,
         args.cpu_extension, args.device, args.plugin_dir, args.input, log)
-    net.batch_size = (args.batch_size if args.batch_size > 1 else len(net.inputs))
-    images = convert_image(net, args.input, log)
+    net.batch_size = (args.batch_size if args.batch_size > 1 else len(data))
+    images = convert_image(net, data, log)
     res, time = infer_sync(net, plugin, images, args.number_iter, log)
-    infer_output(res, net, args.type_model, args.labels, args.color_map, args.input, args.number_top, 
+    infer_output(res, net, args.type_model, args.labels, args.color_map, data, args.number_top, 
         args.prob_threshold, images, log)
 
 if __name__ == '__main__':
