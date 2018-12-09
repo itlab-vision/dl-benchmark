@@ -237,10 +237,11 @@ def segmentation_output(res, color_map, log):
         log.info("Result image was saved to {}".format(out_img))
 
 
-def detection_output(res, images, prob_threshold):
-    initial_h, initial_w = res.shape[2:]
+def detection_output(res, data, prob_threshold):
     for i, r in enumerate(res):
-        for obj in r[0][0]:
+        image = cv2.imread(data[i])
+        initial_h, initial_w = image.shape[:2]
+        for obj in r[0]:
             if obj[2] > prob_threshold:
                 xmin = int(obj[3] * initial_w)
                 ymin = int(obj[4] * initial_h)
@@ -249,9 +250,9 @@ def detection_output(res, images, prob_threshold):
                 class_id = int(obj[1])
                 color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
                     min(class_id * 5, 255))
-                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow("Detection Results", images[i])
-    cv2.wait(0)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+        cv2.imshow("Detection Results", image)
+    cv2.waitKey(1000)
     cv2.destroyAllWindows()
 
 
@@ -260,7 +261,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
-        detection_output(res, images, prob_threshold)
+        detection_output(res, data, prob_threshold)
     elif model_type == "segmentation":
         segmentation_output(res, color_map, log)
 
@@ -283,7 +284,6 @@ def main():
     del net
     del exec_net
     del plugin
-
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
