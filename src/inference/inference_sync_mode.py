@@ -137,22 +137,23 @@ def segmentation_output(res, color_map, log):
         log.info("Result image was saved to {}".format(out_img))
 
 
-def detection_output(res, prob_threshold, images):
-    initial_h, initial_w = res.shape[2:]
+def detection_output(res, data, prob_threshold, log):
     for i, r in enumerate(res):
-        for obj in r[0][0]:
+        image = cv2.imread(data[i])
+        initial_h, initial_w = image.shape[:2]
+        for obj in r[0]:
             if obj[2] > prob_threshold:
                 xmin = int(obj[3] * initial_w)
                 ymin = int(obj[4] * initial_h)
                 xmax = int(obj[5] * initial_w)
                 ymax = int(obj[6] * initial_h)
                 class_id = int(obj[1])
-                color = (min(class_id * 12.5, 255), min(class_id * 7, 255), min(class_id * 5, 255))
-                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow("Detection Results", images[i])
-    cv2.wait(0)    
-    cv2.destroyAllWindows()		
-
+                color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
+                    min(class_id * 5, 255))
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+        out_img = os.path.join(os.path.dirname(__file__), "out_detection_{}.JPEG".format(i))
+        cv2.imwrite(out_img, image)
+        log.info("Result image was saved to {}".format(out_img))    
 
 def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
@@ -162,7 +163,7 @@ def infer_output(res, net, type_model, labels, color_map, inputs, number_top,
     elif type_model == "segmentation":
         segmentation_output(res, color_map, log)
     elif type_model == "detection":
-        detection_output(res, prob_threshold, images)
+        detection_output(res, inputs, prob_threshold, log)
 
 
 def main():
