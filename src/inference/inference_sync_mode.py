@@ -155,6 +155,7 @@ def detection_output(res, data, prob_threshold, log):
         cv2.imwrite(out_img, image)
         log.info("Result image was saved to {}".format(out_img))    
 
+
 def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
     log.info("Start output.")
@@ -177,6 +178,7 @@ def main():
     res, time = infer_sync(net, plugin, images, args.number_iter, log)
     infer_output(res, net, args.type_model, args.labels, args.color_map, data, args.number_top, 
         args.prob_threshold, images, log)
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
