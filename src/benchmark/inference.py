@@ -15,8 +15,10 @@ def test_async(model, dataset, param):
         level = log.INFO, stream = sys.stdout)
     log.info("Start async inference test on model : {}".format(model.name))
     try:
+        images = []
+        images.append(dataset.path)
         net, plugin, data = as_mode.prepare_model(log, model.model,
-            model.weight, None, param.plugin, None, dataset.path)
+            model.weight, None, param.plugin, None, images)
         net.batch_size = param.batchsize
         images = as_mode.prepare_data(net, data)
         log.info("Loading model to the plugin")
@@ -35,8 +37,10 @@ def test_sync(model, dataset, param):
         level = log.INFO, stream = sys.stdout)
     log.info("Start sync inference test on model : {}".format(model.name))
     try:
+        images = []
+        images.append(dataset.path)
         net, plugin, data = s_mode.prepare_model(model.model, model.weight,
-            None, param.plugin, None, dataset.path, log)
+            None, param.plugin, None, images, log)
         net.batch_size = param.batchsize
         images = s_mode.convert_image(net, data, log)
         _, time = s_mode.infer_sync(net, plugin, images, param.iteration, log)
