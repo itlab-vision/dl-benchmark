@@ -85,18 +85,6 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
     return net, plugin, data
 
 
-def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
-    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
-    for i in range(n):
-        image = cv2.imread(data[i])
-        if (image.shape[:-1] != (h, w)):
-            image = cv2.resize(image, (h, w))
-        image = image.transpose((2, 0, 1))
-        images[i] = image
-    return images
-
-
 def prepare_data(model, data):
     video = [".mp4", ".avi", ".mvo", ".mpeg", ".mov"]
     image = [".jpg", ".png", ".bmp", ".gif", ".jpeg"]
@@ -111,6 +99,18 @@ def prepare_data(model, data):
     if prep_data is None:
         raise ValueError("Wrong input data")
     return prep_data
+
+
+def convert_image(model, data):
+    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
+    images = np.ndarray(shape = (len(data), c, h, w))
+    for i in range(len(data)):
+        image = cv2.imread(data[i])
+        if (image.shape[:-1] != (h, w)):
+            image = cv2.resize(image, (h, w))
+        image = image.transpose((2, 0, 1))
+        images[i] = image
+    return images
 
 
 def start_infer_video(path, exec_net, model, number_iter):
@@ -153,19 +153,29 @@ def start_infer_video(path, exec_net, model, number_iter):
         exec_net.requests[0].outputs[next(iter(model.outputs))].shape[1:]))
     for i, r in enumerate(res):
         result[i * n : (i + 1) * n] = r
-    return res, time_e
+    return result, time_e
 
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     time_s = time()
-    for i in range(number_iter):
-        infer_request_handle = exec_net.start_async(request_id = 0,
-            inputs = {input_blob: images})
-        infer_status = infer_request_handle.wait()
+    res = []
+    size = model.batch_size
+    if (len(images) % model.batch_size != 0):
+        raise ValueError('Wrong batch_size')
+    for i in range(len(images) // model.batch_size):
+        for j in range(number_iter):
+            infer_request_handle = exec_net.start_async(request_id = 0,
+                inputs = {input_blob: images[i * size: (i + 1) * size]})
+            infer_status = infer_request_handle.wait()
+        res.append(copy.copy(infer_request_handle.outputs[next(iter(model.outputs))]))   
     log.info("Processing output blob")
-    res = infer_request_handle.outputs[next(iter(model.outputs))] 
     time_e = (time() - time_s) * 1000  
+    result = []
+    for r_l1 in res:
+        for r_l2 in r_l1:
+            result.append(r_l2)
+    res = np.asarray(result)
     return res, time_e
 
 
@@ -174,16 +184,26 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     curr_request_id = 0
     prev_request_id  = 1
     time_s = time()
-    for i in range(number_iter):
-        exec_net.start_async(request_id = curr_request_id,
-            inputs = {input_blob: images})
+    size = model.batch_size
+    res = []
+    if (len(images) % model.batch_size != 0):
+        raise ValueError('Wrong batch_size')
+    for i in range(len(images) // model.batch_size):
+        for j in range(number_iter):
+            exec_net.start_async(request_id = curr_request_id,
+                inputs = {input_blob: images[i * size: (i + 1) * size]})
+            if exec_net.requests[prev_request_id].wait(-1) == 0:
+                pass
+            prev_request_id, curr_request_id = curr_request_id, prev_request_id
         if exec_net.requests[prev_request_id].wait(-1) == 0:
-            pass
-        prev_request_id, curr_request_id = curr_request_id, prev_request_id
-    if exec_net.requests[prev_request_id].wait(-1) == 0:
-        res = (exec_net.requests[prev_request_id].
-            outputs[next(iter(model.outputs))])
+            res.append(copy.copy(exec_net.requests[prev_request_id].
+                outputs[next(iter(model.outputs))]))
     time_e = (time() - time_s) * 1000
+    result = []
+    for r_l1 in res:
+        for r_l2 in r_l1:
+            result.append(r_l2)
+    res = np.asarray(result)
     return res, time_e
 
 
@@ -242,10 +262,11 @@ def segmentation_output(res, color_map, log):
         log.info("Result image was saved to {}".format(out_img))
 
 
-def detection_output(res, images, prob_threshold):
-    initial_h, initial_w = res.shape[2:]
+def detection_output(res, data, prob_threshold):
     for i, r in enumerate(res):
-        for obj in r[0][0]:
+        image = cv2.imread(data[i])
+        initial_h, initial_w = image.shape[:2]
+        for obj in r[0]:
             if obj[2] > prob_threshold:
                 xmin = int(obj[3] * initial_w)
                 ymin = int(obj[4] * initial_h)
@@ -254,9 +275,9 @@ def detection_output(res, images, prob_threshold):
                 class_id = int(obj[1])
                 color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
                     min(class_id * 5, 255))
-                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow("Detection Results", images[i])
-    cv2.wait(0)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+        cv2.imshow("Detection Results", image)
+    cv2.waitKey(1000)
     cv2.destroyAllWindows()
 
 
@@ -265,7 +286,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
     if model_type == "classification": 
         classification_output(res, data, labels, number_top, log)
     elif model_type == "detection":
-        detection_output(res, images, prob_threshold)
+        detection_output(res, data, prob_threshold)
     elif model_type == "segmentation":
         segmentation_output(res, color_map, log)
 
@@ -274,21 +295,22 @@ def main():
     log.basicConfig(format = "[ %(levelname)s ] %(message)s",
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
-    net, plugin, data = prepare_model(log, args.model, args.weights,
-        args.cpu_extension, args.device, args.plugin_dir, args.input)
-    net.batch_size = (args.batch_size if args.batch_size > 1 
-        else len(data))
-    images = prepare_data(net, data)
-    log.info("Loading model to the plugin")
-    exec_net = plugin.load(network = net, num_requests = args.requests)
-    log.info("Starting inference ({} iterations)".format(args.number_iter))
-    res, time = infer_async(images, exec_net, net, args.number_iter)
-    infer_output(res, images, data, args.labels, args.number_top,
-        args.prob_threshold, args.color_map, log, args.model_type)
-    del net
-    del exec_net
-    del plugin
-
+    try:
+        net, plugin, data = prepare_model(log, args.model, args.weights,
+            args.cpu_extension, args.device, args.plugin_dir, args.input)
+        net.batch_size = args.batch_size
+        images = prepare_data(net, data)
+        log.info("Loading model to the plugin")
+        exec_net = plugin.load(network = net, num_requests = args.requests)
+        log.info("Starting inference ({} iterations)".format(args.number_iter))
+        res, time = infer_async(images, exec_net, net, args.number_iter)
+        infer_output(res, images, data, args.labels, args.number_top,
+            args.prob_threshold, args.color_map, log, args.model_type)
+        del net
+        del exec_net
+        del plugin
+    except Exception as ex:
+        print('ERROR! : {0}'.format(str(ex)))
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
