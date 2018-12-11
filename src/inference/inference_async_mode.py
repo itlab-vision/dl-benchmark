@@ -85,6 +85,17 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
     return net, plugin, data
 
 
+def prepare_data(model, data):
+    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
+    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4, ".jpeg" : 5}
+    file = str(os.path.splitext(data[0])[1]).lower()
+    if file in image:
+        prep_data = convert_image(model, data)
+    elif file in video:
+        prep_data = data[0]
+    return prep_data
+
+
 def convert_image(model, data):
     n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
     images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
@@ -95,17 +106,6 @@ def convert_image(model, data):
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
-
-
-def prepare_data(model, data):
-    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
-    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4, ".jpeg" : 5}
-    file = str(os.path.splitext(data[0])[1]).lower()
-    if file in image:
-        prep_data = convert_image(model, data)
-    elif file in video:
-        prep_data = data[0]
-    return prep_data
 
 
 def start_infer_video(path, exec_net, model, number_iter):
@@ -154,10 +154,11 @@ def start_infer_video(path, exec_net, model, number_iter):
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     time_s = time()
-    for i in range(number_iter):
-        infer_request_handle = exec_net.start_async(request_id = 0,
-            inputs = {input_blob: images})
-        infer_status = infer_request_handle.wait()
+    for i in range(len(images) // model.batch_size):
+        for j in range(number_iter):
+            infer_request_handle = exec_net.start_async(request_id = 0,
+                inputs = {input_blob: images[i * model.batch_size: (i + 1) * model.batch_size]})
+            infer_status = infer_request_handle.wait()
     log.info("Processing output blob")
     res = infer_request_handle.outputs[next(iter(model.outputs))] 
     time_e = (time() - time_s) * 1000  
@@ -272,8 +273,7 @@ def main():
     args = build_parser().parse_args()
     net, plugin, data = prepare_model(log, args.model, args.weights,
         args.cpu_extension, args.device, args.plugin_dir, args.input)
-    net.batch_size = (args.batch_size if args.batch_size > 1 
-        else len(data))
+    net.batch_size = args.batch_size
     images = prepare_data(net, data)
     log.info("Loading model to the plugin")
     exec_net = plugin.load(network = net, num_requests = args.requests)
