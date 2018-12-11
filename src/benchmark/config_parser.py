@@ -28,7 +28,7 @@ class parameters:
         const_correct_mode = ['sync', 'async']
         const_correct_plugin = ['CPU', 'GPU', 'FPGA', 'MYRIAD']
         if parameter[1].lower() in const_correct_mode:
-            self.mode = parameter[1].lower()
+            self.mode = parameter[1]
         else:
             raise ValueError('Wrong mode')
         if parameter[0] == 'None':
