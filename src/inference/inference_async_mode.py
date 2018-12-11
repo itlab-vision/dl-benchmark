@@ -86,8 +86,8 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
 
 
 def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))]
-    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))]))
+    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
+    images = np.ndarray(shape = (model.inputs[next(iter(model.inputs))].shape))
     for i in range(n):
         image = cv2.imread(data[i])
         if (image.shape[:-1] != (h, w)):
@@ -99,7 +99,7 @@ def convert_image(model, data):
 
 def prepare_data(model, data):
     video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
-    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4}
+    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4, ".jpeg" : 5}
     file = str(os.path.splitext(data[0])[1]).lower()
     if file in image:
         prep_data = convert_image(model, data)
