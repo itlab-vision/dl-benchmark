@@ -51,7 +51,6 @@ def convert_image(net, data, log):
     for i in range(n):
         image = cv2.imread(data[i])
         if image.shape[:-1] != (h, w):
-            log.warning("Image {} is resized from {} to {}".format(data[i], image.shape[:-1], (h, w)))
             image = cv2.resize(image, (w, h))
         image = image.transpose((2, 0, 1))
         images[i] = image
