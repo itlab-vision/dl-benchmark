@@ -5,16 +5,16 @@ class model:
     def __init__(self, mdl):
         self.name = mdl[0]
         self.model = None
-        self.weigh = None
+        self.weight = None
         for file in os.listdir(mdl[1]):
             if file.endswith('.xml'):
                 self.model = os.path.join(mdl[1], file)
             if file.endswith('.bin'):            
-                self.weigh = os.path.join(mdl[1], file)
+                self.weight = os.path.join(mdl[1], file)
         if self.model is None:
             raise ValueError('Wrong path to model file')
-        if self.weigh is None:
-            raise ValueError('Wrong path to model weigh file')
+        if self.weight is None:
+            raise ValueError('Wrong path to model weight file')
 
 class dataset:
     def __init__(self, dataset):
@@ -50,7 +50,13 @@ class parameters:
         else:
             self.asyncrequest = int(parameter[3])
         self.iteration = int(parameter[4])
-        self.mininferencetime = float(parameter[5])
+        if parameter[5] == 'None':
+            if self.mode == 'sync':
+                raise ValueError('Wrong min inference time number')
+            else:
+                self.mininferencetime = parameter[5]
+        else:
+            self.mininferencetime = float(parameter[5])
 
 class test:
     def __init__(self, arg):
