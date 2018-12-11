@@ -86,18 +86,13 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
 
 
 def prepare_data(model, data):
-    video = [".mp4", ".avi", ".mvo", ".mpeg", ".mov"]
-    image = [".jpg", ".png", ".bmp", ".gif", ".jpeg"]
-    prep_data = None
-    for file in os.listdir(data):
-        if file.endswith(".*") in image:
-            prep_data = convert_image(model, data)
-            break
-        if file.endswith(".*") in video:
-            prep_data = os.path.join(data, file)
-            break
-    if prep_data is None:
-        raise ValueError("Wrong input data")
+    video = {".mp4" : 1, ".avi" : 2, ".mvo" : 3, ".mpeg" : 4, ".mov" : 5}
+    image = {".jpg" : 1, ".png" : 2, ".bmp" : 3, ".gif" : 4, ".jpeg" : 5}
+    file = str(os.path.splitext(data[0])[1]).lower()
+    if file in image:
+        prep_data = convert_image(model, data)
+    elif file in video:
+        prep_data = data[0]
     return prep_data
 
 
