@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Models>
+    <Model>
+        <ModelFile>C:\Intel\computer_vision_sdk_2018.4.420\deployment_tools\model_downloader\classification\densenet\121\caffe\densenet-121.caffemodel</ModelFile>
+        <OutputDir>C:\ITlab\sample\dancenet-121</OutputDir>
+        <AdditionalOptions>--framework caffe --data_type FP32 --input_shape [1,3,224,224] --input data --mean_values data[103.94,116.78,123.68] --scale_values data[58.8235294117647] --output fc6</AdditionalOptions>
+    </Model>
+</Models>
