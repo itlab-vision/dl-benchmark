@@ -12,10 +12,8 @@ def build_parser():
     parser.add_argument('-c', '--config', type = str, dest = 'path_to_config',
         help = 'Path to configuration file')
     config = parser.parse_args().path_to_config
-
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
-
     return config
 
 def inference_benchmark(test_list):
@@ -25,7 +23,6 @@ def inference_benchmark(test_list):
         latency = None
         fps = None
         average_time = None
-        
         if mode == 'sync':
             inference_time = inference.test_sync(test_list[i].model, 
                 test_list[i].dataset, test_list[i].parameter)
@@ -35,13 +32,11 @@ def inference_benchmark(test_list):
             average_time = pp.calculate_average_time(inference_time)
             latency = pp.calculate_latency(inference_time)
             fps = pp.calculate_fps(latency)
-        
         if mode == 'async':
             inference_time = inference.test_async(test_list[i].model,
                 test_list[i].dataset, test_list[i].parameter)
             average_time = inference_time
             fps = pp.calculate_fps(inference_time)
-
         table_row = output.create_table_row(test_list[i].model, test_list[i].dataset,
             test_list[i].parameter, average_time, latency, fps)
         table.append(table_row)
