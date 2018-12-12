@@ -2,6 +2,7 @@ import os
 import platform
 import subprocess
 
+
 def get_cpu_name(ostype):
     cpuname = 'Underfined'
     if (ostype == 'Windows'):
@@ -24,6 +25,7 @@ def get_cpu_name(ostype):
         cpuname = 'Underfined Macintosh CPU'
     return cpuname
 
+
 def get_ram_size(ostype):
     ramsize = 'Underfined'
     if (ostype == 'Windows'):
@@ -42,6 +44,7 @@ def get_ram_size(ostype):
                 return line.split(':')[1].strip()
     return ramsize
 
+
 def get_system_characteristics():
     characteristics = {}
     ostype = platform.system()
@@ -52,6 +55,7 @@ def get_system_characteristics():
     characteristics.update({'OS version' : platform.platform()})
     characteristics.update({'Python version' : platform.python_version()})
     return characteristics
+
 
 if __name__ == '__main__':
     print(get_system_characteristics())

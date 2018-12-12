@@ -1,12 +1,15 @@
 import os
 import sys
 
+
 auxiliary_path = os.path.dirname(os.path.abspath(__file__))
 auxiliary_path = auxiliary_path[0:-9]
 auxiliary_path = os.path.join(auxiliary_path, 'auxiliary')
 sys.path.append(auxiliary_path)
 
+
 import node_info as info
+
 
 def create_table_row(model, dataset, param, average_time, latency, fps):
     hardware = info.get_system_characteristics()
@@ -20,6 +23,7 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
         param.batch_size, param.mode, other_param, hardware_info, average_time,
         latency, fps)
     return table_row
+
 
 def save_table(table, filename):
     file = open(filename, 'w')

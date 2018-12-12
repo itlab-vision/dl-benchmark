@@ -5,10 +5,9 @@ import numpy as np
 import logging as log
 from time import time
 import copy
-
 import cv2
-
 from openvino.inference_engine import IENetwork, IEPlugin
+
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -47,6 +46,7 @@ def build_parser():
         default = None, type = str)
     return parser
 
+
 def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
                   input):
     model_xml = model
@@ -76,6 +76,7 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
         data = input
     return net, plugin, data
 
+
 def prepare_data(model, data):
     video = {'.mp4' : 1, '.avi' : 2, '.mvo' : 3, '.mpeg' : 4, '.mov' : 5}
     image = {'.jpg' : 1, '.png' : 2, '.bmp' : 3, '.gif' : 4, '.jpeg' : 5}
@@ -85,6 +86,7 @@ def prepare_data(model, data):
     elif file in video:
         prep_data = data[0]
     return prep_data
+
 
 def convert_image(model, data):
     n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
@@ -96,6 +98,7 @@ def convert_image(model, data):
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
+
 
 def start_infer_video(path, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
@@ -139,6 +142,7 @@ def start_infer_video(path, exec_net, model, number_iter):
         result[i * n : (i + 1) * n] = r
     return result, time_e
 
+
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     time_s = time()
@@ -160,6 +164,7 @@ def start_infer_one_req(images, exec_net, model, number_iter):
             result.append(r_l2)
     res = np.asarray(result)
     return res, time_e
+
 
 def start_infer_two_req(images, exec_net, model,  number_iter):
     input_blob = next(iter(model.inputs))
@@ -188,6 +193,7 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     res = np.asarray(result)
     return res, time_e
 
+
 def infer_async(images, exec_net, model, number_iter):
     if type(images) is str:
         res = start_infer_video(images, exec_net, model, number_iter)
@@ -196,6 +202,7 @@ def infer_async(images, exec_net, model, number_iter):
     else:
         res = start_infer_two_req(images, exec_net, model, number_iter)
     return res
+
 
 def classification_output(res, data, labels, number_top, log):
     log.info('Top {} results: \n'.format(number_top))
@@ -217,6 +224,7 @@ def classification_output(res, data, labels, number_top, log):
             det_label = labels_map[id] if labels_map else '#{}'.format(id)
             print('{:.7f} {}'.format(probs[id], det_label))
         print('\n')  
+
 
 def segmentation_output(res, color_map, log):
     c = 3
@@ -240,6 +248,7 @@ def segmentation_output(res, color_map, log):
         cv2.imwrite(out_img, classes_map)
         log.info('Result image was saved to {}'.format(out_img))
 
+
 def detection_output(res, data, prob_threshold):
     for i, r in enumerate(res):
         image = cv2.imread(data[i])
@@ -258,6 +267,7 @@ def detection_output(res, data, prob_threshold):
     cv2.waitKey(1000)
     cv2.destroyAllWindows()
 
+
 def infer_output(res, images, data, labels, number_top, prob_threshold,
         color_map, log, model_type):
     if model_type == 'classification': 
@@ -266,6 +276,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         detection_output(res, data, prob_threshold)
     elif model_type == 'segmentation':
         segmentation_output(res, color_map, log)
+
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
@@ -287,6 +298,7 @@ def main():
         del plugin
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

@@ -4,10 +4,9 @@ import argparse
 import numpy as np
 import logging as log
 from time import time
-
 import cv2
-
 from openvino.inference_engine import IENetwork, IEPlugin
+
 
 def build_argparser():
     parser = argparse.ArgumentParser()
@@ -43,6 +42,7 @@ def build_argparser():
         for detections filtering', default = 0.5, type = float)
     return parser
 
+
 def convert_image(net, data, log):
     n, c, h, w = net.inputs[next(iter(net.inputs))].shape
     images = np.ndarray(shape = (n, c, h, w))
@@ -53,6 +53,7 @@ def convert_image(net, data, log):
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
+
 
 def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log):
     model_xml = model
@@ -77,6 +78,7 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
         data = input
     return net, plugin, data
 
+
 def infer_sync(net, plugin, images, number_it, log):
     input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
@@ -90,6 +92,7 @@ def infer_sync(net, plugin, images, number_it, log):
         time_infer.append((time() - t0))
     res = res[out_blob]
     return res, time_infer
+
 
 def classification_output(res, number_top, inputs, labels, log):
     log.info('Top {} results: '.format(number_top))
@@ -106,6 +109,7 @@ def classification_output(res, number_top, inputs, labels, log):
             det_label = labels_map[id] if labels_map else '#{}'.format(id)
             print('{:.7f} label {}'.format(probs[id], det_label))
         print('\n')
+
 
 def segmentation_output(res, color_map, log):
     c = 3
@@ -129,6 +133,7 @@ def segmentation_output(res, color_map, log):
         cv2.imwrite(out_img, classes_map)
         log.info('Result image was saved to {}'.format(out_img))
 
+
 def detection_output(res, data, prob_threshold, log):
     for i, r in enumerate(res):
         image = cv2.imread(data[i])
@@ -147,6 +152,7 @@ def detection_output(res, data, prob_threshold, log):
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img))    
 
+
 def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
     log.info('Start output.')
@@ -156,6 +162,7 @@ def infer_output(res, net, type_model, labels, color_map, inputs, number_top,
         segmentation_output(res, color_map, log)
     elif type_model == 'detection':
         detection_output(res, inputs, prob_threshold, log)
+
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
@@ -168,6 +175,7 @@ def main():
     res, time = infer_sync(net, plugin, images, args.number_iter, log)
     infer_output(res, net, args.type_model, args.labels, args.color_map, data, args.number_top, 
         args.prob_threshold, images, log)
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

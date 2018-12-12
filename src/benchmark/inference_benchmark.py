@@ -7,6 +7,7 @@ import postprocessing_data as pp
 import output
 import logging as log
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type = str, dest = 'config_path',
@@ -18,6 +19,7 @@ def build_parser():
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
     return config, result
+
 
 def inference_benchmark(test_list):
     table = []
@@ -44,6 +46,7 @@ def inference_benchmark(test_list):
             test_list[i].parameter, average_time, latency, fps)
         table.append(table_row)
     return table
+
 
 if __name__ == '__main__':
     try:
