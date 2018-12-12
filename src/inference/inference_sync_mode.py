@@ -68,7 +68,7 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
         if len(not_supported_layers) != 0:
             log.error('Following layers are not supported by the plugin for specified device {}:\n {}'.
                       format(plugin.device, ', '.join(not_supported_layers)))
-            log.error('Please try to specify cpu extensions library path in sample's command line parameters using -l '
+            log.error('Please try to specify cpu extensions library path in sample\'s command line parameters using -l '
                       'or --cpu_extension command line argument')
             sys.exit(1)
     if os.path.isdir(input[0]):

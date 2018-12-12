@@ -44,7 +44,7 @@ def inference_benchmark(test_list):
 
 if __name__ == '__main__':
     try:
-        log.basicConfig(format = '[ %(levelname)s ] % (message)s',
+        log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
         config = build_parser()
         test_list = config_parser.process_config(config)

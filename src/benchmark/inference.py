@@ -11,7 +11,7 @@ import inference_async_mode as as_mode
 import inference_sync_mode as s_mode
 
 def test_async(model, dataset, param):
-    log.basicConfig(format = '[ %(levelname)s ] % (message)s',
+    log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
     log.info('Start async inference test on model : {}'.format(model.name))
     try:
@@ -33,10 +33,10 @@ def test_async(model, dataset, param):
         return time
     except Exception as ex:
         log.warning('Async inference test was ended with error:')
-        print("{}".format(str(ex)))
+        print('{}'.format(str(ex)))
 
 def test_sync(model, dataset, param):
-    log.basicConfig(format = '[ %(levelname)s ] % (message)'",
+    log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
     log.info('Start sync inference test on model : {}'.format(model.name))
     try:
@@ -53,4 +53,4 @@ def test_sync(model, dataset, param):
         return time
     except Exception as ex:
         log.warning('Sync inference test was ended with error:')
-        print("{}".format(str(ex)))
+        print('{}'.format(str(ex)))
