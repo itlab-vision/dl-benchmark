@@ -21,8 +21,8 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
         latency, fps)
     return table_row
 
-def save_table(table):
-    file = open('results.csv', 'w')
+def save_table(table, filename):
+    file = open(filename, 'w')
     head = 'Model;Dataset;BatchSize;Mode;Parameters;Infrastucture;Average time of single pass (s);Latency;FPS'
     file.write(head + '\n')
     for line in range(len(table)):

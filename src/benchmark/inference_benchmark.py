@@ -10,11 +10,14 @@ import logging as log
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type = str, dest = 'config_path',
-        help = 'Path to configuration file')
+        help = 'Path to configuration file', required = True)
+    parser.add_argument('-f', '--filename', type = str, dest = 'result_file',
+        help = 'Full name of the resulting file', required = True)
     config = parser.parse_args().config_path
+    result = parser.parse_args().result_file
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
-    return config
+    return config, result
 
 def inference_benchmark(test_list):
     table = []
@@ -46,13 +49,13 @@ if __name__ == '__main__':
     try:
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
-        config = build_parser()
+        config, result_file = build_parser()
         test_list = config_parser.process_config(config)
         log.info('Start inference tests on {} models'.format(len(test_list)))
         table = inference_benchmark(test_list)
         log.info('End inference tests')
         log.info('Saving data in file')
-        output.save_table(table)
+        output.save_table(table, result_file)
         log.info('Work is done!')
     except Exception as exp:
         log.warning(str(exp))
