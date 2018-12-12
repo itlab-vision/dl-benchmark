@@ -69,7 +69,6 @@ def process_config(config):
         openconfig = file.read()
     utf_parser = etree.XMLParser(encoding = 'utf-8')
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
-
     test_list = []
     for test_tag in root.getchildren():
         test_parameters = []
@@ -90,5 +89,4 @@ def process_config(config):
                 test_parameters.append(parameter)
         tmp_test = test(test_parameters)
         test_list.append(tmp_test)
-    
     return test_list

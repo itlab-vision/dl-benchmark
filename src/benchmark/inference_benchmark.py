@@ -28,7 +28,7 @@ def inference_benchmark(test_list):
                 test_list[i].dataset, test_list[i].parameter)
             inference_time = pp.delete_incorrect_time(inference_time,
                 test_list[i].parameter.mininferencetime)
-            inference_time = pp.three_sigma_rule(inference_time)    
+            inference_time = pp.three_sigma_rule(inference_time)
             average_time = pp.calculate_average_time(inference_time)
             latency = pp.calculate_latency(inference_time)
             fps = pp.calculate_fps(latency)
@@ -41,10 +41,10 @@ def inference_benchmark(test_list):
             test_list[i].parameter, average_time, latency, fps)
         table.append(table_row)
     return table
-    
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     try:
-        log.basicConfig(format = "[ %(levelname)s ] %(message)s",
+        log.basicConfig(format = '[ %(levelname)s ] % (message)s',
             level = log.INFO, stream = sys.stdout)
         config = build_parser()
         test_list = config_parser.process_config(config)
