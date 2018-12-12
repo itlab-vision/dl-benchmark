@@ -143,7 +143,7 @@ def start_infer_video(path, exec_net, model, number_iter):
     if exec_net.requests[prev_request_id].wait(-1) == 0:
         res.append(exec_net.requests[prev_request_id].
                  outputs[next(iter(model.outputs))])
-    time_e = (time() - time_s) * 1000    
+    time_e = time() - time_s  
     result = np.ndarray(shape = ((len(res) * n,) + 
         exec_net.requests[0].outputs[next(iter(model.outputs))].shape[1:]))
     for i, r in enumerate(res):
@@ -165,7 +165,7 @@ def start_infer_one_req(images, exec_net, model, number_iter):
             infer_status = infer_request_handle.wait()
         res.append(copy.copy(infer_request_handle.outputs[next(iter(model.outputs))]))   
     log.info("Processing output blob")
-    time_e = (time() - time_s) * 1000  
+    time_e = time() - time_s
     result = []
     for r_l1 in res:
         for r_l2 in r_l1:
@@ -193,7 +193,7 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
         if exec_net.requests[prev_request_id].wait(-1) == 0:
             res.append(copy.copy(exec_net.requests[prev_request_id].
                 outputs[next(iter(model.outputs))]))
-    time_e = (time() - time_s) * 1000
+    time_e = time() - time_s
     result = []
     for r_l1 in res:
         for r_l2 in r_l1:
