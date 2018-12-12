@@ -1,9 +1,11 @@
 import os
+import sys
 import argparse
 import config_parser
 import inference
 import postprocessing_data as pp
 import output
+import logging as log
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -47,9 +49,15 @@ def inference_benchmark(test_list):
     
 if __name__ == "__main__":
     try:
+        log.basicConfig(format = "[ %(levelname)s ] %(message)s",
+            level = log.INFO, stream = sys.stdout)
         config = build_parser()
         test_list = config_parser.process_config(config)
+        log.info('Start inference tests on {} models'.format(len(test_list)))
         table = inference_benchmark(test_list)
+        log.info('End inference tests')
+        log.info('Saving data in file')
         output.save_table_in_file(table)
+        log.info('Work is done!')
     except Exception as exp:
-        print('Error! : {}'.format(str(exp)))
+        log.warning(str(exp))
