@@ -12,8 +12,8 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
     hardware = info.get_system_characteristics()
     hardware_info = ""
     for key in hardware:
-        hardware_info += "{}: {},".format(key, hardware[key])
-    hardware_info = hardware_info[:-1]
+        hardware_info += "{}: {}, ".format(key, hardware[key])
+    hardware_info = hardware_info[:-2]
     other_param = "Plugin: {}, Async request count: {}, Iteration count: {}, Min inference time: {}".format(param.plugin,
         param.asyncrequest, param.iteration, param.mininferencetime)
     table_row = "{};{};{};{};{};{};{};{};{};".format(model.name, dataset.name,
