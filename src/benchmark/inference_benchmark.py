@@ -9,9 +9,9 @@ import logging as log
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type = str, dest = 'path_to_config',
+    parser.add_argument('-c', '--config', type = str, dest = 'config_path',
         help = 'Path to configuration file')
-    config = parser.parse_args().path_to_config
+    config = parser.parse_args().config_path
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
     return config
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         table = inference_benchmark(test_list)
         log.info('End inference tests')
         log.info('Saving data in file')
-        output.save_table_in_file(table)
+        output.save_table(table)
         log.info('Work is done!')
     except Exception as exp:
         log.warning(str(exp))
