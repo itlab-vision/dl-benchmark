@@ -30,7 +30,7 @@ def inference_benchmark(test_list):
             inference_time = inference.test_sync(test_list[i].model, 
                 test_list[i].dataset, test_list[i].parameter)
             inference_time = pp.delete_incorrect_time(inference_time,
-                test_list[i].parameter.mininferencetime)
+                test_list[i].parameter.min_inference_time)
             inference_time = pp.three_sigma_rule(inference_time)
             average_time = pp.calculate_average_time(inference_time)
             latency = pp.calculate_latency(inference_time)

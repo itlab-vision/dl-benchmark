@@ -33,30 +33,30 @@ class parameters:
             raise ValueError('Wrong mode')
         if parameter[0] == 'None':
             if self.mode != 'async':
-                self.batchsize = 'None'
+                self.batch_size = 'None'
             else:
                 raise ValueError('Wrong batch size')
         else:
-            self.batchsize = int(parameter[0])
+            self.batch_size = int(parameter[0])
         if parameter[2].upper() in const_correct_plugin:
             self.plugin = parameter[2].upper()
         else:
             raise ValueError('Wrong plugin')
         if parameter[3] == 'None':
             if self.mode != 'async':
-                self.asyncrequest = 'None'
+                self.async_request = 'None'
             else:
                 raise ValueError('Wrong async request number')
         else:
-            self.asyncrequest = int(parameter[3])
+            self.async_request = int(parameter[3])
         self.iteration = int(parameter[4])
         if parameter[5] == 'None':
             if self.mode == 'sync':
                 raise ValueError('Wrong min inference time number')
             else:
-                self.mininferencetime = parameter[5]
+                self.min_inference_time = parameter[5]
         else:
-            self.mininferencetime = float(parameter[5])
+            self.min_inference_time = float(parameter[5])
 
 class test:
     def __init__(self, arg):

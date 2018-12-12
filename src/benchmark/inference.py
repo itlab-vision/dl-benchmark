@@ -19,11 +19,11 @@ def test_async(model, dataset, param):
         images.append(dataset.path)
         net, plugin, data = as_mode.prepare_model(log, model.model,
             model.weight, None, param.plugin, None, images)
-        net.batch_size = param.batchsize
+        net.batch_size = param.batch_size
         images = as_mode.prepare_data(net, data)
         log.info('Loading model to the plugin')
         exec_net = plugin.load(network = net,
-            num_requests = param.asyncrequest)
+            num_requests = param.async_request)
         log.info('Starting inference ({} iterations)'.format(param.iteration))
         _, time = as_mode.infer_async(images, exec_net, net, param.iteration)
         log.info('End async inference test on model : {}'.format(model.name))
@@ -44,7 +44,7 @@ def test_sync(model, dataset, param):
         images.append(dataset.path)
         net, plugin, data = s_mode.prepare_model(model.model, model.weight,
             None, param.plugin, None, images, log)
-        net.batch_size = param.batchsize
+        net.batch_size = param.batch_size
         images = s_mode.convert_image(net, data, log)
         _, time = s_mode.infer_sync(net, plugin, images, param.iteration, log)
         log.info('End sync inference test on model : {}'.format(model.name))
