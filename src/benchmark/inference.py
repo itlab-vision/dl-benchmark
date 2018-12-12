@@ -27,6 +27,9 @@ def test_async(model, dataset, param):
         log.info("Starting inference ({} iterations)".format(param.iteration))
         _, time = as_mode.infer_async(images, exec_net, net, param.iteration)
         log.info("End async inference test on model : {}".format(model.name))
+        del net
+        del exec_net
+        del plugin
         return time
     except Exception as ex:
         log.warning("Async inference test was ended with error:")
@@ -45,6 +48,8 @@ def test_sync(model, dataset, param):
         images = s_mode.convert_image(net, data, log)
         _, time = s_mode.infer_sync(net, plugin, images, param.iteration, log)
         log.info("End sync inference test on model : {}".format(model.name))
+        del net
+        del plugin
         return time
     except Exception as ex:
         log.warning("Sync inference test was ended with error:")
