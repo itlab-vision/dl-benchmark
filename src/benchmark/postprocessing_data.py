@@ -1,6 +1,12 @@
 import statistics
 
 
+def time_to_ms(time):
+    for i in range(len(time)):
+        time[i] *= 10 ** 3
+    return time
+
+
 def delete_incorrect_time(time, min_correct_time):
     valid_time = []
     for i in range(len(time)):
@@ -21,6 +27,7 @@ def three_sigma_rule(time):
     for i in range(len(time)):
         if lower_bound <= time[i] <= upper_bound:
             valid_time.append(time[i])
+    print(len(valid_time))
     return valid_time
 
 
@@ -35,6 +42,5 @@ def calculate_latency(time):
     return latency
 
 
-def calculate_fps(average_time):
-    average_time *= 10 ** 3
-    return 1000 / average_time
+def calculate_fps(batch_size, average_time):
+    return (batch_size * 1000) / average_time
