@@ -1,13 +1,6 @@
 import os
 import sys
-
-
-auxiliary_path = os.path.dirname(os.path.abspath(__file__))
-auxiliary_path = auxiliary_path[0:-9]
-auxiliary_path = os.path.join(auxiliary_path, 'auxiliary')
-sys.path.append(auxiliary_path)
-
-
+sys.path.append('../auxiliary')
 import node_info as info
 
 
@@ -27,7 +20,7 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
 
 def save_table(table, filename):
     file = open(filename, 'w')
-    head = 'Model;Dataset;BatchSize;Mode;Parameters;Infrastucture;Average time of single pass (s);Latency;FPS'
+    head = 'Model;Dataset;Batch size;Mode;Parameters;Infrastucture;Average time of single pass (ms);Latency;FPS'
     file.write(head + '\n')
     for line in range(len(table)):
         file.write(table[line] + '\n')
