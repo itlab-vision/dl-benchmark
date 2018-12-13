@@ -27,7 +27,6 @@ def three_sigma_rule(time):
     for i in range(len(time)):
         if lower_bound <= time[i] <= upper_bound:
             valid_time.append(time[i])
-    print(len(valid_time))
     return valid_time
 
 
