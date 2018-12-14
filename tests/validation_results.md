@@ -14,12 +14,7 @@
 
    Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |  Python (синхронный режим)  |  Python (асинхронный режим)        |
 ---------------------|---------------------------|---------------------------|:---------------------------:|:----------------------------------:|
-alexnet              |                           |                           |                             |  0.9896094 Granny Smith            |
-alexnet                     |                           |                           |                             |  0.0037969 bell pepper             |
-alexnet                     |                           |                           |                             |  0.0013717 piggy bank, penny bank  |
-alexnet                     |                           |                           |                             |  0.0011059 acorn                   |
-alexnet                     |                           |                           |                             |  0.0009710 fig                     |
-alexnet                     |                           |                           |                             |                                    |
+alexnet              |                           |                           |                             |  0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|
 densenet-121         |                           |                           |                             |                                    |
 densenet-161         |                           |                           |                             |                                    |
 densenet-169         |                           |                           |                             |                                    |
