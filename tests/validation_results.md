@@ -15,11 +15,11 @@
    Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |  Python (синхронный режим)  |  Python (асинхронный режим)        |
 ---------------------|---------------------------|---------------------------|:---------------------------:|:----------------------------------:|
 alexnet              |                           |                           |                             |  0.9896094 Granny Smith            |
-dasd                     |                           |                           |                             |  0.0037969 bell pepper             |
- adasd                    |                           |                           |                             |  0.0013717 piggy bank, penny bank  |
- asdas                    |                           |                           |                             |  0.0011059 acorn                   |
- fsaf                    |                           |                           |                             |  0.0009710 fig                     |
- asfsa                    |                           |                           |                             |                                    |
+alexnet                     |                           |                           |                             |  0.0037969 bell pepper             |
+alexnet                     |                           |                           |                             |  0.0013717 piggy bank, penny bank  |
+alexnet                     |                           |                           |                             |  0.0011059 acorn                   |
+alexnet                     |                           |                           |                             |  0.0009710 fig                     |
+alexnet                     |                           |                           |                             |                                    |
 densenet-121         |                           |                           |                             |                                    |
 densenet-161         |                           |                           |                             |                                    |
 densenet-169         |                           |                           |                             |                                    |
