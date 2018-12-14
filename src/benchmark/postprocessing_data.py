@@ -1,3 +1,4 @@
+import math
 import statistics
 
 
@@ -12,7 +13,7 @@ def delete_incorrect_time(time, min_correct_time):
     for i in range(len(time)):
         if time[i] >= min_correct_time:
             valid_time.append(time[i])
-    return time
+    return valid_time
 
 
 def three_sigma_rule(time):
@@ -20,7 +21,7 @@ def three_sigma_rule(time):
     sigm = 0
     for i in range(len(time)):
         sigm += (time[i] - average_time) ** 2
-    sigm /= len(time) - 1
+    sigm = math.sqrt(sigm / (len(time) - 1))
     upper_bound = average_time + (3 * sigm)
     lower_bound = average_time - (3 * sigm)
     valid_time = []
