@@ -2,12 +2,39 @@
 
 ## Тестирование глубоких моделей в синхронном режиме
 
+**Командная строка для решения задачи классификации изображений**
 ```bash
-inference_sync_mode.py [TBD]
+python inference_sync_mode.py \
+    -t classification -i <path_to_image>/<image_name> \
+    -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
+    --labels <path_to_labels>/image_net_synset.txt
 ```
 
-Параметры запуска:
-- [TBD]
+Результат выполнения: набор наиболее вероятных классов, которым принадлежит
+изображение.
+
+**Командная строка для решения задачи семантической сегментации изображений**
+```bash
+python inference_sync_mode.py \
+    -t segmentation -i <path_to_image>/<image_name> \
+    -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
+    --color_map <path_to_color_map>/color_map.txt
+```
+
+Результат выполнения: изображение, разрешение которого совпадает с разрешением
+входного изображения; интенсивность пикселя соответствует классу объектов,
+которому принадлежит даннная точка на изображении.
+
+**Командная строка для решения задачи детектирования объектов**
+```bash
+python inference_sync_mode.py \
+    -t detection -i <path_to_image>/<image_name> \
+    -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
+    -d <device>
+```
+
+Результат выполнения: набор окаймляющих прямоугольников, соответствующих
+обнаруженным объектам.
 
 ## Тестирование глубоких моделей в асинхронном режиме
 
