@@ -31,7 +31,6 @@ def inference_benchmark(test_list):
         if mode == 'sync':
             inference_time = inference.test_sync(test_list[i].model, 
                 test_list[i].dataset, test_list[i].parameter)
-            inference_time = pp.time_to_ms(inference_time)
             inference_time = pp.delete_incorrect_time(inference_time,
                 test_list[i].parameter.min_inference_time)
             inference_time = pp.three_sigma_rule(inference_time)
@@ -41,7 +40,6 @@ def inference_benchmark(test_list):
         if mode == 'async':
             inference_time = inference.test_async(test_list[i].model,
                 test_list[i].dataset, test_list[i].parameter)
-            inference_time *= 10 ** 3
             average_time = inference_time
             fps = pp.calculate_fps(test_list[i].parameter.batch_size,
                 inference_time)

@@ -20,7 +20,7 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
 
 def save_table(table, filename):
     file = open(filename, 'w')
-    head = 'Model;Dataset;Batch size;Mode;Parameters;Infrastucture;Average time of single pass (ms);Latency;FPS'
+    head = 'Model;Dataset;Batch size;Mode;Parameters;Infrastucture;Average time of single pass (s);Latency;FPS'
     file.write(head + '\n')
     for line in range(len(table)):
         file.write(table[line] + '\n')
