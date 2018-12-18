@@ -2,12 +2,6 @@ import math
 import statistics
 
 
-def time_to_ms(time):
-    for i in range(len(time)):
-        time[i] *= 10 ** 3
-    return time
-
-
 def delete_incorrect_time(time, min_correct_time):
     valid_time = []
     for i in range(len(time)):
