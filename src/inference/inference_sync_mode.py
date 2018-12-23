@@ -47,7 +47,7 @@ def build_argparser():
 
 def convert_image(net, data, log):
     n, c, h, w = net.inputs[next(iter(net.inputs))].shape
-    images = np.ndarray(shape = (n, c, h, w))
+    images = np.ndarray(shape = (len(data), c, h, w))
     for i in range(n):
         image = cv2.imread(data[i])
         if image.shape[:-1] != (h, w):
@@ -84,16 +84,19 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
 def infer_sync(net, plugin, images, number_it, log):
     input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
+    size=net.batch_size
+    result=[]
     time_infer = []
     log.info("Loading model to the plugin")
     exec_net = plugin.load(network = net)
     log.info("Starting inference ({} iterations)".format(number_it))
     for i in range(number_it):
-        t0 = time()
-        res = exec_net.infer(inputs = {input_blob : images})
+        t0 = time() 
+        res = exec_net.infer(inputs = {input_blob : images[(i*size)%len(images):(((i+1)*size-1)%len(images))+1:]})
         time_infer.append((time() - t0))
-    res = res[out_blob]
-    return res, time_infer
+        for j in range(2):
+            result.append(res[out_blob][j])
+    return result, time_infer
 
 
 def classification_output(res, number_top, inputs, labels, log):
@@ -109,7 +112,7 @@ def classification_output(res, number_top, inputs, labels, log):
         print("Image {}\n".format(inputs[i]))
         for id in top_ind:
             det_label = labels_map[id] if labels_map else "#{}".format(id)
-            print("{:.7f} label {}".format(probs[id], det_label))
+            print("{:.7f} {}".format(probs[id], det_label))
         print("\n")
 
 
