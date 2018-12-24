@@ -1,66 +1,97 @@
 import os
 from lxml import etree
 
+
 class model:
-    def __init__(self, model):
-        self.name = model[0]
-        for file in os.listdir(model[1]):
-            if file.endswith('.bin'):
-                self.model = os.path.join(model[1], file)
-            if file.endswith('.xml'):            
-                self.weigh = os.path.join(model[1], file)
+    def __init__(self, mdl):
+        self.name = mdl[0]
+        self.model = None
+        self.weight = None
+        for file in os.listdir(mdl[1]):
+            if file.endswith('.xml'):
+                self.model = os.path.join(mdl[1], file)
+            if file.endswith('.bin'):            
+                self.weight = os.path.join(mdl[1], file)
+        if self.model is None:
+            raise ValueError('Wrong path to model file')
+        if self.weight is None:
+            raise ValueError('Wrong path to model weight file')
+
 
 class dataset:
     def __init__(self, dataset):
         self.name = dataset[0]
         self.path = dataset[1]
+        if not os.path.isdir(self.path):
+            raise ValueError('Wrong path to folder with dataset')
 
-class parameter:
-    def __init__(self, parameters):
-        self.batchsize = parameters[0]
-        self.mode = parameters[1]
-        self.plugin = parameters[2]
-        self.asyncrequest = parameters[3]
-        self.iteration = parameters[4]
-        self.mininferencetime = parameters[5]
+
+class parameters:
+    def __init__(self, parameter):
+        const_correct_mode = ['sync', 'async']
+        const_correct_plugin = ['CPU', 'GPU', 'FPGA', 'MYRIAD']
+        if parameter[1].lower() in const_correct_mode:
+            self.mode = parameter[1]
+        else:
+            raise ValueError('Wrong mode')
+        if parameter[0] == 'None':
+            if self.mode != 'async':
+                self.batch_size = 'None'
+            else:
+                raise ValueError('Wrong batch size')
+        else:
+            self.batch_size = int(parameter[0])
+        if parameter[2].upper() in const_correct_plugin:
+            self.plugin = parameter[2].upper()
+        else:
+            raise ValueError('Wrong plugin')
+        if parameter[3] == 'None':
+            if self.mode != 'async':
+                self.async_request = 'None'
+            else:
+                raise ValueError('Wrong async request number')
+        else:
+            self.async_request = int(parameter[3])
+        self.iteration = int(parameter[4])
+        if parameter[5] == 'None':
+            if self.mode == 'sync':
+                raise ValueError('Wrong min inference time number')
+            else:
+                self.min_inference_time = parameter[5]
+        else:
+            self.min_inference_time = float(parameter[5])
+
 
 class test:
-    def __init__(self, args):
-        self.model = args[0]
-        self.dataset = args[1]
-        self.parameters = args[2]
-    
+    def __init__(self, arg):
+        self.model = arg[0]
+        self.dataset = arg[1]
+        self.parameter = arg[2]
+
+
 def process_config(config):
     with open(config) as file:
         openconfig = file.read()
-    
     utf_parser = etree.XMLParser(encoding = 'utf-8')
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
-    
     test_list = []
-    
-    for tag in root.getchildren():
-    
-        tmp = []
-        
-        for test_parameter in tag.getchildren():
-            childrens = []
-            for param in test_parameter.getchildren():
-                childrens.append(param.text)
-                
+    for test_tag in root.getchildren():
+        test_parameters = []
+        for test_parameter in test_tag.getchildren():
+            options = []
+            for option in test_parameter.getchildren():
+                if option.text is None:
+                    option.text = 'None'
+                options.append(option.text)
             if test_parameter.tag == 'Model':
-                mdl = model(childrens)
-                tmp.append(mdl)
-                
+                mdl = model(options)
+                test_parameters.append(mdl)
             if test_parameter.tag == 'Dataset':
-                data = dataset(childrens)
-                tmp.append(data)
-                
+                data = dataset(options)
+                test_parameters.append(data)
             if test_parameter.tag == 'Parameters':
-                param = parameter(childrens)
-                tmp.append(param)
-                
-        t = test(tmp)
-        test_list.append(t)
-    
+                parameter = parameters(options)
+                test_parameters.append(parameter)
+        tmp_test = test(test_parameters)
+        test_list.append(tmp_test)
     return test_list
