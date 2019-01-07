@@ -71,7 +71,7 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
                 command line argument')
             sys.exit(1)      
     if os.path.isdir(input[0]):
-        data = [input[0] + file for file in os.listdir(input[0])]
+        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
         data = input
     return net, plugin, data
@@ -187,6 +187,7 @@ def start_infer_two_req(images, exec_net, model, number_iter):
         res.append(copy.copy(exec_net.requests[prev_request_id].
             outputs[next(iter(model.outputs))]))
     time_e = time() - time_s
+    print(time() - time_s)
     result = []
     for r_l1 in res:
         for r_l2 in r_l1:
@@ -196,7 +197,6 @@ def start_infer_two_req(images, exec_net, model, number_iter):
 
 def start_infer_n_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
-    # = [False for i in range(number_iter)]
     requests_counter = len(exec_net.requests)
     requests_images = [-1 for i in range(requests_counter)]
     time_s = time()
@@ -204,23 +204,24 @@ def start_infer_n_req(images, exec_net, model, number_iter):
     res = [-1 for i in range(len(images))]
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
-    requests_status = [i for i in range(requests_counter)]
-    k = 0
+    requests_status = []
+    k = requests_counter
+    for request_id in range(requests_counter):
+        exec_net.start_async(request_id = request_id,
+        inputs = {input_blob: images[request_id * size % len(images): \
+        ((request_id + 1) * size - 1) % len(images) + 1]})
     while k < number_iter:
+        while not len(requests_status):
+            for request_id in range(requests_counter):
+                if exec_net.requests[request_id].wait(0) == 0:
+                    requests_status.append(request_id)
         for request_id in requests_status:
-            print(exec_net.requests[request_id].wait(0))
-            exec_net.requests[request_id].wait(-1)
-            print(exec_net.requests[request_id].wait(0))
+            exec_net.requests[request_id].wait(1)
             exec_net.start_async(request_id = request_id,
             inputs = {input_blob: images[k * size % len(images): \
             ((k + 1) * size - 1) % len(images) + 1]})
-            print(exec_net.requests[request_id].wait(0))
             k += 1
         requests_status.clear()
-        for request_id in range(requests_counter):
-            if exec_net.requests[request_id].wait(0) == 0:
-                #print(request_id)
-                requests_status.append(request_id)
     print(time() - time_s)
     raise ValueError('Wrong batch_size')
     return res, time_e           
@@ -231,8 +232,8 @@ def infer_async(images, exec_net, model, number_iter):
         res = start_infer_video(images, exec_net, model, number_iter)
     elif len(exec_net.requests) == 1:
         res = start_infer_one_req(images, exec_net, model, number_iter)
-    #elif len(exec_net.requests) == 2:
-        #res = start_infer_two_req(images, exec_net, model, number_iter)
+    elif len(exec_net.requests) == 2:
+        res = start_infer_two_req(images, exec_net, model, number_iter)
     else:
         res = start_infer_n_req(images, exec_net, model, number_iter)
     return res
