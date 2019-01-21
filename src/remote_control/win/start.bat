@@ -1,1 +1,1 @@
-@echo Start file>1.txt
+@echo Start file>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\win\\1.txt
