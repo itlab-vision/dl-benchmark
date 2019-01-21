@@ -1,0 +1,1 @@
+@echo Start file>1.txt
