@@ -2,6 +2,7 @@ import ftplib
 import argparse
 import sys
 import platform
+import os
 
 
 def build_parser():
@@ -12,17 +13,16 @@ def build_parser():
         help = 'Login to connect to ftp server.', required = True)
     parser.add_argument('-p', '--password', type = str,
         help = 'Password to connect to ftp server.', required = True)
-    parser.add_argument('-f', '--file_name', type = str,
-        help = 'CSV table name.', required = True)
     return parser
 
 def main():
     param_list = build_parser().parse_args()
+    os.system('launch_benchmark.bat')
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
     f = open(param_list.file_name, 'rb')
     send = ftp_con.storbinary('STOR '+ platform.node() +
-        '_' + param_list.file_name, f)
+        '_result_table.csv', f)
     ftp_con.close
 
 
