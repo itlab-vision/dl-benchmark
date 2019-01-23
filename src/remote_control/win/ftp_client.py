@@ -18,7 +18,7 @@ def build_parser():
 def main():
     param_list = build_parser().parse_args()
     os.system(os.path.dirname(os.path.abspath(__file__))
-        + 'launch_benchmark.bat')
+        + '\\launch_benchmark.bat')
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
     f = open(os.path.dirname(os.path.abspath(__file__)) +
@@ -26,6 +26,7 @@ def main():
     send = ftp_con.storbinary('STOR '+ platform.node() +
         '_result_table.csv', f)
     ftp_con.close
+
 
 
 if __name__ == '__main__':
