@@ -1,0 +1,8 @@
+<Machines>
+	<Machine>
+        <Ip>10.0.16.94</Ip>
+        <Login>kumbrasev.p</Login>
+        <Password>Qwerty123</Password>
+        <Client_Path>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\win\\ftp_client.py</Client_Path>
+    </Machine>
+</Machines>
