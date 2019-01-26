@@ -36,5 +36,5 @@ def calculate_latency(time):
     return latency
 
 
-def calculate_fps(batch_size, average_time):
-    return (batch_size * 1000) / average_time
+def calculate_fps(pictures, time):
+    return pictures / time
