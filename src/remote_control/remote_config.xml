@@ -1,9 +1,16 @@
 <Machines>
 	<Machine>
+        <Ip>10.0.16.81</Ip>
+        <Login>Kumbrasev.p</Login>
+        <Password>Qwerty123</Password>
+        <Os_Type>Windows</Os_Type>
+        <Client_Path>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Client_Path>
+    </Machine>
+    <Machine>
         <Ip>10.0.16.125</Ip>
         <Login>itmm</Login>
         <Password>itmm</Password>
         <Os_Type>Linux</Os_Type>
-        <Client_Path>Home\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Client_Path>
+        <Client_Path>~/Documents/openvino-dl-benchmark/src/remote_control/ftp_client.py</Client_Path>
     </Machine>
 </Machines>

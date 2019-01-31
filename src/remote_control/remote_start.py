@@ -8,35 +8,41 @@ import config_parser
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type = str, dest = 'config_path',
+    parser.add_argument('-c', '--config', type = str,
         help = 'Path to configuration file', required = True)
-    config = parser.parse_args().config_path
-    if not os.path.isfile(config):
+    parser.add_argument('-s', '--server_ip', type = str,
+        help = 'Ip FTP server', required = True)
+    parser.add_argument('-l', '--server_login', type = str,
+        help = 'Login to FTP server', required = True)
+    parser.add_argument('-p', '--server_psw', type = str,
+        help = 'Password to FTP server', required = True)
+    parser = parser.parse_args()
+    if not os.path.isfile(parser.config):
         raise ValueError('Wrong path to configuration file!')
-    return config
+    return parser
 
-def run_benchmark(machine):
+def run_benchmark(machine, server_ip, server_login, server_psw):
     if machine.os_type == 'Windows':
-        run_on_windows(machine)
+        run_on_windows(machine, server_ip, server_login, server_psw)
     elif machine.os_type == 'Linux':
-        run_on_linux(machine)
+        run_on_linux(machine, server_ip, server_login, server_psw)
 
-def run_on_linux(machine): 
+def run_on_linux(machine, server_ip, server_login, server_psw): 
     paramiko_con = paramiko.SSHClient()
     paramiko_con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     paramiko_con.connect(hostname=machine.ip, username=machine.login,
         password=machine.psw)
-    stdin, stdout, stderr = paramiko_con.exec_command('py3 ' + 
-        machine.client_path + ' -ip ' + machine.ip + ' -l ' + 
-        machine.login + ' -p ' + machine.psw + ' -os ' + machine.os_type)
+    paramiko_con.exec_command('python ' +  machine.client_path + 
+        ' -ip ' + server_ip  + ' -l ' +  server_login + 
+        ' -p ' + server_psw + ' -os ' + machine.os_type)
     paramiko_con.close()
 
-def run_on_windows(machine):
+def run_on_windows(machine, server_ip, server_login, server_psw):
     wmi_con = wmi.WMI(machine.ip, user=machine.login, password=machine.psw)
     process_startup = wmi_con.Win32_ProcessStartup.new()
     process_id, result = wmi_con.Win32_Process.Create(CommandLine=('cmd.exe /c' 
-        ' python ' + machine.client_path + ' -ip ' + machine.ip + ' -l ' + 
-        machine.login + ' -p ' + machine.psw + ' -os ' + machine.os_type),
+        ' python ' + machine.client_path + ' -ip ' + server_ip + ' -l ' + 
+        server_login + ' -p ' + server_psw + ' -os ' + machine.os_type),
         ProcessStartupInformation=process_startup)
     if result == 0:
         log.info('Process started successfully {}'.format(process_id))
@@ -46,12 +52,13 @@ def run_on_windows(machine):
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
-    config = build_parser()
+    parser = build_parser()
     log.info('Parsing config file')
-    machine_list = config_parser.parse_config(config)
+    machine_list = config_parser.parse_config(parser.config)
     for machine in machine_list:
         log.info('Run benchmark on {} machine'.format(machine.ip))
-        run_benchmark(machine)
+        run_benchmark(machine, parser.server_ip, parser.server_login,
+            parser.server_psw)
     log.info('Benchmark run on all machines')
 
 

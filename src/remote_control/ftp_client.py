@@ -20,20 +20,20 @@ def build_parser():
 def main():
     param_list = build_parser().parse_args()
     if param_list.os_type == 'Windows':
-        os.system(os.path.dirname(os.path.abspath(__file__))
-            + '\\launch_benchmark.bat')
+        os.system(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+            'launch_benchmark.bat'))
     elif param_list.os_type == 'Linux':
-        f = open(os.path.dirname(os.path.abspath(__file__)) + 
-            'text.txt', 'w')
-        f.write("test")
+        path = os.path.split(os.path.abspath(__file__))
+        f = open(os.path.join(path[0], 'text.txt'), 'w')
+        f.write(param_list.server_ip + " " + 
+            param_list.login + " " +  param_list.password)
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
-    f = open(os.path.dirname(os.path.abspath(__file__)) +
-        '\\result_table.csv', 'rb')
+    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+        'result_table.csv'), 'rb')
     send = ftp_con.storbinary('STOR '+ platform.node() +
         '_result_table.csv', f)
     ftp_con.close()
-
 
 
 if __name__ == '__main__':
