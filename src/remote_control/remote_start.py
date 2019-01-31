@@ -15,11 +15,20 @@ def build_parser():
     return config
 
 def run_benchmark(machine):
+    if machine.os_type == 'Windows':
+        run_on_windows(machine)
+    elif machine.os_type == 'Linux':
+        run_on_linux(machine)
+def run_on_linux(machine): 
+    pass 
+
+
+def run_on_windows(machine):
     wmi_con = wmi.WMI(machine.ip, user=machine.login, password=machine.psw)
     process_startup = wmi_con.Win32_ProcessStartup.new()
     process_id, result = wmi_con.Win32_Process.Create(CommandLine=('cmd.exe /c' 
         ' python ' + machine.client_path + ' -ip ' + machine.ip + ' -l ' + 
-        machine.login + ' -p ' + machine.psw),
+        machine.login + ' -p ' + machine.psw + ' -os' + machine.os_type),
         ProcessStartupInformation=process_startup)
     if result == 0:
         log.info('Process started successfully {}'.format(process_id))

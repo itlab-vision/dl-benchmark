@@ -2,6 +2,7 @@
     <Machine>
         <Ip></Ip>
         <Login></Login>
+        <Os_Type></Os_Type>
         <Password></Password>
     </Machine>
 </Machines>

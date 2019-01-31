@@ -5,7 +5,8 @@ class machine:
         self.ip = params[0]
         self.login = params[1]
         self.psw = params[2]
-        self.client_path = params[3]
+        self.os_type = params[3]
+        self.client_path = params[4]
 
 
 def parse_config(config):
@@ -22,6 +23,8 @@ def parse_config(config):
             if machine_parameter.tag == 'Login':
                 machine_parameters.append(machine_parameter.text)
             if machine_parameter.tag == 'Password':
+                machine_parameters.append(machine_parameter.text)
+            if machine_parameter.tag == 'Os_Type':
                 machine_parameters.append(machine_parameter.text)
             if machine_parameter.tag == 'Client_Path':
                 machine_parameters.append(machine_parameter.text)
