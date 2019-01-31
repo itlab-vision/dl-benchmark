@@ -1,4 +1,5 @@
 import wmi
+import paramiko
 import os
 import sys
 import argparse
@@ -21,8 +22,14 @@ def run_benchmark(machine):
         run_on_linux(machine)
 
 def run_on_linux(machine): 
-    pass 
-
+    paramiko_con = paramiko.SSHClient()
+    paramiko_con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    paramiko_con.connect(hostname=machine.ip, username=machine.login,
+        password=machine.psw)
+    stdin, stdout, stderr = paramiko_con.exec_command('py3 ' + 
+        machine.client_path + ' -ip ' + machine.ip + ' -l ' + 
+        machine.login + ' -p ' + machine.psw + ' -os ' + machine.os_type)
+    paramiko_con.close()
 
 def run_on_windows(machine):
     wmi_con = wmi.WMI(machine.ip, user=machine.login, password=machine.psw)

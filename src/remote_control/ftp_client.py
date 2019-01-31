@@ -23,7 +23,9 @@ def main():
         os.system(os.path.dirname(os.path.abspath(__file__))
             + '\\launch_benchmark.bat')
     elif param_list.os_type == 'Linux':
-        pass
+        f = open(os.path.dirname(os.path.abspath(__file__)) + 
+            'text.txt', 'w')
+        f.write("test")
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
     f = open(os.path.dirname(os.path.abspath(__file__)) +
