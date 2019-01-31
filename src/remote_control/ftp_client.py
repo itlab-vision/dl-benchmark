@@ -19,10 +19,10 @@ def build_parser():
 
 def main():
     param_list = build_parser().parse_args()
-    if (param_list.os_type == 'Windows')
+    if param_list.os_type == 'Windows':
         os.system(os.path.dirname(os.path.abspath(__file__))
             + '\\launch_benchmark.bat')
-    elif (param_list.os_type == 'Linux')
+    elif param_list.os_type == 'Linux':
         pass
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)

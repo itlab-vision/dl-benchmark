@@ -4,6 +4,6 @@
         <Login>kumbrasev.p</Login>
         <Password>Qwerty123</Password>
         <Os_Type>Windows</Os_Type>
-        <Client_Path>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\win\\ftp_client.py</Client_Path>
+        <Client_Path>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Client_Path>
     </Machine>
 </Machines>
