@@ -54,6 +54,10 @@ OpenVINO R4:
     googlenet-v4
     alexnet
     ssd_mobilenet_v2_coco
+    resnet-50
+    resnet-101
+    resnet-152
+    googlenet-v3
     age-gender-recognition-retail-0013
     age-gender-recognition-retail-0013-fp16
     emotions-recognition-retail-0003
