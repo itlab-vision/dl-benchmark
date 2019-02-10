@@ -3,11 +3,11 @@
     <Test>
         <Model>
             <Name>densenet-121</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -15,17 +15,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>densenet-121</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -39,11 +39,11 @@
     <Test>
         <Model>
             <Name>densenet-121</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -57,11 +57,11 @@
 	<Test>
         <Model>
             <Name>densenet-161</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/161/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -69,17 +69,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>densenet-161</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/161/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -93,11 +93,11 @@
     <Test>
         <Model>
             <Name>densenet-161</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/161/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -111,11 +111,11 @@
 	<Test>
         <Model>
             <Name>densenet-169</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/169/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -123,17 +123,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>densenet-169</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/169/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -147,11 +147,11 @@
     <Test>
         <Model>
             <Name>densenet-169</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/169/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -165,11 +165,11 @@
 	<Test>
         <Model>
             <Name>densenet-201</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/201/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -177,17 +177,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>densenet-201</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/201/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -201,11 +201,11 @@
     <Test>
         <Model>
             <Name>densenet-201</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/densenet/201/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -219,11 +219,11 @@
 	<Test>
         <Model>
             <Name>squeezenet1.0</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.0/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -231,17 +231,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>squeezenet1.0</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.0/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -255,11 +255,11 @@
     <Test>
         <Model>
             <Name>squeezenet1.0</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.0/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -273,11 +273,11 @@
 	<Test>
         <Model>
             <Name>squeezenet1.1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -285,17 +285,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>squeezenet1.1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -309,11 +309,11 @@
     <Test>
         <Model>
             <Name>squeezenet1.1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/squeezenet/1.1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -327,11 +327,11 @@
 	<Test>
         <Model>
             <Name>mtcnn-p</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
         </Model>
         <Dataset>
             <Name>WIDER FACE</Name>
-            <Path></Path>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -339,179 +339,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>mtcnn-p</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
         </Model>
         <Dataset>
             <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>1</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-    <Test>
-        <Model>
-            <Name>mtcnn-p</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>2</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-r</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-r</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>1</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-    <Test>
-        <Model>
-            <Name>mtcnn-r</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>2</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-o</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-o</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>1</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-    <Test>
-        <Model>
-            <Name>mtcnn-o</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>WIDER FACE</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>2</AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-p</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
-        </Dataset>
-        <Parameters>
-            <BatchSize>3</BatchSize>
-            <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
-    </Test>
-	<Test>
-        <Model>
-            <Name>mtcnn-p</Name>
-            <Path></Path>
-        </Model>
-        <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -525,11 +363,11 @@
     <Test>
         <Model>
             <Name>mtcnn-p</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -543,11 +381,11 @@
 	<Test>
         <Model>
             <Name>mtcnn-r</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -555,17 +393,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>mtcnn-r</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -579,11 +417,11 @@
     <Test>
         <Model>
             <Name>mtcnn-r</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -597,11 +435,11 @@
 	<Test>
         <Model>
             <Name>mtcnn-o</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -609,17 +447,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>mtcnn-o</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
         </Model>
         <Dataset>
-            <Name>CelebrA</Name>
-            <Path></Path>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -633,11 +471,173 @@
     <Test>
         <Model>
             <Name>mtcnn-o</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>WIDER FACE</Name>
+            <Path>../../data/WIDER_FACE/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-p</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
         </Model>
         <Dataset>
             <Name>CelebrA</Name>
-            <Path></Path>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-p</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>mtcnn-p</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/p/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-r</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-r</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>mtcnn-r</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/r/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-o</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>mtcnn-o</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>mtcnn-o</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mtcnn/o/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>CelebrA</Name>
+            <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -651,11 +651,11 @@
 	<Test>
         <Model>
             <Name>mobilenet-ssd</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mobilenet-ssd/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -663,17 +663,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>mobilenet-ssd</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mobilenet-ssd/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -687,11 +687,11 @@
     <Test>
         <Model>
             <Name>mobilenet-ssd</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/mobilenet-ssd/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -705,11 +705,11 @@
 	<Test>
         <Model>
             <Name>vgg19</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/19/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -717,17 +717,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>vgg19</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/19/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -741,11 +741,11 @@
     <Test>
         <Model>
             <Name>vgg19</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/19/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -759,11 +759,11 @@
 	<Test>
         <Model>
             <Name>vgg16</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/16/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -771,17 +771,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>vgg16</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/16/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -795,11 +795,11 @@
     <Test>
         <Model>
             <Name>vgg16</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/vgg/16/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -813,11 +813,11 @@
 	<Test>
         <Model>
             <Name>ssd512</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/512/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -825,17 +825,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>ssd512</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/512/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -849,11 +849,11 @@
     <Test>
         <Model>
             <Name>ssd512</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/512/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -867,11 +867,11 @@
 	<Test>
         <Model>
             <Name>ssd300</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/300/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -879,17 +879,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>ssd300</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/300/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -903,11 +903,11 @@
     <Test>
         <Model>
             <Name>ssd300</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd/300/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2007-2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -921,11 +921,11 @@
 	<Test>
         <Model>
             <Name>inception-resnet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/inception-resnet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -933,17 +933,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>inception-resnet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/inception-resnet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -957,11 +957,11 @@
     <Test>
         <Model>
             <Name>inception-resnet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/inception-resnet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -975,11 +975,11 @@
 	<Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -987,17 +987,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1011,11 +1011,11 @@
     <Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>Pascal VOC 2012</Name>
-            <Path></Path>
+            <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1029,11 +1029,11 @@
 	<Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1041,17 +1041,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1065,11 +1065,11 @@
     <Test>
         <Model>
             <Name>dilation</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/semantic_segmentation/dilation/cityscapes/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1083,11 +1083,11 @@
 	<Test>
         <Model>
             <Name>googlenet-v1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1095,17 +1095,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>googlenet-v1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1119,11 +1119,11 @@
     <Test>
         <Model>
             <Name>googlenet-v1</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v1/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1137,11 +1137,11 @@
 	<Test>
         <Model>
             <Name>googlenet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1149,17 +1149,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>googlenet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1173,11 +1173,11 @@
     <Test>
         <Model>
             <Name>googlenet-v2</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v2/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1191,11 +1191,11 @@
 	<Test>
         <Model>
             <Name>googlenet-v4</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v4/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1203,17 +1203,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>googlenet-v4</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v4/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1227,11 +1227,11 @@
     <Test>
         <Model>
             <Name>googlenet-v4</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v4/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1245,11 +1245,11 @@
 	<Test>
         <Model>
             <Name>alexnet</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/alexnet/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1257,17 +1257,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>alexnet</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/alexnet/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1281,11 +1281,11 @@
     <Test>
         <Model>
             <Name>alexnet</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/alexnet/IR/</Path>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
-            <Path></Path>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1299,11 +1299,11 @@
 	<Test>
         <Model>
             <Name>ssd_mobile_net_v2_coco</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1311,17 +1311,17 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
         <Model>
             <Name>ssd_mobile_net_v2_coco</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
@@ -1335,11 +1335,227 @@
     <Test>
         <Model>
             <Name>ssd_mobile_net_v2_coco</Name>
-            <Path></Path>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/IR/</Path>
         </Model>
         <Dataset>
             <Name>MS COCO</Name>
-            <Path></Path>
+            <Path>../../data/MS_COCO/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-50</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/50/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>resnet-50</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/50/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-50</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/50/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-101</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/101/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>resnet-101</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/101/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-101</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/101/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-152</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/152/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>resnet-152</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/152/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>resnet-152</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/resnet/v1/152/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>2</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>googlenet-v3</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v3/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>googlenet-v3</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v3/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>3</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>100</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Name>googlenet-v3</Name>
+            <Path>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/classification/googlenet/v3/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
             <BatchSize>3</BatchSize>
