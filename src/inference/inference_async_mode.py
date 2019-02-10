@@ -71,7 +71,7 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
                 command line argument')
             sys.exit(1)      
     if os.path.isdir(input[0]):
-        data = [input[0] + file for file in os.listdir(input[0])]
+        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
         data = input
     return net, plugin, data
@@ -150,11 +150,11 @@ def start_infer_one_req(images, exec_net, model, number_iter):
     size = model.batch_size
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
-    for i in range(len(images) // model.batch_size):
-        for j in range(number_iter):
-            infer_request_handle = exec_net.start_async(request_id = 0,
-                inputs = {input_blob: images[i * size: (i + 1) * size]})
-            infer_status = infer_request_handle.wait()
+    for j in range(number_iter):
+        infer_request_handle = exec_net.start_async(request_id = 0,
+            inputs = {input_blob: images[j * size % len(images): \
+             ((j + 1) * size - 1) % len(images) + 1]})
+        infer_status = infer_request_handle.wait()
         res.append(copy.copy(infer_request_handle.outputs[next(iter(model.outputs))]))   
     log.info('Processing output blob')
     time_e = time() - time_s
@@ -162,11 +162,11 @@ def start_infer_one_req(images, exec_net, model, number_iter):
     for r_l1 in res:
         for r_l2 in r_l1:
             result.append(r_l2)
-    res = np.asarray(result)
+    res = np.asarray(result[0: len(images)])
     return res, time_e
 
 
-def start_infer_two_req(images, exec_net, model,  number_iter):
+def start_infer_two_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     prev_request_id  = 1
@@ -175,23 +175,96 @@ def start_infer_two_req(images, exec_net, model,  number_iter):
     res = []
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
-    for i in range(len(images) // model.batch_size):
-        for j in range(number_iter):
-            exec_net.start_async(request_id = curr_request_id,
-                inputs = {input_blob: images[i * size: (i + 1) * size]})
-            if exec_net.requests[prev_request_id].wait(-1) == 0:
-                pass
-            prev_request_id, curr_request_id = curr_request_id, prev_request_id
+    for j in range(number_iter):
+        exec_net.start_async(request_id = curr_request_id,
+            inputs = {input_blob: images[j * size % len(images): \
+             ((j + 1) * size - 1) % len(images) + 1]})
         if exec_net.requests[prev_request_id].wait(-1) == 0:
             res.append(copy.copy(exec_net.requests[prev_request_id].
                 outputs[next(iter(model.outputs))]))
+        prev_request_id, curr_request_id = curr_request_id, prev_request_id
+    if exec_net.requests[prev_request_id].wait(-1) == 0:
+        res.append(copy.copy(exec_net.requests[prev_request_id].
+            outputs[next(iter(model.outputs))]))
     time_e = time() - time_s
     result = []
     for r_l1 in res:
         for r_l2 in r_l1:
             result.append(r_l2)
-    res = np.asarray(result)
+    res = np.asarray(result[0: len(images)])
     return res, time_e
+
+def start_infer_n_req(images, exec_net, model, number_iter):
+    input_blob = next(iter(model.inputs))
+    requests_counter = len(exec_net.requests)
+    requests_images = [-1 for i in range(requests_counter)]
+    time_s = time()
+    size = model.batch_size
+    res = [-1 for i in range(len(images))]
+    if (len(images) % model.batch_size != 0):
+        raise ValueError('Wrong batch_size')
+    requests_status = []
+    k = requests_counter
+    for request_id in range(requests_counter):
+        exec_net.start_async(request_id = request_id,
+        inputs = {input_blob: images[request_id * size % len(images): \
+        ((request_id + 1) * size - 1) % len(images) + 1]})
+        requests_images[request_id] = (request_id * size % len(images), 
+            ((request_id + 1) * size - 1) % len(images) + 1)
+    while k < number_iter:
+        while not len(requests_status):
+            for request_id in range(requests_counter):
+                if exec_net.requests[request_id].wait(0) == 0:
+                    requests_status.append(request_id)
+        for request_id in requests_status:
+            if not (k < number_iter):
+                break
+            exec_net.requests[request_id].wait(1)
+            start = requests_images[request_id][0]
+            r_size = requests_images[request_id][-1]
+            tmp_buf = (exec_net.requests[request_id]. 
+                        outputs[next(iter(model.outputs))])
+            z = 0
+            for i in range(start, r_size):
+                if type(res[i]) is int:
+                    res[i] = copy.copy(tmp_buf[z])
+                else:
+                    res.append(copy.copy(tmp_buf[z]))
+                z += 1
+            exec_net.start_async(request_id = request_id,
+            inputs = {input_blob: images[k * size % len(images): \
+            ((k + 1) * size - 1) % len(images) + 1]})
+            requests_images[request_id] = (k * size % len(images), 
+            ((k + 1) * size - 1) % len(images) + 1)
+            k += 1
+        requests_status.clear()
+    else:
+        for request_id in range(requests_counter):
+            if exec_net.requests[request_id].wait(0) != 0:
+                    requests_status.append(request_id)
+        some_active = True
+        while some_active:
+            some_active = False
+            for request_id in requests_status:
+                if (exec_net.requests[request_id].wait(0) != 0):
+                   some_active = True
+                   break
+        for request_id in requests_status:
+            exec_net.requests[request_id].wait(1)
+            start = requests_images[request_id][0]
+            r_size = requests_images[request_id][-1]
+            tmp_buf = (exec_net.requests[request_id]. 
+                        outputs[next(iter(model.outputs))])
+            z = 0
+            for i in range(start, r_size):
+                if type(res[i]) is int:
+                    res[i] = copy.copy(tmp_buf[z])
+                else:
+                    res.append(copy.copy(tmp_buf[z]))
+                z += 1
+    res = np.asarray(res[0: len(images)][:])
+    time_e = time() - time_s
+    return res, time_e           
 
 
 def infer_async(images, exec_net, model, number_iter):
@@ -199,8 +272,10 @@ def infer_async(images, exec_net, model, number_iter):
         res = start_infer_video(images, exec_net, model, number_iter)
     elif len(exec_net.requests) == 1:
         res = start_infer_one_req(images, exec_net, model, number_iter)
+    elif len(exec_net.requests) == 2:
+       res = start_infer_two_req(images, exec_net, model, number_iter)
     else:
-        res = start_infer_two_req(images, exec_net, model, number_iter)
+        res = start_infer_n_req(images, exec_net, model, number_iter)
     return res
 
 

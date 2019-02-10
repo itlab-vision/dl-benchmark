@@ -36,15 +36,17 @@ def inference_benchmark(test_list):
             inference_time = pp.three_sigma_rule(inference_time)
             average_time = pp.calculate_average_time(inference_time)
             latency = pp.calculate_latency(inference_time)
-            fps = pp.calculate_fps(test_list[i].parameter.batch_size, latency)
+            fps = pp.calculate_fps(test_list[i].parameter.batch_size,
+                average_time)
         if mode == 'async':
             inference_time = inference.test_async(test_list[i].model,
                 test_list[i].dataset, test_list[i].parameter)
-            average_time = inference_time
-            fps = pp.calculate_fps(test_list[i].parameter.batch_size,
-                inference_time)
-        table_row = output.create_table_row(test_list[i].model, test_list[i].dataset,
-            test_list[i].parameter, average_time, latency, fps)
+            average_time = inference_time / test_list[i].parameter.iteration
+            fps = pp.calculate_fps(test_list[i].parameter.batch_size *
+                test_list[i].parameter.iteration, inference_time)
+        table_row = output.create_table_row(test_list[i].model,
+            test_list[i].dataset, test_list[i].parameter, average_time,
+            latency, fps)
         table.append(table_row)
     return table
 
@@ -55,7 +57,7 @@ if __name__ == '__main__':
             level = log.INFO, stream = sys.stdout)
         config, result_file = build_parser()
         test_list = config_parser.process_config(config)
-        log.info('Start inference tests on {} models'.format(len(test_list)))
+        log.info('Start {} inference tests'.format(len(test_list)))
         table = inference_benchmark(test_list)
         log.info('End inference tests')
         log.info('Saving data in file')

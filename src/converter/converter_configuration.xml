@@ -48,7 +48,7 @@
     <Model>
         <ModelFile>C:\Intel\computer_vision_sdk_2018.4.420\deployment_tools\model_downloader\classification\inception-resnet\v2\caffe\inception-resnet-v2.caffemodel</ModelFile>
         <OutputDir>C:\Intel\computer_vision_sdk_2018.4.420\deployment_tools\model_downloader\classification\inception-resnet\v2\IR</OutputDir>
-        <AdditionalOptions>--framework caffe --data_type FP32 --input_shape [1,3,299,299] --input data --output prob</AdditionalOptions>
+        <AdditionalOptions>--framework caffe --data_type FP32 --input_shape [1,3,299,299] --input data --output prob --mean_values [128.0,128.0,128.0] --scale_values [128.0,128.0,128.0]</AdditionalOptions>
     </Model>
     <Model>
         <ModelFile>C:\Intel\computer_vision_sdk_2018.4.420\deployment_tools\model_downloader\classification\resnet\v1\50\caffe\resnet-50.caffemodel</ModelFile>
