@@ -101,7 +101,7 @@
         <AdditionalOptions>--framework caffe --data_type FP32 --input_shape [1,3,227,227] --input data --mean_values data[104.0,117.0,123.0] --output prob</AdditionalOptions>
     </Model>
     <Model>
-        <ModelFile>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/tf/ssd_mobilenet_v2_coco.pb</ModelFile>
+        <ModelFile>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/tf/ssd_mobilenet_v2_coco.frozen.pb</ModelFile>
         <OutputDIR>C:/Intel/computer_vision_sdk_2018.5.445/deployment_tools/model_downloader/object_detection/common/ssd_mobilenet_v2_coco/IR/</OutputDIR>
         <AdditionalOptions>--framework tf --data_type FP32 --reverse_input_channels --input_shape [1,300,300,3] --input image_tensor --tensorflow_use_custom_operations_config ./extensions/front/tf/ssd_v2_support.json --tensorflow_object_detection_api_pipeline_config ./pipeline.config --output detection_classes,detection_scores,detection_boxes,num_detections</AdditionalOptions>
     </Model>
