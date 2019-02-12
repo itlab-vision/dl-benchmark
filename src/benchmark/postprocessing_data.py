@@ -1,5 +1,5 @@
 import math
-import statistics
+import numpy as np
 
 
 def delete_incorrect_time(time, min_correct_time):
@@ -11,11 +11,8 @@ def delete_incorrect_time(time, min_correct_time):
 
 
 def three_sigma_rule(time):
-    average_time = statistics.mean(time)
-    sigm = 0
-    for i in range(len(time)):
-        sigm += (time[i] - average_time) ** 2
-    sigm = math.sqrt(sigm / (len(time) - 1))
+    average_time = np.mean(time)
+    sigm = np.std(time)
     upper_bound = average_time + (3 * sigm)
     lower_bound = average_time - (3 * sigm)
     valid_time = []
@@ -26,13 +23,13 @@ def three_sigma_rule(time):
 
 
 def calculate_average_time(time):
-    average_time = statistics.mean(time)
+    average_time = np.mean(time)
     return average_time
 
 
 def calculate_latency(time):
     time.sort()
-    latency = statistics.median(time)
+    latency = np.median(time)
     return latency
 
 
