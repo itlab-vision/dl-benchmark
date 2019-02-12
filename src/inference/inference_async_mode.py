@@ -94,7 +94,7 @@ def convert_image(model, data):
     for i in range(len(data)):
         image = cv2.imread(data[i])
         if (image.shape[:-1] != (h, w)):
-            image = cv2.resize(image, (h, w))
+            image = cv2.resize(image, (w, h))
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
@@ -117,7 +117,7 @@ def start_infer_video(path, exec_net, model, number_iter):
             if not ret:
                 break
             if (frame.shape[:-1] != (h, w)):
-                frame = cv2.resize(frame, (h, w))       
+                frame = cv2.resize(frame, (w, h))       
                 frame = frame.transpose((2, 0, 1))
             images_t.append(frame)
         if (len(images_t) == 0):
