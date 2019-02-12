@@ -19,9 +19,8 @@ def build_argparse():
 
 
 def converter(mo, conversion_list):
-    i = 0
-    while i < len(conversion_list):
-        if conversion_list[i].additional_options is None:
+    for i in range(len(conversion_list)):
+        if conversion_list[i].additional_options == 'None':
             command = 'python {} --input_model {} --output_dir {}'.format(mo,
                 conversion_list[i].modelfile, conversion_list[i].outdir)
         else:
@@ -30,7 +29,6 @@ def converter(mo, conversion_list):
                 conversion_list[i].additional_options)
         print(command)
         os.system(command)
-        i += 1
 
 
 if __name__ == '__main__':
