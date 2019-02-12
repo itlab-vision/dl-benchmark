@@ -1,5 +1,6 @@
 from lxml import etree
 
+
 class machine:
     def __init__(self, params):
         self.ip = params[0]

@@ -17,6 +17,7 @@ def build_parser():
         help = 'Type of operating system.', required = True)
     return parser
 
+
 def main():
     param_list = build_parser().parse_args()
     if param_list.os_type == 'Windows':
