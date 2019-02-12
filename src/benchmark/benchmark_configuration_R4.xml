@@ -3,9 +3,8 @@
     <Test>
         <Model>
             <Name>densenet-121</Name>
-<<<<<<< .mine            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR</Path>
-=======            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
->>>>>>> .theirs        </Model>
+            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
+        </Model>
         <Dataset>
             <Name>ImageNet</Name>
             <Path>../../data/ImageNET/</Path>
@@ -22,9 +21,8 @@
 	<Test>
         <Model>
             <Name>densenet-121</Name>
-<<<<<<< .mine            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR</Path>
-=======            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
->>>>>>> .theirs        </Model>
+            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
+    </Model>
         <Dataset>
             <Name>ImageNet</Name>
             <Path>../../data/ImageNET/</Path>
@@ -41,9 +39,8 @@
     <Test>
         <Model>
             <Name>densenet-121</Name>
-<<<<<<< .mine            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR</Path>
-=======            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
->>>>>>> .theirs        </Model>
+            <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
+       </Model>
         <Dataset>
             <Name>ImageNet</Name>
             <Path>../../data/ImageNET/</Path>
