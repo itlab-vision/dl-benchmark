@@ -91,6 +91,7 @@ def infer_sync(net, plugin, images, number_it, log):
         res = exec_net.infer(inputs = {input_blob : images})
         time_infer.append((time() - t0))
     res = res[out_blob]
+    del exec_net
     return res, time_infer
 
 

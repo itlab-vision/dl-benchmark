@@ -366,8 +366,8 @@ def main():
         exec_net = plugin.load(network = net, num_requests = args.requests)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_async(images, exec_net, net, args.number_iter)
-        #infer_output(res, images, data, args.labels, args.number_top,
-        #    args.prob_threshold, args.color_map, log, args.model_type)
+        infer_output(res, images, data, args.labels, args.number_top,
+            args.prob_threshold, args.color_map, log, args.model_type)
         del net
         del exec_net
         del plugin
