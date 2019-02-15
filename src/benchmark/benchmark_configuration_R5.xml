@@ -660,7 +660,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
@@ -678,7 +678,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -696,7 +696,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -822,7 +822,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
@@ -840,7 +840,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -858,7 +858,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -876,7 +876,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
@@ -894,7 +894,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -912,7 +912,7 @@
         <Parameters>
             <BatchSize>3</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -1306,9 +1306,9 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>1</BatchSize>
             <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime>0.005</MinInferenceTime>
@@ -1324,9 +1324,9 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>1</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
@@ -1342,9 +1342,9 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>1</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
+            <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
             <MinInferenceTime></MinInferenceTime>
