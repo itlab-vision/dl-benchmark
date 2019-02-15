@@ -285,7 +285,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime></MinInferenceTime>
+            <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
