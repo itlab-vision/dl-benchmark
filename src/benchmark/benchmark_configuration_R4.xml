@@ -22,7 +22,7 @@
         <Model>
             <Name>densenet-121</Name>
             <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
-    </Model>
+        </Model>
         <Dataset>
             <Name>ImageNet</Name>
             <Path>../../data/ImageNET/</Path>
@@ -33,14 +33,14 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
         <Model>
             <Name>densenet-121</Name>
             <Path>C:/Intel/computer_vision_sdk_2018.4.420/deployment_tools/model_downloader/classification/densenet/121/IR/</Path>
-       </Model>
+        </Model>
         <Dataset>
             <Name>ImageNet</Name>
             <Path>../../data/ImageNET/</Path>
@@ -51,7 +51,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -87,7 +87,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
@@ -105,7 +105,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -141,7 +141,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
@@ -159,7 +159,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -195,7 +195,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
@@ -213,7 +213,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -249,7 +249,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
@@ -267,7 +267,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -285,7 +285,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
@@ -303,7 +303,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
@@ -321,7 +321,7 @@
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
             <IterationCount>100</IterationCount>
-            <MinInferenceTime>0.005</MinInferenceTime>
+            <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
 	<Test>
