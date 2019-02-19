@@ -2,7 +2,10 @@
     <Machine>
         <Ip></Ip>
         <Login></Login>
-        <Os_Type></Os_Type>
         <Password></Password>
+        <Os_type></Os_type>
+        <Path_to_ftp_client></Path_to_ftp_client>
+        <Path_to_OpenVINO_env></Path_to_OpenVINO_env>
+        <Benchmark_config></Benchmark_config>
     </Machine>
 </Machines>

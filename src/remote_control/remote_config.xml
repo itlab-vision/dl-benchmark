@@ -3,14 +3,17 @@
         <Ip>10.0.16.81</Ip>
         <Login>Kumbrasev.p</Login>
         <Password>Qwerty123</Password>
-        <Os_Type>Windows</Os_Type>
-        <Client_Path>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Client_Path>
+        <Os_type>Windows</Os_type>
+        <Path_to_ftp_client>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Path_to_ftp_client>
+        <Path_to_OpenVINO_env></Path_to_OpenVINO_env>
+        <Benchmark_config></Benchmark_config>
     </Machine>
     <Machine>
         <Ip>10.0.16.125</Ip>
         <Login>itmm</Login>
         <Password>itmm</Password>
-        <Os_Type>Linux</Os_Type>
-        <Client_Path>~/Documents/openvino-dl-benchmark/src/remote_control/ftp_client.py</Client_Path>
+        <Os_type>Linux</Os_type>
+        <Path_to_ftp_client>~/Documents/openvino-dl-benchmark/src/remote_control/ftp_client.py</Path_to_ftp_client>
+        <Path_to_OpenVINO_env></Path_to_OpenVINO_env>
     </Machine>
 </Machines>

@@ -7,7 +7,9 @@ class machine:
         self.login = params[1]
         self.psw = params[2]
         self.os_type = params[3]
-        self.client_path = params[4]
+        self.path_to_ftp_client = params[4]
+        self.path_to_OpenVINO_env = params[5]
+        self.benchmark_config = params[6] 
 
 
 def parse_config(config):
@@ -17,17 +19,21 @@ def parse_config(config):
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
     machine_list = []
     for machine_tag in root.getchildren():
-        machine_parameters = []
+        machine_parameters = [None] * 6
         for machine_parameter in machine_tag.getchildren():
             if machine_parameter.tag == 'Ip':
-                machine_parameters.append(machine_parameter.text)
+                machine_parameters[0] = machine_parameter.text
             if machine_parameter.tag == 'Login':
-                machine_parameters.append(machine_parameter.text)
+                machine_parameters[1] = machine_parameter.text
             if machine_parameter.tag == 'Password':
-                machine_parameters.append(machine_parameter.text)
-            if machine_parameter.tag == 'Os_Type':
-                machine_parameters.append(machine_parameter.text)
-            if machine_parameter.tag == 'Client_Path':
-                machine_parameters.append(machine_parameter.text)
+                machine_parameters[2] = machine_parameter.text
+            if machine_parameter.tag == 'Os_type':
+                machine_parameters[3] = machine_parameter.text
+            if machine_parameter.tag == 'Path_to_ftp_client':
+                machine_parameters[4] = (machine_parameter.text)
+            if machine_parameter.tag == 'Path_to_OpenVINO_env':
+                machine_parameters[5] = (machine_parameter.text)
+            if machine_parameter.tag == 'Benchmark_config':
+                machine_parameters[6] = (machine_parameter.text)
         machine_list.append(machine(machine_parameters))
     return machine_list
