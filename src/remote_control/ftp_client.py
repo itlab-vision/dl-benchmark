@@ -28,14 +28,16 @@ def main():
     path_to_benchmark = os.path.normpath(path_to_ftp_client +
         '//..//benchmark')
     if param_list.os_type == 'Windows':
-        os.system('{} & cd {} & python inference_benchmark.py -c {} -f {}\\result_table.csv'
-            .format(param_list.path_to_env, path_to_benchmark,
-            param_list.benchmark_config, path_to_ftp_client))
-    """
+        os.system(('{} & cd {} & python inference_benchmark.py -c {}' + 
+            ' -f {}\\result_table.csv').format(param_list.path_to_env,
+            path_to_benchmark, param_list.benchmark_config,
+            path_to_ftp_client))
+    
     elif param_list.os_type == 'Linux':
-        path = os.path.split(os.path.abspath(__file__))[0]
-        os.system(os.path.join(path, 'launch_benchmark.sh'))
-    """
+        os.system(('source {}; cd {}; python inference_benchmark.py -c {}' + 
+            ' -f {}\\result_table.csv').format(param_list.path_to_env,
+            path_to_benchmark, param_list.benchmark_config,
+            path_to_ftp_client))
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
     f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
