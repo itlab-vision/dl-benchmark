@@ -19,7 +19,7 @@ def parse_config(config):
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
     machine_list = []
     for machine_tag in root.getchildren():
-        machine_parameters = [None] * 6
+        machine_parameters = [None] * 7
         for machine_parameter in machine_tag.getchildren():
             if machine_parameter.tag == 'Ip':
                 machine_parameters[0] = machine_parameter.text
