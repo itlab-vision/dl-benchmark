@@ -21,23 +21,39 @@ def build_parser():
         help = 'Type of operating system.', required = True)
     return parser
 
+def launch_benchmark(path_to_env, path_to_benchmark, path_to_ftp_client,
+                     benchmark_config, os_type):
+    if os_type == 'Windows':
+        launch_benchmark_on_win(path_to_env, path_to_benchmark, 
+            path_to_ftp_client, benchmark_config)
+    elif os_type == 'Linux':
+        launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
+            path_to_ftp_client, benchmark_config)
+
+
+def launch_benchmark_on_win(path_to_env, path_to_benchmark, path_to_ftp_client,
+                            benchmark_config):
+    os.system(('{} & cd {} & python inference_benchmark.py -c {}' + 
+            ' -f {}\\result_table.csv').format(path_to_env, path_to_benchmark, 
+            benchmark_config, path_to_ftp_client))
+
+
+def launch_benchmark_on_linux(path_to_env, path_to_benchmark,
+                              path_to_ftp_client, benchmark_config):
+    os.system(('#!/bin/bash/; source {}; cd {}; python inference_benchmark.py -c {}' + 
+            ' -f {}\\result_table.csv > ' + path_to_ftp_client + '/res.txt').format(path_to_env, path_to_benchmark,
+            benchmark_config, path_to_ftp_client))
+
 
 def main():
     param_list = build_parser().parse_args()
     path_to_ftp_client = os.path.split(os.path.abspath(__file__))[0]
     path_to_benchmark = os.path.normpath(path_to_ftp_client +
         '//..//benchmark')
-    if param_list.os_type == 'Windows':
-        os.system(('{} & cd {} & python inference_benchmark.py -c {}' + 
-            ' -f {}\\result_table.csv').format(param_list.path_to_env,
-            path_to_benchmark, param_list.benchmark_config,
-            path_to_ftp_client))
-    
-    elif param_list.os_type == 'Linux':
-        os.system(('source {}; cd {}; python inference_benchmark.py -c {}' + 
-            ' -f {}\\result_table.csv').format(param_list.path_to_env,
-            path_to_benchmark, param_list.benchmark_config,
-            path_to_ftp_client))
+    launch_benchmark(param_list.path_to_env, path_to_benchmark,
+        path_to_ftp_client, param_list.benchmark_config,
+        param_list.os_type)
+        
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
     f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
