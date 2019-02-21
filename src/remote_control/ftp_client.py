@@ -41,8 +41,8 @@ def launch_benchmark_on_win(path_to_env, path_to_benchmark, path_to_ftp_client,
 
 def launch_benchmark_on_linux(path_to_env, path_to_benchmark,
                               path_to_ftp_client, benchmark_config):
-    sp = subprocess.Popen(['/bin/bash', '-i', '-c', 'source {}; cd {};' +
-        ' python3 inference_benchmark.py -c {} -f {}\\result_table.csv'.format(
+    sp = subprocess.Popen(['/bin/bash', '-i', '-c', ('source {}; cd {};' +
+        ' python3 inference_benchmark.py -c {} -f {}\\result_table.csv').format(
             path_to_env, path_to_benchmark, benchmark_config,
             path_to_ftp_client)])
     sp.communicate()
