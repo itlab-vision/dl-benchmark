@@ -22,29 +22,29 @@ def build_parser():
         help = 'Type of operating system.', required = True)
     return parser
 
-def launch_benchmark(path_to_env, path_to_benchmark, path_to_ftp_client,
-                     benchmark_config, os_type):
+def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
+                     os_type, path_to_res_table, log_file):
     if os_type == 'Windows':
         launch_benchmark_on_win(path_to_env, path_to_benchmark, 
-            path_to_ftp_client, benchmark_config)
+            benchmark_config, path_to_res_table, log_file)
     elif os_type == 'Linux':
         launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
-            path_to_ftp_client, benchmark_config)
+            benchmark_config, path_to_res_table, log_file)
 
 
-def launch_benchmark_on_win(path_to_env, path_to_benchmark, path_to_ftp_client,
-                            benchmark_config):
-    os.system(('{} & cd {} & python inference_benchmark.py -c {}' + 
-            ' -f {}\\result_table.csv').format(path_to_env, path_to_benchmark, 
-            benchmark_config, path_to_ftp_client))
+def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
+                            path_to_res_table, log_file):
+    os.system(('{} > {} & cd {} & python inference_benchmark.py -c {}' + 
+            ' -f {} >> {}').format(path_to_env, log_file, path_to_benchmark, 
+            benchmark_config, path_to_res_table, log_file))
 
 
-def launch_benchmark_on_linux(path_to_env, path_to_benchmark,
-                              path_to_ftp_client, benchmark_config):
-    sp = subprocess.Popen(['/bin/bash', '-i', '-c', ('source {}; cd {};' +
-        ' python3 inference_benchmark.py -c {} -f {}\\result_table.csv').format(
-            path_to_env, path_to_benchmark, benchmark_config,
-            path_to_ftp_client)])
+def launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
+                              benchmark_config, path_to_res_table, log_file):
+    sp = subprocess.Popen(('source {} > log_file; cd {};' +
+        'python3 inference_benchmark.py -c {} -f {} >> {}').format(path_to_env,
+        log_file, path_to_benchmark, benchmark_config, path_to_res_table,
+        log_file), shell=True, executable='/bin/bash')
     sp.communicate()
 
 
@@ -54,16 +54,17 @@ def main():
     path_to_ftp_client = os.path.split(os.path.abspath(__file__))[0]
     path_to_benchmark = os.path.normpath(path_to_ftp_client +
         '//..//benchmark')
+    log_file = os.path.join(path_to_ftp_client, 'log_file.txt')
+    path_to_res_table = os.path.join(path_to_ftp_client, 'result_table.csv')
     launch_benchmark(param_list.path_to_env, path_to_benchmark,
-        path_to_ftp_client, param_list.benchmark_config,
-        param_list.os_type)
+        param_list.benchmark_config, param_list.os_type,
+        path_to_res_table, log_file)
         
     ftp_con = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
-    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-        'result_table.csv'), 'rb')
+    result_table = open(path_to_res_table, 'rb')
     send = ftp_con.storbinary('STOR '+ platform.node() +
-        '_result_table.csv', f)
+        '_result_table.csv', result_table)
     ftp_con.close()
 
 
