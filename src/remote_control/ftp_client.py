@@ -41,7 +41,7 @@ def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
 
 def launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
                               benchmark_config, path_to_res_table, log_file):
-    sp = subprocess.Popen(('source {} > log_file; cd {};' +
+    sp = subprocess.Popen(('source {} > {}; cd {};' +
         'python3 inference_benchmark.py -c {} -f {} >> {}').format(path_to_env,
         log_file, path_to_benchmark, benchmark_config, path_to_res_table,
         log_file), shell=True, executable='/bin/bash')
