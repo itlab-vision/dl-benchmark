@@ -9,7 +9,9 @@ class machine:
         self.os_type = params[3]
         self.path_to_ftp_client = params[4]
         self.path_to_OpenVINO_env = params[5]
-        self.benchmark_config = params[6] 
+        self.benchmark_config = params[6]
+        self.log_file = params[7]
+        self.res_file = params[8]
 
 
 def parse_config(config):
@@ -19,21 +21,25 @@ def parse_config(config):
     root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
     machine_list = []
     for machine_tag in root.getchildren():
-        machine_parameters = [None] * 7
+        machine_parameters = [None] * 9
         for machine_parameter in machine_tag.getchildren():
-            if machine_parameter.tag == 'Ip':
+            if machine_parameter.tag == 'IP':
                 machine_parameters[0] = machine_parameter.text
             if machine_parameter.tag == 'Login':
                 machine_parameters[1] = machine_parameter.text
             if machine_parameter.tag == 'Password':
                 machine_parameters[2] = machine_parameter.text
-            if machine_parameter.tag == 'Os_type':
+            if machine_parameter.tag == 'OS':
                 machine_parameters[3] = machine_parameter.text
-            if machine_parameter.tag == 'Path_to_ftp_client':
+            if machine_parameter.tag == 'FTPClientPath':
                 machine_parameters[4] = (machine_parameter.text)
-            if machine_parameter.tag == 'Path_to_OpenVINO_env':
+            if machine_parameter.tag == 'OpenVINOEnvironmentPath':
                 machine_parameters[5] = (machine_parameter.text)
             if machine_parameter.tag == 'Benchmark_config':
                 machine_parameters[6] = (machine_parameter.text)
+            if machine_parameter.tag == 'LogFile':
+                machine_parameters[7] = (machine_parameter.text)
+            if machine_parameter.tag == 'ResultFile':
+                machine_parameters[8] = (machine_parameter.text)
         machine_list.append(machine(machine_parameters))
     return machine_list

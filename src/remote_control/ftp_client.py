@@ -20,6 +20,12 @@ def build_parser():
         help = 'Path to OpenVINO environment.', required = True)
     parser.add_argument('-os', '--os_type', type = str,
         help = 'Type of operating system.', required = True)
+    parser.add_argument('--res_file', type = str,
+        help = 'The name of the file to which the results'
+        'are written', required = True)
+    parser.add_argument('--log_file', type = str,
+        help = 'The name of the file to which the logs'
+        'are written', required = True)
     return parser
 
 def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
@@ -30,13 +36,15 @@ def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
     elif os_type == 'Linux':
         launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
             benchmark_config, path_to_res_table, log_file)
+    else:
+        raise ValueError('Unsupported OS')
 
 
 def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
                             path_to_res_table, log_file):
     os.system(('{} > {} & cd {} & python inference_benchmark.py -c {}' + 
-            ' -f {} >> {}').format(path_to_env, log_file, path_to_benchmark, 
-            benchmark_config, path_to_res_table, log_file))
+        ' -f {} >> {}').format(path_to_env, log_file, path_to_benchmark, 
+        benchmark_config, path_to_res_table, log_file))
 
 
 def launch_benchmark_on_linux(path_to_env, path_to_benchmark, 
@@ -54,8 +62,8 @@ def main():
     path_to_ftp_client = os.path.split(os.path.abspath(__file__))[0]
     path_to_benchmark = os.path.normpath(path_to_ftp_client +
         '//..//benchmark')
-    log_file = os.path.join(path_to_ftp_client, 'log_file.txt')
-    path_to_res_table = os.path.join(path_to_ftp_client, 'result_table.csv')
+    log_file = os.path.join(path_to_ftp_client, param_list.log_file)
+    path_to_res_table = os.path.join(path_to_ftp_client, param_list.res_file)
     launch_benchmark(param_list.path_to_env, path_to_benchmark,
         param_list.benchmark_config, param_list.os_type,
         path_to_res_table, log_file)

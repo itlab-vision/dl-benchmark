@@ -1,19 +1,13 @@
-<Machines>
-	<Machine>
-        <Ip>10.0.16.81</Ip>
+<Computers>
+    <Computer>
+        <IP>10.0.16.81</IP>
         <Login>Kumbrasev.p</Login>
         <Password>Qwerty123</Password>
-        <Os_type>Windows</Os_type>
-        <Path_to_ftp_client>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</Path_to_ftp_client>
-        <Path_to_OpenVINO_env></Path_to_OpenVINO_env>
+        <OS>Windows</OS>
+        <FTPClientPath>C:\\Users\\kumbrasev.p\\Documents\\GitHub\\openvino-dl-benchmark\\src\\remote_control\\ftp_client.py</FTPClientPath>
+        <OpenVINOEnvironmentPath></OpenVINOEnvironmentPath>
         <Benchmark_config></Benchmark_config>
-    </Machine>
-    <Machine>
-        <Ip>10.0.16.125</Ip>
-        <Login>itmm</Login>
-        <Password>itmm</Password>
-        <Os_type>Linux</Os_type>
-        <Path_to_ftp_client>~/Documents/openvino-dl-benchmark/src/remote_control/ftp_client.py</Path_to_ftp_client>
-        <Path_to_OpenVINO_env></Path_to_OpenVINO_env>
-    </Machine>
-</Machines>
+        <LogFile>log</LogFile>
+        <ResultFile>result.csv</ResultFile>
+    </Computer>
+</Computers>

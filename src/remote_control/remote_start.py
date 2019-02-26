@@ -12,7 +12,7 @@ def build_parser():
     parser.add_argument('-c', '--config', type = str,
         help = 'Path to configuration file', required = True)
     parser.add_argument('-s', '--server_ip', type = str,
-        help = 'Ip FTP server', required = True)
+        help = 'FTP server IP', required = True)
     parser.add_argument('-l', '--server_login', type = str,
         help = 'Login to FTP server', required = True)
     parser.add_argument('-p', '--server_psw', type = str,
@@ -36,9 +36,10 @@ def run_on_linux(machine, server_ip, server_login, server_psw):
     paramiko_con.connect(hostname=machine.ip, username=machine.login,
         password=machine.psw)
     paramiko_con.exec_command(('python {} -ip {} -l {} -p {} -env {} -b {} ' +
-        '-os {}').format(machine.path_to_ftp_client, server_ip, server_login,
-        server_psw, machine.path_to_OpenVINO_env, machine.benchmark_config,
-        machine.os_type))
+        '-os {} --res_file {} --log_file {}').format(machine.path_to_ftp_client,
+        server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
+        machine.benchmark_config, machine.os_type, machine.res_file,
+        machine.log_file))
     paramiko_con.close()
 
 
@@ -47,9 +48,10 @@ def run_on_windows(machine, server_ip, server_login, server_psw):
     process_startup = wmi_con.Win32_ProcessStartup.new()
     process_id, result = wmi_con.Win32_Process.Create(CommandLine=((
         'cmd.exe /c python {} -ip {} -l {} -p {} -env {} -b {} ' +
-        '-os {}').format(machine.path_to_ftp_client, server_ip, server_login,
-        server_psw, machine.path_to_OpenVINO_env, machine.benchmark_config,
-        machine.os_type)), ProcessStartupInformation=process_startup)
+        '-os {} --res_file {} --log_file {}').format(machine.path_to_ftp_client,
+        server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
+        machine.benchmark_config, machine.os_type, machine.res_file,
+        machine.log_file)), ProcessStartupInformation=process_startup)
     if result == 0:
         log.info('Process started successfully {}'.format(process_id))
     else:
