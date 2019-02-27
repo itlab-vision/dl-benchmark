@@ -9,7 +9,7 @@
 Разрешение: 709 x 510
 ﻿
 
-<img src="..\data\ImageNet\ILSVRC2012_val_00000023.JPEG" width="150"></img>
+<img src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
 
 
    Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |  Python (синхронный режим)  |  Python (асинхронный режим)        |
