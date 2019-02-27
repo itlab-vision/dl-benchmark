@@ -4,11 +4,11 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
 
 ## Repo Structure
 
-- `data` contains images for benchmarking.
-- `docs` contains project documentation (concept,
+- `data` directory contains images for benchmarking.
+- `docs` directory contains project documentation (concept,
   architecture an so on).
-- `src` contains benchmark sources.
-- `results` contains  validation and performance results.
+- `src` directory contains benchmark sources.
+- `results` directory contains validation and performance results.
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
