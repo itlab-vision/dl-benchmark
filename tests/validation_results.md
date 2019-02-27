@@ -39,7 +39,7 @@ vgg-19               |                           | 0.7072732 Granny Smith<br>0.0
 Разрешение: 500 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\ImageNet\ILSVRC2012_val_00000247.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
 </div>
 
    Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
@@ -69,7 +69,7 @@ vgg-19               |                           | 0.9999394 junco, snowbird<br>
 Разрешение: 333 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\ImageNet\ILSVRC2012_val_00018592.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
 </div>
 
    Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
