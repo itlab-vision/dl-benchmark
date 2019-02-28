@@ -8,11 +8,11 @@
 
 Разрешение: 709 x 510
 ﻿
+<div style='float: center'>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
 
-<img src="..\data\ImageNet\ILSVRC2012_val_00000023.JPEG" width="150">
-
-
-   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |  Python (синхронный режим)  |  Python (асинхронный режим)        |
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 alexnet              |                           | 0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|                             | 0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|
 densenet-121         |                           | 15.7979164 Granny Smith<br>9.9429455 lemon<br>9.3676043 orange<br>8.6181612 banana<br>7.1164074 tennis ball|                             | 15.7979155 Granny Smith<br>9.9429502 lemon<br>9.3676109 orange<br>8.6181631 banana<br>7.1164064 tennis ball|
@@ -38,10 +38,11 @@ vgg-19               |                           | 0.7072732 Granny Smith<br>0.0
 
 Разрешение: 500 x 500
 ﻿
+<div style='float: center'>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
+</div>
 
-<img src="..\data\ImageNet\ILSVRC2012_val_00000247.JPEG" width="150">
-
-   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |                           | 0.9979284 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|                              | 0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|
 densenet-121         |                           | 17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br>8.2504864 magpie|                              | 17.8269730 junco, snowbird<br>11.4734774 brambling, Fringilla montifringilla<br>11.3202305 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598871 chickadee<br>8.2504835 magpie|
@@ -67,10 +68,11 @@ vgg-19               |                           | 0.9999394 junco, snowbird<br>
 
 Разрешение: 333 x 500
 ﻿
+<div style='float: center'>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
+</div>
 
-<img src="..\data\ImageNet\ILSVRC2012_val_00018592.JPEG" width="150">
-
-   Название модели   |   C++ (синхронный режим)  |  C++ (асинхронный режим)  |   Python (синхронный режим)  |  Python (асинхронный режим)|
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |                           | 0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|                              | 0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|
 densenet-121         |                           | 13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship|                              | 13.9662342 lifeboat<br>7.8177428 drilling platform, offshore rig<br>7.7323399 liner, ocean liner<br>7.5702839 wreck<br>7.5621653 pirate, pirate ship|
