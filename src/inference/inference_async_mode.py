@@ -23,11 +23,11 @@ def build_parser():
         limited by device capabilities', required = True, type = int)
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int)
-    parser.add_argument('-t', '--model_type', help = 'Сhoose model type: \
+    parser.add_argument('-t', '--model_type', help = 'Choose model type: \
          1.classification  2.detection 3.segmentation',
         required = True, type = str)
     parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
-        (CPU)-targeted custom layers.Absolute path to a shared library \
+        (CPU)-targeted custom layers. Absolute path to a shared library \
         with the kernels implementation', type = str, default = None)
     parser.add_argument('-pp', '--plugin_dir', help = 'Path to a plugin \
         folder', type = str, default = None)
@@ -41,9 +41,9 @@ def build_parser():
         iterations', default = 1, type = int)
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str)
-    parser.add_argument('--prob_threshold', help='Probability threshold \
+    parser.add_argument('--prob_threshold', help = 'Probability threshold \
         for detections filtering', default = 0.5, type = float)
-    parser.add_argument('--color_map', help='Classes color map', 
+    parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str)
     return parser
 
