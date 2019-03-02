@@ -1,0 +1,13 @@
+<Computers>
+    <Computer>
+        <IP></IP>
+        <Login></Login>
+        <Password></Password>
+        <OS></OS>
+        <FTPClientPath></FTPClientPath>
+        <OpenVINOEnvironmentPath></OpenVINOEnvironmentPath>
+        <Benchmark_config></Benchmark_config>
+        <LogFile></LogFile>
+        <ResultFile></ResultFile>
+    </Computer>
+</Computers>
