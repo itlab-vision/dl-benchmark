@@ -31,10 +31,56 @@
     </Model>
     <Model>
         <ModelFile>densenet-161.caffemodel</ModelFile>
-        <OutputDIR>C:/classification/densenet/121/IR/</OutputDIR>
+        <OutputDIR>C:/classification/densenet/161/IR/</OutputDIR>
         <AdditionalOptions></AdditionalOptions>
     </Model>
 </Models>
 ```
 
-## Правила заполнения файла конфигурации для скрипта замера производительности
+## Заполнение файла конфигурации для скрипта замера производительности
+
+### Правила заполнения файла конфигурации для скрипта замера производительности
+
+### Пример заполнения файла конфигурации для скрипта замера производительности
+
+```bash
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Name>densenet-121</Name>
+            <Path>C:/classification/densenet/121/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>C:/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>10</BatchSize>
+            <Mode>Sync</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount></AsyncRequestCount>
+            <IterationCount>10</IterationCount>
+            <MinInferenceTime>0.005</MinInferenceTime>
+        </Parameters>
+    </Test>
+	<Test>
+        <Model>
+            <Name>densenet-121</Name>
+            <Path>C:/classification/densenet/121/IR/</Path>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>C:/ImageNET/</Path>
+        </Dataset>
+        <Parameters>
+            <BatchSize>10</BatchSize>
+            <Mode>Async</Mode>
+            <Plugin>CPU</Plugin>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <IterationCount>10</IterationCount>
+            <MinInferenceTime></MinInferenceTime>
+        </Parameters>
+    </Test>
+</Tests>
+```
