@@ -10,7 +10,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -28,7 +28,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -46,7 +46,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -64,7 +64,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -82,7 +82,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -100,7 +100,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -118,7 +118,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -136,7 +136,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -154,7 +154,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -172,7 +172,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -190,7 +190,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -208,7 +208,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -226,7 +226,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -244,7 +244,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -262,7 +262,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -280,7 +280,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -298,7 +298,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -316,7 +316,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -334,7 +334,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -352,7 +352,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -370,7 +370,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -388,7 +388,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -406,7 +406,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -424,7 +424,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -442,7 +442,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -460,7 +460,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -478,7 +478,7 @@
             <Path>../../data/WIDER_FACE/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -496,7 +496,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -514,7 +514,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -532,7 +532,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -550,7 +550,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -568,7 +568,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -586,7 +586,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -604,7 +604,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -622,7 +622,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -640,7 +640,7 @@
             <Path>../../data/CelebA/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -658,7 +658,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -676,7 +676,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -694,7 +694,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -712,7 +712,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -730,7 +730,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -748,7 +748,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -766,7 +766,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -784,7 +784,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -802,7 +802,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -820,7 +820,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -838,7 +838,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -856,7 +856,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -874,7 +874,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -892,7 +892,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -910,7 +910,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>GPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -928,7 +928,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -946,7 +946,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -964,7 +964,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -982,7 +982,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1000,7 +1000,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1018,7 +1018,7 @@
             <Path>../../data/PASCAL_VOC/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1036,7 +1036,7 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1054,7 +1054,7 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1072,7 +1072,7 @@
             <Path>../../data/MS_COCO/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1090,7 +1090,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1108,7 +1108,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1126,7 +1126,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1144,7 +1144,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1162,7 +1162,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1180,7 +1180,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1198,7 +1198,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1216,7 +1216,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1234,7 +1234,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1252,7 +1252,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1270,7 +1270,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1288,7 +1288,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1360,7 +1360,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1378,7 +1378,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1396,7 +1396,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1414,7 +1414,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1432,7 +1432,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1450,7 +1450,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1468,7 +1468,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1486,7 +1486,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1504,7 +1504,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
@@ -1522,7 +1522,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount></AsyncRequestCount>
@@ -1540,7 +1540,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>1</AsyncRequestCount>
@@ -1558,7 +1558,7 @@
             <Path>../../data/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>3</BatchSize>
+            <BatchSize>10</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
             <AsyncRequestCount>2</AsyncRequestCount>
