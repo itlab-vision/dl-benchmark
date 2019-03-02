@@ -3,6 +3,7 @@ import sys
 import argparse
 import numpy as np
 import logging as log
+import postprocessing_data as pp
 from time import time
 import copy
 import cv2
@@ -353,6 +354,17 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         segmentation_output(res, color_map, log)
 
 
+def process_result(inference_time, batch_size, iteration_count):
+    average_time = inference_time / iteration_count
+    fps = pp.calculate_fps(batch_size * iteration_count, inference_time)
+    return average_time, fps
+
+
+def result_output(average_time, fps):
+    print('Average time of single pass : {}'.format(average_time))
+    print('FPS : {}'.format(fps))
+
+
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
@@ -366,8 +378,10 @@ def main():
         exec_net = plugin.load(network = net, num_requests = args.requests)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_async(images, exec_net, net, args.number_iter)
+        average_time, fps = process_result(time, args.batch_size, args.number_iter)
         infer_output(res, images, data, args.labels, args.number_top,
             args.prob_threshold, args.color_map, log, args.model_type)
+        result_output(average_time, fps)
         del net
         del exec_net
         del plugin
