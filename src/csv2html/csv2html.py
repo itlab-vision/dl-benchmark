@@ -18,6 +18,7 @@ def open_csv_table(path_table_csv):
         raise ValueError('Wrong path the inference table!')
     with open(path_table_csv) as file:
         table_csv = file.readlines()
+        file.close()
     return table_csv
 
 def convert_csv_table_to_html(table_csv):
