@@ -30,7 +30,7 @@ def convert_csv_table_to_html(table_csv):
     return table_html
 
 def save_html_table(table_html, path_table_html):
-    table_html = table_html.get_html_string()
+    table_html = table_html.get_html_string(attributes={"border":"1"})
     html_file = open(path_table_html, 'w')
     html_file.write(table_html)
 
