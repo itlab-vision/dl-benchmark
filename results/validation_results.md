@@ -107,7 +107,7 @@ vgg-19               |                           | 0.9965242 lifeboat<br>0.00088
 
  Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |                           |                           |                             | <img width="150" src="\semantic_segmentation\async_ILSVRC2012_val_00000023.bmp"></img> |
+dilation             |                           | <img width="150" src="\semantic_segmentation\async_cpp_ILSVRC2012_val_00000023.bmp"></img> |                             | <img width="150" src="\semantic_segmentation\async_python_ILSVRC2012_val_00000023.bmp"></img> |
 
 ### Тестовое изображение 2
 
@@ -121,7 +121,7 @@ dilation             |                           |                           |  
 
  Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |                           |                           |                             | <img width="150" src="\semantic_segmentation\async_ILSVRC2012_val_00000247.bmp"></img> |
+dilation             |                           | <img width="150" src="\semantic_segmentation\async_cpp_ILSVRC2012_val_00000247.bmp"></img> |                             | <img width="150" src="\semantic_segmentation\async_python_ILSVRC2012_val_00000247.bmp"></img> |
 
 ### Тестовое изображение 3
 
@@ -135,7 +135,7 @@ dilation             |                           |                           |  
 
  Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |                           |                           |                             | <img width="150" src="\semantic_segmentation\async_ILSVRC2012_val_00018592.bmp"></img> |
+dilation             |                           | <img width="150" src="\semantic_segmentation\async_cpp_ILSVRC2012_val_00018592.bmp"></img> |                             | <img width="150" src="\semantic_segmentation\async_python_ILSVRC2012_val_00018592.bmp"></img> |
 
 
 
