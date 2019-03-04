@@ -93,5 +93,21 @@ vgg-16               |                           | 0.9821942 lifeboat<br>0.00828
 vgg-19               |                           | 0.9965242 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|                              | 0.9965214 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|
 
 
+## Результаты семантической сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [ImageNet][imagenet]
+
+Разрешение: 709 x 510
+﻿
+<div style='float: center'>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
+
+ Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+dilation             |                           | 0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009
+
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
