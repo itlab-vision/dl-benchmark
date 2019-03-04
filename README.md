@@ -39,7 +39,7 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
     remotely.
 
 - `results` directory contains validation and performance results.
-  - [`validation_results.md`](docs/validation_results.md) is a table
+  - [`validation_results.md`](results/validation_results.md) is a table
     that confirms correctness of inference implementation based on
     Intel® Distribution of OpenVINO™ toolkit.
   - `*.csv` is a table of benchmarking results in csv-format.
