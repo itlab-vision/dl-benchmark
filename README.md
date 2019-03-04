@@ -12,7 +12,7 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
   - `MS_COCO` is a subset of test images from
     [MS COCO dataset][ms-coco].
   - `PASCAL_VOC` is a subset of test images from
-    [PASCAL VOC 2007, 2012 datasets][[pascal-voc].
+    [PASCAL VOC 2007, 2012 datasets][pascal-voc].
   - `WIDER_FACE` is a subset of test images from
     [WIDER FACE dataset][wider-face].
 
