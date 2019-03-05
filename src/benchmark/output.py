@@ -11,7 +11,7 @@ def create_table(tablename):
     file.close()
 
 
-def add_row_to_table(table, row):
+def add_row_to_table(tablename, row):
     file = open(tablename, 'a')
     file.write(row + '\n')
     file.close()

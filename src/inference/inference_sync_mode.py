@@ -198,7 +198,8 @@ def main():
         net, plugin, data = prepare_model(args.model, args.weights,
             args.cpu_extension, args.device, args.plugin_dir, args.input, log)
         net.batch_size = args.batch_size
-        images = convert_image(net, data)log.info('Loading model to the plugin')
+        images = convert_image(net, data)
+        log.info('Loading model to the plugin')
         exec_net = plugin.load(network = net)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_sync(images, exec_net, net, args.number_iter)
