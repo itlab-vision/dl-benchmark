@@ -33,6 +33,7 @@ def inference_benchmark(test_list):
         inference_async_scrypt = os.path.join(inference_folder, inference_async_mode.py)
         inference_sync_scrypt = os.path.join(inference_folder, inference_sync_mode.py)
         if mode == 'sync':
+            log.info('Start sync inference test on model : {}'.format(test_list[i].model.model))
             cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
                 -mi {} --raw_output true'.format(inference_sync_scrypt,
                     test_list[i].model.model, test_list[i].model.weight,
@@ -43,7 +44,9 @@ def inference_benchmark(test_list):
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if not test.poll():
+                log.warning('Sync inference test on model: {} was ended with error'.format(test_list[i].model.model))
                 continue
+            log.info('End sync inference test on model : {}'.format(test_list[i].model.model))
             lastline = ''
             for line in test.stdout:
                 lastline = line
@@ -52,6 +55,7 @@ def inference_benchmark(test_list):
             fps = float(result[1])
             latency = float(result[2])
         if mode == 'async':
+            log.info('Start async inference test on model : {}'.format(test_list[i].model.model))
             cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
                 -r {} --raw_output true'.format(inference_async_scrypt,
                     test_list[i].model.model, test_list[i].model.weight,
@@ -62,7 +66,9 @@ def inference_benchmark(test_list):
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if not test.poll():
+                log.warning('Async inference test on model: {} was ended with error'.format(test_list[i].model.model))
                 continue
+            log.info('End sync inference test on model : {}'.format(test_list[i].model.model))
             lastline = ''
             for line in test.stdout:
                 lastline = line
