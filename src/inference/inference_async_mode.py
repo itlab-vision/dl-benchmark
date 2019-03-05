@@ -24,8 +24,8 @@ def build_parser():
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int)
     parser.add_argument('-t', '--model_type', help = 'Choose model type: \
-         1.classification  2.detection 3.segmentation',
-        required = True, type = str)
+        0.without output 1.classification 2.detection 3.segmentation',
+        default = '', type = str)
     parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
         (CPU)-targeted custom layers. Absolute path to a shared library \
         with the kernels implementation', type = str, default = None)
@@ -45,6 +45,8 @@ def build_parser():
         for detections filtering', default = 0.5, type = float)
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str)
+    parser.add_argument('--raw_output', help = 'Raw output without logs',
+        default = False, type = bool)
     return parser
 
 
@@ -194,6 +196,7 @@ def start_infer_two_req(images, exec_net, model, number_iter):
             result.append(r_l2)
     res = np.asarray(result[0: len(images)])
     return res, time_e
+
 
 def start_infer_n_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
@@ -346,7 +349,9 @@ def detection_output(res, data, prob_threshold):
 
 def infer_output(res, images, data, labels, number_top, prob_threshold,
         color_map, log, model_type):
-    if model_type == 'classification': 
+    if model_type == '':
+        return
+    elif model_type == 'classification': 
         classification_output(res, data, labels, number_top, log)
     elif model_type == 'detection':
         detection_output(res, data, prob_threshold)
@@ -361,8 +366,12 @@ def process_result(inference_time, batch_size, iteration_count):
 
 
 def result_output(average_time, fps):
-    print('Average time of single pass : {}'.format(average_time))
-    print('FPS : {}'.format(fps))
+    print('Average time of single pass : {0:.3f}'.format(average_time))
+    print('FPS : {0:.3f}'.format(fps))
+
+
+def raw_result_output(average_time, fps):
+    print('{0:.3f},{0:.3f}'.format(average_time, fps))
 
 
 def main():
@@ -379,14 +388,18 @@ def main():
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_async(images, exec_net, net, args.number_iter)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
-        infer_output(res, images, data, args.labels, args.number_top,
-            args.prob_threshold, args.color_map, log, args.model_type)
-        result_output(average_time, fps)
+        if not args.raw_output:
+            infer_output(res, images, data, args.labels, args.number_top,
+                args.prob_threshold, args.color_map, log, args.model_type)
+            result_output(average_time, fps)
+        else:
+            raw_result_output(average_time, fps)
         del net
         del exec_net
         del plugin
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
+        sys.exit(1)
 
 
 if __name__ == '__main__':
