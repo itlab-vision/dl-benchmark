@@ -30,10 +30,12 @@ def inference_benchmark(test_list):
         fps = None
         average_time = None
         inference_folder = os.path.normpath('../inference')
+        inference_async_scrypt = os.path.join(inference_folder, inference_async_mode.py)
+        inference_sync_scrypt = os.path.join(inference_folder, inference_sync_mode.py)
         if mode == 'sync':
-            cmd_line = 'python {}/inference_sync_mode.py -m {} -w {} -i {} \
-                -b {} -d {} -ni {} -mi {} --raw_output true'.format(inference_folder,
-                        test_list[i].model.model, test_list[i].model.weight,
+            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -mi {} --raw_output true'.format(inference_sync_scrypt,
+                    test_list[i].model.model, test_list[i].model.weight,
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.min_inference_time)
@@ -50,9 +52,9 @@ def inference_benchmark(test_list):
             fps = float(result[1])
             latency = float(result[2])
         if mode == 'async':
-            cmd_line = 'python {}/inference_async_mode.py -m {} -w {} -i {} \
-                -b {} -d {} -ni {} -r {} --raw_output true'.format(inference_folder,
-                        test_list[i].model.model, test_list[i].model.weight,
+            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -r {} --raw_output true'.format(inference_async_scrypt,
+                    test_list[i].model.model, test_list[i].model.weight,
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.async_request)
