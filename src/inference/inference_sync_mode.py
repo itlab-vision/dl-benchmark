@@ -180,10 +180,10 @@ def process_result(inference_time, batch_size, min_infer_time):
     return average_time, latency, fps
 
 
-def result_output(average_time, fps, latency):
-    print('Average time of single pass : {0:.3f}'.format(average_time))
-    print('FPS : {0:.3f}'.format(fps))
-    print('Latency : {0:.3f}'.format(latency))
+def result_output(average_time, fps, latency, log):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
+    log.info('Latency : {0:.3f}'.format(latency))
 
 
 def raw_result_output(average_time, fps, latency):
@@ -206,7 +206,7 @@ def main():
         if not args.raw_output:
             infer_output(res, net, args.model_type, args.labels, args.color_map, data, args.number_top, 
                 args.prob_threshold, images, log)
-            result_output(average_time, latency, fps)
+            result_output(average_time, latency, fps, log)
         else:
             raw_result_output(average_time, fps, latency)
         del net

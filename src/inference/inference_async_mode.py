@@ -365,9 +365,9 @@ def process_result(inference_time, batch_size, iteration_count):
     return average_time, fps
 
 
-def result_output(average_time, fps):
-    print('Average time of single pass : {0:.3f}'.format(average_time))
-    print('FPS : {0:.3f}'.format(fps))
+def result_output(average_time, fps, log):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
 
 
 def raw_result_output(average_time, fps):
@@ -391,7 +391,7 @@ def main():
         if not args.raw_output:
             infer_output(res, images, data, args.labels, args.number_top,
                 args.prob_threshold, args.color_map, log, args.model_type)
-            result_output(average_time, fps)
+            result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)
         del net
