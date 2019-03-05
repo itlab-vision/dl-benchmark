@@ -153,7 +153,7 @@
 - Шестой параметр - путь до файла, устанавливающего окружение OpenVINO.
   Параметр описывается внутри тегов `OpenVINOEnvironmentPath`.
 - Седьмой параметр - путь до конфигурации бэнчмарка.
-  Параметр описывается внутри тегов `Benchmark_config`.
+  Параметр описывается внутри тегов `BenchmarkConfig`.
 - Восьмой параметр - имя файла, в который запишется лог работы программы.
   Параметр описывается внутри тегов `LogFile`.
 - Седьмой параметр - имя таблицы, в которую
@@ -172,7 +172,7 @@
         <OS>Windows</OS>
         <FTPClientPath>C:/openvino-dl-benchmark/src/remote_control/ftp_client.py</FTPClientPath>
         <OpenVINOEnvironmentPath>C:/Intel/computer_vision_sdk_2018.4.420/bin/setupvars.bat</OpenVINOEnvironmentPath>
-        <Benchmark_config>C:/openvino-dl-benchmark/src/configs/benchmark_configuration.xml</Benchmark_config>
+        <BenchmarkConfig>C:/openvino-dl-benchmark/src/configs/benchmark_configuration.xml</BenchmarkConfig>
         <LogFile>program_log.txt</LogFile>
         <ResultFile>result_table.csv</ResultFile>
     </Computer>
