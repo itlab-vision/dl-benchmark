@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <Computers>
     <Computer>
         <IP></IP>
@@ -6,7 +7,7 @@
         <OS></OS>
         <FTPClientPath></FTPClientPath>
         <OpenVINOEnvironmentPath></OpenVINOEnvironmentPath>
-        <Benchmark_config></Benchmark_config>
+        <BenchmarkConfig></BenchmarkConfig>
         <LogFile></LogFile>
         <ResultFile></ResultFile>
     </Computer>
