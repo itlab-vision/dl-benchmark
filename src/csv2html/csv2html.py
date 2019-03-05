@@ -21,6 +21,10 @@ def open_csv_table(path_table_csv):
         file.close()
     return table_csv
 
+def replace_all_commas(table_csv):
+    for row_index in range(1, len(table_csv)):
+        table_csv[row_index] = table_csv[row_index].replace(',', '\n')
+
 def convert_csv_table_to_html(table_csv):
     table_headers = table_csv[0].split(';')
     table_html = PT(table_headers)
@@ -30,13 +34,15 @@ def convert_csv_table_to_html(table_csv):
     return table_html
 
 def save_html_table(table_html, path_table_html):
-    table_html = table_html.get_html_string(attributes={"border":"1"})
+    table_html = table_html.get_html_string(attributes={"border":"1",
+        "align":"center"})
     html_file = open(path_table_html, 'w')
     html_file.write(table_html)
 
 def main():
     path_table_csv, path_table_html = build_parser()
     table_csv = open_csv_table(path_table_csv)
+    replace_all_commas(table_csv)
     table_html = convert_csv_table_to_html(table_csv)
     save_html_table(table_html, path_table_html)
 
