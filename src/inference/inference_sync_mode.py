@@ -14,7 +14,7 @@ def build_argparser():
     parser.add_argument('-m', '--model', help = 'Path to an .xml \
         file with a trained model.', required = True, type = str)
     parser.add_argument('-w', '--weights', help = 'Path to an .bin file \
-        with a trained weights.', default = None, type = str)
+        with a trained weights.', required = True, type = str)
     parser.add_argument('-i', '--input', help = 'Path to a folder with \
         images or path to an image files', required = True, type = str, nargs = '+')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
@@ -36,17 +36,20 @@ def build_argparser():
         iterations', default = 1, type = int)
     parser.add_argument('-pc', '--perf_counts', help = 'Report performance \
         counters', action = 'store_true', default = False)
-    parser.add_argument('-t', '--type_model', help = 'Type model', required = True, 
-        type = str)
+    parser.add_argument('-t', '--model_type', help = 'Choose model type: \
+        0.without output 1.classification 2.detection 3.segmentation',
+        default = '', type = str)
     parser.add_argument('--color_map', help = 'Classes color map', type = str, default = None)
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
         for detections filtering', default = 0.5, type = float)
-    parser.add_argument('--mininfer', help = 'Min inference time of single pass',
+    parser.add_argument('-mi', '--mininfer', help = 'Min inference time of single pass',
         type = float, default = 0.0)
+    parser.add_argument('--raw_output', help = 'Raw output without logs',
+        default = False, type = bool)
     return parser
 
 
-def convert_image(net, data, log):
+def convert_image(net, data):
     n, c, h, w = net.inputs[next(iter(net.inputs))].shape
     images = np.ndarray(shape = (len(data), c, h, w))
     for i in range(n):
@@ -72,32 +75,28 @@ def prepare_model(model, weights, cpu_extension, device, plugin_dirs, input, log
         if len(not_supported_layers) != 0:
             log.error('Following layers are not supported by the plugin for specified device {}:\n {}'.
                       format(plugin.device, ', '.join(not_supported_layers)))
-            log.error('Please try to specify cpu extensions library path in sample's command line parameters using -l '
+            log.error('Please try to specify cpu extensions library path in sample\'s command line parameters using -l '
                       'or --cpu_extension command line argument')
             sys.exit(1)
     if os.path.isdir(input[0]):
-        data = [input[0] + file for file in os.listdir(input[0])]
+        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
         data = input
     return net, plugin, data
 
 
-def infer_sync(net, plugin, images, number_it, log):
+def infer_sync(images, exec_net, net, number_it):
     input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
     size = net.batch_size
     result = []
     time_infer = []
-    log.info('Loading model to the plugin')
-    exec_net = plugin.load(network = net)
-    log.info('Starting inference ({} iterations)'.format(number_it))
     for i in range(number_it):
-        t0 = time() 
+        t0 = time()
         res = exec_net.infer(inputs = {input_blob : images[(i * size) % len(images) : (((i + 1) * size - 1) % len(images)) + 1:]})
         time_infer.append((time() - t0))
-        for j in range(len(size)):
+        for j in range(size):
             result.append(res[out_blob][j])
-    del exec_net
     return result, time_infer
 
 
@@ -162,8 +161,9 @@ def detection_output(res, data, prob_threshold, log):
 
 def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
-    log.info('Start output.')
-    if type_model == 'classification':
+    if type_model == '':
+        return
+    elif type_model == 'classification':
         classification_output(res, number_top, inputs, labels, log)
     elif type_model == 'segmentation':
         segmentation_output(res, color_map, log)
@@ -180,25 +180,41 @@ def process_result(inference_time, batch_size, min_infer_time):
     return average_time, latency, fps
 
 
-def result_output(average_time, latency, fps):
-    print('Average time of single pass : {}'.format(average_time))
-    print('Latency : {}'.format(latency))
-    print('FPS : {}'.format(fps))
+def result_output(average_time, fps, latency):
+    print('Average time of single pass : {0:.3f}'.format(average_time))
+    print('FPS : {0:.3f}'.format(fps))
+    print('Latency : {0:.3f}'.format(latency))
+
+
+def raw_result_output(average_time, fps, latency):
+    print('{0:.3f},{0:.3f},{0:.3f}'.format(average_time, fps, latency))
 
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
-    net, plugin, data = prepare_model(args.model, args.weights,
-        args.cpu_extension, args.device, args.plugin_dir, args.input, log)
-    net.batch_size = args.batch_size
-    images = convert_image(net, data, log)
-    res, time = infer_sync(net, plugin, images, args.number_iter, log)
-    average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
-    infer_output(res, net, args.type_model, args.labels, args.color_map, data, args.number_top, 
-        args.prob_threshold, images, log)
-    result_output(average_time, latency, fps)
+    try:
+        net, plugin, data = prepare_model(args.model, args.weights,
+            args.cpu_extension, args.device, args.plugin_dir, args.input, log)
+        net.batch_size = args.batch_size
+        images = convert_image(net, data)log.info('Loading model to the plugin')
+        exec_net = plugin.load(network = net)
+        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+        res, time = infer_sync(images, exec_net, net, args.number_iter)
+        average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
+        if not args.raw_output:
+            infer_output(res, net, args.model_type, args.labels, args.color_map, data, args.number_top, 
+                args.prob_threshold, images, log)
+            result_output(average_time, latency, fps)
+        else:
+            raw_result_output(average_time, fps, latency)
+        del net
+        del exec_net
+        del plugin
+    except Exception as ex:
+        print('ERROR! : {0}'.format(str(ex)))
+        sys.exit(1)
 
 
 if __name__ == '__main__':
