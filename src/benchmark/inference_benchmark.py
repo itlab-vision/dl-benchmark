@@ -22,8 +22,7 @@ def build_parser():
     return config, result
 
 
-def inference_benchmark(test_list):
-    table = []
+def inference_benchmark(test_list, result_table, log):
     for i in range(len(test_list)):
         mode = (test_list[i].parameter.mode).lower()
         latency = None
@@ -75,24 +74,24 @@ def inference_benchmark(test_list):
             result = lastline.split(',')
             average_time = float(result[0])
             fps = float(result[1])
+        log.info('Saving data in file')
         table_row = output.create_table_row(test_list[i].model,
             test_list[i].dataset, test_list[i].parameter, average_time,
             latency, fps)
-        table.append(table_row)
-    return table
+        output.add_row_to_table(result_table, table_row)
 
 
 if __name__ == '__main__':
     try:
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
-        config, result_file = build_parser()
+        config, result_table = build_parser()
         test_list = config_parser.process_config(config)
+        log.info('Create result table with name: '.format(result_table))
+        output.create_table(result_table)
         log.info('Start {} inference tests'.format(len(test_list)))
-        table = inference_benchmark(test_list)
+        table = inference_benchmark(test_list, result_table, log)
         log.info('End inference tests')
-        log.info('Saving data in file')
-        output.save_table(table, result_file)
         log.info('Work is done!')
     except Exception as exp:
         log.warning(str(exp))
