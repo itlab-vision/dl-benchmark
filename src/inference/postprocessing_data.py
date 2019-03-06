@@ -35,5 +35,5 @@ def calculate_latency(time):
 
 def calculate_fps(pictures, time):
     if time == 0:
-        return 'NaN'
+        return -1
     return pictures / time

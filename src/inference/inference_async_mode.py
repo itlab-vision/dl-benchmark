@@ -3,6 +3,7 @@ import sys
 import argparse
 import numpy as np
 import logging as log
+import postprocessing_data as pp
 from time import time
 import copy
 import cv2
@@ -22,11 +23,12 @@ def build_parser():
         limited by device capabilities', required = True, type = int)
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int)
-    parser.add_argument('-t', '--model_type', help = 'Сhoose model type: \
-         1.classification  2.detection 3.segmentation',
-        required = True, type = str)
+    parser.add_argument('-t', '--task', help = 'Output processing method: \
+        1.classification 2.detection 3.segmentation. \
+        Default: without postprocess',
+        default = 'feedforward', type = str)
     parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
-        (CPU)-targeted custom layers.Absolute path to a shared library \
+        (CPU)-targeted custom layers. Absolute path to a shared library \
         with the kernels implementation', type = str, default = None)
     parser.add_argument('-pp', '--plugin_dir', help = 'Path to a plugin \
         folder', type = str, default = None)
@@ -40,10 +42,12 @@ def build_parser():
         iterations', default = 1, type = int)
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str)
-    parser.add_argument('--prob_threshold', help='Probability threshold \
+    parser.add_argument('--prob_threshold', help = 'Probability threshold \
         for detections filtering', default = 0.5, type = float)
-    parser.add_argument('--color_map', help='Classes color map', 
+    parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str)
+    parser.add_argument('--raw_output', help = 'Raw output without logs',
+        default = False, type = bool)
     return parser
 
 
@@ -193,6 +197,7 @@ def start_infer_two_req(images, exec_net, model, number_iter):
             result.append(r_l2)
     res = np.asarray(result[0: len(images)])
     return res, time_e
+
 
 def start_infer_n_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
@@ -344,13 +349,30 @@ def detection_output(res, data, prob_threshold):
 
 
 def infer_output(res, images, data, labels, number_top, prob_threshold,
-        color_map, log, model_type):
-    if model_type == 'classification': 
+        color_map, log, task):
+    if task == 'feedforward':
+        return
+    elif task == 'classification': 
         classification_output(res, data, labels, number_top, log)
-    elif model_type == 'detection':
+    elif task == 'detection':
         detection_output(res, data, prob_threshold)
-    elif model_type == 'segmentation':
+    elif task == 'segmentation':
         segmentation_output(res, color_map, log)
+
+
+def process_result(inference_time, batch_size, iteration_count):
+    average_time = inference_time / iteration_count
+    fps = pp.calculate_fps(batch_size * iteration_count, inference_time)
+    return average_time, fps
+
+
+def result_output(average_time, fps, log):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
+
+
+def raw_result_output(average_time, fps):
+    print('{0:.3f},{0:.3f}'.format(average_time, fps))
 
 
 def main():
@@ -366,13 +388,19 @@ def main():
         exec_net = plugin.load(network = net, num_requests = args.requests)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_async(images, exec_net, net, args.number_iter)
-        infer_output(res, images, data, args.labels, args.number_top,
-            args.prob_threshold, args.color_map, log, args.model_type)
+        average_time, fps = process_result(time, args.batch_size, args.number_iter)
+        if not args.raw_output:
+            infer_output(res, images, data, args.labels, args.number_top,
+                args.prob_threshold, args.color_map, log, args.task)
+            result_output(average_time, fps, log)
+        else:
+            raw_result_output(average_time, fps)
         del net
         del exec_net
         del plugin
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
+        sys.exit(1)
 
 
 if __name__ == '__main__':

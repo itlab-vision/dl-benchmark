@@ -2,10 +2,9 @@ import os
 import sys
 import argparse
 import config_parser
-import inference
-import postprocessing_data as pp
 import output
 import logging as log
+import subprocess
 
 
 def build_parser():
@@ -21,47 +20,76 @@ def build_parser():
     return config, result
 
 
-def inference_benchmark(test_list):
-    table = []
+def inference_benchmark(test_list, result_table, log):
     for i in range(len(test_list)):
         mode = (test_list[i].parameter.mode).lower()
         latency = None
         fps = None
         average_time = None
+        inference_folder = os.path.normpath('../inference')
+        inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
+        inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
         if mode == 'sync':
-            inference_time = inference.test_sync(test_list[i].model, 
-                test_list[i].dataset, test_list[i].parameter)
-            inference_time = pp.delete_incorrect_time(inference_time,
-                test_list[i].parameter.min_inference_time)
-            inference_time = pp.three_sigma_rule(inference_time)
-            average_time = pp.calculate_average_time(inference_time)
-            latency = pp.calculate_latency(inference_time)
-            fps = pp.calculate_fps(test_list[i].parameter.batch_size,
-                average_time)
+            log.info('Start sync inference test on model : {}'.format(test_list[i].model.name))
+            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -mi {} --raw_output true'.format(inference_sync_scrypt,
+                    test_list[i].model.model, test_list[i].model.weight,
+                    test_list[i].dataset.path, test_list[i].parameter.batch_size,
+                    test_list[i].parameter.plugin, test_list[i].parameter.iteration,
+                    test_list[i].parameter.min_inference_time)
+            test = subprocess.Popen(cmd_line, shell = True,
+                stdout = subprocess.PIPE, universal_newlines = True)
+            test.wait()
+            if test.poll():
+                log.warning('Sync inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                continue
+            log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
+            lastline = ''
+            for line in test.stdout:
+                lastline = line
+            result = lastline.split(',')
+            average_time = float(result[0])
+            fps = float(result[1])
+            latency = float(result[2])
         if mode == 'async':
-            inference_time = inference.test_async(test_list[i].model,
-                test_list[i].dataset, test_list[i].parameter)
-            average_time = inference_time / test_list[i].parameter.iteration
-            fps = pp.calculate_fps(test_list[i].parameter.batch_size *
-                test_list[i].parameter.iteration, inference_time)
+            log.info('Start async inference test on model : {}'.format(test_list[i].model.name))
+            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -r {} --raw_output true'.format(inference_async_scrypt,
+                    test_list[i].model.model, test_list[i].model.weight,
+                    test_list[i].dataset.path, test_list[i].parameter.batch_size,
+                    test_list[i].parameter.plugin, test_list[i].parameter.iteration,
+                    test_list[i].parameter.async_request)
+            test = subprocess.Popen(cmd_line, shell = True,
+                stdout = subprocess.PIPE, universal_newlines = True)
+            test.wait()
+            if test.poll():
+                log.warning('Async inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                continue
+            log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
+            lastline = ''
+            for line in test.stdout:
+                lastline = line
+            result = lastline.split(',')
+            average_time = float(result[0])
+            fps = float(result[1])
+        log.info('Saving test result in file')
         table_row = output.create_table_row(test_list[i].model,
             test_list[i].dataset, test_list[i].parameter, average_time,
             latency, fps)
-        table.append(table_row)
-    return table
+        output.add_row_to_table(result_table, table_row)
 
 
 if __name__ == '__main__':
     try:
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
-        config, result_file = build_parser()
+        config, result_table = build_parser()
         test_list = config_parser.process_config(config)
+        log.info('Create result table with name: {}'.format(result_table))
+        output.create_table(result_table)
         log.info('Start {} inference tests'.format(len(test_list)))
-        table = inference_benchmark(test_list)
+        table = inference_benchmark(test_list, result_table, log)
         log.info('End inference tests')
-        log.info('Saving data in file')
-        output.save_table(table, result_file)
         log.info('Work is done!')
     except Exception as exp:
         log.warning(str(exp))
