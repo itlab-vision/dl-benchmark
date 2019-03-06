@@ -372,7 +372,7 @@ def result_output(average_time, fps, log):
 
 
 def raw_result_output(average_time, fps):
-    print('{0:.3f},{0:.3f}'.format(average_time, fps))
+    print('{0:.3f},{1:.3f}'.format(average_time, fps))
 
 
 def main():

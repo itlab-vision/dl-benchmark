@@ -189,7 +189,7 @@ def result_output(average_time, fps, latency, log):
 
 
 def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{0:.3f},{0:.3f}'.format(average_time, fps, latency))
+    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
 
 
 def main():
