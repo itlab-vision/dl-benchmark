@@ -21,14 +21,15 @@ def build_parser():
 
 
 def inference_benchmark(test_list, result_table, log):
+    inference_folder = os.path.normpath('../inference')
+    inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
+    inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
+    environment = os.environ.copy()
     for i in range(len(test_list)):
         mode = (test_list[i].parameter.mode).lower()
         latency = None
         fps = None
         average_time = None
-        inference_folder = os.path.normpath('../inference')
-        inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
-        inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
         if mode == 'sync':
             log.info('Start sync inference test on model : {}'.format(test_list[i].model.name))
             cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
@@ -37,7 +38,7 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.min_inference_time)
-            test = subprocess.Popen(cmd_line, shell = True,
+            test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
@@ -59,7 +60,7 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.async_request)
-            test = subprocess.Popen(cmd_line, shell = True,
+            test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
