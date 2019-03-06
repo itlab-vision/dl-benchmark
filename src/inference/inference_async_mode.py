@@ -23,9 +23,10 @@ def build_parser():
         limited by device capabilities', required = True, type = int)
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int)
-    parser.add_argument('-t', '--model_type', help = 'Choose model type: \
-        0.without output 1.classification 2.detection 3.segmentation',
-        default = '', type = str)
+    parser.add_argument('-t', '--task', help = 'Output processing method: \
+        1.classification 2.detection 3.segmentation. \
+        Default: without postprocess',
+        default = 'feedforward', type = str)
     parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
         (CPU)-targeted custom layers. Absolute path to a shared library \
         with the kernels implementation', type = str, default = None)
@@ -348,14 +349,14 @@ def detection_output(res, data, prob_threshold):
 
 
 def infer_output(res, images, data, labels, number_top, prob_threshold,
-        color_map, log, model_type):
-    if model_type == '':
+        color_map, log, task):
+    if task == 'feedforward':
         return
-    elif model_type == 'classification': 
+    elif task == 'classification': 
         classification_output(res, data, labels, number_top, log)
-    elif model_type == 'detection':
+    elif task == 'detection':
         detection_output(res, data, prob_threshold)
-    elif model_type == 'segmentation':
+    elif task == 'segmentation':
         segmentation_output(res, color_map, log)
 
 
@@ -390,7 +391,7 @@ def main():
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
             infer_output(res, images, data, args.labels, args.number_top,
-                args.prob_threshold, args.color_map, log, args.model_type)
+                args.prob_threshold, args.color_map, log, args.task)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)

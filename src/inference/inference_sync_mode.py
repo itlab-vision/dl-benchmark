@@ -36,9 +36,10 @@ def build_argparser():
         iterations', default = 1, type = int)
     parser.add_argument('-pc', '--perf_counts', help = 'Report performance \
         counters', action = 'store_true', default = False)
-    parser.add_argument('-t', '--model_type', help = 'Choose model type: \
-        0.without output 1.classification 2.detection 3.segmentation',
-        default = '', type = str)
+    parser.add_argument('-t', '--task', help = 'Output processing method: \
+        1.classification 2.detection 3.segmentation. \
+        Default: without postprocess',
+        default = 'feedforward', type = str)
     parser.add_argument('--color_map', help = 'Classes color map', type = str, default = None)
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
         for detections filtering', default = 0.5, type = float)
@@ -159,15 +160,15 @@ def detection_output(res, data, prob_threshold, log):
         log.info('Result image was saved to {}'.format(out_img))    
 
 
-def infer_output(res, net, type_model, labels, color_map, inputs, number_top, 
+def infer_output(res, net, task, labels, color_map, inputs, number_top, 
         prob_threshold, images, log):
-    if type_model == '':
+    if task == 'feedforward':
         return
-    elif type_model == 'classification':
+    elif task == 'classification':
         classification_output(res, number_top, inputs, labels, log)
-    elif type_model == 'segmentation':
+    elif task == 'segmentation':
         segmentation_output(res, color_map, log)
-    elif type_model == 'detection':
+    elif task == 'detection':
         detection_output(res, inputs, prob_threshold, log)
 
 
@@ -205,7 +206,7 @@ def main():
         res, time = infer_sync(images, exec_net, net, args.number_iter)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
-            infer_output(res, net, args.model_type, args.labels, args.color_map, data, args.number_top, 
+            infer_output(res, net, args.task, args.labels, args.color_map, data, args.number_top, 
                 args.prob_threshold, images, log)
             result_output(average_time, latency, fps, log)
         else:
