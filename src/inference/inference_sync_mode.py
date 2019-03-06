@@ -94,7 +94,8 @@ def infer_sync(images, exec_net, net, number_it):
     time_infer = []
     for i in range(number_it):
         t0 = time()
-        res = exec_net.infer(inputs = {input_blob : images[(i * size) % len(images) : (((i + 1) * size - 1) % len(images)) + 1:]})
+        res = exec_net.infer(inputs = {input_blob : images[(i * size)
+            % len(images) : (((i + 1) * size - 1) % len(images)) + 1:]})
         time_infer.append((time() - t0))
         for j in range(size):
             result.append(res[out_blob][j])
