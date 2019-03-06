@@ -208,7 +208,7 @@ def main():
         if not args.raw_output:
             infer_output(res, net, args.task, args.labels, args.color_map, data, args.number_top, 
                 args.prob_threshold, images, log)
-            result_output(average_time, latency, fps, log)
+            result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
         del net
