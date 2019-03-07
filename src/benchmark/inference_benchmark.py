@@ -25,14 +25,14 @@ def inference_benchmark(test_list, result_table, log):
     inference_folder = os.path.normpath('../inference')
     inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
     inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
-	python_type = ''
-	os_type = platform.system()
-	if (os_type == 'Windows'):
-	    python_type = 'python'
-	elif (os_type == 'Linux'):
-	    python_type = 'python3'
-	else 
-	    raise ValueError('OS type not supported')
+    python_type = ''
+    os_type = platform.system()
+    if os_type == 'Windows':
+        python_type = 'python'
+    elif os_type == 'Linux':
+        python_type = 'python3'
+    else:
+        raise ValueError('OS type not supported')
     environment = os.environ.copy()
     for i in range(len(test_list)):
         mode = (test_list[i].parameter.mode).lower()
