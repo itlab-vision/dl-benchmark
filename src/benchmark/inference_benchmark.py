@@ -5,6 +5,7 @@ import config_parser
 import output
 import logging as log
 import subprocess
+import platform
 
 
 def build_parser():
@@ -24,6 +25,14 @@ def inference_benchmark(test_list, result_table, log):
     inference_folder = os.path.normpath('../inference')
     inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
     inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
+	python_type = ''
+	os_type = platform.system()
+	if (os_type == 'Windows'):
+	    python_type = 'python'
+	elif (os_type == 'Linux'):
+	    python_type = 'python3'
+	else 
+	    raise ValueError('OS type not supported')
     environment = os.environ.copy()
     for i in range(len(test_list)):
         mode = (test_list[i].parameter.mode).lower()
@@ -32,8 +41,8 @@ def inference_benchmark(test_list, result_table, log):
         average_time = None
         if mode == 'sync':
             log.info('Start sync inference test on model : {}'.format(test_list[i].model.name))
-            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
-                -mi {} --raw_output true'.format(inference_sync_scrypt,
+            cmd_line = '{} {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -mi {} --raw_output true'.format(python_type, inference_sync_scrypt,
                     test_list[i].model.model, test_list[i].model.weight,
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
@@ -54,8 +63,8 @@ def inference_benchmark(test_list, result_table, log):
             latency = float(result[2])
         if mode == 'async':
             log.info('Start async inference test on model : {}'.format(test_list[i].model.name))
-            cmd_line = 'python {} -m {} -w {} -i {} -b {} -d {} -ni {} \
-                -r {} --raw_output true'.format(inference_async_scrypt,
+            cmd_line = '{} {} -m {} -w {} -i {} -b {} -d {} -ni {} \
+                -r {} --raw_output true'.format(python_type, inference_async_scrypt,
                     test_list[i].model.model, test_list[i].model.weight,
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
