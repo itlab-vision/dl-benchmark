@@ -3,7 +3,7 @@ import sys
 import argparse
 import logging as log
 import config_parser
-import process_watcher as pw
+from process_watcher import process_watcher as pw
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -27,7 +27,8 @@ def main():
     parser = build_parser()
     log.info('Parsing config file')
     machine_list = config_parser.parse_config(parser.config)
-    pw.run_benchmark_on_all_machines(machine_list, parser.server_ip,
+    proc_watcher = pw()
+    proc_watcher.run_benchmark_on_all_machines(machine_list, parser.server_ip,
         parser.server_login, parser.server_login)
 
 

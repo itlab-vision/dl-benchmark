@@ -1,6 +1,7 @@
 import wmi
 import paramiko
 import os
+import sys
 import logging as log
 
 class process_watcher:
@@ -8,20 +9,19 @@ class process_watcher:
         self.proc_list = []
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
-    
-    def run_benchmark_on_all_machines(self, machine_list, server_ip,
-                                      server_login, server_psw):
+
+    def run_benchmark_on_all_machines(self, machine_list, server_ip, server_login, server_psw):
         for machine in machine_list:
             log.info('Run benchmark on {} machine'.format(machine.ip))
-            run_benchmark(machine, server_ip, server_login,
+            self.run_benchmark(machine, server_ip, server_login,
                 server_psw)
         log.info('Benchmark run on all machines')   
 
     def run_benchmark(self, machine, server_ip, server_login, server_psw):
         if machine.os_type == 'Windows':
-            run_on_windows(machine, server_ip, server_login, server_psw)
+            self.run_on_windows(machine, server_ip, server_login, server_psw)
         elif machine.os_type == 'Linux':
-            run_on_linux(machine, server_ip, server_login, server_psw)
+            self.run_on_linux(machine, server_ip, server_login, server_psw)
 
 
     def run_on_linux(self, machine, server_ip, server_login, server_psw): 
