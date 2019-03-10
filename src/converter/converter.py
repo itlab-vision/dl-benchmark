@@ -32,14 +32,17 @@ def converter(mo, conversion_list, log):
         raise ValueError('OS type not supported')
     for i in range(len(conversion_list)):
         if conversion_list[i].additional_options == 'None':
-            command = '{} {} --input_model {} --output_dir {}'.format(python_type, mo,
-                conversion_list[i].modelfile, conversion_list[i].outdir)
+            cmd = '{} {} --input_model {} --output_dir {}'.format(
+                python_type, mo, conversion_list[i].modelfile,
+                conversion_list[i].outdir)
         else:
-            command = '{} {} --input_model {} --output_dir {} {}'.format(python_type, mo,
-                conversion_list[i].modelfile, conversion_list[i].outdir,
+            cmd = '{} {} --input_model {} --output_dir {} {}'.format(
+                python_type, mo, conversion_list[i].modelfile,
+                conversion_list[i].outdir,
                 conversion_list[i].additional_options)
-        log.info('Start converting the model with the command:\n    {}'.format(command))
-        convert = subprocess.Popen(command, shell = True, stdout = subprocess.PIPE,
+        log.info('Start converting the model with the command:\n    {}'.
+            format(cmd))
+        convert = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE,
             stderr = subprocess.PIPE, universal_newlines = True)
         convert.wait()
         if not convert.poll():
