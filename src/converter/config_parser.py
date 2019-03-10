@@ -18,15 +18,10 @@ def process_config(config):
     for model in root.getchildren():
         options_for_model = []
         for parameter in model.getchildren():
-            if parameter.tag == 'AdditionalOptions':
-                if parameter.text is None:
-                   options_for_model.append('None')
+            if parameter.text is None:
+                options_for_model.append('None')
             else:
                 options_for_model.append(parameter.text)
-        if not os.path.isfile(options_for_model[0]):
-            raise ValueError('Wrong path to model: {}'.format(args[0]))
-        if not os.path.exist(options_for_model[0])):
-            continue
         convert_opt = conversion_options(options_for_model)
         conversion_list.append(convert_opt)
     return conversion_list
