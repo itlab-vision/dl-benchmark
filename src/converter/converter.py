@@ -6,6 +6,7 @@ import subprocess
 import platform
 import logging as log
 
+
 def build_argparse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--mo', type = str,
@@ -52,6 +53,7 @@ def converter(mo, conversion_list, log):
             log.error('Error logs:')
             for line in convert.stderr:
                 print(line, end = '')
+
 
 if __name__ == '__main__':
     try:
