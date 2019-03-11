@@ -63,7 +63,8 @@ def infer_sync(images, exec_net, net, number_it):
         time_infer.append((time() - t0))
         for j in range(size):
             result.append(res[out_blob][j])
-    return result, time_infer
+    npres = np.asarray(result[0: len(images)])
+    return npres, time_infer
 
 
 def process_result(inference_time, batch_size, min_infer_time):
