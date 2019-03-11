@@ -29,7 +29,7 @@ def main():
     machine_list = config_parser.parse_config(parser.config)
     proc_watcher = pw()
     proc_watcher.run_benchmark_on_all_machines(machine_list, parser.server_ip,
-        parser.server_login, parser.server_login)
+        parser.server_login, parser.server_psw)
 
 
 if __name__ == '__main__':
