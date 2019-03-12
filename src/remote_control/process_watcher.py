@@ -26,8 +26,8 @@ class process_watcher:
     def run_on_linux(self, machine, server_ip, server_login, server_psw): 
         paramiko_con = paramiko.SSHClient()
         paramiko_con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        paramiko_con.connect(hostname=machine.ip, username=machine.login,
-            password=machine.psw)
+        paramiko_con.connect(hostname = machine.ip, username = machine.login,
+            password = machine.psw)
         transport = paramiko_con.get_transport()
         channel = transport.open_session()
         channel.exec_command(('python {} -ip {} -l {} -p {} -env {} -b {} ' +
@@ -38,20 +38,21 @@ class process_watcher:
         self.process_list.append({'OS':'Linux','channel':channel})
 
     def run_on_windows(self, machine, server_ip, server_login, server_psw):
-        wmi_con = wmi.WMI(machine.ip, user=machine.login, password=machine.psw)
+        wmi_con = wmi.WMI(machine.ip, user = machine.login,
+            password = machine.psw)
         process_startup = wmi_con.Win32_ProcessStartup.new()
-        process_id, result = wmi_con.Win32_Process.Create(CommandLine=((
+        process_id, result = wmi_con.Win32_Process.Create(CommandLine = ((
             'cmd.exe /c python {} -ip {} -l {} -p {} -env {} -b {} ' +
             '-os {} --res_file {} --log_file {}').format(machine.path_to_ftp_client,
             server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
             machine.benchmark_config, machine.os_type, machine.res_file,
-            machine.log_file)), ProcessStartupInformation=process_startup)
+            machine.log_file)), ProcessStartupInformation = process_startup)
         if result == 0:
             log.info('Process started successfully {}'.format(process_id))
         else:
             log.info('Problem creating process {}'.format(result))
-        watcher = wmi_con.watch_for(notification_type='Deletion',
-            wmi_class='Win32_Process', ProcessId=process_id)
+        watcher = wmi_con.watch_for(notification_type = 'Deletion',
+            wmi_class = 'Win32_Process', ProcessId = process_id)
         self.process_list.append({'OS':'Windows','watcher':watcher})
 
     def wait_all_benchmarks(self):
