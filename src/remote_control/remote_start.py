@@ -4,6 +4,8 @@ import argparse
 import logging as log
 import config_parser
 from process_watcher import process_watcher as pw
+import ftplib
+import table_format
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -15,11 +17,12 @@ def build_parser():
         help = 'Login to FTP server', required = True)
     parser.add_argument('-p', '--server_psw', type = str,
         help = 'Password to FTP server', required = True)
+    parser.add_argument('-r', '--result_table', type = str,
+        help = 'Password to FTP server', required = True)
     parser = parser.parse_args()
     if not os.path.isfile(parser.config):
         raise ValueError('Wrong path to configuration file!')
     return parser
-
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
@@ -30,7 +33,12 @@ def main():
     proc_watcher = pw()
     proc_watcher.run_benchmark_on_all_machines(machine_list, parser.server_ip,
         parser.server_login, parser.server_psw)
-
+    log.info('Waiting all benchmarks')
+    proc_watcher.wait_all_benchmarks()
+    ftp_con = ftplib.FTP(parser.server_ip,
+        parser.server_login, parser.server_psw)
+    table_format.join_tables(ftp_con, parser.result_table)
+    ftp_con.close()
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
