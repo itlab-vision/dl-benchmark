@@ -18,7 +18,7 @@ def build_parser():
     parser.add_argument('-p', '--server_psw', type = str,
         help = 'Password to FTP server', required = True)
     parser.add_argument('-r', '--result_table', type = str,
-        help = 'Password to FTP server', required = True)
+        help = 'Name of result table', required = True)
     parser = parser.parse_args()
     if not os.path.isfile(parser.config):
         raise ValueError('Wrong path to configuration file!')
