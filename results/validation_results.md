@@ -103,7 +103,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 <div style='float: center'>
 <img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-
+Разница между полученными результатами составляет 1 пиксель.
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_ILSVRC2012_val_00000023.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_ILSVRC2012_val_00000023.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_ILSVRC2012_val_00000023.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_ILSVRC2012_val_00000023.bmp"></img></div>|
@@ -118,7 +118,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 <div style='float: center'>
 <img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
 </div>
-
+Разница между полученными результатами составляет 1 пиксель.
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_ILSVRC2012_val_00000247.bmp"></img></div>|
@@ -132,7 +132,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 <div style='float: center'>
 <img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
 </div>
-
+Разница между полученными результатами составляет 1 пиксель.
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_ILSVRC2012_val_00018592.bmp"></img></div>|
