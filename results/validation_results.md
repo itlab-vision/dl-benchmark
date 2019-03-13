@@ -121,7 +121,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |                           |                           |                             |                                    |
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_ILSVRC2012_val_00000247.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_ILSVRC2012_val_00000247.bmp"></img></div>|
 
 ### Тестовое изображение 3
 
@@ -135,7 +135,7 @@ dilation             |                           |                           |  
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |                           |                           |                             |                                    |
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_ILSVRC2012_val_00018592.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_ILSVRC2012_val_00018592.bmp"></img></div>|
 
 
 <!-- LINKS -->
