@@ -104,15 +104,20 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 <img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-Bounding box : (55,155), (236,375); Bounding box : (190,190), (380,400); Bounding box : (374,209), (588,422); Bounding box : (289,111), (440,255); Bounding box : (435,160), (615,310)
+Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):
+(55,155), (236,375)
+(190,190), (380,400)
+(374,209), (588,422)
+(289,111), (440,255)
+(435,160), (615,310)
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-mtcnn-p               | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (0,0), (709,510) | Bounding box : (0,0), (709,510) |
-ssd_mobilenet_v2_coco | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (76,168), (231,344)| Bounding box : (75,165), (232,344), Bounding box : (380,315), (610,410) |
-mobilenet-ssd         | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (380,315), (630,415) | Bounding box : (377,314), (632,415) |
-ssd300                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (380,165), (595,425) | Bounding box : (380,165), (595,425) |
-ssd512                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (377,163), (595,425) | Bounding box : (380,165), (595,425) |
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (709,510) | Окаймляющий прямоугольник : (0,0), (709,510) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (76,168), (231,344)| Окаймляющие прямоугольники : (75,165), (232,344), (380,315), (610,410) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (380,315), (630,415) | Окаймляющий прямоугольник : (377,314), (632,415) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (380,165), (595,425) | Окаймляющий прямоугольник : (380,165), (595,425) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (377,163), (595,425) | Окаймляющий прямоугольник : (380,165), (595,425) |
 
 ### Тестовое изображение 2
 
@@ -124,15 +129,15 @@ ssd512                | There is no sample for detection working with images | T
 <img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-Bounding box : (117,86), (365,465)
+Окаймляющий прямоугольник : (117,86), (365,465)
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-mtcnn-p               | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (0,0), (500,500) | Bounding box : (0,0), (500,500) |
-ssd_mobilenet_v2_coco | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (90,100), (356,448) | Bounding box : (90,100), (350,450) |
-mobilenet-ssd         | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (92,95), (361,483) | Bounding box : (94,94), (361,480) |
-ssd300                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (68,100), (336,452) | Bounding box : (66,98), (340,455) |
-ssd512                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (75,100), (355,445) | Bounding box : (75,100), (355,445)|
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (500,500) | Окаймляющий прямоугольник : (0,0), (500,500) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (90,100), (356,448) | Окаймляющий прямоугольник : (90,100), (350,450) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (92,95), (361,483) | Окаймляющий прямоугольник : (94,94), (361,480) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (68,100), (336,452) | Окаймляющий прямоугольник : (66,98), (340,455) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (75,100), (355,445) | Окаймляющий прямоугольник : (75,100), (355,445)|
 
 ### Тестовое изображение 3
 
@@ -144,15 +149,15 @@ ssd512                | There is no sample for detection working with images | T
 <img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-Bounding box : (82,262), (269,376)
+Окаймляющий прямоугольник : (82,262), (269,376)
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-mtcnn-p               | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (0,0), (333,500) | Bounding box : (0,0), (333,500) |
-ssd_mobilenet_v2_coco | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (81,244), (267,376) | Bounding box : (80,244), (267,376) |
-mobilenet-ssd         | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (80,140), (270,375) | Bounding box : (80,140), (270,375) |
-ssd300                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (80,155), (270,375) | Bounding box : (80,157), (274,375) |
-ssd512                | There is no sample for detection working with images | There is no sample for detection working with images | Bounding box : (75,170), (172,370) | Bounding box : (73,170), (173,371) |
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (333,500) | Окаймляющий прямоугольник : (0,0), (333,500) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (81,244), (267,376) | Окаймляющий прямоугольник : (80,244), (267,376) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (80,140), (270,375) | Окаймляющий прямоугольник : (80,140), (270,375) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (80,155), (270,375) | Окаймляющий прямоугольник : (80,157), (274,375) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (75,170), (172,370) | Окаймляющий прямоугольник : (73,170), (173,371) |
 
 
 <!-- LINKS -->
