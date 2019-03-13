@@ -1,13 +1,13 @@
-import os
 import sys
 import argparse
 import numpy as np
 import logging as log
+import prepare_data as pd
+import inference_output as io
 import postprocessing_data as pp
 from time import time
 import copy
 import cv2
-from openvino.inference_engine import IENetwork, IEPlugin
 
 
 def build_parser():
@@ -49,59 +49,6 @@ def build_parser():
     parser.add_argument('--raw_output', help = 'Raw output without logs',
         default = False, type = bool)
     return parser
-
-
-def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
-                  input):
-    model_xml = model
-    model_bin = weights
-    log.info('Plugin initialization.');
-    plugin = IEPlugin(device = device, plugin_dirs = plugin_dir)
-    if cpu_extension and 'CPU' in device:
-        plugin.add_cpu_extension(cpu_extension)
-    log.info('Loading network files:\n\t {0}\n\t {1}'.format(
-        model_xml, model_bin))
-    net = IENetwork.from_ir(model_xml, model_bin)
-    if 'CPU' in plugin.device:
-        supported_layers = plugin.get_supported_layers(net)
-        not_supported_layers = [ l for l in net.layers.keys() \
-            if l not in supported_layers ]
-        if len(not_supported_layers) != 0:
-            log.error('Following layers are not supported by the plugin \
-                for specified device {0}:\n {1}'.format(plugin.device,
-                ', '.join(not_supported_layers)))
-            log.error('Please try to specify cpu extensions library path in \
-                sample\'s command line parameters using -l or --cpu_extension \
-                command line argument')
-            sys.exit(1)      
-    if os.path.isdir(input[0]):
-        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
-    else:
-        data = input
-    return net, plugin, data
-
-
-def prepare_data(model, data):
-    video = {'.mp4' : 1, '.avi' : 2, '.mvo' : 3, '.mpeg' : 4, '.mov' : 5}
-    image = {'.jpg' : 1, '.png' : 2, '.bmp' : 3, '.gif' : 4, '.jpeg' : 5}
-    file = str(os.path.splitext(data[0])[1]).lower()
-    if file in image:
-        prep_data = convert_image(model, data)
-    elif file in video:
-        prep_data = data[0]
-    return prep_data
-
-
-def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
-    images = np.ndarray(shape = (len(data), c, h, w))
-    for i in range(len(data)):
-        image = cv2.imread(data[i])
-        if (image.shape[:-1] != (h, w)):
-            image = cv2.resize(image, (w, h))
-        image = image.transpose((2, 0, 1))
-        images[i] = image
-    return images
 
 
 def start_infer_video(path, exec_net, model, number_iter):
@@ -284,82 +231,6 @@ def infer_async(images, exec_net, model, number_iter):
     return res
 
 
-def classification_output(res, data, labels, number_top, log):
-    log.info('Top {} results: \n'.format(number_top))
-    if labels:
-        labels = 'image_net_synset.txt'
-        with open(labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
-                for x in f ]
-    else:
-        labels_map = None
-    for i, probs in enumerate(res):
-        probs = np.squeeze(probs)
-        top_ind = np.argsort(probs)[-number_top:][::-1]
-        if len(data) > 1:
-            print('Image {}\n'.format(os.path.split(data[i])[1]))
-        else:
-            print('Image {}\n'.format(os.path.split(data[0])[1]))
-        for id in top_ind:
-            det_label = labels_map[id] if labels_map else '#{}'.format(id)
-            print('{:.7f} {}'.format(probs[id], det_label))
-        print('\n')  
-
-
-def segmentation_output(res, color_map, log):
-    c = 3
-    h, w = res.shape[2:]
-    if not color_map:
-        color_map = 'color_map.txt'
-    classes_color_map = []
-    with open(color_map, 'r') as f:
-        for line in f:
-            classes_color_map.append([int(x) for x in line.split()]) 
-    for batch, data in enumerate(res):
-        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
-        for i in range(h):
-            for j in range(w):
-                if len(data[:, i, j]) == 1:
-                    pixel_class = int(data[:, i, j])
-                else:
-                    pixel_class = np.argmax(data[:, i, j])
-                classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-        out_img = os.path.join(os.path.dirname(__file__), 'out_{}.bmp'.format(batch))
-        cv2.imwrite(out_img, classes_map)
-        log.info('Result image was saved to {}'.format(out_img))
-
-
-def detection_output(res, data, prob_threshold):
-    for i, r in enumerate(res):
-        image = cv2.imread(data[i])
-        initial_h, initial_w = image.shape[:2]
-        for obj in r[0]:
-            if obj[2] > prob_threshold:
-                xmin = int(obj[3] * initial_w)
-                ymin = int(obj[4] * initial_h)
-                xmax = int(obj[5] * initial_w)
-                ymax = int(obj[6] * initial_h)
-                class_id = int(obj[1])
-                color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
-                    min(class_id * 5, 255))
-                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow('Detection Results', image)
-    cv2.waitKey(1000)
-    cv2.destroyAllWindows()
-
-
-def infer_output(res, images, data, labels, number_top, prob_threshold,
-        color_map, log, task):
-    if task == 'feedforward':
-        return
-    elif task == 'classification': 
-        classification_output(res, data, labels, number_top, log)
-    elif task == 'detection':
-        detection_output(res, data, prob_threshold)
-    elif task == 'segmentation':
-        segmentation_output(res, color_map, log)
-
-
 def process_result(inference_time, batch_size, iteration_count):
     average_time = inference_time / iteration_count
     fps = pp.calculate_fps(batch_size * iteration_count, inference_time)
@@ -380,17 +251,17 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
-        net, plugin, data = prepare_model(log, args.model, args.weights,
+        net, plugin, data = pd.prepare_model(log, args.model, args.weights,
             args.cpu_extension, args.device, args.plugin_dir, args.input)
         net.batch_size = args.batch_size
-        images = prepare_data(net, data)
+        images = pd.prepare_data(net, data)
         log.info('Loading model to the plugin')
         exec_net = plugin.load(network = net, num_requests = args.requests)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
         res, time = infer_async(images, exec_net, net, args.number_iter)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
-            infer_output(res, images, data, args.labels, args.number_top,
+            io.infer_output(res, images, data, args.labels, args.number_top,
                 args.prob_threshold, args.color_map, log, args.task)
             result_output(average_time, fps, log)
         else:
