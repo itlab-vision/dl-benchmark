@@ -103,7 +103,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 <div style='float: center'>
 <img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
-<title>Bounding box : (55,155), (236,375); Bounding box : (190,190), (380,400); Bounding box : (374,209), (588,422); Bounding box : (289,111), (440,255); Bounding box : (435,160), (615,310)</title>
+<label>Bounding box : (55,155), (236,375); Bounding box : (190,190), (380,400); Bounding box : (374,209), (588,422); Bounding box : (289,111), (440,255); Bounding box : (435,160), (615,310)</label>
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
@@ -123,7 +123,7 @@ ssd512                | There is no sample for detection | There is no sample fo
 <div style='float: center'>
 <img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
-<title>Bounding box : (117,86), (365,465)</title>
+<label>Bounding box : (117,86), (365,465)</label>
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
@@ -143,7 +143,7 @@ ssd512                | There is no sample for detection | There is no sample fo
 <div style='float: center'>
 <img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
-<title>Bounding box : (82,262), (269,376)</title>
+<label>Bounding box : (82,262), (269,376)</label>
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
