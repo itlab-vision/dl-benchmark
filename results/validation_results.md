@@ -9,7 +9,7 @@
 Разрешение: 709 x 510
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
+<img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
@@ -39,7 +39,7 @@ vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig
 Разрешение: 500 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
+<img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
@@ -69,7 +69,7 @@ vgg-19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringill
 Разрешение: 333 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
+<img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
