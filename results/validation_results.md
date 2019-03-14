@@ -143,6 +143,11 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_2008_005803.bmp"></img></div>|
 
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="segmentation\pascal_voc_colormap.png">
+</div>
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
