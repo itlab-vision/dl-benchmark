@@ -19,7 +19,7 @@ densenet-121         |15.7979164 Granny Smith<br>9.9429455 lemon<br>9.3676043 or
 densenet-161         |17.8060474 Granny Smith<br>8.5503120 lemon<br>7.6080256 orange<br>7.2737975 banana<br>7.1114807 fig| 17.8060474 Granny Smith<br>8.5503120 lemon<br>7.6080256 orange<br>7.2737975 banana<br>7.1114807 fig|17.8060474 Granny Smith<br>8.5503120 lemon<br>7.6080256 orange<br>7.2737975 banana<br>7.1114807 fig| 17.8060360 Granny Smith<br>8.5503101 lemon<br>7.6080236 orange<br>7.2737904 banana<br>7.1114841 fig|
 densenet-169         |15.9379349 Granny Smith<br>6.3490119 banana<br>6.2573476 lemon<br>5.8869209 tennis ball<br>5.7489214 piggy bank, penny bank| 15.9379349 Granny Smith<br>6.3490119 banana<br>6.2573476 lemon<br>5.8869209 tennis ball<br>5.7489214 piggy bank, penny bank|15.9379349 Granny Smith<br>6.3490119 banana<br>6.2573476 lemon<br>5.8869209 tennis ball<br>5.7489214 piggy bank, penny bank| 15.9379444 Granny Smith<br>6.3490100 banana<br>6.2573524 lemon<br>5.8869252 tennis ball<br>5.7489195 piggy bank, penny bank|
 densenet-201         |13.9142466 Granny Smith<br>7.1571245 bell pepper<br>6.8382354 acorn<br>6.0525250 lemon<br>6.0490065 candle, taper, wax light| 13.9142380 Granny Smith<br>7.1571240 bell pepper<br>6.8382263 acorn<br>6.0525231 lemon<br>6.0489964 candle, taper, wax light|13.9142466 Granny Smith<br>7.1571245 bell pepper<br>6.8382354 acorn<br>6.0525250 lemon<br>6.0490065 candle, taper, wax light| 13.9142380 Granny Smith<br>7.1571240 bell pepper<br>6.8382263 acorn<br>6.0525231 lemon<br>6.0489964 candle, taper, wax light|
-googlenet-v1         |0.9982976 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank| 0.9982976 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank|0.9982972 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 label tennis ball<br>0.0000656 label piggy bank, penny bank| 0.9982972 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank|
+googlenet-v1         |0.9982976 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank| 0.9982976 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank|0.9982972 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 title tennis ball<br>0.0000656 title piggy bank, penny bank| 0.9982972 Granny Smith<br>0.0005613 bell pepper<br>0.0003487 candle, taper, wax light<br>0.0000679 tennis ball<br>0.0000656 piggy bank, penny bank|
 googlenet-v2         |0.9938872 leafhopper<br>0.0042250 police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria<br>0.0005423 ringlet, ringlet butterfly<br>0.0001996 lacewing, lacewing fly<br>0.0000883 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk| 0.9938872 leafhopper<br>0.0042250 police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria<br>0.0005423 ringlet, ringlet butterfly<br>0.0001996 lacewing, lacewing fly<br>0.0000883 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk|0.9938846 leafhopper<br>0.0042250 police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria<br>0.0005423 ringlet, ringlet butterfly<br>0.0001996 lacewing, lacewing fly<br>0.0000883 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk| 0.9938846 leafhopper<br>0.0042250 police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria<br>0.0005423 ringlet, ringlet butterfly<br>0.0001996 lacewing, lacewing fly<br>0.0000883 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk|
 googlenet-v3         |0.9909649 strawberry<br>0.0007918 binder, ring-binder<br>0.0001872 pill bottle<br>0.0001239 banjo<br>0.0000879 breakwater, groin, groyne, mole, bulwark, seawall, jetty| 0.9909649 strawberry<br>0.0007918 binder, ring-binder<br>0.0001872 pill bottle<br>0.0001239 banjo<br>0.0000879 breakwater, groin, groyne, mole, bulwark, seawall, jetty|0.9909641 strawberry<br>0.0007918 binder, ring-binder<br>0.0001872 pill bottle<br>0.0001239 banjo<br>0.0000879 breakwater, groin, groyne, mole, bulwark, seawall, jetty| 0.9909641 strawberry<br>0.0007918 binder, ring-binder<br>0.0001872 pill bottle<br>0.0001239 banjo<br>0.0000879 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 googlenet-v4         |0.9865599 Granny Smith<br>0.0003842 Rhodesian ridgeback<br>0.0002123 hair slide<br>0.0001513 pineapple, ananas<br>0.0001259 banana| 0.9865599 Granny Smith<br>0.0003842 Rhodesian ridgeback<br>0.0002123 hair slide<br>0.0001513 pineapple, ananas<br>0.0001259 banana|0.9865599 Granny Smith<br>0.0003842 Rhodesian ridgeback<br>0.0002123 hair slide<br>0.0001513 pineapple, ananas<br>0.0001259 banana| 0.9865599 Granny Smith<br>0.0003842 Rhodesian ridgeback<br>0.0002123 hair slide<br>0.0001513 pineapple, ananas<br>0.0001259 banana|
@@ -50,7 +50,7 @@ densenet-161         |18.9021969 junco, snowbird<br>12.8945799 indigo bunting, i
 densenet-169         |18.5059853 junco, snowbird<br>11.6154308 brambling, Fringilla montifringilla<br>11.0603466 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.9430408 goldfinch, Carduelis carduelis<br>8.9175730 chickadee| 18.5059853 junco, snowbird<br>11.6154308 brambling, Fringilla montifringilla<br>11.0603466 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.9430408 goldfinch, Carduelis carduelis<br>8.9175730 chickadee|18.5059853 junco, snowbird<br>11.6154308 brambling, Fringilla montifringilla<br>11.0603466 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.9430408 goldfinch, Carduelis carduelis<br>8.9175730 chickadee| 18.5059853 junco, snowbird<br>11.6154289 brambling, Fringilla montifringilla<br>11.0603485 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.9430408 goldfinch, Carduelis carduelis<br>8.9175758 chickadee|
 densenet-201         |17.9479027 junco, snowbird<br>9.7838697 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.6706028 brambling, Fringilla montifringilla<br>8.9102564 house finch, linnet, Carpodacus mexicanus<br>8.2559881 chickadee| 17.9479065 junco, snowbird<br>9.7838707 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.6706047 brambling, Fringilla montifringilla<br>8.9102554 house finch, linnet, Carpodacus mexicanus<br>8.2559891 chickadee|17.9479027 junco, snowbird<br>9.7838697 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.6706028 brambling, Fringilla montifringilla<br>8.9102564 house finch, linnet, Carpodacus mexicanus<br>8.2559881 chickadee| 17.9479065 junco, snowbird<br>9.7838707 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.6706047 brambling, Fringilla montifringilla<br>8.9102554 house finch, linnet, Carpodacus mexicanus<br>8.2559891 chickadee|
 googlenet-v1         |0.9999955 junco, snowbird<br>0.0000043 chickadee<br> 0.0000003 brambling, Fringilla montifringilla<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000000 water ouzel, dipper| 0.9999955 junco, snowbird<br>0.0000043 chickadee<br>0.0000003 brambling, Fringilla montifringilla<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000000 water ouzel, dipper|0.9999954 junco, snowbird<br>0.0000043 chickadee<br>0.0000003 brambling, Fringilla montifringilla<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000000 water ouzel, dipper| 0.9999954 junco, snowbird<br>0.0000043 chickadee<br>0.0000003 brambling, Fringilla montifringilla<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000000 water ouzel, dipper|
-googlenet-v2         |0.9986873 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 label n02641379 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 label n02730930 apron<br>0.0000563 basketball| 0.9986873 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball|0.9986847 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball| 0.9986847 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball|
+googlenet-v2         |0.9986873 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 title n02641379 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 title n02730930 apron<br>0.0000563 basketball| 0.9986873 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball|0.9986847 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball| 0.9986847 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0004460 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0002120 barracouta, snoek<br>0.0001153 apron<br>0.0000563 basketball|
 googlenet-v3         |0.9241990 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005938 cliff dwelling<br>0.0005932 bustard<br>0.0005757 jack-o'-lantern<br>0.0005057 kite| 0.9241990 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005938 cliff dwelling<br>0.0005932 junco, snowbird8<br>0.0005757 jack-o'-lantern<br>0.0005057 kite|0.9241987 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005938 cliff dwelling<br>0.0005932 bustard<br>0.0005757 jack-o'-lantern<br>0.0005057 kite| 0.9241988 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005938 cliff dwelling<br>0.0005932 bustard<br>0.0005757 jack-o'-lantern<br>0.0005057 kite|
 googlenet-v4         |0.9338058 junco, snowbird<br>0.0005343 hamster<br>0.0005193 chickadee<br>0.0004287 brambling, Fringilla montifringilla<br>0.0003747 koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus| 0.9338058 junco, snowbird<br>0.0005343 hamster<br>0.0005193 chickadee<br>0.0004287 brambling, Fringilla montifringilla<br>0.0003747 brambling, Fringilla montifringilla5|0.9338045 junco, snowbird<br>0.0005343 hamster<br>0.0005193 chickadee<br>0.0004287 brambling, Fringilla montifringilla<br>0.0003747 koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus| 0.9338045 junco, snowbird<br>0.0005343 hamster<br>0.0005193 chickadee<br>0.0004287 brambling, Fringilla montifringilla<br>0.0003747 koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus|
 inception-resnet v2  |0.9995078 junco, snowbird<br>0.0000257 brambling, Fringilla montifringilla<br>0.0000219 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000217 chickadee<br>0.0000119 water ouzel, dipper| 0.9995078 junco, snowbird<br>0.0000257 brambling, Fringilla montifringilla<br>0.0000219 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000217 chickadee<br>0.0000119 water ouzel, dipper|0.9995075 junco, snowbird<br>0.0000257 brambling, Fringilla montifringilla<br>0.0000219 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000217 chickadee<br>0.0000119 water ouzel, dipper| 0.9995075 junco, snowbird<br>0.0000257 brambling, Fringilla montifringilla<br>0.0000219 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000217 chickadee<br>0.0000119 water ouzel, dipper|
@@ -92,6 +92,75 @@ squeezenet-1.1       |0.9570305 lifeboat<br>0.0211557 container ship, containers
 vgg-16               |0.9821943 lifeboat<br>0.0082832 container ship, containership, container vessel<br>0.0014539 drilling platform, offshore rig<br>0.0014494 pirate, pirate ship<br>0.0009578 liner, ocean liner| 0.9821942 lifeboat<br>0.0082832 container ship, containership, container vessel<br>0.0014539 drilling platform, offshore rig<br>0.0014494 pirate, pirate ship<br>0.0009578 liner, ocean liner|0.9821915 lifeboat<br>0.0082832 container ship, containership, container vessel<br>0.0014539 drilling platform, offshore rig<br>0.0014494 pirate, pirate ship<br>0.0009578 liner, ocean liner| 0.9821915 lifeboat<br>0.0082832 container ship, containership, container vessel<br>0.0014539 drilling platform, offshore rig<br>0.0014494 pirate, pirate ship<br>0.0009578 liner, ocean liner|
 vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat| 0.9965242 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|0.9965212 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat| 0.9965214 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|
 
+## Результаты детектирования
+
+### Тестовое изображение 1
+
+Источник: набор данных [ImageNet][imagenet]
+
+Разрешение: 709 x 510
+﻿
+<div style='float: center'>
+<img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
+<img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
+Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
+(55,155), (236,375)<br>
+(190,190), (380,400)<br>
+(374,209), (588,422)<br>
+(289,111), (440,255)<br>
+(435,160), (615,310)<br>
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (709,510) | Окаймляющий прямоугольник : (0,0), (709,510) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (76,168), (231,344)| Окаймляющие прямоугольники : (75,165), (232,344),<br> (380,315), (610,410) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (380,315), (630,415) | Окаймляющий прямоугольник : (377,314), (632,415) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (380,165), (595,425) | Окаймляющий прямоугольник : (380,165), (595,425) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (377,163), (595,425) | Окаймляющий прямоугольник : (380,165), (595,425) |
+
+### Тестовое изображение 2
+
+Источник: набор данных [ImageNet][imagenet]
+
+Разрешение: 500 x 500
+﻿
+<div style='float: center'>
+<img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
+<img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+(117,86), (365,465)
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (500,500) | Окаймляющий прямоугольник : (0,0), (500,500) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (90,100), (356,448) | Окаймляющий прямоугольник : (90,100), (350,450) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (92,95), (361,483) | Окаймляющий прямоугольник : (94,94), (361,480) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (68,100), (336,452) | Окаймляющий прямоугольник : (66,98), (340,455) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (75,100), (355,445) | Окаймляющий прямоугольник : (75,100), (355,445)|
+
+### Тестовое изображение 3
+
+Источник: набор данных [ImageNet][imagenet]
+
+Разрешение: 333 x 500
+﻿
+<div style='float: center'>
+<img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
+<img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+(82,262), (269,376)
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
+mtcnn-p               | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (0,0), (333,500) | Окаймляющий прямоугольник : (0,0), (333,500) |
+ssd_mobilenet_v2_coco | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (81,244), (267,376) | Окаймляющий прямоугольник : (80,244), (267,376) |
+mobilenet-ssd         | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (80,140), (270,375) | Окаймляющий прямоугольник : (80,140), (270,375) |
+ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (80,155), (270,375) | Окаймляющий прямоугольник : (80,157), (274,375) |
+ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (75,170), (172,370) | Окаймляющий прямоугольник : (73,170), (173,371) |
+
 ## Результаты сегментации
 
 ### Тестовое изображение 1
@@ -109,7 +178,6 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_2007_002376.bmp"></img></div>|
-
 
 ### Тестовое изображение 2
 
@@ -148,6 +216,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 <div style='float: center'>
 <img width="300" src="segmentation\pascal_voc_colormap.png">
 </div>
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
