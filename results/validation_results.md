@@ -101,7 +101,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 Разрешение: 709 x 510
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
@@ -126,7 +126,7 @@ ssd512                | Нет теста детектирования, рабо
 Разрешение: 500 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -147,7 +147,7 @@ ssd512                | Нет теста детектирования, рабо
 Разрешение: 333 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
