@@ -36,7 +36,6 @@ def get_gpu_name(ostype):
             if 'Graphics' in eachitem.Name:
                 gpuname = eachitem.Name
     elif (ostype == 'Linux'):
-        # TODO : write code for Linux
         command = 'hwinfo --short'
         gpu_info = subprocess.check_output(command).strip().decode()
         for line in cpu_info.split('\n'):
