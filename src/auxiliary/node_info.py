@@ -37,7 +37,11 @@ def get_gpu_name(ostype):
                 gpuname = eachitem.Name
     elif (ostype == 'Linux'):
         # TODO : write code for Linux
-        gpuname = 'Underfined GPU'
+        command = 'hwinfo --short'
+        gpu_info = subprocess.check_output(command).strip().decode()
+        for line in cpu_info.split('\n'):
+            if 'Graphics' in line:
+                return line.strip()
     elif (ostype == 'Darwin'):
         # TODO : write code for Mac OS
         gpuname = 'Underfined GPU'
