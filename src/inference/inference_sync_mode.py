@@ -72,7 +72,7 @@ def process_result(inference_time, batch_size, min_infer_time):
     correct_time = pp.three_sigma_rule(correct_time)
     average_time = pp.calculate_average_time(correct_time)
     latency = pp.calculate_latency(correct_time)
-    fps = pp.calculate_fps(batch_size, average_time)
+    fps = pp.calculate_fps(batch_size, latency)
     return average_time, latency, fps
 
 
