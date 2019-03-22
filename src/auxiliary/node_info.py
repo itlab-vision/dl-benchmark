@@ -29,6 +29,7 @@ def get_cpu_name(ostype):
 def get_gpu_name(ostype):
     gpuname = 'Underfined'
     if (ostype == 'Windows'):
+        gpuname = 'Underfined discrete GPU'
         import wmi
         computer = wmi.WMI()
         gpu_info = computer.Win32_VideoController()
