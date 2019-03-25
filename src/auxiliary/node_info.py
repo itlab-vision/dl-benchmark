@@ -29,6 +29,7 @@ def get_cpu_name(ostype):
 def get_gpu_name(ostype):
     gpuname = 'Underfined'
     if (ostype == 'Windows'):
+        gpuname = 'Underfined discrete GPU'
         import wmi
         computer = wmi.WMI()
         gpu_info = computer.Win32_VideoController()
@@ -36,11 +37,14 @@ def get_gpu_name(ostype):
             if 'Graphics' in eachitem.Name:
                 gpuname = eachitem.Name
     elif (ostype == 'Linux'):
-        command = 'hwinfo --short'
-        gpu_info = subprocess.check_output(command).strip().decode()
-        for line in cpu_info.split('\n'):
+        command = 'glxinfo | grep OpenGL'
+        p = subprocess.Popen(command, universal_newlines = True, shell = True,
+            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        gpu_info = p.stdout.read()
+        p.wait()
+        for line in gpu_info.split('\n'):
             if 'Graphics' in line:
-                return line.strip()
+                return line.split(':')[1].strip()
     elif (ostype == 'Darwin'):
         # TODO : write code for Mac OS
         gpuname = 'Underfined GPU'
