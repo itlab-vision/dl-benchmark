@@ -27,7 +27,7 @@ def build_argparser():
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
-        (CPU by default)', default = 'CPU', type = str)
+        (CPU by default)', default = 'CPU', type = str, nargs = '+')
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str)
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',

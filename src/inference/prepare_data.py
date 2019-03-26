@@ -6,18 +6,25 @@ import cv2
 from openvino.inference_engine import IENetwork, IEPlugin
 
 
-def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
+def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
                   input):
     model_xml = model
     model_bin = weights
+    if len(device_list) == 1:
+        device = device_list[0]
+    elif len(device_list) == 2:
+        device = 'HETERO:{},{}'.format(device_list[0], device_list[1])
+    else:
+        log.error('Wrong count devices')
+        sys.exit(1)
     log.info('Plugin initialization.');
     plugin = IEPlugin(device = device, plugin_dirs = plugin_dir)
     if cpu_extension and 'CPU' in device:
         plugin.add_cpu_extension(cpu_extension)
     log.info('Loading network files:\n\t {0}\n\t {1}'.format(
         model_xml, model_bin))
-    net = IENetwork.from_ir(model_xml, model_bin)
-    if 'CPU' in plugin.device:
+    net = IENetwork.from_ir(model = model_xml, weights = model_bin)
+    if plugin.device == 'CPU':
         supported_layers = plugin.get_supported_layers(net)
         not_supported_layers = [ l for l in net.layers.keys() \
             if l not in supported_layers ]
@@ -28,7 +35,14 @@ def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
             log.error('Please try to specify cpu extensions library path in \
                 sample\'s command line parameters using -l or --cpu_extension \
                 command line argument')
-            sys.exit(1)      
+            sys.exit(1)
+    if len(device_list) == 2:
+        plugin.set_config({'TARGET_FALLBACK': device})
+        plugin.set_initial_affinity(net)
+        for l in net.layers.values():
+            if l.type == 'Convolution':
+                l.affinity = 'CPU'
+
     if os.path.isdir(input[0]):
         data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
