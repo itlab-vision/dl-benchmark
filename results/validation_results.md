@@ -170,7 +170,7 @@ ssd512                | Нет теста детектирования, рабо
 Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
-<img width="150" src=""></img>
+<img width="150" src="..\data\Cityscapes\berlin_000000_000019_leftImg8bit.png"></img>
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -186,7 +186,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
-<img width="150" src="">
+<img width="150" src="..\data\Cityscapes\berlin_000488_000019_leftImg8bit.png">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -202,7 +202,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
-<img width="150" src="">
+<img width="150" src="..\data\Cityscapes\berlin_000533_000019_leftImg8bit.png">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
