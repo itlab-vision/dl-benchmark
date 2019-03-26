@@ -101,7 +101,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 Разрешение: 709 x 510
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00000023.JPEG"></img>
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
@@ -126,7 +126,7 @@ ssd512                | Нет теста детектирования, рабо
 Разрешение: 500 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00000247.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -147,7 +147,7 @@ ssd512                | Нет теста детектирования, рабо
 Разрешение: 333 x 500
 ﻿
 <div style='float: center'>
-<img width="150" src="validation_images\ILSVRC2012_val_00018592.JPEG">
+<img width="150" src="..\data\ImageNET\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -161,6 +161,63 @@ mobilenet-ssd         | Нет теста детектирования, рабо
 ssd300                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (80,155), (270,375) | Окаймляющий прямоугольник : (80,157), (274,375) |
 ssd512                | Нет теста детектирования, работающего с картинками | Нет теста детектирования, работающего с картинками | Окаймляющий прямоугольник : (75,170), (172,370) | Окаймляющий прямоугольник : (73,170), (173,371) |
 
+## Результаты сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
+
+Разрешение: 2048 x 1024
+﻿
+<div style='float: center'>
+<img width="150" src="..\data\Cityscapes\berlin_000000_000019_leftImg8bit.png"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
+
+### Тестовое изображение 2
+
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
+
+Разрешение: 2048 x 1024
+﻿
+<div style='float: center'>
+<img width="150" src="..\data\Cityscapes\berlin_000488_000019_leftImg8bit.png">
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
+
+### Тестовое изображение 3
+
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
+
+Разрешение: 2048 x 1024
+﻿
+<div style='float: center'>
+<img width="150" src="..\data\Cityscapes\berlin_000533_000019_leftImg8bit.png">
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="segmentation\cityscapes_colormap.png">
+</div>
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
+[cityscapes]: https://www.cityscapes-dataset.com
