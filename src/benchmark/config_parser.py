@@ -29,7 +29,6 @@ class dataset:
 class parameters:
     def __init__(self, parameter):
         const_correct_mode = ['sync', 'async']
-        const_correct_plugin = ['CPU', 'GPU', 'FPGA', 'MYRIAD']
         if parameter[1].lower() in const_correct_mode:
             self.mode = parameter[1]
         else:
@@ -41,10 +40,7 @@ class parameters:
                 raise ValueError('Wrong batch size')
         else:
             self.batch_size = int(parameter[0])
-        if parameter[2].upper() in const_correct_plugin:
-            self.plugin = parameter[2].upper()
-        else:
-            raise ValueError('Wrong plugin')
+        self.plugin = parameter[2].upper()
         if parameter[3] == 'None':
             if self.mode != 'async':
                 self.async_request = 'None'
