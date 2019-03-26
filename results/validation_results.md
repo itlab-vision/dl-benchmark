@@ -177,7 +177,7 @@ ssd512                | Нет теста детектирования, рабо
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_2007_002376.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_2007_002376.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
 
 ### Тестовое изображение 2
 
@@ -193,7 +193,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_2008_002787.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_2008_002787.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_2008_002787.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_2008_002787.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
 
 ### Тестовое изображение 3
 
@@ -209,12 +209,12 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_2008_005803.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_2008_005803.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
 
 Карта цветов:
 
 <div style='float: center'>
-<img width="300" src="segmentation\pascal_voc_colormap.png">
+<img width="300" src="">
 </div>
 
 
