@@ -39,10 +39,6 @@ def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
     if len(device_list) == 2:
         plugin.set_config({'TARGET_FALLBACK': device})
         plugin.set_initial_affinity(net)
-        for l in net.layers.values():
-            if l.type == 'Convolution':
-                l.affinity = 'CPU'
-
     if os.path.isdir(input[0]):
         data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
