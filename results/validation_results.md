@@ -167,7 +167,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 
+Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src=""></img>
@@ -177,13 +177,13 @@ ssd512                | Нет теста детектирования, рабо
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
 
 ### Тестовое изображение 2
 
 Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 
+Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src="">
@@ -193,13 +193,13 @@ dilation             |<div style='float: center'><img width="150" src=""></img><
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
 
 ### Тестовое изображение 3
 
 Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 
+Разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src="">
@@ -209,7 +209,7 @@ dilation             |<div style='float: center'><img width="150" src=""></img><
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|<div style='float: center'><img width="150" src=""></img></div>|
+dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
 
 Карта цветов:
 
