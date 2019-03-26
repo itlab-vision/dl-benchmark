@@ -165,12 +165,12 @@ ssd512                | Нет теста детектирования, рабо
 
 ### Тестовое изображение 1
 
-Источник: набор данных [PASCAL VOC 2007, 2012][pascalvoc]
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 500 x 333
+Разрешение: 
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\PASCAL_VOC\2007_002376.jpg"></img>
+<img width="150" src=""></img>
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -181,12 +181,12 @@ dilation             |<div style='float: center'><img width="150" src=""></img><
 
 ### Тестовое изображение 2
 
-Источник: набор данных [PASCAL VOC 2007, 2012][pascalvoc]
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 500 x 375
+Разрешение: 
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\PASCAL_VOC\2008_002787.jpg">
+<img width="150" src="">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -197,12 +197,12 @@ dilation             |<div style='float: center'><img width="150" src=""></img><
 
 ### Тестовое изображение 3
 
-Источник: набор данных [PASCAL VOC 2007, 2012][pascalvoc]
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 500 x 477
+Разрешение: 
 ﻿
 <div style='float: center'>
-<img width="150" src="..\data\PASCAL_VOC\2008_005803.jpg">
+<img width="150" src="">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -220,4 +220,4 @@ dilation             |<div style='float: center'><img width="150" src=""></img><
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
-[pascalvoc]: http://host.robots.ox.ac.uk/pascal/VOC/
+[cityscapes]: https://www.cityscapes-dataset.com
