@@ -47,11 +47,15 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.min_inference_time)
+            if (test_list[i].parameter.nthreads != 'None'):
+                cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
             test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
-                log.warning('Sync inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                log.warning('Sync inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
+                for line in test.stdout:
+                    print('    {}'.format(line), end = '')
                 continue
             log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
             lastline = ''
@@ -69,11 +73,15 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.async_request)
+            if (test_list[i].parameter.nthreads != 'None'):
+                cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
             test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
-                log.warning('Async inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                log.warning('Async inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
+                for line in test.stdout:
+                    print('    {}'.format(line), end = '')
                 continue
             log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
             lastline = ''

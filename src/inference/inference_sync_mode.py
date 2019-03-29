@@ -27,15 +27,15 @@ def build_argparser():
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
-        (CPU by default)', default = 'CPU', type = str, nargs = '+')
+        (CPU by default)', default = ['CPU'], type = str, nargs = '+')
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str)
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',
         default = 10, type = int)
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int)
-    parser.add_argument('-pc', '--perf_counts', help = 'Report performance \
-        counters', action = 'store_true', default = False)
+    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
+        (Max by default)', type = int, default = None)
     parser.add_argument('-t', '--task', help = 'Output processing method: \
         1.classification 2.detection 3.segmentation. \
         Default: without postprocess',
@@ -91,9 +91,10 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
     try:
-        net, plugin, data = pd.prepare_model(log, args.model, args.weights,
-            args.cpu_extension, args.device, args.plugin_dir, args.input)
+        net, plugin = pd.prepare_model(log, args.model, args.weights,
+            args.cpu_extension, args.device, args.plugin_dir, args.number_threads)
         net.batch_size = args.batch_size
+        data = pd.get_input_list(args.input)
         images = pd.prepare_data(net, data)
         log.info('Loading model to the plugin')
         exec_net = plugin.load(network = net)
