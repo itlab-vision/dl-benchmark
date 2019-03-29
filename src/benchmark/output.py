@@ -23,7 +23,7 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
     for key in hardware:
         hardware_info += '{}: {}, '.format(key, hardware[key])
     hardware_info = hardware_info[:-2]
-    other_param = 'Plugin: {}, Async request count: {}, Iteration count: {}, Thread count: {}, Min inference time: {}'.format(param.plugin,
+    other_param = 'Plugin: {}, Async request count: {}, Iteration count: {}, Thread count: {}, Min inference time: {} s'.format(param.plugin,
         param.async_request, param.iteration, param.nthreads, param.min_inference_time)
     table_row = '{};{};{};{};{};{};{};{};{};'.format(model.name, dataset.name,
         param.batch_size, param.mode, other_param, hardware_info, average_time,

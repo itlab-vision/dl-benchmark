@@ -26,6 +26,31 @@ def get_cpu_name(ostype):
     return cpuname
 
 
+def get_gpu_name(ostype):
+    gpuname = 'Underfined'
+    if (ostype == 'Windows'):
+        gpuname = 'Underfined discrete GPU'
+        import wmi
+        computer = wmi.WMI()
+        gpu_info = computer.Win32_VideoController()
+        for eachitem in gpu_info:
+            if 'Graphics' in eachitem.Name:
+                gpuname = eachitem.Name
+    elif (ostype == 'Linux'):
+        command = 'glxinfo | grep OpenGL'
+        p = subprocess.Popen(command, universal_newlines = True, shell = True,
+            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        gpu_info = p.stdout.read()
+        p.wait()
+        for line in gpu_info.split('\n'):
+            if 'Graphics' in line:
+                return line.split(':')[1].strip()
+    elif (ostype == 'Darwin'):
+        # TODO : write code for Mac OS
+        gpuname = 'Underfined GPU'
+    return gpuname
+
+
 def get_ram_size(ostype):
     ramsize = 'Underfined'
     if (ostype == 'Windows'):
@@ -50,6 +75,7 @@ def get_system_characteristics():
     ostype = platform.system()
     characteristics.update({'CPU' : get_cpu_name(ostype)})
     characteristics.update({'CPU family' : platform.processor()})
+    characteristics.update({'GPU' : get_gpu_name(ostype)})
     characteristics.update({'RAM size' : get_ram_size(ostype)})
     characteristics.update({'OS family' : platform.system()})
     characteristics.update({'OS version' : platform.platform()})
