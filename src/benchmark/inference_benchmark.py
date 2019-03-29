@@ -53,7 +53,9 @@ def inference_benchmark(test_list, result_table, log):
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
-                log.warning('Sync inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                log.warning('Sync inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
+                for line in test.stdout:
+                    print('    {}'.format(line), end = '')
                 continue
             log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
             lastline = ''
@@ -77,7 +79,9 @@ def inference_benchmark(test_list, result_table, log):
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()
             if test.poll():
-                log.warning('Async inference test on model: {} was ended with error'.format(test_list[i].model.name))
+                log.warning('Async inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
+                for line in test.stdout:
+                    print('    {}'.format(line), end = '')
                 continue
             log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
             lastline = ''
