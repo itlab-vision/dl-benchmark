@@ -48,14 +48,21 @@ class parameters:
                 raise ValueError('Wrong async request number')
         else:
             self.async_request = int(parameter[3])
-        self.iteration = int(parameter[4])
-        if parameter[5] == 'None':
+        if parameter[4] != 'None':
+            self.iteration = int(parameter[4])
+        else:
+            raise ValueError('Wrong iteration number')
+        if parameter[5] != 'None':
+            self.nthreads = int(parameter[5])
+        else:
+            self.nthreads = parameter[5]
+        if parameter[6] == 'None':
             if self.mode == 'sync':
                 raise ValueError('Wrong min inference time number')
             else:
-                self.min_inference_time = parameter[5]
+                self.min_inference_time = parameter[6]
         else:
-            self.min_inference_time = float(parameter[5])
+            self.min_inference_time = float(parameter[6])
 
 
 class test:
