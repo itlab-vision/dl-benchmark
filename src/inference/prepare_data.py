@@ -22,7 +22,7 @@ def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
         plugin.add_cpu_extension(cpu_extension)
     log.info('Loading network files:\n\t {0}\n\t {1}'.format(
         model_xml, model_bin))
-    net = IENetwork.from_ir(model = model_xml, weights = model_bin)
+    net = IENetwork(model = model_xml, weights = model_bin)
     if plugin.device == 'CPU':
         supported_layers = plugin.get_supported_layers(net)
         not_supported_layers = [ l for l in net.layers.keys() \
