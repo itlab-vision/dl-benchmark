@@ -5,9 +5,8 @@ import logging as log
 import cv2
 from openvino.inference_engine import IENetwork, IEPlugin
 
-
 def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
-                  input):
+                  thread_num):
     model_xml = model
     model_bin = weights
     if len(device_list) == 1:
@@ -36,14 +35,24 @@ def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
                 sample\'s command line parameters using -l or --cpu_extension \
                 command line argument')
             sys.exit(1)
+    if thread_num is not None:
+        if 'CPU' in device_list:
+            plugin.set_config({'CPU_THREADS_NUM': str(thread_num)})
+        else:
+            log.error('Parameter : Number of threads is used only for CPU')
+            sys.exit(1)
     if len(device_list) == 2:
         plugin.set_config({'TARGET_FALLBACK': device})
         plugin.set_initial_affinity(net)
+    return net, plugin
+
+
+def get_input_list(input):
     if os.path.isdir(input[0]):
         data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
     else:
         data = input
-    return net, plugin, data
+    return data
 
 
 def prepare_data(model, data):
