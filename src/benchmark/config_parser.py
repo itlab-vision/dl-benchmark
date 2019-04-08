@@ -7,6 +7,7 @@ class model:
         self.name = mdl[0]
         self.model = None
         self.weight = None
+        self.datatype = mdl[2].upper()
         for file in os.listdir(mdl[1]):
             if file.endswith('.xml'):
                 self.model = os.path.join(mdl[1], file)
