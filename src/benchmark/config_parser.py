@@ -35,10 +35,7 @@ class parameters:
         else:
             raise ValueError('Wrong mode')
         if parameter[0] == 'None':
-            if self.mode != 'Async':
-                self.batch_size = 'None'
-            else:
-                raise ValueError('Wrong batch size')
+            raise ValueError('Wrong batch size')
         else:
             self.batch_size = int(parameter[0])
         self.plugin = parameter[2].upper()
