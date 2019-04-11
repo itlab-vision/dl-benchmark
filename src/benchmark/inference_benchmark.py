@@ -75,6 +75,8 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].parameter.async_request)
             if (test_list[i].parameter.nthreads != 'None'):
                 cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
+            if (test_list[i].parameter.nstreams != 'None'):
+                cmd_line += ' -nstreams {}'.format(test_list[i].parameter.nstreams)
             test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
             test.wait()

@@ -42,6 +42,8 @@ def build_parser():
         iterations', default = 1, type = int)
     parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
         (Max by default)', type = int, default = None)
+    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
+        type = int, default = None)
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str)
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
@@ -254,7 +256,8 @@ def main():
     args = build_parser().parse_args()
     try:
         net, plugin = pd.prepare_model(log, args.model, args.weights,
-            args.cpu_extension, args.device, args.plugin_dir, args.number_threads)
+            args.cpu_extension, args.device, args.plugin_dir, args.number_threads,
+            args.number_streams)
         net.batch_size = args.batch_size
         data = pd.get_input_list(args.input)
         images = pd.prepare_data(net, data)

@@ -65,7 +65,7 @@ def detection_output(res, data, prob_threshold):
                     min(class_id * 5, 255))
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
         cv2.imshow('Detection Results', image)
-    cv2.waitKey(1000)
+    cv2.waitKey()
     cv2.destroyAllWindows()
 
 

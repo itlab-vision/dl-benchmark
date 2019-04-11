@@ -92,7 +92,8 @@ def main():
     args = build_argparser().parse_args()
     try:
         net, plugin = pd.prepare_model(log, args.model, args.weights,
-            args.cpu_extension, args.device, args.plugin_dir, args.number_threads)
+            args.cpu_extension, args.device, args.plugin_dir, args.number_threads,
+            None)
         net.batch_size = args.batch_size
         data = pd.get_input_list(args.input)
         images = pd.prepare_data(net, data)

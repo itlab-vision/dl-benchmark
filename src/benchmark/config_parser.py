@@ -35,15 +35,12 @@ class parameters:
         else:
             raise ValueError('Wrong mode')
         if parameter[0] == 'None':
-            if self.mode != 'async':
-                self.batch_size = 'None'
-            else:
-                raise ValueError('Wrong batch size')
+            raise ValueError('Wrong batch size')
         else:
             self.batch_size = int(parameter[0])
         self.plugin = parameter[2].upper()
         if parameter[3] == 'None':
-            if self.mode != 'async':
+            if self.mode.lower() != 'async':
                 self.async_request = 'None'
             else:
                 raise ValueError('Wrong async request number')
@@ -57,13 +54,19 @@ class parameters:
             self.nthreads = int(parameter[5])
         else:
             self.nthreads = parameter[5]
-        if parameter[6] == 'None':
-            if self.mode == 'sync':
+        if parameter[6] != 'None':
+            if self.mode.lower() == 'sync':
+                raise ValueError('Parameter streamcount is used only for async')
+            self.nstreams = int(parameter[6])
+        else:
+            self.nstreams = parameter[6]
+        if parameter[7] == 'None':
+            if self.mode.lower() == 'sync':
                 raise ValueError('Wrong min inference time number')
             else:
-                self.min_inference_time = parameter[6]
+                self.min_inference_time = parameter[7]
         else:
-            self.min_inference_time = float(parameter[6])
+            self.min_inference_time = float(parameter[7])
 
 
 class test:
