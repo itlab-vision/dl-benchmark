@@ -6,7 +6,7 @@ import cv2
 from openvino.inference_engine import IENetwork, IEPlugin
 
 def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
-                  thread_num):
+                  thread_num, stream_num):
     model_xml = model
     model_bin = weights
     if len(device_list) == 1:
@@ -40,6 +40,12 @@ def prepare_model(log, model, weights, cpu_extension, device_list, plugin_dir,
             plugin.set_config({'CPU_THREADS_NUM': str(thread_num)})
         else:
             log.error('Parameter : Number of threads is used only for CPU')
+            sys.exit(1)
+    if stream_num is not None:
+        if 'CPU' in device_list:
+            plugin.set_config({'CPU_THROUGHPUT_STREAMS': str(stream_num)})
+        else:
+            log.error('Parameter : Number of streams is used only for CPU')
             sys.exit(1)
     if len(device_list) == 2:
         plugin.set_config({'TARGET_FALLBACK': device})
