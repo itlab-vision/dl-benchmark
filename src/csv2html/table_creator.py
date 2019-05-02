@@ -68,7 +68,8 @@ class HTMLTable:
             self.table_html.append('<td>\n<table align="center" width="100%"' + 
             'border="1" cellspacing="0" cellpadding="0">\n<tr>\n')
             for test in infrastr[1][0][1]:
-                self.table_html.append(('<th>{};{};{};{};{};</th>\n')
+                test[5] = test[5].replace(',', '<br>')
+                self.table_html.append(('<th>{};{};{};<br>{};{}</th>\n')
                 .format(test[1], test[2], test[3], test[4], test[5]))
             self.table_html.append('</tr>\n<tr>')
             for i in range(len(infrastr[1][0][1])):
@@ -92,12 +93,12 @@ class HTMLTable:
                 for curr_model in infrastr[1]:
                     if (curr_model[0] == model):
                         for test in curr_model[1]:
-                            self.table_html.append(('\n<td><table' + 
-                            'align="center" width="100%" border="1"' + 
-                            'cellspacing="0" cellpadding="0">\n<tr>\n<th' + 
-                            'class="double">{}</th>\n<th class="double">{}' + 
-                            '</th>\n</tr>\n</table>\n</td>\n').format(test[7],
-                            test[9]))    
+                            self.table_html.append(('\n<td><table align="center"' +
+                                'width="100%" border="1" cellspacing="0"' + 
+                                'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' + 
+                                '</td>\n<td class="double" align="right">{}</td>\n</tr>\n' + 
+                                '</table>\n</td>\n').format(test[7],
+                                test[9]))    
                 self.table_html.append('\n</tr>\n</table>\n</td>')
             self.table_html.append('\n</tr>')
 
