@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class HTMLTable:
     def __init__(self, _table_csv):
         self.table_html = []
@@ -22,29 +24,73 @@ class HTMLTable:
         return models_set
 
     def prep_tests(self, tests):
-        first_tests = tests[0][1]
+        max_len = -1
+        first_tests = None
+        for model in tests:
+            if (len(model[1]) > max_len):
+                first_tests = model[1]
+                max_len = len(model[1])
+
         for curr_model in range(1, len(tests)):
-            for curr_test in range(len(tests[curr_model][1])):
-                for i in range(len(tests[curr_model][1])):
-                    if (first_tests[curr_test][1:6] ==
-                        tests[curr_model][1][i][1:6]):
+            for curr_test in range(len(first_tests)):
+                i = 0
+                while (i <  len(tests[curr_model][1])):
+                    if (first_tests[curr_test][1] ==
+                        tests[curr_model][1][i][1] and first_tests[curr_test][3:6] ==
+                        tests[curr_model][1][i][3:6]):
                         (tests[curr_model][1][i], \
                         tests[curr_model][1][curr_test]) = \
                         (tests[curr_model][1][curr_test], \
                         tests[curr_model][1][i])
+                        break
+                    i += 1
+                else:
+                    if (len(tests[curr_model][1]) > curr_test):
+                        tests[curr_model][1].append(
+                            deepcopy(tests[curr_model][1][curr_test]))
+                        tests[curr_model][1][curr_test] = \
+                            deepcopy(first_tests[curr_test])
+                        tests[curr_model][1][curr_test][0] = \
+                            tests[curr_model][0]
+                        tests[curr_model][1][curr_test][7] = \
+                            'no test'
+                        tests[curr_model][1][curr_test][9] = \
+                            'no test'
+                    elif (len(tests[curr_model][1]) < len(first_tests)):
+                        tests[curr_model][1].append(
+                            deepcopy(first_tests[curr_test]))
+                        tests[curr_model][1][curr_test][0] = \
+                            tests[curr_model][0]
+                        tests[curr_model][1][curr_test][7] = \
+                            'no test'
+                        tests[curr_model][1][curr_test][9] = \
+                            'no test'
+            if (len(tests[curr_model][1]) != len(first_tests)):
+                print(len(tests[curr_model][1]), len(first_tests))
 
     def sort_all_tests(self):
         infr_list = self.find_all_infr()
         self.sorted_tests = [(infrastr, []) for infrastr in infr_list]
         models_set = list(self.get_all_models_names())
+        unused_models = []
 
-        for i, infrastr in enumerate(infr_list): 
+        for i, infrastr in enumerate(infr_list):
+            unused_models.clear()
             for model in models_set:
                 model_tests = self.find_all_model_tests(model,
                     infrastr)
                 if (len(model_tests) > 0):
                     self.sorted_tests[i][1].append((model, model_tests))
-            self.prep_tests(self.sorted_tests[i][1])    
+                else:
+                    unused_models.append(model)
+            for model in unused_models:
+                copy_model_tests = deepcopy(self.sorted_tests[i][1][1][1])
+                for test in copy_model_tests:
+                    test[0] = model
+                    test[7] = 'no test'
+                    test[9] = 'no test'
+                self.sorted_tests[i][1].append((model, copy_model_tests))
+            self.prep_tests(self.sorted_tests[i][1])
 
     def find_all_model_tests(self, model, infrastr):
         test_list = []
