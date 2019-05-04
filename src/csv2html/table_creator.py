@@ -118,11 +118,18 @@ class HTMLTable:
                 self.table_html.append(('<th>{};{};{};<br>{};{}</th>\n')
                 .format(test[1], test[2], test[3], test[4], test[5]))
             self.table_html.append('</tr>\n<tr>')
-            for i in range(len(infrastr[1][0][1])):
-                self.table_html.append('\n<td>\n<table align="center"' + 
-                'width="100%" border="1" cellspacing="0" cellpadding="0">' + 
-                    '\n<tr>\n<th class="double">Time, s</th>\n' + 
-                    '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
+            for test in infrastr[1][0][1]:
+                if (test[4] == 'Sync'):
+                    self.table_html.append('\n<td>\n<table align="center"' +
+                    'width="100%" border="1" cellspacing="0" cellpadding="0">'+
+                        '\n<tr>\n<th class="double">Latency</th>\n' +
+                        '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
+                else:
+                    self.table_html.append('\n<td>\n<table align="center"' +
+                    'width="100%" border="1" cellspacing="0" cellpadding="0">'+
+                        '\n<tr>\n<th class="double">' +
+                        'Average time of single pass</th>\n'+
+                        '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
             self.table_html.append('\n</tr>\n</table>\n</td>')
         self.table_html.append('\n</tr>')
 
