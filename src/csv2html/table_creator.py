@@ -53,18 +53,18 @@ class HTMLTable:
                         tests[curr_model][1][curr_test][0] = \
                             tests[curr_model][0]
                         tests[curr_model][1][curr_test][7] = \
-                            'no test'
+                            '-'
                         tests[curr_model][1][curr_test][9] = \
-                            'no test'
+                            '-'
                     elif (len(tests[curr_model][1]) < len(first_tests)):
                         tests[curr_model][1].append(
                             deepcopy(first_tests[curr_test]))
                         tests[curr_model][1][curr_test][0] = \
                             tests[curr_model][0]
                         tests[curr_model][1][curr_test][7] = \
-                            'no test'
+                            '-'
                         tests[curr_model][1][curr_test][9] = \
-                            'no test'
+                            '-'
             if (len(tests[curr_model][1]) != len(first_tests)):
                 print(len(tests[curr_model][1]), len(first_tests))
 
@@ -87,8 +87,8 @@ class HTMLTable:
                 copy_model_tests = deepcopy(self.sorted_tests[i][1][1][1])
                 for test in copy_model_tests:
                     test[0] = model
-                    test[7] = 'no test'
-                    test[9] = 'no test'
+                    test[7] = '-'
+                    test[9] = '-'
                 self.sorted_tests[i][1].append((model, copy_model_tests))
             self.prep_tests(self.sorted_tests[i][1])
 
