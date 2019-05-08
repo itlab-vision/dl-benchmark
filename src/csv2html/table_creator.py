@@ -111,7 +111,7 @@ class HTMLTable:
     def write_all_invariants(self):
         self.table_html.append('\n<tr>\n<td>\n</td>\n')
         for infrastr in self.sorted_tests:
-            self.table_html.append('<td>\n<table align="center" width="100%"' + 
+            self.table_html.append('<td>\n<table align="center" width="100%"' +
             'border="1" cellspacing="0" cellpadding="0">\n<tr>\n')
             for test in infrastr[1][0][1]:
                 test[5] = test[5].replace(',', '<br>')
@@ -120,16 +120,14 @@ class HTMLTable:
             self.table_html.append('</tr>\n<tr>')
             for test in infrastr[1][0][1]:
                 if (test[4] == 'Sync'):
-                    self.table_html.append('\n<td>\n<table align="center"' +
-                    'width="100%" border="1" cellspacing="0" cellpadding="0">'+
-                        '\n<tr>\n<th class="double">Latency</th>\n' +
-                        '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
+                    inv = 'Latency'
                 else:
-                    self.table_html.append('\n<td>\n<table align="center"' +
+                    inv = 'Average time of single pass'
+                self.table_html.append(('\n<td>\n<table align="center"' +
                     'width="100%" border="1" cellspacing="0" cellpadding="0">'+
-                        '\n<tr>\n<th class="double">' +
-                        'Average time of single pass</th>\n'+
-                        '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
+                    '\n<tr>\n<th class="double">{}</th>\n' +
+                    '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
+                        .format(inv))
             self.table_html.append('\n</tr>\n</table>\n</td>')
         self.table_html.append('\n</tr>')
 
@@ -146,12 +144,16 @@ class HTMLTable:
                 for curr_model in infrastr[1]:
                     if (curr_model[0] == model):
                         for test in curr_model[1]:
+                            if (test[4] == 'Sync'):
+                                result = test[8:10]
+                            else:
+                                result = test[7:10:2]
                             self.table_html.append(('\n<td><table align="center"' +
                                 'width="100%" border="1" cellspacing="0"' + 
-                                'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' + 
-                                '</td>\n<td class="double" align="right">{}</td>\n</tr>\n' + 
-                                '</table>\n</td>\n').format(test[7],
-                                test[9]))    
+                                'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' +
+                                '</td>\n<td class="double" align="right">{}</td>\n</tr>\n' +
+                                '</table>\n</td>\n').format(result[0],
+                                result[1]))    
                 self.table_html.append('\n</tr>\n</table>\n</td>')
             self.table_html.append('\n</tr>')
 
