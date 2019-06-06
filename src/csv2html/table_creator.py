@@ -54,6 +54,8 @@ class HTMLTable:
                             tests[curr_model][0]
                         tests[curr_model][1][curr_test][7] = \
                             '-'
+                        tests[curr_model][1][curr_test][8] = \
+                            '-'
                         tests[curr_model][1][curr_test][9] = \
                             '-'
                     elif (len(tests[curr_model][1]) < len(first_tests)):
@@ -62,6 +64,8 @@ class HTMLTable:
                         tests[curr_model][1][curr_test][0] = \
                             tests[curr_model][0]
                         tests[curr_model][1][curr_test][7] = \
+                            '-'
+                        tests[curr_model][1][curr_test][8] = \
                             '-'
                         tests[curr_model][1][curr_test][9] = \
                             '-'
@@ -88,6 +92,7 @@ class HTMLTable:
                 for test in copy_model_tests:
                     test[0] = model
                     test[7] = '-'
+                    test[8] = '-'
                     test[9] = '-'
                 self.sorted_tests[i][1].append((model, copy_model_tests))
             self.prep_tests(self.sorted_tests[i][1])
