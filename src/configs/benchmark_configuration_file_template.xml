@@ -4,6 +4,7 @@
         <Model>
             <Name></Name>
             <Path></Path>
+            <WeightType></WeightType>
         </Model>
         <Dataset>
             <Name></Name>
@@ -13,8 +14,11 @@
             <BatchSize></BatchSize>
             <Mode></Mode>
             <Plugin></Plugin>
+            <PluginPath></PluginPath>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount></IterationCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
             <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
