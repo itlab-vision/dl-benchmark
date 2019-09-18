@@ -47,7 +47,9 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.min_inference_time)
-            if (test_list[i].parameter.nthreads != 'None'):
+            if (test_list[i].parameter.plugin_path != None):
+                cmd_line += ' -l {}'.format(test_list[i].parameter.plugin_path)
+            if (test_list[i].parameter.nthreads != None):
                 cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
             test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
@@ -73,9 +75,11 @@ def inference_benchmark(test_list, result_table, log):
                     test_list[i].dataset.path, test_list[i].parameter.batch_size,
                     test_list[i].parameter.plugin, test_list[i].parameter.iteration,
                     test_list[i].parameter.async_request)
-            if (test_list[i].parameter.nthreads != 'None'):
+            if (test_list[i].parameter.plugin_path != None):
+                cmd_line += ' -l {}'.format(test_list[i].parameter.plugin_path)
+            if (test_list[i].parameter.nthreads != None):
                 cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
-            if (test_list[i].parameter.nstreams != 'None'):
+            if (test_list[i].parameter.nstreams != None):
                 cmd_line += ' -nstreams {}'.format(test_list[i].parameter.nstreams)
             test = subprocess.Popen(cmd_line, env = environment, shell = True,
                 stdout = subprocess.PIPE, universal_newlines = True)
@@ -104,12 +108,12 @@ if __name__ == '__main__':
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
         config, result_table = build_parser()
-        test_list = config_parser.process_config(config)
+        test_list = config_parser.process_config(config, log)
         log.info('Create result table with name: {}'.format(result_table))
         output.create_table(result_table)
         log.info('Start {} inference tests'.format(len(test_list)))
-        table = inference_benchmark(test_list, result_table, log)
+        inference_benchmark(test_list, result_table, log)
         log.info('End inference tests')
         log.info('Work is done!')
     except Exception as exp:
-        log.warning(str(exp))
+        log.error(str(exp))
