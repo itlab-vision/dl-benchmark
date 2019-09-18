@@ -25,7 +25,8 @@ class model:
                 if file.endswith('.bin'):            
                     self.weight = os.path.join(path, file)
             if (self.model is None) or (self.weight is None):
-                raise ValueError('Wrong model IR format. The folder should contain .xml and .bin files for only one model.')
+                raise ValueError('Wrong model IR format. \
+                    The folder should contain .xml and .bin files for only one model.')
         else:
             raise ValueError('Path to folder with IR format model is required parameter.')
         if self._parameter_not_is_none(weight_type):
@@ -111,15 +112,18 @@ class parameters:
         if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
             self.batch_size = int(batch_size)
         else:
-            raise ValueError('Batch size is required parameter. Batch size can only take values: integer greater than zero.')
+            raise ValueError('Batch size is required parameter. \
+                Batch size can only take values: integer greater than zero.')
         if self._mode_is_correct(mode):
             self.mode = mode.title()
         else:
-            raise ValueError('Mode is required parameter. Mode can only take values: Sync, Async.')
+            raise ValueError('Mode is required parameter. \
+                Mode can only take values: Sync, Async.')
         if self._plugin_is_correct(plugin):
             self.plugin = plugin.upper()
         else:
-            raise ValueError('Plugin is required parameter. Plugin can only take values: CPU, GPU, FPGA, MYRIAD.')
+            raise ValueError('Plugin is required parameter. \
+                Plugin can only take values: CPU, GPU, FPGA, MYRIAD.')
         if self._plugin_path_is_correct(plugin_path):
             self.plugin_path = plugin_path
         else:
@@ -127,25 +131,30 @@ class parameters:
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
-            raise ValueError('Iteration count is required parameter. Iteration count can only take values: integer greater than zero.')
+            raise ValueError('Iteration count is required parameter. \
+                Iteration count can only take values: integer greater than zero.')
         if self.mode == 'Sync':
             if self._parameter_not_is_none(thread_count) and self._int_value_is_correct(thread_count):
                 self.nthreads = int(thread_count)
             else:
-                raise ValueError('Thread count is required parameter for sync mode. Thread count can only take values: integer greater than zero.')
+                raise ValueError('Thread count is required parameter for sync mode. \
+                    Thread count can only take values: integer greater than zero.')
             if self._parameter_not_is_none(min_inference_time) and self._float_value_is_correct(min_inference_time):
                 self.min_inference_time = float(min_inference_time)
             else:
-                raise ValueError('Min inference time is required parameter for sync mode. Min inference time can only take values: float greater than zero.')
+                raise ValueError('Min inference time is required parameter for sync mode. \
+                    Min inference time can only take values: float greater than zero.')
         if self.mode == 'Async':
             if self._parameter_not_is_none(async_request_count) and self._int_value_is_correct(async_request_count):
                 self.async_request = async_request_count
             else:
-                raise ValueError('Async requiest count is required parameter for async mode. Async requiest count can only take values: integer greater than zero.')
+                raise ValueError('Async requiest count is required parameter for async mode. \
+                    Async requiest count can only take values: integer greater than zero.')
             if self._parameter_not_is_none(stream_count) and self._int_value_is_correct(stream_count):
                 self.nstreams = stream_count
             else:
-                raise ValueError('Stream count is required parameter for async mode. Stream count can only take values: integer greater than zero.')
+                raise ValueError('Stream count is required parameter for async mode. \
+                    Stream count can only take values: integer greater than zero.')
 
 
 class test:
@@ -182,7 +191,9 @@ def process_config(config, log):
                         i += 1
                     test_parameters[1] = dataset(*options)
                 if child.tag == 'Parameters':
-                    options = ['Batch Size', 'Mode', 'Plugin', 'Plugin Path', 'Async Request Count', 'Iterarions', 'Threads', 'Streams', 'Min Infer Time']
+                    options = ['Batch Size', 'Mode', 'Plugin', 'Plugin Path', 
+                               'Async Request Count', 'Iterarions', 'Threads', 
+                               'Streams', 'Min Infer Time']
                     i = 0
                     for option in child.getchildren():
                         options[i] = option.text
