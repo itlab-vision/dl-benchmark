@@ -1,6 +1,7 @@
 import os
 import platform
 import subprocess
+from collections import OrderedDict
 
 
 def get_cpu_name(ostype):
@@ -71,8 +72,8 @@ def get_ram_size(ostype):
 
 
 def get_system_characteristics():
-    characteristics = {}
     ostype = platform.system()
+    characteristics = OrderedDict()
     characteristics.update({'CPU' : get_cpu_name(ostype)})
     characteristics.update({'CPU family' : platform.processor()})
     characteristics.update({'GPU' : get_gpu_name(ostype)})

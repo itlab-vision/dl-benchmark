@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append('../auxiliary')
 import node_info as info
+from collections import OrderedDict
 
 
 def create_table(tablename):
@@ -23,8 +24,18 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
     for key in hardware:
         hardware_info += '{}: {}, '.format(key, hardware[key])
     hardware_info = hardware_info[:-2]
-    other_param = 'Plugin: {}, Async request count: {}, Iteration count: {}, Thread count: {}, Stream count: {}, Min inference time (s): {}'.format(param.plugin,
-        param.async_request, param.iteration, param.nthreads, param.nstreams, param.min_inference_time)
+    parameters = OrderedDict()
+    parameters.update({'Plugin' : param.plugin})
+    parameters.update({'Async request count' : param.async_request})
+    parameters.update({'Iteration count' : param.iteration})
+    parameters.update({'Thread count' : param.nthreads})
+    parameters.update({'Stream count' : param.nstreams})
+    parameters.update({'Min inference time(s)' : param.min_inference_time})
+    other_param = ''
+    for key in parameters:
+        if parameters[key] != None:
+            other_param += '{}: {}, '.format(key, parameters[key])
+    other_param = other_param[:-2]
     table_row = '{};{};{};{};{};{};{};{};{};{};'.format(model.name, model.datatype,
         dataset.name, param.batch_size, param.mode, other_param, hardware_info,
         average_time, latency, fps)
