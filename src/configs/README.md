@@ -50,6 +50,7 @@
 - Имя модели описывается внутри тегов `Name`.
 - Путь до папки с моделью в промежуточном формате Inference Engine
   описывается внутри тега `Path`.
+- Тип данных весов модели описывается внутри тегов `WeightType`
 - Информация о выборке описывается внутри тегов `Dataset`.
 - Имя выборки описывается внутри тегов `Name`.
 - Путь до папки с выборкой описывается внутри тегов `Path`.
@@ -66,8 +67,14 @@
   Параметр задается внутри тега `Plugin`.
 - Обязательным параметром является количество итераций цикла тестирования.
   Параметр описывается внутри тега `IterationCount`.
+- Обязательным параметром является максимальное количество потоков вывода.
+  Параметр описывается внутри тега `ThreadCount`.
 - Обязательным параметром является минимальное время выполнения вывода.
   Параметр описывается внутри тегов `MinInferenceTime`.
+- Для некоторых моделей при запуске на некоторых устройствах необходима
+  реализация слоёв для проведения вывода модели.
+  Путь до файла с реализацией слоёв описывается внутри тегов
+  `PluginPath`.
 - Остальные параметры допустимо оставить пустыми.
 
 Параметры для тестирования асинхронного режима:
@@ -83,6 +90,12 @@
   Параметр описывается внутри тега `Plugin`.
 - Обязательным параметром является количество итераций.
   Параметр описывается внутри тега `IterationCount`.
+- Обязательным параметром является количество потоков исполнения запросов.
+  Параметр описывается внутри тега `StreamCount`.
+- Для некоторых моделей при запуске на некоторых устройствах необходима
+  реализация слоёв для проведения вывода модели.
+  Путь до файла с реализацией слоёв описывается внутри тегов
+  `PluginPath`.
 - Остальные параметры допустимо оставить пустыми.
 
 ### Пример заполнения файла конфигурации для скрипта замера производительности
@@ -93,36 +106,44 @@
     <Test>
         <Model>
             <Name>densenet-121</Name>
-            <Path>C:/classification/densenet/121/IR/</Path>
+            <Path>C:/classification/densenet/121/IR/FP32/</Path>
+            <WeightType>FP32</WeightType>
         </Model>
         <Dataset>
-            <Name>ImageNet</Name>
+            <Name>ImageNET</Name>
             <Path>C:/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>10</BatchSize>
+            <BatchSize>4</BatchSize>
             <Mode>Sync</Mode>
             <Plugin>CPU</Plugin>
+            <PluginPath></PluginPath>
             <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount>10</IterationCount>
+            <IterationCount>1000</IterationCount>
+            <ThreadCount>4</ThreadCount>
+            <StreamCount></StreamCount>
             <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
         <Model>
             <Name>densenet-121</Name>
-            <Path>C:/classification/densenet/121/IR/</Path>
+            <Path>C:/classification/densenet/121/IR/FP32/</Path>
+            <WeightType>FP32</WeightType>
         </Model>
         <Dataset>
-            <Name>ImageNet</Name>
+            <Name>ImageNET</Name>
             <Path>C:/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>10</BatchSize>
+            <BatchSize>4</BatchSize>
             <Mode>Async</Mode>
             <Plugin>CPU</Plugin>
-            <AsyncRequestCount>1</AsyncRequestCount>
-            <IterationCount>10</IterationCount>
+            <PluginPath></PluginPath>
+            <AsyncRequestCount>4</AsyncRequestCount>
+            <IterationCount>1000</IterationCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount>4</StreamCount>
             <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
