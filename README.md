@@ -41,7 +41,7 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
     intermediate representation using Model Optimizer from
 	Intel® Distribution of OpenVINO™ toolkit.
   - `csv2html` is a set of scripts to convert result table
-  from csv format to html format
+  from csv format to html format.
   - `inference` contains inference implementation based on
     Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
@@ -50,7 +50,7 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [celeba]: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
-[cityscapes]: https://www.cityscapes-dataset.com/
+[cityscapes]: https://www.cityscapes-dataset.com
 [imagenet]: http://www.image-net.org
 [ms-coco]: http://cocodataset.org
 [pascal-voc]: http://host.robots.ox.ac.uk/pascal/VOC
