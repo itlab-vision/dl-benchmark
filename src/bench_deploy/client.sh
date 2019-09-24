@@ -12,3 +12,4 @@ wget $1
 arch_name="$(ls | grep ".tgz")"
 tar -xvzf $arch_name
 cd "$(basename $arch_name .tgz)"
+sudo ./install.sh
