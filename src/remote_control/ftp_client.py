@@ -78,8 +78,8 @@ def main():
         path_to_res_table, log_file)
 
     result_table = open(path_to_res_table, 'rb')
-    ftp_con.storbinary('STOR '+ platform.node() +
-        '_result_table.csv', result_table)
+    ftp_con.storbinary('STOR {}_result_table.csv'.format(platform.node()),
+        result_table)
     ftp_con.close()
 
 
