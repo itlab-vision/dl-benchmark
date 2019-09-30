@@ -17,7 +17,7 @@ def build_parser():
     parser.add_argument('-env', '--path_to_env', type = str,
         help = 'Path to OpenVINO environment.', required = True)
     parser.add_argument('-b', '--benchmark_config', type = str,
-        help = 'Path to OpenVINO environment.', required = True)
+        help = 'Path to config file.', required = True)
     parser.add_argument('-os', '--os_type', type = str,
         help = 'Type of operating system.', required = True)
     parser.add_argument('--res_file', type = str,
@@ -64,15 +64,22 @@ def main():
         '//..//benchmark')
     log_file = os.path.join(path_to_ftp_client, param_list.log_file)
     path_to_res_table = os.path.join(path_to_ftp_client, param_list.res_file)
+
+    #Connect to FTP and take benchmark config file
+    ftp_con = ftplib.FTP(param_list.server_ip,
+        param_list.login, param_list.password)
+
+    with open(param_list.benchmark_config, 'wb') as config_file:
+        ftp_con.retrbinary('RETR {}'.format(param_list.benchmark_config),
+            config_file.write)
+
     launch_benchmark(param_list.path_to_env, path_to_benchmark,
         param_list.benchmark_config, param_list.os_type,
         path_to_res_table, log_file)
-        
-    ftp_con = ftplib.FTP(param_list.server_ip,
-        param_list.login, param_list.password)
+
     result_table = open(path_to_res_table, 'rb')
-    send = ftp_con.storbinary('STOR '+ platform.node() +
-        '_result_table.csv', result_table)
+    ftp_con.storbinary('STOR {}_result_table.csv'.format(platform.node()),
+        result_table)
     ftp_con.close()
 
 
