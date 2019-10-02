@@ -4,20 +4,6 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
 
 ## Repo Structure
 
-- `data` directory contains images for benchmarking.
-  - `CelebA` is a subset of test images from
-    [CelebA dataset][celeba].
-  - `Cityscapes` is a subset of test images from
-    [Cityscapes dataset][cityscapes]
-  - `ImageNET` is a subset of test images from
-    [ImageNET dataset][imagenet].
-  - `MS_COCO` is a subset of test images from
-    [MS COCO dataset][ms-coco].
-  - `PASCAL_VOC` is a subset of test images from
-    [PASCAL VOC 2007, 2012 datasets][pascal-voc].
-  - `WIDER_FACE` is a subset of test images from
-    [WIDER FACE dataset][wider-face].
-
 - `docs` directory contains project documentation.
   - [`concept.md`](docs/concept.md) is a concept description
     (goals, tasks and requirements).
@@ -49,9 +35,3 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
-[celeba]: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
-[cityscapes]: https://www.cityscapes-dataset.com
-[imagenet]: http://www.image-net.org
-[ms-coco]: http://cocodataset.org
-[pascal-voc]: http://host.robots.ox.ac.uk/pascal/VOC
-[wider-face]: http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace
