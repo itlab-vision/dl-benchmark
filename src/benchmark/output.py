@@ -33,6 +33,8 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
     parameters.update({'Min inference time(s)' : param.min_inference_time})
     other_param = ''
     for key in parameters:
+        if key == 'Min inference time(s)' and parameters[key] == 0.0:
+            continue
         if parameters[key] != None:
             other_param += '{}: {}, '.format(key, parameters[key])
     other_param = other_param[:-2]

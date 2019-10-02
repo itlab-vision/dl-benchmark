@@ -134,11 +134,11 @@ class parameters:
             raise ValueError('Iteration count is required parameter. \
                 Iteration count can only take values: integer greater than zero.')
         if self.mode == 'Sync':
-            if self._parameter_not_is_none(thread_count) and self._int_value_is_correct(thread_count):
-                self.nthreads = int(thread_count)
-            else:
-                raise ValueError('Thread count is required parameter for sync mode. \
-                    Thread count can only take values: integer greater than zero.')
+            if self._parameter_not_is_none(thread_count):
+                if self._int_value_is_correct(thread_count):
+                    self.nthreads = int(thread_count)
+                else:
+                    raise ValueError('Thread count can only take values: integer greater than zero.')
             if self._parameter_not_is_none(min_inference_time) and self._float_value_is_correct(min_inference_time):
                 self.min_inference_time = float(min_inference_time)
             else:
@@ -150,11 +150,11 @@ class parameters:
             else:
                 raise ValueError('Async requiest count is required parameter for async mode. \
                     Async requiest count can only take values: integer greater than zero.')
-            if self._parameter_not_is_none(stream_count) and self._int_value_is_correct(stream_count):
-                self.nstreams = stream_count
-            else:
-                raise ValueError('Stream count is required parameter for async mode. \
-                    Stream count can only take values: integer greater than zero.')
+            if self._parameter_not_is_none(stream_count):
+                if self._int_value_is_correct(stream_count):
+                    self.nstreams = stream_count
+                else:
+                    raise ValueError('Stream count can only take values: integer greater than zero.')
 
 
 class test:
