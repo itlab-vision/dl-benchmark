@@ -1,4 +1,4 @@
-# DeepLInf: Deep Learning Inference Benchmark based on Intel® Distribution of OpenVINO™ toolkit
+# DLI: Deep Learning Inference Benchmark based on Intel® Distribution of OpenVINO™ toolkit
 
 Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][openvino-toolkit].
 
