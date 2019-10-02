@@ -211,7 +211,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 Карта цветов:
 
 <div style='float: center'>
-<img width="300" src="segmentation\cityscapes_colormap.png">
+<img width="300" src="segmentation\cityscapes_colormap.jpg">
 </div>
 
 
