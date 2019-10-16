@@ -25,7 +25,7 @@ def create_table_row(model, dataset, param, average_time, latency, fps):
         hardware_info += '{}: {}, '.format(key, hardware[key])
     hardware_info = hardware_info[:-2]
     parameters = OrderedDict()
-    parameters.update({'Plugin' : param.plugin})
+    parameters.update({'Device' : param.device})
     parameters.update({'Async request count' : param.async_request})
     parameters.update({'Iteration count' : param.iteration})
     parameters.update({'Thread count' : param.nthreads})
