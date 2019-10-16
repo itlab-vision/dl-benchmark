@@ -2,53 +2,26 @@ import os
 import platform
 import subprocess
 from collections import OrderedDict
+from openvino.inference_engine import IECore
 
 
-def get_cpu_name(ostype):
-    cpuname = 'Underfined'
-    if (ostype == 'Windows'):
-        command = ['wmic', 'cpu', 'get', 'name', '/Value']
-        p = subprocess.Popen(command, universal_newlines = True, shell = True,
-            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        text = p.stdout.read()
-        p.wait()
-        text = text.split('=')
-        cpuname = text[1].strip()
-    elif (ostype == 'Linux'):
-        command = ['cat', '/proc/cpuinfo']
-        cpu_info = subprocess.check_output(command).strip().decode()
-        for line in cpu_info.split('\n'):
-            if 'model name' in line:
-                return line.split(':')[1].strip()
-    elif (ostype == 'Darwin'):
-        # TODO : write code for Mac OS
-        #'sysctl -n machdep.cpu.brand_string'
-        cpuname = 'Underfined Macintosh CPU'
+def get_cpu_name():
+    ie = IECore()
+    try:
+        cpuname = ie.get_metric('CPU',  'FULL_DEVICE_NAME')
+    except TypeError:
+        cpuname = 'Underfined'
+    del ie
     return cpuname
 
 
-def get_gpu_name(ostype):
-    gpuname = 'Underfined'
-    if (ostype == 'Windows'):
-        gpuname = 'Underfined discrete GPU'
-        import wmi
-        computer = wmi.WMI()
-        gpu_info = computer.Win32_VideoController()
-        for eachitem in gpu_info:
-            if 'Graphics' in eachitem.Name:
-                gpuname = eachitem.Name
-    elif (ostype == 'Linux'):
-        command = 'glxinfo | grep OpenGL'
-        p = subprocess.Popen(command, universal_newlines = True, shell = True,
-            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        gpu_info = p.stdout.read()
-        p.wait()
-        for line in gpu_info.split('\n'):
-            if 'Graphics' in line:
-                return line.split(':')[1].strip()
-    elif (ostype == 'Darwin'):
-        # TODO : write code for Mac OS
-        gpuname = 'Underfined GPU'
+def get_gpu_name():
+    ie = IECore()
+    try:
+        gpuname = ie.get_metric('GPU',  'FULL_DEVICE_NAME')
+    except TypeError:
+        gpuname = 'Underfined'
+    del ie
     return gpuname
 
 
@@ -74,9 +47,9 @@ def get_ram_size(ostype):
 def get_system_characteristics():
     ostype = platform.system()
     characteristics = OrderedDict()
-    characteristics.update({'CPU' : get_cpu_name(ostype)})
+    characteristics.update({'CPU' : get_cpu_name()})
     characteristics.update({'CPU family' : platform.processor()})
-    characteristics.update({'GPU' : get_gpu_name(ostype)})
+    characteristics.update({'GPU' : get_gpu_name()})
     characteristics.update({'RAM size' : get_ram_size(ostype)})
     characteristics.update({'OS family' : platform.system()})
     characteristics.update({'OS version' : platform.platform()})
