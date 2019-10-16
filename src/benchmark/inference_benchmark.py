@@ -6,6 +6,7 @@ import argparse
 import config_parser
 import logging as log
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type = str, dest = 'config_path',

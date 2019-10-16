@@ -2,6 +2,7 @@ import os
 import platform
 from subprocess import Popen, PIPE
 
+
 def get_path_to_sync_scrypts():
     inference_folder = os.path.abspath('../inference')
     path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
@@ -17,12 +18,10 @@ def get_path_to_async_scrypts():
 def get_cmd_python_version():
     cmd_python_version = ''
     os_type = platform.system()
-    if os_type == 'Windows':
-        cmd_python_version = 'python'
-    elif os_type == 'Linux':
+    if os_type == 'Linux':
         cmd_python_version = 'python3'
     else:
-        raise ValueError('OS type not supported')
+        cmd_python_version = 'python'
     return cmd_python_version
 
 
