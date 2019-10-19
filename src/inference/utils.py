@@ -60,6 +60,11 @@ def get_input_list(input):
     return data
 
 
+def get_input_blob(model):
+    n, c, h, w = model.inputs[next(iter(model.inputs))].shape
+    return '{0}x{1}x{2}x{3}'.format(n, c, h, w)
+
+
 def prepare_data(model, data):
     video = {'.mp4' : 1, '.avi' : 2, '.mvo' : 3, '.mpeg' : 4, '.mov' : 5}
     image = {'.jpg' : 1, '.png' : 2, '.bmp' : 3, '.gif' : 4, '.jpeg' : 5}

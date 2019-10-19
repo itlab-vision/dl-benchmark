@@ -111,6 +111,7 @@ def main():
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
+            print(utils.get_input_blob(net))
         del net
         del exec_net
         del iecore
