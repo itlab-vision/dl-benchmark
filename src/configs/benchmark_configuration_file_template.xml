@@ -2,6 +2,7 @@
 <Tests>
     <Test>
         <Model>
+            <Task></Task>
             <Name></Name>
             <Path></Path>
             <WeightType></WeightType>
