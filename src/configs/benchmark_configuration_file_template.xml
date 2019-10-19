@@ -14,8 +14,8 @@
         <Parameters>
             <BatchSize></BatchSize>
             <Mode></Mode>
-            <Plugin></Plugin>
-            <PluginPath></PluginPath>
+            <Device></Device>
+            <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount></IterationCount>
             <ThreadCount></ThreadCount>
