@@ -25,6 +25,8 @@ def inference_benchmark(test_list, result_table, log):
     for i in range(len(test_list)):
         test = test_list[i]
         mode = (test.parameter.mode).lower()
+        test_status = 'Passed'
+        blob = 'Undefined'
         latency = None
         fps = None
         average_time = None
@@ -37,11 +39,12 @@ def inference_benchmark(test_list, result_table, log):
             return_code, out = utils.run_test(command_line, environment)
             if return_code == 0:
                 log.info('End sync inference test on model : {}'.format(test.model.name))
+                blob = utils.parse_model_blob(out)
                 average_time, fps, latency = utils.parse_sync_output(out)
             else:
                 log.warning('Sync inference test on model: {} was ended with error:'.format(test.model.name))
+                test_status = 'Failed'
                 utils.print_error(out)
-                continue
         if mode == 'async':
             log.info('Start async inference test on model : {}'.format(test.model.name))
             command_line = utils.create_cmd_line_for_async_test(test.model.model, 
@@ -51,14 +54,15 @@ def inference_benchmark(test_list, result_table, log):
             return_code, out = utils.run_test(command_line, environment)
             if return_code == 0:
                 log.info('End async inference test on model : {}'.format(test.model.name))
+                blob = utils.parse_model_blob(out)
                 average_time, fps = utils.parse_async_output(out)
             else:
                 log.warning('Async inference test on model: {} was ended with error. Process logs:'.format(test.model.name))
+                test_status = 'Failed'
                 utils.print_error(out)
-                continue
         log.info('Saving test result in file')
-        table_row = output.create_table_row(test.model, test.dataset, 
-            test.parameter, average_time, latency, fps)
+        table_row = output.create_table_row(test_status, test.model, test.dataset, 
+            test.parameter, blob, average_time, latency, fps)
         output.add_row_to_table(result_table, table_row)
 
 
