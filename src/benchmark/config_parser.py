@@ -194,9 +194,6 @@ def process_config(config, log):
             Dataset = dataset(*test_dict['Dataset'].values())
             Parameters = parameters(*test_dict['Parameters'].values())
             test_list.append(test(Model, Dataset, Parameters))
-            print(test_dict['Model'])
-            print(test_dict['Dataset'])
-            print(test_dict['Parameters'])
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(test_count, valerr))
     return test_list
