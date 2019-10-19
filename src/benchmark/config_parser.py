@@ -1,5 +1,6 @@
 import os
 from lxml import etree
+from collections import OrderedDict
 
 
 class model:
@@ -9,7 +10,8 @@ class model:
         return False
 
 
-    def __init__(self, name, path, weight_type):
+    def __init__(self, task, name, path, weight_type):
+        self.task = task
         self.name = None
         self.model = None
         self.weight = None
@@ -99,7 +101,8 @@ class parameters:
         return False
 
 
-    def __init__(self, batch_size, mode, device, extension, async_request_count, iterarion_count, thread_count, stream_count, min_inference_time):
+    def __init__(self, batch_size, mode, device, extension, async_request_count, 
+                 iterarion_count, thread_count, stream_count, min_inference_time):
         self.batch_size = None
         self.mode = None
         self.device = None
@@ -168,39 +171,32 @@ def process_config(config, log):
     with open(config) as file:
         openconfig = file.read()
     utf_parser = etree.XMLParser(encoding = 'utf-8')
-    root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
-    list = []
-    test_number = 0
-    for tag in root.getchildren():
-        test_number += 1
+    tests = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
+    test_list = []
+    test_count = 0
+    model_dict = OrderedDict(
+                    [('Task', None), ('Name', None),
+                     ('Path', None), ('WeightType', None)])
+    dataset_dict = OrderedDict([('Name', None), ('Path', None)])
+    parameters_dict = OrderedDict(
+                     [('BatchSize', None), ('Mode', None), ('Device', None), 
+                     ('Extension', None), ('AsyncRequestCount', None),
+                     ('IterationCount', None), ('ThreadCount', None),
+                     ('StreamCount', None), ('MinInferenceTime', None)])
+    test_dict = {'Model' : model_dict, 'Dataset' : dataset_dict, 'Parameters' : parameters_dict}
+    for curr_test in tests:
+        test_count += 1
         try:
-            test_parameters = ['Model', 'Dataset', 'Parameters']
-            for child in tag.getchildren():
-                if child.tag == 'Model':
-                    options = ['Name', 'Path', 'Weight type']
-                    i = 0
-                    for option in child.getchildren():
-                        options[i] = option.text
-                        i += 1
-                    test_parameters[0] = model(*options)
-                if child.tag == 'Dataset':
-                    options = ['Name', 'Path']
-                    i = 0
-                    for option in child.getchildren():
-                        options[i] = option.text
-                        i += 1
-                    test_parameters[1] = dataset(*options)
-                if child.tag == 'Parameters':
-                    options = ['Batch Size', 'Mode', 'Device', 'Extension', 
-                               'Async Request Count', 'Iterarions', 'Threads', 
-                               'Streams', 'Min Infer Time']
-                    i = 0
-                    for option in child.getchildren():
-                        options[i] = option.text
-                        i += 1
-                    test_parameters[2] = parameters(*options)
+            for i in curr_test.getchildren():
+                for j in i.getchildren():
+                    test_dict[i.tag][j.tag] = j.text
+            Model = model(*test_dict['Model'].values())
+            Dataset = dataset(*test_dict['Dataset'].values())
+            Parameters = parameters(*test_dict['Parameters'].values())
+            test_list.append(test(Model, Dataset, Parameters))
+            print(test_dict['Model'])
+            print(test_dict['Dataset'])
+            print(test_dict['Parameters'])
         except ValueError as valerr:
-            log.warning('Test {} not added to test list: {}'.format(test_number, valerr))
-            continue
-        list.append(test(*test_parameters))
-    return list
+            log.warning('Test {} not added to test list: {}'.format(test_count, valerr))
+    return test_list
