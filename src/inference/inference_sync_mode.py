@@ -95,6 +95,7 @@ def main():
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
+        log.info('Input shape: {}'.format(utils.get_input_shape(net)))
         net.batch_size = args.batchsize
         data = utils.get_input_list(args.input)
         log.info('Prepare input data')
@@ -111,7 +112,6 @@ def main():
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
-            print(utils.get_input_blob(net))
         del net
         del exec_net
         del iecore

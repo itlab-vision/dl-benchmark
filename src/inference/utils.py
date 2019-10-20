@@ -60,7 +60,7 @@ def get_input_list(input):
     return data
 
 
-def get_input_blob(model):
+def get_input_shape(model):
     n, c, h, w = model.inputs[next(iter(model.inputs))].shape
     return '{0}x{1}x{2}x{3}'.format(n, c, h, w)
 
