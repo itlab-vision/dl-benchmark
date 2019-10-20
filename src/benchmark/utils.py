@@ -94,12 +94,17 @@ def print_error(out):
             print('    {0}'.format(line))
 
 
-def parse_model_blob(out):
-    return out[-1]
+def parse_model_input_shape(out):
+    input_shape = 'Undefined'
+    for line in out:
+        if 'Input shape: ' in line:
+            input_shape = line.split(' ')[-1]
+    return input_shape
+
 
 
 def parse_sync_output(out):
-    result = out[-2].split(',')
+    result = out[-1].split(',')
     average_time = float(result[0])
     fps = float(result[1])
     latency = float(result[2])
@@ -107,7 +112,7 @@ def parse_sync_output(out):
 
 
 def parse_async_output(out):
-    result = out[-2].split(',')
+    result = out[-1].split(',')
     average_time = float(result[0])
     fps = float(result[1])
     return average_time, fps
