@@ -10,7 +10,7 @@ def get_cpu_name():
     try:
         cpuname = ie.get_metric('CPU',  'FULL_DEVICE_NAME')
     except TypeError:
-        cpuname = 'Underfined'
+        cpuname = 'Undefined'
     del ie
     return cpuname
 
@@ -20,13 +20,13 @@ def get_gpu_name():
     try:
         gpuname = ie.get_metric('GPU',  'FULL_DEVICE_NAME')
     except TypeError:
-        gpuname = 'Underfined'
+        gpuname = 'Undefined'
     del ie
     return gpuname
 
 
 def get_ram_size(ostype):
-    ramsize = 'Underfined'
+    ramsize = 'Undefined'
     if (ostype == 'Windows'):
         command = ['wmic', 'OS', 'get', 'TotalVisibleMemorySize', '/Value']
         p = subprocess.Popen(command, universal_newlines = True, shell = True, 
