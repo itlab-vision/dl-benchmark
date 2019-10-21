@@ -4,14 +4,14 @@ from subprocess import Popen, PIPE
 
 
 def get_path_to_sync_scripts():
-    inference_folder = os.path.abspath('../inference')
-    path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
+    benchmark_folder = os.getenv('BENCHMARK_DIR')
+    path_to_sync_scrypt = os.path.join(benchmark_folder, 'src', 'inference', 'inference_sync_mode.py')
     return path_to_sync_scrypt
 
 
 def get_path_to_async_scripts():
-    inference_folder = os.path.abspath('../inference')
-    path_to_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
+    benchmark_folder = os.getenv('BENCHMARK_DIR')
+    path_to_async_scrypt = os.path.join(benchmark_folder, 'src', 'inference', 'inference_async_mode.py')
     return path_to_async_scrypt
 
 

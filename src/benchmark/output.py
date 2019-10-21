@@ -1,7 +1,8 @@
 import os
 import sys
-sys.path.append(os.path.abspath('../auxiliary'))
-import node_info as info
+# sys.path.append(os.path.abspath('../auxiliary'))
+# import node_info as info
+from src.auxiliary import node_info as info
 from collections import OrderedDict
 
 
