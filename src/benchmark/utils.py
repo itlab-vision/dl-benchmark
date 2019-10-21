@@ -3,13 +3,13 @@ import platform
 from subprocess import Popen, PIPE
 
 
-def get_path_to_sync_scrypts():
+def get_path_to_sync_scripts():
     inference_folder = os.path.abspath('../inference')
     path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
     return path_to_sync_scrypt
 
 
-def get_path_to_async_scrypts():
+def get_path_to_async_scripts():
     inference_folder = os.path.abspath('../inference')
     path_to_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
     return path_to_async_scrypt
@@ -38,16 +38,16 @@ def add_nstreams_for_cmd_line(command_line, nstreams):
 
 
 def add_requests_for_cmd_line(command_line, requests):
-    return '{0} -nstreams {1}'.format(command_line, requests)
+    return '{0} -requests {1}'.format(command_line, requests)
 
 
 def create_cmd_line_for_sync_test(model_xml, model_bin, dataset, batch, device,
                                 extension, iteration, nthreads, min_inference_time):
-    scrypt = get_path_to_sync_scrypts()
+    scrypt = get_path_to_sync_scripts()
     python = get_cmd_python_version()
     command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} -mi {8} \
         --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset,
-                                    batch, device, iteration, min_inference_time)
+        batch, device, iteration, min_inference_time)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
@@ -58,11 +58,11 @@ def create_cmd_line_for_sync_test(model_xml, model_bin, dataset, batch, device,
 
 def create_cmd_line_for_async_test(model_xml, model_bin, dataset, batch, device,
                                 extension, iteration, nthreads, nstreams, requests):
-    scrypt = get_path_to_async_scrypts()
+    scrypt = get_path_to_async_scripts()
     python = get_cmd_python_version()
     command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} \
         --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset,
-                                    batch, device, iteration)
+        batch, device, iteration)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
