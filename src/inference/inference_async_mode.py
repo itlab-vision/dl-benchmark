@@ -23,7 +23,7 @@ def build_parser():
         of infer requests to be created. Number of infer requests may be \
         limited by device capabilities', default = None, type = int, dest = 'requests')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
-        processed pack', default = 1, type = int, dest = 'batchsize')
+        processed pack', default = 1, type = int, dest = 'batch_size')
     parser.add_argument('-l', '--extension', 
         help = 'Path to MKLDNN (CPU, MYRIAD) custom layers OR Path to CLDNN config.',
         type = str, default = None, dest = 'extension')
@@ -258,7 +258,7 @@ def main():
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
         log.info('Input shape: {}'.format(utils.get_input_shape(net)))
-        net.batch_size = args.batchsize
+        net.batch_size = args.batch_size
         data = utils.get_input_list(args.input)
         log.info('Prepare input data')
         images = utils.prepare_data(net, data)
@@ -268,7 +268,7 @@ def main():
         log.info('Starting inference ({} iterations) with {} requests on {}'.
             format(args.number_iter, len(exec_net.requests), args.device))
         res, time = infer_async(images, exec_net, net, args.number_iter)
-        average_time, fps = process_result(time, args.batchsize, args.number_iter)
+        average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
             io.infer_output(res, images, data, args.labels, args.number_top,
                 args.threshold, args.color_map, log, args.task)
