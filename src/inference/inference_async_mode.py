@@ -1,8 +1,8 @@
 import sys
+import utils
 import argparse
 import numpy as np
 import logging as log
-import prepare_data as pd
 import inference_output as io
 import postprocessing_data as pp
 from time import time
@@ -13,45 +13,44 @@ import cv2
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', help = 'Path to an .xml \
-        file with a trained model.', required = True, type = str)
+        file with a trained model.', required = True, type = str, dest = 'model_xml')
     parser.add_argument('-w', '--weights', help = 'Path to an .bin file \
-        with a trained weights.', required = True, type = str)
+        with a trained weights.', required = True, type = str, dest = 'model_bin')
     parser.add_argument('-i', '--input', help = 'Path to a folder with \
-        images or path to an image files', required = True, type = str, nargs = '+')
+        images or path to an image files', required = True, type = str,
+        nargs = '+', dest = 'input')
     parser.add_argument('-r', '--requests', help = 'A positive integer value \
         of infer requests to be created. Number of infer requests may be \
-        limited by device capabilities', required = True, type = int)
+        limited by device capabilities', default = None, type = int, dest = 'requests')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
-        processed pack', default = 1, type = int)
-    parser.add_argument('-t', '--task', help = 'Output processing method: \
-        1.classification 2.detection 3.segmentation. \
-        Default: without postprocess',
-        default = 'feedforward', type = str)
-    parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
-        (CPU)-targeted custom layers. Absolute path to a shared library \
-        with the kernels implementation', type = str, default = None)
-    parser.add_argument('-pp', '--plugin_dir', help = 'Path to a plugin \
-        folder', type = str, default = None)
+        processed pack', default = 1, type = int, dest = 'batch_size')
+    parser.add_argument('-l', '--extension', 
+        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers OR Path to CLDNN config.',
+        type = str, default = None, dest = 'extension')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
-        (CPU by default)', default = ['CPU'], type = str, nargs = '+')
-    parser.add_argument('-nt', '--number_top', help = 'Number of top results',
-        default = 10, type = int)
-    parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
-        iterations', default = 1, type = int)
-    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
-        (Max by default)', type = int, default = None)
-    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
-        type = int, default = None)
+        (CPU by default)', default = 'CPU', type = str, dest = 'device')
     parser.add_argument('--labels', help = 'Labels mapping file',
-        default = None, type = str)
-    parser.add_argument('--prob_threshold', help = 'Probability threshold \
-        for detections filtering', default = 0.5, type = float)
+        default = None, type = str, dest = 'labels')
+    parser.add_argument('-nt', '--number_top', help = 'Number of top results',
+        default = 10, type = int, dest = 'number_top')
+    parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
+        iterations', default = 1, type = int, dest = 'number_iter')
+    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
+        (Max by default)', type = int, default = None, dest = 'nthreads')
+    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
+        type = int, default = None, dest = 'nstreams')
+    parser.add_argument('-t', '--task', help = 'Output processing method: \
+        1.classification 2.detection 3.segmentation. \
+        Default: without postprocess',
+        default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
-        default = None, type = str)
+        default = None, type = str, dest = 'color_map')
+    parser.add_argument('--prob_threshold', help = 'Probability threshold \
+        for detections filtering', default = 0.5, type = float, dest = 'threshold')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
-        default = False, type = bool)
+        default = False, type = bool, dest = 'raw_output')
     return parser
 
 
@@ -100,16 +99,16 @@ def start_infer_video(path, exec_net, model, number_iter):
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
-    time_s = time()
     res = []
     size = model.batch_size
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
+    time_s = time()
     for j in range(number_iter):
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images[j * size % len(images): \
              ((j + 1) * size - 1) % len(images) + 1]})
-        infer_status = infer_request_handle.wait()
+        infer_request_handle.wait()
         res.append(copy.copy(infer_request_handle.outputs[next(iter(model.outputs))]))   
     log.info('Processing output blob')
     time_e = time() - time_s
@@ -125,11 +124,11 @@ def start_infer_two_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     prev_request_id  = 1
-    time_s = time()
     size = model.batch_size
     res = []
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
+    time_s = time()
     for j in range(number_iter):
         exec_net.start_async(request_id = curr_request_id,
             inputs = {input_blob: images[j * size % len(images): \
@@ -154,13 +153,13 @@ def start_infer_n_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     requests_counter = len(exec_net.requests)
     requests_images = [-1 for i in range(requests_counter)]
-    time_s = time()
     size = model.batch_size
     res = [-1 for i in range(len(images))]
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
     requests_status = []
     k = requests_counter
+    time_s = time()
     for request_id in range(requests_counter):
         exec_net.start_async(request_id = request_id,
         inputs = {input_blob: images[request_id * size % len(images): \
@@ -255,26 +254,30 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
-        net, plugin = pd.prepare_model(log, args.model, args.weights,
-            args.cpu_extension, args.device, args.plugin_dir, args.number_threads,
-            args.number_streams)
+        iecore = utils.create_ie_core(args.extension, args.device,
+            args.nthreads,args.nstreams, 'async', log)
+        net = utils.create_network(args.model_xml, args.model_bin, log)
+        log.info('Input shape: {}'.format(utils.get_input_shape(net)))
         net.batch_size = args.batch_size
-        data = pd.get_input_list(args.input)
-        images = pd.prepare_data(net, data)
-        log.info('Loading model to the plugin')
-        exec_net = plugin.load(network = net, num_requests = args.requests)
-        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+        data = utils.get_input_list(args.input)
+        log.info('Prepare input data')
+        images = utils.prepare_data(net, data)
+        log.info('Create executable network')
+        exec_net = iecore.load_network(network = net, device_name = args.device,
+            num_requests = (args.requests or 0))
+        log.info('Starting inference ({} iterations) with {} requests on {}'.
+            format(args.number_iter, len(exec_net.requests), args.device))
         res, time = infer_async(images, exec_net, net, args.number_iter)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
             io.infer_output(res, images, data, args.labels, args.number_top,
-                args.prob_threshold, args.color_map, log, args.task)
+                args.threshold, args.color_map, log, args.task)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)
         del net
         del exec_net
-        del plugin
+        del iecore
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)

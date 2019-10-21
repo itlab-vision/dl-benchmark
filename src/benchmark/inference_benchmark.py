@@ -1,11 +1,10 @@
 import os
 import sys
+import utils
+import output
 import argparse
 import config_parser
-import output
 import logging as log
-import subprocess
-import platform
 
 
 def build_parser():
@@ -22,84 +21,48 @@ def build_parser():
 
 
 def inference_benchmark(test_list, result_table, log):
-    inference_folder = os.path.normpath('../inference')
-    inference_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
-    inference_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
-    python_type = ''
-    os_type = platform.system()
-    if os_type == 'Windows':
-        python_type = 'python'
-    elif os_type == 'Linux':
-        python_type = 'python3'
-    else:
-        raise ValueError('OS type not supported')
     environment = os.environ.copy()
     for i in range(len(test_list)):
-        mode = (test_list[i].parameter.mode).lower()
+        framework = 'OpenVINO DLDT'
+        test = test_list[i]
+        mode = (test.parameter.mode).lower()
+        test_status = 'Passed'
         latency = None
         fps = None
         average_time = None
         if mode == 'sync':
-            log.info('Start sync inference test on model : {}'.format(test_list[i].model.name))
-            cmd_line = '{} {} -m {} -w {} -i {} -b {} -d {} -ni {} \
-                -mi {} --raw_output true'.format(python_type, inference_sync_scrypt,
-                    test_list[i].model.model, test_list[i].model.weight,
-                    test_list[i].dataset.path, test_list[i].parameter.batch_size,
-                    test_list[i].parameter.plugin, test_list[i].parameter.iteration,
-                    test_list[i].parameter.min_inference_time)
-            if (test_list[i].parameter.plugin_path != None):
-                cmd_line += ' -l {}'.format(test_list[i].parameter.plugin_path)
-            if (test_list[i].parameter.nthreads != None):
-                cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
-            test = subprocess.Popen(cmd_line, env = environment, shell = True,
-                stdout = subprocess.PIPE, universal_newlines = True)
-            test.wait()
-            if test.poll():
-                log.warning('Sync inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
-                for line in test.stdout:
-                    print('    {}'.format(line), end = '')
-                continue
-            log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
-            lastline = ''
-            for line in test.stdout:
-                lastline = line
-            result = lastline.split(',')
-            average_time = float(result[0])
-            fps = float(result[1])
-            latency = float(result[2])
+            log.info('Start sync inference test on model : {}'.format(test.model.name))
+            command_line = utils.create_cmd_line_for_sync_test(test.model.model, 
+                test.model.weight, test.dataset.path, test.parameter.batch_size,
+                test.parameter.device, test.parameter.extension, test.parameter.iteration,
+                test.parameter.nthreads, test.parameter.min_inference_time)
+            return_code, out = utils.run_test(command_line, environment)
+            input_shape = utils.parse_model_input_shape(out)
+            if return_code == 0:
+                log.info('End sync inference test on model : {}'.format(test.model.name))
+                average_time, fps, latency = utils.parse_sync_output(out)
+            else:
+                log.warning('Sync inference test on model: {} was ended with error:'.format(test.model.name))
+                test_status = 'Failed'
+                utils.print_error(out)
         if mode == 'async':
-            log.info('Start async inference test on model : {}'.format(test_list[i].model.name))
-            cmd_line = '{} {} -m {} -w {} -i {} -b {} -d {} -ni {} \
-                -r {} --raw_output true'.format(python_type, inference_async_scrypt,
-                    test_list[i].model.model, test_list[i].model.weight,
-                    test_list[i].dataset.path, test_list[i].parameter.batch_size,
-                    test_list[i].parameter.plugin, test_list[i].parameter.iteration,
-                    test_list[i].parameter.async_request)
-            if (test_list[i].parameter.plugin_path != None):
-                cmd_line += ' -l {}'.format(test_list[i].parameter.plugin_path)
-            if (test_list[i].parameter.nthreads != None):
-                cmd_line += ' -nthreads {}'.format(test_list[i].parameter.nthreads)
-            if (test_list[i].parameter.nstreams != None):
-                cmd_line += ' -nstreams {}'.format(test_list[i].parameter.nstreams)
-            test = subprocess.Popen(cmd_line, env = environment, shell = True,
-                stdout = subprocess.PIPE, universal_newlines = True)
-            test.wait()
-            if test.poll():
-                log.warning('Async inference test on model: {} was ended with error. Process logs:'.format(test_list[i].model.name))
-                for line in test.stdout:
-                    print('    {}'.format(line), end = '')
-                continue
-            log.info('End sync inference test on model : {}'.format(test_list[i].model.name))
-            lastline = ''
-            for line in test.stdout:
-                lastline = line
-            result = lastline.split(',')
-            average_time = float(result[0])
-            fps = float(result[1])
+            log.info('Start async inference test on model : {}'.format(test.model.name))
+            command_line = utils.create_cmd_line_for_async_test(test.model.model, 
+                test.model.weight, test.dataset.path, test.parameter.batch_size,
+                test.parameter.device, test.parameter.extension, test.parameter.iteration,
+                test.parameter.nthreads, test.parameter.nstreams, test.parameter.async_request)
+            return_code, out = utils.run_test(command_line, environment)
+            input_shape = utils.parse_model_input_shape(out)
+            if return_code == 0:
+                log.info('End async inference test on model : {}'.format(test.model.name))
+                average_time, fps = utils.parse_async_output(out)
+            else:
+                log.warning('Async inference test on model: {} was ended with error. Process logs:'.format(test.model.name))
+                test_status = 'Failed'
+                utils.print_error(out)
         log.info('Saving test result in file')
-        table_row = output.create_table_row(test_list[i].model,
-            test_list[i].dataset, test_list[i].parameter, average_time,
-            latency, fps)
+        table_row = output.create_table_row(test_status, test.model, test.dataset, 
+            test.parameter, framework, input_shape, average_time, latency, fps)
         output.add_row_to_table(result_table, table_row)
 
 
