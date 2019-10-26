@@ -1,6 +1,7 @@
 from copy import deepcopy
-INFR_POSITION_IN_TABLE = 8
 MODEL_POSITION_IN_TABLE = 1
+MODE_POSITION_IN_TABLE = 6
+INFR_POSITION_IN_TABLE = 8
 ATOSP_POSITION_IN_TABLE = 9
 LATENCY_POSITION_IN_TABLE = 10
 FPS_POSITION_IN_TABLE = 11
@@ -130,7 +131,7 @@ class HTMLTable:
                 .format(test[4], test[5], test[6], test[7]))
             self.table_html.append('</tr>\n<tr>')
             for test in infrastr[1][0][1]:
-                if (test[4] == 'Sync'):
+                if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
                     inv = 'Latency'
                 else:
                     inv = 'Average time of single pass'
@@ -151,14 +152,14 @@ class HTMLTable:
             for infrastr in self.sorted_tests:
                 self.table_html.append('\n<td>\n<table align="center"' +
                 'width="100%" border="1" cellspacing="0" cellpadding="0">\n' +
-                '<tr>')    
+                '<tr>')
                 for curr_model in infrastr[1]:
                     if (curr_model[0] == model):
                         for test in curr_model[1]:
-                            if (test[6] == 'Sync'):
-                                result = test[ATOSP_POSITION_IN_TABLE:FPS_POSITION_IN_TABLE + 1]
+                            if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
+                                result = test[LATENCY_POSITION_IN_TABLE:FPS_POSITION_IN_TABLE + 1]
                             else:
-                                result = test[ATOSP_POSITION_IN_TABLE:FPS_POSITION_IN_TABLE + 1:2]
+                                result = (test[ATOSP_POSITION_IN_TABLE], test[FPS_POSITION_IN_TABLE])
                             self.table_html.append(('\n<td><table align="center"' +
                                 'width="100%" border="1" cellspacing="0"' + 
                                 'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' +
