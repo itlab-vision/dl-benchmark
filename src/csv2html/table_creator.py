@@ -1,4 +1,11 @@
 from copy import deepcopy
+MODEL_POSITION_IN_TABLE = 1
+MODE_POSITION_IN_TABLE = 6
+INFR_POSITION_IN_TABLE = 8
+ATOSP_POSITION_IN_TABLE = 9
+LATENCY_POSITION_IN_TABLE = 10
+FPS_POSITION_IN_TABLE = 11
+
 
 class HTMLTable:
     def __init__(self, _table_csv):
@@ -13,61 +20,59 @@ class HTMLTable:
     def find_all_infr(self):
         infr_list = []
         for row_index in range(1, len(self.table_csv)):
-            infr_list.append(self.table_csv[row_index][6])
-        infr_list = set(infr_list)        
+            infr_list.append(self.table_csv[row_index][INFR_POSITION_IN_TABLE])
+        infr_list = set(infr_list)
         return list(infr_list)
 
     def get_all_models_names(self):
         models_set = set()
         for row_index in range(1, len(self.table_csv)):
-            models_set.add(self.table_csv[row_index][0])
+            models_set.add(self.table_csv[row_index][MODEL_POSITION_IN_TABLE])
         return models_set
 
     def prep_tests(self, tests):
         max_len = -1
         first_tests = None
-        for model in tests:
-            if (len(model[1]) > max_len):
-                first_tests = model[1]
-                max_len = len(model[1])
+        for test_tuple in tests:
+            if (len(test_tuple[1]) > max_len):
+                first_tests = test_tuple[1]
+                max_len = len(test_tuple[1])
 
-        for curr_model in range(1, len(tests)):
+        for curr_model in range(0, len(tests)):
             for curr_test in range(len(first_tests)):
                 i = 0
                 while (i <  len(tests[curr_model][1])):
-                    if (first_tests[curr_test][1] ==
-                        tests[curr_model][1][i][1] and first_tests[curr_test][3:6] ==
-                        tests[curr_model][1][i][3:6]):
+                    if (first_tests[curr_test][4:9] ==
+                        tests[curr_model][1][i][4:9]):
                         (tests[curr_model][1][i], \
                         tests[curr_model][1][curr_test]) = \
                         (tests[curr_model][1][curr_test], \
                         tests[curr_model][1][i])
-                        break
                     i += 1
                 else:
-                    if (len(tests[curr_model][1]) > curr_test):
+                    if (len(tests[curr_model][1]) < curr_test):
                         tests[curr_model][1].append(
                             deepcopy(tests[curr_model][1][curr_test]))
                         tests[curr_model][1][curr_test] = \
                             deepcopy(first_tests[curr_test])
-                        tests[curr_model][1][curr_test][0] = \
-                            tests[curr_model][0]
-                        tests[curr_model][1][curr_test][7] = \
+                        tests[curr_model][1][curr_test][MODEL_POSITION_IN_TABLE] = \
+                            tests[curr_model][MODEL_POSITION_IN_TABLE]
+                        tests[curr_model][1][curr_test][ATOSP_POSITION_IN_TABLE] = \
                             '-'
-                        tests[curr_model][1][curr_test][8] = \
+                        tests[curr_model][1][curr_test][LATENCY_POSITION_IN_TABLE] = \
                             '-'
-                        tests[curr_model][1][curr_test][9] = \
+                        tests[curr_model][1][curr_test][FPS_POSITION_IN_TABLE] = \
                             '-'
                     elif (len(tests[curr_model][1]) < len(first_tests)):
                         tests[curr_model][1].append(
                             deepcopy(first_tests[curr_test]))
-                        tests[curr_model][1][curr_test][0] = \
-                            tests[curr_model][0]
-                        tests[curr_model][1][curr_test][7] = \
+                        tests[curr_model][1][-1][MODEL_POSITION_IN_TABLE] = \
+                            tests[curr_model][1][0][MODEL_POSITION_IN_TABLE]
+                        tests[curr_model][1][-1][ATOSP_POSITION_IN_TABLE] = \
                             '-'
-                        tests[curr_model][1][curr_test][8] = \
+                        tests[curr_model][1][-1][LATENCY_POSITION_IN_TABLE] = \
                             '-'
-                        tests[curr_model][1][curr_test][9] = \
+                        tests[curr_model][1][-1][FPS_POSITION_IN_TABLE] = \
                             '-'
             if (len(tests[curr_model][1]) != len(first_tests)):
                 print(len(tests[curr_model][1]), len(first_tests))
@@ -90,20 +95,22 @@ class HTMLTable:
             for model in unused_models:
                 copy_model_tests = deepcopy(self.sorted_tests[i][1][1][1])
                 for test in copy_model_tests:
-                    test[0] = model
-                    test[7] = '-'
-                    test[8] = '-'
-                    test[9] = '-'
+                    test[1] = model
+                    test[ATOSP_POSITION_IN_TABLE] = '-'
+                    test[LATENCY_POSITION_IN_TABLE] = '-'
+                    test[FPS_POSITION_IN_TABLE] = '-'
                 self.sorted_tests[i][1].append((model, copy_model_tests))
             self.prep_tests(self.sorted_tests[i][1])
 
     def find_all_model_tests(self, model, infrastr):
+        # If infr and model == test.infr and test.model than add test in pack
         test_list = []
         for row_index in range(1, len(self.table_csv)):
-            if (self.table_csv[row_index][6] == infrastr and
-                self.table_csv[row_index][0] == model):
+            if (self.table_csv[row_index][INFR_POSITION_IN_TABLE] == infrastr
+                and
+                self.table_csv[row_index][MODEL_POSITION_IN_TABLE] == model):
                 test_list.append(self.table_csv[row_index])
-        return test_list   
+        return test_list
 
     def create_table_header(self):
         self.table_html.append('\n<table align="center" border="1"' +
@@ -119,12 +126,12 @@ class HTMLTable:
             self.table_html.append('<td>\n<table align="center" width="100%"' +
             'border="1" cellspacing="0" cellpadding="0">\n<tr>\n')
             for test in infrastr[1][0][1]:
-                test[5] = test[5].replace(',', '<br>')
-                self.table_html.append(('<th>{};{};{};<br>{};{}</th>\n')
-                .format(test[1], test[2], test[3], test[4], test[5]))
+                test[7] = test[7].replace(',', '<br>')
+                self.table_html.append(('<th>{};{};{};<br>{}</th>\n')
+                .format(test[4], test[5], test[6], test[7]))
             self.table_html.append('</tr>\n<tr>')
             for test in infrastr[1][0][1]:
-                if (test[4] == 'Sync'):
+                if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
                     inv = 'Latency'
                 else:
                     inv = 'Average time of single pass'
@@ -145,14 +152,14 @@ class HTMLTable:
             for infrastr in self.sorted_tests:
                 self.table_html.append('\n<td>\n<table align="center"' +
                 'width="100%" border="1" cellspacing="0" cellpadding="0">\n' +
-                '<tr>')    
+                '<tr>')
                 for curr_model in infrastr[1]:
                     if (curr_model[0] == model):
                         for test in curr_model[1]:
-                            if (test[4] == 'Sync'):
-                                result = test[8:10]
+                            if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
+                                result = test[LATENCY_POSITION_IN_TABLE:FPS_POSITION_IN_TABLE + 1]
                             else:
-                                result = test[7:10:2]
+                                result = (test[ATOSP_POSITION_IN_TABLE], test[FPS_POSITION_IN_TABLE])
                             self.table_html.append(('\n<td><table align="center"' +
                                 'width="100%" border="1" cellspacing="0"' + 
                                 'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' +
