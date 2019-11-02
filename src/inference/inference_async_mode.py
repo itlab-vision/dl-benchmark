@@ -1,103 +1,57 @@
-import os
 import sys
+import utils
 import argparse
 import numpy as np
 import logging as log
+import inference_output as io
+import postprocessing_data as pp
 from time import time
 import copy
 import cv2
-from openvino.inference_engine import IENetwork, IEPlugin
 
 
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', help = 'Path to an .xml \
-        file with a trained model.', required = True, type = str)
+        file with a trained model.', required = True, type = str, dest = 'model_xml')
     parser.add_argument('-w', '--weights', help = 'Path to an .bin file \
-        with a trained weights.', required = True, type = str)
+        with a trained weights.', required = True, type = str, dest = 'model_bin')
     parser.add_argument('-i', '--input', help = 'Path to a folder with \
-        images or path to an image files', required = True, type = str, nargs = '+')
+        images or path to an image files', required = True, type = str,
+        nargs = '+', dest = 'input')
     parser.add_argument('-r', '--requests', help = 'A positive integer value \
         of infer requests to be created. Number of infer requests may be \
-        limited by device capabilities', required = True, type = int)
+        limited by device capabilities', default = None, type = int, dest = 'requests')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
-        processed pack', default = 1, type = int)
-    parser.add_argument('-t', '--model_type', help = 'Сhoose model type: \
-         1.classification  2.detection 3.segmentation',
-        required = True, type = str)
-    parser.add_argument('-l', '--cpu_extension', help = 'MKLDNN \
-        (CPU)-targeted custom layers.Absolute path to a shared library \
-        with the kernels implementation', type = str, default = None)
-    parser.add_argument('-pp', '--plugin_dir', help = 'Path to a plugin \
-        folder', type = str, default = None)
+        processed pack', default = 1, type = int, dest = 'batch_size')
+    parser.add_argument('-l', '--extension', 
+        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers OR Path to CLDNN config.',
+        type = str, default = None, dest = 'extension')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
-        (CPU by default)', default = 'CPU', type = str)
-    parser.add_argument('-nt', '--number_top', help = 'Number of top results',
-        default = 10, type = int)
-    parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
-        iterations', default = 1, type = int)
+        (CPU by default)', default = 'CPU', type = str, dest = 'device')
     parser.add_argument('--labels', help = 'Labels mapping file',
-        default = None, type = str)
-    parser.add_argument('--prob_threshold', help='Probability threshold \
-        for detections filtering', default = 0.5, type = float)
-    parser.add_argument('--color_map', help='Classes color map', 
-        default = None, type = str)
+        default = None, type = str, dest = 'labels')
+    parser.add_argument('-nt', '--number_top', help = 'Number of top results',
+        default = 10, type = int, dest = 'number_top')
+    parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
+        iterations', default = 1, type = int, dest = 'number_iter')
+    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
+        (Max by default)', type = int, default = None, dest = 'nthreads')
+    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
+        type = int, default = None, dest = 'nstreams')
+    parser.add_argument('-t', '--task', help = 'Output processing method: \
+        1.classification 2.detection 3.segmentation. \
+        Default: without postprocess',
+        default = 'feedforward', type = str, dest = 'task')
+    parser.add_argument('--color_map', help = 'Classes color map', 
+        default = None, type = str, dest = 'color_map')
+    parser.add_argument('--prob_threshold', help = 'Probability threshold \
+        for detections filtering', default = 0.5, type = float, dest = 'threshold')
+    parser.add_argument('--raw_output', help = 'Raw output without logs',
+        default = False, type = bool, dest = 'raw_output')
     return parser
-
-
-def prepare_model(log, model, weights, cpu_extension, device, plugin_dir,
-                  input):
-    model_xml = model
-    model_bin = weights
-    log.info('Plugin initialization.');
-    plugin = IEPlugin(device = device, plugin_dirs = plugin_dir)
-    if cpu_extension and 'CPU' in device:
-        plugin.add_cpu_extension(cpu_extension)
-    log.info('Loading network files:\n\t {0}\n\t {1}'.format(
-        model_xml, model_bin))
-    net = IENetwork.from_ir(model_xml, model_bin)
-    if 'CPU' in plugin.device:
-        supported_layers = plugin.get_supported_layers(net)
-        not_supported_layers = [ l for l in net.layers.keys() \
-            if l not in supported_layers ]
-        if len(not_supported_layers) != 0:
-            log.error('Following layers are not supported by the plugin \
-                for specified device {0}:\n {1}'.format(plugin.device,
-                ', '.join(not_supported_layers)))
-            log.error('Please try to specify cpu extensions library path in \
-                sample\'s command line parameters using -l or --cpu_extension \
-                command line argument')
-            sys.exit(1)      
-    if os.path.isdir(input[0]):
-        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
-    else:
-        data = input
-    return net, plugin, data
-
-
-def prepare_data(model, data):
-    video = {'.mp4' : 1, '.avi' : 2, '.mvo' : 3, '.mpeg' : 4, '.mov' : 5}
-    image = {'.jpg' : 1, '.png' : 2, '.bmp' : 3, '.gif' : 4, '.jpeg' : 5}
-    file = str(os.path.splitext(data[0])[1]).lower()
-    if file in image:
-        prep_data = convert_image(model, data)
-    elif file in video:
-        prep_data = data[0]
-    return prep_data
-
-
-def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
-    images = np.ndarray(shape = (len(data), c, h, w))
-    for i in range(len(data)):
-        image = cv2.imread(data[i])
-        if (image.shape[:-1] != (h, w)):
-            image = cv2.resize(image, (w, h))
-        image = image.transpose((2, 0, 1))
-        images[i] = image
-    return images
 
 
 def start_infer_video(path, exec_net, model, number_iter):
@@ -145,16 +99,16 @@ def start_infer_video(path, exec_net, model, number_iter):
 
 def start_infer_one_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
-    time_s = time()
     res = []
     size = model.batch_size
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
+    time_s = time()
     for j in range(number_iter):
         infer_request_handle = exec_net.start_async(request_id = 0,
             inputs = {input_blob: images[j * size % len(images): \
              ((j + 1) * size - 1) % len(images) + 1]})
-        infer_status = infer_request_handle.wait()
+        infer_request_handle.wait()
         res.append(copy.copy(infer_request_handle.outputs[next(iter(model.outputs))]))   
     log.info('Processing output blob')
     time_e = time() - time_s
@@ -170,11 +124,11 @@ def start_infer_two_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     curr_request_id = 0
     prev_request_id  = 1
-    time_s = time()
     size = model.batch_size
     res = []
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
+    time_s = time()
     for j in range(number_iter):
         exec_net.start_async(request_id = curr_request_id,
             inputs = {input_blob: images[j * size % len(images): \
@@ -194,17 +148,18 @@ def start_infer_two_req(images, exec_net, model, number_iter):
     res = np.asarray(result[0: len(images)])
     return res, time_e
 
+
 def start_infer_n_req(images, exec_net, model, number_iter):
     input_blob = next(iter(model.inputs))
     requests_counter = len(exec_net.requests)
     requests_images = [-1 for i in range(requests_counter)]
-    time_s = time()
     size = model.batch_size
     res = [-1 for i in range(len(images))]
     if (len(images) % model.batch_size != 0):
         raise ValueError('Wrong batch_size')
     requests_status = []
     k = requests_counter
+    time_s = time()
     for request_id in range(requests_counter):
         exec_net.start_async(request_id = request_id,
         inputs = {input_blob: images[request_id * size % len(images): \
@@ -279,78 +234,19 @@ def infer_async(images, exec_net, model, number_iter):
     return res
 
 
-def classification_output(res, data, labels, number_top, log):
-    log.info('Top {} results: \n'.format(number_top))
-    if labels:
-        labels = 'image_net_synset.txt'
-        with open(labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
-                for x in f ]
-    else:
-        labels_map = None
-    for i, probs in enumerate(res):
-        probs = np.squeeze(probs)
-        top_ind = np.argsort(probs)[-number_top:][::-1]
-        if len(data) > 1:
-            print('Image {}\n'.format(os.path.split(data[i])[1]))
-        else:
-            print('Image {}\n'.format(os.path.split(data[0])[1]))
-        for id in top_ind:
-            det_label = labels_map[id] if labels_map else '#{}'.format(id)
-            print('{:.7f} {}'.format(probs[id], det_label))
-        print('\n')  
+def process_result(inference_time, batch_size, iteration_count):
+    average_time = inference_time / iteration_count
+    fps = pp.calculate_fps(batch_size * iteration_count, inference_time)
+    return average_time, fps
 
 
-def segmentation_output(res, color_map, log):
-    c = 3
-    h, w = res.shape[2:]
-    if not color_map:
-        color_map = 'color_map.txt'
-    classes_color_map = []
-    with open(color_map, 'r') as f:
-        for line in f:
-            classes_color_map.append([int(x) for x in line.split()]) 
-    for batch, data in enumerate(res):
-        classes_map = np.zeros(shape=(h, w, c), dtype=np.int)
-        for i in range(h):
-            for j in range(w):
-                if len(data[:, i, j]) == 1:
-                    pixel_class = int(data[:, i, j])
-                else:
-                    pixel_class = np.argmax(data[:, i, j])
-                classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-        out_img = os.path.join(os.path.dirname(__file__), 'out_{}.bmp'.format(batch))
-        cv2.imwrite(out_img, classes_map)
-        log.info('Result image was saved to {}'.format(out_img))
+def result_output(average_time, fps, log):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
 
 
-def detection_output(res, data, prob_threshold):
-    for i, r in enumerate(res):
-        image = cv2.imread(data[i])
-        initial_h, initial_w = image.shape[:2]
-        for obj in r[0]:
-            if obj[2] > prob_threshold:
-                xmin = int(obj[3] * initial_w)
-                ymin = int(obj[4] * initial_h)
-                xmax = int(obj[5] * initial_w)
-                ymax = int(obj[6] * initial_h)
-                class_id = int(obj[1])
-                color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
-                    min(class_id * 5, 255))
-                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow('Detection Results', image)
-    cv2.waitKey(1000)
-    cv2.destroyAllWindows()
-
-
-def infer_output(res, images, data, labels, number_top, prob_threshold,
-        color_map, log, model_type):
-    if model_type == 'classification': 
-        classification_output(res, data, labels, number_top, log)
-    elif model_type == 'detection':
-        detection_output(res, data, prob_threshold)
-    elif model_type == 'segmentation':
-        segmentation_output(res, color_map, log)
+def raw_result_output(average_time, fps):
+    print('{0:.3f},{1:.3f}'.format(average_time, fps))
 
 
 def main():
@@ -358,21 +254,33 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
-        net, plugin, data = prepare_model(log, args.model, args.weights,
-            args.cpu_extension, args.device, args.plugin_dir, args.input)
+        iecore = utils.create_ie_core(args.extension, args.device,
+            args.nthreads,args.nstreams, 'async', log)
+        net = utils.create_network(args.model_xml, args.model_bin, log)
+        log.info('Input shape: {}'.format(utils.get_input_shape(net)))
         net.batch_size = args.batch_size
-        images = prepare_data(net, data)
-        log.info('Loading model to the plugin')
-        exec_net = plugin.load(network = net, num_requests = args.requests)
-        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+        data = utils.get_input_list(args.input)
+        log.info('Prepare input data')
+        images = utils.prepare_data(net, data)
+        log.info('Create executable network')
+        exec_net = iecore.load_network(network = net, device_name = args.device,
+            num_requests = (args.requests or 0))
+        log.info('Starting inference ({} iterations) with {} requests on {}'.
+            format(args.number_iter, len(exec_net.requests), args.device))
         res, time = infer_async(images, exec_net, net, args.number_iter)
-        infer_output(res, images, data, args.labels, args.number_top,
-            args.prob_threshold, args.color_map, log, args.model_type)
+        average_time, fps = process_result(time, args.batch_size, args.number_iter)
+        if not args.raw_output:
+            io.infer_output(res, images, data, args.labels, args.number_top,
+                args.threshold, args.color_map, log, args.task)
+            result_output(average_time, fps, log)
+        else:
+            raw_result_output(average_time, fps)
         del net
         del exec_net
-        del plugin
+        del iecore
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
+        sys.exit(1)
 
 
 if __name__ == '__main__':

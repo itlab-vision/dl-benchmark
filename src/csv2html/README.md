@@ -3,7 +3,7 @@
 Скрипт запускается с помощью следующей командной строки:
 
 ```bash
-python table_converter.py -t <inf_table.csv> -r <result_file.html>
+python converter.py -t <inf_table.csv> -r <result_file.html>
 ```
 
 Входные параметры скрипта:

@@ -26,13 +26,13 @@ def split_table(table_csv):
         table_csv[row_index] = table_csv[row_index].split(';')
 
 def convert_csv_table_to_html(table_csv):
-    framework_config = open('frameworks.yml', 'r')
-    table_html = HTMLTable(table_csv, framework_config)
+    table_html = HTMLTable(table_csv)
     script_dir = os.path.split(os.path.abspath(__file__))[0]
     path_to_styles = os.path.join(script_dir, 'styles.html')
     table_html.add_styles_to_table(path_to_styles)
     table_html.sort_all_tests()
     table_html.create_table_header()
+    table_html.write_all_invariants()
     table_html.write_test_results()
     return table_html
 

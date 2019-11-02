@@ -35,7 +35,7 @@ def parse_config(config):
                 machine_parameters[4] = (machine_parameter.text)
             if machine_parameter.tag == 'OpenVINOEnvironmentPath':
                 machine_parameters[5] = (machine_parameter.text)
-            if machine_parameter.tag == 'Benchmark_config':
+            if machine_parameter.tag == 'BenchmarkConfig':
                 machine_parameters[6] = (machine_parameter.text)
             if machine_parameter.tag == 'LogFile':
                 machine_parameters[7] = (machine_parameter.text)
