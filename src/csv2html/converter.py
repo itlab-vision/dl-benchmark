@@ -1,4 +1,4 @@
-from new_table_creator import HTMLTable
+from table_creator import HTMLTable
 import sys
 import argparse
 import os
@@ -33,8 +33,7 @@ def convert_csv_table_to_html(table_csv):
     table_html.add_styles_to_table(path_to_styles)
     table_html.sort_all_tests()
     table_html.create_table_header()
-    #table_html.write_all_invariants()
-    #table_html.write_test_results()
+    table_html.write_test_results()
     return table_html
 
 def main():
