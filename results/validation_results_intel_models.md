@@ -9,8 +9,8 @@
 Разрешение: 2048 x 1024
 
 <div style='float: center'>
-<img width="150" height="300" src="images\ILSVRC2012_val_00000247.JPEG">
-<img width="150" height="300" src="detection\pedestrian-and-vehicle-detector-adas-0001">
+<img width="300" height="150" src="images\pedestrian-and-vehicle-detector-adas-0001.png">
+<img width="300" height="150" src="detection\pedestrian-and-vehicle-detector-adas-0001.png">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
 (117,86), (365,465)
