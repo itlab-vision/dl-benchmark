@@ -19,6 +19,13 @@
 ---------------------|-----------------------------|------------------------------------|
 semantic-segmentation-adas-0001             |<div style='float: center'><img width="150" src="segmentation\python_sync_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|
 
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="segmentation\cityscapes_colormap.jpg">
+</div>
+
+
 ### Тестовое изображение 2
 
 Источник: набор данных [GitHub][github]
@@ -38,7 +45,7 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 Карта цветов:
 
 <div style='float: center'>
-<img width="300" src="segmentation\cityscapes_colormap.jpg">
+<img width="300" src="segmentation\road_segmentation_colormap.jpg">
 </div>
 
 
