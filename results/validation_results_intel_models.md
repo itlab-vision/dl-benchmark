@@ -10,7 +10,7 @@
 
 <div style='float: center'>
 <img width="300" height="150" src="images\berlin_000000_000019_leftImg8bit.png">
-<img width="300" height="150" src="detection\pedestrian-and-vehicle-detector-adas-0001.png">
+<img width="300" height="150" src="detection\pedestrian-and-vehicle-detector.png">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
 (0, 431), (231, 914) car<br>
@@ -37,7 +37,7 @@ pedestrian-and-vehicle-detector-adas-0001 | Окаймляющий прямоу�
 
 <div style='float: center'>
 <img width="300" height="150" src="images\vehicle-detection-adas-0002.png">
-<img width="300" height="150" src="detection\vehicle-detection-adas-0002.png">
+<img width="300" height="150" src="detection\vehicle-detection.png">
 </div>
 
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -62,7 +62,7 @@ vehicle-detection-adas-binary-0001 | Окаймляющий прямоуголь
 
 <div style='float: center'>
 <img width="300" height="150" src="images\person-vehicle-bike-detection-crossroad.png">
-<img width="300" height="150" src="detection\person-vehicle-bike-detection-crossroad-0078.png">
+<img width="300" height="150" src="detection\person-vehicle-bike-detection-crossroad.png">
 </div>
 
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
