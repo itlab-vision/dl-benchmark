@@ -84,7 +84,7 @@ person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямо
 
 ### Тестовое изображение 4
 
-Источник: набор данных [GitHub][github] 
+Источник: набор данных [GitHub][github_plate] 
 
 Разрешение: 799 x 637
 
@@ -101,4 +101,4 @@ person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямо
 vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>(232, 119), (509, 466),<br>(330, 410), (393, 436)<br> | Окаймляющий прямоугольник:<br>(232, 119), (509, 466),<br>(330, 410), (393, 436)<br> |
 
 [cityscapes]: https://www.cityscapes-dataset.com
-[github]: https://github.com/
+[github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
