@@ -64,9 +64,6 @@ def detection_output(res, data, prob_threshold):
                 color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
                     min(class_id * 5, 255))
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-                log.info('Rectangle coordinates ({}, {}) ({}, {})'.format(xmin, ymin, xmax, ymax))
-        out_img = os.path.join(os.path.dirname(__file__), 'out_detection.bmp')
-        cv2.imwrite(out_img, image)
         cv2.imshow('Detection Results', image)
     cv2.waitKey()
     cv2.destroyAllWindows()
