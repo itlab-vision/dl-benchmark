@@ -64,9 +64,31 @@ def detection_output(res, data, prob_threshold):
                 color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
                     min(class_id * 5, 255))
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('({}, {}), ({}, {}) - {}'.format(xmin, ymin, xmax, ymax, class_id))
         cv2.imshow('Detection Results', image)
+        # cv2.imwrite("../../results/detection/result.png", image)
     cv2.waitKey()
     cv2.destroyAllWindows()
+
+
+def recognition_face_output(res, data, log):
+    for i, r in enumerate(res):
+        image = cv2.imread(data[i])
+        initial_h, initial_w = image.shape[:2]
+        radius = int((initial_w + initial_h) / 200)
+        for j in range (0, len(r), 2):
+            index = int(j / 2) + 1
+            x = int(r[j] * initial_w)
+            y = int(r[j + 1] * initial_h)
+            color = (0, 255, 255)
+            cv2.circle(image, (x, y), radius, color, -1)
+            cv2.putText(image, str(index), (x + radius, y), cv2.FONT_HERSHEY_SIMPLEX,
+                (initial_w + initial_h) / (2 * 1000), (255, 255, 255))
+            log.info('({}, {}) - {}'.format(x, y, index))
+        cv2.imshow("Result image", image)
+        # cv2.imwrite("../../results/detection/result.png", image)
+    cv2.waitKey()
+    cv2.destroyAllWindows()     
 
 
 def infer_output(res, images, data, labels, number_top, prob_threshold,
@@ -77,5 +99,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         classification_output(res, data, labels, number_top, log)
     elif task == 'detection':
         detection_output(res, data, prob_threshold)
+    elif task == 'recognition-face':
+        recognition_face_output(res, data, log)
     elif task == 'segmentation':
         segmentation_output(res, color_map, log)
