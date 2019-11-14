@@ -19,6 +19,12 @@ echo "Delete old openvino"
 sed -i 's/=install/=uninstall/' silent.cfg
 ./install.sh --silent silent.cfg
 
+cd ~/Documents
+mkdir benchmark
+rm -rf OpenVINO_env
+python3 -m venv OpenVINO_env
+source OpenVINO_env/bin/activate
+
 echo "Install old openvino"
 sed -i 's/=uninstall/=install/' silent.cfg
 ./install.sh --silent silent.cfg
