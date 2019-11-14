@@ -2,8 +2,10 @@
 <Tests>
     <Test>
         <Model>
+            <Task></Task>
             <Name></Name>
             <Path></Path>
+            <WeightType></WeightType>
         </Model>
         <Dataset>
             <Name></Name>
@@ -12,9 +14,12 @@
         <Parameters>
             <BatchSize></BatchSize>
             <Mode></Mode>
-            <Plugin></Plugin>
+            <Device></Device>
+            <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
             <IterationCount></IterationCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
             <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>

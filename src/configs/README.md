@@ -43,13 +43,16 @@
 
 - Файл конфигурации описывается в формате XML.
 - Шаблон тегов находится в файле `benchmark_configuration_file_template.xml`.
+- Порядок тегов важен и при изменении порядка тегов поведение скрипта не определено.
 - Кодирование файла осуществляется в формате `utf-8`.
 - Корневой тег `Tests`.
 - Каждый тест описывается внутри тегов `Test`.
 - Информация о модели описывается внутри тегов `Model`.
+- Тип задачи модели описывается внутри тегов `Task`
 - Имя модели описывается внутри тегов `Name`.
 - Путь до папки с моделью в промежуточном формате Inference Engine
   описывается внутри тега `Path`.
+- Тип данных весов модели описывается внутри тегов `WeightType`
 - Информация о выборке описывается внутри тегов `Dataset`.
 - Имя выборки описывается внутри тегов `Name`.
 - Путь до папки с выборкой описывается внутри тегов `Path`.
@@ -63,12 +66,20 @@
 - Обязательным параметром является режим тестирования.
   Для синхронного режима необходимо записать `Sync` внутри тегов `Mode`.
 - Обязательным параметром является устройсво для теста.
-  Параметр задается внутри тега `Plugin`.
+  Параметр задается внутри тега `Device`.
 - Обязательным параметром является количество итераций цикла тестирования.
   Параметр описывается внутри тега `IterationCount`.
 - Обязательным параметром является минимальное время выполнения вывода.
   Параметр описывается внутри тегов `MinInferenceTime`.
-- Остальные параметры допустимо оставить пустыми.
+- Для некоторых моделей при запуске на некоторых устройствах необходима
+  реализация слоёв для проведения вывода модели.
+  Путь до файла с реализацией слоёв описывается внутри тегов
+  `Extension`.
+- Параметры, описанные допустимо оставить пустыми.
+- Максимальное количество потоков выполнения вывода описывается 
+  внутри тегов `ThreadCount`.
+- При запуске синхронного режима тестирования параметры, относящиеся к
+  асинхронному режиму тестирования будут проигноированы.
 
 Параметры для тестирования асинхронного режима:
 
@@ -77,13 +88,23 @@
   Параметр описывается внутри тега `BatchSize`.
 - Обязательным параметром является режим тестирования.
   Для асинхронного режима необходимо записать `Async` внутри тегов `Mode`.
-- Обязательным параметром является количество запросов, выполняемых одновременно.
-  Параметр задается внутри тега `AsyncRequestCount`
 - Обязательным параметром является устройсво для теста.
-  Параметр описывается внутри тега `Plugin`.
+  Параметр описывается внутри тега `Device`.
 - Обязательным параметром является количество итераций.
   Параметр описывается внутри тега `IterationCount`.
-- Остальные параметры допустимо оставить пустыми.
+- Для некоторых моделей при запуске на некоторых устройствах необходима
+  реализация слоёв для проведения вывода модели.
+  Путь до файла с реализацией слоёв описывается внутри тегов
+  `Extension`.
+- Параметры, описанные допустимо оставить пустыми.
+- Количество запросов на одновременное выполнение вывода описывается
+  внутри тегов `AsyncRequestCount`.
+- Максимальное количество потоков выполнения вывода описывается 
+  внутри тегов `ThreadCount`.
+- Максимальное количество потоков выполнения запросов на вывод описывается
+  внутри тегов `StreamCount`.
+- При запуске асинхронного режима тестирования параметры, относящиеся к
+  синхронному режиму тестирования будут проигноированы.
 
 ### Пример заполнения файла конфигурации для скрипта замера производительности
 
@@ -92,37 +113,47 @@
 <Tests>
     <Test>
         <Model>
+            <Task>Classification</Task>
             <Name>densenet-121</Name>
-            <Path>C:/classification/densenet/121/IR/</Path>
+            <Path>C:/classification/densenet/121/IR/FP32/</Path>
+            <WeightType>FP32</WeightType>
         </Model>
         <Dataset>
-            <Name>ImageNet</Name>
+            <Name>ImageNET</Name>
             <Path>C:/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>10</BatchSize>
+            <BatchSize>4</BatchSize>
             <Mode>Sync</Mode>
-            <Plugin>CPU</Plugin>
+            <Device>CPU</Device>
+            <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount>10</IterationCount>
+            <IterationCount>1000</IterationCount>
+            <ThreadCount>4</ThreadCount>
+            <StreamCount></StreamCount>
             <MinInferenceTime>0.005</MinInferenceTime>
         </Parameters>
     </Test>
     <Test>
         <Model>
+            <Task>Classification</Task>
             <Name>densenet-121</Name>
-            <Path>C:/classification/densenet/121/IR/</Path>
+            <Path>C:/classification/densenet/121/IR/FP32/</Path>
+            <WeightType>FP32</WeightType>
         </Model>
         <Dataset>
-            <Name>ImageNet</Name>
+            <Name>ImageNET</Name>
             <Path>C:/ImageNET/</Path>
         </Dataset>
         <Parameters>
-            <BatchSize>10</BatchSize>
+            <BatchSize>4</BatchSize>
             <Mode>Async</Mode>
-            <Plugin>CPU</Plugin>
-            <AsyncRequestCount>1</AsyncRequestCount>
-            <IterationCount>10</IterationCount>
+            <Device>CPU</Device>
+            <Extension></Extension>
+            <AsyncRequestCount>4</AsyncRequestCount>
+            <IterationCount>1000</IterationCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount>4</StreamCount>
             <MinInferenceTime></MinInferenceTime>
         </Parameters>
     </Test>
