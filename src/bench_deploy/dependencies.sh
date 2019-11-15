@@ -10,3 +10,7 @@ source OpenVINO_env/bin/activate
 
 yes | pip3 install PyYAML
 yes | pip3 install requests
+yes | pip3 install numpy
+yes | pip3 install networkx==2.3
+yes | pip3 install defusedxml
+yes | pip install protobuf==3.6.1
