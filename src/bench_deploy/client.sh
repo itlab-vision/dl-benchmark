@@ -28,3 +28,14 @@ sudo ./install.sh --silent silent.cfg
 echo "Install openvino dependencies"
 cd /opt/intel/openvino/install_dependencies
 sudo ./install_openvino_dependencies.sh -E
+
+echo "Setting vars"
+source /opt/intel/openvino/bin/setupvars.sh
+
+echo "Configurate model_optimizer"
+cd /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
+sudo ./install_prerequisites.sh
+
+echo "Test run"
+cd /opt/intel/openvino/deployment_tools/demo
+./demo_squeezenet_download_convert_run.sh
