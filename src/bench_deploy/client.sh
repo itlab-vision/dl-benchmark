@@ -21,14 +21,14 @@ sed -i 's/=install/=uninstall/' silent.cfg
 
 source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
-echo "Install old openvino"
+echo "Install new openvino"
 sed -i 's/=uninstall/=install/' silent.cfg
-./install.sh --silent silent.cfg
+sudo ./install.sh --silent silent.cfg
 
 cd /opt/intel/openvino/install_dependencies
-./install_openvino_dependencies.sh -E
+sudo ./install_openvino_dependencies.sh -E
 source /opt/intel/openvino/bin/setupvars.sh
 cd /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
-./install_prerequisites.sh
+sudo ./install_prerequisites.sh
 cd /opt/intel/openvino/deployment_tools/demo
 ./demo_squeezenet_download_convert_run.sh
