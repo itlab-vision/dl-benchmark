@@ -9,3 +9,4 @@ python3 -m venv OpenVINO_env
 source OpenVINO_env/bin/activate
 
 yes | pip3 install PyYAML
+yes | pip3 install requests
