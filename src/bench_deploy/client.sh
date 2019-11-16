@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Update components"
-#apt-get update
+yes | apt-get update
 
 echo "Delete old components"
 rm -r /home/itmm/inference_engine_samples_build
