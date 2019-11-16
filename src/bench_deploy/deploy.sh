@@ -13,8 +13,8 @@ echo "Setting vars"
 source /opt/intel/openvino/bin/setupvars.sh
 
 echo "Convert to FP16"
-sudo ./converter.py --all --precisions=FP16
+sudo ./converter.py --all --precisions=FP16 --mo ../../../model_optimizer/mo.py
 echo "Convert to FP32"
-sudo ./converter.py --all --precisions=FP32
+sudo ./converter.py --all --precisions=FP32 --mo ../../../model_optimizer/mo.py
 echo "Convert to INT8"
-sudo ./converter.py --all --precisions=INT8
+sudo ./converter.py --all --precisions=INT8 --mo ../../../model_optimizer/mo.py
