@@ -69,6 +69,25 @@ def detection_output(res, data, prob_threshold):
     cv2.destroyAllWindows()
 
 
+def person_attributes(res, data):
+    image = cv2.imread(data[0])
+    initial_h, initial_w = image.shape[:2]
+    r = res[0]
+    top = res[1]
+    bottom = res[2]
+    attributes = ["is_male", "has_bag", "has_backpack", "has_hat", "has_longsleeves",
+        "has_longpants", "has_longhair", "has_coat_jacket"]
+    for i, val in enumerate(r):
+        print('{} - {}'.format(attributes[i], bool(val > 0.5)))
+    radius = int((initial_w + initial_h) / 200)
+    color = (0, 0, 255)
+    cv2.circle(image, (top[0] * initial_w, top[1] * initial_h), radius, color, -1)
+    cv2.circle(image, (bottom[0] * initial_w, bottom[1] * initial_h), radius, color, -1)
+    cv2.imshow('Detection Results', image)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+
+
 def infer_output(res, images, data, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
@@ -77,5 +96,7 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         classification_output(res, data, labels, number_top, log)
     elif task == 'detection':
         detection_output(res, data, prob_threshold)
+    elif task == 'person-attributes':
+        person_attributes(res, data)
     elif task == 'segmentation':
         segmentation_output(res, color_map, log)
