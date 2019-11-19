@@ -58,7 +58,7 @@ def build_parser():
 def infer_async(input, batch_size, exec_net, number_iter):
     requests_counter = len(exec_net.requests)
     size = batch_size
-    result = []
+    result = None
     slice_input = dict.fromkeys(input.keys(), None)
     if number_iter == 1:
         time_s = time()
@@ -71,8 +71,10 @@ def infer_async(input, batch_size, exec_net, number_iter):
         for request_id in range(requests_counter):
             exec_net.requests[request_id].wait(-1)
         time_e = time() - time_s
-        for request_id in range(requests_counter):
-            result.append(copy(exec_net.requests[request_id].outputs))
+        list = [copy(exec_net.requests[request_id].outputs) for request_id in range(requests_counter)]
+        result = dict.fromkeys(list[0].keys(), None)
+        for key in result:
+            result[key] = np.concatenate([array[key] for array in list], axis = 0)
     else:
         time_s = time()
         iteration = 0
