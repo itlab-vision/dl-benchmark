@@ -70,8 +70,10 @@ def detection_output(result, data, prob_threshold):
 
 def infer_output(result, input, labels, number_top, prob_threshold,
         color_map, log, task):
-    if task == 'feedforward' or len(result) == 0:
+    if task == 'feedforward':
         return
+    elif result is None:
+        log.warning("Model output is processed only for the number iteration = 1")
     elif task == 'classification':
         classification_output(result['prob'], labels, number_top, log)
     elif task == 'detection':
