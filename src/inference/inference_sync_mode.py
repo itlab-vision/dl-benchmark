@@ -57,13 +57,11 @@ def infer_sync(input, batch_size, exec_net, number_it):
     time_infer = []
     slice_input = dict.fromkeys(input.keys(), None)
     if number_it == 1:
-        for i in range(number_it):
-            for key in input:
-                slice_input[key] = input[key][(i * size) % len(input[key]):
-                    (((i + 1) * size - 1) % len(input[key])) + 1:]
-            t0 = time()
-            result = exec_net.infer(inputs = slice_input)
-            time_infer.append((time() - t0))
+        for key in input:
+            slice_input[key] = input[key][0:batch_size]
+        t0 = time()
+        result = exec_net.infer(inputs = slice_input)
+        time_infer.append((time() - t0))
     else:
         for i in range(number_it):
             for key in input:
