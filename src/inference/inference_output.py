@@ -66,7 +66,6 @@ def detection_output(res, data, prob_threshold):
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
                 log.info('({}, {}), ({}, {}) - {}'.format(xmin, ymin, xmax, ymax, class_id))
         cv2.imshow('Detection Results', image)
-        # cv2.imwrite("../../results/detection/result.png", image)
     cv2.waitKey()
     cv2.destroyAllWindows()
 
@@ -86,7 +85,6 @@ def recognition_face_output(res, data, log):
                 (initial_w + initial_h) / (2 * 1000), (255, 255, 255))
             log.info('({}, {}) - {}'.format(x, y, index))
         cv2.imshow("Result image", image)
-        # cv2.imwrite("../../results/detection/result.png", image)
     cv2.waitKey()
     cv2.destroyAllWindows()     
 
