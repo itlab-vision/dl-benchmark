@@ -12,12 +12,10 @@ def classification_output(result, labels, number_top, log):
     with open(labels, 'r') as f:
         labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
             for x in f ]
-    image_count = 1
-    for i, probs in enumerate(result):
+    for batch, probs in enumerate(result):
         probs = np.squeeze(probs)
         top_ind = np.argsort(probs)[-number_top:][::-1]
-        print("Result for image {}\n".format(image_count))
-        image_count += 1
+        print("Result for image {}\n".format(batch + 1))
         for id in top_ind:
             det_label = labels_map[id] if labels_map else '#{}'.format(id)
             print('{:.7f} {}'.format(probs[id], det_label))
@@ -33,7 +31,6 @@ def segmentation_output(result, color_map, log):
     with open(color_map, 'r') as f:
         for line in f:
             classes_color_map.append([int(x) for x in line.split()])
-    image_count = 1
     for batch, data in enumerate(result):
         classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
         for i in range(h):
@@ -43,8 +40,7 @@ def segmentation_output(result, color_map, log):
                 else:
                     pixel_class = np.argmax(data[:, i, j])
                 classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-        out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(image_count))
-        image_count += 1
+        out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
         cv2.imwrite(out_img, classes_map)
         log.info('Result image was saved to {}'.format(out_img))
 
