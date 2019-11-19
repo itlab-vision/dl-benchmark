@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import logging as log
 import cv2
+from copy import copy
 from openvino.inference_engine import IENetwork, IECore
 
 
@@ -52,32 +53,19 @@ def create_ie_core(path_to_extension, device, nthreads, nstreams, mode, log):
     return ie
 
 
-def get_input_list(input):
-    if os.path.isdir(input[0]):
-        data = [os.path.join(input[0], file) for file in os.listdir(input[0])]
-    else:
-        data = input
-    return data
-
-
 def get_input_shape(model):
-    n, c, h, w = model.inputs[next(iter(model.inputs))].shape
-    return '{0}x{1}x{2}x{3}'.format(n, c, h, w)
+    layers_shape = dict()
+    for input_layer in model.inputs:
+        shape = ''
+        for dem in model.inputs[input_layer].shape:
+            shape += '{0}x'.format(dem)
+        shape = shape[:-1]
+        layers_shape.update({input_layer : shape})
+    return layers_shape
 
 
-def prepare_data(model, data):
-    video = {'.mp4' : 1, '.avi' : 2, '.mvo' : 3, '.mpeg' : 4, '.mov' : 5}
-    image = {'.jpg' : 1, '.png' : 2, '.bmp' : 3, '.gif' : 4, '.jpeg' : 5}
-    file = str(os.path.splitext(data[0])[1]).lower()
-    if file in image:
-        prep_data = convert_image(model, data)
-    elif file in video:
-        prep_data = data[0]
-    return prep_data
-
-
-def convert_image(model, data):
-    n, c, h, w  = model.inputs[next(iter(model.inputs))].shape
+def convert_images(shape, data):
+    n, c, h, w  = shape
     images = np.ndarray(shape = (len(data), c, h, w))
     for i in range(len(data)):
         image = cv2.imread(data[i])
@@ -86,3 +74,63 @@ def convert_image(model, data):
         image = image.transpose((2, 0, 1))
         images[i] = image
     return images
+
+
+def fill_input(input, batch_size):
+    index = 0
+    result = input.copy()
+    while(len(result) < batch_size):
+        result.append(copy(result[index]))
+        index += 1
+    return result
+
+
+def create_list_images(input):
+    images = []
+    input_is_correct = True
+    if os.path.exists(input[0]):
+        if os.path.isdir(input[0]):
+            path = os.path.abspath(input[0])
+            images = [os.path.join(path, file) for file in os.listdir(path)]
+        elif os.path.isfile(input[0]):
+            for image in input:
+                if not os.path.isfile(image):
+                    input_is_correct = False
+                    break
+                images.append(os.path.abspath(image))
+        else:
+            input_is_correct = False
+    if not input_is_correct:
+        raise ValueError("Wrong path to image or to directory with images")
+    return images
+
+
+def check_correct_input(len_values):
+    ideal = len_values[0]
+    for len in len_values:
+        if len != ideal:
+            raise ValueError("Mismatch batch sizes for different input layers")
+
+
+def prepare_input(model, input, batch_size):
+    result = {}
+    if ':' in input[0]:
+        len_values = []
+        for str in input:
+            key, value = str.split(':')
+            value = value.split(",")
+            shape = model.inputs[key].shape
+            len_values.append(len(value))
+            value = fill_input(value, batch_size)
+            value = create_list_images(value)
+            value = convert_images(shape, value)
+            result.update({key : value})
+        check_correct_input(len_values)
+    else:
+        input_blob = next(iter(model.inputs))
+        shape = model.inputs[input_blob].shape
+        list = fill_input(input, batch_size)
+        list = create_list_images(input)
+        images = convert_images(shape, list)
+        result.update({input_blob : images})
+    return result
