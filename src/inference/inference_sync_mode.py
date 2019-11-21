@@ -113,7 +113,7 @@ def main():
         result, time = infer_sync(input, net.batch_size, exec_net, args.number_iter)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
-            io.infer_output(result, input, args.labels, args.number_top,
+            io.infer_output(net, result, input, args.labels, args.number_top,
                 args.threshold, args.color_map, log, args.task)
             result_output(average_time, fps, latency, log)
         else:

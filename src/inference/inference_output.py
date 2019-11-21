@@ -8,7 +8,7 @@ import cv2
 def classification_output(result, labels, number_top, log):
     log.info('Top {} results: \n'.format(number_top))
     if not labels:
-        labels= 'image_net_synset.txt'
+        labels= os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
     with open(labels, 'r') as f:
         labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() \
             for x in f ]
@@ -24,9 +24,9 @@ def classification_output(result, labels, number_top, log):
 
 def segmentation_output(result, color_map, log):
     c = 3
-    h, w = result.shape[2:]
+    h, w = result.shape[1:]
     if not color_map:
-        color_map = 'color_map.txt'
+        color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
     classes_color_map = []
     with open(color_map, 'r') as f:
         for line in f:
@@ -35,44 +35,62 @@ def segmentation_output(result, color_map, log):
         classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
         for i in range(h):
             for j in range(w):
-                if len(data[:, i, j]) == 1:
-                    pixel_class = int(data[:, i, j])
-                else:
-                    pixel_class = np.argmax(data[:, i, j])
+                pixel_class = int(data[i, j])
                 classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
         out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
         cv2.imwrite(out_img, classes_map)
         log.info('Result image was saved to {}'.format(out_img))
 
 
-def detection_output(result, data, prob_threshold):
-    for i, r in enumerate(result):
-        image = copy(data[i])
-        initial_h, initial_w = image.shape[:2]
-        for obj in r[0]:
+def detection_output(result, input, prob_threshold, log):
+    ib, c, h, w = input.shape
+    b, _, _, _ = result.shape
+    images = np.ndarray(shape = (b, w, h, c))
+    i = 0
+    while i < b:
+        images[i] = input[i % ib].transpose((1, 2, 0))
+        i += 1
+    for batch in range(b):
+        for obj in result[batch][0]:
             if obj[2] > prob_threshold:
+                image_number = int(obj[0])
+                image = images[image_number]
+                initial_h, initial_w = image.shape[:2]
                 xmin = int(obj[3] * initial_w)
                 ymin = int(obj[4] * initial_h)
                 xmax = int(obj[5] * initial_w)
                 ymax = int(obj[6] * initial_h)
                 class_id = int(obj[1])
-                color = (min(class_id * 12.5, 255), min(class_id * 7, 255),
+                color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
                     min(class_id * 5, 255))
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.imshow('Detection Results', image)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+                log.info("Bounding boxes for image {0} for object {1}".format(image_number, class_id))
+                log.info("Top left: ({0}, {1})".format(xmin, ymin))
+                log.info("Bottom right: ({0}, {1})".format(xmax, ymax))
+
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
 
 
-def infer_output(result, input, labels, number_top, prob_threshold,
+
+
+def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
         return
     elif result is None:
         log.warning("Model output is processed only for the number iteration = 1")
     elif task == 'classification':
-        classification_output(result['prob'], labels, number_top, log)
+        result_layer_name = next(iter(model.outputs))
+        classification_output(result[result_layer_name], labels, number_top, log)
     elif task == 'detection':
-        detection_output(result['prob'], input['data'], prob_threshold)
+        input_layer_name = next(iter(model.inputs))
+        result_layer_name = next(iter(model.outputs))
+        detection_output(result[result_layer_name], input[input_layer_name], prob_threshold, log)
     elif task == 'segmentation':
-        segmentation_output(result['prob'], color_map, log)
+        result_layer_name = next(iter(model.outputs))
+        segmentation_output(result[result_layer_name], color_map, log)
