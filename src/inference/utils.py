@@ -130,7 +130,7 @@ def prepare_input(model, input, batch_size):
         input_blob = next(iter(model.inputs))
         shape = model.inputs[input_blob].shape
         list = fill_input(input, batch_size)
-        list = create_list_images(input)
+        list = create_list_images(list)
         images = convert_images(shape, list)
         result.update({input_blob : images})
     return result
