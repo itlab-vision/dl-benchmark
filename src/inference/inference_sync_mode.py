@@ -15,8 +15,9 @@ def build_argparser():
         file with a trained model.', required = True, type = str, dest = 'model_xml')
     parser.add_argument('-w', '--weights', help = 'Path to an .bin file \
         with a trained weights.', required = True, type = str, dest = 'model_bin')
-    parser.add_argument('-i', '--input', help = 'Path to a folder with \
-        images or path to an image files', required = True, type = str, 
+    parser.add_argument('-i', '--input', help = 'Data for input layers in format: \
+        input_layer_name:path_to_image1,path_to_image2.. \
+        or input_layer_name:path_to_folder_with_images', required = True, type = str,
         nargs = '+', dest = 'input')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int, dest = 'batch_size')
@@ -50,22 +51,26 @@ def build_argparser():
     return parser
 
 
-def infer_sync(images, exec_net, net, number_it):
-    input_blob = next(iter(net.inputs))
-    out_blob = next(iter(net.outputs))
-    size = net.batch_size
-    result = []
+def infer_sync(input, batch_size, exec_net, number_it):
+    size = batch_size
+    result = None
     time_infer = []
-    for i in range(number_it):
-        input = {input_blob : images[(i * size) % len(images) :
-                 (((i + 1) * size - 1) % len(images)) + 1:]}
+    slice_input = dict.fromkeys(input.keys(), None)
+    if number_it == 1:
+        for key in input:
+            slice_input[key] = input[key][0:batch_size]
         t0 = time()
-        res = exec_net.infer(inputs = input)
+        result = exec_net.infer(inputs = slice_input)
         time_infer.append((time() - t0))
-        for j in range(size):
-            result.append(res[out_blob][j])
-    npres = np.asarray(result[0: len(images)])
-    return npres, time_infer
+    else:
+        for i in range(number_it):
+            for key in input:
+                slice_input[key] = input[key][(i * size) % len(input[key]):
+                    (((i + 1) * size - 1) % len(input[key])) + 1:]
+            t0 = time()
+            exec_net.infer(inputs = slice_input)
+            time_infer.append((time() - t0))
+    return result, time_infer
 
 
 def process_result(inference_time, batch_size, min_infer_time):
@@ -95,19 +100,20 @@ def main():
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
-        log.info('Input shape: {}'.format(utils.get_input_shape(net)))
+        input_shapes = utils.get_input_shape(net)
+        for layer in input_shapes:
+            log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
-        data = utils.get_input_list(args.input)
         log.info('Prepare input data')
-        images = utils.prepare_data(net, data)
+        input = utils.prepare_input(net, args.input, net.batch_size)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device)
         log.info('Starting inference ({} iterations) on {}'.
             format(args.number_iter, args.device))
-        res, time = infer_sync(images, exec_net, net, args.number_iter)
+        result, time = infer_sync(input, net.batch_size, exec_net, args.number_iter)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
-            io.infer_output(res, images, data, args.labels, args.number_top,
+            io.infer_output(net, result, input, args.labels, args.number_top,
                 args.threshold, args.color_map, log, args.task)
             result_output(average_time, fps, latency, log)
         else:

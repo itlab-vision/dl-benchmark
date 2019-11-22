@@ -1,172 +1,232 @@
 from copy import deepcopy
-MODEL_POSITION_IN_TABLE = 1
-MODE_POSITION_IN_TABLE = 6
-INFR_POSITION_IN_TABLE = 8
-ATOSP_POSITION_IN_TABLE = 9
-LATENCY_POSITION_IN_TABLE = 10
-FPS_POSITION_IN_TABLE = 11
+import yaml
 
+STATUS_POSITION_IN_TABLE = 0
+TYPE_POSITION_IN_TABLE = 1
+MODEL_POSITION_IN_TABLE = 2
+FRAMEWORK_POSITION_IN_TABLE = 3
+INFERENCE_POSITION_IN_TABLE = 4
+SHAPE_POSITION_IN_TABLE = 5
+WEIGHT_POSITION_IN_TABLE = 6
+BATCH_POSITION_IN_TABLE = 7
+MODE_POSITION_IN_TABLE = 8
+PARAMS_POSITION_IN_TABLE = 9
+INFR_POSITION_IN_TABLE = 10
+FPS_POSITION_IN_TABLE = 13
 
 class HTMLTable:
-    def __init__(self, _table_csv):
+    def __init__(self, _table_csv, _file):
         self.table_html = []
         self.table_csv = _table_csv
+        self.frameworks_list = yaml.safe_load(_file)['frameworks']
 
     def add_styles_to_table(self, path_to_styles):
         styles = open(path_to_styles, 'r')
-        for line in styles:    
+        for line in styles:
             self.table_html.append(line)
 
-    def find_all_infr(self):
-        infr_list = []
+    def get_model_dict(self):
+        models_dict = dict()
         for row_index in range(1, len(self.table_csv)):
-            infr_list.append(self.table_csv[row_index][INFR_POSITION_IN_TABLE])
-        infr_list = set(infr_list)
-        return list(infr_list)
+            try:
+                models_dict[self.table_csv[row_index][MODEL_POSITION_IN_TABLE]]
+            except KeyError:
+                models_dict[self.table_csv[row_index][MODEL_POSITION_IN_TABLE]] = {
+                    'weight': set(),
+                    'shape': self.table_csv[row_index][SHAPE_POSITION_IN_TABLE],
+                    'batch': set(),
+                    'type': self.table_csv[row_index][TYPE_POSITION_IN_TABLE],
+                    'framework' : self.table_csv[row_index][FRAMEWORK_POSITION_IN_TABLE]
+                }
+        return models_dict
 
-    def get_all_models_names(self):
-        models_set = set()
+    def get_model_weights_and_batches(self, models_dict):
+        #Added to dict all weights and batch.
         for row_index in range(1, len(self.table_csv)):
-            models_set.add(self.table_csv[row_index][MODEL_POSITION_IN_TABLE])
-        return models_set
+            models_dict[self.table_csv[row_index][MODEL_POSITION_IN_TABLE]]['weight'].add(
+                self.table_csv[row_index][WEIGHT_POSITION_IN_TABLE])
+            models_dict[self.table_csv[row_index][MODEL_POSITION_IN_TABLE]]['batch'].add(
+                self.table_csv[row_index][BATCH_POSITION_IN_TABLE])
 
-    def prep_tests(self, tests):
-        max_len = -1
-        first_tests = None
-        for test_tuple in tests:
-            if (len(test_tuple[1]) > max_len):
-                first_tests = test_tuple[1]
-                max_len = len(test_tuple[1])
+        #Sort all batches, because they added in set randomly.
+        for model in models_dict:
+            models_dict[model]['batch'] =  \
+                sorted(models_dict[model]['batch'], key=lambda val: int(val))
 
-        for curr_model in range(0, len(tests)):
-            for curr_test in range(len(first_tests)):
-                i = 0
-                while (i <  len(tests[curr_model][1])):
-                    if (first_tests[curr_test][4:9] ==
-                        tests[curr_model][1][i][4:9]):
-                        (tests[curr_model][1][i], \
-                        tests[curr_model][1][curr_test]) = \
-                        (tests[curr_model][1][curr_test], \
-                        tests[curr_model][1][i])
-                    i += 1
+    def format_models_dict(self, models_dict):
+        task_types_dict = dict()
+        for model in models_dict:
+            try:
+                task_types_dict[models_dict[model]['type']][model] = models_dict[model]
+            except KeyError:
+                task_types_dict[models_dict[model]['type']] = { model: models_dict[model] }
+
+        return task_types_dict
+
+    def get_infr_dict(self):
+        infr_dict = dict()
+        for row_index in range(1, len(self.table_csv)):
+            try:
+                infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]]
+            except KeyError:
+                #Added to each intr all frameworks with target plugins.
+                infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]] = {}
+                for framework in self.frameworks_list:
+                    infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]][framework['name']] = {}
+                    for plagin in framework:
+                        if plagin == 'name':
+                            continue
+                        infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]][framework['name']][plagin] = \
+                            framework[plagin].replace(' ', '').split(',')
+
+        return infr_dict
+
+    def find_test_in_table(self, curr_infr, plagin, model_name, framework, batch, weight, mode):
+        for row_index in range(1, len(self.table_csv)):
+            if (self.table_csv[row_index][MODEL_POSITION_IN_TABLE] == model_name and
+                self.table_csv[row_index][INFR_POSITION_IN_TABLE] == curr_infr and
+                plagin in self.table_csv[row_index][PARAMS_POSITION_IN_TABLE] and
+                self.table_csv[row_index][BATCH_POSITION_IN_TABLE] == batch and
+                self.table_csv[row_index][WEIGHT_POSITION_IN_TABLE] == weight and
+                self.table_csv[row_index][MODE_POSITION_IN_TABLE] == mode and
+                self.table_csv[row_index][INFERENCE_POSITION_IN_TABLE] == framework):
+                if self.table_csv[row_index][STATUS_POSITION_IN_TABLE] == 'Failed':
+                    return '-'
                 else:
-                    if (len(tests[curr_model][1]) < curr_test):
-                        tests[curr_model][1].append(
-                            deepcopy(tests[curr_model][1][curr_test]))
-                        tests[curr_model][1][curr_test] = \
-                            deepcopy(first_tests[curr_test])
-                        tests[curr_model][1][curr_test][MODEL_POSITION_IN_TABLE] = \
-                            tests[curr_model][MODEL_POSITION_IN_TABLE]
-                        tests[curr_model][1][curr_test][ATOSP_POSITION_IN_TABLE] = \
-                            '-'
-                        tests[curr_model][1][curr_test][LATENCY_POSITION_IN_TABLE] = \
-                            '-'
-                        tests[curr_model][1][curr_test][FPS_POSITION_IN_TABLE] = \
-                            '-'
-                    elif (len(tests[curr_model][1]) < len(first_tests)):
-                        tests[curr_model][1].append(
-                            deepcopy(first_tests[curr_test]))
-                        tests[curr_model][1][-1][MODEL_POSITION_IN_TABLE] = \
-                            tests[curr_model][1][0][MODEL_POSITION_IN_TABLE]
-                        tests[curr_model][1][-1][ATOSP_POSITION_IN_TABLE] = \
-                            '-'
-                        tests[curr_model][1][-1][LATENCY_POSITION_IN_TABLE] = \
-                            '-'
-                        tests[curr_model][1][-1][FPS_POSITION_IN_TABLE] = \
-                            '-'
-            if (len(tests[curr_model][1]) != len(first_tests)):
-                print(len(tests[curr_model][1]), len(first_tests))
+                    return self.table_csv[row_index][FPS_POSITION_IN_TABLE]
+
+        return 'N/A'
+
+    def added_all_test(self, models_dict):
+        for infr in self.infr_dict:
+            for framework in self.infr_dict[infr]:
+                for plagin in self.infr_dict[infr][framework]:
+                    weights = self.infr_dict[infr][framework][plagin]
+                    self.infr_dict[infr][framework][plagin] = {weight:{} for weight in weights}
+                    for weight in weights:
+                        for model in models_dict:
+                            self.infr_dict[infr][framework][plagin][weight][model] = {}
+                            for batch in models_dict[model]['batch']:
+                                self.infr_dict[infr][framework][plagin][weight][model][batch] = {}
+                                self.infr_dict[infr][framework][plagin][weight][model][batch]['sync'] = \
+                                    self.find_test_in_table(infr, plagin, model, framework, batch, weight, 'Sync')
+                                self.infr_dict[infr][framework][plagin][weight][model][batch]['async'] = \
+                                    self.find_test_in_table(infr, plagin, model, framework, batch, weight, 'Async')
 
     def sort_all_tests(self):
-        infr_list = self.find_all_infr()
-        self.sorted_tests = [(infrastr, []) for infrastr in infr_list]
-        models_set = list(self.get_all_models_names())
-        unused_models = []
-
-        for i, infrastr in enumerate(infr_list):
-            unused_models.clear()
-            for model in models_set:
-                model_tests = self.find_all_model_tests(model,
-                    infrastr)
-                if (len(model_tests) > 0):
-                    self.sorted_tests[i][1].append((model, model_tests))
-                else:
-                    unused_models.append(model)
-            for model in unused_models:
-                copy_model_tests = deepcopy(self.sorted_tests[i][1][1][1])
-                for test in copy_model_tests:
-                    test[1] = model
-                    test[ATOSP_POSITION_IN_TABLE] = '-'
-                    test[LATENCY_POSITION_IN_TABLE] = '-'
-                    test[FPS_POSITION_IN_TABLE] = '-'
-                self.sorted_tests[i][1].append((model, copy_model_tests))
-            self.prep_tests(self.sorted_tests[i][1])
-
-    def find_all_model_tests(self, model, infrastr):
-        # If infr and model == test.infr and test.model than add test in pack
-        test_list = []
-        for row_index in range(1, len(self.table_csv)):
-            if (self.table_csv[row_index][INFR_POSITION_IN_TABLE] == infrastr
-                and
-                self.table_csv[row_index][MODEL_POSITION_IN_TABLE] == model):
-                test_list.append(self.table_csv[row_index])
-        return test_list
+        models_dict = self.get_model_dict()
+        self.get_model_weights_and_batches(models_dict)
+        self.task_types_dict = self.format_models_dict(models_dict)
+        self.infr_dict = self.get_infr_dict()
+        self.added_all_test(models_dict)
 
     def create_table_header(self):
         self.table_html.append('\n<table align="center" border="1"' +
             'cellspacing="0" cellpadding="0" class="main">')
-        self.table_html.append('\n<tr>\n<th>Topology</th>\n')
-        for infrastr in self.sorted_tests:
-            self.table_html.append('<th>{}</th>\n'.format(infrastr[0]))
+        self.table_html.append('\n<tr>\n<th>Task type</th>\n'\
+            '<th>Topology name</th>\n<th>Framework</th>\n'\
+            '<th>Input blob sizes</th>\n<th>Batch size</th>\n')
+        for infrastr in self.infr_dict:
+            self.table_html.append('<th> <table align="center" width="100%"' +
+                'border="1" cellspacing="0" cellpadding="0">\n')
+            self.table_html.append('<tr>\n<th>{}</th>\n</tr>'.format(infrastr))
+            self.table_html.append('\n<tr>\n<td> <table align="center" width="100%"' +
+                'border="1" cellspacing="0" cellpadding="0">\n<tr>')
+            for framework in self.infr_dict[infrastr]:
+                self.table_html.append('<th> <table align="center" width="100%"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n<tr>')
+                self.table_html.append('\n<th>{}</th></tr><tr>'.format(framework))
+                self.table_html.append('<td> <table align="center" widtd="100%"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n<tr>')
+                for plugin in self.infr_dict[infrastr][framework]:
+                    self.table_html.append('<th> <table align="center" widtd="100%"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n<tr>')
+                    self.table_html.append('\n<th>{}</th>\n</tr>\n<tr>\n'.format(plugin))
+                    self.table_html.append('<td> <table align="center" widtd="100%"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n<tr>')
+                    for weight in self.infr_dict[infrastr][framework][plugin]:
+                        self.table_html.append('<th><table align="center" widtd="100%"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n')
+                        self.table_html.append('<tr><th colspan="2">{}</th>\n</tr>'.format(weight))
+                        self.table_html.append('<tr class="double"><th>Latency Mode</th>\n')
+                        self.table_html.append('<th class="double">Throughput Mode</th></tr>\n</table></th>')
+                    self.table_html.append('</tr></table></td></tr>\n</table>\n</th>')
+                self.table_html.append('\n</tr></table></td></tr>\n</table>\n</th>\n')
+            self.table_html.append('</tr>\n</table></td></tr>')
+            #END of one ifr table
+            self.table_html.append('\n</table>\n</th>\n')
         self.table_html.append('</tr>\n')
 
-    def write_all_invariants(self):
-        self.table_html.append('\n<tr>\n<td>\n</td>\n')
-        for infrastr in self.sorted_tests:
-            self.table_html.append('<td>\n<table align="center" width="100%"' +
-            'border="1" cellspacing="0" cellpadding="0">\n<tr>\n')
-            for test in infrastr[1][0][1]:
-                test[7] = test[7].replace(',', '<br>')
-                self.table_html.append(('<th>{};{};{};<br>{}</th>\n')
-                .format(test[4], test[5], test[6], test[7]))
-            self.table_html.append('</tr>\n<tr>')
-            for test in infrastr[1][0][1]:
-                if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
-                    inv = 'Latency'
-                else:
-                    inv = 'Average time of single pass'
-                self.table_html.append(('\n<td>\n<table align="center"' +
-                    'width="100%" border="1" cellspacing="0" cellpadding="0">'+
-                    '\n<tr>\n<th class="double">{}</th>\n' +
-                    '<th class="double">FPS</th>\n</tr>\n</table>\n</td>\n')
-                        .format(inv))
-            self.table_html.append('\n</tr>\n</table>\n</td>')
-        self.table_html.append('\n</tr>')
-
     def write_test_results(self):
-        self.table_html.append('\n<tr>')
-        models_set = list(self.get_all_models_names())
-        models_set.sort()
-        for model in models_set:
-            self.table_html.append('\n<td>{}</td>'.format(model))
-            for infrastr in self.sorted_tests:
-                self.table_html.append('\n<td>\n<table align="center"' +
-                'width="100%" border="1" cellspacing="0" cellpadding="0">\n' +
-                '<tr>')
-                for curr_model in infrastr[1]:
-                    if (curr_model[0] == model):
-                        for test in curr_model[1]:
-                            if (test[MODE_POSITION_IN_TABLE] == 'Sync'):
-                                result = test[LATENCY_POSITION_IN_TABLE:FPS_POSITION_IN_TABLE + 1]
-                            else:
-                                result = (test[ATOSP_POSITION_IN_TABLE], test[FPS_POSITION_IN_TABLE])
-                            self.table_html.append(('\n<td><table align="center"' +
-                                'width="100%" border="1" cellspacing="0"' + 
-                                'cellpadding="0">\n<tr>\n<td class="double" align="right">{}' +
-                                '</td>\n<td class="double" align="right">{}</td>\n</tr>\n' +
-                                '</table>\n</td>\n').format(result[0],
-                                result[1]))    
-                self.table_html.append('\n</tr>\n</table>\n</td>')
+        pass
+        for task_type in self.task_types_dict:
+            self.table_html.append('\n<tr>')
+            self.table_html.append('<td>{}</td>'.format(task_type))
+
+            #Print models
+            self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+            for model in self.task_types_dict[task_type]:
+                self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+                self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(model))
+            self.table_html.append('</table>\n</td>')
+
+            #Print framework
+            self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+            for model in self.task_types_dict[task_type]:
+                self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+                self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
+                    self.task_types_dict[task_type][model]['framework']))
+            self.table_html.append('</table>\n</td>')
+
+            #Print shape
+            self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+            for model in self.task_types_dict[task_type]:
+                self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+                self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
+                    self.task_types_dict[task_type][model]['shape']))
+            self.table_html.append('</table>\n</td>')
+
+            #Print batch
+            self.table_html.append('<td > <table align="center" class="lock"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+            for model in self.task_types_dict[task_type]:
+                self.table_html.append('<tr>\n <td> <table align="center" class="border_columns"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+                for batch in self.task_types_dict[task_type][model]['batch']:
+                    self.table_html.append('<tr>\n<td align="right">{}</td>\n</tr>\n'.format(batch))
+                self.table_html.append('</table>\n</td></tr>')
+            self.table_html.append('</table>\n</td>')
+
+            # Print result
+            for infrastr in self.infr_dict:
+                self.table_html.append('<td> <table align="center" class="lock"' +
+                    'border="1" cellspacing="0" cellpadding="0">\n')
+                for model in self.task_types_dict[task_type]:
+                    self.table_html.append('<tr>\n<td> <table align="center" class="lock"' +
+                        'border="1" cellspacing="0" cellpadding="0">\n')
+                    for framework in self.infr_dict[infrastr]:
+                        for plugin in self.infr_dict[infrastr][framework]:
+                            for weight in self.infr_dict[infrastr][framework][plugin]:
+                                self.table_html.append('<td height="120px"> <table align="center" class="result_column"' +
+                                    'border="1" cellspacing="0" cellpadding="0">')
+                                for batch in self.task_types_dict[task_type][model]['batch']:
+                                    self.table_html.append('\n<tr><td> <table align="center"' +
+                                        'border="1" cellspacing="0" cellpadding="0">\n')
+                                    self.table_html.append('<tr>\n<td class="double" align="right">{}</td>\n'.format(
+                                        self.infr_dict[infrastr][framework][plugin][weight][model][batch]['sync']))
+                                    self.table_html.append('<td class="double" align="right">{}</td>\n</tr>'.format(
+                                        self.infr_dict[infrastr][framework][plugin][weight][model][batch]['async']))
+                                    self.table_html.append('\n</table></td>\n</tr>')
+                                self.table_html.append('</table>\n</td>')
+                    self.table_html.append('</table>\n</td>\n</tr>')
+                self.table_html.append('</table>\n</td>')
+
             self.table_html.append('\n</tr>')
 
     def save_html_table(self, path_table_html):
