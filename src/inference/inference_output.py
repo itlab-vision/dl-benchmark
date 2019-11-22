@@ -76,9 +76,26 @@ def detection_output(result, input, prob_threshold, log):
         log.info('Result image was saved to {}'.format(out_img))
 
 
+def recognition_face_output(res, data, log):
+    for i, r in enumerate(res):
+        image = cv2.imread(data[i])
+        initial_h, initial_w = image.shape[:2]
+        radius = int((initial_w + initial_h) / 200)
+        for j in range (0, len(r), 2):
+            index = int(j / 2) + 1
+            x = int(r[j] * initial_w)
+            y = int(r[j + 1] * initial_h)
+            color = (0, 255, 255)
+            cv2.circle(image, (x, y), radius, color, -1)
+            cv2.putText(image, str(index), (x + radius, y), cv2.FONT_HERSHEY_SIMPLEX,
+                (initial_w + initial_h) / (2 * 1000), (255, 255, 255))
+            log.info('({}, {}) - {}'.format(x, y, index))
+        cv2.imshow("Result image", image)
+    cv2.waitKey()
+    cv2.destroyAllWindows()     
 
 
-def infer_output(model, result, input, labels, number_top, prob_threshold,
+def infer_output(res, images, data, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
         return
@@ -91,6 +108,8 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
         detection_output(result[result_layer_name], input[input_layer_name], prob_threshold, log)
+    elif task == 'recognition-face':
+        recognition_face_output(res, data, log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
