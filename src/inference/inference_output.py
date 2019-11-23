@@ -78,7 +78,7 @@ def detection_output(result, input, prob_threshold, log):
 
 def recognition_face_output(result, input, log):
     ib, c, h, w = input.shape
-    b, _, _, _ = result.shape
+    b = result.shape[0]
     images = np.ndarray(shape = (b, h, w, c))
     i = 0
     while i < b:
