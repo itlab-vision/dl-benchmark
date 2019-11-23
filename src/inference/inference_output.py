@@ -80,10 +80,8 @@ def recognition_face_output(result, input, log):
     ib, c, h, w = input.shape
     b = result.shape[0]
     images = np.ndarray(shape = (b, h, w, c))
-    i = 0
-    while i < b:
+    for i in range(b):
         images[i] = input[i % ib].transpose((1, 2, 0))
-        i += 1
     for i, r in enumerate(result):
         image = images[i]
         initial_h, initial_w = image.shape[:2]
