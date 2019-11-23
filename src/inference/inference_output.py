@@ -46,10 +46,8 @@ def detection_output(result, input, prob_threshold, log):
     ib, c, h, w = input.shape
     b, _, _, _ = result.shape
     images = np.ndarray(shape = (b, h, w, c))
-    i = 0
-    while i < b:
+    for i in range(b):
         images[i] = input[i % ib].transpose((1, 2, 0))
-        i += 1
     for batch in range(b):
         for obj in result[batch][0]:
             if obj[2] > prob_threshold:
@@ -76,6 +74,29 @@ def detection_output(result, input, prob_threshold, log):
         log.info('Result image was saved to {}'.format(out_img))
 
 
+def recognition_face_output(result, input, log):
+    ib, c, h, w = input.shape
+    b = result.shape[0]
+    images = np.ndarray(shape = (b, h, w, c))
+    for i in range(b):
+        images[i] = input[i % ib].transpose((1, 2, 0))
+    for i, r in enumerate(result):
+        image = images[i]
+        initial_h, initial_w = image.shape[:2]
+        log.info('Landmarks coordinates for {} image'.format(i))
+        for j in range (0, len(r), 2):
+            index = int(j / 2) + 1
+            x = int(r[j] * initial_w)
+            y = int(r[j + 1] * initial_h)
+            color = (0, 255, 255)
+            cv2.circle(image, (x, y), 1, color, -1)
+            log.info('Point {0} - ({1}, {2})'.format(index, x, y))
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_recognition_face_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img)) 
 
 
 def infer_output(model, result, input, labels, number_top, prob_threshold,
@@ -91,6 +112,10 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
         detection_output(result[result_layer_name], input[input_layer_name], prob_threshold, log)
+    elif task == 'recognition-face':
+        input_layer_name = next(iter(model.inputs))
+        result_layer_name = next(iter(model.outputs))
+        recognition_face_output(result[result_layer_name], input[input_layer_name], log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
