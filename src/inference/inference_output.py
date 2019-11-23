@@ -45,7 +45,7 @@ def segmentation_output(result, color_map, log):
 def detection_output(result, input, prob_threshold, log):
     ib, c, h, w = input.shape
     b, _, _, _ = result.shape
-    images = np.ndarray(shape = (b, w, h, c))
+    images = np.ndarray(shape = (b, h, w, c))
     i = 0
     while i < b:
         images[i] = input[i % ib].transpose((1, 2, 0))
