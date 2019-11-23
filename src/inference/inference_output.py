@@ -45,7 +45,7 @@ def segmentation_output(result, color_map, log):
 def detection_output(result, input, prob_threshold, log):
     ib, c, h, w = input.shape
     b, _, _, _ = result.shape
-    images = np.ndarray(shape = (b, w, h, c))
+    images = np.ndarray(shape = (b, h, w, c))
     i = 0
     while i < b:
         images[i] = input[i % ib].transpose((1, 2, 0))
@@ -76,26 +76,34 @@ def detection_output(result, input, prob_threshold, log):
         log.info('Result image was saved to {}'.format(out_img))
 
 
-def recognition_face_output(res, data, log):
-    for i, r in enumerate(res):
-        image = cv2.imread(data[i])
+def recognition_face_output(result, input, log):
+    ib, c, h, w = input.shape
+    b, _, _, _ = result.shape
+    images = np.ndarray(shape = (b, h, w, c))
+    i = 0
+    while i < b:
+        images[i] = input[i % ib].transpose((1, 2, 0))
+        i += 1
+    for i, r in enumerate(result):
+        image = images[i]
         initial_h, initial_w = image.shape[:2]
-        radius = int((initial_w + initial_h) / 200)
+        log.info('Landmarks coordinates for {} image'.format(i))
         for j in range (0, len(r), 2):
             index = int(j / 2) + 1
             x = int(r[j] * initial_w)
             y = int(r[j + 1] * initial_h)
             color = (0, 255, 255)
-            cv2.circle(image, (x, y), radius, color, -1)
-            cv2.putText(image, str(index), (x + radius, y), cv2.FONT_HERSHEY_SIMPLEX,
-                (initial_w + initial_h) / (2 * 1000), (255, 255, 255))
-            log.info('({}, {}) - {}'.format(x, y, index))
-        cv2.imshow("Result image", image)
-    cv2.waitKey()
-    cv2.destroyAllWindows()     
+            cv2.circle(image, (x, y), 1, color, -1)
+            log.info('Point {0} - ({1}, {2})'.format(index, x, y))
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_recognition_face_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img)) 
 
 
-def infer_output(res, images, data, labels, number_top, prob_threshold,
+def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
         return
@@ -109,7 +117,9 @@ def infer_output(res, images, data, labels, number_top, prob_threshold,
         result_layer_name = next(iter(model.outputs))
         detection_output(result[result_layer_name], input[input_layer_name], prob_threshold, log)
     elif task == 'recognition-face':
-        recognition_face_output(res, data, log)
+        input_layer_name = next(iter(model.inputs))
+        result_layer_name = next(iter(model.outputs))
+        recognition_face_output(result[result_layer_name], input[input_layer_name], log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
