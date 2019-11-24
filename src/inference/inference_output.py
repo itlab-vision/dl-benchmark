@@ -130,7 +130,7 @@ def person_attributes_output(model, result, input, log):
                 images[i][y + int(h / 2)][x] = color_bottom
         for j, val in enumerate(result_attributes[i]):
             cv2.putText(images[i], '{0} {1}'.format(attributes[j],bool(val > 0.5)), 
-                (w * 2 + 10, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.3, 
+                (w * 2 + 10, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, 
                     (0, 255 * bool(val > 0.5), 255 * bool(val <= 0.5)))
     count = 0
     for image in images:
