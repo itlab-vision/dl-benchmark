@@ -131,20 +131,13 @@ def person_attributes_output(model, result, input, log):
         for j, val in enumerate(result_attributes[i]):
             color_attribut = (0, 255 * bool(val > 0.5), 255 * bool(val <= 0.5))
             cv2.putText(images[i], '{0} {1}'.format(attributes[j], bool(val > 0.5)), 
-                (w * 2 + 10, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color_attribut)
+                (w * 2 + 5, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color_attribut)
     count = 0
     for image in images:
         out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
         count += 1
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img)) 
-
-
-def list_of_layers(model_layers):
-    layers = []
-    for i, layer in model_layers:
-        layers[i] = layer
-    return layers
 
 
 def infer_output(model, result, input, labels, number_top, prob_threshold,
