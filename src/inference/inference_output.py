@@ -99,26 +99,52 @@ def recognition_face_output(result, input, log):
         log.info('Result image was saved to {}'.format(out_img)) 
 
 
-def person_attributes_output(result_attributes, result_top, result_bottom, input, log):
-    ib, c, h, w = input.shape
+def person_attributes_output(model, result, input, log):
+    layer_iter = iter(model.outputs)
+    result_attributes = result[next(layer_iter)]
+    result_top = result[next(layer_iter)]
+    result_bottom = result[next(layer_iter)]
     b = result_attributes.shape[0]
-    images = np.ndarray(shape = (b, h, w, c))
+    ib, c, h, w = input.shape
+    images = np.ndarray(shape = (b, h, w * 4, c))
     attributes = ["is_male", "has_bag", "has_backpack", "has_hat", "has_longsleeves",
         "has_longpants", "has_longhair", "has_coat_jacket"]
-    color = (0, 0, 255)
+    color_point = (0, 0, 255)
     for i in range(b):
-        images[i] = input[i % ib].transpose((1, 2, 0))
-        log.info('Person attributes for {} image'.format(i))
+        for x in range(w):
+            for y in range(h):
+                images[i][y][x] = input[i % ib].transpose((1, 2, 0))[y][x]
+        x_top = int(result_top[i][0] * w)
+        y_top = int(result_top[i][1] * h)
+        x_bottom = int(result_bottom[i][0] * w)
+        y_bottom = int(result_bottom[i][1] * h)
+        color_top = (int(images[i][y_top][x_top][0]), int(images[i][y_top][x_top][1]),
+            int(images[i][y_top][x_top][2]))
+        color_bottom = (int(images[i][y_bottom][x_bottom][0]), int(images[i][y_bottom][x_bottom][1]),
+            int(images[i][y_bottom][x_bottom][2]))
+        cv2.circle(images[i], (x_top, y_top), 3, color_point, -1)
+        cv2.circle(images[i], (x_bottom, y_bottom), 3, color_point, -1)  
+        for x in range(w, 2 * w):
+            for y in range(0, int(h / 2)):
+                images[i][y][x] = color_top
+                images[i][y + int(h / 2)][x] = color_bottom
         for j, val in enumerate(result_attributes[i]):
-            log.info('{} - {}'.format(attributes[j], bool(val > 0.5)))
-        cv2.circle(images[i], (result_top[i][0] * w, result_top[i][1] * h), 3, color, -1)
-        cv2.circle(images[i], (result_bottom[i][0] * w, result_bottom[i][1] * h), 3, color, -1)
+            cv2.putText(images[i], '{0} {1}'.format(attributes[j],bool(val > 0.5)), 
+                (w * 2 + 10, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.3, 
+                    (0, 255 * bool(val > 0.5), 255 * bool(val <= 0.5)))
     count = 0
     for image in images:
         out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
         count += 1
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img)) 
+
+
+def list_of_layers(model_layers):
+    layers = []
+    for i, layer in model_layers:
+        layers[i] = layer
+    return layers
 
 
 def infer_output(model, result, input, labels, number_top, prob_threshold,
@@ -140,12 +166,7 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         recognition_face_output(result[result_layer_name], input[input_layer_name], log)
     elif task == 'person-attributes':
         input_layer_name = next(iter(model.inputs))
-        layer_iter = iter(model.outputs)
-        result_layer1_name = next(layer_iter)
-        result_layer2_name = next(layer_iter)
-        result_layer3_name = next(layer_iter)
-        person_attributes_output(result[result_layer1_name], result[result_layer2_name], 
-            result[result_layer3_name], input[input_layer_name], log)
+        person_attributes_output(model, result, input[input_layer_name], log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
