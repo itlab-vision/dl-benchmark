@@ -65,7 +65,6 @@ def detection_output(result, input, prob_threshold, log):
                 log.info("Bounding boxes for image {0} for object {1}".format(image_number, class_id))
                 log.info("Top left: ({0}, {1})".format(xmin, ymin))
                 log.info("Bottom right: ({0}, {1})".format(xmax, ymax))
-
     count = 0
     for image in images:
         out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
