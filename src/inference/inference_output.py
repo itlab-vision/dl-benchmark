@@ -139,7 +139,7 @@ def person_attributes_output(model, result, input, log):
         log.info('Result image was saved to {}'.format(out_img)) 
 
 
-def age_gender_output(model, result, input, log):
+def age_gender_output(model, result, log):
     layer_iter = iter(model.outputs)
     result_age = result[next(layer_iter)]
     result_gender = result[next(layer_iter)]
@@ -172,8 +172,7 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         input_layer_name = next(iter(model.inputs))
         person_attributes_output(model, result, input[input_layer_name], log)
     elif task == 'age-gender':
-        input_layer_name = next(iter(model.inputs))
-        age_gender_output(model, result, input[input_layer_name], log)
+        age_gender_output(model, result, log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
