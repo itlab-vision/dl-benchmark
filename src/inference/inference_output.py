@@ -139,6 +139,18 @@ def person_attributes_output(model, result, input, log):
         log.info('Result image was saved to {}'.format(out_img)) 
 
 
+def age_gender_output(model, result, input, log):
+    layer_iter = iter(model.outputs)
+    result_age = result[next(layer_iter)]
+    result_gender = result[next(layer_iter)]
+    b = result_age.shape[0]
+    gender = ["Male", "Female"]
+    for i in range(b):
+        log.info('Information for {} image'.format(i))
+        log.info('Gender: {}'.format(gender[bool(result_gender[i][0] > 0.5)]))
+        log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
+
+
 def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
@@ -159,6 +171,9 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
     elif task == 'person-attributes':
         input_layer_name = next(iter(model.inputs))
         person_attributes_output(model, result, input[input_layer_name], log)
+    elif task == 'age-gender':
+        input_layer_name = next(iter(model.inputs))
+        age_gender_output(model, result, input[input_layer_name], log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
