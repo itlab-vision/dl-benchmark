@@ -151,6 +151,57 @@ def age_gender_output(model, result, log):
         log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
+def head_pose_output(model, result, input, log):
+    layer_iter = iter(model.outputs)
+    result_yaw = result[next(layer_iter)]
+    result_pitch = result[next(layer_iter)]
+    result_roll = result[next(layer_iter)]
+    b = result_yaw.shape[0]
+    ib, c, h, w = input.shape
+    images = np.ndarray(shape = (b, h, w, c))
+    center_x = int(w / 2)
+    center_y = int(h / 2)
+    color_x = (255, 0, 0)
+    color_y = (0, 255, 0)
+    color_z = (0, 0, 255)
+    for i in range(b):
+        images[i] = input[i % ib].transpose((1, 2, 0))
+        yaw = result_yaw[0][0] * np.pi / 180
+        pitch = result_pitch[0][0] * np.pi / 180
+        roll = result_roll[0][0] * np.pi / 180
+        Rx = np.array([[1, 0, 0], 
+                       [0, np.cos(pitch), -np.sin(pitch)],
+                       [0, np.sin(pitch), np.cos(pitch)]])
+        Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
+                       [0, 1, 0],
+                       [np.sin(yaw), 0, np.cos(yaw)]])
+        Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
+                       [np.sin(roll), np.cos(roll), 0], 
+                       [0, 0, 1]])
+        R = np.dot(Rx, np.dot(Ry, Rz))
+        X = np.dot(R, np.array([1, 0, 0]))
+        Y = np.dot(R, np.array([0, -1, 0]))
+        Z = np.dot(R, np.array([0, 0, -1]))
+        Z1 = np.dot(R, np.array([0, 0, 1]))
+        point_x = (int(X[0] / X[2]) + center_x)
+        point_y = (int(X[1] / X[2]) + center_y)
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
+        point_x = (int(Y[0] / Y[2]) + center_x)
+        point_y = (int(Y[1] / Y[2]) + center_y)
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
+        point_x = (int(Z[0] / Z[2]) + center_x)
+        point_y = (int(Z[1] / Z[2]) + center_y)
+        point_x1 = (int(Z1[0] / Z1[2]) + center_x)
+        point_y1 = (int(Z1[1] / Z1[2]) + center_y)
+        cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img)) 
+
+
 def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
@@ -173,6 +224,9 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         person_attributes_output(model, result, input[input_layer_name], log)
     elif task == 'age-gender':
         age_gender_output(model, result, log)
+    elif task == 'head-pose':
+        input_layer_name = next(iter(model.inputs))
+        head_pose_output(model, result, input[input_layer_name], log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
