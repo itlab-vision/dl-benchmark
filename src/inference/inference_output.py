@@ -161,14 +161,20 @@ def head_pose_output(model, result, input, log):
     images = np.ndarray(shape = (b, h, w, c))
     center_x = int(w / 2)
     center_y = int(h / 2)
-    color_x = (255, 0, 0)
+    color_x = (0, 0, 255)
     color_y = (0, 255, 0)
-    color_z = (0, 0, 255)
+    color_z = (255, 0, 0)
+    camera_matrix = np.zeros((3, 3), dtype='float32')
+    camera_matrix[0][0] = h
+    camera_matrix[0][2] = center_x
+    camera_matrix[1][1] = w
+    camera_matrix[1][2] = center_y
+    camera_matrix[2][2] = 1
     for i in range(b):
         images[i] = input[i % ib].transpose((1, 2, 0))
-        yaw = result_yaw[0][0] * np.pi / 180
-        pitch = result_pitch[0][0] * np.pi / 180
-        roll = result_roll[0][0] * np.pi / 180
+        yaw = result_yaw[i][0] * np.pi / 180
+        pitch = result_pitch[i][0] * np.pi / 180
+        roll = result_roll[i][0] * np.pi / 180
         Rx = np.array([[1, 0, 0], 
                        [0, np.cos(pitch), -np.sin(pitch)],
                        [0, np.sin(pitch), np.cos(pitch)]])
@@ -179,20 +185,22 @@ def head_pose_output(model, result, input, log):
                        [np.sin(roll), np.cos(roll), 0], 
                        [0, 0, 1]])
         R = np.dot(Rx, np.dot(Ry, Rz))
-        X = np.dot(R, np.array([1, 0, 0]))
-        Y = np.dot(R, np.array([0, -1, 0]))
-        Z = np.dot(R, np.array([0, 0, -1]))
-        Z1 = np.dot(R, np.array([0, 0, 1]))
-        point_x = (int(X[0] / X[2]) + center_x)
-        point_y = (int(X[1] / X[2]) + center_y)
+        o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
+        o[2] = camera_matrix[0][0]
+        X = np.dot(R, np.array([20, 0, 0]).reshape(3, 1)) + o
+        Y = np.dot(R, np.array([0, -20, 0]).reshape(3, 1)) + o
+        Z = np.dot(R, np.array([0, 0, -20]).reshape(3, 1)) + o
+        Z1 = np.dot(R, np.array([0, 0, 20]).reshape(3, 1)) + o
+        point_x = int(X[0] / X[2] * camera_matrix[0][0]) + center_x
+        point_y = int(X[1] / X[2] * camera_matrix[1][1]) + center_y
         cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
-        point_x = (int(Y[0] / Y[2]) + center_x)
-        point_y = (int(Y[1] / Y[2]) + center_y)
+        point_x = int(Y[0] / Y[2] * camera_matrix[0][0]) + center_x
+        point_y = int(Y[1] / Y[2] * camera_matrix[1][1]) + center_y
         cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
-        point_x = (int(Z[0] / Z[2]) + center_x)
-        point_y = (int(Z[1] / Z[2]) + center_y)
-        point_x1 = (int(Z1[0] / Z1[2]) + center_x)
-        point_y1 = (int(Z1[1] / Z1[2]) + center_y)
+        point_x = int(Z[0] / Z[2] * camera_matrix[0][0]) + center_x
+        point_y = int(Z[1] / Z[2] * camera_matrix[1][1]) + center_y
+        point_x1 = int(Z1[0] / Z1[2] * camera_matrix[0][0]) + center_x
+        point_y1 = int(Z1[1] / Z1[2] * camera_matrix[1][1]) + center_y
         cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
     count = 0
     for image in images:
