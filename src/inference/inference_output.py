@@ -152,11 +152,10 @@ def age_gender_output(model, result, log):
 
 
 def head_pose_output(model, result, input, log):
-    layer_iter = iter(model.outputs)
-    result_pitch = result[next(layer_iter)]
-    result_roll = result[next(layer_iter)]
-    result_yaw = result[next(layer_iter)]
-    b = result_yaw.shape[0]
+    result_pitch = result['angle_p_fc']
+    result_roll = result['angle_r_fc']
+    result_yaw = result['angle_y_fc']
+    b = result_pitch.shape[0]
     ib, c, h, w = input.shape
     images = np.ndarray(shape = (b, h, w, c))
     center_x = int(w / 2)
@@ -182,10 +181,10 @@ def head_pose_output(model, result, input, log):
         R = np.dot(Rx, np.dot(Ry, Rz))
         o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
         o[2] = camera_matrix[0][0]
-        X = np.dot(R, np.array(([20, 0, 0]), dtype='float32').reshape(3, 1)) + o
-        Y = np.dot(R, np.array(([0, -20, 0]), dtype='float32').reshape(3, 1)) + o
-        Z = np.dot(R, np.array(([0, 0, -20]), dtype='float32').reshape(3, 1)) + o
-        Z1 = np.dot(R, np.array(([0, 0, 20]), dtype='float32').reshape(3, 1)) + o
+        X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
+        Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
+        Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
+        Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
         point_x = int(X[0] / X[2] * camera_matrix[0][0]) + center_x
         point_y = int(X[1] / X[2] * camera_matrix[1][1]) + center_y
         cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
