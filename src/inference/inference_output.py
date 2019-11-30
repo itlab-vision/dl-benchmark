@@ -163,7 +163,7 @@ def head_pose_output(model, result, input, log):
     color_x = (0, 0, 255)
     color_y = (0, 255, 0)
     color_z = (255, 0, 0)
-    camera_matrix = np.array(([950, 0, center_x], [0, 950, center_y], [0, 0, 1]), dtype='float32')
+    focal_length = 950.0
     for i in range(b):
         images[i] = input[i % ib].transpose((1, 2, 0))
         yaw = result_yaw[i][0] * np.pi / 180.0
@@ -180,21 +180,21 @@ def head_pose_output(model, result, input, log):
                        [0, 0, 1]])
         R = np.dot(Rx, np.dot(Ry, Rz))
         o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
-        o[2] = camera_matrix[0][0]
+        o[2] = focal_length
         X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
         Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
         Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
         Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
-        point_x = int(X[0] / X[2] * camera_matrix[0][0]) + center_x
-        point_y = int(X[1] / X[2] * camera_matrix[1][1]) + center_y
+        point_x = int(X[0] / X[2] * focal_length) + center_x
+        point_y = int(X[1] / X[2] * focal_length) + center_y
         cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
-        point_x = int(Y[0] / Y[2] * camera_matrix[0][0]) + center_x
-        point_y = int(Y[1] / Y[2] * camera_matrix[1][1]) + center_y
+        point_x = int(Y[0] / Y[2] * focal_length) + center_x
+        point_y = int(Y[1] / Y[2] * focal_length) + center_y
         cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
-        point_x = int(Z[0] / Z[2] * camera_matrix[0][0]) + center_x
-        point_y = int(Z[1] / Z[2] * camera_matrix[1][1]) + center_y
-        point_x1 = int(Z1[0] / Z1[2] * camera_matrix[0][0]) + center_x
-        point_y1 = int(Z1[1] / Z1[2] * camera_matrix[1][1]) + center_y
+        point_x = int(Z[0] / Z[2] * focal_length) + center_x
+        point_y = int(Z[1] / Z[2] * focal_length) + center_y
+        point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
+        point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
         cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
     count = 0
     for image in images:
