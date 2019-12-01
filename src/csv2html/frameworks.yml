@@ -1,0 +1,6 @@
+frameworks:
+
+  - name: "OpenVINO DLDT"
+    CPU: FP32, INT8
+    GPU: FP32, FP16
+    MYRIAD: FP16
