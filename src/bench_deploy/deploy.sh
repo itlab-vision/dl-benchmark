@@ -1,4 +1,17 @@
 #!/bin/bash
+
+echo "Start on all machines"
+file="config.txt"
+for var in $(cat $file)
+do
+    ssh 
+    echo "Download repos"
+    cd ~/Documents/
+    git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
+    cd openvino-dl-benchmark/src/bench_deploy/
+    nohup ./client.sh $1 &
+done
+
 echo "Run client script"
 sudo ./client.sh $1
 cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader
