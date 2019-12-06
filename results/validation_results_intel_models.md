@@ -100,5 +100,50 @@ PLATE (330, 410), (393, 436)<br>
 ----------------------|-----------------------------------------|-----------------------------------------|
 vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br> | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br> |
 
+## Результаты распознования
+
+### Тестовое изображение 1
+
+Источник: набор данных [GitHub][github_age_gender] 
+
+Разрешение: 62 x 62
+
+<div style='float: center'>
+<img width="62" height="62" src="images\age-gender-recognition-retail-0001.jpg">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
+
+### Тестовое изображение 2
+
+Источник: набор данных [GitHub][github_age_gender] 
+
+Разрешение: 64 x 77
+
+<div style='float: center'>
+<img width="64" height="77" src="images\age-gender-recognition-retail-0002.png">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
+
+### Тестовое изображение 3
+
+Источник: набор данных [GitHub][github_age_gender] 
+
+Разрешение: 71 x 77
+
+<div style='float: center'>
+<img width="71" height="77" src="images\age-gender-recognition-retail-0003.png">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+age-gender-recognition-retail-0013 | Male, 28.49 | Male, 28.49 |
+
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
+[github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
