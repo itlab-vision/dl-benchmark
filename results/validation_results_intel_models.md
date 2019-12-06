@@ -109,7 +109,7 @@ vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямо
 Разрешение: 62 x 62
 
 <div style='float: center'>
-<img width="62" height="62" src="images\age-gender-recognition-retail-0001.jpg">
+<img src="images\age-gender-recognition-retail-0001.jpg">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
@@ -123,7 +123,7 @@ age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 Разрешение: 64 x 77
 
 <div style='float: center'>
-<img width="64" height="77" src="images\age-gender-recognition-retail-0002.png">
+<img src="images\age-gender-recognition-retail-0002.png">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
@@ -137,13 +137,50 @@ age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 Разрешение: 71 x 77
 
 <div style='float: center'>
-<img width="71" height="77" src="images\age-gender-recognition-retail-0003.png">
+<img src="images\age-gender-recognition-retail-0003.png">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 age-gender-recognition-retail-0013 | Male, 28.49 | Male, 28.49 |
 
+### Тестовое изображение 4
+
+Источник: набор данных [VGGFace2][vgg_face2] 
+
+Разрешение: 123 x 151
+
+<div style='float: center'>
+<img src="images\landmarks_1.jpg">
+<img src="recognition\out_recognition_face_1.jpg">
+</div>
+
+Лицевые метки:<br>
+EYE (24, 21),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34)<br>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (23, 20),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34) | Лицевые метки:<br> EYE (23, 20),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34) |
+
+### Тестовое изображение 5
+
+Источник: набор данных [VGGFace2][vgg_face2] 
+
+Разрешение: 123 x 151
+
+<div style='float: center'>
+<img src="images\landmarks_2.jpg">
+<img src="recognition\out_recognition_face_2.bmp">
+</div>
+
+Лицевые метки:<br>
+EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br> | Лицевые метки:<br> EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br> |
+
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
+[vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
