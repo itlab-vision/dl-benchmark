@@ -7,6 +7,11 @@ echo "Delete old components"
 rm -r /home/itmm/inference_engine_samples_build
 rm -r /home/itmm/openvino_models
 
+echo "Install python dependencies"
+./dependencies
+
+source ~/Documents/benchmark/OpenVINO_env/bin/activate
+
 cd ~/Downloads/
 wget $1
 
@@ -18,8 +23,6 @@ sed -i 's/=decline/=accept/' silent.cfg
 echo "Delete old openvino"
 sed -i 's/=install/=uninstall/' silent.cfg
 ./install.sh --silent silent.cfg
-
-source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
 echo "Install new openvino"
 sed -i 's/=uninstall/=install/' silent.cfg
@@ -39,3 +42,20 @@ sudo ./install_prerequisites.sh
 echo "Test run"
 cd /opt/intel/openvino/deployment_tools/demo
 ./demo_squeezenet_download_convert_run.sh
+
+"""
+echo "Download models"
+sudo ./downloader.py --all
+
+echo "Setting vars"
+source /opt/intel/openvino/bin/setupvars.sh
+
+echo "Convert to FP16"
+sudo ./converter.py --all --precisions=FP16 --mo ../../../model_optimizer/mo.py
+echo "Convert to FP32"
+sudo ./converter.py --all --precisions=FP32 --mo ../../../model_optimizer/mo.py
+echo "Convert to INT8"
+sudo ./converter.py --all --precisions=INT8 --mo ../../../model_optimizer/mo.py
+"""
+
+echo "InstallSuccess"
