@@ -6,8 +6,8 @@ yes | sudo apt-get install python3-venv
 cd ~/Documents
 mkdir benchmark
 cd benchmark
-rm -rf OpenVINO_env
-python3 -m venv OpenVINO_env
+sudo rm -rf OpenVINO_env
+sudo python3 -m venv OpenVINO_env
 source OpenVINO_env/bin/activate
 
 yes | pip3 install PyYAML
