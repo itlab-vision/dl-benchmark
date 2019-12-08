@@ -43,24 +43,22 @@ echo "Test run"
 cd /opt/intel/openvino/deployment_tools/demo
 ./demo_squeezenet_download_convert_run.sh
 
-"""
-cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader
-source ~/Documents/benchmark/OpenVINO_env/bin/activate
+# cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader
+# source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
-python3 -mpip install --user -r ./requirements.in
+# python3 -mpip install --user -r ./requirements.in
 
-echo "Download models"
-sudo ./downloader.py --all
+# echo "Download models"
+# sudo ./downloader.py --all
 
-echo "Setting vars"
-source /opt/intel/openvino/bin/setupvars.sh
+# echo "Setting vars"
+# source /opt/intel/openvino/bin/setupvars.sh
 
-echo "Convert to FP16"
-sudo ./converter.py --all --precisions=FP16 --mo ../../../model_optimizer/mo.py
-echo "Convert to FP32"
-sudo ./converter.py --all --precisions=FP32 --mo ../../../model_optimizer/mo.py
-echo "Convert to INT8"
-sudo ./converter.py --all --precisions=INT8 --mo ../../../model_optimizer/mo.py
-"""
+# echo "Convert to FP16"
+# sudo ./converter.py --all --precisions=FP16 --mo ../../../model_optimizer/mo.py
+# echo "Convert to FP32"
+# sudo ./converter.py --all --precisions=FP32 --mo ../../../model_optimizer/mo.py
+# echo "Convert to INT8"
+# sudo ./converter.py --all --precisions=INT8 --mo ../../../model_optimizer/mo.py
 
 echo "InstallSuccess"

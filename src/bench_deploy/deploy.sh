@@ -69,7 +69,7 @@ do
     status="Working"
     while [ $status == "Working" ];
     do
-        sshpass -p osboxes.org ssh -n -f osboxes@10.0.2.15 "sh -c 'if [ $(ps fx | grep client.sh | wc -l) -ne 1 ];
+        sshpass -p osboxes.org ssh -x osboxes@10.0.2.15 "sh -c 'if [ \`ps fx | grep client.sh | wc -l\` -gt 3 ];
             then cd ErrorPath; fi'" > ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt 2>&1
         sleep 5
         if [ $(cat ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -eq 0 ]; then
@@ -79,8 +79,8 @@ do
         fi
     done
 
-    sshpass -p osboxes.org ssh -n -f osboxes@10.0.2.15 "sh -c 'if [ $(grep InstallSuccess ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -ne 1 ];
-        then cd ErrorPath; fi'" > ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt 2>&1
+    sshpass -p osboxes.org ssh -x osboxes@10.0.2.15 "sh -c 'if [ \`grep InstallSuccess ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l\` -ne 1 ];
+         then cd ErrorPath; fi'" > ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt 2>&1
     sleep 5
     if [ $(cat ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -eq 0 ]; then
         echo "On machine $var install done with success"
