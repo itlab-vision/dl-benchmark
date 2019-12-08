@@ -7,8 +7,8 @@ echo "Update components"
 yes | apt-get update
 
 echo "Delete old components"
-echo $password | sudo -S rm -r /home/itmm/inference_engine_samples_build
-echo $password | sudo -S -r /home/itmm/openvino_models
+echo $password | sudo -S rm -rf /home/itmm/inference_engine_samples_build
+echo $password | sudo -S rm -rf /home/itmm/openvino_models
 
 echo "Install python dependencies"
 echo $password | sudo -S ./dependencies.sh $password
