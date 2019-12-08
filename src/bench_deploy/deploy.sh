@@ -55,7 +55,7 @@ do
 done
 
 echo "Run client script"
-sudo ./client.sh $download_link > > ./log.txt 2>&1
+sudo ./client.sh $download_link > ./log.txt 2>&1
 
 if [ $(grep InstallSuccess ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -eq 1 ]; then
     echo "Intall done with succes on hostmachine"
