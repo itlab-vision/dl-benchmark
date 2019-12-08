@@ -45,13 +45,13 @@ fi
 echo "Start on all machines"
 for var in $(cat $config_file)
 do
-        sshpass -p $password ssh -n -f $username@$var "sh -c 'cd ~/Documents/;
-            git clone https://github.com/TheG1uy/openvino-dl-benchmark;
-            cd ~/Documents/openvino-dl-benchmark && git checkout bench_deploy;
-            cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
-            chmod u+x client.sh && chmod u+x dependencies.sh;
-            cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
-            nohup echo $password | sudo -S ./client.sh $download_link > ./log.txt 2>&1 &'"
+    sshpass -p $password ssh -n -f $username@$var "sh -c 'cd ~/Documents/;
+        git clone https://github.com/TheG1uy/openvino-dl-benchmark;
+        cd ~/Documents/openvino-dl-benchmark && git checkout bench_deploy;
+        cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
+        chmod u+x client.sh && chmod u+x dependencies.sh;
+        cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
+        nohup echo $password | sudo -S ./client.sh $download_link > ./log.txt 2>&1 &'"
 done
 
 echo "Run client script"

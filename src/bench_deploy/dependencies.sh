@@ -1,5 +1,5 @@
 yes | sudo apt install python3-pip3
-yes | sudo apt install python3-venv
+yes | sudo apt-get install python3-venv
 
 cd ~/Documents
 mkdir benchmark
