@@ -8,7 +8,7 @@ rm -r /home/itmm/inference_engine_samples_build
 rm -r /home/itmm/openvino_models
 
 echo "Install python dependencies"
-./dependencies
+./dependencies.sh
 
 source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
