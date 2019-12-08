@@ -51,7 +51,7 @@ do
         cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
         chmod u+x client.sh && chmod u+x dependencies.sh;
         cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
-        nohup echo $password | sudo -S ./client.sh $download_link > ./log.txt 2>&1 &'"
+        nohup echo $password | sudo -S ./client.sh $download_link $password > ./log.txt 2>&1 &'"
 done
 
 echo "Run client script"

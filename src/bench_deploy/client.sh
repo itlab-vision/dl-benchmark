@@ -1,5 +1,7 @@
 #!/bin/bash
 
+password=$2
+
 echo "Update components"
 yes | apt-get update
 
@@ -8,7 +10,7 @@ rm -r /home/itmm/inference_engine_samples_build
 rm -r /home/itmm/openvino_models
 
 echo "Install python dependencies"
-./dependencies.sh
+echo $password | sudo -S yes ./dependencies.sh $password
 
 source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
@@ -22,22 +24,22 @@ sed -i 's/=decline/=accept/' silent.cfg
 
 echo "Delete old openvino"
 sed -i 's/=install/=uninstall/' silent.cfg
-./install.sh --silent silent.cfg
+echo $password | sudo -S yes ./install.sh --silent silent.cfg
 
 echo "Install new openvino"
 sed -i 's/=uninstall/=install/' silent.cfg
-sudo ./install.sh --silent silent.cfg
+echo $password | sudo -S yes ./install.sh --silent silent.cfg
 
 echo "Install openvino dependencies"
 cd /opt/intel/openvino/install_dependencies
-sudo ./install_openvino_dependencies.sh -E
+echo $password | sudo -S yes ./install_openvino_dependencies.sh -E
 
 echo "Setting vars"
 source /opt/intel/openvino/bin/setupvars.sh
 
 echo "Configurate model_optimizer"
 cd /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
-sudo ./install_prerequisites.sh
+echo $password | sudo -S yes ./install_prerequisites.sh
 
 echo "Test run"
 cd /opt/intel/openvino/deployment_tools/demo
