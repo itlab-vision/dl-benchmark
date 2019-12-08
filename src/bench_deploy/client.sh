@@ -44,6 +44,11 @@ cd /opt/intel/openvino/deployment_tools/demo
 ./demo_squeezenet_download_convert_run.sh
 
 """
+cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader
+source ~/Documents/benchmark/OpenVINO_env/bin/activate
+
+python3 -mpip install --user -r ./requirements.in
+
 echo "Download models"
 sudo ./downloader.py --all
 

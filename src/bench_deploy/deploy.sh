@@ -51,15 +51,17 @@ do
             cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
             chmod u+x client.sh && chmod u+x dependencies.sh;
             cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&
-            nohup echo $password | sudo -S ./client.sh $1 > ./log.txt 2>&1 &'"
+            nohup echo $password | sudo -S ./client.sh $download_link > ./log.txt 2>&1 &'"
 done
 
 echo "Run client script"
 sudo ./client.sh $1
-cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader
-source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
-python3 -mpip install --user -r ./requirements.in
+if [ $(grep InstallSuccess ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -eq 1 ]; then
+    echo "Intall done with succes on hostmachine"
+else
+    echo "Intall failed on hostmachine"
+fi
 
 echo "Wait all machines"
 for var in $(cat $config_file)
@@ -67,7 +69,7 @@ do
     status="Working"
     while [ $status == "Working" ];
     do
-        sshpass -p osboxes.org ssh -n -f osboxes@10.0.2.15 "sh -c 'if [ $(ps fx | grep client.sh | wc -l) -ne 1 ]; 
+        sshpass -p osboxes.org ssh -n -f osboxes@10.0.2.15 "sh -c 'if [ $(ps fx | grep client.sh | wc -l) -ne 1 ];
             then cd ErrorPath; fi'" > ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt 2>&1
         sleep 5
         if [ $(cat ~/Documents/openvino-dl-benchmark/src/bench_deploy/log.txt | wc -l) -eq 0 ]; then
