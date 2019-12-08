@@ -27,7 +27,7 @@ PERSON (1476, 416), (1503, 481)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-pedestrian-and-vehicle-detector-adas-0001 | Окаймляющий прямоугольник:<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>CAR (720, 439), (821, 505),<br>PERSON (1474, 416), (1499, 481)<br> | Окаймляющий прямоугольник:<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>CAR (720, 439), (821, 505),<br>PERSON (1474, 416), (1499, 481)<br> |
+pedestrian-and-vehicle-detector-adas-0001 | Окаймляющий прямоугольник:<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>CAR (720, 439), (821, 505),<br>PERSON (1474, 416), (1499, 481)<br>| Окаймляющий прямоугольник:<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>CAR (720, 439), (821, 505),<br>PERSON (1474, 416), (1499, 481)<br>|
 
 ### Тестовое изображение 2
 
@@ -51,8 +51,8 @@ CAR (1697, 315), (2048, 681)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-vehicle-detection-adas-0002 | Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (1618, 305), (2036, 669),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592)<br> | Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (1618, 305), (2036, 669),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592)<br> |
-vehicle-detection-adas-binary-0001 | Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br> | Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br> |
+vehicle-detection-adas-0002 | Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (1618, 305), (2036, 669),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592)<br>| Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (1618, 305), (2036, 669),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592)<br>|
+vehicle-detection-adas-binary-0001 | Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br>| Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br>|
 
 ### Тестовое изображение 3
 
@@ -79,8 +79,8 @@ PERSON (1874, 288), (1976, 545)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-person-vehicle-bike-detection-crossroad-0078 | Окаймляющий прямоугольник:<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>PERSON (329, 228), (541, 697),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>CAR (-4, 400), (80, 515),<br>BIKE (319, 232), (546, 717)<br> | Окаймляющий прямоугольник:<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>PERSON (329, 228), (541, 697),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>CAR (-4, 400), (80, 515),<br>BIKE(319, 232), (546, 717)<br> |
-person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (319, 213), (554, 722),<br>PERSON (1883, 299), (1975, 513)<br> | Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (319, 213), (554, 722),<br>PERSON (1883, 299), (1975, 513)<br> |
+person-vehicle-bike-detection-crossroad-0078 | Окаймляющий прямоугольник:<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>PERSON (329, 228), (541, 697),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>CAR (-4, 400), (80, 515),<br>BIKE (319, 232), (546, 717)<br>| Окаймляющий прямоугольник:<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>PERSON (329, 228), (541, 697),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>CAR (-4, 400), (80, 515),<br>BIKE(319, 232), (546, 717)<br>|
+person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (319, 213), (554, 722),<br>PERSON (1883, 299), (1975, 513)<br>| Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (319, 213), (554, 722),<br>PERSON (1883, 299), (1975, 513)<br>|
 
 ### Тестовое изображение 4
 
@@ -98,7 +98,7 @@ PLATE (330, 410), (393, 436)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br> | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br> |
+vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>| Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>|
 
 ## Результаты распознования
 
@@ -156,11 +156,15 @@ age-gender-recognition-retail-0013 | Male, 28.49 | Male, 28.49 |
 </div>
 
 Лицевые метки:<br>
-EYE (24, 21),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34)<br>
+EYE (24, 21),<br>
+EYE (39, 20),<br>
+NOSE (37, 25),<br>
+LIP CORNER (26, 35),<br>
+LIP CORNER (41, 34)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (23, 20),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34) | Лицевые метки:<br> EYE (23, 20),<br> EYE (39, 20),<br> NOSE (37, 25),<br> LIP CORNER (26, 35),<br> LIP CORNER (41, 34) |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (23, 20),<br>EYE (39, 20),<br>NOSE (37, 25),<br>LIP CORNER (26, 35),<br>LIP CORNER (41, 34) | Лицевые метки:<br>EYE (23, 20),<br>EYE (39, 20),<br>NOSE (37, 25),<br>LIP CORNER (26, 35),<br>LIP CORNER (41, 34) |
 
 ### Тестовое изображение 5
 
@@ -174,11 +178,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (23, 20),<
 </div>
 
 Лицевые метки:<br>
-EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br>
+EYE (17, 18),<br>
+EYE (35, 21),<br>
+NOSE (24, 27),<br>
+LIP CORNER (15, 34),<br>
+LIP CORNER (28, 36)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br> | Лицевые метки:<br> EYE (17, 18),<br> EYE (35, 21),<br> NOSE (24, 27),<br> LIP CORNER (15, 34),<br> LIP CORNER (28, 36)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (17, 18),<br>EYE (35, 21),<br>NOSE (24, 27),<br>LIP CORNER (15, 34),<br>LIP CORNER (28, 36)<br>| Лицевые метки:<br>EYE (17, 18),<br>EYE (35, 21),<br>NOSE (24, 27),<br>LIP CORNER (15, 34),<br>LIP CORNER (28, 36)<br>|
 
 ### Тестовое изображение 6
 
@@ -192,11 +200,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (17, 18),<
 </div>
 
 Лицевые метки:<br>
-EYE (14, 20),<br> EYE (30, 19),<br> NOSE (20, 29),<br> LIP CORNER (15, 33),<br> LIP CORNER (31, 34)<br>
+EYE (14, 20),<br>
+EYE (30, 19),<br>
+NOSE (20, 29),<br>
+LIP CORNER (15, 33),<br>
+LIP CORNER (31, 34)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (14, 20),<br> EYE (31, 20),<br> NOSE (20, 29),<br> LIP CORNER (15, 33),<br> LIP CORNER (31, 34)<br> | Лицевые метки:<br> EYE (14, 20),<br> EYE (31, 20),<br> NOSE (20, 29),<br> LIP CORNER (15, 33),<br> LIP CORNER (31, 34)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (14, 20),<br>EYE (31, 20),<br>NOSE (20, 29),<br>LIP CORNER (15, 33),<br>LIP CORNER (31, 34)<br>| Лицевые метки:<br>EYE (14, 20),<br>EYE (31, 20),<br>NOSE (20, 29),<br>LIP CORNER (15, 33),<br>LIP CORNER (31, 34)<br>|
 
 ### Тестовое изображение 7
 
@@ -210,11 +222,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (14, 20),<
 </div>
 
 Лицевые метки:<br>
-EYE (13, 21),<br> EYE (30, 20),<br> NOSE (20, 29),<br> LIP CORNER (16, 35),<br> LIP CORNER (32, 34)<br>
+EYE (13, 21),<br>
+EYE (30, 20),<br>
+NOSE (20, 29),<br>
+LIP CORNER (16, 35),<br>
+LIP CORNER (32, 34)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (13, 21),<br> EYE (30, 20),<br> NOSE (20, 29),<br> LIP CORNER (16, 35),<br> LIP CORNER (32, 34)<br> | Лицевые метки:<br> EYE (13, 21),<br> EYE (30, 20),<br> NOSE (20, 29),<br> LIP CORNER (16, 35),<br> LIP CORNER (32, 34)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (13, 21),<br>EYE (30, 20),<br>NOSE (20, 29),<br>LIP CORNER (16, 35),<br>LIP CORNER (32, 34)<br>| Лицевые метки:<br>EYE (13, 21),<br>EYE (30, 20),<br>NOSE (20, 29),<br>LIP CORNER (16, 35),<br>LIP CORNER (32, 34)<br>|
 
 ### Тестовое изображение 8
 
@@ -228,11 +244,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (13, 21),<
 </div>
 
 Лицевые метки:<br>
-EYE (21, 23),<br> EYE (37, 19),<br> NOSE (32, 27),<br> LIP CORNER (25, 37),<br> LIP CORNER (39, 34)<br>
+EYE (21, 23),<br>
+EYE (37, 19),<br>
+NOSE (32, 27),<br>
+LIP CORNER (25, 37),<br>
+LIP CORNER (39, 34)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (18, 22),<br> EYE (37, 19),<br> NOSE (32, 27),<br> LIP CORNER (25, 37),<br> LIP CORNER (39, 34)<br> | Лицевые метки:<br> EYE (18, 22),<br> EYE (37, 19),<br> NOSE (32, 27),<br> LIP CORNER (25, 37),<br> LIP CORNER (39, 34)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (18, 22),<br>EYE (37, 19),<br>NOSE (32, 27),<br>LIP CORNER (25, 37),<br>LIP CORNER (39, 34)<br>| Лицевые метки:<br>EYE (18, 22),<br>EYE (37, 19),<br>NOSE (32, 27),<br>LIP CORNER (25, 37),<br>LIP CORNER (39, 34)<br>|
 
 ### Тестовое изображение 9
 
@@ -246,11 +266,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (18, 22),<
 </div>
 
 Лицевые метки:<br>
-EYE (14, 24),<br> EYE (31, 21),<br> NOSE (22, 30),<br> LIP CORNER (17, 36),<br> LIP CORNER (31, 35)<br>
+EYE (14, 24),<br>
+EYE (31, 21),<br>
+NOSE (22, 30),<br>
+LIP CORNER (17, 36),<br>
+LIP CORNER (31, 35)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (14, 22),<br> EYE (31, 21),<br> NOSE (22, 30),<br> LIP CORNER (17, 36),<br> LIP CORNER (31, 35)<br> | Лицевые метки:<br> EYE (14, 22),<br> EYE (31, 21),<br> NOSE (22, 30),<br> LIP CORNER (17, 36),<br> LIP CORNER (31, 35)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (14, 22),<br>EYE (31, 21),<br>NOSE (22, 30),<br>LIP CORNER (17, 36),<br>LIP CORNER (31, 35)<br>| Лицевые метки:<br>EYE (14, 22),<br>EYE (31, 21),<br>NOSE (22, 30),<br>LIP CORNER (17, 36),<br>LIP CORNER (31, 35)<br>|
 
 ### Тестовое изображение 10
 
@@ -264,11 +288,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (14, 22),<
 </div>
 
 Лицевые метки:<br>
-EYE (12, 20),<br> EYE (31, 20),<br> NOSE (20, 27),<br> LIP CORNER (12, 33),<br> LIP CORNER (30, 33)<br>
+EYE (12, 20),<br>
+EYE (31, 20),<br>
+NOSE (20, 27),<br>
+LIP CORNER (12, 33),<br>
+LIP CORNER (30, 33)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (12, 20),<br> EYE (31, 20),<br> NOSE (20, 27),<br> LIP CORNER (12, 33),<br> LIP CORNER (30, 33)<br> | Лицевые метки:<br> EYE (12, 20),<br> EYE (31, 20),<br> NOSE (20, 27),<br> LIP CORNER (12, 33),<br> LIP CORNER (30, 33)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (12, 20),<br>EYE (31, 20),<br>NOSE (20, 27),<br>LIP CORNER (12, 33),<br>LIP CORNER (30, 33)<br>| Лицевые метки:<br>EYE (12, 20),<br>EYE (31, 20),<br>NOSE (20, 27),<br>LIP CORNER (12, 33),<br>LIP CORNER (30, 33)<br>|
 
 ### Тестовое изображение 12
 
@@ -282,11 +310,15 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (12, 20),<
 </div>
 
 Лицевые метки:<br>
-EYE (18, 20),<br> EYE (35, 22),<br> NOSE (28, 30),<br> LIP CORNER (16, 35),<br> LIP CORNER (31, 36)<br>
+EYE (18, 20),<br>
+EYE (35, 22),<br>
+NOSE (28, 30),<br>
+LIP CORNER (16, 35),<br>
+LIP CORNER (31, 36)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (18, 20),<br> EYE (35, 22),<br> NOSE (28, 30),<br> LIP CORNER (16, 35),<br> LIP CORNER (31, 36)<br> | Лицевые метки:<br> EYE (18, 20),<br> EYE (35, 22),<br> NOSE (28, 30),<br> LIP CORNER (16, 35),<br> LIP CORNER (31, 36)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (18, 20),<br>EYE (35, 22),<br>NOSE (28, 30),<br>LIP CORNER (16, 35),<br>LIP CORNER (31, 36)<br>| Лицевые метки:<br>EYE (18, 20),<br>EYE (35, 22),<br>NOSE (28, 30),<br>LIP CORNER (16, 35),<br>LIP CORNER (31, 36)<br>|
 
 ### Тестовое изображение 13
 
@@ -300,12 +332,67 @@ landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (18, 20),<
 </div>
 
 Лицевые метки:<br>
-EYE (15, 19),<br> EYE (32, 20),<br> NOSE (23, 28),<br> LIP CORNER (14, 32),<br> LIP CORNER (30, 33)<br>
+EYE (15, 19),<br>
+EYE (32, 20),<br>
+NOSE (23, 28),<br>
+LIP CORNER (14, 32),<br>
+LIP CORNER (30, 33)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-landmarks-regression-retail-0009 | Лицевые метки:<br> EYE (15, 19),<br> EYE (32, 20),<br> NOSE (23, 28),<br> LIP CORNER (14, 32),<br> LIP CORNER (30, 33)<br> | Лицевые метки:<br> EYE (15, 19),<br> EYE (32, 20),<br> NOSE (23, 28),<br> LIP CORNER (14, 32),<br> LIP CORNER (30, 33)<br> |
+landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (15, 19),<br>EYE (32, 20),<br>NOSE (23, 28),<br>LIP CORNER (14, 32),<br>LIP CORNER (30, 33)<br>| Лицевые метки:<br>EYE (15, 19),<br>EYE (32, 20),<br>NOSE (23, 28),<br>LIP CORNER (14, 32),<br>LIP CORNER (30, 33)<br>|
 
+### Тестовое изображение 14
+
+Источник: набор данных Интернет
+
+Разрешение: 353 x 366
+
+<div style='float: center'>
+<img width="200" height="200" src="images\facial-landmarks-35-adas-1.png">
+<img src="recognition\out_recognition_face_facial_landmarks_1.bmp">
+</div>
+
+Лицевые метки:<br>
+LEFT EYE (17, 22), (9, 22),<br>
+RIGHT EYE (30, 21), (39, 20),<br>
+NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>
+MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>
+LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>
+RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>
+FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+facial-landmarks-35-adas-0002 | Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>| Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>|
+
+### Тестовое изображение 15
+
+Источник: набор данных [CityScapes][cityscapes] 
+
+Разрешение: 199 x 436
+
+<div style='float: center'>
+<img width="100" height="225"src="images\person-attributes-recognition-crossroad-01.png">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_1.bmp"> | <img src="recognition\out_person_attributes_async_1.bmp"> |
+
+### Тестовое изображение 16
+
+Источник: набор данных [CityScapes][cityscapes] 
+
+Разрешение: 218 x 510
+
+<div style='float: center'>
+<img width="100" height="225"src="images\person-attributes-recognition-crossroad-02.png">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_2.bmp"> | <img src="recognition\out_person_attributes_async_2.bmp"> |
 
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
