@@ -45,7 +45,7 @@ fi
 echo "Start on all machines"
 for var in $(cat $config_file)
 do
-    sshpass -p $password ssh -n -f $username@$var "sh -c 'cd ~/Documents/;
+    sshpass -p $password ssh -x $username@$var "sh -c 'cd ~/Documents/;
         git clone https://github.com/TheG1uy/openvino-dl-benchmark;
         cd ~/Documents/openvino-dl-benchmark && git checkout bench_deploy;
         cd ~/Documents/openvino-dl-benchmark/src/bench_deploy &&

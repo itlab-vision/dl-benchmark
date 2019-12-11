@@ -19,6 +19,7 @@ echo $password | sudo -S ./dependencies.sh $password
 source ~/Documents/benchmark/OpenVINO_env/bin/activate
 
 cd ~/Downloads/
+sudo rm -rf l_openvino*
 wget $dowload_link
 
 arch_name="$(ls | grep ".tgz")"
