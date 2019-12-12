@@ -112,25 +112,48 @@ def check_correct_input(len_values):
             raise ValueError("Mismatch batch sizes for different input layers")
 
 
+def parse_tensors(filename):
+    with open(filename, "r") as file:
+        input = file.readlines()
+    input = [line.strip() for line in input]
+    shape = [int(number) for number in input[0].split(';')]
+    input.pop(0)
+    value = []
+    for str in input:
+        value.append([float(number) for number in str.split(';')])
+    result = np.array(value, dtype = np.float32)
+    result = result.reshape(shape)
+    return result
+
+
 def prepare_input(model, input, batch_size):
     result = {}
     if ':' in input[0]:
         len_values = []
         for str in input:
             key, value = str.split(':')
-            value = value.split(",")
             shape = model.inputs[key].shape
-            len_values.append(len(value))
-            value = fill_input(value, batch_size)
-            value = create_list_images(value)
-            value = convert_images(shape, value)
+            file_format = value.split('.')[-1]
+            if 'csv' == file_format:
+                value = parse_tensors(value)
+                len_values.append(value.shape[0])
+            else:
+                value = value.split(',')
+                len_values.append(len(value))
+                value = fill_input(value, batch_size)
+                value = create_list_images(value)
+                value = convert_images(shape, value)
             result.update({key : value})
         check_correct_input(len_values)
     else:
         input_blob = next(iter(model.inputs))
         shape = model.inputs[input_blob].shape
-        list = fill_input(input, batch_size)
-        list = create_list_images(list)
-        images = convert_images(shape, list)
-        result.update({input_blob : images})
+        file_format = input[0].split('.')[-1]
+        if 'csv' == file_format:
+            value = parse_tensors(input[0])
+        else:
+            list = fill_input(input, batch_size)
+            list = create_list_images(list)
+            value = convert_images(shape, list)
+        result.update({input_blob : value})
     return result
