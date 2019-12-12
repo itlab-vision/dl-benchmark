@@ -101,7 +101,7 @@ def create_list_images(input):
         else:
             input_is_correct = False
     if not input_is_correct:
-        raise ValueError("Wrong path to image or to directory with images")
+        raise ValueError('Wrong path to image or to directory with images')
     return images
 
 
@@ -109,11 +109,11 @@ def check_correct_input(len_values):
     ideal = len_values[0]
     for len in len_values:
         if len != ideal:
-            raise ValueError("Mismatch batch sizes for different input layers")
+            raise ValueError('Mismatch batch sizes for different input layers')
 
 
 def parse_tensors(filename):
-    with open(filename, "r") as file:
+    with open(filename, 'r') as file:
         input = file.readlines()
     input = [line.strip() for line in input]
     shape = [int(number) for number in input[0].split(';')]
