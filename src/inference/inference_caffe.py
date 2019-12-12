@@ -7,6 +7,8 @@ from PIL import Image
 import caffe
 import inference_output as io
 import logging as log
+import postprocessing_data_caffe as ppc
+from time import time
 
 
 def build_argparser():
@@ -31,6 +33,8 @@ def build_argparser():
         type = str, default = None, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
         for detections filtering', default = 0.5, type = float, dest = 'threshold')
+    parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
+        iterations', default = 1, type = int, dest = 'number_iter')
     #parser.add_argument('-mi', '--mininfer', help = 'Min inference time of single pass',
     #    type = float, default = 0.0, dest = 'mininfer')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
@@ -70,7 +74,6 @@ def create_list_images(input):
     if os.path.exists(input):
         if os.path.isdir(input):
             path = os.path.abspath(input)
-            # path = os.path(input[0])
             images = [os.path.join(path, file) for file in os.listdir(path)]
         elif os.path.isfile(input):
             for image in input:
@@ -93,6 +96,38 @@ def load_images_to_network(input, net, transformer):
         net.blobs['data'].data[i,:,:,:] = transformer.preprocess('data', im)
 
 
+def process_result(batch_size, inference_time, total_time):
+    inference_time = ppc.three_sigma_rule(inference_time)
+    average_time = ppc.calculate_average_time(inference_time)
+    latency = ppc.calculate_latency(inference_time)
+    fps = ppc.calculate_fps(batch_size, total_time)
+    return average_time, latency, fps
+
+
+def result_output(average_time, fps, latency, log):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
+    log.info('Latency : {0:.3f}'.format(latency))
+
+
+def raw_result_output(average_time, fps, latency):
+    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
+
+
+def inference_caffe(batch_size, net, number_iter, input, transformer):
+    time_infer = []
+    t0_total = time()
+    for i in range(number_iter):
+        load_images_to_network(input, net, transformer)
+        t0 = time()
+        result = net.forward()
+        t1 = time()
+        time_infer.append(t1 - t0)
+    t1_total = time()
+    inference_total_time = t1_total - t0_total
+    return result, time_infer, inference_total_time
+
+
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
@@ -102,22 +137,22 @@ def main():
         net, transformer = load_network(args.model_caffemodel, 
             args.model_prototxt, args.batch_size)
 
-        load_images_to_network(args.input, net, transformer)
-        input = create_list_images(args.input)
-
         # Прямой проход по сети
-        result = net.forward()
-    
+        result, inference_time, total_time = inference_caffe(args.batch_size, 
+            net, args.number_iter, args.input, transformer)
+
+        # Результаты
+        time, latency, fps = process_result(args.batch_size, inference_time, total_time)
+
         # Вывод
+        input = create_list_images(args.input)
         if not args.raw_output:
             io.infer_output(net, result, input, args.labels, args.number_top,
                 args.threshold, args.color_map, log, args.task)
-        #    result_output(average_time, fps, latency, log)
-        # else:
-        #    raw_result_output(average_time, fps, latency)
+            result_output(time, fps, latency, log)
+        else:
+            raw_result_output(time, fps, latency)
         
-        # todo:
-        # fps, latency
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
