@@ -77,11 +77,16 @@ def convert_images(shape, data):
 
 
 def fill_input(input, batch_size):
-    index = 0
-    result = input.copy()
-    while(len(result) < batch_size):
-        result.append(copy(result[index]))
-        index += 1
+    if batch_size <= input.shape[0]:
+        return input
+    input_batch = input.shape[0]
+    shape = list(input.shape)
+    shape[0] = batch_size
+    result = np.ndarray(shape = shape)
+    for i in range(input_batch):
+        result[i] = copy(input[i])
+    for i in range(input_batch, batch_size):
+        result[i] = copy(result[i - input_batch])
     return result
 
 
@@ -101,7 +106,7 @@ def create_list_images(input):
         else:
             input_is_correct = False
     if not input_is_correct:
-        raise ValueError("Wrong path to image or to directory with images")
+        raise ValueError('Wrong path to image or to directory with images')
     return images
 
 
@@ -109,7 +114,21 @@ def check_correct_input(len_values):
     ideal = len_values[0]
     for len in len_values:
         if len != ideal:
-            raise ValueError("Mismatch batch sizes for different input layers")
+            raise ValueError('Mismatch batch sizes for different input layers')
+
+
+def parse_tensors(filename):
+    with open(filename, 'r') as file:
+        input = file.readlines()
+    input = [line.strip() for line in input]
+    shape = [int(number) for number in input[0].split(';')]
+    input.pop(0)
+    value = []
+    for str in input:
+        value.append([float(number) for number in str.split(';')])
+    result = np.array(value, dtype = np.float32)
+    result = result.reshape(shape)
+    return result
 
 
 def prepare_input(model, input, batch_size):
@@ -118,19 +137,28 @@ def prepare_input(model, input, batch_size):
         len_values = []
         for str in input:
             key, value = str.split(':')
-            value = value.split(",")
-            shape = model.inputs[key].shape
-            len_values.append(len(value))
+            file_format = value.split('.')[-1]
+            if 'csv' == file_format:
+                value = parse_tensors(value)
+                len_values.append(value.shape[0])
+            else:
+                value = value.split(',')
+                len_values.append(len(value))
+                value = create_list_images(value)
+                shape = model.inputs[key].shape
+                value = convert_images(shape, value)
             value = fill_input(value, batch_size)
-            value = create_list_images(value)
-            value = convert_images(shape, value)
             result.update({key : value})
         check_correct_input(len_values)
     else:
         input_blob = next(iter(model.inputs))
-        shape = model.inputs[input_blob].shape
-        list = fill_input(input, batch_size)
-        list = create_list_images(list)
-        images = convert_images(shape, list)
-        result.update({input_blob : images})
+        file_format = input[0].split('.')[-1]
+        if 'csv' == file_format:
+            value = parse_tensors(input[0])
+        else:
+            value = create_list_images(input)
+            shape = model.inputs[input_blob].shape
+            value = convert_images(shape, value)
+        value = fill_input(value, batch_size)
+        result.update({input_blob : value})
     return result
