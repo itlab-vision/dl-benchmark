@@ -77,11 +77,16 @@ def convert_images(shape, data):
 
 
 def fill_input(input, batch_size):
-    index = 0
-    result = input.copy()
-    while(len(result) < batch_size):
-        result.append(copy(result[index]))
-        index += 1
+    if batch_size <= input.shape[0]:
+        return input
+    input_batch = input.shape[0]
+    shape = list(input.shape)
+    shape[0] = batch_size
+    result = np.ndarray(shape = shape)
+    for i in range(input_batch):
+        result[i] = copy(input[i])
+    for i in range(input_batch, batch_size):
+        result[i] = copy(result[i - input_batch])
     return result
 
 
@@ -132,7 +137,6 @@ def prepare_input(model, input, batch_size):
         len_values = []
         for str in input:
             key, value = str.split(':')
-            shape = model.inputs[key].shape
             file_format = value.split('.')[-1]
             if 'csv' == file_format:
                 value = parse_tensors(value)
@@ -140,20 +144,21 @@ def prepare_input(model, input, batch_size):
             else:
                 value = value.split(',')
                 len_values.append(len(value))
-                value = fill_input(value, batch_size)
                 value = create_list_images(value)
+                shape = model.inputs[key].shape
                 value = convert_images(shape, value)
+            value = fill_input(value, batch_size)
             result.update({key : value})
         check_correct_input(len_values)
     else:
         input_blob = next(iter(model.inputs))
-        shape = model.inputs[input_blob].shape
         file_format = input[0].split('.')[-1]
         if 'csv' == file_format:
             value = parse_tensors(input[0])
         else:
-            list = fill_input(input, batch_size)
-            list = create_list_images(list)
-            value = convert_images(shape, list)
+            value = create_list_images(input)
+            shape = model.inputs[input_blob].shape
+            value = convert_images(shape, value)
+        value = fill_input(value, batch_size)
         result.update({input_blob : value})
     return result
