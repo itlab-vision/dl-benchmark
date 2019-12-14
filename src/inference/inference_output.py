@@ -151,6 +151,24 @@ def age_gender_output(model, result, log):
         log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
+def license_plate(model, result, dictionary, log):
+    if not dictionary:
+        dictionary = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+    lexis = []
+    with open(dictionary, 'r') as f:
+        for line in f:
+            lexis.append([str(x) for x in line.split()])
+    for i, decode in enumerate(result):
+        log.info("Result for image {}".format(i))
+        decode = np.squeeze(decode)
+        s = ''
+        for j in range(decode.shape[0]):
+            if (decode[j] == -1):
+                break
+            s = s + str(lexis[int(decode[j])][1])
+        log.info('Plate: {}'.format(s))
+
+
 def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
@@ -173,6 +191,9 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         person_attributes_output(model, result, input[input_layer_name], log)
     elif task == 'age-gender':
         age_gender_output(model, result, log)
+    elif task == 'license-plate':
+        result_layer_name = next(iter(model.outputs))
+        license_plate(model, result[result_layer_name], labels, log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
