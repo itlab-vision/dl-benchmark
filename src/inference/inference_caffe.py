@@ -7,7 +7,7 @@ from PIL import Image
 import caffe
 import inference_output as io
 import logging as log
-import postprocessing_data_caffe as ppc
+import postprocessing_data as pp
 from time import time
 
 
@@ -97,10 +97,10 @@ def load_images_to_network(input, net, transformer):
 
 
 def process_result(batch_size, inference_time, total_time):
-    inference_time = ppc.three_sigma_rule(inference_time)
-    average_time = ppc.calculate_average_time(inference_time)
-    latency = ppc.calculate_latency(inference_time)
-    fps = ppc.calculate_fps(batch_size, total_time)
+    inference_time = pp.three_sigma_rule(inference_time)
+    average_time = pp.calculate_average_time(inference_time)
+    latency = pp.calculate_latency(inference_time)
+    fps = pp.calculate_fps(batch_size, total_time)
     return average_time, latency, fps
 
 
