@@ -151,6 +151,111 @@ def age_gender_output(model, result, log):
         log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
+def head_pose_output(model, result, input, log):
+    result_pitch = result['angle_p_fc']
+    result_roll = result['angle_r_fc']
+    result_yaw = result['angle_y_fc']
+    b = result_pitch.shape[0]
+    ib, c, h, w = input.shape
+    images = np.ndarray(shape = (b, h, w, c))
+    center_x = int(w / 2)
+    center_y = int(h / 2)
+    color_x = (0, 0, 255)
+    color_y = (0, 255, 0)
+    color_z = (255, 0, 0)
+    focal_length = 950.0
+    for i in range(b):
+        images[i] = input[i % ib].transpose((1, 2, 0))
+        yaw = result_yaw[i][0] * np.pi / 180.0
+        pitch = result_pitch[i][0] * np.pi / 180.0
+        roll = result_roll[i][0] * np.pi / 180.0
+        Rx = np.array([[1, 0, 0], 
+                       [0, np.cos(pitch), -np.sin(pitch)],
+                       [0, np.sin(pitch), np.cos(pitch)]])
+        Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
+                       [0, 1, 0],
+                       [np.sin(yaw), 0, np.cos(yaw)]])
+        Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
+                       [np.sin(roll), np.cos(roll), 0], 
+                       [0, 0, 1]])
+        R = np.dot(Rx, np.dot(Ry, Rz))
+        o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
+        o[2] = focal_length
+        X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
+        Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
+        Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
+        Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
+        point_x = int(X[0] / X[2] * focal_length) + center_x
+        point_y = int(X[1] / X[2] * focal_length) + center_y
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
+        point_x = int(Y[0] / Y[2] * focal_length) + center_x
+        point_y = int(Y[1] / Y[2] * focal_length) + center_y
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
+        point_x = int(Z[0] / Z[2] * focal_length) + center_x
+        point_y = int(Z[1] / Z[2] * focal_length) + center_y
+        point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
+        point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
+        cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img)) 
+
+
+def gaze_output(model, result, input, log):
+    b = result.shape[0]
+    input_angles = input['head_pose_angles']
+    input_left_eye = input['left_eye_image']
+    input_right_eye = input['right_eye_image']
+    ib, c, h, w = input_left_eye.shape
+    images_left_eye = np.ndarray(shape = (b, h, w, c))
+    images_right_eye = np.ndarray(shape = (b, h, w, c))
+    center_x = int(w / 2)
+    center_y = int(h / 2)
+    color = (255, 0, 0)
+    focal_length = 950.0
+    for i in range(0, b, 2):
+        images_left_eye[i] = input[i % ib].transpose((1, 2, 0))
+        images_right_eye[i] = input[(i + 1) % ib].transpose((1, 2, 0))
+        yaw = result_yaw[i][0] * np.pi / 180.0
+        pitch = result_pitch[i][0] * np.pi / 180.0
+        roll = result_roll[i][0] * np.pi / 180.0
+        Rx = np.array([[1, 0, 0], 
+                       [0, np.cos(pitch), -np.sin(pitch)],
+                       [0, np.sin(pitch), np.cos(pitch)]])
+        Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
+                       [0, 1, 0],
+                       [np.sin(yaw), 0, np.cos(yaw)]])
+        Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
+                       [np.sin(roll), np.cos(roll), 0], 
+                       [0, 0, 1]])
+        R = np.dot(Rx, np.dot(Ry, Rz))
+        o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
+        o[2] = focal_length
+        X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
+        Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
+        Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
+        Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
+        point_x = int(X[0] / X[2] * focal_length) + center_x
+        point_y = int(X[1] / X[2] * focal_length) + center_y
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
+        point_x = int(Y[0] / Y[2] * focal_length) + center_x
+        point_y = int(Y[1] / Y[2] * focal_length) + center_y
+        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
+        point_x = int(Z[0] / Z[2] * focal_length) + center_x
+        point_y = int(Z[1] / Z[2] * focal_length) + center_y
+        point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
+        point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
+        cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+    count = 0
+    for image in images:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(count + 1))
+        count += 1
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img)) 
+
 def infer_output(model, result, input, labels, number_top, prob_threshold,
         color_map, log, task):
     if task == 'feedforward':
@@ -173,6 +278,12 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         person_attributes_output(model, result, input[input_layer_name], log)
     elif task == 'age-gender':
         age_gender_output(model, result, log)
+    elif task == 'head-pose':
+        input_layer_name = next(iter(model.inputs))
+        head_pose_output(model, result, input[input_layer_name], log)
+    elif task == 'gaze':
+        result_layer_name = next(iter(model.outputs))
+        gaze_output(model, result, input, log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
