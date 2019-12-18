@@ -79,8 +79,8 @@ PERSON (1874, 288), (1976, 545)<br>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
-person-vehicle-bike-detection-crossroad-0078 | Окаймляющий прямоугольник:<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>BIKE (319, 232), (546, 717)<br>| Окаймляющий прямоугольник:<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524),<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>BIKE(319, 232), (546, 717)<br>|
-person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямоугольник:<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513),<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455)<br>| Окаймляющий прямоугольник:<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513),<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455)<br>|
+person-vehicle-bike-detection-crossroad-0078 | Окаймляющий прямоугольник:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>BIKE (319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>| Окаймляющий прямоугольник:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>BIKE(319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>|
+person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>| Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>|
 
 ### Тестовое изображение 4
 
@@ -344,7 +344,7 @@ landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (15, 19),<b
 
 ### Тестовое изображение 14
 
-Источник: набор данных Интернет
+Источник: набор данных [Интернет][internet_kerzhakov]
 
 Разрешение: 353 x 366
 
@@ -398,3 +398,4 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
 [vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
+[internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
