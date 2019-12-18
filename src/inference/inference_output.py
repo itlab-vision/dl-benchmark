@@ -216,42 +216,22 @@ def gaze_output(model, result, input, log):
     center_y = int(h / 2)
     color = (255, 0, 0)
     focal_length = 950.0
-    for i in range(0, b, 2):
-        images_left_eye[i] = input[i % ib].transpose((1, 2, 0))
-        images_right_eye[i] = input[(i + 1) % ib].transpose((1, 2, 0))
-        yaw = result_yaw[i][0] * np.pi / 180.0
-        pitch = result_pitch[i][0] * np.pi / 180.0
-        roll = result_roll[i][0] * np.pi / 180.0
-        Rx = np.array([[1, 0, 0], 
-                       [0, np.cos(pitch), -np.sin(pitch)],
-                       [0, np.sin(pitch), np.cos(pitch)]])
-        Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
-                       [0, 1, 0],
-                       [np.sin(yaw), 0, np.cos(yaw)]])
-        Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
-                       [np.sin(roll), np.cos(roll), 0], 
-                       [0, 0, 1]])
-        R = np.dot(Rx, np.dot(Ry, Rz))
-        o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
-        o[2] = focal_length
-        X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
-        Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
-        Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
-        Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
-        point_x = int(X[0] / X[2] * focal_length) + center_x
-        point_y = int(X[1] / X[2] * focal_length) + center_y
-        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
-        point_x = int(Y[0] / Y[2] * focal_length) + center_x
-        point_y = int(Y[1] / Y[2] * focal_length) + center_y
-        cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
-        point_x = int(Z[0] / Z[2] * focal_length) + center_x
-        point_y = int(Z[1] / Z[2] * focal_length) + center_y
-        point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
-        point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
-        cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+    for i in range(b):
+        images_left_eye[i] = input_left_eye[i % ib].transpose((1, 2, 0))
+        images_right_eye[i] = input_right_eye[i % ib].transpose((1, 2, 0))
+        yaw = input_angles[i][0] * np.pi / 180.0
+        roll = input_angles[i][1] * np.pi / 180.0
+        pitch = input_angles[i][2] * np.pi / 180.0
+        vector_length = np.sqrt(result[i][0] ** 2 + result[i][1] ** 2 + result[i][2] ** 2)
+        vector_x = result[i][0] / vector_length
+        vector_y = result[i][1] / vector_length
+        vector_z = result[i][2] / vector_length
+        gaze_x = int(vector_x * np.cos(roll) + vector_y * np.sin(roll)) * 10
+        gaze_y = int(-vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -10
+        cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color)
     count = 0
-    for image in images:
-        out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(count + 1))
+    for image in images_left_eye:
+        out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
         count += 1
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img)) 
@@ -283,7 +263,7 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         head_pose_output(model, result, input[input_layer_name], log)
     elif task == 'gaze':
         result_layer_name = next(iter(model.outputs))
-        gaze_output(model, result, input, log)
+        gaze_output(model, result[result_layer_name], input, log)
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
