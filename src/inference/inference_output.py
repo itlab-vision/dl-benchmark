@@ -215,22 +215,19 @@ def gaze_output(model, result, input, log):
     center_x = int(w / 2)
     center_y = int(h / 2)
     color = (255, 0, 0)
-    focal_length = 950.0
     for i in range(b):
         images_left_eye[i] = input_left_eye[i % ib].transpose((1, 2, 0))
         images_right_eye[i] = input_right_eye[i % ib].transpose((1, 2, 0))
-        yaw = input_angles[i][0] * np.pi / 180.0
         roll = input_angles[i][1] * np.pi / 180.0
-        pitch = input_angles[i][2] * np.pi / 180.0
-        vector_length = np.sqrt(result[i][0] ** 2 + result[i][1] ** 2 + result[i][2] ** 2)
+        vector_length = np.linalg.norm(result[i])
         vector_x = result[i][0] / vector_length
         vector_y = result[i][1] / vector_length
-        vector_z = result[i][2] / vector_length
-        gaze_x = int(vector_x * np.cos(roll) + vector_y * np.sin(roll)) * 10
-        gaze_y = int(-vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -10
-        cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color)
+        gaze_x = int((vector_x * np.cos(roll) - vector_y * np.sin(roll)) * 50)
+        gaze_y = int((vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -50)
+        cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+        cv2.line(images_right_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
     count = 0
-    for image in images_left_eye:
+    for image in images_right_eye:
         out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
         count += 1
         cv2.imwrite(out_img, image)
