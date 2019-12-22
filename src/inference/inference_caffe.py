@@ -18,7 +18,7 @@ def build_argparser():
     parser.add_argument('-w', '--weights', help = 'Path to an .prototxt file \
         with a trained model.', required = True, type = str, dest = 'model_prototxt')
     parser.add_argument('-i', '--input', help = 'Path to data', required = True, type = str, 
-        dest = 'input')
+        nargs = '+', dest = 'input')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int, dest = 'batch_size')
     parser.add_argument('-l', '--labels', help = 'Labels mapping file',
@@ -71,11 +71,11 @@ def load_network(caffemodel, prototxt, batch_size):
 def create_list_images(input):
     images = []
     input_is_correct = True
-    if os.path.exists(input):
-        if os.path.isdir(input):
-            path = os.path.abspath(input)
+    if os.path.exists(input[0]):
+        if os.path.isdir(input[0]):
+            path = os.path.abspath(input[0])
             images = [os.path.join(path, file) for file in os.listdir(path)]
-        elif os.path.isfile(input):
+        elif os.path.isfile(input[0]):
             for image in input:
                 if not os.path.isfile(image):
                     input_is_correct = False
@@ -100,7 +100,7 @@ def process_result(batch_size, inference_time, total_time):
     inference_time = pp.three_sigma_rule(inference_time)
     average_time = pp.calculate_average_time(inference_time)
     latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, total_time)
+    fps = pp.calculate_fps(batch_size, latency)
     return average_time, latency, fps
 
 
