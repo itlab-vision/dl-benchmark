@@ -210,6 +210,7 @@ def gaze_output(model, result, input, log):
     input_left_eye = input['left_eye_image']
     input_right_eye = input['right_eye_image']
     ib, c, h, w = input_left_eye.shape
+    images = np.ndarray(shape = (b, h, w * 2, c))
     images_left_eye = np.ndarray(shape = (b, h, w, c))
     images_right_eye = np.ndarray(shape = (b, h, w, c))
     center_x = int(w / 2)
@@ -226,8 +227,12 @@ def gaze_output(model, result, input, log):
         gaze_y = int((vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -50)
         cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
         cv2.line(images_right_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+        for x in range(w):
+            for y in range(h):
+                images[i][y][x] = images_left_eye[i % ib][y][x]
+                images[i][y][x + w] = images_right_eye[i % ib][y][x]
     count = 0
-    for image in images_right_eye:
+    for image in images:
         out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
         count += 1
         cv2.imwrite(out_img, image)
