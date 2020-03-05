@@ -1,13 +1,13 @@
+import cv2
 import sys
 import utils
 import argparse
 import numpy as np
 import logging as log
-import inference_output as io
 import postprocessing_data as pp
 from time import time
 from copy import copy
-import cv2
+from io_adapter import io_adapter
 
 
 def build_parser():
@@ -118,6 +118,7 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
+        io = io_adapter.get_io_adapter(args.model_xml, args.task)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
@@ -126,7 +127,7 @@ def main():
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
         log.info('Prepare input data')
-        input = utils.prepare_input(net, args.input, net.batch_size)
+        input = io.prepare_input(net, args.input, net.batch_size)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device,
             num_requests = (args.requests or 0))
@@ -135,8 +136,8 @@ def main():
         result, time = infer_async(input, net.batch_size, exec_net, args.number_iter)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
-            io.infer_output(net, result, input, args.labels, args.number_top,
-                args.threshold, args.color_map, log, args.task)
+            io.process_output(net, result, input, args.labels, args.number_top,
+                args.threshold, args.color_map, log)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)
