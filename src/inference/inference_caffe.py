@@ -9,7 +9,7 @@ import inference_output as io
 import logging as log
 import postprocessing_data as pp
 from time import time
-
+from utils import create_list_images as create_list_images
 
 def build_argparser():
     parser = argparse.ArgumentParser()
@@ -66,27 +66,6 @@ def load_network(caffemodel, prototxt, batch_size):
         net = input_reshape(net, batch_size)
 
     return net, transformer
-
-
-def create_list_images(input):
-    images = []
-    input_is_correct = True
-    if os.path.exists(input[0]):
-        if os.path.isdir(input[0]):
-            path = os.path.abspath(input[0])
-            images = [os.path.join(path, file) for file in os.listdir(path)]
-        elif os.path.isfile(input[0]):
-            for image in input:
-                if not os.path.isfile(image):
-                    input_is_correct = False
-                    break
-                images.append(os.path.abspath(image))
-        else:
-            input_is_correct = False
-    if not input_is_correct:
-        raise ValueError("Wrong path to image or to directory with images")
-
-    return images
 
 
 def load_images_to_network(input, net, transformer):
