@@ -3,13 +3,12 @@ import os
 import argparse
 import numpy as np
 from PIL import Image
-# CAFFE_ROOT = '/home/roix/miniconda3/envs/intelcaffe'
 import caffe
 import inference_output as io
 import logging as log
 import postprocessing_data as pp
 from time import time
-from utils import create_list_images as create_list_images
+from utils import create_list_images
 
 def build_argparser():
     parser = argparse.ArgumentParser()
