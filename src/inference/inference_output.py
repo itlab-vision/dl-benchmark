@@ -42,6 +42,47 @@ def segmentation_output(result, color_map, log):
         log.info('Result image was saved to {}'.format(out_img))
 
 
+def semantic_segmentation_output(result, color_map, log):
+    c = 3
+    h, w = result.shape[2:]
+    if not color_map:
+        color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+    classes_color_map = []
+    with open(color_map, 'r') as f:
+        for line in f:
+            classes_color_map.append([int(x) for x in line.split()])
+    for batch, data in enumerate(result[0]):
+        classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+        for i in range(h):
+            for j in range(w):
+                pixel_class = int(data[i, j])
+                classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+        out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+        cv2.imwrite(out_img, classes_map)
+        log.info('Result image was saved to {}'.format(out_img))
+        
+
+def road_segmentation_output(result, color_map, log):
+    c = 3
+    h, w = result.shape[2:]
+    if not color_map:
+        color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+    classes_color_map = []
+    with open(color_map, 'r') as f:
+        for line in f:
+            classes_color_map.append([int(x) for x in line.split()])
+    for batch, data in enumerate(result):
+        data = data.transpose((1, 2, 0))
+        classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+        for i in range(h):
+            for j in range(w):
+                pixel_class = np.argmax(data[i][j])
+                classes_map[i, j, :] = classes_color_map[pixel_class]
+        out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+        cv2.imwrite(out_img, classes_map)
+        log.info('Result image was saved to {}'.format(out_img))
+
+
 def detection_output(result, input, prob_threshold, log):
     ib, c, h, w = input.shape
     b, _, _, _ = result.shape
@@ -176,3 +217,9 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
     elif task == 'segmentation':
         result_layer_name = next(iter(model.outputs))
         segmentation_output(result[result_layer_name], color_map, log)
+    elif task == 'semantic_segmentation':
+        result_layer_name = next(iter(model.outputs))
+        semantic_segmentation_output(result[result_layer_name], color_map, log)
+    elif task == 'road_segmentation':
+        result_layer_name = next(iter(model.outputs))
+        road_segmentation_output(result[result_layer_name], color_map, log)
