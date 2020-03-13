@@ -36,10 +36,11 @@ def build_argparser():
         iterations', default = 1, type = int, dest = 'number_iter')
     parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
         (Max by default)', type = int, default = None, dest = 'nthreads')
-    parser.add_argument('-t', '--task', help = 'Output processing method: \
-        1.classification 2.detection 3.segmentation. \
+    parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
-        default = 'feedforward', type = str, dest = 'task')
+        choices = ['classification', 'detection', 'segmentation', 'recognition-face',
+        'person-attributes', 'age-gender'], default = 'feedforward', type = str,
+        dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
