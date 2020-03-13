@@ -141,11 +141,11 @@ class classification_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
-        log.info('Top {} results: \n'.format(self._number_top))
+        log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
         with open(self._labels, 'r') as f:
@@ -153,11 +153,10 @@ class classification_io(io_adapter):
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
-            print("Result for image {}\n".format(batch + 1))
+            log.info('Result for image {}'.format(batch + 1))
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else '#{}'.format(id)
-                print('{:.7f} {}'.format(probs[id], det_label))
-            print('\n')
+                log.info('{:.7f} {}'.format(probs[id], det_label))
 
 
 class detection_io(io_adapter):
@@ -167,7 +166,7 @@ class detection_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
@@ -192,9 +191,9 @@ class detection_io(io_adapter):
                     color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
                         min(class_id * 5, 255))
                     cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-                    log.info("Bounding boxes for image {0} for object {1}".format(image_number, class_id))
-                    log.info("Top left: ({0}, {1})".format(xmin, ymin))
-                    log.info("Bottom right: ({0}, {1})".format(xmax, ymax))
+                    log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                    log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                    log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
@@ -210,7 +209,7 @@ class segmenatation_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
@@ -240,7 +239,7 @@ class recognition_face_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
@@ -277,7 +276,7 @@ class person_attributes_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(model.inputs))
         input = self._input[input_layer_name]
@@ -288,8 +287,8 @@ class person_attributes_io(io_adapter):
         b = result_attributes.shape[0]
         ib, c, h, w = input.shape
         images = np.ndarray(shape = (b, h, w * 4, c))
-        attributes = ["is_male", "has_bag", "has_backpack", "has_hat", "has_longsleeves",
-            "has_longpants", "has_longhair", "has_coat_jacket"]
+        attributes = ['is_male', 'has_bag', 'has_backpack', 'has_hat', 'has_longsleeves',
+            'has_longpants', 'has_longhair', 'has_coat_jacket']
         color_point = (0, 0, 255)
         for i in range(b):
             for x in range(w):
@@ -328,13 +327,13 @@ class age_gender_io(io_adapter):
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
-            log.warning("Model output is processed only for the number iteration = 1")
+            log.warning('Model output is processed only for the number iteration = 1')
             return
         layer_iter = iter(model.outputs)
         result_age = result[next(layer_iter)]
         result_gender = result[next(layer_iter)]
         b = result_age.shape[0]
-        gender = ["Male", "Female"]
+        gender = ['Male', 'Female']
         for i in range(b):
             log.info('Information for {} image'.format(i))
             log.info('Gender: {}'.format(gender[bool(result_gender[i][0] > 0.5)]))
