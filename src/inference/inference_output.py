@@ -73,6 +73,69 @@ def detection_output(result, input, prob_threshold, log):
         log.info('Result image was saved to {}'.format(out_img))
 
 
+def single_image_super_resolution(result, log):
+    colors = result['129'][0]
+    colors *= 255
+    colors = np.clip(colors, 0., 255.)
+    h, w = result['129'].shape[2:]
+
+    classes_map = np.zeros(shape = (h, w, 3), dtype = np.int)
+    classes_map = colors.transpose((1, 2, 0))
+
+    out_img = os.path.join(os.path.dirname(__file__), 'out.png')
+    cv2.imwrite(out_img, classes_map)
+    log.info('Result image was saved to {}'.format(out_img))
+
+
+def instance_segmentation(result, log, prob_threshold, input, labels, color_map):
+    if not color_map:
+        color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+    classes_color_map = []
+    with open(color_map, 'r') as f:
+        for line in f:
+            classes_color_map.append([int(x) for x in line.split()])
+    if not labels:
+        labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+    labels_map = []
+    labels_map.append('background')
+    with open(labels, 'r') as f:
+        for x in f:
+            labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+    ib, c, h, w = input['im_data'].shape
+    image = np.ndarray(shape = (h, w, c))
+    image = input['im_data'][0].transpose((1, 2, 0))
+    boxes = result['boxes']
+    scores = result['scores']
+    classes = result['classes'].astype(np.uint32)
+    masks = result['raw_masks']
+    labels = []
+    for i in range(len(classes)):
+        if (scores[i] > prob_threshold):
+            object_width = boxes[i][2] - boxes[i][0]
+            object_height = boxes[i][3] - boxes[i][1]
+            mask = masks[i][classes[i]]
+            label_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
+            label = '<' + labels_map[classes[i]] + '>'
+            labels.append((label, label_point)) 
+            for j in range(len(mask)):
+                for k in range(len(mask[j])):
+                    if (mask[j][k] > prob_threshold):
+                        dh = int(object_height / len(mask))
+                        dw = int(object_width / len(mask[j]))
+                        x = int(boxes[i][0] + k * dw)
+                        y = int(boxes[i][1] + j * dh)
+                        for c in range(dh):
+                            for t in range(dw):
+                                image[y + c][x + t] += classes_color_map[classes[i]]
+    out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+    cv2.imwrite(out_img, image)
+    out_image = cv2.imread('instance_segmentation_out.bmp')
+    for l in range(len(labels)):
+        cv2.putText(out_image, labels[l][0], labels[l][1], cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+    cv2.imwrite(out_img, out_image)
+    log.info('Result image was saved to {}'.format(out_img))
+
+
 def recognition_face_output(result, input, log):
     ib, c, h, w = input.shape
     b = result.shape[0]
@@ -164,6 +227,12 @@ def infer_output(model, result, input, labels, number_top, prob_threshold,
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
         detection_output(result[result_layer_name], input[input_layer_name], prob_threshold, log)
+    elif task == 'single_image_super_resolution':
+        input_layer_name = next(iter(model.inputs))
+        single_image_super_resolution(result, log)
+    elif task == 'instance-segmentation':
+        input_layer_name = next(iter(model.inputs))
+        instance_segmentation(result, log, prob_threshold, input, labels, color_map)  
     elif task == 'recognition-face':
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
