@@ -74,7 +74,7 @@ def load_images_to_network(input, net, transformer):
         net.blobs['data'].data[i,:,:,:] = transformer.preprocess('data', im)
 
 
-def process_result(batch_size, inference_time, total_time):
+def process_result(batch_size, inference_time):
     inference_time = pp.three_sigma_rule(inference_time)
     average_time = pp.calculate_average_time(inference_time)
     latency = pp.calculate_latency(inference_time)
@@ -94,16 +94,21 @@ def raw_result_output(average_time, fps, latency):
 
 def inference_caffe(batch_size, net, number_iter, input, transformer):
     time_infer = []
-    t0_total = time()
-    for i in range(number_iter):
+    result = None
+    if number_iter == 1:
         load_images_to_network(input, net, transformer)
         t0 = time()
         result = net.forward()
         t1 = time()
         time_infer.append(t1 - t0)
-    t1_total = time()
-    inference_total_time = t1_total - t0_total
-    return result, time_infer, inference_total_time
+    else:
+        for i in range(number_iter):
+            load_images_to_network(input, net, transformer)
+            t0 = time()
+            net.forward()
+            t1 = time()
+            time_infer.append(t1 - t0)
+    return result, time_infer
 
 
 def main():
@@ -116,11 +121,11 @@ def main():
             args.model_prototxt, args.batch_size)
 
         # Прямой проход по сети
-        result, inference_time, total_time = inference_caffe(args.batch_size, 
+        result, inference_time = inference_caffe(args.batch_size, 
             net, args.number_iter, args.input, transformer)
 
         # Результаты
-        time, latency, fps = process_result(args.batch_size, inference_time, total_time)
+        time, latency, fps = process_result(args.batch_size, inference_time)
 
         # Вывод
         input = create_list_images(args.input)
