@@ -5,8 +5,16 @@ import numpy as np
 
 
 class io_adapter(metaclass = abc.ABCMeta):
+    def __init__(self, args):
+        self._input = None
+        self._labels = args.labels
+        self._number_top = args.number_top
+        self._threshold = args.threshold
+        self._color_map = args.color_map
+
+        
     def __convert_images(self, shape, data):
-        n, c, h, w  = shape
+        c, h, w  = shape[1:]
         images = np.ndarray(shape = (len(data), c, h, w))
         for i in range(len(data)):
             image = cv2.imread(data[i])
@@ -58,8 +66,8 @@ class io_adapter(metaclass = abc.ABCMeta):
         return result
 
 
-    def prepare_input(self, model, input, batch_size):
-        result = {}
+    def prepare_input(self, model, input):
+        self._input = {}
         if ':' in input[0]:
             len_values = []
             for str in input:
@@ -74,7 +82,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                     value = self.__create_list_images(value)
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
-                result.update({key : value})
+                self._input.update({key : value})
             self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
@@ -85,8 +93,8 @@ class io_adapter(metaclass = abc.ABCMeta):
                 value = self.__create_list_images(input)
                 shape = model.inputs[input_blob].shape
                 value = self.__convert_images(shape, value)
-            result.update({input_blob : value})
-        return result
+            self._input.update({input_blob : value})
+        return self._input
 
 
     def _not_valid_result(self, result):
@@ -94,51 +102,57 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def process_output(self, model, result, log):
         pass
 
 
     @staticmethod
-    def get_io_adapter(model: str, task: str):
+    def get_io_adapter(args):
+        task = args.task
         if task == 'feedforward':
-            return feedforward_io()
+            return feedforward_io(args)
         elif task == 'classification':
-            return classification_io()
+            return classification_io(args)
         elif task == 'detection':
-            return detection_io()
+            return detection_io(args)
         elif task == 'segmentation':
-            return segmenatation_io()
+            return segmenatation_io(args)
         elif task == 'recognition-face':
-            return recognition_face_io()
+            return recognition_face_io(args)
         elif task == 'person-attributes':
-            return person_attributes_io()
+            return person_attributes_io(args)
         elif task == 'age-gender':
-            return age_gender_io()
+            return age_gender_io(args)
 
 
 class feedforward_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         return
 
 
 class classification_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
-        log.info('Top {} results: \n'.format(number_top))
-        if not labels:
-            labels= os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
-        with open(labels, 'r') as f:
+        log.info('Top {} results: \n'.format(self._number_top))
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
+        with open(self._labels, 'r') as f:
             labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
-            top_ind = np.argsort(probs)[-number_top:][::-1]
+            top_ind = np.argsort(probs)[-self._number_top:][::-1]
             print("Result for image {}\n".format(batch + 1))
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else '#{}'.format(id)
@@ -147,14 +161,17 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
-        input = input[input_layer_name]
+        input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
         b = result.shape[0]
@@ -163,7 +180,7 @@ class detection_io(io_adapter):
             images[i] = input[i % ib].transpose((1, 2, 0))
         for batch in range(b):
             for obj in result[batch][0]:
-                if obj[2] > prob_threshold:
+                if obj[2] > self._threshold:
                     image_number = int(obj[0])
                     image = images[image_number]
                     initial_h, initial_w = image.shape[:2]
@@ -187,8 +204,11 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return
@@ -196,10 +216,10 @@ class segmenatation_io(io_adapter):
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[1:]
-        if not color_map:
-            color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
         classes_color_map = []
-        with open(color_map, 'r') as f:
+        with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
@@ -214,14 +234,17 @@ class segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return
         input_layer_name = next(iter(model.inputs))
         result_layer_name = next(iter(model.outputs))
-        input = input[input_layer_name]
+        input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
         b = result.shape[0]
@@ -248,13 +271,16 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return
         input_layer_name = next(iter(model.inputs))
-        input = input[input_layer_name]
+        input = self._input[input_layer_name]
         layer_iter = iter(model.outputs)
         result_attributes = result[next(layer_iter)]
         result_top = result[next(layer_iter)]
@@ -296,8 +322,11 @@ class person_attributes_io(io_adapter):
 
 
 class age_gender_io(io_adapter):
-    def process_output(self, model, result, input, labels, number_top, 
-            prob_threshold, color_map, log):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning("Model output is processed only for the number iteration = 1")
             return

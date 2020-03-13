@@ -98,7 +98,7 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
     try:
-        io = io_adapter.get_io_adapter(args.model_xml, args.task)
+        io = io_adapter.get_io_adapter(args)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
@@ -107,7 +107,7 @@ def main():
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
         log.info('Prepare input data')
-        input = io.prepare_input(net, args.input, net.batch_size)
+        input = io.prepare_input(net, args.input)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device)
         log.info('Starting inference ({} iterations) on {}'.
@@ -115,8 +115,7 @@ def main():
         result, time = infer_sync(input, net.batch_size, exec_net, args.number_iter)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
-            io.process_output(net, result, input, args.labels, args.number_top,
-                args.threshold, args.color_map, log)
+            io.process_output(net, result, log)
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
