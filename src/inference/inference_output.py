@@ -8,24 +8,15 @@ import cv2
 def face_reidentification(result, log):
     for batch, probs in enumerate(result):
         probs = np.squeeze(probs)
-        print("Result:\n")
+        log.info("Result:\n")
         for i in probs:
             log.info('{:.7f} '.format(i))
-'''
-    print('\n')  
-    with open("tmp1.txt", 'r') as f1:        # There is vector of the first image in tmp1.txt 
-        tmp1 = np.array([ float(x.strip()) for x in f1 ], float)
-    with open("tmp2.txt", 'r') as f2:        # There is vector of the second image in tmp2.txt 
-        tmp2 = np.array([ float(x.strip()) for x in f2 ], float)
-    # Calculate cosine_similarity (1 - cosine_distance)
-    print('{:.7f} '.format((np.dot(tmp1, tmp2)) / (np.sqrt(np.dot(tmp1, tmp1)) * np.sqrt(np.dot(tmp2, tmp2)))))
-'''
 
 
 def action_recognition_encoder(result, log):
     b = np.squeeze(result['371'])
     for i in b:
-        print('{:.7f} '.format(i))
+        log.info('{:.7f} '.format(i))
 
 
 def action_recognition_decoder(result, log):
@@ -34,17 +25,17 @@ def action_recognition_decoder(result, log):
             for x in f ]
     probs = np.squeeze(result['674/FinalReshape'][0])
     top_ind = np.argsort(probs)[-10:][::-1]
-    print("\nResult:")
+    log.info("\nResult:")
     for id in top_ind:
         det_label = labels_map[id] if labels_map else '#{}'.format(id)
-        print('{:.7f} {}'.format(probs[id], det_label))
-    print("\n")
+        log.info('{:.7f} {}'.format(probs[id], det_label))
+    log.info("\n")
 
 
 def driver_action_recognition_encoder(result, log):
     b = np.squeeze(result['513'])
     for i in b:
-        print('{:.7f} '.format(i))
+        log.info('{:.7f} '.format(i))
 
 
 def driver_action_recognition_decoder(result, log):
@@ -53,11 +44,11 @@ def driver_action_recognition_decoder(result, log):
             for x in f ]
     probs = np.squeeze(result['804/FinalReshape'][0])
     top_ind = np.argsort(probs)[::-1]
-    print("\nResult:")
+    log.info("\nResult:")
     for id in top_ind:
         det_label = labels_map[id] if labels_map else '#{}'.format(id)
-        print('{:.7f} {}'.format(probs[id], det_label))
-    print("\n")
+        log.info('{:.7f} {}'.format(probs[id], det_label))
+    log.info("\n")
 
 
 def classification_output(result, labels, number_top, log):
