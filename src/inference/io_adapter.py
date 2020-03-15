@@ -123,6 +123,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_attributes_io(args)
         elif task == 'age-gender':
             return age_gender_io(args)
+        elif task == 'gaze':
+            return gaze_io(args)
 
 
 class feedforward_io(io_adapter):
@@ -338,3 +340,47 @@ class age_gender_io(io_adapter):
             log.info('Information for {} image'.format(i))
             log.info('Gender: {}'.format(gender[bool(result_gender[i][0] > 0.5)]))
             log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
+
+
+class gaze_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[iter(model.outputs)]
+        b = result.shape[0]
+        input_angles = self._input['head_pose_angles']
+        input_left_eye = self._input['left_eye_image']
+        input_right_eye = self._input['right_eye_image']
+        ib, c, h, w = input_left_eye.shape
+        images = np.ndarray(shape = (b, h, w * 2, c))
+        images_left_eye = np.ndarray(shape = (b, h, w, c))
+        images_right_eye = np.ndarray(shape = (b, h, w, c))
+        center_x = int(w / 2)
+        center_y = int(h / 2)
+        color = (255, 0, 0)
+        for i in range(b):
+            images_left_eye[i] = input_left_eye[i % ib].transpose((1, 2, 0))
+            images_right_eye[i] = input_right_eye[i % ib].transpose((1, 2, 0))
+            roll = input_angles[i][1] * np.pi / 180.0
+            vector_length = np.linalg.norm(result[i])
+            vector_x = result[i][0] / vector_length
+            vector_y = result[i][1] / vector_length
+            gaze_x = int((vector_x * np.cos(roll) - vector_y * np.sin(roll)) * 50)
+            gaze_y = int((vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -50)
+            cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+            cv2.line(images_right_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+            for x in range(w):
+                for y in range(h):
+                    images[i][y][x] = images_left_eye[i % ib][y][x]
+                    images[i][y][x + w] = images_right_eye[i % ib][y][x]
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img)) 
