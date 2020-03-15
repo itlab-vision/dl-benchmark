@@ -45,7 +45,7 @@ def build_parser():
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
-        'person-attributes', 'age-gender'], default = 'feedforward', type = str,
+        'person-attributes', 'age-gender', 'gaze'], default = 'feedforward', type = str,
         dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
