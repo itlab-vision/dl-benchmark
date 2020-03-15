@@ -401,7 +401,7 @@ class head_pose_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(i + 1))
             cv2.imwrite(out_img, images[i])
             log.info('Result image was saved to {}'.format(out_img))
-            file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.scv'.format(i + 1))
+            file_angles = os.path.join(os.path.dirname(__file__), 'angles_head_pose_{}.csv'.format(i + 1))
             with open(file_angles, 'w+') as f:                
                 f.write(str(result_pitch[i][0]) + '\n')
                 f.write(str(result_roll[i][0]) + '\n')
