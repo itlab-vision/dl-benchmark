@@ -123,6 +123,16 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_attributes_io(args)
         elif task == 'age-gender':
             return age_gender_io(args)
+        elif task == 'face-reidentification':
+            return face_reidentification_io(args)
+        elif task == 'action-recognition-encoder':
+            return action_recognition_encoder_io(args)
+        elif task == 'action-recognition-decoder':
+            return action_recognition_decoder_io(args)
+        elif task == 'driver-action-recognition-encoder':
+            return driver_action_recognition_encoder_io(args)
+        elif task == 'driver-action-recognition-decoder':
+            return driver_action_recognition_decoder_io(args)
 
 
 class feedforward_io(io_adapter):
@@ -338,3 +348,104 @@ class age_gender_io(io_adapter):
             log.info('Information for {} image'.format(i))
             log.info('Gender: {}'.format(gender[bool(result_gender[i][0] > 0.5)]))
             log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
+
+
+class face_reidentification_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        result = result['658']
+        for batch, probs in enumerate(result):
+            probs = np.squeeze(probs)
+            file_name = os.path.join(os.path.dirname(__file__), \
+                'out_face_reidentification_{}.csv'.format(batch + 1))
+            with open(file_name, 'w') as f:
+                np.savetxt(file_name, probs)
+
+
+class action_recognition_encoder_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        result = result['371']
+        data = np.squeeze(result)
+        file_name = os.path.join(os.path.dirname(__file__), \
+            'out_action_recognition_encoder.csv')
+        with open(file_name, 'w') as f:
+            np.savetxt(file_name, data)
+
+
+class action_recognition_decoder_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+        input_layer_name = next(iter(model.inputs))
+        result = result['674/FinalReshape']
+        probs = np.squeeze(result)
+        top_ind = np.argsort(probs)[-10:][::-1]
+        log.info("\nResult:")
+        for id in top_ind:
+            det_label = labels_map[id] if labels_map else '#{}'.format(id)
+            log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class driver_action_recognition_encoder_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        result = result['513']
+        data = np.squeeze(result)
+        file_name = os.path.join(os.path.dirname(__file__), \
+            'out_driver_action_recognition_encoder.csv')
+        with open(file_name, 'w') as f:
+            np.savetxt(file_name, data)
+
+
+class driver_action_recognition_decoder_io(io_adapter):
+    def __init__(self, args):
+        super().__init__(args)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+        input_layer_name = next(iter(model.inputs))
+        result = result['804/FinalReshape']
+        probs = np.squeeze(result)
+        top_ind = np.argsort(probs)[::-1]
+        log.info("\nResult:")
+        for id in top_ind:
+            det_label = labels_map[id] if labels_map else '#{}'.format(id)
+            log.info('{:.7f} {}'.format(probs[id], det_label))
