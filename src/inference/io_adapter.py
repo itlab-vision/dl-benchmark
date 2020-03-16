@@ -451,6 +451,5 @@ class head_pose_io(io_adapter):
             file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.csv'.format(i + 1))
             with open(file_angles, 'w+') as f:                
                 np.savetxt(file_angles, (result_pitch[i], result_roll[i], result_yaw[i]), fmt = '%3.3f')
-                #np.savetxt(file_angles, result_roll[i], delimiter = ';')
-                #np.savetxt(file_angles, result_yaw[i], delimiter = ';')
             log.info('Result angles was saved to {}'.format(file_angles))
+
