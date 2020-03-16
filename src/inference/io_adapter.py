@@ -11,7 +11,7 @@ class io_adapter(metaclass = abc.ABCMeta):
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
-        self.optional_dict = optional_dict
+        self._optional = optional_dict
 
         
     def __convert_images(self, shape, data):
