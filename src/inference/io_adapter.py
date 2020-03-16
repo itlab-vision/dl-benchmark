@@ -5,12 +5,13 @@ import numpy as np
 
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args):
+    def __init__(self, args, optional_dict = None):
         self._input = None
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
+        self._optional = optional_dict
 
         
     def __convert_images(self, shape, data):
@@ -107,29 +108,29 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @staticmethod
-    def get_io_adapter(args):
+    def get_io_adapter(args, optional = None):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args)
+            return feedforward_io(args, optional)
         elif task == 'classification':
-            return classification_io(args)
+            return classification_io(args, optional)
         elif task == 'detection':
-            return detection_io(args)
+            return detection_io(args, optional)
         elif task == 'segmentation':
-            return segmenatation_io(args)
+            return segmenatation_io(args, optional)
         elif task == 'recognition-face':
-            return recognition_face_io(args)
+            return recognition_face_io(args, optional)
         elif task == 'person-attributes':
-            return person_attributes_io(args)
+            return person_attributes_io(args, optional)
         elif task == 'age-gender':
-            return age_gender_io(args)
+            return age_gender_io(args, optional)
         elif task == 'gaze':
-            return gaze_io(args)
+            return gaze_io(args, optional)
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -137,8 +138,8 @@ class feedforward_io(io_adapter):
 
 
 class classification_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -162,8 +163,8 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -205,8 +206,8 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -235,8 +236,8 @@ class segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -272,8 +273,8 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -319,12 +320,12 @@ class person_attributes_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img)) 
+            log.info('Result image was saved to {}'.format(out_img))
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -343,8 +344,8 @@ class age_gender_io(io_adapter):
 
 
 class gaze_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
 
 
     def process_output(self, model, result, log):
@@ -383,4 +384,4 @@ class gaze_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img)) 
+            log.info('Result image was saved to {}'.format(out_img))
