@@ -448,8 +448,10 @@ class head_pose_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(i + 1))
             cv2.imwrite(out_img, images[i])
             log.info('Result image was saved to {}'.format(out_img))
-            file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.csv'.format(i + 1))
-            with open(file_angles, 'w+') as f:                
-                np.savetxt(file_angles, (result_pitch[i], result_roll[i], result_yaw[i]), fmt = '%3.3f')
-            log.info('Result angles was saved to {}'.format(file_angles))
+        file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose.csv')
+        with open(file_angles, 'w+') as f:
+            f.write('{};3\n'.format(b))
+            for i in range(b):
+                f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
+        log.info('Result angles was saved to {}'.format(file_angles))
 
