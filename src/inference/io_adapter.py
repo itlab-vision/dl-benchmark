@@ -322,7 +322,7 @@ class person_attributes_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img)) 
+            log.info('Result image was saved to {}'.format(out_img))
 
 
 class age_gender_io(io_adapter):
@@ -454,4 +454,3 @@ class head_pose_io(io_adapter):
             for i in range(b):
                 f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
         log.info('Result angles was saved to {}'.format(file_angles))
-
