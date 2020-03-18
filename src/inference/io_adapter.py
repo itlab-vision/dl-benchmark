@@ -126,6 +126,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return age_gender_io(args, optional)
         elif task == 'gaze':
             return gaze_io(args, optional)
+        elif task == 'head-pose':
+            return head_pose_io(args, optional)
 
 
 class feedforward_io(io_adapter):
@@ -385,3 +387,70 @@ class gaze_io(io_adapter):
             count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class head_pose_io(io_adapter):
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        input = self._input[input_layer_name]
+        result_pitch = result['angle_p_fc']
+        result_roll = result['angle_r_fc']
+        result_yaw = result['angle_y_fc']
+        b = result_pitch.shape[0]
+        ib, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        center_x = int(w / 2)
+        center_y = int(h / 2)
+        color_x = (0, 0, 255)
+        color_y = (0, 255, 0)
+        color_z = (255, 0, 0)
+        focal_length = 950.0
+        for i in range(b):
+            images[i] = input[i % ib].transpose((1, 2, 0))
+            yaw = result_yaw[i][0] * np.pi / 180.0
+            pitch = result_pitch[i][0] * np.pi / 180.0
+            roll = result_roll[i][0] * np.pi / 180.0
+            Rx = np.array([[1, 0, 0], 
+                        [0, np.cos(pitch), -np.sin(pitch)],
+                        [0, np.sin(pitch), np.cos(pitch)]])
+            Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
+                        [0, 1, 0],
+                        [np.sin(yaw), 0, np.cos(yaw)]])
+            Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
+                        [np.sin(roll), np.cos(roll), 0], 
+                        [0, 0, 1]])
+            R = np.dot(Rx, np.dot(Ry, Rz))
+            o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
+            o[2] = focal_length
+            X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
+            Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
+            Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
+            Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
+            point_x = int(X[0] / X[2] * focal_length) + center_x
+            point_y = int(X[1] / X[2] * focal_length) + center_y
+            cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
+            point_x = int(Y[0] / Y[2] * focal_length) + center_x
+            point_y = int(Y[1] / Y[2] * focal_length) + center_y
+            cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
+            point_x = int(Z[0] / Z[2] * focal_length) + center_x
+            point_y = int(Z[1] / Z[2] * focal_length) + center_y
+            point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
+            point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
+            cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+        for i in range(b):
+            out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(i + 1))
+            cv2.imwrite(out_img, images[i])
+            log.info('Result image was saved to {}'.format(out_img))
+        file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose.csv')
+        with open(file_angles, 'w+') as f:
+            f.write('{};3\n'.format(b))
+            for i in range(b):
+                f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
+        log.info('Result angles was saved to {}'.format(file_angles))

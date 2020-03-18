@@ -45,8 +45,8 @@ def build_parser():
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
-        'person-attributes', 'age-gender', 'gaze'], default = 'feedforward', type = str,
-        dest = 'task')
+        'person-attributes', 'age-gender', 'gaze', 'head-pose'], 
+        default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
