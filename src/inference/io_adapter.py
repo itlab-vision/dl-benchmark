@@ -84,7 +84,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-            self.__check_correct_input(len_values)
+            #self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
@@ -128,6 +128,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return gaze_io(args, optional)
         elif task == 'head-pose':
             return head_pose_io(args, optional)
+        elif task == 'person-detection-asl':
+            return person_detection_asl_io(args, optional)
 
 
 class feedforward_io(io_adapter):
@@ -454,3 +456,37 @@ class head_pose_io(io_adapter):
             for i in range(b):
                 f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
         log.info('Result angles was saved to {}'.format(file_angles))
+
+
+class person_detection_asl_io(io_adapter):
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        input = self._input[input_layer_name]
+        result = result['17701/Split.0']
+        _, c, h, w = input.shape
+        images = np.ndarray(shape = (1, h, w, c))
+        images[0] = input[0].transpose((1, 2, 0))
+        count = 0
+        for obj in result:
+            if obj[4] > self._threshold:
+                count += 1
+                xmin = int(obj[0])
+                ymin = int(obj[1])
+                xmax = int(obj[2])
+                ymax = int(obj[3])
+                color = (0, 0, 255)
+                cv2.rectangle(images[0], (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('Object {} box:'.format(count))
+                log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+        out_img = os.path.join(os.path.dirname(__file__), 'out_person_detection_asl.bmp')
+        cv2.imwrite(out_img, images[0])
+        log.info('Result image was saved to {}'.format(out_img))
+
