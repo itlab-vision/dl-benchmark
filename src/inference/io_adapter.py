@@ -7,6 +7,7 @@ import numpy as np
 class io_adapter(metaclass = abc.ABCMeta):
     def __init__(self, args, optional_dict = None):
         self._input = None
+        self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
@@ -46,13 +47,6 @@ class io_adapter(metaclass = abc.ABCMeta):
         return images
 
 
-    def __check_correct_input(self, len_values):
-        ideal = len_values[0]
-        for len in len_values:
-            if len != ideal:
-                raise ValueError('Mismatch batch sizes for different input layers')
-
-
     def __parse_tensors(self, filename):
         with open(filename, 'r') as file:
             input = file.readlines()
@@ -70,21 +64,17 @@ class io_adapter(metaclass = abc.ABCMeta):
     def prepare_input(self, model, input):
         self._input = {}
         if ':' in input[0]:
-            len_values = []
             for str in input:
                 key, value = str.split(':')
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
-                    len_values.append(value.shape[0])
                 else:
                     value = value.split(',')
-                    len_values.append(len(value))
                     value = self.__create_list_images(value)
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-            self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
@@ -96,6 +86,15 @@ class io_adapter(metaclass = abc.ABCMeta):
                 value = self.__convert_images(shape, value)
             self._input.update({input_blob : value})
         return self._input
+
+
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        for key in self._input:
+            slice_input[key] = self._input[key][(iteration * self._batch_size)
+                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input[key])) + 1:]
+        return slice_input
 
 
     def _not_valid_result(self, result):
