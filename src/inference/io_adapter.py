@@ -84,7 +84,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-           self.__check_correct_input(len_values)
+            self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
