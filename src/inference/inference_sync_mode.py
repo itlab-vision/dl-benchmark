@@ -7,6 +7,7 @@ import logging as log
 import postprocessing_data as pp
 from time import time
 from io_adapter import io_adapter
+from transformer import transformer
 
 
 def build_argparser():
@@ -94,7 +95,8 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
     try:
-        io = io_adapter.get_io_adapter(args)
+        data_transformer = transformer()
+        io = io_adapter.get_io_adapter(args, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)

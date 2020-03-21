@@ -2,17 +2,17 @@ import os
 import abc
 import cv2
 import numpy as np
-
+from transformer import transformer
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args, optional_dict = None):
+    def __init__(self, args, transformer):
         self._input = None
         self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
-        self._optional = optional_dict
+        self._transformer = transformer
 
         
     def __convert_images(self, shape, data):
@@ -23,7 +23,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
-            images[i] = image
+            images[i] = self._transformer.transform(image)
         return images
 
 
@@ -107,29 +107,29 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @staticmethod
-    def get_io_adapter(args, optional = None):
+    def get_io_adapter(args, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args, optional)
+            return feedforward_io(args, transformer)
         elif task == 'classification':
-            return classification_io(args, optional)
+            return classification_io(args, transformer)
         elif task == 'detection':
-            return detection_io(args, optional)
+            return detection_io(args, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args, optional)
+            return segmenatation_io(args, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args, optional)
+            return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args, optional)
+            return person_attributes_io(args, transformer)
         elif task == 'age-gender':
-            return age_gender_io(args, optional)
+            return age_gender_io(args, transformer)
         elif task == 'gaze':
-            return gaze_io(args, optional)
+            return gaze_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -137,8 +137,8 @@ class feedforward_io(io_adapter):
 
 
 class classification_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -162,8 +162,8 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -205,8 +205,8 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -235,8 +235,8 @@ class segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -272,8 +272,8 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -323,8 +323,8 @@ class person_attributes_io(io_adapter):
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -343,8 +343,8 @@ class age_gender_io(io_adapter):
 
 
 class gaze_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
