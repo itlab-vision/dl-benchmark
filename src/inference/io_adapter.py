@@ -84,7 +84,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-            self.__check_correct_input(len_values)
+           #self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
@@ -128,6 +128,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return gaze_io(args, optional)
         elif task == 'head-pose':
             return head_pose_io(args, optional)
+        elif task == 'license-plate':
+            return license_plate_io(args, optional)
 
 
 class feedforward_io(io_adapter):
@@ -454,3 +456,28 @@ class head_pose_io(io_adapter):
             for i in range(b):
                 f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
         log.info('Result angles was saved to {}'.format(file_angles))
+
+
+class license_plate_io(io_adapter):
+    def __init__(self, args, optional = None):
+        super().__init__(args, optional)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[next(iter(model.outputs))]
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+        lexis = []
+        with open(self._labels, 'r') as f:
+            for line in f:
+                lexis.append([str(x) for x in line.split()])
+        result = np.squeeze(result)
+        s = ''
+        for j in range(result.shape[0]):
+            if (result[j] == -1):
+                break
+            s = s + str(lexis[int(result[j])][1])
+        log.info('Plate: {}'.format(s))
