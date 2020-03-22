@@ -123,13 +123,6 @@ class io_adapter(metaclass = abc.ABCMeta):
         elif task == 'person-attributes':
             return person_attributes_io(args, transformer)
         elif task == 'age-gender':
-<<<<<<< HEAD
-            return age_gender_io(args)
-        elif task == 'instance-segmentation':
-            return instance_segmenatation_io(args)
-        elif task == 'single-image-super-resolution':
-            return single_image_super_resolution_io(args)
-=======
             return age_gender_io(args, transformer)
         elif task == 'gaze':
             return gaze_io(args, transformer)
@@ -137,7 +130,14 @@ class io_adapter(metaclass = abc.ABCMeta):
             return head_pose_io(args, transformer)
         elif task == 'person-detection-asl':
             return person_detection_asl_io(args, transformer)
->>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
+        elif task == 'person-detection-asl':
+            return person_detection_asl_io(args, transformer)
+        elif task == 'person-detection-asl':
+            return person_detection_asl_io(args, transformer)
+        elif task == 'instance-segmentation':
+            return instance_segmenatation_io(args, transformer)
+        elif task == 'single-image-super-resolution':
+            return single_image_super_resolution_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -355,75 +355,15 @@ class age_gender_io(io_adapter):
             log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
-<<<<<<< HEAD
-class instance_segmenatation_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
-=======
 class gaze_io(io_adapter):
     def __init__(self, args, transformer):
         super().__init__(args, transformer)
->>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
 
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-<<<<<<< HEAD
-        input_layer_name = next(iter(model.inputs))
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
-        labels_map = []
-        labels_map.append('background')
-        with open(self._labels, 'r') as f:
-        for x in f:
-            labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
-        ib, c, h, w = self._input['im_data'].shape
-        image = np.ndarray(shape = (h, w, c))
-        image = self._input['im_data'][0].transpose((1, 2, 0))
-        boxes = result['boxes']
-        scores = result['scores']
-        classes = result['classes'].astype(np.uint32)
-        masks = result['raw_masks']
-        labels_on_image = []
-        for i in range(len(classes)):
-        if (scores[i] > self._threshold):
-            object_width = boxes[i][2] - boxes[i][0]
-            object_height = boxes[i][3] - boxes[i][1]
-            mask = masks[i][classes[i]]
-            label_on_image_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
-            label_on_image = '<' + labels_map[classes[i]] + '>'
-            labels_on_image.append((label_on_image, label_on_image_point)) 
-            for j in range(len(mask)):
-                for k in range(len(mask[j])):
-                    if (mask[j][k] > self._threshold):
-                        dh = int(object_height / len(mask))
-                        dw = int(object_width / len(mask[j]))
-                        x = int(boxes[i][0] + k * dw)
-                        y = int(boxes[i][1] + j * dh)
-                        for c in range(dh):
-                            for t in range(dw):
-                                image[y + c][x + t] += classes_color_map[classes[i]]
-        out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
-        cv2.imwrite(out_img, image)
-        out_image = cv2.imread('instance_segmentation_out.bmp')
-        for l in range(len(labels)):
-            cv2.putText(out_image, labels[l][0], labels[l][1], cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-        cv2.imwrite(out_img, out_image)
-        log.info('Result image was saved to {}'.format(out_img))
-
-
-class single_image_super_resolution_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
-=======
         result = result[iter(model.outputs)]
         b = result.shape[0]
         input_angles = self._input['head_pose_angles']
@@ -462,7 +402,6 @@ class single_image_super_resolution_io(io_adapter):
 class head_pose_io(io_adapter):
     def __init__(self, args, transformer):
         super().__init__(args, transformer)
->>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
 
 
     def process_output(self, model, result, log):
@@ -470,20 +409,6 @@ class head_pose_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(model.inputs))
-<<<<<<< HEAD
-        result = result['129']
-        c = 3
-        h, w = result.shape[2:]
-        for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
-            colors = data * 255
-            np.clip(colors, 0., 255.)
-            classes_map = colors.transpose((1, 2, 0))
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
-            cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {}'.format(out_img))
-            
-=======
         input = self._input[input_layer_name]
         result_pitch = result['angle_p_fc']
         result_roll = result['angle_r_fc']
@@ -573,4 +498,83 @@ class person_detection_asl_io(io_adapter):
         cv2.imwrite(out_img, images[0])
         log.info('Result image was saved to {}'.format(out_img))
 
->>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
+
+class instance_segmenatation_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+        labels_map = []
+        labels_map.append('background')
+        with open(self._labels, 'r') as f:
+            for x in f:
+                labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+        ib, c, h, w = self._input['im_data'].shape
+        image = np.ndarray(shape = (h, w, c))
+        image = self._input['im_data'][0].transpose((1, 2, 0))
+        boxes = result['boxes']
+        scores = result['scores']
+        classes = result['classes'].astype(np.uint32)
+        masks = result['raw_masks']
+        labels_on_image = []
+        for i in range(len(classes)):
+            if (scores[i] > self._threshold):
+                object_width = boxes[i][2] - boxes[i][0]
+                object_height = boxes[i][3] - boxes[i][1]
+                mask = masks[i][classes[i]]
+                label_on_image_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
+                label_on_image = '<' + labels_map[classes[i]] + '>'
+                labels_on_image.append((label_on_image, label_on_image_point)) 
+                for j in range(len(mask)):
+                    for k in range(len(mask[j])):
+                        if (mask[j][k] > self._threshold):
+                            dh = int(object_height / len(mask))
+                            dw = int(object_width / len(mask[j]))
+                            x = int(boxes[i][0] + k * dw)
+                            y = int(boxes[i][1] + j * dh)
+                            for c in range(dh):
+                                for t in range(dw):
+                                    image[y + c][x + t] += classes_color_map[classes[i]]
+        out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+        cv2.imwrite(out_img, image)
+        out_image = cv2.imread('instance_segmentation_out.bmp')
+        for l in range(len(labels)):
+            cv2.putText(out_image, labels[l][0], labels[l][1], cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+        cv2.imwrite(out_img, out_image)
+        log.info('Result image was saved to {}'.format(out_img))
+
+
+class single_image_super_resolution_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[2:]
+        for batch, data in enumerate(result):
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            colors = data * 255
+            np.clip(colors, 0., 255.)
+            classes_map = colors.transpose((1, 2, 0))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
+            
