@@ -2,17 +2,20 @@ import os
 import abc
 import cv2
 import numpy as np
+from transformer import transformer
 
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args):
+    def __init__(self, args, transformer):
         self._input = None
+        self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
+        self._transformer = transformer
 
-        
+
     def __convert_images(self, shape, data):
         c, h, w  = shape[1:]
         images = np.ndarray(shape = (len(data), c, h, w))
@@ -21,7 +24,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
-            images[i] = image
+            images[i] = self._transformer.transform(image)
         return images
 
 
@@ -45,13 +48,6 @@ class io_adapter(metaclass = abc.ABCMeta):
         return images
 
 
-    def __check_correct_input(self, len_values):
-        ideal = len_values[0]
-        for len in len_values:
-            if len != ideal:
-                raise ValueError('Mismatch batch sizes for different input layers')
-
-
     def __parse_tensors(self, filename):
         with open(filename, 'r') as file:
             input = file.readlines()
@@ -69,21 +65,17 @@ class io_adapter(metaclass = abc.ABCMeta):
     def prepare_input(self, model, input):
         self._input = {}
         if ':' in input[0]:
-            len_values = []
             for str in input:
                 key, value = str.split(':')
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
-                    len_values.append(value.shape[0])
                 else:
                     value = value.split(',')
-                    len_values.append(len(value))
                     value = self.__create_list_images(value)
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-            self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
@@ -97,6 +89,15 @@ class io_adapter(metaclass = abc.ABCMeta):
         return self._input
 
 
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        for key in self._input:
+            slice_input[key] = self._input[key][(iteration * self._batch_size)
+                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input[key])) + 1:]
+        return slice_input
+
+
     def _not_valid_result(self, result):
         return result is None
 
@@ -107,31 +108,41 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @staticmethod
-    def get_io_adapter(args):
+    def get_io_adapter(args, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args)
+            return feedforward_io(args, transformer)
         elif task == 'classification':
-            return classification_io(args)
+            return classification_io(args, transformer)
         elif task == 'detection':
-            return detection_io(args)
+            return detection_io(args, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args)
+            return segmenatation_io(args, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args)
+            return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args)
+            return person_attributes_io(args, transformer)
         elif task == 'age-gender':
+<<<<<<< HEAD
             return age_gender_io(args)
         elif task == 'instance-segmentation':
             return instance_segmenatation_io(args)
         elif task == 'single-image-super-resolution':
             return single_image_super_resolution_io(args)
+=======
+            return age_gender_io(args, transformer)
+        elif task == 'gaze':
+            return gaze_io(args, transformer)
+        elif task == 'head-pose':
+            return head_pose_io(args, transformer)
+        elif task == 'person-detection-asl':
+            return person_detection_asl_io(args, transformer)
+>>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -139,8 +150,8 @@ class feedforward_io(io_adapter):
 
 
 class classification_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -164,8 +175,8 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -207,8 +218,8 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -237,8 +248,8 @@ class segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -274,8 +285,8 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -321,12 +332,12 @@ class person_attributes_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img)) 
+            log.info('Result image was saved to {}'.format(out_img))
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -344,15 +355,22 @@ class age_gender_io(io_adapter):
             log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
+<<<<<<< HEAD
 class instance_segmenatation_io(io_adapter):
     def __init__(self, args):
         super().__init__(args)
+=======
+class gaze_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+>>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
 
 
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+<<<<<<< HEAD
         input_layer_name = next(iter(model.inputs))
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
@@ -405,6 +423,46 @@ class instance_segmenatation_io(io_adapter):
 class single_image_super_resolution_io(io_adapter):
     def __init__(self, args):
         super().__init__(args)
+=======
+        result = result[iter(model.outputs)]
+        b = result.shape[0]
+        input_angles = self._input['head_pose_angles']
+        input_left_eye = self._input['left_eye_image']
+        input_right_eye = self._input['right_eye_image']
+        ib, c, h, w = input_left_eye.shape
+        images = np.ndarray(shape = (b, h, w * 2, c))
+        images_left_eye = np.ndarray(shape = (b, h, w, c))
+        images_right_eye = np.ndarray(shape = (b, h, w, c))
+        center_x = int(w / 2)
+        center_y = int(h / 2)
+        color = (255, 0, 0)
+        for i in range(b):
+            images_left_eye[i] = input_left_eye[i % ib].transpose((1, 2, 0))
+            images_right_eye[i] = input_right_eye[i % ib].transpose((1, 2, 0))
+            roll = input_angles[i][1] * np.pi / 180.0
+            vector_length = np.linalg.norm(result[i])
+            vector_x = result[i][0] / vector_length
+            vector_y = result[i][1] / vector_length
+            gaze_x = int((vector_x * np.cos(roll) - vector_y * np.sin(roll)) * 50)
+            gaze_y = int((vector_x * np.sin(roll) + vector_y * np.cos(roll)) * -50)
+            cv2.line(images_left_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+            cv2.line(images_right_eye[i], (center_x, center_y), (center_x + gaze_x, center_y + gaze_y), color, 2)
+            for x in range(w):
+                for y in range(h):
+                    images[i][y][x] = images_left_eye[i % ib][y][x]
+                    images[i][y][x + w] = images_right_eye[i % ib][y][x]
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class head_pose_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+>>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
 
 
     def process_output(self, model, result, log):
@@ -412,6 +470,7 @@ class single_image_super_resolution_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(model.inputs))
+<<<<<<< HEAD
         result = result['129']
         c = 3
         h, w = result.shape[2:]
@@ -424,3 +483,94 @@ class single_image_super_resolution_io(io_adapter):
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
             
+=======
+        input = self._input[input_layer_name]
+        result_pitch = result['angle_p_fc']
+        result_roll = result['angle_r_fc']
+        result_yaw = result['angle_y_fc']
+        b = result_pitch.shape[0]
+        ib, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        center_x = int(w / 2)
+        center_y = int(h / 2)
+        color_x = (0, 0, 255)
+        color_y = (0, 255, 0)
+        color_z = (255, 0, 0)
+        focal_length = 950.0
+        for i in range(b):
+            images[i] = input[i % ib].transpose((1, 2, 0))
+            yaw = result_yaw[i][0] * np.pi / 180.0
+            pitch = result_pitch[i][0] * np.pi / 180.0
+            roll = result_roll[i][0] * np.pi / 180.0
+            Rx = np.array([[1, 0, 0], 
+                        [0, np.cos(pitch), -np.sin(pitch)],
+                        [0, np.sin(pitch), np.cos(pitch)]])
+            Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
+                        [0, 1, 0],
+                        [np.sin(yaw), 0, np.cos(yaw)]])
+            Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
+                        [np.sin(roll), np.cos(roll), 0], 
+                        [0, 0, 1]])
+            R = np.dot(Rx, np.dot(Ry, Rz))
+            o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
+            o[2] = focal_length
+            X = np.dot(R, np.array(([25, 0, 0]), dtype='float32').reshape(3, 1)) + o
+            Y = np.dot(R, np.array(([0, -25, 0]), dtype='float32').reshape(3, 1)) + o
+            Z = np.dot(R, np.array(([0, 0, -25]), dtype='float32').reshape(3, 1)) + o
+            Z1 = np.dot(R, np.array(([0, 0, 25]), dtype='float32').reshape(3, 1)) + o
+            point_x = int(X[0] / X[2] * focal_length) + center_x
+            point_y = int(X[1] / X[2] * focal_length) + center_y
+            cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_x)
+            point_x = int(Y[0] / Y[2] * focal_length) + center_x
+            point_y = int(Y[1] / Y[2] * focal_length) + center_y
+            cv2.line(images[i], (center_x, center_y), (point_x, point_y), color_y)
+            point_x = int(Z[0] / Z[2] * focal_length) + center_x
+            point_y = int(Z[1] / Z[2] * focal_length) + center_y
+            point_x1 = int(Z1[0] / Z1[2] * focal_length) + center_x
+            point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
+            cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
+        for i in range(b):
+            out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(i + 1))
+            cv2.imwrite(out_img, images[i])
+            log.info('Result image was saved to {}'.format(out_img))
+        file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose.csv')
+        with open(file_angles, 'w+') as f:
+            f.write('{};3\n'.format(b))
+            for i in range(b):
+                f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
+        log.info('Result angles was saved to {}'.format(file_angles))
+
+
+class person_detection_asl_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(model.inputs))
+        input = self._input[input_layer_name]
+        result = result['17701/Split.0']
+        _, c, h, w = input.shape
+        images = np.ndarray(shape = (1, h, w, c))
+        images[0] = input[0].transpose((1, 2, 0))
+        count = 0
+        for obj in result:
+            if obj[4] > self._threshold:
+                count += 1
+                xmin = int(obj[0])
+                ymin = int(obj[1])
+                xmax = int(obj[2])
+                ymax = int(obj[3])
+                color = (0, 0, 255)
+                cv2.rectangle(images[0], (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('Object {} box:'.format(count))
+                log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+        out_img = os.path.join(os.path.dirname(__file__), 'out_person_detection_asl.bmp')
+        cv2.imwrite(out_img, images[0])
+        log.info('Result image was saved to {}'.format(out_img))
+
+>>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
