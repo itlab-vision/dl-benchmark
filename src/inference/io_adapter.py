@@ -117,11 +117,11 @@ class io_adapter(metaclass = abc.ABCMeta):
         elif task == 'detection':
             return detection_io(args, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args)
+            return segmenatation_io(args, transformer)
         elif task == 'adas-segmentation':
-            return adas_segmenatation_io(args)
+            return adas_segmenatation_io(args, transformer)
         elif task == 'road-segmentation':
-            return road_segmenatation_io(args)
+            return road_segmenatation_io(args, transformer)
         elif task == 'recognition-face':
             return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
