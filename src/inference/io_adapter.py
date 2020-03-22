@@ -117,15 +117,11 @@ class io_adapter(metaclass = abc.ABCMeta):
         elif task == 'detection':
             return detection_io(args, transformer)
         elif task == 'segmentation':
-<<<<<<< HEAD
             return segmenatation_io(args)
-        elif task == 'semantic-segmentation':
-            return semantic_segmenatation_io(args)
+        elif task == 'adas-segmentation':
+            return adas_segmenatation_io(args)
         elif task == 'road-segmentation':
             return road_segmenatation_io(args)
-=======
-            return segmenatation_io(args, transformer)
->>>>>>> 1a62d2b1f10719c8465216099eba0cb58dd3ac22
         elif task == 'recognition-face':
             return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
@@ -247,9 +243,9 @@ class segmenatation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class semantic_segmenatation_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+class adas_segmenatation_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -279,8 +275,8 @@ class semantic_segmenatation_io(io_adapter):
 
 
 class road_segmenatation_io(io_adapter):
-    def __init__(self, args):
-        super().__init__(args)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
