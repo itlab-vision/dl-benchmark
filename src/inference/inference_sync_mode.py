@@ -7,6 +7,7 @@ import logging as log
 import postprocessing_data as pp
 from time import time
 from io_adapter import io_adapter
+from transformer import transformer
 
 
 def build_argparser():
@@ -39,7 +40,7 @@ def build_argparser():
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
-        'person-attributes', 'age-gender', 'gaze', 'head-pose'], 
+        'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl'], 
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
@@ -52,22 +53,18 @@ def build_argparser():
     return parser
 
 
-def infer_sync(input, batch_size, exec_net, number_it):
-    size = batch_size
+def infer_sync(exec_net, number_iter, get_slice):
     result = None
     time_infer = []
-    slice_input = dict.fromkeys(input.keys(), None)
-    if number_it == 1:
-        for key in input:
-            slice_input[key] = input[key][0:batch_size]
+    slice_input = None
+    if number_iter == 1:
+        slice_input = get_slice(0)
         t0 = time()
         result = exec_net.infer(inputs = slice_input)
         time_infer.append((time() - t0))
     else:
-        for i in range(number_it):
-            for key in input:
-                slice_input[key] = input[key][(i * size) % len(input[key]):
-                    (((i + 1) * size - 1) % len(input[key])) + 1:]
+        for i in range(number_iter):
+            slice_input = get_slice(i)
             t0 = time()
             exec_net.infer(inputs = slice_input)
             time_infer.append((time() - t0))
@@ -98,7 +95,8 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
     try:
-        io = io_adapter.get_io_adapter(args)
+        data_transformer = transformer()
+        io = io_adapter.get_io_adapter(args, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
@@ -107,12 +105,12 @@ def main():
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
         log.info('Prepare input data')
-        input = io.prepare_input(net, args.input)
+        io.prepare_input(net, args.input)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device)
         log.info('Starting inference ({} iterations) on {}'.
             format(args.number_iter, args.device))
-        result, time = infer_sync(input, net.batch_size, exec_net, args.number_iter)
+        result, time = infer_sync(exec_net, args.number_iter, io.get_slice_input)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
             io.process_output(net, result, log)
@@ -129,3 +127,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
+
