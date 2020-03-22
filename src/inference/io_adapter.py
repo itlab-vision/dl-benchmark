@@ -130,10 +130,6 @@ class io_adapter(metaclass = abc.ABCMeta):
             return head_pose_io(args, transformer)
         elif task == 'person-detection-asl':
             return person_detection_asl_io(args, transformer)
-        elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, transformer)
-        elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, transformer)
         elif task == 'instance-segmentation':
             return instance_segmenatation_io(args, transformer)
         elif task == 'single-image-super-resolution':
