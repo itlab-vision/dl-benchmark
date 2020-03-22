@@ -8,6 +8,7 @@ import postprocessing_data as pp
 from time import time
 from copy import copy
 from io_adapter import io_adapter
+from transformer import transformer
 
 
 def build_parser():
@@ -45,8 +46,8 @@ def build_parser():
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
-        'person-attributes', 'age-gender', 'gaze', 'head-pose', 'license-plate'], 
-        default = 'feedforward', type = str, dest = 'task')
+        'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
+        'license-plate'], default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
@@ -56,17 +57,14 @@ def build_parser():
     return parser
 
 
-def infer_async(input, batch_size, exec_net, number_iter):
+def infer_async(exec_net, number_iter, get_slice):
     requests_counter = len(exec_net.requests)
-    size = batch_size
     result = None
-    slice_input = dict.fromkeys(input.keys(), None)
+    slice_input = None
     if number_iter == 1:
         time_s = time()
         for request_id in range(requests_counter):
-            for key in input:
-                slice_input[key] = input[key][request_id * size % len(input[key]):
-                    ((request_id + 1) * size - 1) % len(input[key]) + 1]
+            slice_input = get_slice(request_id)
             exec_net.start_async(request_id = request_id,
                 inputs = slice_input)
         for request_id in range(requests_counter):
@@ -83,9 +81,7 @@ def infer_async(input, batch_size, exec_net, number_iter):
         while iteration < number_iter:
             for request_id in range(requests_counter):
                 if requests_status[request_id] == 0:
-                    for key in input:
-                        slice_input[key] = input[key][iteration * size % len(input[key]):
-                            ((iteration + 1) * size - 1) % len(input[key]) + 1]
+                    slice_input = get_slice(iteration)
                     exec_net.start_async(request_id = request_id,
                         inputs = slice_input)
                     requests_status[request_id] = 1
@@ -119,7 +115,8 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
-        io = io_adapter.get_io_adapter(args)
+        data_transformer = transformer()
+        io = io_adapter.get_io_adapter(args, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
@@ -128,13 +125,13 @@ def main():
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
         log.info('Prepare input data')
-        input = io.prepare_input(net, args.input)
+        io.prepare_input(net, args.input)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device,
             num_requests = (args.requests or 0))
         log.info('Starting inference ({} iterations) with {} requests on {}'.
             format(args.number_iter, len(exec_net.requests), args.device))
-        result, time = infer_async(input, net.batch_size, exec_net, args.number_iter)
+        result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
             io.process_output(net, result, log)
@@ -151,3 +148,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
+
