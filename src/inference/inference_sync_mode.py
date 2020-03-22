@@ -40,7 +40,7 @@ def build_argparser():
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
-        'person-attributes', 'age-gender', 'gaze', 'head-pose'], 
+        'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl'], 
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
@@ -127,3 +127,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
+
