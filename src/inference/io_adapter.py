@@ -584,7 +584,6 @@ class instance_segmenatation_io(io_adapter):
             for x in f:
                 labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
         ib, c, h, w = self._input['im_data'].shape
-        image = np.ndarray(shape = (h, w, c))
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
         scores = result['scores']
@@ -609,12 +608,11 @@ class instance_segmenatation_io(io_adapter):
                             for c in range(dh):
                                 for t in range(dw):
                                     image[y + c][x + t] += classes_color_map[classes[i]]
+        for l in range(len(labels_on_image)):
+            image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
         cv2.imwrite(out_img, image)
-        out_image = cv2.imread('instance_segmentation_out.bmp')
-        for l in range(len(labels)):
-            cv2.putText(out_image, labels[l][0], labels[l][1], cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-        cv2.imwrite(out_img, out_image)
         log.info('Result image was saved to {}'.format(out_img))
 
 
