@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from transformer import transformer
 
+
 class io_adapter(metaclass = abc.ABCMeta):
     def __init__(self, args, transformer):
         self._input = None
@@ -14,7 +15,7 @@ class io_adapter(metaclass = abc.ABCMeta):
         self._color_map = args.color_map
         self._transformer = transformer
 
-        
+
     def __convert_images(self, shape, data):
         c, h, w  = shape[1:]
         images = np.ndarray(shape = (len(data), c, h, w))
