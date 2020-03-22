@@ -100,6 +100,43 @@ PLATE (330, 410), (393, 436)<br>
 ----------------------|-----------------------------------------|-----------------------------------------|
 vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>| Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>|
 
+### Тестовое изображение 5
+
+Источник: набор данных [Интернет][internet_person_asl] 
+
+Разрешение: 320 x 320
+
+<div style='float: center'>
+<img width="320" height="320" src="images\person-detection-asl-0001.bmp">
+<img width="320" height="320" src="detection\out_person_detection_asl.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+PERSON (35, 17), (84, 192)<br>
+PERSON (79, 13), (122, 194)<br>
+PERSON (211, 78), (273, 279)<br>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+person-detection-asl-0001 | Окаймляющий прямоугольник:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>| Окаймляющий прямоугольник:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>|
+
+### Тестовое изображение 6
+
+Источник: набор данных [Интернет][internet_product] 
+
+Разрешение: 512 x 512
+
+<div style='float: center'>
+<img width="300" height="300" src="images\product-detection-0001.bmp">
+<img width="300" height="300" src="detection\product-detection-0001.png">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+PRINGLES (133, 195), (257, 195)<br>
+SPRITE (240, 487), (380, 10)<br>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+product-detection-0001 | Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>| Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>|
+
 ## Результаты распознования
 
 ### Тестовое изображение 1
@@ -399,3 +436,5 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
 [vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
 [internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
+[internet_person_asl]:http://rasfokus.ru/photos/topweek/photo3138574.html
+[internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
