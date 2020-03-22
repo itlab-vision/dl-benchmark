@@ -2,16 +2,17 @@ import os
 import abc
 import cv2
 import numpy as np
-
+from transformer import transformer
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args, optional_dict = None):
+    def __init__(self, args, transformer):
         self._input = None
+        self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
-        self._optional = optional_dict
+        self._transformer = transformer
 
         
     def __convert_images(self, shape, data):
@@ -22,7 +23,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
-            images[i] = image
+            images[i] = self._transformer.transform(image)
         return images
 
 
@@ -46,13 +47,6 @@ class io_adapter(metaclass = abc.ABCMeta):
         return images
 
 
-    def __check_correct_input(self, len_values):
-        ideal = len_values[0]
-        for len in len_values:
-            if len != ideal:
-                raise ValueError('Mismatch batch sizes for different input layers')
-
-
     def __parse_tensors(self, filename):
         with open(filename, 'r') as file:
             input = file.readlines()
@@ -70,21 +64,17 @@ class io_adapter(metaclass = abc.ABCMeta):
     def prepare_input(self, model, input):
         self._input = {}
         if ':' in input[0]:
-            len_values = []
             for str in input:
                 key, value = str.split(':')
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
-                    len_values.append(value.shape[0])
                 else:
                     value = value.split(',')
-                    len_values.append(len(value))
                     value = self.__create_list_images(value)
                     shape = model.inputs[key].shape
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
-            self.__check_correct_input(len_values)
         else:
             input_blob = next(iter(model.inputs))
             file_format = input[0].split('.')[-1]
@@ -98,6 +88,15 @@ class io_adapter(metaclass = abc.ABCMeta):
         return self._input
 
 
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        for key in self._input:
+            slice_input[key] = self._input[key][(iteration * self._batch_size)
+                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input[key])) + 1:]
+        return slice_input
+
+
     def _not_valid_result(self, result):
         return result is None
 
@@ -108,33 +107,33 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @staticmethod
-    def get_io_adapter(args, optional = None):
+    def get_io_adapter(args, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args, optional)
+            return feedforward_io(args, transformer)
         elif task == 'classification':
-            return classification_io(args, optional)
+            return classification_io(args, transformer)
         elif task == 'detection':
-            return detection_io(args, optional)
+            return detection_io(args, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args, optional)
+            return segmenatation_io(args, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args, optional)
+            return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args, optional)
+            return person_attributes_io(args, transformer)
         elif task == 'age-gender':
-            return age_gender_io(args, optional)
+            return age_gender_io(args, transformer)
         elif task == 'gaze':
-            return gaze_io(args, optional)
+            return gaze_io(args, transformer)
         elif task == 'head-pose':
-            return head_pose_io(args, optional)
+            return head_pose_io(args, transformer)
         elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, optional)
+            return person_detection_asl_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -142,8 +141,8 @@ class feedforward_io(io_adapter):
 
 
 class classification_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -167,8 +166,8 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -210,8 +209,8 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -240,8 +239,8 @@ class segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -277,8 +276,8 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -328,8 +327,8 @@ class person_attributes_io(io_adapter):
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -348,8 +347,8 @@ class age_gender_io(io_adapter):
 
 
 class gaze_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -392,8 +391,8 @@ class gaze_io(io_adapter):
 
 
 class head_pose_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
@@ -459,8 +458,8 @@ class head_pose_io(io_adapter):
 
 
 class person_detection_asl_io(io_adapter):
-    def __init__(self, args, optional = None):
-        super().__init__(args, optional)
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
 
 
     def process_output(self, model, result, log):
