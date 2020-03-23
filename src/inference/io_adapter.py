@@ -118,6 +118,10 @@ class io_adapter(metaclass = abc.ABCMeta):
             return detection_io(args, transformer)
         elif task == 'segmentation':
             return segmenatation_io(args, transformer)
+        elif task == 'adas-segmentation':
+            return adas_segmenatation_io(args, transformer)
+        elif task == 'road-segmentation':
+            return road_segmenatation_io(args, transformer)
         elif task == 'recognition-face':
             return recognition_face_io(args, transformer)
         elif task == 'person-attributes':
@@ -236,6 +240,68 @@ class segmenatation_io(io_adapter):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class adas_segmenatation_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[1:]
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        for batch, data in enumerate(result):
+            data = np.squeeze(data)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            for i in range(h):
+                for j in range(w):
+                    pixel_class = int(data[i, j])
+                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class road_segmenatation_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[1:]
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        for batch, data in enumerate(result):
+            data = data.transpose((1, 2, 0))
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            for i in range(h):
+                for j in range(w):
+                    pixel_class = np.argmax(data[i][j])
+                    classes_map[i, j, :] = classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
