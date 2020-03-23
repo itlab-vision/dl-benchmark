@@ -520,10 +520,10 @@ class license_plate_io(io_adapter):
         with open(self._labels, 'r') as f:
             for line in f:
                 lexis.append([str(x) for x in line.split()])
-        result = np.squeeze(result)
-        s = ''
-        for j in range(result.shape[0]):
-            if (result[j] == -1):
-                break
-            s = s + str(lexis[int(result[j])][1])
-        log.info('Plate: {}'.format(s))
+        for lex in result:
+            s = ''
+            for j in range(lex.shape[0]):
+                if (lex[j] == -1):
+                    break
+                s = s + str(lexis[int(lex[j])][1])
+            log.info('Plate: {}'.format(s))
