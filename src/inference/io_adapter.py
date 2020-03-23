@@ -134,6 +134,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return head_pose_io(args, transformer)
         elif task == 'person-detection-asl':
             return person_detection_asl_io(args, transformer)
+        elif task == 'license-plate':
+            return license_plate_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -556,3 +558,38 @@ class person_detection_asl_io(io_adapter):
         cv2.imwrite(out_img, images[0])
         log.info('Result image was saved to {}'.format(out_img))
 
+
+class license_plate_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        slice_input['data'] = self._input['data'][(iteration * self._batch_size)
+                % len(self._input['data']) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input['data'])) + 1:]
+        slice_input['seq_ind'] = self._input['seq_ind'][(iteration * 88 * self._batch_size)
+                % len(self._input['seq_ind']) : (((iteration + 1) * 88 * self._batch_size - 1)
+                % len(self._input['seq_ind'])) + 1:]
+        return slice_input
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[next(iter(model.outputs))]
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+        lexis = []
+        with open(self._labels, 'r') as f:
+            for line in f:
+                lexis.append([str(x) for x in line.split()])
+        for lex in result:
+            s = ''
+            for j in range(lex.shape[0]):
+                if (lex[j] == -1):
+                    break
+                s = s + str(lexis[int(lex[j])][1])
+            log.info('Plate: {}'.format(s))
