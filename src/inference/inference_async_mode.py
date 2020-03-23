@@ -47,9 +47,10 @@ def build_parser():
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
         'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
-        'adas-segmentation', 'road-segmentation', 'driver-action-recognition-encoder',
+        'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
+        'single-image-super-resolution', 'driver-action-recognition-encoder',
         'driver-action-recognition-decoder', 'action-recognition-encoder', 
-        'action-recognition-decoder','face-reidentification'],  
+        'action-recognition-decoder','face-reidentification'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
