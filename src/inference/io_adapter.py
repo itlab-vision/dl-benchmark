@@ -583,7 +583,6 @@ class instance_segmenatation_io(io_adapter):
         with open(self._labels, 'r') as f:
             for x in f:
                 labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
-        ib, c, h, w = self._input['im_data'].shape
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
         scores = result['scores']
