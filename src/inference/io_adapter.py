@@ -498,6 +498,17 @@ class license_plate_io(io_adapter):
         super().__init__(args, transformer)
 
 
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        slice_input['data'] = self._input['data'][(iteration * self._batch_size)
+                % len(self._input['data']) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input['data'])) + 1:]
+        slice_input['seq_ind'] = self._input['seq_ind'][(iteration * 88 * self._batch_size)
+                % len(self._input['seq_ind']) : (((iteration + 1) * 88 * self._batch_size - 1)
+                % len(self._input['seq_ind'])) + 1:]
+        return slice_input
+
+
     def process_output(self, model, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
