@@ -510,14 +510,17 @@ class face_reidentification_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result = result['658']
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             file_name = os.path.join(os.path.dirname(__file__), \
                 'out_face_reidentification_{}.csv'.format(batch + 1))
             with open(file_name, 'w') as f:
-                np.savetxt(file_name, probs)
+                for i in range(probs.shape[0] - 1):
+                    f.write('{:.5f};'.format(probs[i]))
+                f.write('{:.5f}'.format(probs[probs.shape[0] - 1]))
+            log.info('Result was saved to {}'.format(file_name))
 
 
 class action_recognition_encoder_io(io_adapter):
@@ -529,13 +532,16 @@ class action_recognition_encoder_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result = result['371']
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
         data = np.squeeze(result)
         file_name = os.path.join(os.path.dirname(__file__), \
             'out_action_recognition_encoder.csv')
         with open(file_name, 'w') as f:
-            np.savetxt(file_name, data)
+            for i in range(data.shape[0] - 1):
+                f.write('{:.5f};'.format(data[i]))
+            f.write('{:.5f}'.format(data[data.shape[0] - 1]))
+        log.info('Result was saved to {}'.format(file_name))
 
 
 class action_recognition_decoder_io(io_adapter):
@@ -551,8 +557,8 @@ class action_recognition_decoder_io(io_adapter):
             self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
         with open(self._labels, 'r') as f:
             labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
-        input_layer_name = next(iter(model.inputs))
-        result = result['674/FinalReshape']
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
         probs = np.squeeze(result)
         top_ind = np.argsort(probs)[-10:][::-1]
         log.info("\nResult:")
@@ -570,13 +576,16 @@ class driver_action_recognition_encoder_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result = result['513']
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
         data = np.squeeze(result)
         file_name = os.path.join(os.path.dirname(__file__), \
             'out_driver_action_recognition_encoder.csv')
         with open(file_name, 'w') as f:
-            np.savetxt(file_name, data)
+            for i in range(data.shape[0] - 1):
+                f.write('{:.5f};'.format(data[i]))
+            f.write('{:.5f}'.format(data[data.shape[0] - 1]))
+        log.info('Result was saved to {}'.format(file_name))
 
 
 class driver_action_recognition_decoder_io(io_adapter):
@@ -592,8 +601,8 @@ class driver_action_recognition_decoder_io(io_adapter):
             self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
         with open(self._labels, 'r') as f:
             labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
-        input_layer_name = next(iter(model.inputs))
-        result = result['804/FinalReshape']
+        result_layer_name = next(iter(model.outputs))
+        result = result[result_layer_name]
         probs = np.squeeze(result)
         top_ind = np.argsort(probs)[::-1]
         log.info("\nResult:")
