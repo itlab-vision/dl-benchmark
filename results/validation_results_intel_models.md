@@ -469,7 +469,7 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 Разрешение: 314 x 106
 
 <div style='float: center'>
-<img height = '100' width = '200' src="images\license-plate-recognition-barrier.jpg">
+<img height = '100' width = '200' src="images\license-plate-recognition-barrier.JPG">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
