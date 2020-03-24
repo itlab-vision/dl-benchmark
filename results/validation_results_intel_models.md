@@ -446,6 +446,22 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 ----------------------|-----------------------------------------|-----------------------------------------|
 head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"> | <img src="recognition\out_head_pose_1_async.bmp"> |
 
+### Тестовое изображение 18
+
+Источник: набор данных [BKHD][...] 
+
+Разрешение: 60 x 60
+
+<div style='float: center'>
+<img src="images\left_eye.jpg">
+<img src="images\right_eye.jpg">
+<img src="recognition\out_gaze_1_sync.bmp">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img src="recognition\out_gaze_1_async.bmp"> |
+
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
