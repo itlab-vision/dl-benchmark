@@ -697,15 +697,19 @@ class face_reidentification_io(io_adapter):
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
-        for batch, probs in enumerate(result):
-            probs = np.squeeze(probs)
-            file_name = os.path.join(os.path.dirname(__file__), \
-                'out_face_reidentification_{}.csv'.format(batch + 1))
-            with open(file_name, 'w') as f:
-                for i in range(probs.shape[0] - 1):
-                    f.write('{:.5f};'.format(probs[i]))
-                f.write('{:.5f}'.format(probs[probs.shape[0] - 1]))
-            log.info('Result was saved to {}'.format(file_name))
+        file_name = os.path.join(os.path.dirname(__file__), 'face_reidentification_out.csv')
+        batch_size = result.shape[0]
+        dim1 = result.shape[1]
+        with open(file_name, 'w') as f:
+            f.write('{};{}\n'.format(batch_size, dim1))
+            for batch, probs in enumerate(result):
+                probs = np.squeeze(probs)
+                for i in range(dim1 - 1):
+                    f.write('{:.7f};'.format(probs[i]))
+                f.write('{:.7f}'.format(probs[dim1 - 1]))
+                if not (batch + 1 == batch_size):
+                    f.write('\n')
+        log.info('Result was saved to {}'.format(file_name))
 
 
 class action_recognition_encoder_io(io_adapter):
@@ -719,14 +723,20 @@ class action_recognition_encoder_io(io_adapter):
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
-        data = np.squeeze(result)
-        file_name = os.path.join(os.path.dirname(__file__), \
-            'out_action_recognition_encoder.csv')
+        file_name = os.path.join(os.path.dirname(__file__), 'action_recognition_encoder_out.csv')
+        batch_size = result.shape[0]
+        dim1 = result.shape[1]        
         with open(file_name, 'w') as f:
-            for i in range(data.shape[0] - 1):
-                f.write('{:.5f};'.format(data[i]))
-            f.write('{:.5f}'.format(data[data.shape[0] - 1]))
+            f.write('{};{}\n'.format(batch_size, dim1))
+            for batch, probs in enumerate(result):
+                probs = np.squeeze(probs)
+                for i in range(dim1 - 1):
+                    f.write('{:.7f};'.format(probs[i]))
+                f.write('{:.7f}'.format(probs[dim1 - 1]))
+                if not (batch + 1 == batch_size):
+                    f.write('\n')
         log.info('Result was saved to {}'.format(file_name))
+
 
 
 class action_recognition_decoder_io(io_adapter):
@@ -763,13 +773,18 @@ class driver_action_recognition_encoder_io(io_adapter):
             return
         result_layer_name = next(iter(model.outputs))
         result = result[result_layer_name]
-        data = np.squeeze(result)
-        file_name = os.path.join(os.path.dirname(__file__), \
-            'out_driver_action_recognition_encoder.csv')
+        file_name = os.path.join(os.path.dirname(__file__), 'driver_action_recognition_encoder_out.csv')
+        batch_size = result.shape[0]
+        dim1 = result.shape[1]        
         with open(file_name, 'w') as f:
-            for i in range(data.shape[0] - 1):
-                f.write('{:.5f};'.format(data[i]))
-            f.write('{:.5f}'.format(data[data.shape[0] - 1]))
+            f.write('{};{}\n'.format(batch_size, dim1))
+            for batch, probs in enumerate(result):
+                probs = np.squeeze(probs)
+                for i in range(dim1 - 1):
+                    f.write('{:.7f};'.format(probs[i]))
+                f.write('{:.7f}'.format(probs[dim1 - 1]))
+                if not (batch + 1 == batch_size):
+                    f.write('\n')
         log.info('Result was saved to {}'.format(file_name))
 
 
