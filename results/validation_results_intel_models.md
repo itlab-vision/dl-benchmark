@@ -462,6 +462,20 @@ head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"
 ----------------------|-----------------------------------------|-----------------------------------------|
 gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img src="recognition\out_gaze_1_async.bmp"> |
 
+### Тестовое изображение 19
+
+Источник: набор данных [GitHub][github_license_plate] 
+
+Разрешение: 314 x 106
+
+<div style='float: center'>
+<img height = '100' width = '200' src="images\license-plate-recognition-barrier.jpg">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;FA9512 |
+
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
@@ -469,3 +483,4 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 [internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
 [internet_person_asl]:http://rasfokus.ru/photos/topweek/photo3138574.html
 [internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
+[github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
