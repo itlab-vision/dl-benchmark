@@ -7,13 +7,11 @@ from xml.dom import minidom
 
 from remote_executor import remote_executor
 
-
 CONFIG_ROOT_TAG = 'Computer'
 CONFIG_IP_TAG = 'IP'
 CONFIG_LOGIN_TAG = 'Login'
 CONFIG_PASSWORD_TAG = 'Password'
 CONFIG_DOWNLOAD_FOLDER_TAG = 'DownloadFolder'
-
 
 def build_parser():
     parser = argparse.ArgumentParser()

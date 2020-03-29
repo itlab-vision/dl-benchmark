@@ -32,7 +32,6 @@ def download_image(server_ip, server_login, server_psw, image_path, download_dir
         ftp_connection.retrbinary('RETR {}'.format(os.path.split(image_path)[1]),
             container_image.write)
 
-
 def main():
     args = build_parser()
 
@@ -45,7 +44,6 @@ def main():
 
     os.system('docker load --input {}'.format(file_path))
     os.system('docker run --privileged -d -t {}'.format(image_name.split('.')[0]))
-
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
