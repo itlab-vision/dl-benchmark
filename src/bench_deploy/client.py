@@ -17,31 +17,34 @@ def build_parser():
         help = 'Path to directory on target machine where to download container image.')
     return parser.parse_args()
 
-def prepare_ftp_connection(server_ip, server_login, server_psw, image_dir):
-    log.info('Trying to connect to FTP server')
+def prepare_ftp_connection(server_ip, server_login, server_psw, image_path):
     ftp_connection = ftplib.FTP(server_ip, server_login, server_psw)
-    log.info('Created FTP connection')
-
+    image_dir = os.path.split(image_path)[0]
     if ftp_connection.pwd() != image_dir:
-        log.info('Change current {} directory to target : {}'.format(ftp_connection.pwd(), image_dir))
         ftp_connection.cwd(image_dir)
 
     return ftp_connection
 
-def download_image(server_ip, server_login, server_psw, image_dir, download_dir):
-    ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, image_dir)
-    with open(download_dir, 'wb') as container_image:
-        ftp_con.retrbinary('RETR {}'.format(os.path.split(args.image_path)[1]),
+def download_image(server_ip, server_login, server_psw, image_path, download_dir, file_path):
+    ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, image_path)
+
+    with open(file_path, 'wb') as container_image:
+        ftp_connection.retrbinary('RETR {}'.format(os.path.split(image_path)[1]),
             container_image.write)
 
 
 def main():
     args = build_parser()
-    download_image(args.server_ip, args.server_login, args.server_psw,
-        args.image_path, args.download_dir)
 
-    os.system('docker load {}'.format())
-    os.system('docker run --privileged {}'.os.path.split(args.image_path)[1])
+    image_name = os.path.split(args.image_path)[1]
+    joined_pass = os.path.join(args.download_dir, image_name)
+    file_path = os.path.normpath(joined_pass)
+
+    download_image(args.server_ip, args.server_login, args.server_psw,
+        args.image_path, args.download_dir, file_path)
+
+    os.system('docker load --input {}'.format(file_path))
+    os.system('docker run --privileged -it {}'.format(image_name.split('.')[0]))
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-import wmi
+#import wmi
 import paramiko
 import os
 import sys
@@ -10,9 +10,9 @@ class remote_executor:
 
     def create_connection(self, machine_ip, login, password):
         new_connection = None
-        if self.my_os_type == 'linux':
+        if self.my_os_type.lower() == 'linux':
             new_connection = self.__create_linux_connection(machine_ip, login, password)
-        elif elf.my_os_type == 'windows':
+        elif self.my_os_type.lower() == 'windows':
             new_connection = self.__create_windows_connection(machine_ip, login, password)
 
         self.my_active_connection = new_connection
@@ -23,7 +23,7 @@ class remote_executor:
         new_process = None
         if self.my_os_type == 'linux':
             new_process = self.__execute_command_on_linux(command)
-        elif elf.my_os_type == 'windows':
+        elif self.my_os_type == 'windows':
             new_process = self.__execute_command_on_windows(command)
 
         if not new_process is None:
@@ -35,7 +35,7 @@ class remote_executor:
         new_process = None
         if self.my_os_type == 'linux':
             new_process = self.__execute_command_on_linux(command)
-        elif elf.my_os_type == 'windows':
+        elif self.my_os_type == 'windows':
             new_process = self.__execute_command_on_windows(command)
 
         if not new_process is None:
@@ -45,7 +45,7 @@ class remote_executor:
         for process in self.my_process_list:
             self.__wait_process(process)
 
-    def __create_linux_connection(machine_ip, login, password):
+    def __create_linux_connection(self, machine_ip, login, password):
         new_connection = paramiko.SSHClient()
         new_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         new_connection.connect(hostname = machine_ip, username = login,
@@ -53,7 +53,7 @@ class remote_executor:
 
         return new_connection
 
-    def __create_windows_connection(machine_ip, login, password):
+    def __create_windows_connection(self, machine_ip, login, password):
         new_connection = wmi.WMI(machine_ip, user = login,
             password = password)
 
@@ -90,7 +90,7 @@ class remote_executor:
     def __wait_process(self, process):
         if self.my_os_type == 'linux':
             self.__wait_linux_process(process)
-        elif elf.my_os_type == 'windows':
+        elif self.my_os_type == 'windows':
             self.__wait_windows_process(process)
 
     def __wait_windows_process(self, watcher):

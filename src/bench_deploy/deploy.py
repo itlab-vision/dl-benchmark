@@ -47,8 +47,8 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir):
 def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_path):
     ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir)
 
-    target_image = open(args.image_path, 'rb')
-    image_name = os.path.split(args.image_path)[1]
+    target_image = open(image_path, 'rb')
+    image_name = os.path.split(image_path)[1]
 
     log.info('Copy image to server')
     ftp_connection.storbinary('STOR {}'.format(image_name), target_image)
@@ -77,7 +77,9 @@ def parse_machine_list(path_to_config):
 def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder):
     executor = remote_executor(os_type = 'Linux')
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
-    executor.execute_command_and_wait('cd {}/src/bench_deploy && python3 client.py \
+    joined_pass = os.path.join(project_folder, '/src/bench_deploy')
+    project_folder = os.path.normpath(joined_pass)
+    executor.execute_command_and_wait('cd {} && python3 client.py \
         -s {} -l {} -p {} -i {} -d {}'.format(project_folder, server_ip,
         server_login, server_psw, image_path, download_dir))
 
@@ -101,7 +103,7 @@ def main():
     image_ftp_path = os.path.join(args.upload_dir, os.path.split(args.image_path)[1])
     for machine in machine_list:
         client_execution(machine, args.server_ip, args.server_login, args.server_psw,
-            image_ftp_path, machine['download_folder'])
+            image_ftp_path, machine['download_folder'], args.project_folder)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
