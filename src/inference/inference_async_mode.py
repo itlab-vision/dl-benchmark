@@ -120,7 +120,7 @@ def main():
     try:
         model_wrapper = openvino_io_model_wrapper()
         data_transformer = transformer()
-        io = io_adapter.get_io_adapter(args, model_wrapper,data_transformer)
+        io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
