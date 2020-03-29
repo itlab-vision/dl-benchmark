@@ -429,7 +429,7 @@ class gaze_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result = result[iter(result)]
+        result = result[next(iter(result))]
         b = result.shape[0]
         input_angles = self._input['head_pose_angles']
         input_left_eye = self._input['left_eye_image']
