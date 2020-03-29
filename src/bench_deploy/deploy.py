@@ -77,11 +77,11 @@ def parse_machine_list(path_to_config):
 def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder):
     executor = remote_executor(os_type = 'Linux')
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
-    joined_pass = os.path.join(project_folder, '/src/bench_deploy')
+    joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
-    executor.execute_command_and_wait('cd {} && python3 client.py \
-        -s {} -l {} -p {} -i {} -d {}'.format(project_folder, server_ip,
-        server_login, server_psw, image_path, download_dir))
+    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} > log.txt'.format(
+        project_folder, server_ip, server_login, server_psw, image_path, download_dir))
+    executor.execute_command_and_wait(command)
 
 def main():
     # Enable log formatting

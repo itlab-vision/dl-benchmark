@@ -2,17 +2,18 @@
 import paramiko
 import os
 import sys
+import logging as log
 
 class remote_executor:
     def __init__(self, os_type):
         self.my_process_list = []
-        self.my_os_type = os_type
+        self.my_os_type = os_type.lower()
 
     def create_connection(self, machine_ip, login, password):
         new_connection = None
-        if self.my_os_type.lower() == 'linux':
+        if self.my_os_type == 'linux':
             new_connection = self.__create_linux_connection(machine_ip, login, password)
-        elif self.my_os_type.lower() == 'windows':
+        elif self.my_os_type == 'windows':
             new_connection = self.__create_windows_connection(machine_ip, login, password)
 
         self.my_active_connection = new_connection

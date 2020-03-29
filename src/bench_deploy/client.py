@@ -44,7 +44,7 @@ def main():
         args.image_path, args.download_dir, file_path)
 
     os.system('docker load --input {}'.format(file_path))
-    os.system('docker run --privileged -it {}'.format(image_name.split('.')[0]))
+    os.system('docker run --privileged -d -t {}'.format(image_name.split('.')[0]))
 
 
 if __name__ == '__main__':
