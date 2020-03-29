@@ -140,6 +140,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return instance_segmenatation_io(args, transformer)
         elif task == 'single-image-super-resolution':
             return single_image_super_resolution_io(args, transformer)
+        elif task == 'human-pose-estimation':
+            return human_pose_estimation_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -674,3 +676,59 @@ class single_image_super_resolution_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class human_pose_estimation_io(io_adapter):
+    def __init__(self, args, transformer):
+        super().__init__(args, transformer)
+
+
+    def process_output(self, model, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        edges = [
+            (1, 8),
+            (8, 9),
+            (9, 10),
+            (1, 11),
+            (11, 12),
+            (12, 13),
+            (1, 2),
+            (2, 3),
+            (3, 4),
+            #(2, 16), connect right ear and right shoulder
+            (1, 5),
+            (5, 6),
+            (6, 7),
+            #(5, 17), connect left ear and left shoulder
+            (0, 1),
+            (0, 14),
+            (0, 15),
+            (15, 17),
+            (14, 16),
+        ]
+        frame = self._input['data'][0].transpose((1, 2, 0))
+        frameHeight = frame.shape[0]
+        frameWidth = frame.shape[1]
+        keypoints = result['Mconv7_stage2_L2'][0].transpose(1, 2, 0)
+        H = keypoints.shape[0]
+        W = keypoints.shape[1]
+        points = {}
+        for i in range(len(keypoints)):
+            for j in range(len(keypoints[i])):
+                keypoint = keypoints[i][j].argmax()
+                if not (keypoint == 18):
+                    x = int(j * frameWidth/W)
+                    y = int(i * frameHeight/H)
+                    points[keypoint] = (x, y)
+        for edge in edges:
+            start_point = points.get(edge[0])
+            end_point = points.get(edge[1])
+            if not (start_point == None) and not (end_point == None):
+                frame = cv2.line(frame, start_point, end_point, (255, 0, 0), 2, cv2.LINE_AA, 0)
+        for point in points.values():
+            frame = cv2.circle(frame, point, 2, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
+        out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation.png')
+        cv2.imwrite(out_img, frame)
+        log.info('Result image was saved to {}'.format(out_img))
