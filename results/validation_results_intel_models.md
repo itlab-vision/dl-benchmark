@@ -433,7 +433,7 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 
 ### Тестовое изображение 17
 
-Источник: набор данных [BKHD][...] 
+Источник: набор данных [BKHD][bkhd] 
 
 Разрешение: 60 x 60
 
@@ -448,7 +448,7 @@ head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"
 
 ### Тестовое изображение 18
 
-Источник: набор данных [BKHD][...] 
+Источник: набор данных [BKHD][bkhd] 
 
 Разрешение: 60 x 60
 
@@ -483,4 +483,5 @@ license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;
 [internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
 [internet_person_asl]:http://rasfokus.ru/photos/topweek/photo3138574.html
 [internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
+[bkhd]:https://www.kaggle.com/kmader/biwi-kinect-head-pose-database
 [github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
