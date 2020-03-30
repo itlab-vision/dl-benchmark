@@ -53,12 +53,13 @@ def create_ie_core(path_to_extension, device, nthreads, nstreams, mode, log):
     return ie
 
 
-def get_input_shape(model):
-    layers_shape = dict()
-    for input_layer in model.inputs:
+def get_input_shape(io_model_wrapper, model):
+    layer_shapes = dict()
+    layer_names = io_model_wrapper.get_input_layer_names(model)
+    for input_layer in layer_names:
         shape = ''
-        for dem in model.inputs[input_layer].shape:
+        for dem in io_model_wrapper.get_input_layer_shape(model, input_layer):
             shape += '{0}x'.format(dem)
         shape = shape[:-1]
-        layers_shape.update({input_layer : shape})
-    return layers_shape
+        layer_shapes.update({input_layer : shape})
+    return layer_shapes

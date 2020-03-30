@@ -6,13 +6,14 @@ from transformer import transformer
 
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args, transformer):
+    def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
         self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
+        self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
 
@@ -73,17 +74,17 @@ class io_adapter(metaclass = abc.ABCMeta):
                 else:
                     value = value.split(',')
                     value = self.__create_list_images(value)
-                    shape = model.inputs[key].shape
+                    shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
         else:
-            input_blob = next(iter(model.inputs))
+            input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
             else:
                 value = self.__create_list_images(input)
-                shape = model.inputs[input_blob].shape
+                shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value = self.__convert_images(shape, value)
             self._input.update({input_blob : value})
         return self._input
@@ -103,54 +104,64 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         pass
 
 
     @staticmethod
-    def get_io_adapter(args, transformer):
+    def get_io_adapter(args, io_model_wrapper, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args, transformer)
+            return feedforward_io(args, io_model_wrapper, transformer)
         elif task == 'classification':
-            return classification_io(args, transformer)
+            return classification_io(args, io_model_wrapper, transformer)
         elif task == 'detection':
-            return detection_io(args, transformer)
+            return detection_io(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args, transformer)
+            return segmenatation_io(args, io_model_wrapper, transformer)
+        elif task == 'adas-segmentation':
+            return adas_segmenatation_io(args, io_model_wrapper, transformer)
+        elif task == 'road-segmentation':
+            return road_segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args, transformer)
+            return recognition_face_io(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args, transformer)
+            return person_attributes_io(args, io_model_wrapper, transformer)
         elif task == 'age-gender':
-            return age_gender_io(args, transformer)
+            return age_gender_io(args, io_model_wrapper, transformer)
         elif task == 'gaze':
-            return gaze_io(args, transformer)
+            return gaze_io(args, io_model_wrapper, transformer)
         elif task == 'head-pose':
-            return head_pose_io(args, transformer)
+            return head_pose_io(args, io_model_wrapper, transformer)
         elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, transformer)
+            return person_detection_asl_io(args, io_model_wrapper, transformer)
+        elif task == 'license-plate':
+            return license_plate_io(args, io_model_wrapper, transformer)
+        elif task == 'instance-segmentation':
+            return instance_segmenatation_io(args, io_model_wrapper, transformer)
+        elif task == 'single-image-super-resolution':
+            return single_image_super_resolution_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         return
 
 
 class classification_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
@@ -167,16 +178,16 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result_layer_name = next(iter(model.outputs))
+        input_layer_name = next(iter(result))
+        result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
@@ -210,15 +221,15 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[1:]
@@ -239,17 +250,79 @@ class segmenatation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class recognition_face_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+class adas_segmenatation_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[1:]
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        for batch, data in enumerate(result):
+            data = np.squeeze(data)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            for i in range(h):
+                for j in range(w):
+                    pixel_class = int(data[i, j])
+                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class road_segmenatation_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[1:]
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        for batch, data in enumerate(result):
+            data = data.transpose((1, 2, 0))
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            for i in range(h):
+                for j in range(w):
+                    pixel_class = np.argmax(data[i][j])
+                    classes_map[i, j, :] = classes_color_map[pixel_class]
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class recognition_face_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
@@ -277,17 +350,17 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
-        layer_iter = iter(model.outputs)
+        layer_iter = iter(result)
         result_attributes = result[next(layer_iter)]
         result_top = result[next(layer_iter)]
         result_bottom = result[next(layer_iter)]
@@ -328,15 +401,15 @@ class person_attributes_io(io_adapter):
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        layer_iter = iter(model.outputs)
+        layer_iter = iter(result)
         result_age = result[next(layer_iter)]
         result_gender = result[next(layer_iter)]
         b = result_age.shape[0]
@@ -348,15 +421,15 @@ class age_gender_io(io_adapter):
 
 
 class gaze_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result = result[iter(model.outputs)]
+        result = result[next(iter(result))]
         b = result.shape[0]
         input_angles = self._input['head_pose_angles']
         input_left_eye = self._input['left_eye_image']
@@ -392,15 +465,15 @@ class gaze_io(io_adapter):
 
 
 class head_pose_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         result_pitch = result['angle_p_fc']
         result_roll = result['angle_r_fc']
@@ -459,15 +532,15 @@ class head_pose_io(io_adapter):
 
 
 class person_detection_asl_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         result = result['17701/Split.0']
         _, c, h, w = input.shape
@@ -490,3 +563,115 @@ class person_detection_asl_io(io_adapter):
         cv2.imwrite(out_img, images[0])
         log.info('Result image was saved to {}'.format(out_img))
 
+
+class license_plate_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        slice_input['data'] = self._input['data'][(iteration * self._batch_size)
+                % len(self._input['data']) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input['data'])) + 1:]
+        slice_input['seq_ind'] = self._input['seq_ind'][(iteration * 88 * self._batch_size)
+                % len(self._input['seq_ind']) : (((iteration + 1) * 88 * self._batch_size - 1)
+                % len(self._input['seq_ind'])) + 1:]
+        return slice_input
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[next(iter(result))]
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+        lexis = []
+        with open(self._labels, 'r') as f:
+            for line in f:
+                lexis.append([str(x) for x in line.split()])
+        for lex in result:
+            s = ''
+            for j in range(lex.shape[0]):
+                if (lex[j] == -1):
+                    break
+                s = s + str(lexis[int(lex[j])][1])
+            log.info('Plate: {}'.format(s))
+
+
+class instance_segmenatation_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+        labels_map = []
+        labels_map.append('background')
+        with open(self._labels, 'r') as f:
+            for x in f:
+                labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+        image = self._input['im_data'][0].transpose((1, 2, 0))
+        boxes = result['boxes']
+        scores = result['scores']
+        classes = result['classes'].astype(np.uint32)
+        masks = result['raw_masks']
+        labels_on_image = []
+        for i in range(len(classes)):
+            if (scores[i] > self._threshold):
+                object_width = boxes[i][2] - boxes[i][0]
+                object_height = boxes[i][3] - boxes[i][1]
+                mask = masks[i][classes[i]]
+                label_on_image_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
+                label_on_image = '<' + labels_map[classes[i]] + '>'
+                labels_on_image.append((label_on_image, label_on_image_point)) 
+                for j in range(len(mask)):
+                    for k in range(len(mask[j])):
+                        if (mask[j][k] > self._threshold):
+                            dh = int(object_height / len(mask))
+                            dw = int(object_width / len(mask[j]))
+                            x = int(boxes[i][0] + k * dw)
+                            y = int(boxes[i][1] + j * dh)
+                            for c in range(dh):
+                                for t in range(dw):
+                                    image[y + c][x + t] += classes_color_map[classes[i]]
+        for l in range(len(labels_on_image)):
+            image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+        out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
+
+
+class single_image_super_resolution_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        c = 3
+        h, w = result.shape[2:]
+        for batch, data in enumerate(result):
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            colors = data * 255
+            np.clip(colors, 0., 255.)
+            classes_map = colors.transpose((1, 2, 0))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
+            cv2.imwrite(out_img, classes_map)
+            log.info('Result image was saved to {}'.format(out_img))
