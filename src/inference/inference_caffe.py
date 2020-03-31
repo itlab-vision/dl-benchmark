@@ -1,5 +1,4 @@
 import sys
-import os
 import argparse
 import caffe
 import utils
@@ -25,9 +24,9 @@ def build_argparser():
         default = None, type = str, dest = 'labels')
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',
         default = 10, type = int, dest = 'number_top')
-    parser.add_argument('-t', '--task', help = 'Output processing method: \
-        1.classification 2.detection 3.segmentation. \
+    parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
+        choices = ['classification', 'detection', 'segmentation'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
@@ -40,24 +39,21 @@ def build_argparser():
     parser.add_argument('--channel_swap', help = 'Parameter channel swap',
         default = (2, 1, 0), type = tuple, dest = 'channel_swap')
     parser.add_argument('--raw_scale', help = 'Parameter raw scale',
-        default = 1.0, type = float, dest = 'raw_scale')
+        default = 1, type = int, dest = 'raw_scale')
     parser.add_argument('--mean', help = 'Parameter mean',
         default = (0, 0, 0), type = tuple, dest = 'mean')
     return parser
 
 
-def input_reshape(net, batch_size):
-    if batch_size > 1:
-        for layer_input in net.inputs:
-            _, c, h, w = net.blobs[layer_input].data.shape
-            net.blobs[layer_input].reshape(batch_size, c, h, w)
-        net.reshape()
+def network_input_reshape(net, batch_size):
+    for layer_input in net.inputs:
+        _, c, h, w = net.blobs[layer_input].data.shape
+        net.blobs[layer_input].reshape(batch_size, c, h, w)
+    net.reshape()
     return net
 
 
 def load_network(caffemodel, prototxt, batch_size):
-    log.info('Loading network files:\n\t {0}\n\t {1}'.format(
-            prototxt, caffemodel))
     caffe.set_mode_cpu()
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net
@@ -118,14 +114,14 @@ def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
     args = build_argparser().parse_args()
-    
     try:
         model_wrapper = intelcaffe_io_model_wrapper()
         data_transformer = intelcaffe_transformer(create_dict_for_transformer(args))
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
-        log.info('Load network')
+        log.info('Loading network files:\n\t {0}\n\t {1}'.format(
+            args.model_prototxt, args.model_caffemodel))
         net = load_network(args.model_caffemodel, args.model_prototxt, args.batch_size)
-        net = input_reshape(net, args.batch_size)
+        net = network_input_reshape(net, args.batch_size)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
@@ -133,8 +129,7 @@ def main():
         io.prepare_input(net, args.input)
         log.info('Starting inference ({} iterations)'.
             format(args.number_iter))
-        result, inference_time = inference_caffe(net, 
-            args.number_iter, io.get_slice_input)       
+        result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)       
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
             io.process_output(result, log)   

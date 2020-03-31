@@ -10,14 +10,25 @@ class intelcaffe_transformer(transformer):
         self._converting = converting
 
 
-    def transform(self, image):
-        img = image.astype(np.float32, copy = False)
+    def __set_channel_swap(self, image):
         if 'channel_swap' in self._converting:
-            img = img[self._converting['channel_swap'], :, :]
+            image = image[self._converting['channel_swap'], :, :]
+    
+
+    def __set_raw_scale(self, image):
         if 'raw_scale' in self._converting:
-            img *= self._converting['raw_scale']
+            image *= self._converting['raw_scale']
+
+    
+    def __set_mean(self, image):
         if 'mean' in self._converting:
-            img[0] -= self._converting['mean'][0]
-            img[1] -= self._converting['mean'][1]
-            img[2] -= self._converting['mean'][2]
-        return img        
+            image[0] -= self._converting['mean'][0]
+            image[1] -= self._converting['mean'][1]
+            image[2] -= self._converting['mean'][2]
+
+
+    def transform(self, image):
+        self.__set_channel_swap(image)
+        self.__set_raw_scale(image)
+        self.__set_mean(image)
+        return image        
