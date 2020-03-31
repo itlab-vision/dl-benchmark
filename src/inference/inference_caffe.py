@@ -53,7 +53,7 @@ def network_input_reshape(net, batch_size):
     return net
 
 
-def load_network(caffemodel, prototxt, batch_size):
+def load_network(caffemodel, prototxt):
     caffe.set_mode_cpu()
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net
@@ -120,7 +120,7 @@ def main():
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         log.info('Loading network files:\n\t {0}\n\t {1}'.format(
             args.model_prototxt, args.model_caffemodel))
-        net = load_network(args.model_caffemodel, args.model_prototxt, args.batch_size)
+        net = load_network(args.model_caffemodel, args.model_prototxt)
         net = network_input_reshape(net, args.batch_size)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
