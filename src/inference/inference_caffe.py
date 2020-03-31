@@ -4,11 +4,13 @@ import argparse
 import numpy as np
 from PIL import Image
 import caffe
-import inference_output as io
+import utils
 import logging as log
 import postprocessing_data as pp
 from time import time
-from utils import create_list_images
+from io_adapter import io_adapter
+from transformer import intelcaffe_transformer
+from io_model_wrapper import intelcaffe_io_model_wrapper
 
 def build_argparser():
     parser = argparse.ArgumentParser()
@@ -34,44 +36,59 @@ def build_argparser():
         for detections filtering', default = 0.5, type = float, dest = 'threshold')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
-    #parser.add_argument('-mi', '--mininfer', help = 'Min inference time of single pass',
-    #    type = float, default = 0.0, dest = 'mininfer')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
         default = False, type = bool, dest = 'raw_output')
+    parser.add_argument('--channel_swap', help = 'Parameter channel swap',
+        default = (2, 1, 0), type = tuple, dest = 'channel_swap')
+    parser.add_argument('--raw_scale', help = 'Parameter raw scale',
+        default = 1.0, type = float, dest = 'raw_scale')
+    parser.add_argument('--mean', help = 'Parameter mean',
+        default = (0, 0, 0), type = tuple, dest = 'mean')
     return parser
 
 
 def input_reshape(net, batch_size):
-    channels = net.blobs['data'].data.shape[1]
-    height = net.blobs['data'].data.shape[2]
-    width = net.blobs['data'].data.shape[3]
-    net.blobs['data'].reshape(batch_size, channels, height, width)
-    net.reshape()
-
+    if batch_size > 1:
+        for layer_input in net.inputs:
+            _, c, h, w = net.blobs[layer_input].data.shape
+            net.blobs[layer_input].reshape(batch_size, c, h, w)
+        net.reshape()
     return net
 
 
 def load_network(caffemodel, prototxt, batch_size):
+    log.info('Loading network files:\n\t {0}\n\t {1}'.format(
+            prototxt, caffemodel))
     caffe.set_mode_cpu()
-    # загружаем сеть
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
-    # Меняем параметры местами, чтобы корректно обработать пришедшую картинку
-    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-    transformer.set_transpose('data', (2,0,1))
-    transformer.set_channel_swap('data', (2,1,0))
-    transformer.set_raw_scale('data', 255.0)
-
-    if batch_size > 1:
-        net = input_reshape(net, batch_size)
-
-    return net, transformer
+    return net
 
 
-def load_images_to_network(input, net, transformer):
-    image_paths = create_list_images(input)
-    for i in range(len(image_paths)):
-        im = np.array(Image.open(image_paths[i]))
-        net.blobs['data'].data[i,:,:,:] = transformer.preprocess('data', im)
+def load_images_to_network(net, input):
+    for layer in input:
+        net.blobs[layer].data[:,:,:,:] = input[layer] # сюда будет приходить уже обработанный адаптером тензор
+
+
+def inference_caffe(net, number_iter, get_slice):
+    result = None
+    time_infer = []
+    slice_input = None
+    if number_iter == 1:
+        slice_input = get_slice(0)
+        load_images_to_network(net, slice_input)
+        t0 = time()
+        result = net.forward()
+        t1 = time()
+        time_infer.append(t1 - t0)
+    else:
+        for i in range(number_iter):
+            slice_input = get_slice(i)
+            load_images_to_network(net, slice_input)
+            t0 = time()
+            net.forward()
+            t1 = time()
+            time_infer.append(t1 - t0)
+    return result, time_infer
 
 
 def process_result(batch_size, inference_time):
@@ -92,23 +109,10 @@ def raw_result_output(average_time, fps, latency):
     print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
 
 
-def inference_caffe(batch_size, net, number_iter, input, transformer):
-    time_infer = []
-    result = None
-    if number_iter == 1:
-        load_images_to_network(input, net, transformer)
-        t0 = time()
-        result = net.forward()
-        t1 = time()
-        time_infer.append(t1 - t0)
-    else:
-        for i in range(number_iter):
-            load_images_to_network(input, net, transformer)
-            t0 = time()
-            net.forward()
-            t1 = time()
-            time_infer.append(t1 - t0)
-    return result, time_infer
+def create_dict_for_transformer(args):
+    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale,
+                    'mean' : args.mean}
+    return dictionary
 
 
 def main():
@@ -117,25 +121,27 @@ def main():
     args = build_argparser().parse_args()
     
     try:
-        net, transformer = load_network(args.model_caffemodel, 
-            args.model_prototxt, args.batch_size)
-
-        # Прямой проход по сети
-        result, inference_time = inference_caffe(args.batch_size, 
-            net, args.number_iter, args.input, transformer)
-
-        # Результаты
+        model_wrapper = intelcaffe_io_model_wrapper()
+        data_transformer = intelcaffe_transformer(create_dict_for_transformer(args))
+        io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
+        log.info('Load network')
+        net = load_network(args.model_caffemodel, args.model_prototxt, args.batch_size)
+        net = input_reshape(net, args.batch_size)
+        input_shapes = utils.get_input_shape(model_wrapper, net)
+        for layer in input_shapes:
+            log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
+        log.info('Prepare input data')
+        io.prepare_input(net, args.input)
+        log.info('Starting inference ({} iterations)'.
+            format(args.number_iter))
+        result, inference_time = inference_caffe(net, 
+            args.number_iter, io.get_slice_input)       
         time, latency, fps = process_result(args.batch_size, inference_time)
-
-        # Вывод
-        input = create_list_images(args.input)
         if not args.raw_output:
-            io.infer_output(net, result, input, args.labels, args.number_top,
-                args.threshold, args.color_map, log, args.task)
+            io.process_output(result, log)   
             result_output(time, fps, latency, log)
         else:
-            raw_result_output(time, fps, latency)
-        
+            raw_result_output(time, fps, latency)  
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
@@ -143,4 +149,3 @@ def main():
 
 if __name__ == '__main__':
    sys.exit(main() or 0)
-
