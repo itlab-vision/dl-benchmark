@@ -4,6 +4,7 @@
         <IP></IP>
         <Login></Login>
         <Password></Password>
+        <OS></OS>
         <DownloadFolder></DownloadFolder>
     </Computer>
 </Computers>
