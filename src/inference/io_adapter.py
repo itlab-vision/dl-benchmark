@@ -141,6 +141,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return instance_segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
             return single_image_super_resolution_io(args, io_model_wrapper, transformer)
+        elif task == 'sphereface':
+            return sphereface_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -675,3 +677,20 @@ class single_image_super_resolution_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class sphereface_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[next(iter(result))]
+        file_name = os.path.join(os.path.dirname(__file__), 'sphereface_out.csv')
+        with open(file_name, 'w+'):
+            np.savetxt('sphereface_out.csv', result, fmt = '%1.2f', delimiter = ';', 
+                        header = '{};{}'.format(result.shape[0], result.shape[1]), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
