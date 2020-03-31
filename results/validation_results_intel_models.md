@@ -227,35 +227,35 @@ FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (
 ----------------------|-----------------------------------------|-----------------------------------------|
 facial-landmarks-35-adas-0002 | Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>| Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>|
 
-### Тестовое изображение 15
+### Тестовое изображение 6
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 199 x 436
+Разрешение: 80 x 160
 
 <div style='float: center'>
-<img width="100" height="225"src="images\person-attributes-recognition-crossroad-01.png">
+<img width="80" height="160" src="images\person-attributes-recognition-crossroad-01.png">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_1.bmp"> | <img src="recognition\out_person_attributes_async_1.bmp"> |
 
-### Тестовое изображение 16
+### Тестовое изображение 7
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 218 x 510
+Разрешение: 80 x 160
 
 <div style='float: center'>
-<img width="100" height="225"src="images\person-attributes-recognition-crossroad-02.png">
+<img width="80" height="160" src="images\person-attributes-recognition-crossroad-02.png">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_2.bmp"> | <img src="recognition\out_person_attributes_async_2.bmp"> |
 
-### Тестовое изображение 17
+### Тестовое изображение 8
 
 Источник: набор данных [BKHD][bkhd] 
 
@@ -270,7 +270,7 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 ----------------------|-----------------------------------------|-----------------------------------------|
 head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"> | <img src="recognition\out_head_pose_1_async.bmp"> |
 
-### Тестовое изображение 18
+### Тестовое изображение 9
 
 Источник: набор данных [BKHD][bkhd] 
 
@@ -286,14 +286,14 @@ head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"
 ----------------------|-----------------------------------------|-----------------------------------------|
 gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img src="recognition\out_gaze_1_async.bmp"> |
 
-### Тестовое изображение 19
+### Тестовое изображение 10
 
 Источник: набор данных [GitHub][github_license_plate] 
 
-Разрешение: 314 x 106
+Разрешение: 24 x 94
 
 <div style='float: center'>
-<img height = '100' width = '200' src="images\license-plate-recognition-barrier.JPG">
+<img height = '24' width = '94' src="images\license-plate-recognition-barrier.JPG">
 </div>
 
    Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
