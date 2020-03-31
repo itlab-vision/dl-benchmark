@@ -157,7 +157,7 @@ age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 
 Источник: набор данных [GitHub][github_age_gender] 
 
-Разрешение: 64 x 77
+Разрешение: 62 x 62
 
 <div style='float: center'>
 <img src="images\age-gender-recognition-retail-0002.png">
@@ -171,7 +171,7 @@ age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 
 Источник: набор данных [GitHub][github_age_gender] 
 
-Разрешение: 71 x 77
+Разрешение: 62 x 62
 
 <div style='float: center'>
 <img src="images\age-gender-recognition-retail-0003.png">
