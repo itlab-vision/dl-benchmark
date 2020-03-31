@@ -476,6 +476,22 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 ----------------------|-----------------------------------------|-----------------------------------------|
 license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;FA9512 |
 
+## Результаты распознования лиц
+
+### Тестовое изображение 1
+
+Источник: набор данных [VGGFace2][vgg_face2]  
+
+Разрешение: 96 x 112
+
+<div style='float: center'>
+<img src="images\sphereface.jpg">
+</div>
+
+   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+----------------------|-----------------------------------------|-----------------------------------------|
+Sphereface | TODO | TODO |
+
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
