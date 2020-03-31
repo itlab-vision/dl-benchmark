@@ -1,8 +1,6 @@
 import sys
 import os
 import argparse
-import numpy as np
-from PIL import Image
 import caffe
 import utils
 import logging as log
@@ -11,6 +9,7 @@ from time import time
 from io_adapter import io_adapter
 from transformer import intelcaffe_transformer
 from io_model_wrapper import intelcaffe_io_model_wrapper
+
 
 def build_argparser():
     parser = argparse.ArgumentParser()
@@ -66,7 +65,7 @@ def load_network(caffemodel, prototxt, batch_size):
 
 def load_images_to_network(net, input):
     for layer in input:
-        net.blobs[layer].data[:,:,:,:] = input[layer] # сюда будет приходить уже обработанный адаптером тензор
+        net.blobs[layer].data[:,:,:,:] = input[layer]
 
 
 def inference_caffe(net, number_iter, get_slice):
