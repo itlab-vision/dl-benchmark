@@ -207,10 +207,10 @@ landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (17, 18),<b
 
 Источник: набор данных [Интернет][internet_kerzhakov]
 
-Разрешение: 353 x 366
+Разрешение: 60 x 60
 
 <div style='float: center'>
-<img width="200" height="200" src="images\facial-landmarks-35-adas-1.png">
+<img src="images\facial-landmarks-35-adas.png">
 <img src="recognition\out_recognition_face_facial_landmarks_1.bmp">
 </div>
 
