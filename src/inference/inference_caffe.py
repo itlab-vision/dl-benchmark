@@ -53,7 +53,7 @@ def network_input_reshape(net, batch_size):
     return net
 
 
-def load_network(caffemodel, prototxt, batch_size):
+def load_network(caffemodel, prototxt):
     caffe.set_mode_cpu()
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net
