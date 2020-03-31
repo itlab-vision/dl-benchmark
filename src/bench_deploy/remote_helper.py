@@ -1,16 +1,16 @@
 import abc
+import paramiko
+import wmi
 
 class remote_helper(metaclass = abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
 
-     @staticmethod
+    @staticmethod
     def get_remote_helper(os_type, log):
-        if self.my_os_type == 'linux':
-            import paramiko
+        if os_type == 'linux':
             return linux_remote_helper(log)
-        elif self.my_os_type == 'windows':
-            import wmi
+        elif os_type == 'windows':
             return windows_remote_hepler(log)
 
     @abc.abstractmethod
@@ -38,7 +38,7 @@ class linux_remote_helper(remote_helper):
         return new_connection
 
     def execute(self, con, command):
-        transport = self.my_active_connection.get_transport()
+        transport = con.get_transport()
         channel = transport.open_session()
 
         try:

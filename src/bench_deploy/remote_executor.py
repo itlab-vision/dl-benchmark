@@ -3,7 +3,7 @@ from remote_helper import remote_helper
 class remote_executor:
     def __init__(self, os_type, log):
         self.my_process_list = []
-        self.my_remote_helper = remote_helper().get_remote_helper(os_type.lower(), log)
+        self.my_remote_helper = remote_helper.get_remote_helper(os_type.lower(), log)
 
     def create_connection(self, machine_ip, login, password):
         self.my_active_connection = self.my_remote_helper.connect(machine_ip, login, password)

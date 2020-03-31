@@ -75,8 +75,8 @@ def parse_machine_list(path_to_config):
 
     return machine_list
 
-def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder):
-    executor = remote_executor(os_type = machine['os_type'])
+def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder, log):
+    executor = remote_executor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
     joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
@@ -107,9 +107,9 @@ def main():
     log.info('Start executing clients')
     image_ftp_path = os.path.join(args.upload_dir, os.path.split(args.image_path)[1])
     for machine in machine_list:
-        client_list.apend(client_execution(machine, args.server_ip,
+        client_list.append(client_execution(machine, args.server_ip,
             args.server_login, args.server_psw, image_ftp_path,
-            machine['download_folder'], args.project_folder))
+            machine['download_folder'], args.project_folder, log))
 
     # Fourth stage wait all clients
     log.info('Waiting clients')

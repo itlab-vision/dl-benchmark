@@ -2,6 +2,7 @@ import os
 import argparse
 import ftplib
 import sys
+import logging as log
 
 def build_parser():
     parser = argparse.ArgumentParser()
