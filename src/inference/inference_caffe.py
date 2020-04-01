@@ -105,8 +105,7 @@ def raw_result_output(average_time, fps, latency):
 
 
 def create_dict_for_transformer(args):
-    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale,
-                    'mean' : args.mean}
+    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale, 'mean' : args.mean}
     return dictionary
 
 
