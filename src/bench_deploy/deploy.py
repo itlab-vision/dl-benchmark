@@ -16,19 +16,19 @@ def build_parser():
     parser.add_argument('-p', '--server_psw', type = str,
         help = 'Password to the FTP server.', required = True)
     parser.add_argument('-i', '--image_path', required = True, type = str,
-        help = 'Path to container image on host machine.')
+        help = 'Path to the container image on the host machine.')
     parser.add_argument('-d', '--upload_dir', required = True, type = str,
-        help = 'Path to directory on FTP server where to need copy container image.')
+        help = 'Path to the directory on the FTP server to copy the container image.')
     parser.add_argument('--machine_list',  required = True, type = str,
-        help = 'Path to config file in .xml format.')
+        help = 'Path to the config file in .xml format.')
     parser.add_argument('--project_folder',  required = True, type = str,
         help = 'Link to github project.')
     return parser.parse_args()
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log):
-    log.info('Trying to connect to FTP server')
+    log.info('Trying to connect to the FTP server')
     ftp_connection = ftplib.FTP(server_ip, server_login, server_psw)
-    log.info('Created FTP connection')
+    log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
         log.info('Change current {} directory to target : {}'.format(ftp_connection.pwd(), upload_dir))
@@ -95,7 +95,7 @@ def main():
     if not os.path.isfile(args.image_path):
         raise ValueError('Wrong path to container image!')
 
-    # First stage send container to FTP server
+    # First stage send container to the FTP server
     copy_image_to_server(args.server_ip, args.server_login, args.server_psw,
         args.upload_dir, args.image_path, log)
 
@@ -115,8 +115,6 @@ def main():
     log.info('Waiting clients')
     for client in client_list:
         client.wait_all()
-
-    log.info('Done')
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

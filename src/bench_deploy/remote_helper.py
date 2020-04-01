@@ -45,8 +45,7 @@ class linux_remote_helper(remote_helper):
             channel.exec_command(command)
             self.my_log.info('Process started successfully')
         except paramiko.ssh_exception.SSHException:
-            channel = None
-            self.my_log.info('Problem creating process')
+            raise RuntimeError('Failed to create process!')
 
         return channel
 
@@ -61,7 +60,7 @@ class windows_remote_hepler(remote_helper):
 
     def connect(self, machine_ip, login, password):
         new_connection = wmi.WMI(machine_ip, user = login,
-        password = password)
+            password = password)
 
         return new_connection
 
@@ -76,7 +75,7 @@ class windows_remote_hepler(remote_helper):
             con.watch_for(notification_type = 'Deletion',
                 wmi_class = 'Win32_Process', ProcessId = process_id)
         else:
-            self.my_log.info('Problem creating process {}'.format(result))
+            raise RuntimeError('Failed to create process!')
 
         return watcher
 
