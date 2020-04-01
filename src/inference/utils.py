@@ -55,20 +55,16 @@ def set_config(iecore, devices, nthreads, nstreams, mode):
         if device == 'CPU':
             if nthreads:
                 iecore.set_config({'CPU_THREADS_NUM': str(nthreads)}, 'CPU')
-
             if 'MULTI' in devices and 'GPU' in devices:
                 iecore.set_config({'CPU_BIND_THREAD': 'NO'}, 'CPU')
-
             if mode == 'async':
                 cpu_throughput = {'CPU_THROUGHPUT_STREAMS': 'CPU_THROUGHPUT_AUTO'}
                 if device in streams_dict.keys() and streams_dict[devices]:
                     cpu_throughput['CPU_THROUGHPUT_STREAMS'] = streams_dict['CPU']
                 iecore.set_config(cpu_throughput, 'CPU')
-
         if device == 'GPU':
             if 'MULTI' in devices and 'СPU' in devices:
                 iecore.set_config({'CLDNN_PLUGIN_THROTTLE': '1'}, 'GPU')
-
             if mode == 'async':
                 gpu_throughput = {'GPU_THROUGHPUT_STREAMS': 'GPU_THROUGHPUT_AUTO'}
                 if device in streams_dict.keys() and streams_dict[devices]:
