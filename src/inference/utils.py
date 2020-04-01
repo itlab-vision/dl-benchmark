@@ -14,13 +14,13 @@ def create_network(model_xml, model_bin, log):
     return network
 
 
-def add_extension(iecore, path_to_extension, device, log):
+def add_extension(iecore, path_to_extension, path_to_cldnn_config, device, log):
     if path_to_extension:
-        if device == 'GPU':
-            iecore.set_config({'CONFIG_FILE': path_to_extension}, device)
+        if 'GPU' in device:
+            iecore.set_config({'CONFIG_FILE': path_to_cldnn_config}, 'GPU')
             log.info('GPU extensions is loaded {}'.format(path_to_extension))
-        if device == 'CPU' or device == 'MYRIAD':
-            iecore.add_extension(path_to_extension, device)
+        if 'CPU' in device or 'MYRIAD' in device:
+            iecore.add_extension(path_to_extension, 'CPU')
             log.info('CPU extensions is loaded {}'.format(path_to_extension))
 
 
@@ -45,10 +45,10 @@ def set_config(iecore, device, nthreads, nstreams, mode):
     iecore.set_config(config, device)
 
 
-def create_ie_core(path_to_extension, device, nthreads, nstreams, mode, log):
+def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams, mode, log):
     log.info('Inference Engine initialization')
     ie = IECore()
-    add_extension(ie, path_to_extension, device, log)
+    add_extension(ie, path_to_extension, path_to_cldnn_config, device, log)
     set_config(ie, device, nthreads, nstreams, mode)
     return ie
 

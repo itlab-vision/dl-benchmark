@@ -24,8 +24,11 @@ def build_argparser():
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int, dest = 'batch_size')
     parser.add_argument('-l', '--extension', 
-        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers OR Path to CLDNN config.',
+        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers',
         type = str, default = None, dest = 'extension')
+    parser.add_argument('-c', '--cldnn_config', 
+        help = 'Path to CLDNN config.',
+        type = str, default = None, dest = 'cldnn_config')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
@@ -101,7 +104,7 @@ def main():
         model_wrapper = openvino_io_model_wrapper()
         data_transformer = transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
-        iecore = utils.create_ie_core(args.extension, args.device,
+        iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
             args.nthreads, None, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
         input_shapes = utils.get_input_shape(model_wrapper, net)
