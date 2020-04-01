@@ -35,6 +35,9 @@ def build_parser():
         type = str, default = None, dest = 'cldnn_config')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
+        Support HETERO and MULTI plugins. \
+        Use HETERO:<Device1>,<Device2>,... for HETERO plugin. \
+        Use MULTI:<Device1>,<Device2>,... for MULTI plugin. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)', default = 'CPU', type = str, dest = 'device')
     parser.add_argument('-p', '--priority', help = 'Priority for \
@@ -47,9 +50,13 @@ def build_parser():
         default = 10, type = int, dest = 'number_top')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
-    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
-        (Max by default)', type = int, default = None, dest = 'nthreads')
-    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
+    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads \
+        to use for inference on the CPU. (Max by default)',
+        type = int, default = None, dest = 'nthreads')
+    parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams \
+        to use for inference on the CPU/GPU. \
+        For HETERO and MULTI use format <Device1>:<NStreams1>,<Device2>:<Nstreams2>... \
+        or just <nstreams>. Default value is determined automatically for a device', 
         type = str, default = None, dest = 'nstreams')
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
