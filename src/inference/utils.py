@@ -24,25 +24,58 @@ def add_extension(iecore, path_to_extension, path_to_cldnn_config, device, log):
             log.info('CPU extensions is loaded {}'.format(path_to_extension))
 
 
-def set_config(iecore, device, nthreads, nstreams, mode):
-    config = {}
-    if device == 'CPU':
-        if nthreads:
-            config.update({'CPU_THREADS_NUM': str(nthreads)})
-        if mode == 'async':
-            cpu_throughput = {'CPU_THROUGHPUT_STREAMS': 'CPU_THROUGHPUT_AUTO'}
-            if nstreams:
-                cpu_throughput['CPU_THROUGHPUT_STREAMS'] = str(nstreams)
-            config.update(cpu_throughput)
-    if device == 'GPU':
-        if mode == 'async':
-            gpu_throughput = {'GPU_THROUGHPUT_STREAMS': 'GPU_THROUGHPUT_AUTO'}
-            if nstreams:
-                gpu_throughput['GPU_THROUGHPUT_STREAMS'] = str(nstreams)
-            config.update(gpu_throughput)
-    if device == 'MYRIAD':
-        config.update({'LOG_LEVEL': 'LOG_INFO', 'VPU_LOG_LEVEL': 'LOG_WARNING'})
-    iecore.set_config(config, device)
+def parse_devices(device):
+    device_list = []
+    if ':' in device:
+        device_list = device.partition(':')[2].split(',')
+    else:
+        device_list.append(device)
+    return device_list
+
+
+def parse_value_per_device(device_list, values):
+    result = dict.fromkeys(device_list, None)
+    if values is None:
+        return result
+    if values.isdecimal():
+        for key in result:
+            result[key] = values
+        return result
+    for pair in values.split(','):
+        key, value = pair.split(':')
+        if key in device_list:
+            result[key] = value
+    return result
+
+
+def set_config(iecore, devices, nthreads, nstreams, mode):
+    device_list = parse_devices(devices)
+    streams_dict = parse_value_per_device(device_list, nstreams)
+    for device in device_list:
+        if device == 'CPU':
+            if nthreads:
+                iecore.set_config({'CPU_THREADS_NUM': str(nthreads)}, 'CPU')
+
+            if 'MULTI' in devices and 'GPU' in devices:
+                iecore.set_config({'CPU_BIND_THREAD': 'NO'}, 'CPU')
+
+            if mode == 'async':
+                cpu_throughput = {'CPU_THROUGHPUT_STREAMS': 'CPU_THROUGHPUT_AUTO'}
+                if device in streams_dict.keys() and streams_dict[devices]:
+                    cpu_throughput['CPU_THROUGHPUT_STREAMS'] = streams_dict['CPU']
+                iecore.set_config(cpu_throughput, 'CPU')
+
+        if device == 'GPU':
+            if 'MULTI' in devices and 'СPU' in devices:
+                iecore.set_config({'CLDNN_PLUGIN_THROTTLE': '1'}, 'GPU')
+
+            if mode == 'async':
+                gpu_throughput = {'GPU_THROUGHPUT_STREAMS': 'GPU_THROUGHPUT_AUTO'}
+                if device in streams_dict.keys() and streams_dict[devices]:
+                    gpu_throughput['GPU_THROUGHPUT_STREAMS'] = streams_dict['GPU']
+                iecore.set_config(gpu_throughput, 'GPU')
+        if device == 'MYRIAD':
+            iecore.set_config({'LOG_LEVEL': 'LOG_INFO', 'VPU_LOG_LEVEL': 'LOG_WARNING'}, 'MYRIAD')
 
 
 def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams, mode, log):

@@ -46,7 +46,7 @@ def build_parser():
     parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
         (Max by default)', type = int, default = None, dest = 'nthreads')
     parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
-        type = int, default = None, dest = 'nstreams')
+        type = str, default = None, dest = 'nstreams')
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
