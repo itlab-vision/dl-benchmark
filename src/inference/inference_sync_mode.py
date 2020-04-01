@@ -123,7 +123,7 @@ def main():
         io.prepare_input(net, args.input)
         log.info('Create executable network')
         config = {}
-        if args.priority:
+        if 'MULTI' in args.device and args.priority:
             config.update({'MULTI_DEVICE_PRIORITIES': args.priority})
         exec_net = iecore.load_network(network = net, device_name = args.device, config = config)
         log.info('Starting inference ({} iterations) on {}'.
