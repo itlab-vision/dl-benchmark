@@ -37,6 +37,10 @@ def build_parser():
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)', default = 'CPU', type = str, dest = 'device')
+    parser.add_argument('-p', '--priority', help = 'Priority for \
+        multi-device inference in descending order. \
+        Use format <Device1>,<Device2> First device has top priority',
+        default = None, type = str, dest = 'priority')
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str, dest = 'labels')
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',
@@ -134,8 +138,11 @@ def main():
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')
+        config = {}
+        if args.priority:
+            config.update({'MULTI_DEVICE_PRIORITIES': args.priority})
         exec_net = iecore.load_network(network = net, device_name = args.device,
-            num_requests = (args.requests or 0))
+            config = config, num_requests = (args.requests or 0))
         log.info('Starting inference ({} iterations) with {} requests on {}'.
             format(args.number_iter, len(exec_net.requests), args.device))
         result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)
