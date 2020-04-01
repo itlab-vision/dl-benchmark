@@ -59,7 +59,7 @@ def set_config(iecore, devices, nthreads, nstreams, mode):
                 iecore.set_config({'CPU_BIND_THREAD': 'NO'}, 'CPU')
             if mode == 'async':
                 cpu_throughput = {'CPU_THROUGHPUT_STREAMS': 'CPU_THROUGHPUT_AUTO'}
-                if device in streams_dict.keys() and streams_dict[devices]:
+                if device in streams_dict.keys() and streams_dict[device]:
                     cpu_throughput['CPU_THROUGHPUT_STREAMS'] = streams_dict['CPU']
                 iecore.set_config(cpu_throughput, 'CPU')
         if device == 'GPU':
@@ -67,7 +67,7 @@ def set_config(iecore, devices, nthreads, nstreams, mode):
                 iecore.set_config({'CLDNN_PLUGIN_THROTTLE': '1'}, 'GPU')
             if mode == 'async':
                 gpu_throughput = {'GPU_THROUGHPUT_STREAMS': 'GPU_THROUGHPUT_AUTO'}
-                if device in streams_dict.keys() and streams_dict[devices]:
+                if device in streams_dict.keys() and streams_dict[device]:
                     gpu_throughput['GPU_THROUGHPUT_STREAMS'] = streams_dict['GPU']
                 iecore.set_config(gpu_throughput, 'GPU')
         if device == 'MYRIAD':
