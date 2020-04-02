@@ -26,12 +26,12 @@ def build_parser():
     return parser.parse_args()
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log):
-    log.info('Trying to connect to the FTP server')
+    log.info('Deploy script is connecting to the FTP server')
     ftp_connection = ftplib.FTP(server_ip, server_login, server_psw)
     log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
-        log.info('Change current {} directory to target : {}'.format(ftp_connection.pwd(), upload_dir))
+        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), upload_dir))
         ftp_connection.cwd(upload_dir)
 
     return ftp_connection
@@ -42,7 +42,7 @@ def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_
     target_image = open(image_path, 'rb')
     image_name = os.path.split(image_path)[1]
 
-    log.info('Copy image to server')
+    log.info('Image copying to server')
     ftp_connection.storbinary('STOR {}'.format(image_name), target_image)
     log.info('Image copied to server')
 
@@ -104,7 +104,7 @@ def main():
 
     # Third stage connect to each machine start client script
     client_list = []
-    log.info('Start executing clients')
+    log.info('Clients start executing')
     image_ftp_path = os.path.join(args.upload_dir, os.path.split(args.image_path)[1])
     for machine in machine_list:
         client_list.append(client_execution(machine, args.server_ip,
@@ -112,7 +112,7 @@ def main():
             machine['download_folder'], args.project_folder, log))
 
     # Fourth stage wait all clients
-    log.info('Waiting clients')
+    log.info('Deploy script is waiting clients')
     for client in client_list:
         client.wait_all()
 

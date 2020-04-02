@@ -52,7 +52,7 @@ class linux_remote_helper(remote_helper):
     def wait(self, process):
         channel_id = process.get_id()
         process_status = process.recv_exit_status()
-        self.my_log.info('Ended process on Linux with id {}'.format(channel_id))
+        self.my_log.info('Process ended on Linux with id {}'.format(channel_id))
 
 class windows_remote_hepler(remote_helper):
     def __init__(self, log):
@@ -81,5 +81,5 @@ class windows_remote_hepler(remote_helper):
 
     def wait(self, process):
         process_status = process()
-        self.my_log.info('Ended process on Windows with name {}'.format(
+        self.my_log.info('Process ended on Windows with name {}'.format(
             process_status.CSName))
