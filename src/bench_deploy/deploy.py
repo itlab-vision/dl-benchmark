@@ -116,5 +116,9 @@ def main():
     for client in client_list:
         client.wait_all()
 
+    log.info('Deploy status:')
+    for client in client_list:
+        log.info(client.get_status())
+
 if __name__ == '__main__':
     sys.exit(main() or 0)
