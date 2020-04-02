@@ -42,7 +42,17 @@ def build_argparser():
         default = 1, type = int, dest = 'raw_scale')
     parser.add_argument('--mean', help = 'Parameter mean',
         default = (0, 0, 0), type = tuple, dest = 'mean')
+    parser.add_argument('-d', '--device', help = 'Specify the target \
+        device to infer on (CPU by default)',
+        default = 'CPU', type = str, dest = 'device')
     return parser
+
+
+def set_device_to_infer(device):
+    if device is 'CPU':
+        caffe.set_mode_cpu()
+    else: 
+        raise ValueError('The device is not supported')
 
 
 def network_input_reshape(net, batch_size):
@@ -54,14 +64,13 @@ def network_input_reshape(net, batch_size):
 
 
 def load_network(caffemodel, prototxt):
-    caffe.set_mode_cpu()
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net
 
 
 def load_images_to_network(net, input):
     for layer in input:
-        net.blobs[layer].data[:,:,:,:] = input[layer]
+        net.blobs[layer].data[...] = input[layer]
 
 
 def inference_caffe(net, number_iter, get_slice):
@@ -117,6 +126,9 @@ def main():
         model_wrapper = intelcaffe_io_model_wrapper()
         data_transformer = intelcaffe_transformer(create_dict_for_transformer(args))
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
+        log.info('The assign of the device to infer')
+        set_device_to_infer(args.device)
+        log.info('The device has been assigned: {0}'.format(args.device))
         log.info('Loading network files:\n\t {0}\n\t {1}'.format(
             args.model_prototxt, args.model_caffemodel))
         net = load_network(args.model_caffemodel, args.model_prototxt)
