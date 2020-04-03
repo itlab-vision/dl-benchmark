@@ -48,7 +48,7 @@ def parse_value_per_device(device_list, values):
     return result
 
 
-def set_config(iecore, devices, nthreads, nstreams, mode):
+def set_config(iecore, devices, nthreads, nstreams, dump, mode):
     device_list = parse_devices(devices)
     streams_dict = parse_value_per_device(device_list, nstreams)
     for device in device_list:
@@ -72,14 +72,32 @@ def set_config(iecore, devices, nthreads, nstreams, mode):
                 iecore.set_config(gpu_throughput, 'GPU')
         if device == 'MYRIAD':
             iecore.set_config({'LOG_LEVEL': 'LOG_INFO', 'VPU_LOG_LEVEL': 'LOG_WARNING'}, 'MYRIAD')
+    if dump:
+        if 'HETERO' in devices:
+            iecore.set_config({'KEY_HETERO_DUMP_GRAPH_DOT': 'YES'}, 'HETERO')
+        elif 'MULTI' in devices:
+            iecore.set_config({'KEY_DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, 'MULTI')
+        else:
+            iecore.set_config({'KEY_DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, devices)
 
 
-def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams, mode, log):
+
+def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams,
+    dump, mode, log):
     log.info('Inference Engine initialization')
     ie = IECore()
     add_extension(ie, path_to_extension, path_to_cldnn_config, device, log)
-    set_config(ie, device, nthreads, nstreams, mode)
+    set_config(ie, device, nthreads, nstreams, dump, mode)
     return ie
+
+
+def load_network(iecore, network, device, multi_priority, requests):
+    config = {}
+    if 'MULTI' in device and multi_priority:
+        config.update({'MULTI_DEVICE_PRIORITIES': multi_priority})
+    exec_net = iecore.load_network(network = network, device_name = device,
+        num_requests = (requests or 0), config = config)
+    return exec_net
 
 
 def get_input_shape(io_model_wrapper, model):

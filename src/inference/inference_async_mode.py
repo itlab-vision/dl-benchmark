@@ -58,6 +58,8 @@ def build_parser():
         For HETERO and MULTI use format <Device1>:<NStreams1>,<Device2>:<Nstreams2>... \
         or just <nstreams>. Default value is determined automatically for a device', 
         type = str, default = None, dest = 'nstreams')
+    parser.add_argument('--dump', help = 'Dump information about the model exectution',
+        type = bool, default = False, dest = 'dump')
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
@@ -136,7 +138,7 @@ def main():
         data_transformer = transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
-            args.nthreads,args.nstreams, 'async', log)
+            args.nthreads, args.nstreams, args.dump, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
@@ -145,11 +147,7 @@ def main():
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')
-        config = {}
-        if 'MULTI' in args.device and args.priority:
-            config.update({'MULTI_DEVICE_PRIORITIES': args.priority})
-        exec_net = iecore.load_network(network = net, device_name = args.device,
-            config = config, num_requests = (args.requests or 0))
+        exec_net = utils.load_network(iecore, net, args.device, args.priority, args.requests)
         log.info('Starting inference ({} iterations) with {} requests on {}'.
             format(args.number_iter, len(exec_net.requests), args.device))
         result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)

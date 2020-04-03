@@ -36,6 +36,8 @@ def build_argparser():
         Use MULTI:<Device1>,<Device2>,... for MULTI plugin. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)', default = 'CPU', type = str, dest = 'device')
+    parser.add_argument('--dump', help = 'Dump information about the model exectution',
+        type = bool, default = False, dest = 'dump')
     parser.add_argument('-p', '--priority', help = 'Priority for \
         multi-device inference in descending order. \
         Use format <Device1>,<Device2> First device has top priority',
@@ -113,7 +115,7 @@ def main():
         data_transformer = transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
-            args.nthreads, None, 'sync', log)
+            args.nthreads, None, args.dump, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
@@ -122,10 +124,7 @@ def main():
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')
-        config = {}
-        if 'MULTI' in args.device and args.priority:
-            config.update({'MULTI_DEVICE_PRIORITIES': args.priority})
-        exec_net = iecore.load_network(network = net, device_name = args.device, config = config)
+        exec_net = utils.load_network(iecore, net, args.device, args.priority, 1)
         log.info('Starting inference ({} iterations) on {}'.
             format(args.number_iter, args.device))
         result, time = infer_sync(exec_net, args.number_iter, io.get_slice_input)
