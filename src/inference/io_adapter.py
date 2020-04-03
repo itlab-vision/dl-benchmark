@@ -143,6 +143,16 @@ class io_adapter(metaclass = abc.ABCMeta):
             return single_image_super_resolution_io(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
             return sphereface_io(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-old':
+            return person_detection_action_recognition_old(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-new':
+            return person_detection_action_recognition_new(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-raisinghand-recognition':
+            return person_detection_raisinghand_recognition(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-teacher':
+            return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-retail':
+            return person_detection_retail(args. io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -188,7 +198,7 @@ class detection_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(result))
+        input_layer_name = next(iter(self._input))
         result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
@@ -694,3 +704,612 @@ class sphereface_io(io_adapter):
             np.savetxt('sphereface_out.csv', result, fmt = '%1.2f', delimiter = ';', 
                         header = '{};{}'.format(result.shape[0], result.shape[1]), comments = '')
         log.info('Result was saved to {}'.format(file_name))
+
+class person_detection_action_recognition_old(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        det_threshold = 0.3
+        action_threshold = 0.75
+        prior = result['mbox/priorbox']
+        for batch in range(b):
+            loc = result['mbox_loc1/out/conv/flat'][batch]
+            main = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
+            heads = np.ndarray(shape = (4, 25, 43, 3))
+            for i in range(4):
+                heads[i] = result['out/anchor{}'.format(i + 1)][batch]
+            for i in range(4300):
+                #parse detection confidence
+                detection_conf = main[i * 2 + 1]
+                
+                #skip low-confidence detections
+                if detection_conf < det_threshold:
+                    continue
+
+                #parse action id
+                head = heads[i % 4].flatten()
+                action_exp_max = 0.
+                action_exp_sum = 0.
+                action_id = -1
+                for num in range(3):
+                    action_exp = np.exp(3 * head[i // 4 * 3 + num])
+                    action_exp_sum += action_exp
+                    if action_exp > action_exp_max:
+                        action_exp_max = action_exp
+                        action_id = num
+                action_conf = action_exp_max / action_exp_sum
+
+                #skip low-confidence actions
+                if action_conf < action_threshold:
+                    action_id = 0
+                    action_conf = 0.
+                
+                #parse bbox
+                priorbox = prior.flatten()
+                prior_xmin = priorbox[i * 4]
+                prior_ymin = priorbox[i * 4 + 1]
+                prior_xmax = priorbox[i * 4 + 2]
+                prior_ymax = priorbox[i * 4 + 3]
+
+                variance_xmin = priorbox[(4300 + i) * 4]
+                variance_ymin = priorbox[(4300 + i) * 4 + 1]
+                variance_xmax = priorbox[(4300 + i) * 4 + 2]
+                variance_ymax = priorbox[(4300 + i) * 4 + 3]
+
+                encoded_xmin = loc[i * 4]
+                encoded_ymin = loc[i * 4 + 1]
+                encoded_xmax = loc[i * 4 + 2]
+                encoded_ymax = loc[i * 4 + 3]
+
+                prior_width = prior_xmax - prior_xmin
+                prior_height = prior_ymax - prior_ymin
+                prior_xcenter = (prior_xmax + prior_xmin) / 2
+                prior_ycenter = (prior_ymax + prior_ymin) / 2
+
+                decoded_xcenter = variance_xmin * encoded_xmin * prior_width + prior_xcenter
+                decoded_ycenter = variance_ymin * encoded_ymin * prior_height + prior_ycenter
+                decoded_width = np.exp(variance_xmax * encoded_xmax) * prior_width
+                decoded_height = np.exp(variance_ymax * encoded_ymax) * prior_height
+
+                decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * w)
+                decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+                decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * w)
+                decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+
+                decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+                
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+ 
+        #Nonmax supression
+        detections.sort(key = lambda detection: detection[0], reverse = True)
+        valid_detections = []
+        for idx in range(len(detections)):
+            max_detection = max(detections, key = lambda detection: detection[0])
+            if max_detection[0] < det_threshold: 
+                continue
+            valid_detections.append(max_detection)
+            max_detection[0] = 0
+            for detection in detections:
+                if detection[0] < det_threshold:
+                    continue
+                current_rect_area = ((detection[1][2] - detection[1][0]) * 
+                                    (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
+                                (max_detection[1][3] - max_detection[1][1]))
+                intersection_area = 0
+                if not (detection[1][0] >= max_detection[1][2] or 
+                        detection[1][1] >= max_detection[1][3] or 
+                        max_detection[1][0] >= detection[1][2] or 
+                        max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
+                                        max(detection[1][0], max_detection[1][0])) * 
+                                        (min(detection[1][3], max_detection[1][3]) - 
+                                        max(detection[1][1], max_detection[1][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                detection[0] *= np.exp(-overlap * overlap / 0.6)
+        image = images[batch]
+        rect_color = (255, 255, 255)
+        for detection in valid_detections:
+            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
+                        (detection[1][2], detection[1][3]), rect_color, 1)
+            action_map = ["sitting", "standing", "rasing hand"]
+            action_color = (0, 0, 0)
+            if detection[3] == 0:
+                action_color = (0, 255, 0)
+            else:
+                action_color = (0, 0, 255)
+            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+class person_detection_action_recognition_new(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        det_threshold = 0.3
+        action_threshold = 0.75
+        for batch in range(b):
+            loc = result['ActionNet/out_detection_loc'][batch].flatten()
+            main = result['ActionNet/out_detection_conf'][batch].flatten()
+            main_head = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
+            heads = np.ndarray(shape = (4, 6, 25, 43))
+            for i in range(4):
+                heads[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
+            detections = []
+            for i in range(4250):
+                detection_conf = main[i * 2 + 1]
+                if detection_conf < det_threshold:
+                    continue
+                action_exp_max = 0.
+                action_exp_sum = 0.
+                action_id = -1
+                for num in range(3):
+                    action_exp = np.exp(16 * main_head[i + num * 4250])
+                    if action_exp > action_exp_max:
+                        action_exp_max = action_exp
+                        action_id = num
+                    action_exp_sum += action_exp
+                action_conf = action_exp_max / action_exp_sum
+                if action_conf < action_threshold:
+                    action_id = 0
+                    action_conf = 0
+                #parsing bbox
+                anchor = [26.17863728, 58.670372]
+                blob_size = [50, 85]
+                step = 8
+                row = i // blob_size[0]
+                col = i % blob_size[0]
+                xcenter = (col + 0.5) * step
+                ycenter = (row + 0.5) * step
+                prior_xmin = (xcenter - 0.5 * anchor[0]) / w
+                prior_ymin = (ycenter - 0.5 * anchor[1]) / h
+                prior_xmax = (xcenter + 0.5 * anchor[0]) / w
+                prior_ymax = (ycenter + 0.5 * anchor[1]) / h
+                prior_width = prior_xmax - prior_xmin
+                prior_height = prior_ymax - prior_ymin
+                prior_ycenter = (prior_ymax + prior_ymin) / 2
+                prior_xcenter = (prior_xmax + prior_xmin) / 2
+
+                variance_xmin = 0.1
+                variance_ymin = 0.1
+                variance_xmax = 0.2
+                variance_ymax = 0.2
+
+                encoded_xmin = loc[i * 4 + 1]
+                encoded_ymin = loc[i * 4]
+                encoded_xmax = loc[i * 4 + 3]
+                encoded_ymax = loc[i * 4 + 2]
+
+                width = 680
+                decoded_xcenter = (variance_xmin * encoded_xmin * prior_width + prior_xcenter)
+                decoded_ycenter = (variance_ymin * encoded_ymin * prior_height + prior_ycenter)
+                decoded_width = np.exp(variance_xmax * encoded_xmax) * prior_width
+                decoded_height = np.exp(variance_ymax * encoded_ymax) * prior_height
+                decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * width)
+                decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+                decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * width)
+                decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+                decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+                
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+            for i in range(4300):
+                detection_conf = main[(4250 + i) * 2 + 1]
+                head = heads[i % 4].flatten()
+                if detection_conf < det_threshold:
+                    continue
+                action_exp_max = 0.
+                action_exp_sum = 0.
+                action_id = -1
+                for num in range(3):
+                    action_exp = np.exp(16 * head[i // 4 + num * 1075])
+                    if action_exp > action_exp_max:
+                        action_exp_max = action_exp
+                        action_id = num
+                    action_exp_sum += action_exp
+                action_conf = action_exp_max / action_exp_sum
+                if action_conf < action_threshold:
+                    action_id = 0
+                    action_conf = 0
+                #parsing bbox
+                anchors = [[35.36, 81.829632],
+                        [45.8114572, 107.651852],
+                        [63.31491832, 142.595732],
+                        [93.5070856, 201.107692]]
+                anchor = anchors[i % 4]
+                blob_size = [43, 25]
+                step = 16
+                pos = i // 4
+                row = pos // blob_size[0]
+                col = pos % blob_size[0]
+                xcenter = (col + 0.5) * step
+                ycenter = (row + 0.5) * step
+                prior_xmin = (xcenter - 0.5 * anchor[0]) / w
+                prior_ymin = (ycenter - 0.5 * anchor[1]) / h
+                prior_xmax = (xcenter + 0.5 * anchor[0]) / w
+                prior_ymax = (ycenter + 0.5 * anchor[1]) / h
+                prior_width = prior_xmax - prior_xmin
+                prior_height = prior_ymax - prior_ymin
+                prior_ycenter = (prior_ymax + prior_ymin) / 2
+                prior_xcenter = (prior_xmax + prior_xmin) / 2
+
+                variance_xmin = 0.1
+                variance_ymin = 0.1
+                variance_xmax = 0.2
+                variance_ymax = 0.2
+
+                encoded_xmin = loc[(i + 4250) * 4 + 1]
+                encoded_ymin = loc[(i + 4250) * 4]
+                encoded_xmax = loc[(i + 4250) * 4 + 3]
+                encoded_ymax = loc[(i + 4250) * 4 + 2]
+
+                width = 680
+                decoded_xcenter = variance_xmin * encoded_xmin * prior_width + prior_xcenter
+                decoded_ycenter = variance_ymin * encoded_ymin * prior_height + prior_ycenter
+                decoded_width = np.exp(variance_xmax * encoded_xmax) * prior_width
+                decoded_height = np.exp(variance_ymax * encoded_ymax) * prior_height
+                decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * width)
+                decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+                decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * width)
+                decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+                decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+                
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+
+        #Nonmax supression
+        detections.sort(key = lambda detection: detection[0], reverse = True)
+        valid_detections = []
+        for idx in range(len(detections)):
+            max_detection = max(detections, key = lambda detection: detection[0])
+            if max_detection[0] < det_threshold: 
+                continue
+            valid_detections.append(max_detection)
+            max_detection[0] = 0
+            for detection in detections:
+                if detection[0] < det_threshold:
+                    continue
+                current_rect_area = ((detection[1][2] - detection[1][0]) * 
+                                    (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
+                                (max_detection[1][3] - max_detection[1][1]))
+                intersection_area = 0
+                if not (detection[1][0] >= max_detection[1][2] or 
+                        detection[1][1] >= max_detection[1][3] or 
+                        max_detection[1][0] >= detection[1][2] or 
+                        max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
+                                        max(detection[1][0], max_detection[1][0])) * 
+                                        (min(detection[1][3], max_detection[1][3]) - 
+                                        max(detection[1][1], max_detection[1][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                detection[0] *= np.exp(-overlap * overlap / 0.6)
+        image = images[batch]
+        rect_color = (255, 255, 255)
+        for detection in valid_detections:
+            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
+                        (detection[1][2], detection[1][3]), rect_color, 1)
+            action_map = ["sitting", "standing", "rasing hand"]
+            action_color = (0, 0, 0)
+            if detection[3] == 0:
+                action_color = (0, 255, 0)
+            else:
+                action_color = (0, 0, 255)
+            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+class person_detection_raisinghand_recognition(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        det_threshold = 0.3
+        action_threshold = 0.75
+        prior = result['mbox/priorbox']
+        for batch in range(b):
+            loc = result['mbox_loc1/out/conv/flat'][batch]
+            main = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
+            heads = np.ndarray(shape = (4, 25, 43, 2))
+            for i in range(4):
+                heads[i] = result['out/anchor{}'.format(i + 1)][batch]
+            for i in range(4300):
+                #parse detection confidence
+                detection_conf = main[i * 2 + 1]
+                
+                #skip low-confidence detections
+                if detection_conf < det_threshold:
+                    continue
+
+                #parse action id
+                head = heads[i % 4].flatten()
+                action_exp_max = 0.
+                action_exp_sum = 0.
+                action_id = -1
+                for num in range(2):
+                    action_exp = np.exp(3 * head[i // 4 * 2 + num])
+                    action_exp_sum += action_exp
+                    if action_exp > action_exp_max:
+                        action_exp_max = action_exp
+                        action_id = num
+                action_conf = action_exp_max / action_exp_sum
+
+                #skip low-confidence actions
+                if action_conf < action_threshold:
+                    action_id = 0
+                    action_conf = 0.
+                
+                #parse bbox
+                priorbox = prior.flatten()
+                prior_xmin = priorbox[i * 4]
+                prior_ymin = priorbox[i * 4 + 1]
+                prior_xmax = priorbox[i * 4 + 2]
+                prior_ymax = priorbox[i * 4 + 3]
+
+                variance_xmin = priorbox[(4300 + i) * 4]
+                variance_ymin = priorbox[(4300 + i) * 4 + 1]
+                variance_xmax = priorbox[(4300 + i) * 4 + 2]
+                variance_ymax = priorbox[(4300 + i) * 4 + 3]
+
+                encoded_xmin = loc[i * 4]
+                encoded_ymin = loc[i * 4 + 1]
+                encoded_xmax = loc[i * 4 + 2]
+                encoded_ymax = loc[i * 4 + 3]
+
+                prior_width = prior_xmax - prior_xmin
+                prior_height = prior_ymax - prior_ymin
+                prior_xcenter = (prior_xmax + prior_xmin) / 2
+                prior_ycenter = (prior_ymax + prior_ymin) / 2
+
+                decoded_xcenter = variance_xmin * encoded_xmin * prior_width + prior_xcenter
+                decoded_ycenter = variance_ymin * encoded_ymin * prior_height + prior_ycenter
+                decoded_width = np.exp(variance_xmax * encoded_xmax) * prior_width
+                decoded_height = np.exp(variance_ymax * encoded_ymax) * prior_height
+
+                decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * w)
+                decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+                decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * w)
+                decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+
+                decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+                
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+ 
+        #Nonmax supression
+        detections.sort(key = lambda detection: detection[0], reverse = True)
+        valid_detections = []
+        for idx in range(len(detections)):
+            max_detection = max(detections, key = lambda detection: detection[0])
+            if max_detection[0] < det_threshold: 
+                continue
+            valid_detections.append(max_detection)
+            max_detection[0] = 0
+            for detection in detections:
+                if detection[0] < det_threshold:
+                    continue
+                current_rect_area = ((detection[1][2] - detection[1][0]) * 
+                                    (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
+                                (max_detection[1][3] - max_detection[1][1]))
+                intersection_area = 0
+                if not (detection[1][0] >= max_detection[1][2] or 
+                        detection[1][1] >= max_detection[1][3] or 
+                        max_detection[1][0] >= detection[1][2] or 
+                        max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
+                                        max(detection[1][0], max_detection[1][0])) * 
+                                        (min(detection[1][3], max_detection[1][3]) - 
+                                        max(detection[1][1], max_detection[1][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                detection[0] *= np.exp(-overlap * overlap / 0.6)
+        image = images[batch]
+        rect_color = (255, 255, 255)
+        for detection in valid_detections:
+            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
+                        (detection[1][2], detection[1][3]), rect_color, 1)
+            action_map = ["sitting", "other"]
+            action_color = (0, 0, 0)
+            if detection[3] == 0:
+                action_color = (0, 255, 0)
+            else:
+                action_color = (0, 0, 255)
+            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+class person_detection_action_recognition_teacher(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        det_threshold = 0.3
+        action_threshold = 0.75
+        prior = result['mbox/priorbox']
+        for batch in range(b):
+            loc = result['mbox_loc1/out/conv/flat'][batch]
+            main = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
+            heads = np.ndarray(shape = (4, 25, 43, 3))
+            for i in range(4):
+                heads[i] = result['out/anchor{}'.format(i + 1)][batch]
+            for i in range(4300):
+                #parse detection confidence
+                detection_conf = main[i * 2 + 1]
+                
+                #skip low-confidence detections
+                if detection_conf < det_threshold:
+                    continue
+
+                #parse action id
+                head = heads[i % 4].flatten()
+                action_exp_max = 0.
+                action_exp_sum = 0.
+                action_id = -1
+                for num in range(3):
+                    action_exp = np.exp(3 * head[i // 4 * 3 + num])
+                    action_exp_sum += action_exp
+                    if action_exp > action_exp_max:
+                        action_exp_max = action_exp
+                        action_id = num
+                action_conf = action_exp_max / action_exp_sum
+
+                #skip low-confidence actions
+                if action_conf < action_threshold:
+                    action_id = 0
+                    action_conf = 0.
+                
+                #parse bbox
+                priorbox = prior.flatten()
+                prior_xmin = priorbox[i * 4]
+                prior_ymin = priorbox[i * 4 + 1]
+                prior_xmax = priorbox[i * 4 + 2]
+                prior_ymax = priorbox[i * 4 + 3]
+
+                variance_xmin = priorbox[(4300 + i) * 4]
+                variance_ymin = priorbox[(4300 + i) * 4 + 1]
+                variance_xmax = priorbox[(4300 + i) * 4 + 2]
+                variance_ymax = priorbox[(4300 + i) * 4 + 3]
+
+                encoded_xmin = loc[i * 4]
+                encoded_ymin = loc[i * 4 + 1]
+                encoded_xmax = loc[i * 4 + 2]
+                encoded_ymax = loc[i * 4 + 3]
+
+                prior_width = prior_xmax - prior_xmin
+                prior_height = prior_ymax - prior_ymin
+                prior_xcenter = (prior_xmax + prior_xmin) / 2
+                prior_ycenter = (prior_ymax + prior_ymin) / 2
+
+                decoded_xcenter = variance_xmin * encoded_xmin * prior_width + prior_xcenter
+                decoded_ycenter = variance_ymin * encoded_ymin * prior_height + prior_ycenter
+                decoded_width = np.exp(variance_xmax * encoded_xmax) * prior_width
+                decoded_height = np.exp(variance_ymax * encoded_ymax) * prior_height
+
+                decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * w)
+                decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+                decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * w)
+                decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+
+                decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+                
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+ 
+        #Nonmax supression
+        detections.sort(key = lambda detection: detection[0], reverse = True)
+        valid_detections = []
+        for idx in range(len(detections)):
+            max_detection = max(detections, key = lambda detection: detection[0])
+            if max_detection[0] < det_threshold: 
+                continue
+            valid_detections.append(max_detection)
+            max_detection[0] = 0
+            for detection in detections:
+                if detection[0] < det_threshold:
+                    continue
+                current_rect_area = ((detection[1][2] - detection[1][0]) * 
+                                    (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
+                                (max_detection[1][3] - max_detection[1][1]))
+                intersection_area = 0
+                if not (detection[1][0] >= max_detection[1][2] or 
+                        detection[1][1] >= max_detection[1][3] or 
+                        max_detection[1][0] >= detection[1][2] or 
+                        max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
+                                        max(detection[1][0], max_detection[1][0])) * 
+                                        (min(detection[1][3], max_detection[1][3]) - 
+                                        max(detection[1][1], max_detection[1][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                detection[0] *= np.exp(-overlap * overlap / 0.6)
+        image = images[batch]
+        rect_color = (255, 255, 255)
+        for detection in valid_detections:
+            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
+                        (detection[1][2], detection[1][3]), rect_color, 1)
+            action_map = ["standing", "writing", "demonstrating"]
+            action_color = (0, 0, 0)
+            if detection[3] == 0:
+                action_color = (0, 255, 0)
+            else:
+                action_color = (0, 0, 255)
+            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+class person_detection_retail(detection_io):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def get_slice_input(self, iteration):
+        slice_input = dict.fromkeys(self._input.keys(), None)
+        slice_input['data'] = self._input['data'][(iteration * self._batch_size)
+                % len(self._input['data']) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._input['data'])) + 1:]
+        slice_input['im_info'] = self._input['im_info'][(iteration * 88 * self._batch_size)
+                % len(self._input['im_info']) : (((iteration + 1) * 88 * self._batch_size - 1)
+                % len(self._input['im_info'])) + 1:]
+        return slice_input
