@@ -81,7 +81,6 @@ def set_config(iecore, devices, nthreads, nstreams, dump, mode):
             iecore.set_config({'KEY_DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, devices)
 
 
-
 def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams,
     dump, mode, log):
     log.info('Inference Engine initialization')
