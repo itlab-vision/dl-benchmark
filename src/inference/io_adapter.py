@@ -188,7 +188,7 @@ class detection_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(result))
+        input_layer_name = next(iter(self._input))
         result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
