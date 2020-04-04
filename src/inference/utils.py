@@ -74,11 +74,9 @@ def set_config(iecore, devices, nthreads, nstreams, dump, mode):
             iecore.set_config({'LOG_LEVEL': 'LOG_INFO', 'VPU_LOG_LEVEL': 'LOG_WARNING'}, 'MYRIAD')
     if dump:
         if 'HETERO' in devices:
-            iecore.set_config({'KEY_HETERO_DUMP_GRAPH_DOT': 'YES'}, 'HETERO')
-        elif 'MULTI' in devices:
-            iecore.set_config({'KEY_DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, 'MULTI')
-        else:
-            iecore.set_config({'KEY_DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, devices)
+            iecore.set_config({'HETERO_DUMP_GRAPH_DOT': 'YES'}, 'HETERO')
+        elif not('MULTI' in devices):
+            iecore.set_config({'DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'}, devices)
 
 
 def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams,
