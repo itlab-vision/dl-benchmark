@@ -43,7 +43,7 @@ def build_argparser():
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
         'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
         'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
-        'single-image-super-resolution', 'sphereface', 'pose-estimation'],
+        'single-image-super-resolution', 'sphereface', 'human-pose-estimation'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
