@@ -713,6 +713,46 @@ class detection_ssd(io_adapter):
     def _set_configs(self):
         pass
 
+    def _parse_det_conf(self, detection_conf_data, i):
+        return detection_conf_data[i * 2 + 1]
+
+
+    def _low_detection(self, detection_conf):
+        return detection_conf < self._threshold
+
+
+    def _parse_action(self, action_data, position, num_classes, scale, shift = 1):
+        action_exp_max = 0.
+        action_exp_sum = 0.
+        action_id = -1
+        action_threshold = 0.75
+        for num in range(num_classes):
+            action_exp = np.exp(scale * action_data[position + num * shift])
+            action_exp_sum += action_exp
+            if action_exp > action_exp_max:
+                action_exp_max = action_exp
+                action_id = num
+        action_conf = action_exp_max / action_exp_sum
+        if action_conf < action_threshold:
+            action_id = 0
+            action_conf = 0.
+        return action_id, action_conf
+
+
+    @abc.abstractmethod
+    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+        pass
+
+
+    @abc.abstractmethod
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        pass
+
+
+    @abc.abstractmethod
+    def _parse_encoded_box(self, encoded_data, i):
+        pass
+    
 
     def _parse_decoded_bbox(self, prior_box, variance_box, encoded_box, w, h):
         prior_width = prior_box[2] - prior_box[0]
@@ -781,6 +821,40 @@ class detection_ssd(io_adapter):
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
 
+    
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
+class detection_ssd_old_format(detection_ssd):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+        prior_xmin = prior_data[i * 4]
+        prior_ymin = prior_data[i * 4 + 1]
+        prior_xmax = prior_data[i * 4 + 2]
+        prior_ymax = prior_data[i * 4 + 3]
+        return prior_xmin, prior_ymin, prior_xmax, prior_ymax
+
+
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        variance_xmin = prior_data[(4300 + i) * 4]
+        variance_ymin = prior_data[(4300 + i) * 4 + 1]
+        variance_xmax = prior_data[(4300 + i) * 4 + 2]
+        variance_ymax = prior_data[(4300 + i) * 4 + 3]
+        return variance_xmin, variance_ymin, variance_xmax, variance_ymax
+
+
+    def _parse_encoded_box(self, encoded_data, i):
+        encoded_xmin = encoded_data[i * 4]
+        encoded_ymin = encoded_data[i * 4 + 1]
+        encoded_xmax = encoded_data[i * 4 + 2]
+        encoded_ymax = encoded_data[i * 4 + 3]
+        return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
+
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -793,57 +867,24 @@ class detection_ssd(io_adapter):
         for i in range(b):
             images[i] = input[i].transpose((1, 2, 0))
         detections = []
-        action_threshold = 0.75
         num_classes, action_map = self._set_configs()
-        prior = result['mbox/priorbox']
+        prior_data = result['mbox/priorbox'].flatten()
         for batch in range(b):
-            loc = result['mbox_loc1/out/conv/flat'][batch]
-            main = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
-            heads = np.ndarray(shape = (4, 25, 43, num_classes))
+            encoded_data = result['mbox_loc1/out/conv/flat'][batch]
+            detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
+            action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
             for i in range(4):
-                heads[i] = result['out/anchor{}'.format(i + 1)][batch]
+                action_blobs[i] = result['out/anchor{}'.format(i + 1)][batch]
             for i in range(4300):
-                #parse detection confidence
-                detection_conf = main[i * 2 + 1]
-                #skip low-confidence detections
-                if detection_conf < self._threshold:
+                detection_conf = self._parse_det_conf(detection_conf_data, i)
+                if self._low_detection(detection_conf):
                     continue
-                #parse action id and action_confidence
-                head = heads[i % 4].flatten()
-                action_exp_max = 0.
-                action_exp_sum = 0.
-                action_id = -1
-                for num in range(num_classes):
-                    action_exp = np.exp(3 * head[i // 4 * num_classes + num])
-                    action_exp_sum += action_exp
-                    if action_exp > action_exp_max:
-                        action_exp_max = action_exp
-                        action_id = num
-                action_conf = action_exp_max / action_exp_sum
-                #skip low-confidence actions
-                if action_conf < action_threshold:
-                    action_id = 0
-                    action_conf = 0.
-                #parsing bbox
-                prior_data = prior.flatten()
-                prior_xmin = prior_data[i * 4]
-                prior_ymin = prior_data[i * 4 + 1]
-                prior_xmax = prior_data[i * 4 + 2]
-                prior_ymax = prior_data[i * 4 + 3]
-                prior_box = [prior_xmin, prior_ymin, prior_xmax, prior_ymax]
-
-                variance_xmin = prior_data[(4300 + i) * 4]
-                variance_ymin = prior_data[(4300 + i) * 4 + 1]
-                variance_xmax = prior_data[(4300 + i) * 4 + 2]
-                variance_ymax = prior_data[(4300 + i) * 4 + 3]
-                variance_box = [variance_xmin, variance_ymin, variance_xmax, variance_ymax]
-
-                encoded_xmin = loc[i * 4]
-                encoded_ymin = loc[i * 4 + 1]
-                encoded_xmax = loc[i * 4 + 2]
-                encoded_ymax = loc[i * 4 + 3]
-                encoded_box = [encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax]
-                
+                action_data = action_blobs[i % 4].flatten()
+                action_id, action_conf = self._parse_action(action_data,
+                                            i // 4 * num_classes, num_classes, 3)
+                prior_box = self._parse_prior_box(prior_data, i)
+                variance_box = self._parse_variance_box(prior_data, i)
+                encoded_box = self._parse_encoded_box(encoded_data, i)
                 decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
@@ -851,7 +892,97 @@ class detection_ssd(io_adapter):
         self._draw_detections(images, batch, valid_detections, action_map, log)
 
 
-class person_detection_action_recognition_old(detection_ssd):
+class detection_ssd_new_format(detection_ssd):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _parse_prior_box(self, prior_data, i, w, h):
+        blob_size, step = [], 0
+        if i < 4250:
+            blob_size = [50, 85]
+            step = 8
+        else:
+            blob_size = [43, 25]
+            step = 16
+            i = (i - 4250) // 4
+        row = i // blob_size[0]
+        col = i % blob_size[0]
+        xcenter = (col + 0.5) * step
+        ycenter = (row + 0.5) * step
+        prior_xmin = (xcenter - 0.5 * prior_data[0]) / w
+        prior_ymin = (ycenter - 0.5 * prior_data[1]) / h
+        prior_xmax = (xcenter + 0.5 * prior_data[0]) / w
+        prior_ymax = (ycenter + 0.5 * prior_data[1]) / h
+        return prior_xmin, prior_ymin, prior_xmax, prior_ymax
+
+    
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        return 0.1, 0.1, 0.2, 0.2
+
+
+    def _parse_encoded_box(self, encoded_data, i):
+        encoded_xmin = encoded_data[i * 4 + 1]
+        encoded_ymin = encoded_data[i * 4]
+        encoded_xmax = encoded_data[i * 4 + 3]
+        encoded_ymax = encoded_data[i * 4 + 2]
+        return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        num_classes, action_map = self._set_configs()
+        main_anchor = [26.17863728, 58.670372]
+        anchors = [[35.36, 81.829632],
+                    [45.8114572, 107.651852],
+                    [63.31491832, 142.595732],
+                    [93.5070856, 201.107692]]
+        for batch in range(b):
+            encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
+            detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
+            main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
+            action_blobs = np.ndarray(shape = (4, 6, 25, 43))
+            for i in range(4):
+                action_blobs[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
+            detections = []
+            for i in range(8550):
+                detection_conf = self._parse_det_conf(detection_conf_data, i)
+                if self._low_detection(detection_conf):
+                    continue
+                action_data = []
+                action_id, action_conf = 0, 0.
+                if i < 4250:
+                    action_data = main_action_data
+                    action_id, action_conf = self._parse_action(main_action_data,
+                                            i, num_classes, 16, 4250)
+                else:
+                    action_data = action_blobs[(i - 4250) % 4].flatten()
+                    action_id, action_conf = self._parse_action(action_data,
+                                        (i - 4250) // 4, num_classes, 16, 1075)
+                prior_box = []
+                if i < 4250:
+                    prior_box = self._parse_prior_box(main_anchor, i, w, h)
+                else:
+                    prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
+                variance_box = self._parse_variance_box()
+                encoded_box = self._parse_encoded_box(encoded_data, i)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+        valid_detections = self._non_max_supression(detections, self._threshold)
+        self._draw_detections(images, batch, valid_detections, action_map, log)
+    
+
+class person_detection_action_recognition_old(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -862,7 +993,7 @@ class person_detection_action_recognition_old(detection_ssd):
         return num_classes, action_map
 
 
-class person_detection_raisinghand_recognition(detection_ssd):
+class person_detection_raisinghand_recognition(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -872,7 +1003,7 @@ class person_detection_raisinghand_recognition(detection_ssd):
         return num_classes, action_map
     
 
-class person_detection_action_recognition_teacher(detection_ssd):
+class person_detection_action_recognition_teacher(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -882,7 +1013,7 @@ class person_detection_action_recognition_teacher(detection_ssd):
         return num_classes, action_map
 
 
-class person_detection_action_recognition_new(detection_ssd):
+class person_detection_action_recognition_new(detection_ssd_new_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -891,126 +1022,3 @@ class person_detection_action_recognition_new(detection_ssd):
             num_classes = 3
             action_map = ["sitting", "standing", "rasing hand"]
             return num_classes, action_map
-    
-
-    def process_output(self, result, log):
-        if (self._not_valid_result(result)):
-            log.warning('Model output is processed only for the number iteration = 1')
-            return
-        input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
-        b, c, h, w = input.shape
-        images = np.ndarray(shape = (b, h, w, c))
-        for i in range(b):
-            images[i] = input[i].transpose((1, 2, 0))
-        detections = []
-        action_threshold = 0.75
-        num_classes, action_map = self._set_configs()
-        for batch in range(b):
-            loc = result['ActionNet/out_detection_loc'][batch].flatten()
-            main = result['ActionNet/out_detection_conf'][batch].flatten()
-            main_head = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
-            heads = np.ndarray(shape = (4, 6, 25, 43))
-            for i in range(4):
-                heads[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
-            detections = []
-            for i in range(4250):
-                #parse detection confidence
-                detection_conf = main[i * 2 + 1]
-                #skip low-confidence detections
-                if detection_conf < self._threshold:
-                    continue
-                #parse action id and action_confidence
-                action_exp_max = 0.
-                action_exp_sum = 0.
-                action_id = -1
-                for num in range(num_classes):
-                    action_exp = np.exp(16 * main_head[i + num * 4250])
-                    if action_exp > action_exp_max:
-                        action_exp_max = action_exp
-                        action_id = num
-                    action_exp_sum += action_exp
-                action_conf = action_exp_max / action_exp_sum
-                #skip low-confidence actions
-                if action_conf < action_threshold:
-                    action_id = 0
-                    action_conf = 0
-                #parsing bbox
-                anchor = [26.17863728, 58.670372]
-                blob_size = [50, 85]
-                step = 8
-                row = i // blob_size[0]
-                col = i % blob_size[0]
-                xcenter = (col + 0.5) * step
-                ycenter = (row + 0.5) * step
-                prior_xmin = (xcenter - 0.5 * anchor[0]) / w
-                prior_ymin = (ycenter - 0.5 * anchor[1]) / h
-                prior_xmax = (xcenter + 0.5 * anchor[0]) / w
-                prior_ymax = (ycenter + 0.5 * anchor[1]) / h
-                prior_box = [prior_xmin, prior_ymin, prior_xmax, prior_ymax]
-
-                variance_box = [0.1, 0.1, 0.2, 0.2]
-
-                encoded_xmin = loc[i * 4 + 1]
-                encoded_ymin = loc[i * 4]
-                encoded_xmax = loc[i * 4 + 3]
-                encoded_ymax = loc[i * 4 + 2]
-                encoded_box = [encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax]
-
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
-                detection = [detection_conf, decoded_bbox, action_conf, action_id]
-                detections.append(detection)
-            for i in range(4300):
-                #parse detection confidence
-                detection_conf = main[(4250 + i) * 2 + 1]
-                #skip low-confidence detections
-                if detection_conf < self._threshold:
-                    continue
-                #parse action id and action_confidence
-                head = heads[i % 4].flatten()
-                action_exp_max = 0.
-                action_exp_sum = 0.
-                action_id = -1
-                for num in range(num_classes):
-                    action_exp = np.exp(16 * head[i // 4 + num * 1075])
-                    if action_exp > action_exp_max:
-                        action_exp_max = action_exp
-                        action_id = num
-                    action_exp_sum += action_exp
-                action_conf = action_exp_max / action_exp_sum
-                #skip low-confidence actions
-                if action_conf < action_threshold:
-                    action_id = 0
-                    action_conf = 0
-                #parsing bbox
-                anchors = [[35.36, 81.829632],
-                        [45.8114572, 107.651852],
-                        [63.31491832, 142.595732],
-                        [93.5070856, 201.107692]]
-                anchor = anchors[i % 4]
-                blob_size = [43, 25]
-                step = 16
-                pos = i // 4
-                row = pos // blob_size[0]
-                col = pos % blob_size[0]
-                xcenter = (col + 0.5) * step
-                ycenter = (row + 0.5) * step
-                prior_xmin = (xcenter - 0.5 * anchor[0]) / w
-                prior_ymin = (ycenter - 0.5 * anchor[1]) / h
-                prior_xmax = (xcenter + 0.5 * anchor[0]) / w
-                prior_ymax = (ycenter + 0.5 * anchor[1]) / h
-                prior_box = [prior_xmin, prior_ymin, prior_xmax, prior_ymax]
-
-                variance_box = [0.1, 0.1, 0.2, 0.2]
-
-                encoded_xmin = loc[(i + 4250) * 4 + 1]
-                encoded_ymin = loc[(i + 4250) * 4]
-                encoded_xmax = loc[(i + 4250) * 4 + 3]
-                encoded_ymax = loc[(i + 4250) * 4 + 2]
-                encoded_box = [encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax]
-
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)    
-                detection = [detection_conf, decoded_bbox, action_conf, action_id]
-                detections.append(detection)
-        valid_detections = self._non_max_supression(detections, self._threshold)
-        self._draw_detections(images, batch, valid_detections, action_map, log)
