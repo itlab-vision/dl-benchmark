@@ -1000,6 +1000,7 @@ class person_detection_raisinghand_recognition(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
+
     def _get_action_map(self):
         action_map = ['sitting', 'other']
         return action_map
@@ -1008,6 +1009,7 @@ class person_detection_raisinghand_recognition(detection_ssd_old_format):
 class person_detection_action_recognition_teacher(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+
 
     def _get_action_map(self):
         action_map = ['standing', 'writing', 'demonstrating']
