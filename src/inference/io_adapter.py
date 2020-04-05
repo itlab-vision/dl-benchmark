@@ -6,13 +6,14 @@ from transformer import transformer
 
 
 class io_adapter(metaclass = abc.ABCMeta):
-    def __init__(self, args, transformer):
+    def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
         self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
         self._threshold = args.threshold
         self._color_map = args.color_map
+        self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
 
@@ -73,17 +74,17 @@ class io_adapter(metaclass = abc.ABCMeta):
                 else:
                     value = value.split(',')
                     value = self.__create_list_images(value)
-                    shape = model.inputs[key].shape
+                    shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value = self.__convert_images(shape, value)
                 self._input.update({key : value})
         else:
-            input_blob = next(iter(model.inputs))
+            input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
             else:
                 value = self.__create_list_images(input)
-                shape = model.inputs[input_blob].shape
+                shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value = self.__convert_images(shape, value)
             self._input.update({input_blob : value})
         return self._input
@@ -103,66 +104,68 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         pass
 
 
     @staticmethod
-    def get_io_adapter(args, transformer):
+    def get_io_adapter(args, io_model_wrapper, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args, transformer)
+            return feedforward_io(args, io_model_wrapper, transformer)
         elif task == 'classification':
-            return classification_io(args, transformer)
+            return classification_io(args, io_model_wrapper, transformer)
         elif task == 'detection':
-            return detection_io(args, transformer)
+            return detection_io(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args, transformer)
+            return segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
-            return adas_segmenatation_io(args, transformer)
+            return adas_segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'road-segmentation':
-            return road_segmenatation_io(args, transformer)
+            return road_segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args, transformer)
+            return recognition_face_io(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args, transformer)
+            return person_attributes_io(args, io_model_wrapper, transformer)
         elif task == 'age-gender':
-            return age_gender_io(args, transformer)
+            return age_gender_io(args, io_model_wrapper, transformer)
         elif task == 'gaze':
-            return gaze_io(args, transformer)
+            return gaze_io(args, io_model_wrapper, transformer)
         elif task == 'head-pose':
-            return head_pose_io(args, transformer)
+            return head_pose_io(args, io_model_wrapper, transformer)
         elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, transformer)
+            return person_detection_asl_io(args, io_model_wrapper, transformer)
         elif task == 'license-plate':
-            return license_plate_io(args, transformer)
+            return license_plate_io(args, io_model_wrapper, transformer)
         elif task == 'instance-segmentation':
-            return instance_segmenatation_io(args, transformer)
+            return instance_segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
-            return single_image_super_resolution_io(args, transformer)
+            return single_image_super_resolution_io(args, io_model_wrapper, transformer)
+        elif task == 'sphereface':
+            return sphereface_io(args, io_model_wrapper, transformer)
         elif task == 'pose-estimation':
-            return pose_estimation_io(args, transformer)
+            return pose_estimation_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         return
 
 
 class classification_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
@@ -179,16 +182,16 @@ class classification_io(io_adapter):
 
 
 class detection_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result_layer_name = next(iter(model.outputs))
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
@@ -222,15 +225,15 @@ class detection_io(io_adapter):
 
 
 class segmenatation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[1:]
@@ -252,15 +255,15 @@ class segmenatation_io(io_adapter):
 
 
 class adas_segmenatation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[1:]
@@ -283,15 +286,15 @@ class adas_segmenatation_io(io_adapter):
 
 
 class road_segmenatation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[1:]
@@ -314,16 +317,16 @@ class road_segmenatation_io(io_adapter):
 
 
 class recognition_face_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
-        result_layer_name = next(iter(model.outputs))
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         ib, c, h, w = input.shape
@@ -351,17 +354,17 @@ class recognition_face_io(io_adapter):
 
 
 class person_attributes_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
-        layer_iter = iter(model.outputs)
+        layer_iter = iter(result)
         result_attributes = result[next(layer_iter)]
         result_top = result[next(layer_iter)]
         result_bottom = result[next(layer_iter)]
@@ -402,15 +405,15 @@ class person_attributes_io(io_adapter):
 
 
 class age_gender_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        layer_iter = iter(model.outputs)
+        layer_iter = iter(result)
         result_age = result[next(layer_iter)]
         result_gender = result[next(layer_iter)]
         b = result_age.shape[0]
@@ -422,15 +425,15 @@ class age_gender_io(io_adapter):
 
 
 class gaze_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result = result[iter(model.outputs)]
+        result = result[next(iter(result))]
         b = result.shape[0]
         input_angles = self._input['head_pose_angles']
         input_left_eye = self._input['left_eye_image']
@@ -466,15 +469,15 @@ class gaze_io(io_adapter):
 
 
 class head_pose_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         result_pitch = result['angle_p_fc']
         result_roll = result['angle_r_fc']
@@ -533,15 +536,15 @@ class head_pose_io(io_adapter):
 
 
 class person_detection_asl_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        input_layer_name = next(iter(model.inputs))
+        input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         result = result['17701/Split.0']
         _, c, h, w = input.shape
@@ -566,8 +569,8 @@ class person_detection_asl_io(io_adapter):
 
 
 class license_plate_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
     def get_slice_input(self, iteration):
@@ -581,11 +584,11 @@ class license_plate_io(io_adapter):
         return slice_input
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result = result[next(iter(model.outputs))]
+        result = result[next(iter(result))]
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
         lexis = []
@@ -602,11 +605,11 @@ class license_plate_io(io_adapter):
 
 
 class instance_segmenatation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
@@ -656,15 +659,15 @@ class instance_segmenatation_io(io_adapter):
 
 
 class single_image_super_resolution_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        result_layer_name = next(iter(model.outputs))
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
         h, w = result.shape[2:]
@@ -678,37 +681,53 @@ class single_image_super_resolution_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-edges = [
-    {'startVertex' : 1, 'endVertex': 8},
-    {'startVertex' : 8, 'endVertex': 9},
-    {'startVertex' : 9, 'endVertex': 10},
-    {'startVertex' : 1, 'endVertex': 11},
-    {'startVertex' : 11, 'endVertex': 12},
-    {'startVertex' : 12, 'endVertex': 13},
-    {'startVertex' : 1, 'endVertex': 2},
-    {'startVertex' : 2, 'endVertex': 3},
-    {'startVertex' : 3, 'endVertex': 4},
-    {'startVertex' : 2, 'endVertex': 16}, #connect right ear and right shoulder
-    {'startVertex' : 1, 'endVertex': 5},
-    {'startVertex' : 5, 'endVertex': 6},
-    {'startVertex' : 6, 'endVertex': 7},
-    {'startVertex' : 5, 'endVertex': 17}, #connect left ear and left shoulder
-    {'startVertex' : 1, 'endVertex': 0},
-    {'startVertex' : 0, 'endVertex': 14},
-    {'startVertex' : 0, 'endVertex': 15},
-    {'startVertex' : 15, 'endVertex': 17},
-    {'startVertex' : 14, 'endVertex': 16},
-]
-
-class pose_estimation_io(io_adapter):
-    def __init__(self, args, transformer):
-        super().__init__(args, transformer)
+class sphereface_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
 
-    def process_output(self, model, result, log):
+    def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+        result = result[next(iter(result))]
+        file_name = os.path.join(os.path.dirname(__file__), 'sphereface_out.csv')
+        with open(file_name, 'w+'):
+            np.savetxt('sphereface_out.csv', result, fmt = '%1.2f', delimiter = ';', 
+                        header = '{};{}'.format(result.shape[0], result.shape[1]), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class pose_estimation_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        edges = [
+            {'startVertex' : 1, 'endVertex': 8},
+            {'startVertex' : 8, 'endVertex': 9},
+            {'startVertex' : 9, 'endVertex': 10},
+            {'startVertex' : 1, 'endVertex': 11},
+            {'startVertex' : 11, 'endVertex': 12},
+            {'startVertex' : 12, 'endVertex': 13},
+            {'startVertex' : 1, 'endVertex': 2},
+            {'startVertex' : 2, 'endVertex': 3},
+            {'startVertex' : 3, 'endVertex': 4},
+            {'startVertex' : 2, 'endVertex': 16}, #connect right ear and right shoulder
+            {'startVertex' : 1, 'endVertex': 5},
+            {'startVertex' : 5, 'endVertex': 6},
+            {'startVertex' : 6, 'endVertex': 7},
+            {'startVertex' : 5, 'endVertex': 17}, #connect left ear and left shoulder
+            {'startVertex' : 1, 'endVertex': 0},
+            {'startVertex' : 0, 'endVertex': 14},
+            {'startVertex' : 0, 'endVertex': 15},
+            {'startVertex' : 15, 'endVertex': 17},
+            {'startVertex' : 14, 'endVertex': 16},
+        ]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'pose_estimation_color_map.txt')
         colors = []

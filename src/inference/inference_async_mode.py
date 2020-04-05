@@ -9,6 +9,7 @@ from time import time
 from copy import copy
 from io_adapter import io_adapter
 from transformer import transformer
+from io_model_wrapper import openvino_io_model_wrapper
 
 
 def build_parser():
@@ -48,7 +49,7 @@ def build_parser():
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
         'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
         'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
-        'single-image-super-resolution', 'pose-estimation'],
+        'single-image-super-resolution', 'sphereface', 'pose-estimation'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
@@ -117,12 +118,13 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
+        model_wrapper = openvino_io_model_wrapper()
         data_transformer = transformer()
-        io = io_adapter.get_io_adapter(args, data_transformer)
+        io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
-        input_shapes = utils.get_input_shape(net)
+        input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
@@ -136,7 +138,7 @@ def main():
         result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
-            io.process_output(net, result, log)
+            io.process_output(result, log)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)
@@ -150,4 +152,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
-
