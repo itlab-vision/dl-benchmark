@@ -710,15 +710,12 @@ class detection_ssd(io_adapter):
     
 
     @abc.abstractmethod
-    def _set_configs(self):
+    def _get_action_map(self):
         pass
+
 
     def _parse_det_conf(self, detection_conf_data, i):
         return detection_conf_data[i * 2 + 1]
-
-
-    def _low_detection(self, detection_conf):
-        return detection_conf < self._threshold
 
 
     def _parse_action(self, action_data, position, num_classes, scale, shift = 1):
@@ -801,7 +798,7 @@ class detection_ssd(io_adapter):
         return valid_detections
 
 
-    def _draw_detections(self, images, batch, valid_detections, action_map, log):
+    def _draw_detections(self, images, batch, valid_detections, action_map):
         image = images[batch]
         rect_color = (255, 255, 255)
         for detection in valid_detections:
@@ -814,6 +811,9 @@ class detection_ssd(io_adapter):
                 action_color = (0, 0, 255)
             cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        
+
+    def _save_output_images(self, images, log):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
@@ -867,7 +867,8 @@ class detection_ssd_old_format(detection_ssd):
         for i in range(b):
             images[i] = input[i].transpose((1, 2, 0))
         detections = []
-        num_classes, action_map = self._set_configs()
+        action_map = self._get_action_map()
+        num_classes = len(action_map)
         prior_data = result['mbox/priorbox'].flatten()
         for batch in range(b):
             encoded_data = result['mbox_loc1/out/conv/flat'][batch]
@@ -877,7 +878,7 @@ class detection_ssd_old_format(detection_ssd):
                 action_blobs[i] = result['out/anchor{}'.format(i + 1)][batch]
             for i in range(4300):
                 detection_conf = self._parse_det_conf(detection_conf_data, i)
-                if self._low_detection(detection_conf):
+                if detection_conf < self._threshold:
                     continue
                 action_data = action_blobs[i % 4].flatten()
                 action_id, action_conf = self._parse_action(action_data,
@@ -888,8 +889,9 @@ class detection_ssd_old_format(detection_ssd):
                 decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
-        valid_detections = self._non_max_supression(detections, self._threshold)
-        self._draw_detections(images, batch, valid_detections, action_map, log)
+            valid_detections = self._non_max_supression(detections, self._threshold)
+            self._draw_detections(images, batch, valid_detections, action_map)
+        self._save_output_images(images, log)
 
 
 class detection_ssd_new_format(detection_ssd):
@@ -940,7 +942,8 @@ class detection_ssd_new_format(detection_ssd):
         for i in range(b):
             images[i] = input[i].transpose((1, 2, 0))
         detections = []
-        num_classes, action_map = self._set_configs()
+        action_map = self._get_action_map()
+        num_classes = len(action_map)
         main_anchor = [26.17863728, 58.670372]
         anchors = [[35.36, 81.829632],
                     [45.8114572, 107.651852],
@@ -956,7 +959,7 @@ class detection_ssd_new_format(detection_ssd):
             detections = []
             for i in range(8550):
                 detection_conf = self._parse_det_conf(detection_conf_data, i)
-                if self._low_detection(detection_conf):
+                if detection_conf < self._threshold:
                     continue
                 action_data = []
                 action_id, action_conf = 0, 0.
@@ -978,8 +981,9 @@ class detection_ssd_new_format(detection_ssd):
                 decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
-        valid_detections = self._non_max_supression(detections, self._threshold)
-        self._draw_detections(images, batch, valid_detections, action_map, log)
+            valid_detections = self._non_max_supression(detections, self._threshold)
+            self._draw_detections(images, batch, valid_detections, action_map)
+        self._save_output_images(images, log)
     
 
 class person_detection_action_recognition_old(detection_ssd_old_format):
@@ -987,30 +991,27 @@ class person_detection_action_recognition_old(detection_ssd_old_format):
         super().__init__(args, io_model_wrapper, transformer)
 
     
-    def _set_configs(self):
-        num_classes = 3
-        action_map = ["sitting", "standing", "rasing hand"]
-        return num_classes, action_map
+    def _get_action_map(self):
+        action_map = ['sitting', 'standing', 'rasing hand']
+        return action_map
 
 
 class person_detection_raisinghand_recognition(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _set_configs(self):
-        num_classes = 2
-        action_map = ["sitting", "other"]
-        return num_classes, action_map
+    def _get_action_map(self):
+        action_map = ['sitting', 'other']
+        return action_map
     
 
 class person_detection_action_recognition_teacher(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _set_configs(self):
-        num_classes = 3
-        action_map = ["standing", "writing", "demonstrating"]
-        return num_classes, action_map
+    def _get_action_map(self):
+        action_map = ['standing', 'writing', 'demonstrating']
+        return action_map
 
 
 class person_detection_action_recognition_new(detection_ssd_new_format):
@@ -1018,7 +1019,7 @@ class person_detection_action_recognition_new(detection_ssd_new_format):
         super().__init__(args, io_model_wrapper, transformer)
 
     
-    def _set_configs(self):
-            num_classes = 3
-            action_map = ["sitting", "standing", "rasing hand"]
-            return num_classes, action_map
+    def _get_action_map(self):
+        action_map = ['sitting', 'writing', 'raising_hand', 'standing',
+                        'turned around', 'lie on the desk']
+        return action_map
