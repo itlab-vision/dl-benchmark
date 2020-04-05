@@ -1,13 +1,15 @@
+import cv2
 import sys
 import utils
 import argparse
 import numpy as np
 import logging as log
-import inference_output as io
 import postprocessing_data as pp
 from time import time
 from copy import copy
-import cv2
+from io_adapter import io_adapter
+from transformer import transformer
+from io_model_wrapper import openvino_io_model_wrapper
 
 
 def build_parser():
@@ -42,9 +44,12 @@ def build_parser():
         (Max by default)', type = int, default = None, dest = 'nthreads')
     parser.add_argument('-nstreams', '--number_streams', help = 'Number of streams.', 
         type = int, default = None, dest = 'nstreams')
-    parser.add_argument('-t', '--task', help = 'Output processing method: \
-        1.classification 2.detection 3.segmentation. \
+    parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
+        choices = ['classification', 'detection', 'segmentation', 'recognition-face',
+        'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
+        'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
+        'single-image-super-resolution', 'sphereface'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
@@ -55,17 +60,14 @@ def build_parser():
     return parser
 
 
-def infer_async(input, batch_size, exec_net, number_iter):
+def infer_async(exec_net, number_iter, get_slice):
     requests_counter = len(exec_net.requests)
-    size = batch_size
     result = None
-    slice_input = dict.fromkeys(input.keys(), None)
+    slice_input = None
     if number_iter == 1:
         time_s = time()
         for request_id in range(requests_counter):
-            for key in input:
-                slice_input[key] = input[key][request_id * size % len(input[key]):
-                    ((request_id + 1) * size - 1) % len(input[key]) + 1]
+            slice_input = get_slice(request_id)
             exec_net.start_async(request_id = request_id,
                 inputs = slice_input)
         for request_id in range(requests_counter):
@@ -82,9 +84,7 @@ def infer_async(input, batch_size, exec_net, number_iter):
         while iteration < number_iter:
             for request_id in range(requests_counter):
                 if requests_status[request_id] == 0:
-                    for key in input:
-                        slice_input[key] = input[key][iteration * size % len(input[key]):
-                            ((iteration + 1) * size - 1) % len(input[key]) + 1]
+                    slice_input = get_slice(iteration)
                     exec_net.start_async(request_id = request_id,
                         inputs = slice_input)
                     requests_status[request_id] = 1
@@ -118,25 +118,27 @@ def main():
         level = log.INFO, stream = sys.stdout)
     args = build_parser().parse_args()
     try:
+        model_wrapper = openvino_io_model_wrapper()
+        data_transformer = transformer()
+        io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.device,
             args.nthreads,args.nstreams, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
-        input_shapes = utils.get_input_shape(net)
+        input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         net.batch_size = args.batch_size
         log.info('Prepare input data')
-        input = utils.prepare_input(net, args.input, net.batch_size)
+        io.prepare_input(net, args.input)
         log.info('Create executable network')
         exec_net = iecore.load_network(network = net, device_name = args.device,
             num_requests = (args.requests or 0))
         log.info('Starting inference ({} iterations) with {} requests on {}'.
             format(args.number_iter, len(exec_net.requests), args.device))
-        result, time = infer_async(input, net.batch_size, exec_net, args.number_iter)
+        result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
-            io.infer_output(net, result, input, args.labels, args.number_top,
-                args.threshold, args.color_map, log, args.task)
+            io.process_output(result, log)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Computers>
+    <Computer>
+        <IP></IP>
+        <Login></Login>
+        <Password></Password>
+        <OS></OS>
+        <DownloadFolder></DownloadFolder>
+    </Computer>
+</Computers>
