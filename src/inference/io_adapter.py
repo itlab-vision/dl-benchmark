@@ -734,13 +734,14 @@ class human_pose_estimation_io(io_adapter):
         with open(self._color_map, 'r') as f:
             for line in f:
                 colors.append([int(x) for x in line.split()])
-        for batch, fields in enumerate(result['Mconv7_stage2_L1']):
-            frame = self._input['data'][batch].transpose((1, 2, 0))
+        for batch, frame in enumerate(self._input['data']):
+            frame = frame.transpose((1, 2, 0))
             frame_height = frame.shape[0]
             frame_width = frame.shape[1]
             keypoints_prob_map = result['Mconv7_stage2_L2'][batch].transpose(0, 2, 1)
             W = keypoints_prob_map.shape[1]
             H = keypoints_prob_map.shape[2]
+            fields = result['Mconv7_stage2_L1'][batch]
 
 # create_pafs:
             pafX = [fields[i] for i in range(0, fields.shape[0], 2)]
