@@ -678,7 +678,49 @@ class single_image_super_resolution_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class human_pose_estimation_io(io_adapter):
+edges = [
+    {'startVertex' : 1, 'endVertex': 8},
+    {'startVertex' : 8, 'endVertex': 9},
+    {'startVertex' : 9, 'endVertex': 10},
+    {'startVertex' : 1, 'endVertex': 11},
+    {'startVertex' : 11, 'endVertex': 12},
+    {'startVertex' : 12, 'endVertex': 13},
+    {'startVertex' : 1, 'endVertex': 2},
+    {'startVertex' : 2, 'endVertex': 3},
+    {'startVertex' : 3, 'endVertex': 4},
+    {'startVertex' : 2, 'endVertex': 16}, #connect right ear and right shoulder
+    {'startVertex' : 1, 'endVertex': 5},
+    {'startVertex' : 5, 'endVertex': 6},
+    {'startVertex' : 6, 'endVertex': 7},
+    {'startVertex' : 5, 'endVertex': 17}, #connect left ear and left shoulder
+    {'startVertex' : 1, 'endVertex': 0},
+    {'startVertex' : 0, 'endVertex': 14},
+    {'startVertex' : 0, 'endVertex': 15},
+    {'startVertex' : 15, 'endVertex': 17},
+    {'startVertex' : 14, 'endVertex': 16},
+]
+
+colors = [[85, 0, 0], 
+          [0, 85, 0], 
+          [0, 0, 85], 
+          [170, 0, 0], 
+          [0, 170, 0],
+          [0, 0, 170], 
+          [255, 0, 0], 
+          [0, 255, 0], 
+          [0, 0, 255], 
+          [0, 150, 150],
+          [150, 0, 150], 
+          [150, 150, 0],
+          [150, 150, 150], 
+          [0, 255, 255], 
+          [255, 0, 255], 
+          [255, 255, 0], 
+          [200, 200, 200], 
+          [150, 255, 0], 
+          [255, 150, 0]]
+
+class pose_estimation_io(io_adapter):
     def __init__(self, args, transformer):
         super().__init__(args, transformer)
 
@@ -687,48 +729,122 @@ class human_pose_estimation_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        edges = [
-            (1, 8),
-            (8, 9),
-            (9, 10),
-            (1, 11),
-            (11, 12),
-            (12, 13),
-            (1, 2),
-            (2, 3),
-            (3, 4),
-            #(2, 16), connect right ear and right shoulder
-            (1, 5),
-            (5, 6),
-            (6, 7),
-            #(5, 17), connect left ear and left shoulder
-            (0, 1),
-            (0, 14),
-            (0, 15),
-            (15, 17),
-            (14, 16),
-        ]
+        
         frame = self._input['data'][0].transpose((1, 2, 0))
-        frameHeight = frame.shape[0]
-        frameWidth = frame.shape[1]
-        keypoints = result['Mconv7_stage2_L2'][0].transpose(1, 2, 0)
-        H = keypoints.shape[0]
-        W = keypoints.shape[1]
-        points = {}
-        for i in range(len(keypoints)):
-            for j in range(len(keypoints[i])):
-                keypoint = keypoints[i][j].argmax()
-                if not (keypoint == 18):
-                    x = int(j * frameWidth/W)
-                    y = int(i * frameHeight/H)
-                    points[keypoint] = (x, y)
+        frame_height = frame.shape[0]
+        frame_width = frame.shape[1]
+        keypoints_prob_map = result['Mconv7_stage2_L2'][0].transpose(0, 2, 1)
+        W = keypoints_prob_map.shape[1]
+        H = keypoints_prob_map.shape[2]
+        fields = result['Mconv7_stage2_L1'][0]
+
+# create_pafs:
+        pafX = [fields[i] for i in range(0, fields.shape[0], 2)]
+        pafY = [fields[i] for i in range(1, fields.shape[0], 2)]
+
+# search_keypoints:
+        keypoints = {}
+        keypoint_id = 0
+        for i in range(keypoints_prob_map.shape[0] - 1):
+            prob_map = cv2.resize(keypoints_prob_map[i], (frame_height, frame_width))
+            mapSmooth = cv2.GaussianBlur(prob_map, (3,3), 0, 0)
+            mapMask = np.uint8(mapSmooth > self._threshold)
+            contours, _ = cv2.findContours(mapMask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            keypoints[i] = []
+            for cnt in contours:
+                blobMask = np.zeros(mapMask.shape)
+                blobMask = cv2.fillConvexPoly(blobMask, cnt, 1)
+                maskedProbMap = mapSmooth * blobMask
+                _, _, _, (y, x) = cv2.minMaxLoc(maskedProbMap)
+                keypoints[i].append({'coordinates': (x, y), 'id': keypoint_id})
+                keypoint_id += 1
+
+# create_points:
+        points = []
+        point_id = 0
+        for part in range(len(keypoints)):
+            if not (len(keypoints[part]) == 0):
+                for point in keypoints[part]:
+                    points.append({'coordinates': point['coordinates'], 
+                                   'part': part, 
+                                   'id': point_id})
+                    point_id += 1
+
+# search_valid_connections:
+        valid_connections = []
+        invalid_connections = []
         for edge in edges:
-            start_point = points.get(edge[0])
-            end_point = points.get(edge[1])
-            if not (start_point == None) and not (end_point == None):
-                frame = cv2.line(frame, start_point, end_point, (255, 0, 0), 2, cv2.LINE_AA, 0)
-        for point in points.values():
-            frame = cv2.circle(frame, point, 2, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
-        out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation.png')
+            valid_pairs = []
+            fieldX = cv2.resize(pafX[edges.index(edge)], (frame_width, frame_height))
+            fieldY = cv2.resize(pafY[edges.index(edge)], (frame_width, frame_height))
+            start_point_candidates = keypoints[edge['startVertex']]
+            end_point_candidates = keypoints[edge['endVertex']]
+            if (not (len(start_point_candidates) == 0) and not (len(end_point_candidates) == 0)):
+                for start_point in start_point_candidates:
+                    max_end_point_id = -1
+                    max_score = -1
+                    found = False
+                    for end_point in end_point_candidates:
+                        distance = np.subtract(end_point['coordinates'], start_point['coordinates'])
+                        norm = np.linalg.norm(distance)
+                        if norm:
+                            norm_distance = distance/norm
+                        else:
+                            continue
+                        interp_coord = list(zip(np.linspace(start_point['coordinates'][0], end_point['coordinates'][0], num=10),\
+                                                np.linspace(start_point['coordinates'][1], end_point['coordinates'][1], num=10)))
+                        paf_interp = []
+                        for coord in interp_coord:
+                            x = int(round(coord[0]))
+                            y = int(round(coord[1]))
+                            paf_interp.append((fieldX[y, x], fieldY[y, x]))
+                        paf_scores = np.dot(paf_interp, norm_distance)
+                        avg_paf_score = sum(paf_scores)/len(paf_scores)
+                        valid_points = np.where(paf_scores > self._threshold)[0]
+                        if ((len(valid_points) / 10) > 0.7):   # if (valid points is 70%):
+                            if avg_paf_score > max_score:
+                                max_end_point_id = end_point['id']
+                                max_score = avg_paf_score
+                                found = True
+                    if (found):
+                        valid_pairs.append([start_point['id'], max_end_point_id])
+                valid_connections.append(valid_pairs)
+            else:
+                valid_connections.append([])
+                invalid_connections.append(edge)
+
+#search_persons_keypoints:
+        persons_keypoints = -1 * np.ones((0, 18))
+        for edge in edges:
+            if edge not in invalid_connections:
+                start_point = edge['startVertex']
+                end_point = edge['endVertex']
+                for connection in valid_connections[edges.index(edge)]:
+                    found = False
+                    person_index = -1
+                    for person_index in range(len(persons_keypoints)):
+                        if persons_keypoints[person_index][start_point] == connection[0]:
+                            found = True
+                            break
+                    if found:
+                        persons_keypoints[person_index][end_point] = connection[1]
+                    elif not found and edges.index(edge) < 17:
+                        new_person_points = -1 * np.ones(18)
+                        new_person_points[start_point] = connection[0]
+                        new_person_points[end_point] = connection[1]
+                        persons_keypoints = np.vstack((persons_keypoints, new_person_points))
+
+# print_edges:
+        for edge in edges:
+            for person_points in persons_keypoints:
+                start_point_id = int(person_points[edge['startVertex']])
+                end_point_id = int(person_points[edge['endVertex']])
+                connection = (start_point_id, end_point_id)
+                if -1 in connection:
+                    continue
+                start_point = points[start_point_id]['coordinates']
+                end_point = points[end_point_id]['coordinates']
+                frame = cv2.line(frame, start_point, end_point, colors[edges.index(edge)], 2, cv2.LINE_AA)
+        out_img = os.path.join(os.path.dirname(__file__), 'out.png')
         cv2.imwrite(out_img, frame)
         log.info('Result image was saved to {}'.format(out_img))
