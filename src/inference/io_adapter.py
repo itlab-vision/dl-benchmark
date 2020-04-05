@@ -140,8 +140,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return instance_segmenatation_io(args, transformer)
         elif task == 'single-image-super-resolution':
             return single_image_super_resolution_io(args, transformer)
-        elif task == 'human-pose-estimation':
-            return human_pose_estimation_io(args, transformer)
+        elif task == 'pose-estimation':
+            return pose_estimation_io(args, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -700,26 +700,6 @@ edges = [
     {'startVertex' : 14, 'endVertex': 16},
 ]
 
-colors = [[85, 0, 0], 
-          [0, 85, 0], 
-          [0, 0, 85], 
-          [170, 0, 0], 
-          [0, 170, 0],
-          [0, 0, 170], 
-          [255, 0, 0], 
-          [0, 255, 0], 
-          [0, 0, 255], 
-          [0, 150, 150],
-          [150, 0, 150], 
-          [150, 150, 0],
-          [150, 150, 150], 
-          [0, 255, 255], 
-          [255, 0, 255], 
-          [255, 255, 0], 
-          [200, 200, 200], 
-          [150, 255, 0], 
-          [255, 150, 0]]
-
 class pose_estimation_io(io_adapter):
     def __init__(self, args, transformer):
         super().__init__(args, transformer)
@@ -729,7 +709,12 @@ class pose_estimation_io(io_adapter):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'pose_estimation_color_map.txt')
+        colors = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                colors.append([int(x) for x in line.split()])
         frame = self._input['data'][0].transpose((1, 2, 0))
         frame_height = frame.shape[0]
         frame_width = frame.shape[1]
