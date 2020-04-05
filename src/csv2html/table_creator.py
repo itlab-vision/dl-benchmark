@@ -20,6 +20,15 @@ class HTMLTable:
         self.table_csv = _table_csv
         self.frameworks_list = yaml.safe_load(_file)['frameworks']
 
+    @staticmethod
+    def get_supported_mode(plugin):
+        if plugin == 'CPU':
+            return 'ALL'
+        elif plugin == 'GPU':
+            return 'SYNC'
+        else:
+            return 'ASYNC'
+
     def add_styles_to_table(self, path_to_styles):
         styles = open(path_to_styles, 'r')
         for line in styles:
@@ -63,6 +72,13 @@ class HTMLTable:
 
         return task_types_dict
 
+    def find_plugin_in_infr(self, plugin, target_infr):
+        for row_index in range(1, len(self.table_csv)):
+            if (plugin in self.table_csv[row_index][PARAMS_POSITION_IN_TABLE] and
+                target_infr == self.table_csv[row_index][INFR_POSITION_IN_TABLE]):
+                return True
+        return False
+
     def get_infr_dict(self):
         infr_dict = dict()
         for row_index in range(1, len(self.table_csv)):
@@ -76,8 +92,9 @@ class HTMLTable:
                     for plagin in framework:
                         if plagin == 'name':
                             continue
-                        infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]][framework['name']][plagin] = \
-                            framework[plagin].replace(' ', '').split(',')
+                        if self.find_plugin_in_infr(plagin, self.table_csv[row_index][INFR_POSITION_IN_TABLE]):
+                            infr_dict[self.table_csv[row_index][INFR_POSITION_IN_TABLE]][framework['name']][plagin] = \
+                                framework[plagin].replace(' ', '').split(',')
 
         return infr_dict
 
@@ -148,8 +165,15 @@ class HTMLTable:
                         self.table_html.append('<th><table align="center" widtd="100%"' +
                         'border="1" cellspacing="0" cellpadding="0">\n')
                         self.table_html.append('<tr><th colspan="2">{}</th>\n</tr>'.format(weight))
-                        self.table_html.append('<tr class="double"><th>Latency Mode</th>\n')
-                        self.table_html.append('<th class="double">Throughput Mode</th></tr>\n</table></th>')
+                        supported_mode = HTMLTable.get_supported_mode(plugin)
+                        if supported_mode == 'ALL':
+                            self.table_html.append('<tr class="double"><th>Latency Mode</th>\n')
+                            self.table_html.append('<th class="double">Throughput Mode</th></tr>\n</table></th>')
+                        elif supported_mode == 'SYNC':
+                            self.table_html.append('<tr>\n<th>Latency<br>Mode</th>\n</tr></table></th>\n')
+                        elif supported_mode == 'ASYNC':
+                            self.table_html.append('<tr><th>Throughput<br>Mode</th>\n</tr>\n</table></th>')
+
                     self.table_html.append('</tr></table></td></tr>\n</table>\n</th>')
                 self.table_html.append('\n</tr></table></td></tr>\n</table>\n</th>\n')
             self.table_html.append('</tr>\n</table></td></tr>')
@@ -218,10 +242,19 @@ class HTMLTable:
                                 for batch in self.task_types_dict[task_type][model]['batch']:
                                     self.table_html.append('\n<tr><td> <table align="center"' +
                                         'border="1" cellspacing="0" cellpadding="0">\n')
-                                    self.table_html.append('<tr>\n<td class="double" align="right">{}</td>\n'.format(
-                                        self.infr_dict[infrastr][framework][plugin][weight][model][batch]['sync']))
-                                    self.table_html.append('<td class="double" align="right">{}</td>\n</tr>'.format(
-                                        self.infr_dict[infrastr][framework][plugin][weight][model][batch]['async']))
+                                    supported_mode = HTMLTable.get_supported_mode(plugin)
+                                    if supported_mode == 'ALL':
+                                        self.table_html.append('<tr>\n<td class="double" align="right">{}</td>\n'.format(
+                                            self.infr_dict[infrastr][framework][plugin][weight][model][batch]['sync']))
+                                        self.table_html.append('<td class="double" align="right">{}</td>\n</tr>'.format(
+                                            self.infr_dict[infrastr][framework][plugin][weight][model][batch]['async']))
+                                    elif supported_mode == 'SYNC':
+                                        self.table_html.append('<tr>\n<td class="double" align="right">{}</td>\n</tr>'.format(
+                                            self.infr_dict[infrastr][framework][plugin][weight][model][batch]['sync']))
+                                    elif supported_mode == 'ASYNC':
+                                       self.table_html.append('<tr><td class="double" align="right">{}</td>\n</tr>'.format(
+                                            self.infr_dict[infrastr][framework][plugin][weight][model][batch]['async']))
+
                                     self.table_html.append('\n</table></td>\n</tr>')
                                 self.table_html.append('</table>\n</td>')
                     self.table_html.append('</table>\n</td>\n</tr>')
