@@ -781,18 +781,18 @@ class detection_ssd(io_adapter):
                 if detection[0] < det_threshold:
                     continue
                 current_rect_area = ((detection[1][2] - detection[1][0]) * 
-                                    (detection[1][3] - detection[1][1]))
+                    (detection[1][3] - detection[1][1]))
                 max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
-                                (max_detection[1][3] - max_detection[1][1]))
+                    (max_detection[1][3] - max_detection[1][1]))
                 intersection_area = 0
                 if not (detection[1][0] >= max_detection[1][2] or 
-                        detection[1][1] >= max_detection[1][3] or 
-                        max_detection[1][0] >= detection[1][2] or 
-                        max_detection[1][1] >= detection[1][3]):
+                    detection[1][1] >= max_detection[1][3] or 
+                    max_detection[1][0] >= detection[1][2] or 
+                    max_detection[1][1] >= detection[1][3]):
                     intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
-                                        max(detection[1][0], max_detection[1][0])) * 
-                                        (min(detection[1][3], max_detection[1][3]) - 
-                                        max(detection[1][1], max_detection[1][1])))
+                        max(detection[1][0], max_detection[1][0])) * 
+                        (min(detection[1][3], max_detection[1][3]) - 
+                        max(detection[1][1], max_detection[1][1])))
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
                 detection[0] *= np.exp(-overlap * overlap / 0.6)
         return valid_detections
@@ -803,14 +803,14 @@ class detection_ssd(io_adapter):
         rect_color = (255, 255, 255)
         for detection in valid_detections:
             cv2.rectangle(image, (detection[1][0], detection[1][1]), 
-                        (detection[1][2], detection[1][3]), rect_color, 1)
+                (detection[1][2], detection[1][3]), rect_color, 1)
             action_color = (0, 0, 0)
             if detection[3] == 0:
                 action_color = (0, 255, 0)
             else:
                 action_color = (0, 0, 255)
             cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
         
 
     def _save_output_images(self, images, log):
@@ -882,7 +882,7 @@ class detection_ssd_old_format(detection_ssd):
                     continue
                 action_data = action_blobs[i % 4].flatten()
                 action_id, action_conf = self._parse_action(action_data,
-                                            i // 4 * num_classes, num_classes, 3)
+                    i // 4 * num_classes, num_classes, 3)
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
                 encoded_box = self._parse_encoded_box(encoded_data, i)
@@ -945,10 +945,10 @@ class detection_ssd_new_format(detection_ssd):
         action_map = self._get_action_map()
         num_classes = len(action_map)
         main_anchor = [26.17863728, 58.670372]
-        anchors = [[35.36, 81.829632],
-                    [45.8114572, 107.651852],
-                    [63.31491832, 142.595732],
-                    [93.5070856, 201.107692]]
+        anchors = [[35.36, 81.829632], 
+            [45.8114572, 107.651852], 
+            [63.31491832, 142.595732], 
+            [93.5070856, 201.107692]]
         for batch in range(b):
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
@@ -966,11 +966,11 @@ class detection_ssd_new_format(detection_ssd):
                 if i < 4250:
                     action_data = main_action_data
                     action_id, action_conf = self._parse_action(main_action_data,
-                                            i, num_classes, 16, 4250)
+                        i, num_classes, 16, 4250)
                 else:
                     action_data = action_blobs[(i - 4250) % 4].flatten()
                     action_id, action_conf = self._parse_action(action_data,
-                                        (i - 4250) // 4, num_classes, 16, 1075)
+                        (i - 4250) // 4, num_classes, 16, 1075)
                 prior_box = []
                 if i < 4250:
                     prior_box = self._parse_prior_box(main_anchor, i, w, h)
@@ -1023,5 +1023,5 @@ class person_detection_action_recognition_new(detection_ssd_new_format):
     
     def _get_action_map(self):
         action_map = ['sitting', 'writing', 'raising_hand', 'standing',
-                        'turned around', 'lie on the desk']
+            'turned around', 'lie on the desk']
         return action_map
