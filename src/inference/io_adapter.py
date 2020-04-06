@@ -825,7 +825,6 @@ class human_pose_estimation_io(io_adapter):
         return frame
 
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -875,3 +874,4 @@ class human_pose_estimation_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
+
