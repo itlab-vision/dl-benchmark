@@ -839,11 +839,11 @@ class human_pose_estimation_io(io_adapter):
             {'startVertex' : 1, 'endVertex': 2},
             {'startVertex' : 2, 'endVertex': 3},
             {'startVertex' : 3, 'endVertex': 4},
-            {'startVertex' : 2, 'endVertex': 16}, #connect right ear and right shoulder
+            {'startVertex' : 2, 'endVertex': 16},
             {'startVertex' : 1, 'endVertex': 5},
             {'startVertex' : 5, 'endVertex': 6},
             {'startVertex' : 6, 'endVertex': 7},
-            {'startVertex' : 5, 'endVertex': 17}, #connect left ear and left shoulder
+            {'startVertex' : 5, 'endVertex': 17},
             {'startVertex' : 1, 'endVertex': 0},
             {'startVertex' : 0, 'endVertex': 14},
             {'startVertex' : 0, 'endVertex': 15},
