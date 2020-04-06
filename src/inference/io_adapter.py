@@ -143,6 +143,14 @@ class io_adapter(metaclass = abc.ABCMeta):
             return single_image_super_resolution_io(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
             return sphereface_io(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-old':
+            return person_detection_action_recognition_old(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-new':
+            return person_detection_action_recognition_new(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-raisinghand-recognition':
+            return person_detection_raisinghand_recognition(args, io_model_wrapper, transformer)
+        elif task == 'person-detection-action-recognition-teacher':
+            return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
             return human_pose_estimation_io(args, io_model_wrapper, transformer)
 
@@ -698,6 +706,329 @@ class sphereface_io(io_adapter):
         log.info('Result was saved to {}'.format(file_name))
 
 
+class detection_ssd(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+    
+
+    @abc.abstractmethod
+    def _get_action_map(self):
+        pass
+
+
+    def _parse_det_conf(self, detection_conf_data, i):
+        return detection_conf_data[i * 2 + 1]
+
+
+    def _parse_action(self, action_data, position, num_classes, scale, shift = 1):
+        action_exp_max = 0.
+        action_exp_sum = 0.
+        action_id = -1
+        action_threshold = 0.75
+        for num in range(num_classes):
+            action_exp = np.exp(scale * action_data[position + num * shift])
+            action_exp_sum += action_exp
+            if action_exp > action_exp_max:
+                action_exp_max = action_exp
+                action_id = num
+        action_conf = action_exp_max / action_exp_sum
+        if action_conf < action_threshold:
+            action_id = 0
+            action_conf = 0.
+        return action_id, action_conf
+
+
+    @abc.abstractmethod
+    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+        pass
+
+
+    @abc.abstractmethod
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        pass
+
+
+    @abc.abstractmethod
+    def _parse_encoded_box(self, encoded_data, i):
+        pass
+    
+
+    def _parse_decoded_bbox(self, prior_box, variance_box, encoded_box, w, h):
+        prior_width = prior_box[2] - prior_box[0]
+        prior_height = prior_box[3] - prior_box[1]
+        prior_xcenter = (prior_box[2] + prior_box[0]) / 2
+        prior_ycenter = (prior_box[3] + prior_box[1]) / 2
+        decoded_xcenter = variance_box[0] * encoded_box[0] * prior_width + prior_xcenter
+        decoded_ycenter = variance_box[1] * encoded_box[1] * prior_height + prior_ycenter
+        decoded_width = np.exp(variance_box[2] * encoded_box[2]) * prior_width
+        decoded_height = np.exp(variance_box[3] * encoded_box[3]) * prior_height
+        decoded_xmin = int((decoded_xcenter - 0.5 * decoded_width) * w)
+        decoded_ymin = int((decoded_ycenter - 0.5 * decoded_height) * h)
+        decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * w)
+        decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
+        decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+        return decoded_bbox
+
+
+    def _non_max_supression(self, detections, det_threshold):
+        detections.sort(key = lambda detection: detection[0], reverse = True)
+        valid_detections = []
+        for idx in range(len(detections)):
+            max_detection = max(detections, key = lambda detection: detection[0])
+            if max_detection[0] < det_threshold: 
+                continue
+            valid_detections.append(max_detection)
+            max_detection[0] = 0
+            for detection in detections:
+                if detection[0] < det_threshold:
+                    continue
+                current_rect_area = ((detection[1][2] - detection[1][0]) * 
+                    (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
+                    (max_detection[1][3] - max_detection[1][1]))
+                intersection_area = 0
+                if not (detection[1][0] >= max_detection[1][2] or 
+                    detection[1][1] >= max_detection[1][3] or 
+                    max_detection[1][0] >= detection[1][2] or 
+                    max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
+                        max(detection[1][0], max_detection[1][0])) * 
+                        (min(detection[1][3], max_detection[1][3]) - 
+                        max(detection[1][1], max_detection[1][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                detection[0] *= np.exp(-overlap * overlap / 0.6)
+        return valid_detections
+
+
+    def _draw_detections(self, images, batch, valid_detections, action_map):
+        image = images[batch]
+        rect_color = (255, 255, 255)
+        for detection in valid_detections:
+            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
+                (detection[1][2], detection[1][3]), rect_color, 1)
+            action_color = (0, 0, 0)
+            if detection[3] == 0:
+                action_color = (0, 255, 0)
+            else:
+                action_color = (0, 0, 255)
+            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        
+
+    def _save_output_images(self, images, log):
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            count += 1
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+    
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
+class detection_ssd_old_format(detection_ssd):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+        prior_xmin = prior_data[i * 4]
+        prior_ymin = prior_data[i * 4 + 1]
+        prior_xmax = prior_data[i * 4 + 2]
+        prior_ymax = prior_data[i * 4 + 3]
+        return prior_xmin, prior_ymin, prior_xmax, prior_ymax
+
+
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        variance_xmin = prior_data[(4300 + i) * 4]
+        variance_ymin = prior_data[(4300 + i) * 4 + 1]
+        variance_xmax = prior_data[(4300 + i) * 4 + 2]
+        variance_ymax = prior_data[(4300 + i) * 4 + 3]
+        return variance_xmin, variance_ymin, variance_xmax, variance_ymax
+
+
+    def _parse_encoded_box(self, encoded_data, i):
+        encoded_xmin = encoded_data[i * 4]
+        encoded_ymin = encoded_data[i * 4 + 1]
+        encoded_xmax = encoded_data[i * 4 + 2]
+        encoded_ymax = encoded_data[i * 4 + 3]
+        return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        action_map = self._get_action_map()
+        num_classes = len(action_map)
+        prior_data = result['mbox/priorbox'].flatten()
+        for batch in range(b):
+            encoded_data = result['mbox_loc1/out/conv/flat'][batch]
+            detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
+            action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
+            for i in range(4):
+                action_blobs[i] = result['out/anchor{}'.format(i + 1)][batch]
+            for i in range(4300):
+                detection_conf = self._parse_det_conf(detection_conf_data, i)
+                if detection_conf < self._threshold:
+                    continue
+                action_data = action_blobs[i % 4].flatten()
+                action_id, action_conf = self._parse_action(action_data,
+                    i // 4 * num_classes, num_classes, 3)
+                prior_box = self._parse_prior_box(prior_data, i)
+                variance_box = self._parse_variance_box(prior_data, i)
+                encoded_box = self._parse_encoded_box(encoded_data, i)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+            valid_detections = self._non_max_supression(detections, self._threshold)
+            self._draw_detections(images, batch, valid_detections, action_map)
+        self._save_output_images(images, log)
+
+
+class detection_ssd_new_format(detection_ssd):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _parse_prior_box(self, prior_data, i, w, h):
+        blob_size, step = [], 0
+        if i < 4250:
+            blob_size = [50, 85]
+            step = 8
+        else:
+            blob_size = [43, 25]
+            step = 16
+            i = (i - 4250) // 4
+        row = i // blob_size[0]
+        col = i % blob_size[0]
+        xcenter = (col + 0.5) * step
+        ycenter = (row + 0.5) * step
+        prior_xmin = (xcenter - 0.5 * prior_data[0]) / w
+        prior_ymin = (ycenter - 0.5 * prior_data[1]) / h
+        prior_xmax = (xcenter + 0.5 * prior_data[0]) / w
+        prior_ymax = (ycenter + 0.5 * prior_data[1]) / h
+        return prior_xmin, prior_ymin, prior_xmax, prior_ymax
+
+    
+    def _parse_variance_box(self, prior_data = None, i = 0):
+        return 0.1, 0.1, 0.2, 0.2
+
+
+    def _parse_encoded_box(self, encoded_data, i):
+        encoded_xmin = encoded_data[i * 4 + 1]
+        encoded_ymin = encoded_data[i * 4]
+        encoded_xmax = encoded_data[i * 4 + 3]
+        encoded_ymax = encoded_data[i * 4 + 2]
+        return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        input = self._input[input_layer_name]
+        b, c, h, w = input.shape
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = input[i].transpose((1, 2, 0))
+        detections = []
+        action_map = self._get_action_map()
+        num_classes = len(action_map)
+        main_anchor = [26.17863728, 58.670372]
+        anchors = [[35.36, 81.829632], 
+            [45.8114572, 107.651852], 
+            [63.31491832, 142.595732], 
+            [93.5070856, 201.107692]]
+        for batch in range(b):
+            encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
+            detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
+            main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
+            action_blobs = np.ndarray(shape = (4, 6, 25, 43))
+            for i in range(4):
+                action_blobs[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
+            detections = []
+            for i in range(8550):
+                detection_conf = self._parse_det_conf(detection_conf_data, i)
+                if detection_conf < self._threshold:
+                    continue
+                action_data = []
+                action_id, action_conf = 0, 0.
+                if i < 4250:
+                    action_data = main_action_data
+                    action_id, action_conf = self._parse_action(main_action_data,
+                        i, num_classes, 16, 4250)
+                else:
+                    action_data = action_blobs[(i - 4250) % 4].flatten()
+                    action_id, action_conf = self._parse_action(action_data,
+                        (i - 4250) // 4, num_classes, 16, 1075)
+                prior_box = []
+                if i < 4250:
+                    prior_box = self._parse_prior_box(main_anchor, i, w, h)
+                else:
+                    prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
+                variance_box = self._parse_variance_box()
+                encoded_box = self._parse_encoded_box(encoded_data, i)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
+                detection = [detection_conf, decoded_bbox, action_conf, action_id]
+                detections.append(detection)
+            valid_detections = self._non_max_supression(detections, self._threshold)
+            self._draw_detections(images, batch, valid_detections, action_map)
+        self._save_output_images(images, log)
+    
+
+class person_detection_action_recognition_old(detection_ssd_old_format):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    
+    def _get_action_map(self):
+        action_map = ['sitting', 'standing', 'rasing hand']
+        return action_map
+
+
+class person_detection_raisinghand_recognition(detection_ssd_old_format):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _get_action_map(self):
+        action_map = ['sitting', 'other']
+        return action_map
+    
+
+class person_detection_action_recognition_teacher(detection_ssd_old_format):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _get_action_map(self):
+        action_map = ['standing', 'writing', 'demonstrating']
+        return action_map
+
+
+class person_detection_action_recognition_new(detection_ssd_new_format):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    
+    def _get_action_map(self):
+        action_map = ['sitting', 'writing', 'raising_hand', 'standing',
+            'turned around', 'lie on the desk']
+        return action_map
+
+
 class human_pose_estimation_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -735,8 +1066,8 @@ class human_pose_estimation_io(io_adapter):
             if not (len(keypoints[part]) == 0):
                 for point in keypoints[part]:
                     points.append({'coordinates': point['coordinates'], 
-                                    'part': part, 
-                                    'id': point_id})
+                        'part': part, 
+                        'id': point_id})
                     point_id += 1
         return points
 
@@ -774,7 +1105,7 @@ class human_pose_estimation_io(io_adapter):
                         paf_scores = np.dot(paf_interp, norm_distance)
                         avg_paf_score = sum(paf_scores)/len(paf_scores)
                         valid_points = np.where(paf_scores > self._threshold)[0]
-                        if ((len(valid_points) / 10) > 0.7):   # if (valid points is 70%):
+                        if ((len(valid_points) / 10) > 0.7):
                             if avg_paf_score > max_score:
                                 max_end_point_id = end_point['id']
                                 max_score = avg_paf_score
@@ -823,7 +1154,7 @@ class human_pose_estimation_io(io_adapter):
                 end_point = points[end_point_id]['coordinates']
                 frame = cv2.line(frame, start_point, end_point, colors[edges.index(edge)], 2, cv2.LINE_AA)
         return frame
-
+        
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -867,11 +1198,10 @@ class human_pose_estimation_io(io_adapter):
             pafX, pafY = self.__create_pafs(fields)
             keypoints = self.__search_keypoints(keypoints_prob_map, frame_height, frame_width)
             points = self.__create_points(keypoints)
-            valid_connections, invalid_connections = self.__search_connections(edges, keypoints, \
-                                                            pafX, pafY, frame_width, frame_height)
+            valid_connections, invalid_connections = self.__search_connections(edges,\
+                keypoints, pafX, pafY, frame_width, frame_height)
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
-
