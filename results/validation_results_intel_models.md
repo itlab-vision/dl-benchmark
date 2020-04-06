@@ -99,6 +99,9 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 <div style='float: center'>
 <img width="300" src="images\is0083.jpg"></img>
 </div>
+<div style='float: center'>
+Входной тензор: (480, 640, 1)
+</div>
 
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
@@ -115,6 +118,9 @@ instance-segmentation-security-0083             |<div style='float: center'><img
 <div style='float: center'>
 <img width="300" src="images\is0050.jpg"></img>
 </div>
+<div style='float: center'>
+Входной тензор: (480, 480, 1)
+</div>
 
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
@@ -130,6 +136,9 @@ instance-segmentation-security-0050             |<div style='float: center'><img
 
 <div style='float: center'>
 <img width="300" src="images\is0010.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: (800, 1344, 1)
 </div>
 
 
