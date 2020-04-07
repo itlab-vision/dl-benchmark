@@ -1094,9 +1094,9 @@ class human_pose_estimation_io(io_adapter):
                         else:
                             continue
                         interp_coord = list(zip(np.linspace(start_point['coordinates'][0],
-                            end_point['coordinates'][0], num=10),
+                            end_point['coordinates'][0], num = 10),
                             np.linspace(start_point['coordinates'][1],
-                            end_point['coordinates'][1], num=10)))
+                            end_point['coordinates'][1], num = 10)))
                         paf_interp = []
                         for coord in interp_coord:
                             x = int(round(coord[0]))
@@ -1198,7 +1198,7 @@ class human_pose_estimation_io(io_adapter):
             pafX, pafY = self.__create_pafs(fields)
             keypoints = self.__search_keypoints(keypoints_prob_map, frame_height, frame_width)
             points = self.__create_points(keypoints)
-            valid_connections, invalid_connections = self.__search_connections(edges,\
+            valid_connections, invalid_connections = self.__search_connections(edges, 
                 keypoints, pafX, pafY, frame_width, frame_height)
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
