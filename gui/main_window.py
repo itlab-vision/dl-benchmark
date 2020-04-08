@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QWidget, QTabWidget, QVBoxLayout, QApplication
+from widgets import WidgetData
 
 
 class MainWindow(QMainWindow):
@@ -22,12 +23,11 @@ class MainTableWidget(QWidget):
 
     def initUI(self):
         self.tabs = QTabWidget()
-        self.tab_data = QWidget()  # data widget
+        self.tab_data = WidgetData(self)
         self.tab_configuration = QWidget()  # configuration widget
         self.tabs.resize(920, 560)
-        self.tabs.addTab(self.tab_data, "Работа с данными")
-        self.tabs.addTab(self.tab_configuration, "Создание конфигураций")
-
+        self.tabs.addTab(self.tab_data, 'Работа с данными')
+        self.tabs.addTab(self.tab_configuration, 'Создание конфигураций')
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.tabs)
         self.setLayout((self.layout))
