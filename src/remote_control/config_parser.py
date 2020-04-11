@@ -13,7 +13,6 @@ class machine:
         self.log_file = params[7]
         self.res_file = params[8]
 
-
 def parse_config(config):
     with open(config) as file:
         openconfig = file.read()

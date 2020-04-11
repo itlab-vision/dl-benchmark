@@ -26,6 +26,9 @@ class windows_remote_hepler(remote_helper):
 
         return watcher
 
+    def execute_python(self, command):
+        return execute('python {}'.format(command))
+
     def wait(self, process):
         process_status = process()
         self.my_log.info('Ended process on Windows with name {}'.format(
