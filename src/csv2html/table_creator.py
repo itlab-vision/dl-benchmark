@@ -145,19 +145,19 @@ class HTMLTable:
             '<th>Input blob sizes</th>\n<th>Batch size</th>\n')
         for infrastr in self.infr_dict:
             self.table_html.append('<th> <table align="center" width="100%"' +
-                'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
             self.table_html.append('<tr>\n<th>{}</th>\n</tr>'.format(infrastr))
             self.table_html.append('\n<tr>\n<td> <table align="center" width="100%"' +
-                'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n<tr>')
+                'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')
             for framework in self.infr_dict[infrastr]:
                 self.table_html.append('<th> <table align="center" width="100%"' +
                         'border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>')
                 self.table_html.append('\n<th>{}</th></tr><tr>'.format(framework))
                 self.table_html.append('<td> <table align="center" width="100%"' +
-                        'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n<tr>')
+                        'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')
                 for plugin in self.infr_dict[infrastr][framework]:
                     supported_mode = HTMLTable.get_supported_mode(plugin)
-                    table_header_class = "standart_table" if (supported_mode == 'ALL' and
+                    table_header_class = "standard_table" if (supported_mode == 'ALL' and
                         len(self.infr_dict[infrastr][framework]) > 1)  else "one_type_table"
                     self.table_html.append('<th> <table align="center" width="100%"' +
                         'border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))
@@ -165,7 +165,7 @@ class HTMLTable:
                     self.table_html.append('<td> <table align="center" width="100%"' +
                         'border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))
                     for weight in self.infr_dict[infrastr][framework][plugin]:
-                        table_class = "standart_table" if supported_mode == 'ALL' else "one_type_table"
+                        table_class = "standard_table" if supported_mode == 'ALL' else "one_type_table"
                         self.table_html.append('<th><table align="center" width="100%"' +
                         'border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))
                         self.table_html.append('<tr><th colspan="2">{}</th>\n</tr>'.format(weight))
@@ -192,39 +192,39 @@ class HTMLTable:
 
             #Print models
             self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
             for model in self.task_types_dict[task_type]:
                 self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(model))
             self.table_html.append('</table>\n</td>')
 
             #Print framework
             self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
             for model in self.task_types_dict[task_type]:
                 self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
                     self.task_types_dict[task_type][model]['framework']))
             self.table_html.append('</table>\n</td>')
 
             #Print shape
             self.table_html.append('<td> <table align="center" class="lock" height="100%"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
             for model in self.task_types_dict[task_type]:
                 self.table_html.append('<tr><td>\n<table align="center" class="border_columns"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 self.table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
                     self.task_types_dict[task_type][model]['shape']))
             self.table_html.append('</table>\n</td>')
 
             #Print batch
             self.table_html.append('<td > <table align="center" class="lock"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
             for model in self.task_types_dict[task_type]:
                 self.table_html.append('<tr>\n <td> <table align="center" class="border_columns"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 for batch in self.task_types_dict[task_type][model]['batch']:
                     self.table_html.append('<tr>\n<td align="right">{}</td>\n</tr>\n'.format(batch))
                 self.table_html.append('</table>\n</td></tr>')
@@ -233,18 +233,18 @@ class HTMLTable:
             # Print result
             for infrastr in self.infr_dict:
                 self.table_html.append('<td> <table align="center" class="lock"' +
-                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 for model in self.task_types_dict[task_type]:
                     self.table_html.append('<tr>\n<td> <table align="center" class="lock"' +
-                        'border="1" cellspacing="0" cellpadding="0" class="standart_table">\n')
+                        'border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                     for framework in self.infr_dict[infrastr]:
                         for plugin in self.infr_dict[infrastr][framework]:
                             for weight in self.infr_dict[infrastr][framework][plugin]:
                                 self.table_html.append('<td height="120px"> <table align="center" class="result_column"' +
-                                    'border="1" cellspacing="0" cellpadding="0" class="standart_table">')
+                                    'border="1" cellspacing="0" cellpadding="0" class="standard_table">')
                                 for batch in self.task_types_dict[task_type][model]['batch']:
                                     supported_mode = HTMLTable.get_supported_mode(plugin)
-                                    table_class = "standart_table" if supported_mode == 'ALL' else "one_type_table"
+                                    table_class = "standard_table" if supported_mode == 'ALL' else "one_type_table"
                                     self.table_html.append('\n<tr><td> <table align="center"' +
                                         'border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))
                                     if supported_mode == 'ALL':
