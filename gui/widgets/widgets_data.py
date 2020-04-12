@@ -10,7 +10,7 @@ class WidgetModelSettings(QWidget):
         self._table = TableModel()
         self._buttons = GroupButtonModels()
         layouts.addWidget(self._table)
-        layouts.addWidget(self._buttons.group)
+        layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 
@@ -21,7 +21,7 @@ class WidgetDataSettings(QWidget):
         self._table = TableData()
         self._buttons = GroupButtonData()
         layouts.addWidget(self._table)
-        layouts.addWidget(self._buttons.group)
+        layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 

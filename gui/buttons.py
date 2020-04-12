@@ -1,12 +1,11 @@
 from PyQt5.QtWidgets import *
 
 
-class GroupButtonModels(QWidget):
+class GroupButtonModels(QGroupBox):
     def __init__(self):
         super().__init__()
         self._buttons = self.__create_dict_buttons()
-        self.group = QGroupBox()
-        self.group.setLayout(self.__create_buttons_vbox())
+        self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
         list_name_buttons = ['Добавить модель', 'Удалить модель']
@@ -20,12 +19,11 @@ class GroupButtonModels(QWidget):
         return vbox
 
 
-class GroupButtonData(QWidget):
+class GroupButtonData(QGroupBox):
     def __init__(self):
         super().__init__()
         self._buttons = self.__create_dict_buttons()
-        self.group = QGroupBox()
-        self.group.setLayout(self.__create_buttons_vbox())
+        self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
         list_name_buttons = ['Добавить данные', 'Удалить данные']
