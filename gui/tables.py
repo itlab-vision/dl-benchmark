@@ -5,13 +5,14 @@ class TableModel(QTableWidget):
     def __init__(self):
         super().__init__()
         self._model = []
-        self._headers = ['#', 'Название модели', 'Абсолютный путь']
-        self._count_col = 3
+        self._headers = ['Название модели', 'Абсолютный путь']
+        self._count_col = 2
         self._count_row = 50
         self.setHorizontalHeaderLabels(self._headers)
-        self.setColCount(self._count_col)
+        self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.clear_table()
+        self.resizeColumnsToContents()
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -37,8 +38,8 @@ class DataTable(QTableWidget):
     def __init__(self):
         super().__init__()
         self._data = []
-        self._headers = ['#', 'Название датасета', 'Абсолютный путь']
-        self._count_col = 3
+        self._headers = ['Название датасета', 'Абсолютный путь']
+        self._count_col = 2
         self._count_row = 20
         self.setHorizontalHeaderLabels(self._headers)
         self.setColCount(self._count_col)

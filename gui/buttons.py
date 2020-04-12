@@ -1,24 +1,21 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QGroupBox, QVBoxLayout
+from PyQt5.QtWidgets import *
 
 
-class GroupButton(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
-        self.list_name_buttons = []
-        self.initUI()
-
-    def initUI(self):
-        self.groupbox = QGroupBox()
-        vbox = QVBoxLayout()
-        self.list_buttons = []
-        for name, i in self.list_name_buttons:
-            self.list_buttons.append(QPushButton(self.list_name_buttons[i]))
-            vbox.addWidget(self.list_buttons[i])
-        self.groupbox.setLayout(vbox)
-
-
-class GroupButtonModels(GroupButton):
+class GroupButtonModels(QWidget):
     def __init__(self):
-        super(self).__init__()
-        self.list_name_buttons = ['Добавить модель', 'Удалить модель']
-        self.initUI()
+        super().__init__()
+        self._buttons = self.__create_dict_buttons()
+        self.group = QGroupBox()
+        self.group.setLayout(self.__create_buttons_vbox())
+
+    def __create_dict_buttons(self):
+        list_name_buttons = ['Добавить модель', 'Удалить модель']
+        buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
+        return buttons
+
+    def __create_buttons_vbox(self):
+        vbox = QVBoxLayout()
+        for name_button in self._buttons:
+            vbox.addWidget(self._buttons[name_button])
+        return vbox
+

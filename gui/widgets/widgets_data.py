@@ -1,43 +1,53 @@
 from PyQt5.QtWidgets import *
-from buttons import GroupButton, GroupButtonModels
+from tables import *
+from buttons import GroupButtonModels
+
+
+class WidgetModelSettings(QWidget):
+    def __init__(self, parent):
+        super(QWidget, self).__init__(parent)
+        layouts = QHBoxLayout()
+        self._table = TableModel()
+        self._buttons = GroupButtonModels()
+        layouts.addWidget(self._table)
+        layouts.addWidget(self._buttons.group)
+        self.setLayout(layouts)
+
 
 class WidgetData(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self.initUI()
-
-    def initUI(self):
         self._grid = QGridLayout()
-        # self.setLayout(grid)
-        menu = self.__create_combobox()
-        self._grid.addWidget(menu, 0, 0)
+        self._widgets = self.__create_dict()
+        self._grid.addWidget(self.__create_combobox(), 0, 0)
+        self._grid.addWidget(self._widgets['Управление моделями'], 1, 0)
+        self._widgets['Управление моделями'].show()
+        self._grid.addWidget(self._widgets['Управление данными'], 1, 0)
+        self._widgets['Управление данными'].hide()
+        self._grid.addWidget(self._widgets['Управление тестами'], 1, 0)
+        self._widgets['Управление тестами'].hide()
         self.setLayout(self._grid)
 
     def __create_combobox(self):
         menu = QComboBox()
-        menu.addItems(['Управление моделями', 'Управление данными', 'Управление тестами'])
+        menu.addItems(self._widgets.keys())
         menu.activated[str].connect(self.onActivated)
         return menu
+
+    def __create_dict(self):
+        model_settings = WidgetModelSettings(self)
+        data_settings = QWidget()
+        tests_settings = QWidget()
+        dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
+                      'Управление тестами': tests_settings}
+        return dictionary
 
     def __clear_grid(self, number_row):
         pass
 
     def onActivated(self, type):
-        if type == 'Управление моделями':
-            pass
-        elif type == 'Управление данными':
-            pass
-        elif type == 'Управление тестами':
-            pass
-
-class WidgetModelSettings(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
-        self.initUI()
-
-    def initUI(self):
-        layouts = QHBoxLayout()
-
-    def __create_table(self):
-        table = QTableWidget(self)
-        table.setColumnCount(2)
+        for key in self._widgets:
+            if key == type:
+                self._widgets[key].show()
+            else:
+                self._widgets[key].hide()
