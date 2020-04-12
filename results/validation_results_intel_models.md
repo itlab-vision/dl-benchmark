@@ -97,54 +97,54 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 Разрешение: 640 x 480
 
 <div style='float: center'>
-<img width="300" src="images\is0083.jpg"></img>
+<img width="300" src="images\000000118209.jpg"></img>
 </div>
 <div style='float: center'>
-Входной тензор: (480, 640, 1)
+Входной тензор: 480; 640; 1
 </div>
 
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-instance-segmentation-security-0083             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_is0083.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_is0083.bmp"></img></div>|
+instance-segmentation-security-0083             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000118209.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000118209.bmp"></img></div>|
 
 
 ### Тестовое изображение 2
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 480 x 480
+Разрешение: 640 x 640
 
 <div style='float: center'>
-<img width="300" src="images\is0050.jpg"></img>
+<img width="300" src="images\COCO_val2014_000000203438.jpg"></img>
 </div>
 <div style='float: center'>
-Входной тензор: (480, 480, 1)
+Входной тензор: 480; 480; 1
 </div>
 
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_is0050.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_is0050.bmp"></img></div>|
+instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_COCO_val2014_000000203438.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_COCO_val2014_000000203438.bmp"></img></div>|
 
 
 ### Тестовое изображение 3
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 1344 x 800
+Разрешение: 640 x 427
 
 <div style='float: center'>
-<img width="300" src="images\is0010.jpg"></img>
+<img width="300" src="images\000000367818.jpg"></img>
 </div>
 <div style='float: center'>
-Входной тензор: (800, 1344, 1)
+Входной тензор: 800; 1344; 1
 </div>
 
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-instance-segmentation-security-0010             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_is0010.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_is0010.bmp"></img></div>|
+instance-segmentation-security-0010             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000367818.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000367818.bmp"></img></div>|
 
 
 Карта цветов:
@@ -154,7 +154,7 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 </div>
 
 <!-- LINKS -->
-[github_road_segmentation]: https://docs.openvinotoolkit.org/2019_R1.1/_road_segmentation_adas_0001_description_road_segmentation_adas_0001.html
-[github_single_image_super_resolution]: https://docs.openvinotoolkit.org/latest/_models_intel_single_image_super_resolution_1032_description_single_image_super_resolution_1032.html
+[github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
+[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
 [cityscapes]: https://www.cityscapes-dataset.com
 [ms_coco]: http://cocodataset.org
