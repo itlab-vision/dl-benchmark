@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from tables import *
-from buttons import GroupButtonModels
+from buttons import *
 
 
 class WidgetModelSettings(QWidget):
@@ -9,6 +9,17 @@ class WidgetModelSettings(QWidget):
         layouts = QHBoxLayout()
         self._table = TableModel()
         self._buttons = GroupButtonModels()
+        layouts.addWidget(self._table)
+        layouts.addWidget(self._buttons.group)
+        self.setLayout(layouts)
+
+
+class WidgetDataSettings(QWidget):
+    def __init__(self, parent):
+        super(QWidget, self).__init__(parent)
+        layouts = QHBoxLayout()
+        self._table = TableData()
+        self._buttons = GroupButtonData()
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons.group)
         self.setLayout(layouts)
@@ -36,7 +47,7 @@ class WidgetData(QWidget):
 
     def __create_dict(self):
         model_settings = WidgetModelSettings(self)
-        data_settings = QWidget()
+        data_settings = WidgetDataSettings(self)
         tests_settings = QWidget()
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
                       'Управление тестами': tests_settings}

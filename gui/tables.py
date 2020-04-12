@@ -12,7 +12,6 @@ class TableModel(QTableWidget):
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.clear_table()
-        self.resizeColumnsToContents()
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -34,7 +33,7 @@ class TableModel(QTableWidget):
         self.update_table()
 
 
-class DataTable(QTableWidget):
+class TableData(QTableWidget):
     def __init__(self):
         super().__init__()
         self._data = []
@@ -42,7 +41,7 @@ class DataTable(QTableWidget):
         self._count_col = 2
         self._count_row = 20
         self.setHorizontalHeaderLabels(self._headers)
-        self.setColCount(self._count_col)
+        self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.clear_table()
 
