@@ -28,16 +28,16 @@ class WidgetDataSettings(QWidget):
 class WidgetData(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self._grid = QGridLayout()
+        grid = QGridLayout()
         self._widgets = self.__create_dict()
-        self._grid.addWidget(self.__create_combobox(), 0, 0)
-        self._grid.addWidget(self._widgets['Управление моделями'], 1, 0)
+        grid.addWidget(self.__create_combobox(), 0, 0)
+        grid.addWidget(self._widgets['Управление моделями'], 1, 0)
         self._widgets['Управление моделями'].show()
-        self._grid.addWidget(self._widgets['Управление данными'], 1, 0)
+        grid.addWidget(self._widgets['Управление данными'], 1, 0)
         self._widgets['Управление данными'].hide()
-        self._grid.addWidget(self._widgets['Управление тестами'], 1, 0)
+        grid.addWidget(self._widgets['Управление тестами'], 1, 0)
         self._widgets['Управление тестами'].hide()
-        self.setLayout(self._grid)
+        self.setLayout(grid)
 
     def __create_combobox(self):
         menu = QComboBox()
@@ -52,9 +52,6 @@ class WidgetData(QWidget):
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
                       'Управление тестами': tests_settings}
         return dictionary
-
-    def __clear_grid(self, number_row):
-        pass
 
     def onActivated(self, type):
         for key in self._widgets:
