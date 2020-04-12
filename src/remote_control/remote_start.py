@@ -3,11 +3,10 @@ import sys
 import argparse
 import logging as log
 import config_parser
-from process_watcher import process_watcher as pw
 import ftplib
 import table_format
 
-path_to_utils = os.path.normpath(os.path.join(os.getcwd(), ../bench_deploy))
+path_to_utils = os.path.normpath(os.path.join(os.getcwd(), '../bench_deploy'))
 sys.path.insert(1, path_to_utils)
 from remote_executor import remote_executor
 
@@ -24,15 +23,13 @@ def build_parser():
     parser.add_argument('-r', '--result_table', type = str,
         help = 'Name of result table', required = True)
     args = parser.parse_args()
-    if not os.path.isfile(parser.config):
+    if not os.path.isfile(args.config):
         raise ValueError('Wrong path to configuration file!')
     return args
 
 def client_execution(machine, server_ip, server_login, server_psw, log):
     executor = remote_executor(machine.os_type, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
-    joined_pass = os.path.join(project_folder, 'src/bench_deploy')
-    project_folder = os.path.normpath(joined_pass)
     command = (('{} -ip {} -l {} -p {} -env {} -b {} -os {} --res_file ' + 
         '{} --log_file {}').format(machine.path_to_ftp_client,
         server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
@@ -48,7 +45,6 @@ def main():
     args = build_parser()
     log.info('Parsing config file')
     machine_list = config_parser.parse_config(args.config)
-        machine_list = parse_machine_list(args.machine_list)
 
     client_list = []
     log.info('Clients start executing')

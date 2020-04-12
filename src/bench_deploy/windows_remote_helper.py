@@ -26,8 +26,8 @@ class windows_remote_hepler(remote_helper):
 
         return watcher
 
-    def execute_python(self, command):
-        return execute('python {}'.format(command))
+    def execute_python(self, con, command):
+        return self.execute(con, 'python {}'.format(command))
 
     def wait(self, process):
         process_status = process()

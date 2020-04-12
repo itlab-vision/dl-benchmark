@@ -19,7 +19,10 @@ class remote_executor:
             except:
                 time.sleep(self.my_wait_counter)
 
-    def execute_command(self, command, executor=self.my_remote_helper.execute):
+    def execute_command(self, command, executor=None):
+        if executor is None:
+            executor = self.my_remote_helper.execute
+
         if self.my_active_connection is None:
             self.my_status = 'Error: can\'t connect to {}!'.format(self.my_machine_ip)
             return None
@@ -40,7 +43,10 @@ class remote_executor:
     def execute_python(self, command):
         self.execute_command(command, executor=self.my_remote_helper.execute_python)
 
-    def execute_command_and_wait(self, command, executor=self.my_remote_helper.execute):
+    def execute_command_and_wait(self, command, executor=None):
+        if executor is None:
+            executor = self.my_remote_helper.execute
+
         if self.my_active_connection is None:
             self.my_status = 'Error: can\'t connect to {}!'.format(self.my_machine_ip)
             return None

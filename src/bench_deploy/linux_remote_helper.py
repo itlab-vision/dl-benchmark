@@ -26,8 +26,8 @@ class linux_remote_helper(remote_helper):
 
         return channel
 
-    def execute_python(self, command):
-        return execute('python3 {}'.format(command))
+    def execute_python(self, con, command):
+        return self.execute(con, 'python3 {}'.format(command))
 
     def wait(self, process):
         channel_id = process.get_id()
