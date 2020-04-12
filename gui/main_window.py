@@ -9,14 +9,14 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.resize(920, 560)
         self.setWindowTitle('Configuration Creator')
-        table_widget = MainTabWidget(self)
+        table_widget = MainTabWidget()
         self.setCentralWidget(table_widget)
         self.show()
 
 
 class MainTabWidget(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         self._tabs = self.__create_tabs()
         layout = QVBoxLayout(self)
         layout.addWidget(self._tabs)
@@ -24,12 +24,13 @@ class MainTabWidget(QWidget):
 
     def __create_tabs(self):
         tabs = QTabWidget()
-        tab_data = WidgetData(self)
-        tab_configuration = WidgetConfig(self)
+        tab_data = WidgetData()
+        tab_configuration = WidgetConfig()
         tabs.resize(920, 560)
         tabs.addTab(tab_data, 'Работа с данными')
         tabs.addTab(tab_configuration, 'Создание конфигураций')
         return tabs
+
 
 def main():
     app = QApplication([])

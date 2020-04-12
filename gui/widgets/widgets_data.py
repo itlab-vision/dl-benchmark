@@ -4,8 +4,8 @@ from buttons import *
 
 
 class WidgetModelSettings(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         layouts = QHBoxLayout()
         self._table = TableModel()
         self._buttons = GroupButtonModels()
@@ -15,8 +15,8 @@ class WidgetModelSettings(QWidget):
 
 
 class WidgetDataSettings(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         layouts = QHBoxLayout()
         self._table = TableData()
         self._buttons = GroupButtonData()
@@ -26,8 +26,8 @@ class WidgetDataSettings(QWidget):
 
 
 class WidgetData(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
@@ -46,8 +46,8 @@ class WidgetData(QWidget):
         return menu
 
     def __create_dict(self):
-        model_settings = WidgetModelSettings(self)
-        data_settings = WidgetDataSettings(self)
+        model_settings = WidgetModelSettings()
+        data_settings = WidgetDataSettings()
         tests_settings = QWidget()
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
                       'Управление тестами': tests_settings}

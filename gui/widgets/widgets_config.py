@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import *
 
 
 class WidgetConfig(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
