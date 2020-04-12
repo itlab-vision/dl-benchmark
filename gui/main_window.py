@@ -7,9 +7,6 @@ from widgets.widgets_config import *
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
-
-    def initUI(self):
         self.resize(920, 560)
         self.setWindowTitle('Configuration Creator')
         table_widget = MainTabWidget(self)
@@ -20,9 +17,6 @@ class MainWindow(QMainWindow):
 class MainTabWidget(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self.initUI()
-
-    def initUI(self):
         self._tabs = self.__create_tabs()
         layout = QVBoxLayout(self)
         layout.addWidget(self._tabs)
