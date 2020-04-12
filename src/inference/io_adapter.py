@@ -657,7 +657,7 @@ class instance_segmenatation_io(io_adapter):
                             y = int(boxes[i][1] + j * dh)
                             for c in range(dh):
                                 for t in range(dw):
-                                    image[y + c][x + t] += classes_color_map[classes[i]]
+                                    image[y + c][x + t] = classes_color_map[classes[i] - 1]
         for l in range(len(labels_on_image)):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
@@ -818,7 +818,7 @@ class detection_ssd(io_adapter):
     def _save_output_images(self, images, log):
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
