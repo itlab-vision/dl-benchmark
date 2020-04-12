@@ -12,7 +12,13 @@ class TableModel(QTableWidget):
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self._headers)
+        self.__resize_columns()
         self.clear_table()
+
+    def __resize_columns(self):
+        header = self.horizontalHeader()
+        header.setStretchLastSection(True)
+        self.resizeColumnsToContents()
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -54,7 +60,13 @@ class TableData(QTableWidget):
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self._headers)
+        self.__resize_columns()
         self.clear_table()
+
+    def __resize_columns(self):
+        header = self.horizontalHeader()
+        header.setStretchLastSection(True)
+        self.resizeColumnsToContents()
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
