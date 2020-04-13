@@ -157,6 +157,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return action_recognition_encoder_io(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-encoder':
             return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'reidentification':
+            return reidentification_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -1247,6 +1249,26 @@ class driver_action_recognition_encoder_io(io_adapter):
         with open(file_name, 'w+'):
             probs = np.reshape(np.squeeze(result), (batch_size, dim1))
             np.savetxt('driver_action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                        header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class reidentification_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'reidentification.csv')
+        batch_size = result.shape[0]
+        dim1 = result.shape[1]        
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('reidentification.csv', probs, fmt = '%1.7f', delimiter = ';', 
                         header = '{};{}'.format(batch_size, dim1), comments = '')
         log.info('Result was saved to {}'.format(file_name))
 
