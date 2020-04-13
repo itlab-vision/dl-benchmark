@@ -153,6 +153,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
             return human_pose_estimation_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-encoder':
+            return action_recognition_encoder_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -1205,3 +1207,24 @@ class human_pose_estimation_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'action_recognition_encoder_out.csv')
+        batch_size = result.shape[0]
+        dim1 = result.shape[1]        
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                        header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
