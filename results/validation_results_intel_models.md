@@ -210,12 +210,12 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 </div>
 
 <!-- LINKS -->
-[ARE_sync]: descriptor\python_sync_demo.csv
-[ARE_async]: descriptor\python_async_demo.csv
-[DARE_sync]: descriptor\python_sync_action-recognition-kelly.csv
-[DARE_async]: descriptor\python_async_action-recognition-kelly.csv
-[face_reidentification_sync]: descriptor\python_sync_Aaron_Peirsol_0002.csv
-[face_reidentification_async]: descriptor\python_async_Aaron_Peirsol_0002.csv
+[ARE_sync]: descriptor/python_sync_demo.csv
+[ARE_async]: descriptor/python_async_demo.csv
+[DARE_sync]: descriptor/python_sync_action-recognition-kelly.csv
+[DARE_async]: descriptor/python_async_action-recognition-kelly.csv
+[face_reidentification_sync]: descriptor/python_sync_Aaron_Peirsol_0002.csv
+[face_reidentification_async]: descriptor/python_async_Aaron_Peirsol_0002.csv
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
