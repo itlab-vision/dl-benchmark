@@ -92,6 +92,24 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 
 ### Тестовое изображение 1
 
+Источник: набор данных [LFW][LFW]
+
+Разрешение: 250 x 250
+
+<div style='float: center'>
+<img width="300" src="images\Aaron_Peirsol_0002.jpg"></img>
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_sync] | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_async] |
+
+
+### Тестовое изображение 2
+
 Источник: набор данных [GitHub][github_ARE]
 
 Разрешение: 960 x 720
@@ -108,7 +126,7 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_sync] | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_async] |
 
 
-### Тестовое изображение 2
+### Тестовое изображение 3
 
 Источник: набор данных [GitHub][github_DARE]
 
@@ -126,14 +144,18 @@ action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<
 driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
 
 
-### Тестовое изображение 3
+## Результаты распознования действий
 
-Источник: набор данных [LFW][LFW]
+### Тестовый тензор 1
 
-Разрешение: 250 x 250
+Источник: [Результат работы модели action-recognition-0001-encoder][ARD]
 
 <div style='float: center'>
-<img width="300" src="images\Aaron_Peirsol_0002.jpg"></img>
+0.0794002  0.0583136  0.0020747  0.0903931<br>
+0.0154800  0.3712009  0.4007360  0.0830761<br>
+...<br>
+0.1126685  0.1257046  0.1392988  0.5075323<br>
+0.0785143  0.0922345  0.0033597  0.3115494
 </div>
 <div style='float: center'>
 </div>
@@ -141,7 +163,27 @@ driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_sync] | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_async] |
+action-recognition-0001-decoder |  |  |
+
+
+### Тестовый тензор 2
+
+Источник: [Результат работы модели driver-action-recognition-adas-0002-encoder][DARD]
+
+<div style='float: center'>
+-0.0142664  -0.0064780  -0.0334583  -0.0108943<br>
+-0.0555940  -0.0013968   0.0001638  -0.0007524<br>
+...<br>
+-0.0093990  -0.0028726   0.0074722   0.0303789<br>
+-0.2324419   0.2686763   0.0168234   0.0029897
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+driver-action-recognition-adas-0002-decoder |  |  |
 
 
 ## Результаты экземплярной сегментации
@@ -210,12 +252,14 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 </div>
 
 <!-- LINKS -->
-[ARE_sync]: descriptor/python_sync_demo.csv
-[ARE_async]: descriptor/python_async_demo.csv
-[DARE_sync]: descriptor/python_sync_action-recognition-kelly.csv
-[DARE_async]: descriptor/python_async_action-recognition-kelly.csv
-[face_reidentification_sync]: descriptor/python_sync_Aaron_Peirsol_0002.csv
-[face_reidentification_async]: descriptor/python_async_Aaron_Peirsol_0002.csv
+[ARD]: action_recognition/action_recognition_encoder_out.csv
+[DARD]: action_recognition/driver_action_recognition_encoder_out.csv
+[ARE_sync]: encoding/python_sync_demo.csv
+[ARE_async]: encoding/python_async_demo.csv
+[DARE_sync]: encoding/python_sync_action-recognition-kelly.csv
+[DARE_async]: encoding/python_async_action-recognition-kelly.csv
+[face_reidentification_sync]: encoding/python_sync_Aaron_Peirsol_0002.csv
+[face_reidentification_async]: encoding/python_async_Aaron_Peirsol_0002.csv
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
