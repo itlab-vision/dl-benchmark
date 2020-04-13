@@ -163,7 +163,7 @@ driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-action-recognition-0001-decoder |  |  |
+action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet |
 
 
 ### Тестовый тензор 2
@@ -183,7 +183,7 @@ action-recognition-0001-decoder |  |  |
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-driver-action-recognition-adas-0002-decoder |  |  |
+driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand |
 
 
 ## Результаты экземплярной сегментации
