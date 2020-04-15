@@ -8,6 +8,7 @@ from transformer import transformer
 class io_adapter(metaclass = abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
+        self._original_shapes = None
         self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
@@ -20,13 +21,15 @@ class io_adapter(metaclass = abc.ABCMeta):
     def __convert_images(self, shape, data):
         c, h, w  = shape[1:]
         images = np.ndarray(shape = (len(data), c, h, w))
+        image_shapes = []
         for i in range(len(data)):
             image = cv2.imread(data[i])
+            image_shapes.append(image.shape[:-1])
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
             images[i] = self._transformer.transform(image)
-        return images
+        return images, image_shapes
 
 
     def __create_list_images(self, input):
@@ -65,6 +68,7 @@ class io_adapter(metaclass = abc.ABCMeta):
 
     def prepare_input(self, model, input):
         self._input = {}
+        self._original_shapes = {}
         if ':' in input[0]:
             for str in input:
                 key, value = str.split(':')
@@ -75,8 +79,9 @@ class io_adapter(metaclass = abc.ABCMeta):
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
-                    value = self.__convert_images(shape, value)
+                    value, shapes = self.__convert_images(shape, value)
                 self._input.update({key : value})
+                self._original_shapes.update({key : shapes})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -85,8 +90,9 @@ class io_adapter(metaclass = abc.ABCMeta):
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
-                value = self.__convert_images(shape, value)
+                value, shapes = self.__convert_images(shape, value)
             self._input.update({input_blob : value})
+            self._original_shapes.update({input_blob : shapes})
         return self._input
 
 
@@ -208,6 +214,7 @@ class detection_io(io_adapter):
         result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
+        shapes = self._original_shapes[input_layer_name]
         ib, c, h, w = input.shape
         b = result.shape[0]
         images = np.ndarray(shape = (b, h, w, c))
@@ -233,9 +240,11 @@ class detection_io(io_adapter):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
-            count += 1
+            orig_h, orig_w = shapes[count % self._batch_size]
+            image = cv2.resize(image, (orig_w, orig_h))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
+            count += 1
 
 
 class segmenatation_io(io_adapter):
@@ -249,6 +258,7 @@ class segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[1:]
         if not self._color_map:
@@ -258,12 +268,14 @@ class segmenatation_io(io_adapter):
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -289,7 +301,7 @@ class adas_segmenatation_io(io_adapter):
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = np.squeeze(data)
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
@@ -320,7 +332,7 @@ class road_segmenatation_io(io_adapter):
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = data.transpose((1, 2, 0))
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = np.argmax(data[i][j])
@@ -686,7 +698,7 @@ class single_image_super_resolution_io(io_adapter):
         c = 3
         h, w = result.shape[2:]
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             colors = data * 255
             np.clip(colors, 0., 255.)
             classes_map = colors.transpose((1, 2, 0))
