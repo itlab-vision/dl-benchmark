@@ -788,7 +788,7 @@ class detection_ssd(io_adapter):
         for idx in range(len(detections)):
             max_detection = max(detections, key = lambda detection: detection[0])
             if max_detection[0] < det_threshold: 
-                continue
+                break
             valid_detections.append(max_detection)
             max_detection[0] = 0
             for detection in detections:
@@ -812,8 +812,8 @@ class detection_ssd(io_adapter):
         return valid_detections
 
 
-    def _draw_detections(self, images, batch, valid_detections, action_map):
-        image = images[batch]
+    def _draw_detections(self, images, batch, valid_detections, action_map, h, w):
+        image = cv2.resize(images[batch], (w, h))
         rect_color = (255, 255, 255)
         for detection in valid_detections:
             cv2.rectangle(image, (detection[1][0], detection[1][1]), 
@@ -825,6 +825,7 @@ class detection_ssd(io_adapter):
                 action_color = (0, 0, 255)
             cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        return image
         
 
     def _save_output_images(self, images, log):
@@ -884,7 +885,10 @@ class detection_ssd_old_format(detection_ssd):
         action_map = self._get_action_map()
         num_classes = len(action_map)
         prior_data = result['mbox/priorbox'].flatten()
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['mbox_loc1/out/conv/flat'][batch]
             detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
             action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
@@ -900,12 +904,12 @@ class detection_ssd_old_format(detection_ssd):
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
 
 
 class detection_ssd_new_format(detection_ssd):
@@ -963,7 +967,10 @@ class detection_ssd_new_format(detection_ssd):
             [45.8114572, 107.651852], 
             [63.31491832, 142.595732], 
             [93.5070856, 201.107692]]
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
@@ -992,12 +999,12 @@ class detection_ssd_new_format(detection_ssd):
                     prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
                 variance_box = self._parse_variance_box()
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)              
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
     
 
 class person_detection_action_recognition_old(detection_ssd_old_format):
