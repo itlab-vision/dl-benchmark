@@ -380,5 +380,4 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 [sphereface_sync]:recognition/sphereface_out_sync.csv
 [sphereface_async]:recognition/sphereface_out_async.csv
 [widerface]: http://shuoyang1213.me/WIDERFACE
-[cityscapes]: https://www.cityscapes-dataset.com
 [walksf_internet]: https://walksf.org/our-work/campaigns/6th-street/
