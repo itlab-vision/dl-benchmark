@@ -25,6 +25,17 @@ class WidgetDataSettings(QWidget):
         self.setLayout(layouts)
 
 
+class WidgetTestSettings(QWidget):
+    def __init__(self):
+        super().__init__()
+        layouts = QHBoxLayout()
+        self._table = TableTest()
+        self._buttons = GroupButtonTest()
+        layouts.addWidget(self._table)
+        layouts.addWidget(self._buttons)
+        self.setLayout(layouts)
+
+
 class WidgetData(QWidget):
     def __init__(self):
         super().__init__()
@@ -48,7 +59,7 @@ class WidgetData(QWidget):
     def __create_dict(self):
         model_settings = WidgetModelSettings()
         data_settings = WidgetDataSettings()
-        tests_settings = TestsTable()
+        tests_settings = WidgetTestSettings()
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
                       'Управление тестами': tests_settings}
         return dictionary

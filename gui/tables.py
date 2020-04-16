@@ -96,7 +96,7 @@ class TableData(QTableWidget):
         self.update_table()
 
 
-class TestsTable(QTableWidget):
+class TableTest(QTableWidget):
     def __init__(self):
         super().__init__()
         self._tests = []
