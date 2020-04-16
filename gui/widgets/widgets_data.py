@@ -48,7 +48,7 @@ class WidgetData(QWidget):
     def __create_dict(self):
         model_settings = WidgetModelSettings()
         data_settings = WidgetDataSettings()
-        tests_settings = QWidget()
+        tests_settings = TestsTable()
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
                       'Управление тестами': tests_settings}
         return dictionary
