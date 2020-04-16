@@ -159,6 +159,12 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
             return human_pose_estimation_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-encoder':
+            return action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'driver-action-recognition-encoder':
+            return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'reidentification':
+            return reidentification_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -669,7 +675,7 @@ class instance_segmenatation_io(io_adapter):
                             y = int(boxes[i][1] + j * dh)
                             for c in range(dh):
                                 for t in range(dw):
-                                    image[y + c][x + t] += classes_color_map[classes[i]]
+                                    image[y + c][x + t] = classes_color_map[classes[i] - 1]
         for l in range(len(labels_on_image)):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
@@ -830,7 +836,7 @@ class detection_ssd(io_adapter):
     def _save_output_images(self, images, log):
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
@@ -1217,3 +1223,64 @@ class human_pose_estimation_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2]
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class driver_action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'driver_action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('driver_action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class reidentification_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'reidentification.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('reidentification.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+

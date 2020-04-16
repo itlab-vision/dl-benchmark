@@ -51,7 +51,8 @@ def build_parser():
         'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
         'single-image-super-resolution', 'sphereface', 'person-detection-action-recognition-old',
         'person-detection-action-recognition-new', 'person-detection-raisinghand-recognition',
-        'person-detection-action-recognition-teacher', 'human-pose-estimation'],
+        'person-detection-action-recognition-teacher', 'human-pose-estimation', 
+        'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map', 
         default = None, type = str, dest = 'color_map')
