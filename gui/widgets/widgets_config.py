@@ -14,6 +14,17 @@ class WidgetTestConfigs(QWidget):
         self.setLayout(layouts)
 
 
+class WidgetRemoteConfigs(QWidget):
+    def __init__(self):
+        super().__init__()
+        layouts = QHBoxLayout()
+        self._table = TableRemoteConfig()
+        self._buttons = GroupButtonRemoteConfig()
+        layouts.addWidget(self._table)
+        layouts.addWidget(self._buttons)
+        self.setLayout(layouts)
+
+
 class WidgetConfig(QWidget):
     def __init__(self):
         super().__init__()
@@ -36,7 +47,7 @@ class WidgetConfig(QWidget):
 
     def __create_dict(self):
         tests_configs = WidgetTestConfigs()
-        remote_configs = QWidget()
+        remote_configs = WidgetRemoteConfigs()
         deploy_configs = QWidget()
         dictionary = {'Составить конфигурацию тестов': tests_configs,
                       'Составить конфигурацию удаленного запуска': remote_configs,
