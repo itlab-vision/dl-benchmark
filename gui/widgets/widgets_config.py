@@ -1,4 +1,17 @@
 from PyQt5.QtWidgets import *
+from tables import *
+from buttons import *
+
+
+class WidgetTestConfigs(QWidget):
+    def __init__(self):
+        super().__init__()
+        layouts = QHBoxLayout()
+        self._table = TableTestConfig()
+        self._buttons = GroupButtonTestConfig()
+        layouts.addWidget(self._table)
+        layouts.addWidget(self._buttons)
+        self.setLayout(layouts)
 
 
 class WidgetConfig(QWidget):
@@ -22,7 +35,7 @@ class WidgetConfig(QWidget):
         return menu
 
     def __create_dict(self):
-        tests_configs = QWidget()
+        tests_configs = WidgetTestConfigs()
         remote_configs = QWidget()
         deploy_configs = QWidget()
         dictionary = {'Составить конфигурацию тестов': tests_configs,

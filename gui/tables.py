@@ -137,3 +137,45 @@ class TableTest(QTableWidget):
     def remove_test(self, number):
         self._test.pop(number - 1)
         self.update_table()
+
+
+class TableTestConfig(QTableWidget):
+    def __init__(self):
+        super().__init__()
+        self._tests = []
+        self._count_col = 3
+        self._count_row = 100
+        self._headers = ['Модель', 'Данные', 'Конфигурация теста']
+        self.setColumnCount(self._count_col)
+        self.setRowCount(self._count_row)
+        self.setHorizontalHeaderLabels(self._headers)
+        self.__resize_columns()
+        self.clear_table()
+
+    def __resize_columns(self):
+        header = self.horizontalHeader()
+        header.setStretchLastSection(True)
+        self.resizeColumnsToContents()
+
+    def __create_cell(self, text):
+        cell = QTableWidgetItem(text)
+        return cell
+
+    def clear_table(self):
+        for i in range(self._count_row):
+            for j in range(self._count_col):
+                self.setItem(i, j, self.__create_cell(''))
+
+    def update_table(self):
+        self.clear_table()
+        count = 0
+        # заполнение
+        self.resizeColumnsToContents()
+
+    def add_test(self, test):
+        self._test.append(test)
+        # поэлементно
+
+    def remove_test(self, number):
+        self._test.pop(number - 1)
+        self.update_table()
