@@ -27,7 +27,6 @@ ARG DEPENDENCIES="apt-utils \
                   unzip \
                   git"
 RUN apt-get update && \
-
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -56,7 +55,7 @@ RUN ./demo_security_barrier_camera -d GPU || exit 0
 
 #install model_optimizer dependencies
 WORKDIR /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
-RUN ./install_prerequisites.sh || exit 0
+RUN ./install_prerequisites.sh
 
 WORKDIR /opt/intel/openvino/deployment_tools/tools/model_downloader/
 RUN python3 downloader.py --all
