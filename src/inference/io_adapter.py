@@ -159,6 +159,12 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
             return human_pose_estimation_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-encoder':
+            return action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'driver-action-recognition-encoder':
+            return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'reidentification':
+            return reidentification_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -669,7 +675,7 @@ class instance_segmenatation_io(io_adapter):
                             y = int(boxes[i][1] + j * dh)
                             for c in range(dh):
                                 for t in range(dw):
-                                    image[y + c][x + t] += classes_color_map[classes[i]]
+                                    image[y + c][x + t] = classes_color_map[classes[i] - 1]
         for l in range(len(labels_on_image)):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
@@ -788,7 +794,7 @@ class detection_ssd(io_adapter):
         for idx in range(len(detections)):
             max_detection = max(detections, key = lambda detection: detection[0])
             if max_detection[0] < det_threshold: 
-                continue
+                break
             valid_detections.append(max_detection)
             max_detection[0] = 0
             for detection in detections:
@@ -812,8 +818,8 @@ class detection_ssd(io_adapter):
         return valid_detections
 
 
-    def _draw_detections(self, images, batch, valid_detections, action_map):
-        image = images[batch]
+    def _draw_detections(self, images, batch, valid_detections, action_map, h, w):
+        image = cv2.resize(images[batch], (w, h))
         rect_color = (255, 255, 255)
         for detection in valid_detections:
             cv2.rectangle(image, (detection[1][0], detection[1][1]), 
@@ -825,12 +831,13 @@ class detection_ssd(io_adapter):
                 action_color = (0, 0, 255)
             cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        return image
         
 
     def _save_output_images(self, images, log):
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
@@ -884,7 +891,10 @@ class detection_ssd_old_format(detection_ssd):
         action_map = self._get_action_map()
         num_classes = len(action_map)
         prior_data = result['mbox/priorbox'].flatten()
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['mbox_loc1/out/conv/flat'][batch]
             detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
             action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
@@ -900,12 +910,12 @@ class detection_ssd_old_format(detection_ssd):
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
 
 
 class detection_ssd_new_format(detection_ssd):
@@ -963,7 +973,10 @@ class detection_ssd_new_format(detection_ssd):
             [45.8114572, 107.651852], 
             [63.31491832, 142.595732], 
             [93.5070856, 201.107692]]
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
@@ -992,12 +1005,12 @@ class detection_ssd_new_format(detection_ssd):
                     prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
                 variance_box = self._parse_variance_box()
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)              
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
     
 
 class person_detection_action_recognition_old(detection_ssd_old_format):
@@ -1217,3 +1230,64 @@ class human_pose_estimation_io(io_adapter):
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2]
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class driver_action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'driver_action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('driver_action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class reidentification_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'reidentification.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('reidentification.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+

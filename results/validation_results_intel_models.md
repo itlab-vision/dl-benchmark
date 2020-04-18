@@ -647,6 +647,6 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
 [LFW]: http://vis-www.cs.umass.edu/lfw/index.html
 [cityscapes]: https://www.cityscapes-dataset.com
-[ms_coco]: http://cocodataset.org
 [widerface]: http://shuoyang1213.me/WIDERFACE
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
+[ms_coco]: http://cocodataset.org
