@@ -3,7 +3,8 @@ USER root
 WORKDIR /
 RUN useradd -ms /bin/bash openvino && \
     chown openvino -R /home/openvino
-ARG DEPENDENCIES="autoconf \
+ARG DEPENDENCIES="apt-utils \
+                  autoconf \
                   sudo \
                   vim \
                   automake \
@@ -20,11 +21,13 @@ ARG DEPENDENCIES="autoconf \
                   python-pip \
                   python3-pip \
                   python3-setuptools \
+                  python3-dev \
                   libpython3.6 \
                   udev \
                   unzip \
                   git"
 RUN apt-get update && \
+
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -53,7 +56,10 @@ RUN ./demo_security_barrier_camera -d GPU || exit 0
 
 #install model_optimizer dependencies
 WORKDIR /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
-RUN ./install_prerequisites.sh
+RUN ./install_prerequisites.sh || exit 0
 
+WORKDIR /opt/intel/openvino/deployment_tools/tools/model_downloader/
+RUN python3 downloader.py --all
+RUN python3 converter.py --all --mo /opt/intel/openvino/deployment_tools/model_optimizer/mo.py
 
 RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
