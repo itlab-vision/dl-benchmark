@@ -6,7 +6,8 @@ import config_parser
 import ftplib
 import table_format
 
-path_to_utils = os.path.normpath(os.path.join(os.getcwd(), '../bench_deploy'))
+PATH_TO_REMOTE_SCRIPT = '../bench_deploy'
+path_to_utils = os.path.normpath(os.path.join(os.getcwd(), PATH_TO_REMOTE_SCRIPT))
 sys.path.insert(1, path_to_utils)
 from remote_executor import remote_executor
 
@@ -43,7 +44,7 @@ def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
     args = build_parser()
-    log.info('Parsing config file')
+    log.info('Parsing configuration file')
     machine_list = config_parser.parse_config(args.config)
 
     client_list = []
@@ -53,14 +54,14 @@ def main():
             args.server_login, args.server_psw, log))
 
 
-    log.info('Executor script is waiting all benchmarks')
+    log.info('Executor script is waiting for all benchmarks')
     for client in client_list:
         client.wait_all()
 
-    ftp_con = ftplib.FTP(args.server_ip,
+    ftp_connection = ftplib.FTP(args.server_ip,
         args.server_login, args.server_psw)
-    table_format.join_tables(ftp_con, args.result_table)
-    ftp_con.close()
+    table_format.join_tables(ftp_connection, args.result_table)
+    ftp_connection.close()
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

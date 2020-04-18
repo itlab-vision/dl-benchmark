@@ -66,11 +66,11 @@ def main():
     path_to_res_table = os.path.join(path_to_ftp_client, param_list.res_file)
 
     #Connect to FTP and take benchmark config file
-    ftp_con = ftplib.FTP(param_list.server_ip,
+    ftp_connection = ftplib.FTP(param_list.server_ip,
         param_list.login, param_list.password)
 
     with open(param_list.benchmark_config, 'wb') as config_file:
-        ftp_con.retrbinary('RETR {}'.format(param_list.benchmark_config),
+        ftp_connection.retrbinary('RETR {}'.format(param_list.benchmark_config),
             config_file.write)
 
     launch_benchmark(param_list.path_to_env, path_to_benchmark,
@@ -78,9 +78,9 @@ def main():
         path_to_res_table, log_file)
 
     result_table = open(path_to_res_table, 'rb')
-    ftp_con.storbinary('STOR {}_result_table.csv'.format(platform.node()),
+    ftp_connection.storbinary('STOR {}_result_table.csv'.format(platform.node()),
         result_table)
-    ftp_con.close()
+    ftp_connection.close()
 
 
 if __name__ == '__main__':
