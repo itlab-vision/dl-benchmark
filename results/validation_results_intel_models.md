@@ -61,6 +61,7 @@ vehicle-detection-adas-binary-0001 | Окаймляющий прямоуголь
 Разрешение: 2048 x 1024
 
 <div style='float: center'>
+
 <img width="300" height="150" src="images\person-vehicle-bike-detection-crossroad.png">
 <img width="300" height="150" src="detection\person-vehicle-bike-detection-crossroad.png">
 </div>
@@ -159,7 +160,7 @@ face-detection-retail-0005 | Окаймляющие прямоугольники
 
 ### Тестовое изображение 8
 
-Источник: [из Интернет][walksf_internet]
+Источник: [из Интернет][internet_walksf]
 
 Разрешение: 1999 x 1333
 
@@ -368,6 +369,259 @@ license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;
 ----------------------|-----------------------------------------|-----------------------------------------|
 Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
 
+
+## Результаты обработки изображений
+
+### Тестовое изображение 1
+
+Источник: набор данных [GitHub][github_single_image_super_resolution]
+
+Разрешение: 720 x 480
+
+<div style='float: center'>
+<img width="300" src="images\street_480x270.png"></img>
+<img width="300" src="images\x4c_street_480x270.png"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+single-image-super-resolution-1032             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_1.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_1.png"></img></div>|
+single-image-super-resolution-1033             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_2.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_2.png"></img></div>|
+
+
+## Результаты распознавания позы человека
+
+### Тестовое изображение 1
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Разрешение: 640 x 425
+
+<div style='float: center'>
+<img width="300" src="images\COCO_val2014_000000453166.jpg"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+human-pose-estimation-0001             |<div style='float: center'><img width="300" src="human_pose_estimation\python_sync_COCO_val2014_000000453166.png"></img></div>|<div style='float: center'><img width="300" src="human_pose_estimation\python_async_COCO_val2014_000000453166.png"></img></div>|
+
+
+## Результаты семантической сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [The Cityscapes Dataset][cityscapes]
+
+Разрешение: 2048 x 1024
+
+<div style='float: center'>
+<img width="300" src="images\bielefeld_000000_038924_leftImg8bit.png"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+semantic-segmentation-adas-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="200" src="semantic_segmentation\cityscapes_colormap.jpg">
+</div>
+
+
+### Тестовое изображение 2
+
+Источник: набор данных [GitHub][github_road_segmentation]
+
+Разрешение: 640 x 365
+
+<div style='float: center'>
+<img width="300" src="images\road-segmentation-adas-1.png"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+road-segmentation-adas-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_road-segmentation-adas-1.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_road-segmentation-adas-1.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="200" src="semantic_segmentation\road_segmentation_colormap.jpg">
+</div>
+
+
+## Результаты векторного описания
+
+### Тестовое изображение 1
+
+Источник: набор данных [LFW][LFW]
+
+Разрешение: 250 x 250
+
+<div style='float: center'>
+<img width="300" src="images\Aaron_Peirsol_0002.jpg"></img>
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_sync] | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_async] |
+
+
+### Тестовое изображение 2
+
+Источник: набор данных [GitHub][github_ARE]
+
+Разрешение: 960 x 720
+
+<div style='float: center'>
+<img width="300" src="images\demo.png"></img>
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_sync] | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_async] |
+
+
+### Тестовое изображение 3
+
+Источник: набор данных [GitHub][github_DARE]
+
+Разрешение: 1922 x 1080
+
+<div style='float: center'>
+<img width="300" src="images\action-recognition-kelly.png"></img>
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
+
+
+## Результаты распознования действий
+
+### Тестовый тензор 1
+
+Источник: [Результат работы модели action-recognition-0001-encoder][ARD]
+
+<div style='float: center'>
+0.0794002  0.0583136  0.0020747  0.0903931<br>
+0.0154800  0.3712009  0.4007360  0.0830761<br>
+...<br>
+0.1126685  0.1257046  0.1392988  0.5075323<br>
+0.0785143  0.0922345  0.0033597  0.3115494
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet |
+
+
+### Тестовый тензор 2
+
+Источник: [Результат работы модели driver-action-recognition-adas-0002-encoder][DARD]
+
+<div style='float: center'>
+-0.0142664  -0.0064780  -0.0334583  -0.0108943<br>
+-0.0555940  -0.0013968   0.0001638  -0.0007524<br>
+...<br>
+-0.0093990  -0.0028726   0.0074722   0.0303789<br>
+-0.2324419   0.2686763   0.0168234   0.0029897
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand |
+
+
+## Результаты экземплярной сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Разрешение: 640 x 480
+
+<div style='float: center'>
+<img width="300" src="images\000000118209.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: 480; 640; 1
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+instance-segmentation-security-0083             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000118209.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000118209.bmp"></img></div>|
+
+
+### Тестовое изображение 2
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Разрешение: 640 x 640
+
+<div style='float: center'>
+<img width="300" src="images\COCO_val2014_000000203438.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: 480; 480; 1
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_COCO_val2014_000000203438.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_COCO_val2014_000000203438.bmp"></img></div>|
+
+
+### Тестовое изображение 3
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Разрешение: 640 x 427
+
+<div style='float: center'>
+<img width="300" src="images\000000367818.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: 800; 1344; 1
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+instance-segmentation-security-0010             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000367818.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000367818.bmp"></img></div>|
+
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="200" src="instance_segmentation\mscoco_colormap.jpg">
+</div>
+
+<!-- LINKS -->
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
@@ -379,5 +633,20 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 [github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
 [sphereface_sync]:recognition/sphereface_out_sync.csv
 [sphereface_async]:recognition/sphereface_out_async.csv
+[ARD]: action_recognition/action_recognition_encoder_out.csv
+[DARD]: action_recognition/driver_action_recognition_encoder_out.csv
+[ARE_sync]: encoding/python_sync_demo.csv
+[ARE_async]: encoding/python_async_demo.csv
+[DARE_sync]: encoding/python_sync_action-recognition-kelly.csv
+[DARE_async]: encoding/python_async_action-recognition-kelly.csv
+[face_reidentification_sync]: encoding/python_sync_Aaron_Peirsol_0002.csv
+[face_reidentification_async]: encoding/python_async_Aaron_Peirsol_0002.csv
+[github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
+[github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
+[github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
+[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
+[LFW]: http://vis-www.cs.umass.edu/lfw/index.html
+[cityscapes]: https://www.cityscapes-dataset.com
+[ms_coco]: http://cocodataset.org
 [widerface]: http://shuoyang1213.me/WIDERFACE
-[walksf_internet]: https://walksf.org/our-work/campaigns/6th-street/
+[internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
