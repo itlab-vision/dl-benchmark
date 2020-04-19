@@ -145,8 +145,8 @@ product-detection-0001 | Окаймляющий прямоугольник:<br>P
 Разрешение: 1024 x 678
 
 <div style='float: center'>
-<img width="200" src="images\1_Handshaking_Handshaking_1_209.jpg">
-<img width="200" src="detection\1_Handshaking_Handshaking_1_209.bmp">
+<img width="300" src="images\1_Handshaking_Handshaking_1_209.jpg">
+<img width="300" src="detection\1_Handshaking_Handshaking_1_209.bmp">
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
 (189, 140) (288, 284) <br/>(616, 45) (704, 213)
@@ -165,14 +165,15 @@ face-detection-retail-0005 | Окаймляющие прямоугольники
 Разрешение: 1999 x 1333
 
 <div style='float: center'>
-<img width="200" src="images\person-detection-retail-00013-1.jpg">
-<img width="200" src="detection\person-detection-retail-00013-1.bmp">
+<img width="300" src="images\person-detection-retail-00013-1.jpg">
+<img width="300" src="detection\person-detection-retail-00013-1.bmp">
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br/> (1537, 385) (1792, 1184)<br/> (541, 299) (845, 1161)<br/>(229, 337) (453, 1048)<br/> (0, 293) (193, 1129)<br/> (955, 387) (1169, 1009)<br/> (435, 370) (599, 1019) <br/> (887, 292) (951, 479) <br/> (749, 252) (866, 657) <br/> (515, 317) (599, 580) <br/> (833, 264) (894, 464) <br/> (954, 283) (1020, 476)
 
 Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
 ---|---|---|
 person-detection-retail-0013 | Окаймляющие прямоугольники : <br/> (1537, 385) (1792, 1184)<br/> (541, 299) (845, 1161)<br/>(229, 337) (453, 1048)<br/> (0, 293) (193, 1129)<br/> (955, 387) (1169, 1009)<br/> (435, 370) (599, 1019) <br/> (887, 292) (951, 479) <br/> (749, 252) (866, 657) <br/> (515, 317) (599, 580) <br/> (833, 264) (894, 464) <br/> (954, 283) (1020, 476) | Окаймляющие прямоугольники : <br/> (1537, 385) (1792, 1184)<br/> (541, 299) (845, 1161)<br/>(229, 337) (453, 1048)<br/> (0, 293) (193, 1129)<br/> (955, 387) (1169, 1009)<br/> (435, 370) (599, 1019) <br/> (887, 292) (951, 479) <br/> (749, 252) (866, 657) <br/> (515, 317) (599, 580) <br/> (833, 264) (894, 464) <br/> (954, 283) (1020, 476)|
+person-detection-retail-0002 | Окаймляющие прямоугольники : <br/> (252, 294) (465, 1048)<br/> (966, 361) (1183, 1028)<br/>(429, 262) (849, 1048)<br/> (695, 283) (872, 839)<br/> (421, 315) (612, 986)<br/> (1560, 360) (1766, 1204) <br/> (885, 283) (944, 503) <br/> (771, 276) (868, 574) <br/> (0, 314) (180, 941) <br/> (1879, 459) (1936, 694) <br/> (962, 279) (1023, 499) <br/> (1890, 302) (1992, 638) | Окаймляющие прямоугольники : <br/> (252, 294) (465, 1048)<br/> (966, 361) (1183, 1028)<br/>(429, 262) (849, 1048)<br/> (695, 283) (872, 839)<br/> (421, 315) (612, 986)<br/> (1560, 360) (1766, 1204) <br/> (885, 283) (944, 503) <br/> (771, 276) (868, 574) <br/> (0, 314) (180, 941) <br/> (1879, 459) (1936, 694) <br/> (962, 279) (1023, 499) <br/> (1890, 302) (1992, 638)|
 
 ### Тестовое изображение 9
 Источник: [City Scapes][cityscapes]
@@ -180,8 +181,8 @@ person-detection-retail-0013 | Окаймляющие прямоугольник
 Разрешение: 1999 x 1333
 
 <div style='float: center'>
-<img width="200" src="images\pedestrian-detection-adas-1.png">
-<img width="200" src="detection\pedestrian-detection-adas-1.bmp">
+<img width="300" src="images\pedestrian-detection-adas-1.png">
+<img width="300" src="detection\pedestrian-detection-adas-1.bmp">
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br/> (629, 310) (934, 811) <br/> (392, 435) (440, 525)
 
@@ -621,6 +622,44 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 <img width="200" src="instance_segmentation\mscoco_colormap.jpg">
 </div>
 
+## Результаты детектирования и распознования действия
+
+### Тестовое изображение 1
+
+Источник: набор данных [sample-videos][sample_videos]
+
+Разрешение: 1920 x 1080
+
+<div style='float: center'>
+<img width="300" src="images\classroom.jpg">
+<img width="300" src="person_detection_action_recognition\person-detection-action-recognition.bmp">
+</div>
+
+Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов) и действия:<br/> sitting (1157,517) (1407,1057)<br/> sitting (452,495) (627,874)<br/>sitting (201,555) (469,1084)<br/> raising hand (874,444) (1052,849)
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+person-detection-action-recognition-0006 | Окаймляющие прямоугольники и действия : <br/> sitting (1157,517) (1407,1057)<br/> sitting (452,495) (627,874)<br/>sitting (201,555) (469,1084)<br/> raising hand (874,444) (1052,849) | Окаймляющие прямоугольники и действия : <br/> sitting (1157,517) (1407,1057)<br/> sitting (452,495) (627,874)<br/>sitting (201,555) (469,1084)<br/> raising hand (874,444) (1052,849)|
+person-detection-action-recognition-0005 | Окаймляющие прямоугольники и действия : <br/> sitting (1160,528) (1409,1082)<br/> sitting (202,569) (455,1079)<br/>standing (453,495) (624,869)<br/> raising hand (836,404) (1048,862) | Окаймляющие прямоугольники и действия : <br/> sitting (1160,528) (1409,1082)<br/> sitting (202,569) (455,1079)<br/>standing (453,495) (624,869)<br/> raising hand (836,404) (1048,862)|
+person-detection-raisinghand-recognition-0001 | Окаймляющие прямоугольники и действия : <br/> sitting (1160,528) (1409,1082)<br/> sitting (202,569) (455,1079)<br/>sitting (453,495) (624,869)<br/> other (836,404) (1048,862) | Окаймляющие прямоугольники и действия : <br/> sitting (1160,528) (1409,1082)<br/> sitting (202,569) (455,1079)<br/>sitting (453,495) (624,869)<br/> other (836,404) (1048,862) |
+
+### Тестовое изображение 2
+
+Источник: набор данных [из Интернет][internet_taringa]
+
+Разрешение: 1920 x 1080
+
+<div style='float: center'>
+<img width="300" src="images\person-detection-action-recognition-teacher-0001.jpg">
+<img width="300" src="person_detection_action_recognition\person-detection-action-recognition-teacher-0001.jpg">
+</div>
+
+Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов) и действия:<br/> standing (186,15) (276,224)
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+person-detection-action-recognition-teacher-0002 | Окаймляющие прямоугольники и действия : <br/> standing (286,84) (357,283)<br/> standing (0,81) (101,281)<br/>standing (186,15) (276,224)| Окаймляющие прямоугольники и действия : <br/> standing (286,84) (357,283)<br/> standing (0,81) (101,281)<br/>standing (186,15) (276,224)|
+
 <!-- LINKS -->
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
@@ -649,4 +688,6 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [cityscapes]: https://www.cityscapes-dataset.com
 [widerface]: http://shuoyang1213.me/WIDERFACE
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
+[sample_videos]: https://github.com/intel-iot-devkit/sample-videos
+[internet_taringa]: https://www.taringa.net/+ciencia_educacion/busca-tu-propia-respuesta-crisis-en-la-educacion_13n2mk
 [ms_coco]: http://cocodataset.org
