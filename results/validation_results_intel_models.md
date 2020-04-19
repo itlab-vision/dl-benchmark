@@ -580,9 +580,6 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [bkhd]:https://www.kaggle.com/kmader/biwi-kinect-head-pose-database
 [github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
 [sphereface_sync]:recognition/sphereface_out_sync.csv
-<<<<<<< HEAD
-[sphereface_async]:recognition/sphereface_out_async.csv
-=======
 [sphereface_async]:recognition/sphereface_out_async.csv
 [ARD]: action_recognition/action_recognition_encoder_out.csv
 [DARD]: action_recognition/driver_action_recognition_encoder_out.csv
@@ -599,4 +596,3 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [LFW]: http://vis-www.cs.umass.edu/lfw/index.html
 [cityscapes]: https://www.cityscapes-dataset.com
 [ms_coco]: http://cocodataset.org
->>>>>>> 2ac3056e56ae99f12a49cffe30f46f692e6f349b
