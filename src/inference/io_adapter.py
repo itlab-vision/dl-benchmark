@@ -170,6 +170,7 @@ class io_adapter(metaclass = abc.ABCMeta):
         elif task == 'driver-action-recognition-decoder':
             return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
 
+        
 class feedforward_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
