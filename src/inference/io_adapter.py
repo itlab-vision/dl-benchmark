@@ -292,7 +292,7 @@ class adas_segmenatation_io(io_adapter):
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
         classes_color_map = []
@@ -323,7 +323,7 @@ class road_segmenatation_io(io_adapter):
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
         classes_color_map = []
