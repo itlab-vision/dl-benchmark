@@ -165,8 +165,12 @@ class io_adapter(metaclass = abc.ABCMeta):
             return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
         elif task == 'reidentification':
             return reidentification_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-decoder':
+            return action_recognition_decoder_io(args, io_model_wrapper, transformer)
+        elif task == 'driver-action-recognition-decoder':
+            return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
 
-
+        
 class feedforward_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -1291,3 +1295,50 @@ class reidentification_io(io_adapter):
                 header = '{};{}'.format(batch_size, dim1), comments = '')
         log.info('Result was saved to {}'.format(file_name))
 
+
+class action_recognition_decoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+      
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        for batch, data in enumerate(result):
+            probs = np.squeeze(result)
+            top_ind = np.argsort(probs)[-self._number_top:][::-1]
+            log.info("\nResult:")
+            for id in top_ind:
+                det_label = labels_map[id] if labels_map else '#{}'.format(id)
+                log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class driver_action_recognition_decoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        for batch, data in enumerate(result):
+            probs = np.squeeze(data)
+            top_ind = np.argsort(probs)[::-1]
+            log.info("\nResult:")
+            for id in top_ind:
+                det_label = labels_map[id] if labels_map else '#{}'.format(id)
+                log.info('{:.7f} {}'.format(probs[id], det_label))
