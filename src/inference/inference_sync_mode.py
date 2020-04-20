@@ -24,26 +24,43 @@ def build_argparser():
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
         processed pack', default = 1, type = int, dest = 'batch_size')
     parser.add_argument('-l', '--extension', 
-        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers OR Path to CLDNN config.',
+        help = 'Path to MKLDNN (CPU, MYRIAD) custom layers',
         type = str, default = None, dest = 'extension')
+    parser.add_argument('-c', '--cldnn_config', 
+        help = 'Path to CLDNN config.',
+        type = str, default = None, dest = 'cldnn_config')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on; CPU, GPU, FPGA or MYRIAD is acceptable. \
+        Support HETERO and MULTI plugins. \
+        Use HETERO:<Device1>,<Device2>,... for HETERO plugin. \
+        Use MULTI:<Device1>,<Device2>,... for MULTI plugin. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)', default = 'CPU', type = str, dest = 'device')
+    parser.add_argument('--dump', help = 'Dump information about the model exectution',
+        type = bool, default = False, dest = 'dump')
+    parser.add_argument('-p', '--priority', help = 'Priority for \
+        multi-device inference in descending order. \
+        Use format <Device1>,<Device2> First device has top priority',
+        default = None, type = str, dest = 'priority')
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str, dest = 'labels')
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',
         default = 10, type = int, dest = 'number_top')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
-    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads. \
-        (Max by default)', type = int, default = None, dest = 'nthreads')
+    parser.add_argument('-nthreads', '--number_threads', help = 'Number of threads \
+        to use for inference on the CPU. (Max by default)',
+        type = int, default = None, dest = 'nthreads')
     parser.add_argument('-t', '--task', help = 'Output processing method. \
         Default: without postprocess',
         choices = ['classification', 'detection', 'segmentation', 'recognition-face',
         'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
         'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
-        'single-image-super-resolution'],
+        'single-image-super-resolution', 'sphereface', 'person-detection-action-recognition-old',
+        'person-detection-action-recognition-new', 'person-detection-raisinghand-recognition',
+        'person-detection-action-recognition-teacher', 'human-pose-estimation', 
+        'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification', 
+        'driver-action-recognition-decoder', 'action-recognition-decoder'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
@@ -101,8 +118,8 @@ def main():
         model_wrapper = openvino_io_model_wrapper()
         data_transformer = transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
-        iecore = utils.create_ie_core(args.extension, args.device,
-            args.nthreads, None, 'sync', log)
+        iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
+            args.nthreads, None, args.dump, 'sync', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
@@ -111,7 +128,7 @@ def main():
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')
-        exec_net = iecore.load_network(network = net, device_name = args.device)
+        exec_net = utils.load_network(iecore, net, args.device, args.priority, 1)
         log.info('Starting inference ({} iterations) on {}'.
             format(args.number_iter, args.device))
         result, time = infer_sync(exec_net, args.number_iter, io.get_slice_input)

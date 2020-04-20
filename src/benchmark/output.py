@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 def create_table(tablename):
     file = open(tablename, 'w')
-    head = 'Status;Task type;Topology name;Framework;Inference Framework;Input blob sizes;Weight type;Batch size;Mode;Parameters;Infrastructure;Average time of single pass (s);Latency;FPS;'
+    head = 'Status;Task type;Topology name;Dataset;Framework;Inference Framework;Input blob sizes;Weight type;Batch size;Mode;Parameters;Infrastructure;Average time of single pass (s);Latency;FPS'
     file.write(head + '\n')
     file.close()
 
@@ -42,8 +42,8 @@ def create_table_row(status, model, dataset, param, framework, input_shape, aver
         average_time = '-'
         latency = '-'
         fps = '-'
-    table_row = '{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};'.format(
-        status, model.task, model.name, dataset.name, framework,input_shape, 
+    table_row = '{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14}'.format(
+        status, model.task, model.name, dataset.name, framework, framework, input_shape,
         model.datatype, param.batch_size, param.mode, other_param, hardware_info,
         average_time, latency, fps)
     return table_row
