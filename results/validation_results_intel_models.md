@@ -515,6 +515,26 @@ action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<
 driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
 
 
+### Тестовое изображение 4
+
+Источник: набор данных [Интернет][internet_of6]
+
+Разрешение: 2804 x 3532
+
+<div style='float: center'>
+<img width="300" src="images\person-reidentification-retail.jpg"></img>
+</div>
+<div style='float: center'>
+</div>
+
+
+   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+person-reidentification-retail-0103 | 0.4247247  0.3002377<br> 0.3066252  0.2818610<br> ...<br> -0.1469140  0.2819874<br> -0.2170699  0.9683639<br> [Полный тензор][PRR-0103_sync] | 0.4247247  0.3002377<br> 0.3066252  0.2818610<br> ...<br> -0.1469140  0.2819874<br> -0.2170699  0.9683639<br> [Полный тензор][PRR-0103_async] |
+person-reidentification-retail-0107 | -0.1249468  2.0196252<br> 0.5869867  1.2346774<br> ...<br> -0.4520372  -0.4875982<br> -0.3296853  -0.3499746<br> [Полный тензор][PRR-0107_sync] | -0.1249468  2.0196252<br> 0.5869867  1.2346774<br> ...<br> -0.4520372  -0.4875982<br> -0.3296853  -0.3499746<br> [Полный тензор][PRR-0107_sync] |
+person-reidentification-retail-0200 | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
+
+
 ## Результаты распознования действий
 
 ### Тестовый тензор 1
@@ -690,4 +710,8 @@ person-detection-action-recognition-teacher-0002 | Окаймляющие пря
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
 [sample_videos]: https://github.com/intel-iot-devkit/sample-videos
 [internet_taringa]: https://www.taringa.net/+ciencia_educacion/busca-tu-propia-respuesta-crisis-en-la-educacion_13n2mk
+[internet_of6]: http://of6.info
+[PRR-0103_sync]: encoding/person-reidentification-retail-0103_sync.csv
+[PRR-0103_async]: encoding/person-reidentification-retail-0103_async.csv
+[PRR-0107_sync]: encoding/person-reidentification-retail-0107_sync.csv
 [ms_coco]: http://cocodataset.org
