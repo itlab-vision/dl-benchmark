@@ -195,7 +195,7 @@ class classification_io(io_adapter):
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
@@ -629,8 +629,7 @@ class license_plate_io(io_adapter):
             self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
         lexis = []
         with open(self._labels, 'r') as f:
-            for line in f:
-                lexis.append([str(x) for x in line.split()])
+            lexis = [line.strip() for line in f]
         for lex in result:
             s = ''
             for j in range(lex.shape[0]):
@@ -660,8 +659,8 @@ class instance_segmenatation_io(io_adapter):
         labels_map = []
         labels_map.append('background')
         with open(self._labels, 'r') as f:
-            for x in f:
-                labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+            for line in f:
+                labels_map.append(line.strip())
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
@@ -1320,7 +1319,7 @@ class action_recognition_decoder_io(io_adapter):
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for batch, data in enumerate(result):
@@ -1344,7 +1343,7 @@ class driver_action_recognition_decoder_io(io_adapter):
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for batch, data in enumerate(result):

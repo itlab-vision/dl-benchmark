@@ -1,9 +1,9 @@
-1. drinking
-2. doing hair or making up
-3. operating the radio
-4. reaching behind
-5. safe driving
-6. talking on the phone by left hand
-7. talking on the phone by right hand
-8. texting by left hand
-9. texting by right hand
+drinking
+doing hair or making up
+operating the radio
+reaching behind
+safe driving
+talking on the phone by left hand
+talking on the phone by right hand
+texting by left hand
+texting by right hand
