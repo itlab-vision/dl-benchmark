@@ -174,7 +174,7 @@ ssd512                | Нет теста детектирования, рабо
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
 
 ### Тестовое изображение 2
 
@@ -190,7 +190,7 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
 
 ### Тестовое изображение 3
 
@@ -206,12 +206,12 @@ dilation             |<div style='float: center'><img width="150" src="segmentat
 
    Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-dilation             |<div style='float: center'><img width="150" src="segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
+dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
 
 Карта цветов:
 
 <div style='float: center'>
-<img width="300" src="segmentation\cityscapes_colormap.jpg">
+<img width="300" src="semantic_segmentation\cityscapes_colormap.jpg">
 </div>
 
 
