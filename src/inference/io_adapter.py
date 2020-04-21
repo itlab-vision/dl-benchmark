@@ -193,7 +193,7 @@ class classification_io(io_adapter):
         result = result[result_layer_name]
         log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
         with open(self._labels, 'r') as f:
             labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
@@ -266,7 +266,7 @@ class segmenatation_io(io_adapter):
         c = 3
         h, w = result.shape[1:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -299,7 +299,7 @@ class adas_segmenatation_io(io_adapter):
         c = 3
         h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -333,7 +333,7 @@ class road_segmenatation_io(io_adapter):
         c = 3
         h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map_road_segmentation.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -626,7 +626,7 @@ class license_plate_io(io_adapter):
             return
         result = result[next(iter(result))]
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/dictionary.txt')
         lexis = []
         with open(self._labels, 'r') as f:
             lexis = [line.strip() for line in f]
@@ -649,13 +649,13 @@ class instance_segmenatation_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names.txt')
         labels_map = []
         labels_map.append('background')
         with open(self._labels, 'r') as f:
@@ -1219,7 +1219,7 @@ class human_pose_estimation_io(io_adapter):
             {'startVertex' : 14, 'endVertex': 16},
         ]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'pose_estimation_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/pose_estimation_color_map.txt')
         colors = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -1317,7 +1317,7 @@ class action_recognition_decoder_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/kinetics.txt')
         with open(self._labels, 'r') as f:
             labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
@@ -1341,7 +1341,7 @@ class driver_action_recognition_decoder_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/driver_action_labels.txt')
         with open(self._labels, 'r') as f:
             labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
