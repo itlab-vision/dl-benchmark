@@ -219,16 +219,18 @@ class detection_io(io_adapter):
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         shapes = self._original_shapes[input_layer_name]
-        ib, c, h, w = input.shape
+        ib = input.shape[0]
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = []
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
-        for batch in range(b):
+            orig_h, orig_w = shapes[i % ib]
+            image = input[i % ib].transpose((1, 2, 0))
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+        for batch in range(0, b, ib):
             for obj in result[batch][0]:
                 if obj[2] > self._threshold:
                     image_number = int(obj[0])
-                    image = images[image_number]
+                    image = images[image_number + batch * ib]
                     initial_h, initial_w = image.shape[:2]
                     xmin = int(obj[3] * initial_w)
                     ymin = int(obj[4] * initial_h)
@@ -244,8 +246,6 @@ class detection_io(io_adapter):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
-            orig_h, orig_w = shapes[count % self._batch_size]
-            image = cv2.resize(image, (orig_w, orig_h))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
             count += 1
