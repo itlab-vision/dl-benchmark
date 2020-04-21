@@ -44,6 +44,10 @@ def build_parser():
         multi-device inference in descending order. \
         Use format <Device1>,<Device2> First device has top priority',
         default = None, type = str, dest = 'priority')
+    parser.add_argument('-a', '--affinity', help = 'Path to file \
+        with affinity per layer in format <layer> <device> \
+        for heterogeneous inference', default = None,
+        type = str, dest = 'affinity')
     parser.add_argument('--labels', help = 'Labels mapping file',
         default = None, type = str, dest = 'labels')
     parser.add_argument('-nt', '--number_top', help = 'Number of top results',
@@ -144,6 +148,7 @@ def main():
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
             args.nthreads, args.nstreams, args.dump, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
+        utils.configure_network(iecore, net, args.device, args.affinity)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))

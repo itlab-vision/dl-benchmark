@@ -14,6 +14,29 @@ def create_network(model_xml, model_bin, log):
     return network
 
 
+def parse_affinity(affinity_file):
+    affinity = {}
+    with open(affinity_file, 'r') as f:
+        for line in f:
+            layer, device = line.strip().split(' ')
+            affinity.update({layer : device})
+    return affinity
+
+
+def configure_network(ie, net, device, affinity_file):
+    if 'HETERO' not in device:
+        return
+    layers = net.layers
+    if affinity_file:
+        affinity = parse_affinity(affinity_file)
+        for layer in layers:
+            layers[layer].affinity = affinity[layer]
+    else:
+        layers_map = ie.query_network(network = net, device_name = device)
+        for layer, device in layers_map.items():
+            layers[layer].affinity = device
+
+
 def add_extension(iecore, path_to_extension, path_to_cldnn_config, device, log):
     if path_to_extension:
         if 'GPU' in device:
