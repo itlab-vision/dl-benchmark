@@ -219,16 +219,18 @@ class detection_io(io_adapter):
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         shapes = self._original_shapes[input_layer_name]
-        ib, c, h, w = input.shape
+        ib = input.shape[0]
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = []
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
-        for batch in range(b):
+            orig_h, orig_w = shapes[i % ib]
+            image = input[i % ib].transpose((1, 2, 0))
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+        for batch in range(0, b, ib):
             for obj in result[batch][0]:
                 if obj[2] > self._threshold:
                     image_number = int(obj[0])
-                    image = images[image_number]
+                    image = images[image_number + batch * ib]
                     initial_h, initial_w = image.shape[:2]
                     xmin = int(obj[3] * initial_w)
                     ymin = int(obj[4] * initial_h)
@@ -244,8 +246,6 @@ class detection_io(io_adapter):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
-            orig_h, orig_w = shapes[count % self._batch_size]
-            image = cv2.resize(image, (orig_w, orig_h))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
             count += 1
@@ -295,8 +295,9 @@ class adas_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
         classes_color_map = []
@@ -311,6 +312,8 @@ class adas_segmenatation_io(io_adapter):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -326,8 +329,9 @@ class road_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
         classes_color_map = []
@@ -342,6 +346,8 @@ class road_segmenatation_io(io_adapter):
                     pixel_class = np.argmax(data[i][j])
                     classes_map[i, j, :] = classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -656,6 +662,7 @@ class instance_segmenatation_io(io_adapter):
         with open(self._labels, 'r') as f:
             for x in f:
                 labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
         scores = result['scores']
@@ -684,6 +691,8 @@ class instance_segmenatation_io(io_adapter):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img))
 
@@ -1216,6 +1225,7 @@ class human_pose_estimation_io(io_adapter):
         with open(self._color_map, 'r') as f:
             for line in f:
                 colors.append([int(x) for x in line.split()])
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         for batch, frame in enumerate(self._input['data']):
             frame = frame.transpose((1, 2, 0))
             frame_height = frame.shape[0]
@@ -1232,6 +1242,8 @@ class human_pose_estimation_io(io_adapter):
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            frame = cv2.resize(frame, (orig_w, orig_h))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
 
