@@ -25,17 +25,6 @@ class WidgetDataSettings(QWidget):
         self.setLayout(layouts)
 
 
-class WidgetTestSettings(QWidget):
-    def __init__(self):
-        super().__init__()
-        layouts = QHBoxLayout()
-        self._table = TableTest()
-        self._buttons = GroupButtonTest()
-        layouts.addWidget(self._table)
-        layouts.addWidget(self._buttons)
-        self.setLayout(layouts)
-
-
 class WidgetData(QWidget):
     def __init__(self):
         super().__init__()
@@ -46,8 +35,6 @@ class WidgetData(QWidget):
         self._widgets['Управление моделями'].show()
         grid.addWidget(self._widgets['Управление данными'], 1, 0)
         self._widgets['Управление данными'].hide()
-        grid.addWidget(self._widgets['Управление тестами'], 1, 0)
-        self._widgets['Управление тестами'].hide()
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -59,9 +46,7 @@ class WidgetData(QWidget):
     def __create_dict(self):
         model_settings = WidgetModelSettings()
         data_settings = WidgetDataSettings()
-        tests_settings = WidgetTestSettings()
-        dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings,
-                      'Управление тестами': tests_settings}
+        dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings}
         return dictionary
 
     def onActivated(self, type):
