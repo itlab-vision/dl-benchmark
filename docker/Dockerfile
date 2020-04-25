@@ -61,4 +61,5 @@ WORKDIR /opt/intel/openvino/deployment_tools/tools/model_downloader/
 RUN python3 downloader.py --all
 RUN python3 converter.py --all --mo /opt/intel/openvino/deployment_tools/model_optimizer/mo.py || exit 0
 
+WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
