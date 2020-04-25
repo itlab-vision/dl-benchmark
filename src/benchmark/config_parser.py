@@ -175,6 +175,7 @@ def process_config(config, log):
     tests = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
     test_list = []
     test_count = 0
+    framework_dict = OrderedDict([('Name', None)])
     model_dict = OrderedDict(
                     [('Task', None), ('Name', None),
                      ('Path', None), ('WeightType', None)])
@@ -184,18 +185,18 @@ def process_config(config, log):
                      ('Extension', None), ('AsyncRequestCount', None),
                      ('IterationCount', None), ('ThreadCount', None),
                      ('StreamCount', None), ('MinInferenceTime', None)])
-    test_dict = {'Model' : model_dict, 'Dataset' : dataset_dict, 'Parameters' : parameters_dict}
+    test_dict = {'Framework' : framework_dict, 'Model' : model_dict, 'Dataset' : dataset_dict, 'Parameters' : parameters_dict}
     for curr_test in tests:
         test_count += 1
         try:
             for i in curr_test.getchildren():
                 for j in i.getchildren():
                     test_dict[i.tag][j.tag] = j.text
-            Framework = test_dict['Framework'].values()[0]
+            Framework = test_dict['Framework']['Name']
             Model = model(*test_dict['Model'].values())
             Dataset = dataset(*test_dict['Dataset'].values())
             Parameters = parameters(*test_dict['Parameters'].values())
-            test_list.append(test(Model, Dataset, Parameters))
+            test_list.append(test(Framework, Model, Dataset, Parameters))
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(test_count, valerr))
     return test_list

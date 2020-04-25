@@ -23,18 +23,18 @@ def build_parser():
     enviroment = parser.parse_args().enviroment
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
-    return config, result
+    return config, result, enviroment
 
 
 def inference_benchmark(enviroment, test_list, result_table, log):
-    process_executor = executor.get_executor(enviroment)
-    for test in testx_list:
-        process = process.get_process(test, process_executor, log)
-        process.execute()
+    process_executor = executor.get_executor(enviroment, log)
+    for test in test_list:
+        test_process = process.get_process(test, process_executor, log)
+        test_process.execute()
 
-        test_status = process.get_status()
-        input_shape = process.get_model_shape()
-        average_time, fps, latency = process.get_performance_metrics()
+        test_status = test_process.get_status()
+        input_shape = test_process.get_model_shape()
+        average_time, fps, latency = test_process.get_performance_metrics()
 
         log.info('Saving test result in file')
         table_row = output.create_table_row(test_status, test.model, test.dataset,
@@ -51,7 +51,7 @@ if __name__ == '__main__':
         log.info('Create result table with name: {}'.format(result_table))
         output.create_table(result_table)
         log.info('Start {} inference tests'.format(len(test_list)))
-        inference_benchmark(test_list, result_table, log)
+        inference_benchmark(enviroment, test_list, result_table, log)
         log.info('End inference tests')
         log.info('Work is done!')
     except Exception as exp:

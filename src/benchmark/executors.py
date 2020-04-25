@@ -1,7 +1,7 @@
 import abc
 import docker
 import os
-import platform
+import sys
 from subprocess import Popen, PIPE
 
 PATH_TO_AUXILIARY = '../auxiliary'
@@ -17,9 +17,9 @@ class executor(metaclass = abc.ABCMeta):
     @staticmethod
     def get_executor(env_type, log):
         if env_type == 'host_machine':
-            return linux_remote_helper(log)
+            return host_executor(log)
         elif env_type == 'docker_container':
-            return windows_remote_hepler(log)
+            return docker_executor(log)
 
     def set_target_framework(self, target_framework):
         self.my_target_framework = target_framework
@@ -61,7 +61,8 @@ class docker_executor(executor):
         self.my_container_dict = { container.name: container for container in client.containers.list() }
 
     def get_infrastructure(self):
-        pass
+        # TODO Add get_infrastructure
+        return ''
 
     def execute_process(self, command_line):
         return self.my_container_dict[self.my_target_framework].exec_run(command_line, privileged=True)
