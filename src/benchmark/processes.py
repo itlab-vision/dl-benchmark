@@ -13,7 +13,7 @@ class process(metaclass = abc.ABCMeta):
         pass
 
     @staticmethod
-    def get_cmd_python_version():
+    def _get_cmd_python_version():
         cmd_python_version = ''
         os_type = platform.system()
         if os_type == 'Linux':
@@ -23,13 +23,21 @@ class process(metaclass = abc.ABCMeta):
         return cmd_python_version
 
     def execute(self):
+        log.info('Start inference test on model : {}'.format(self.my_test.model.name))
+        self.my_executor.set_target_framework(self.my_test.framework)
         self.my_row_output = self.my_executor.execute_process(self.my_command_line)
 
+        if self.my_row_output[0] == 0:
+            log.info('End inference test on model : {}'.format(self.my_test.model.name))
+        else:
+            log.warning('Inference test on model: {} was ended with error. Process logs:'.format(self.my_test.model.name))
+            self.print_error()
+
     def get_status(self):
-        return self.my_row_output[0]
+        return 'Success' if self.my_row_output[0] == 0 else 'Failed'
 
     @staticmethod
-    def get_executor(test, executor, log):
+    def get_process(test, executor, log):
         if test == 'OpenVINO':
             return OpenVINO_process.create_process(test, executor, log)
 
@@ -39,6 +47,10 @@ class process(metaclass = abc.ABCMeta):
 
     @abc.abstractmethod
     def get_performance_metrics(self):
+        pass
+
+    @abc.abstractmethod
+    def print_error(self):
         pass
 
 class OpenVINO_process(process):
@@ -74,6 +86,17 @@ class OpenVINO_process(process):
     def add_nthreads_for_cmd_line(self, nthreads):
         self.my_common_params = '{0} -nthreads {1}'.format(self.my_common_params, nthreads)
 
+    def print_error(self):
+        out = self.my_row_output[1]
+        iserror = False
+        for line in out:
+            if line.rfind('ERROR! :') != -1:
+                iserror = True
+                print('    {0}'.format(line[8:]))
+                continue
+            if iserror:
+                print('    {0}'.format(line))
+
     @staticmethod
     def create_process(test, executor, log):
         mode = (test.parameter.mode).lower()
@@ -96,7 +119,7 @@ class sync_OpenVINO_process(OpenVINO_process):
         inference_folder = os.path.abspath('../inference')
         path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
 
-        python = process.get_cmd_python_version()
+        python = process._get_cmd_python_version()
         self.my_command_line = '{} {} {}'.(python, path_to_sync_scrypt, self.self.my_common_params)
 
         min_inference_time = my_test.parameter.min_inference_time
@@ -125,7 +148,7 @@ class async_OpenVINO_process(OpenVINO_process):
         inference_folder = os.path.abspath('../inference')
         path_to_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
 
-        python = process.get_cmd_python_version()
+        python = process._get_cmd_python_version()
         self.my_command_line = '{} {} {}'.(python, path_to_async_scrypt, self.self.my_common_params)
 
         nstreams = my_test.parameter.nstreams
@@ -140,4 +163,4 @@ class async_OpenVINO_process(OpenVINO_process):
         result = my_row_output[1][-1].split(',')
         average_time = float(result[0])
         fps = float(result[1])
-        return average_time, fps
+        return average_time, fps, 0

@@ -12,7 +12,7 @@ import node_info as info
 class executor(metaclass = abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
-        self.my_target = None
+        self.target_framework = None
 
     @staticmethod
     def get_executor(env_type, log):
@@ -21,8 +21,8 @@ class executor(metaclass = abc.ABCMeta):
         elif env_type == 'docker_container':
             return windows_remote_hepler(log)
 
-    def set_target(self, target):
-        self.my_target = target
+    def set_target_framework(self, target_framework):
+        self.my_target_framework = target_framework
 
     @abc.abstractmethod
     def get_infrastructure(self):
@@ -35,6 +35,7 @@ class executor(metaclass = abc.ABCMeta):
 class host_executor(executor):
     def __init__(self, log):
         super().__init__(log)
+        self.my_environment = os.environ.copy()
 
     def get_infrastructure(self):
         hardware = info.get_system_characteristics()
@@ -46,7 +47,7 @@ class host_executor(executor):
         return hardware_info
 
     def execute_process(self, command_line):
-        process = Popen(command_line, env = os.environ.copy(), shell = True,
+        process = Popen(command_line, env = self.my_environment, shell = True,
         stdout = PIPE, universal_newlines = True)
         return_code = process.wait()
         out, _ = process.communicate()
@@ -63,4 +64,4 @@ class docker_executor(executor):
         pass
 
     def execute_process(self, command_line):
-        return self.my_container_dict[self.my_target].exec_run(command_line, privileged=True)
+        return self.my_container_dict[self.my_target_framework].exec_run(command_line, privileged=True)

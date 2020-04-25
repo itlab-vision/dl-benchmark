@@ -20,11 +20,11 @@ class model:
             self.name = name
         else:
             raise ValueError('Model name is required parameter.')
-        if self._parameter_not_is_none(path):    
+        if self._parameter_not_is_none(path):
             for file in os.listdir(path):
                 if file.endswith('.xml'):
                     self.model = os.path.join(path, file)
-                if file.endswith('.bin'):            
+                if file.endswith('.bin'):
                     self.weight = os.path.join(path, file)
             if (self.model is None) or (self.weight is None):
                 raise ValueError('Wrong model IR format. \
@@ -161,7 +161,8 @@ class parameters:
 
 
 class test:
-    def __init__(self, model, dataset, parameter):
+    def __init__(self, framework, model, dataset, parameter):
+        self.framework = framework
         self.model = model
         self.dataset = dataset
         self.parameter = parameter
@@ -190,6 +191,7 @@ def process_config(config, log):
             for i in curr_test.getchildren():
                 for j in i.getchildren():
                     test_dict[i.tag][j.tag] = j.text
+            Framework = test_dict['Framework'].values()[0]
             Model = model(*test_dict['Model'].values())
             Dataset = dataset(*test_dict['Dataset'].values())
             Parameters = parameters(*test_dict['Parameters'].values())
