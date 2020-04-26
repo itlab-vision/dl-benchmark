@@ -21,11 +21,8 @@ class model:
         else:
             raise ValueError('Model name is required parameter.')
         if self._parameter_not_is_none(path):
-            for file in os.listdir(path):
-                if file.endswith('.xml'):
-                    self.model = os.path.join(path, file)
-                if file.endswith('.bin'):
-                    self.weight = os.path.join(path, file)
+            self.model = os.path.join(path, '{}.xml'.format(name))
+            self.weight = os.path.join(path, '{}.bin'.format(name))
             if (self.model is None) or (self.weight is None):
                 raise ValueError('Wrong model IR format. \
                     The folder should contain .xml and .bin files for only one model.')
@@ -52,10 +49,7 @@ class dataset:
         else:
             raise ValueError('Dataset name is required parameter.')
         if self._parameter_not_is_none(path):
-            if os.path.isdir(path):
-                self.path = path
-            else:
-                raise ValueError('Wrong path to folder with dataset')
+            self.path = path
         else:
             raise ValueError('Path to dataset is required parameter.')
 
@@ -101,8 +95,9 @@ class parameters:
         return False
 
 
-    def __init__(self, batch_size, mode, device, extension, async_request_count, 
+    def __init__(self, inference_folder, batch_size, mode, device, extension, async_request_count, 
                  iterarion_count, thread_count, stream_count, min_inference_time):
+        self.inference_folder = None
         self.batch_size = None
         self.mode = None
         self.device = None
@@ -112,6 +107,10 @@ class parameters:
         self.nthreads = None
         self.nstreams = None
         self.min_inference_time = None
+        if self._parameter_not_is_none(inference_folder):
+            self.inference_folder = inference_folder
+        else:
+            raise ValueError('Inference folder is required parameter.')
         if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
             self.batch_size = int(batch_size)
         else:
@@ -181,7 +180,7 @@ def process_config(config, log):
                      ('Path', None), ('WeightType', None)])
     dataset_dict = OrderedDict([('Name', None), ('Path', None)])
     parameters_dict = OrderedDict(
-                     [('BatchSize', None), ('Mode', None), ('Device', None), 
+                     [('InferenceFolder', None), ('BatchSize', None), ('Mode', None), ('Device', None), 
                      ('Extension', None), ('AsyncRequestCount', None),
                      ('IterationCount', None), ('ThreadCount', None),
                      ('StreamCount', None), ('MinInferenceTime', None)])

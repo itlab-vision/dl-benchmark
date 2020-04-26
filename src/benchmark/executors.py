@@ -3,6 +3,7 @@ import docker
 import os
 import sys
 from subprocess import Popen, PIPE
+from xml.dom import minidom
 
 PATH_TO_AUXILIARY = '../auxiliary'
 sys.path.append(os.path.abspath(PATH_TO_AUXILIARY))
@@ -15,11 +16,11 @@ class executor(metaclass = abc.ABCMeta):
         self.target_framework = None
 
     @staticmethod
-    def get_executor(env_type, log):
+    def get_executor(env_type, enviroment_config, log):
         if env_type == 'host_machine':
             return host_executor(log)
         elif env_type == 'docker_container':
-            return docker_executor(log)
+            return docker_executor(enviroment_config, log)
 
     def set_target_framework(self, target_framework):
         self.my_target_framework = target_framework
@@ -55,14 +56,37 @@ class host_executor(executor):
         return return_code, out
 
 class docker_executor(executor):
-    def __init__(self, log):
+    def __init__(self, docker_config, log):
         super().__init__(log)
+        self.my_parameters_dict = self._parse_config(docker_config)
         client = docker.from_env()
         self.my_container_dict = { container.name: container for container in client.containers.list() }
+
+    def _parse_config(self, docker_config):
+        CONFIG_ROOT_TAG = 'DockerContainer'
+        CONFIG_CONTAINER_NAME_TAG = 'ContainerName'
+        CONFIG_SOURCE_COMMAND_TAG = 'SourceCommand'
+
+        parsed_config = minidom.parse(docker_config)
+        parameters_dict = {}
+
+        containers = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
+        for idx, container in enumerate(containers):
+            container_name = (container.
+                getElementsByTagName(CONFIG_CONTAINER_NAME_TAG)[0].firstChild.data)
+            parameters_dict[container_name] = {}
+            parameters_dict[container_name]['source_command'] = (container.
+                getElementsByTagName(CONFIG_SOURCE_COMMAND_TAG)[0].firstChild.data)
+
+        return parameters_dict
 
     def get_infrastructure(self):
         # TODO Add get_infrastructure
         return ''
 
     def execute_process(self, command_line):
-        return self.my_container_dict[self.my_target_framework].exec_run(command_line, privileged=True)
+        source_command = self.my_parameters_dict[self.my_target_framework]['source_command']
+        if source_command != '':
+            command_line = 'bash -c "{} && {}"'.format(source_command, command_line)
+
+        return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)

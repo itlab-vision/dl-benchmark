@@ -18,16 +18,19 @@ def build_parser():
         help = 'Full name of the resulting file', required = True)
     parser.add_argument('--enviroment', type = str, default='host_machine',
         help = 'The environment in which the tests will be executed')
+    parser.add_argument('--enviroment_config', type = str, default='',
+        help = 'Path to enviroment configuration file')
     config = parser.parse_args().config_path
     result = parser.parse_args().result_file
     enviroment = parser.parse_args().enviroment
+    enviroment_config = parser.parse_args().enviroment_config
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
-    return config, result, enviroment
+    return config, result, enviroment, enviroment_config
 
 
-def inference_benchmark(enviroment, test_list, result_table, log):
-    process_executor = executor.get_executor(enviroment, log)
+def inference_benchmark(enviroment, test_list, result_table, enviroment_config, log):
+    process_executor = executor.get_executor(enviroment, enviroment_config, log)
     for test in test_list:
         test_process = process.get_process(test, process_executor, log)
         test_process.execute()
@@ -46,12 +49,12 @@ if __name__ == '__main__':
     try:
         log.basicConfig(format = '[ %(levelname)s ] %(message)s',
             level = log.INFO, stream = sys.stdout)
-        config, result_table, enviroment = build_parser()
-        test_list = config_parser.process_config(config, log)
+        config, result_table, enviroment, enviroment_config = build_parser()
+        test_list = config_parser.process_config(config, enviroment, log)
         log.info('Create result table with name: {}'.format(result_table))
         output.create_table(result_table)
         log.info('Start {} inference tests'.format(len(test_list)))
-        inference_benchmark(enviroment, test_list, result_table, log)
+        inference_benchmark(enviroment, test_list, result_table, enviroment_config, log)
         log.info('End inference tests')
         log.info('Work is done!')
     except Exception as exp:

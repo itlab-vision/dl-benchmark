@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Tests>
     <Test>
+        <Framework>
+            <Name></Name>
+        </Framework> 
         <Model>
             <Task></Task>
             <Name></Name>
@@ -12,6 +15,7 @@
             <Path></Path>
         </Dataset>
         <Parameters>
+            <InferenceFolder></InferenceFolder>
             <BatchSize></BatchSize>
             <Mode></Mode>
             <Device></Device>

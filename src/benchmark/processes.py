@@ -31,6 +31,10 @@ class process(metaclass = abc.ABCMeta):
         self.my_log.info('Start inference test on model : {}'.format(self.my_test.model.name))
         self.my_executor.set_target_framework(self.my_test.framework)
         self.my_row_output = self.my_executor.execute_process(self.my_command_line)
+        self.my_output = self.my_row_output[1]
+
+        if type(self.my_output) is not list:
+            self.my_output = self.my_output.decode("utf-8").split('\n')[:-1]
 
         if self.my_row_output[0] == 0:
             self.my_log.info('End inference test on model : {}'.format(self.my_test.model.name))
@@ -80,7 +84,7 @@ class OpenVINO_process(process):
 
     def get_model_shape(self):
         input_shape = 'Undefined'
-        for line in self.my_row_output[1]:
+        for line in self.my_output:
             if 'Input shape: ' in line:
                 input_shape = line.split(' ')[-1]
         return input_shape
@@ -121,8 +125,7 @@ class sync_OpenVINO_process(OpenVINO_process):
         self.my_command_line = '{0} {1}'.format(self.my_command_line, raw_output)
 
     def _fill_command_line(self):
-        inference_folder = os.path.abspath('../inference')
-        path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
+        path_to_sync_scrypt = os.path.join(self.my_test.parameter.inference_folder, 'inference_sync_mode.py')
 
         python = process._get_cmd_python_version()
         self.my_command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, self.my_common_params)
@@ -132,10 +135,10 @@ class sync_OpenVINO_process(OpenVINO_process):
         self.add_raw_output_time_for_cmd_line('--raw_output true')
 
     def get_performance_metrics(self):
-        if self.my_row_output[0] != 0 or len(self.my_row_output[1]) == 0:
+        if self.my_row_output[0] != 0 or len(self.my_output) == 0:
             return 0, 0, 0
 
-        result = self.my_row_output[1][-1].split(',')
+        result = self.my_output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
         latency = float(result[2])
@@ -153,8 +156,7 @@ class async_OpenVINO_process(OpenVINO_process):
         self.my_command_line = '{0} -requests {1}'.format(self.my_command_line, requests)
 
     def _fill_command_line(self):
-        inference_folder = os.path.abspath('../inference')
-        path_to_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
+        path_to_async_scrypt = os.path.join(self.my_test.parameter.inference_folder, 'inference_async_mode.py')
 
         python = process._get_cmd_python_version()
         self.my_command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, self.my_common_params)
@@ -168,10 +170,10 @@ class async_OpenVINO_process(OpenVINO_process):
             self.add_requests_for_cmd_line(requests)
 
     def get_performance_metrics(self):
-        if self.my_row_output[0] != 0 or len(self.my_row_output[1]) == 0:
+        if self.my_row_output[0] != 0 or len(self.my_output) == 0:
             return 0, 0, 0
 
-        result = self.my_row_output[1][-1].split(',')
+        result = self.my_output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
         return average_time, fps, 0
