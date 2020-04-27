@@ -28,8 +28,15 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
-            images[i] = self._transformer.transform(image)
         return images, image_shapes
+
+
+    def __transform_images(self, images):
+        b, c, h, w = images.shape
+        transformed_images = np.zeros(shape = (b, c, h, w))
+        for i in range(b):
+            transformed_images[i] = self._transformer.transform(images[i])
+        return transformed_images
 
 
     def __create_list_images(self, input):
@@ -67,6 +74,7 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     def prepare_input(self, model, input):
+        result = {}
         self._input = {}
         self._original_shapes = {}
         if ':' in input[0]:
@@ -80,8 +88,10 @@ class io_adapter(metaclass = abc.ABCMeta):
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value, shapes = self.__convert_images(shape, value)
+                    transformed_value = self.__transform_images(value)
                 self._input.update({key : value})
                 self._original_shapes.update({key : shapes})
+                result.update({key : transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -91,9 +101,11 @@ class io_adapter(metaclass = abc.ABCMeta):
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
+                transformed_value = self.__transform_images(value)
             self._input.update({input_blob : value})
             self._original_shapes.update({input_blob : shapes})
-        return self._input
+            result.update({input_blob : transformed_value})
+        return result
 
 
     def get_slice_input(self, iteration):
@@ -193,9 +205,9 @@ class classification_io(io_adapter):
         result = result[result_layer_name]
         log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
@@ -219,16 +231,18 @@ class detection_io(io_adapter):
         input = self._input[input_layer_name]
         result = result[result_layer_name]
         shapes = self._original_shapes[input_layer_name]
-        ib, c, h, w = input.shape
+        ib = input.shape[0]
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = []
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
-        for batch in range(b):
+            orig_h, orig_w = shapes[i % ib]
+            image = input[i % ib].transpose((1, 2, 0))
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+        for batch in range(0, b, ib):
             for obj in result[batch][0]:
                 if obj[2] > self._threshold:
                     image_number = int(obj[0])
-                    image = images[image_number]
+                    image = images[image_number + batch * ib]
                     initial_h, initial_w = image.shape[:2]
                     xmin = int(obj[3] * initial_w)
                     ymin = int(obj[4] * initial_h)
@@ -244,8 +258,6 @@ class detection_io(io_adapter):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
-            orig_h, orig_w = shapes[count % self._batch_size]
-            image = cv2.resize(image, (orig_w, orig_h))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
             count += 1
@@ -266,7 +278,7 @@ class segmenatation_io(io_adapter):
         c = 3
         h, w = result.shape[1:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -295,10 +307,11 @@ class adas_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -311,6 +324,8 @@ class adas_segmenatation_io(io_adapter):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -326,10 +341,11 @@ class road_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map_road_segmentation.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
@@ -342,6 +358,8 @@ class road_segmenatation_io(io_adapter):
                     pixel_class = np.argmax(data[i][j])
                     classes_map[i, j, :] = classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -620,11 +638,10 @@ class license_plate_io(io_adapter):
             return
         result = result[next(iter(result))]
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/dictionary.txt')
         lexis = []
         with open(self._labels, 'r') as f:
-            for line in f:
-                lexis.append([str(x) for x in line.split()])
+            lexis = [line.strip() for line in f]
         for lex in result:
             s = ''
             for j in range(lex.shape[0]):
@@ -644,18 +661,19 @@ class instance_segmenatation_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names.txt')
         labels_map = []
         labels_map.append('background')
         with open(self._labels, 'r') as f:
-            for x in f:
-                labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+            for line in f:
+                labels_map.append(line.strip())
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
         scores = result['scores']
@@ -684,6 +702,8 @@ class instance_segmenatation_io(io_adapter):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img))
 
@@ -1211,11 +1231,12 @@ class human_pose_estimation_io(io_adapter):
             {'startVertex' : 14, 'endVertex': 16},
         ]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'pose_estimation_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/pose_estimation_color_map.txt')
         colors = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 colors.append([int(x) for x in line.split()])
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         for batch, frame in enumerate(self._input['data']):
             frame = frame.transpose((1, 2, 0))
             frame_height = frame.shape[0]
@@ -1232,6 +1253,8 @@ class human_pose_estimation_io(io_adapter):
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            frame = cv2.resize(frame, (orig_w, orig_h))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -1306,9 +1329,9 @@ class action_recognition_decoder_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'kinetics.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/kinetics.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for batch, data in enumerate(result):
@@ -1330,9 +1353,9 @@ class driver_action_recognition_decoder_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'driver_action_labels.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/driver_action_labels.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for batch, data in enumerate(result):

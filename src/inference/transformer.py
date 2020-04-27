@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class transformer:
     def transform(self, image):
         return image
@@ -28,7 +29,8 @@ class intelcaffe_transformer(transformer):
 
 
     def transform(self, image):
-        self.__set_channel_swap(image)
-        self.__set_raw_scale(image)
-        self.__set_mean(image)
-        return image        
+        transformed_image = np.copy(image)
+        self.__set_channel_swap(transformed_image)
+        self.__set_raw_scale(transformed_image)
+        self.__set_mean(transformed_image)
+        return transformed_image        
