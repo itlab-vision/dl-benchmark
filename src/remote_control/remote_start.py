@@ -3,9 +3,13 @@ import sys
 import argparse
 import logging as log
 import config_parser
-from process_watcher import process_watcher as pw
 import ftplib
 import table_format
+
+PATH_TO_REMOTE_SCRIPT = '../bench_deploy'
+path_to_utils = os.path.normpath(os.path.join(os.getcwd(), PATH_TO_REMOTE_SCRIPT))
+sys.path.insert(1, path_to_utils)
+from remote_executor import remote_executor
 
 def build_parser():
     parser = argparse.ArgumentParser()
@@ -19,26 +23,45 @@ def build_parser():
         help = 'Password to FTP server', required = True)
     parser.add_argument('-r', '--result_table', type = str,
         help = 'Name of result table', required = True)
-    parser = parser.parse_args()
-    if not os.path.isfile(parser.config):
+    args = parser.parse_args()
+    if not os.path.isfile(args.config):
         raise ValueError('Wrong path to configuration file!')
-    return parser
+    return args
+
+def client_execution(machine, server_ip, server_login, server_psw, log):
+    executor = remote_executor(machine.os_type, log)
+    executor.create_connection(machine.ip, machine.login, machine.password)
+    command = (('{} -ip {} -l {} -p {} -env {} -b {} -os {} --res_file ' + 
+        '{} --log_file {}').format(machine.path_to_ftp_client,
+        server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
+        machine.benchmark_config, machine.os_type, machine.res_file,
+        machine.log_file))
+    executor.execute_python(command)
+
+    return executor
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',
         level = log.INFO, stream = sys.stdout)
-    parser = build_parser()
-    log.info('Parsing config file')
-    machine_list = config_parser.parse_config(parser.config)
-    proc_watcher = pw()
-    proc_watcher.run_benchmark_on_all_machines(machine_list, parser.server_ip,
-        parser.server_login, parser.server_psw)
-    log.info('Waiting all benchmarks')
-    proc_watcher.wait_all_benchmarks()
-    ftp_con = ftplib.FTP(parser.server_ip,
-        parser.server_login, parser.server_psw)
-    table_format.join_tables(ftp_con, parser.result_table)
-    ftp_con.close()
+    args = build_parser()
+    log.info('Parsing configuration file')
+    machine_list = config_parser.parse_config(args.config)
+
+    client_list = []
+    log.info('Clients start executing')
+    for machine in machine_list:
+        client_list.append(client_execution(machine, args.server_ip,
+            args.server_login, args.server_psw, log))
+
+
+    log.info('Executor script is waiting for all benchmarks')
+    for client in client_list:
+        client.wait_all()
+
+    ftp_connection = ftplib.FTP(args.server_ip,
+        args.server_login, args.server_psw)
+    table_format.join_tables(ftp_connection, args.result_table)
+    ftp_connection.close()
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

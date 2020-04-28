@@ -5,14 +5,13 @@ class machine:
     def __init__(self, params):
         self.ip = params[0]
         self.login = params[1]
-        self.psw = params[2]
+        self.password = params[2]
         self.os_type = params[3]
         self.path_to_ftp_client = params[4]
         self.path_to_OpenVINO_env = params[5]
         self.benchmark_config = params[6]
         self.log_file = params[7]
         self.res_file = params[8]
-
 
 def parse_config(config):
     with open(config) as file:

@@ -29,5 +29,3 @@ def join_tables(ftp_server, table_name):
     result_table = open(table_name, 'rb')
     send = ftp_server.storbinary('STOR ' + table_name, result_table)
     result_table.close()
-
-

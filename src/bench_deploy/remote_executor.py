@@ -19,7 +19,10 @@ class remote_executor:
             except:
                 time.sleep(self.my_wait_counter)
 
-    def execute_command(self, command):
+    def execute_command(self, command, executor=None):
+        if executor is None:
+            executor = self.my_remote_helper.execute
+
         if self.my_active_connection is None:
             self.my_status = 'Error: can\'t connect to {}!'.format(self.my_machine_ip)
             return None
@@ -27,7 +30,7 @@ class remote_executor:
         new_process = None
         for i in range(self.my_attempts_counter):
             try:
-                new_process = self.my_remote_helper.execute(self.my_active_connection, command)
+                new_process = executor(self.my_active_connection, command)
                 break
             except:
                 time.sleep(self.my_wait_counter)
@@ -37,7 +40,13 @@ class remote_executor:
         else:
             self.my_status = 'Error: failed to creat process on {}!'.format(self.my_machine_ip)
 
-    def execute_command_and_wait(self, command):
+    def execute_python(self, command):
+        self.execute_command(command, executor=self.my_remote_helper.execute_python)
+
+    def execute_command_and_wait(self, command, executor=None):
+        if executor is None:
+            executor = self.my_remote_helper.execute
+
         if self.my_active_connection is None:
             self.my_status = 'Error: can\'t connect to {}!'.format(self.my_machine_ip)
             return None
@@ -54,6 +63,9 @@ class remote_executor:
             self.my_remote_helper.wait(new_process)
         else:
             self.my_status = 'Error: failed to creat process on {}!'.format(self.my_machine_ip)
+
+    def execute_python_and_wait(self, command):
+        self.execute_command_and_wait(command, executor=self.my_remote_helper.execute_python)
 
     def wait_all(self):
         for process in self.my_process_list:

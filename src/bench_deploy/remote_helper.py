@@ -22,5 +22,9 @@ class remote_helper(metaclass = abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def execute_python(self, command):
+        pass
+
+    @abc.abstractmethod
     def wait(self, process):
         pass
