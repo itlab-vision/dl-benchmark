@@ -35,7 +35,7 @@ def inference_benchmark(enviroment, test_list, result_table, enviroment_config, 
         test_process = process.get_process(test, process_executor, log)
         test_process.execute()
 
-        test_status = test_process.get_status()
+        test_status = 'Success' if test_process.get_status() == 0 else 'Failed'
         input_shape = test_process.get_model_shape()
         average_time, fps, latency = test_process.get_performance_metrics()
 

@@ -2,12 +2,9 @@ import abc
 import docker
 import os
 import sys
+import node_info as info
 from subprocess import Popen, PIPE
 from xml.dom import minidom
-
-PATH_TO_AUXILIARY = '../auxiliary'
-sys.path.append(os.path.abspath(PATH_TO_AUXILIARY))
-import node_info as info
 
 
 class executor(metaclass = abc.ABCMeta):
@@ -58,11 +55,11 @@ class host_executor(executor):
 class docker_executor(executor):
     def __init__(self, docker_config, log):
         super().__init__(log)
-        self.my_parameters_dict = self._parse_config(docker_config)
+        self.my_parameters_dict = self.__parse_config(docker_config)
         client = docker.from_env()
         self.my_container_dict = { container.name: container for container in client.containers.list() }
 
-    def _parse_config(self, docker_config):
+    def __parse_config(self, docker_config):
         CONFIG_ROOT_TAG = 'DockerContainer'
         CONFIG_CONTAINER_NAME_TAG = 'ContainerName'
         CONFIG_SOURCE_COMMAND_TAG = 'SourceCommand'
@@ -86,7 +83,7 @@ class docker_executor(executor):
 
     def execute_process(self, command_line):
         source_command = self.my_parameters_dict[self.my_target_framework]['source_command']
-        if source_command != '':
+        if source_command:
             command_line = 'bash -c "{} && {}"'.format(source_command, command_line)
 
         return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
