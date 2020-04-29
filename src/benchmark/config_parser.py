@@ -1,7 +1,6 @@
 import os
-from lxml import etree
 from collections import OrderedDict
-
+from xml.dom import minidom
 
 class model:
     def _parameter_not_is_none(self, parameter):
@@ -10,12 +9,17 @@ class model:
         return False
 
 
-    def __init__(self, task, name, path, weight_type):
+    def __init__(self, task, name, path, precision, source_framework):
+        self.source_framework = None
         self.task = task
         self.name = None
         self.model = None
         self.weight = None
         self.datatype = None
+        if self._parameter_not_is_none(source_framework):
+            self.source_framework = source_framework
+        else:
+            raise ValueError('Source framework is required parameter.')
         if self._parameter_not_is_none(name):
             self.name = name
         else:
@@ -28,10 +32,10 @@ class model:
                     The folder should contain .xml and .bin files for only one model.')
         else:
             raise ValueError('Path to folder with IR format model is required parameter.')
-        if self._parameter_not_is_none(weight_type):
-            self.datatype = weight_type
+        if self._parameter_not_is_none(precision):
+            self.datatype = precision
         else:
-            raise ValueError('Weight type is required parameter.')
+            raise ValueError('Precision is required parameter.')
 
 
 class dataset:
@@ -95,9 +99,9 @@ class parameters:
         return False
 
 
-    def __init__(self, inference_folder, batch_size, mode, device, extension, async_request_count, 
-                 iterarion_count, thread_count, stream_count, min_inference_time):
-        self.inference_folder = None
+    def __init__(self, inference_framework, batch_size, mode, device, extension, async_request_count, 
+                 iterarion_count, thread_count, stream_count, test_time_limit):
+        self.inference_framework = None
         self.batch_size = None
         self.mode = None
         self.device = None
@@ -106,11 +110,11 @@ class parameters:
         self.iteration = None
         self.nthreads = None
         self.nstreams = None
-        self.min_inference_time = None
-        if self._parameter_not_is_none(inference_folder):
-            self.inference_folder = inference_folder
+        self.test_time_limit = None
+        if self._parameter_not_is_none(inference_framework):
+            self.inference_framework = inference_framework
         else:
-            raise ValueError('Inference folder is required parameter.')
+            raise ValueError('Inference framework is required parameter.')
         if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
             self.batch_size = int(batch_size)
         else:
@@ -141,11 +145,11 @@ class parameters:
                     self.nthreads = int(thread_count)
                 else:
                     raise ValueError('Thread count can only take values: integer greater than zero.')
-            if self._parameter_not_is_none(min_inference_time) and self._float_value_is_correct(min_inference_time):
-                self.min_inference_time = float(min_inference_time)
+            if self._parameter_not_is_none(test_time_limit) and self._float_value_is_correct(test_time_limit):
+                self.test_time_limit = float(test_time_limit)
             else:
-                raise ValueError('Min inference time is required parameter for sync mode. \
-                    Min inference time can only take values: float greater than zero.')
+                raise ValueError('Test time limit is required parameter. \
+                    Test time limit can only take values: float greater than zero.')
         if self.mode == 'Async':
             if self._parameter_not_is_none(async_request_count):
                 if self._int_value_is_correct(async_request_count):
@@ -160,42 +164,94 @@ class parameters:
 
 
 class test:
-    def __init__(self, framework, model, dataset, parameter):
-        self.framework = framework
+    def __init__(self, model, dataset, parameter):
         self.model = model
         self.dataset = dataset
         self.parameter = parameter
 
 
 def process_config(config, log):
-    with open(config) as file:
-        openconfig = file.read()
-    utf_parser = etree.XMLParser(encoding = 'utf-8')
-    tests = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
+    parsed_config = minidom.parse(config)
     test_list = []
-    test_count = 0
-    framework_dict = OrderedDict([('Name', None)])
-    model_dict = OrderedDict(
-                    [('Task', None), ('Name', None),
-                     ('Path', None), ('WeightType', None)])
-    dataset_dict = OrderedDict([('Name', None), ('Path', None)])
-    parameters_dict = OrderedDict(
-                     [('InferenceFolder', None), ('BatchSize', None), ('Mode', None), ('Device', None), 
-                     ('Extension', None), ('AsyncRequestCount', None),
-                     ('IterationCount', None), ('ThreadCount', None),
-                     ('StreamCount', None), ('MinInferenceTime', None)])
-    test_dict = {'Framework' : framework_dict, 'Model' : model_dict, 'Dataset' : dataset_dict, 'Parameters' : parameters_dict}
-    for curr_test in tests:
-        test_count += 1
+
+    CONFIG_ROOT_TAG = 'Test'
+
+    CONFIG_MODEL_TAG = 'Model'
+    CONFIG_MODEL_TASK_TAG = 'Task'
+    CONFIG_MODEL_NAME_TAG = 'Name'
+    CONFIG_MODEL_PRECISION_TAG = 'Precision'
+    CONFIG_MODEL_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
+    CONFIG_MODEL_PATH_TAG = 'Path'
+
+    CONFIG_DATASET_TAG = 'Dataset'
+    CONFIG_DATASET_NAME_TAG = 'Name'
+    CONFIG_DATASET_PATH_TAG = 'Path'
+
+    CONFIG_FRAMEWORK_INDEPENDENT_TAG = 'FrameworkIndependent'
+    CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG = 'InferenceFramework'
+    CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG = 'BatchSize'
+    CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG = 'Device'
+    CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG = 'IterationCount'
+    CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG = 'TestTimeLimit'
+
+    CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
+    CONFIG_FRAMEWORK_DEPENDENT_MODE_TAG = 'Mode'
+    CONFIG_FRAMEWORK_DEPENDENT_EXTENSION_TAG = 'Extension'
+    CONFIG_FRAMEWORK_DEPENDENT_ASYNC_REQUEST_COUNT_TAG = 'AsyncRequestCount'
+    CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
+    CONFIG_FRAMEWORK_DEPENDENT_STREAM_COUNT_TAG = 'StreamCount'
+
+    tests = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
+    for idx, curr_test in enumerate(tests):
         try:
-            for i in curr_test.getchildren():
-                for j in i.getchildren():
-                    test_dict[i.tag][j.tag] = j.text
-            Framework = test_dict['Framework']['Name']
-            Model = model(*test_dict['Model'].values())
-            Dataset = dataset(*test_dict['Dataset'].values())
-            Parameters = parameters(*test_dict['Parameters'].values())
-            test_list.append(test(Framework, Model, Dataset, Parameters))
+            model_tag = curr_test.getElementsByTagName(CONFIG_MODEL_TAG)[0]
+            Model = model(
+                task = model_tag.getElementsByTagName(CONFIG_MODEL_TASK_TAG)[0].firstChild.data,
+                name = model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
+                precision = model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
+                source_framework = model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
+                path = model_tag.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+            )
+
+            dataset_tag = curr_test.getElementsByTagName(CONFIG_DATASET_TAG)[0]
+            Dataset = dataset(
+                name = dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
+                path = dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
+            )
+
+            indep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
+            dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
+
+            _mode = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_MODE_TAG)[0].firstChild
+            _extension = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_EXTENSION_TAG)[0].firstChild
+            _async_request_count = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_ASYNC_REQUEST_COUNT_TAG)[0].firstChild
+            _thread_count = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
+            _stream_count = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_STREAM_COUNT_TAG)[0].firstChild
+
+            Parameters = parameters(
+                inference_framework = indep_parameters_tag.getElementsByTagName(
+                    CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data,
+                batch_size = indep_parameters_tag.getElementsByTagName(
+                    CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG)[0].firstChild.data,
+                device = indep_parameters_tag.getElementsByTagName(
+                    CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG)[0].firstChild.data,
+                iterarion_count = indep_parameters_tag.getElementsByTagName(
+                    CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
+                test_time_limit = indep_parameters_tag.getElementsByTagName(
+                    CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data,
+
+                mode = _mode.data if _mode else None,
+                extension = _extension.data if _extension else None,
+                async_request_count = _async_request_count.data if _async_request_count else None,
+                thread_count = _thread_count.data if _thread_count else None,
+                stream_count = _stream_count.data if _stream_count else None
+            )
+            test_list.append(test(Model, Dataset, Parameters))
         except ValueError as valerr:
-            log.warning('Test {} not added to test list: {}'.format(test_count, valerr))
+            log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
     return test_list

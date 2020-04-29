@@ -1,7 +1,6 @@
 import abc
 import docker
 import os
-import sys
 import node_info as info
 from subprocess import Popen, PIPE
 from xml.dom import minidom

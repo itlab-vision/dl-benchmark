@@ -30,7 +30,7 @@ def create_table_row(status, model, dataset, param, framework, input_shape, aver
     parameters.update({'Iteration count' : param.iteration})
     parameters.update({'Thread count' : param.nthreads})
     parameters.update({'Stream count' : param.nstreams})
-    parameters.update({'Min inference time(s)' : param.min_inference_time})
+    parameters.update({'Min inference time(s)' : 0})
     other_param = ''
     for key in parameters:
         if key == 'Min inference time(s)' and parameters[key] == 0.0:
