@@ -44,7 +44,7 @@ def inference_benchmark(enviroment, test_list, result_table, enviroment_config, 
 
         log.info('Saving test result in file')
         table_row = output.create_table_row(test_status, test.model, test.dataset,
-            test.parameter, test.parameter.inference_framework, input_shape, average_time, latency, fps)
+            test.indep_parameters, test.dep_parameters, test.indep_parameters.inference_framework, input_shape, average_time, latency, fps)
         output.add_row_to_table(result_table, table_row)
 
 

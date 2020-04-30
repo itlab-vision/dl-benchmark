@@ -48,7 +48,7 @@ class process(metaclass = abc.ABCMeta):
         if command_line == '':
             self.__my_log.error('Command line is empty')
         self.__my_log.info('Start inference test on model : {}'.format(self._my_test.model.name))
-        self.__my_executor.set_target_framework(self._my_test.parameter.inference_framework)
+        self.__my_executor.set_target_framework(self._my_test.indep_parameters.inference_framework)
         self._my_row_output = self.__my_executor.execute_process(command_line)
         self._my_output = self._my_row_output[1]
 
@@ -66,7 +66,7 @@ class process(metaclass = abc.ABCMeta):
 
     @staticmethod
     def get_process(test, executor, inference_folder, log):
-        if test.parameter.inference_framework == 'OpenVINO':
+        if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
             return OpenVINO_process.create_process(test, executor, inference_folder, log)
 
     @abc.abstractmethod
@@ -89,17 +89,17 @@ class OpenVINO_process(process):
         model_xml = self._my_test.model.model
         model_bin = self._my_test.model.weight
         dataset = self._my_test.dataset.path
-        batch = self._my_test.parameter.batch_size
-        device = self._my_test.parameter.device
-        iteration = self._my_test.parameter.iteration
+        batch = self._my_test.indep_parameters.batch_size
+        device = self._my_test.indep_parameters.device
+        iteration = self._my_test.indep_parameters.iteration
 
         command_line = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(model_xml, model_bin, dataset, batch, device, iteration)
 
-        extension = self._my_test.parameter.extension
+        extension = self._my_test.dep_parameters.extension
         if extension:
             command_line = OpenVINO_process.__add_extension_for_cmd_line(command_line, extension)
 
-        nthreads = self._my_test.parameter.nthreads
+        nthreads = self._my_test.dep_parameters.nthreads
         if nthreads:
             command_line = OpenVINO_process.__add_nthreads_for_cmd_line(command_line, nthreads)
 
@@ -107,7 +107,7 @@ class OpenVINO_process(process):
 
     @staticmethod
     def create_process(test, executor, inference_folder, log):
-        mode = (test.parameter.mode).lower()
+        mode = (test.dep_parameters.mode).lower()
         if mode == 'sync':
             return sync_OpenVINO_process(test, executor, inference_folder, log)
         elif mode == 'async':
@@ -161,11 +161,11 @@ class async_OpenVINO_process(OpenVINO_process):
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, common_params)
 
-        nstreams = self._my_test.parameter.nstreams
+        nstreams = self._my_test.dep_parameters.nstreams
         if nstreams:
             command_line = async_OpenVINO_process.__add_nstreams_for_cmd_line(command_line, nstreams)
 
-        requests = self._my_test.parameter.requests
+        requests = self._my_test.dep_parameters.requests
         if requests:
             command_line = async_OpenVINO_process.__add_requests_for_cmd_line(command_line, requests)
 

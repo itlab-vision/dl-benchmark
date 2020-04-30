@@ -18,18 +18,18 @@ def add_row_to_table(tablename, row):
     file.close()
 
 
-def create_table_row(status, model, dataset, param, framework, input_shape, average_time, latency, fps):
+def create_table_row(status, model, dataset, indep_param, dep_param, framework, input_shape, average_time, latency, fps):
     hardware = info.get_system_characteristics()
     hardware_info = ''
     for key in hardware:
         hardware_info += '{}: {}, '.format(key, hardware[key])
     hardware_info = hardware_info[:-2]
     parameters = OrderedDict()
-    parameters.update({'Device' : param.device})
-    parameters.update({'Async request count' : param.async_request})
-    parameters.update({'Iteration count' : param.iteration})
-    parameters.update({'Thread count' : param.nthreads})
-    parameters.update({'Stream count' : param.nstreams})
+    parameters.update({'Device' : indep_param.device})
+    parameters.update({'Async request count' : dep_param.async_request})
+    parameters.update({'Iteration count' : indep_param.iteration})
+    parameters.update({'Thread count' : dep_param.nthreads})
+    parameters.update({'Stream count' : dep_param.nstreams})
     parameters.update({'Min inference time(s)' : 0})
     other_param = ''
     for key in parameters:
@@ -44,6 +44,6 @@ def create_table_row(status, model, dataset, param, framework, input_shape, aver
         fps = '-'
     table_row = '{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14}'.format(
         status, model.task, model.name, dataset.name, framework, framework, input_shape,
-        model.datatype, param.batch_size, param.mode, other_param, hardware_info,
+        model.datatype, indep_param.batch_size, dep_param.mode, other_param, hardware_info,
         average_time, latency, fps)
     return table_row
