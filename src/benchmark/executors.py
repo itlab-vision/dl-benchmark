@@ -5,7 +5,6 @@ import node_info as info
 from subprocess import Popen, PIPE
 from xml.dom import minidom
 
-
 class executor(metaclass = abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
@@ -19,7 +18,7 @@ class executor(metaclass = abc.ABCMeta):
             return docker_executor(enviroment_config, log)
 
     def set_target_framework(self, target_framework):
-        self.my_target_framework = target_framework
+        self.my_target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
     def get_path_to_inference_folder(self):

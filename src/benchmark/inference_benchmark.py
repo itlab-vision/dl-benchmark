@@ -35,7 +35,7 @@ def inference_benchmark(enviroment, test_list, output_handler, enviroment_config
         test_process.execute()
 
         log.info('Saving test result in file')
-        output_handler.add_row_to_table(test, test_process, process_executor)
+        output_handler.add_row_to_table(process_executor, test, test_process)
 
 
 if __name__ == '__main__':

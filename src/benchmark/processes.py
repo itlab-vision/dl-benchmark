@@ -11,7 +11,7 @@ class process(metaclass = abc.ABCMeta):
         self._my_row_output = None
 
     def __print_error(self):
-        out = self._my_row_output[1]
+        out = self._my_output
         iserror = False
         for line in out:
             if line.rfind('ERROR! :') != -1:
@@ -39,8 +39,8 @@ class process(metaclass = abc.ABCMeta):
         input_shape = []
         for line in self._my_output:
             if 'Shape for input layer' in line:
-                input_shape.append(line.split('input layer')[-1].strip())
-        return ', '.join(input_shape) if input_shape.len() > 0 else 'Undefined'
+                input_shape.append(line.split(':')[-1].strip())
+        return ', '.join(input_shape) if len(input_shape) > 0 else 'Undefined'
 
     def execute(self):
         command_line = self._fill_command_line()
@@ -121,7 +121,7 @@ class sync_OpenVINO_process(OpenVINO_process):
         return '{0} {1}'.format(command_line, raw_output)
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py'))
+        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
@@ -154,7 +154,7 @@ class async_OpenVINO_process(OpenVINO_process):
         return '{0} -requests {1}'.format(command_line, requests)
 
     def _fill_command_line(self):
-        path_to_async_scrypt = os.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_async_mode.py'))
+        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_async_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
