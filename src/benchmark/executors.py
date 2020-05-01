@@ -22,6 +22,10 @@ class executor(metaclass = abc.ABCMeta):
         self.my_target_framework = target_framework
 
     @abc.abstractmethod
+    def get_path_to_inference_folder(self):
+        pass
+
+    @abc.abstractmethod
     def get_infrastructure(self):
         pass
 
@@ -33,6 +37,9 @@ class host_executor(executor):
     def __init__(self, log):
         super().__init__(log)
         self.my_environment = os.environ.copy()
+
+    def get_path_to_inference_folder(self):
+        return '../inference'
 
     def get_infrastructure(self):
         hardware = info.get_system_characteristics()
@@ -75,6 +82,9 @@ class docker_executor(executor):
                 getElementsByTagName(CONFIG_SOURCE_COMMAND_TAG)[0].firstChild.data)
 
         return parameters_dict
+
+    def get_path_to_inference_folder(self):
+        return '/tmp/openvino-dl-benchmark/src/inference'
 
     def get_infrastructure(self):
         # TODO Add get_infrastructure

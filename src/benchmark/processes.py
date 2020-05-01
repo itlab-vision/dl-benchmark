@@ -3,11 +3,10 @@ import os
 import platform
 
 class process(metaclass = abc.ABCMeta):
-    def __init__(self, test, executor, inference_folder, log):
-        self._my_test = test
-        self._my_inference_folder = inference_folder
-        self.__my_executor = executor
+    def __init__(self, test, executor, log):
         self.__my_log = log
+        self._my_test = test
+        self._my_executor = executor
         self._my_output = None
         self._my_row_output = None
 
@@ -37,19 +36,19 @@ class process(metaclass = abc.ABCMeta):
         return cmd_python_version
 
     def get_model_shape(self):
-        input_shape = 'Undefined'
+        input_shape = []
         for line in self._my_output:
-            if 'Input shape: ' in line:
-                input_shape = line.split(' ')[-1]
-        return input_shape
+            if 'Shape for input layer' in line:
+                input_shape.append(line.split('input layer')[-1].strip())
+        return ', '.join(input_shape) if input_shape.len() > 0 else 'Undefined'
 
     def execute(self):
         command_line = self._fill_command_line()
         if command_line == '':
             self.__my_log.error('Command line is empty')
         self.__my_log.info('Start inference test on model : {}'.format(self._my_test.model.name))
-        self.__my_executor.set_target_framework(self._my_test.indep_parameters.inference_framework)
-        self._my_row_output = self.__my_executor.execute_process(command_line)
+        self._my_executor.set_target_framework(self._my_test.indep_parameters.inference_framework)
+        self._my_row_output = self._my_executor.execute_process(command_line)
         self._my_output = self._my_row_output[1]
 
         if type(self._my_output) is not list:
@@ -65,17 +64,17 @@ class process(metaclass = abc.ABCMeta):
         return self._my_row_output[0]
 
     @staticmethod
-    def get_process(test, executor, inference_folder, log):
+    def get_process(test, executor, log):
         if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
-            return OpenVINO_process.create_process(test, executor, inference_folder, log)
+            return OpenVINO_process.create_process(test, executor, log)
 
     @abc.abstractmethod
     def get_performance_metrics(self):
         pass
 
 class OpenVINO_process(process):
-    def __init__(self, test, executor, inference_folder, log):
-        super().__init__(test, executor, inference_folder, log)
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
 
     @staticmethod
     def __add_extension_for_cmd_line(command_line, extension):
@@ -106,23 +105,23 @@ class OpenVINO_process(process):
         return command_line
 
     @staticmethod
-    def create_process(test, executor, inference_folder, log):
+    def create_process(test, executor, log):
         mode = (test.dep_parameters.mode).lower()
         if mode == 'sync':
-            return sync_OpenVINO_process(test, executor, inference_folder, log)
+            return sync_OpenVINO_process(test, executor, log)
         elif mode == 'async':
-            return async_OpenVINO_process(test, executor, inference_folder, log)
+            return async_OpenVINO_process(test, executor, log)
 
 class sync_OpenVINO_process(OpenVINO_process):
-    def __init__(self, test, executor, inference_folder, log):
-        super().__init__(test, executor, inference_folder, log)
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
 
     @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.join(self._my_inference_folder, 'inference_sync_mode.py')
+        path_to_sync_scrypt = os.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
@@ -143,8 +142,8 @@ class sync_OpenVINO_process(OpenVINO_process):
         return average_time, fps, latency
 
 class async_OpenVINO_process(OpenVINO_process):
-    def __init__(self, test, executor, inference_folder, log):
-        super().__init__(test, executor, inference_folder, log)
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
 
     @staticmethod
     def __add_nstreams_for_cmd_line(command_line, nstreams):
@@ -155,7 +154,7 @@ class async_OpenVINO_process(OpenVINO_process):
         return '{0} -requests {1}'.format(command_line, requests)
 
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.join(self._my_inference_folder, 'inference_async_mode.py')
+        path_to_async_scrypt = os.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_async_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()

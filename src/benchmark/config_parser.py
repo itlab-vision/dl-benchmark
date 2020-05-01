@@ -260,12 +260,43 @@ class OpenVINO_parameters(parameters_methods):
                 else:
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
-class test:
+class test(metaclass = abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         self.model = model
         self.dataset = dataset
         self.indep_parameters = indep_parameters
         self.dep_parameters = dep_parameters
+
+    @staticmethod
+    def get_test(framework, model, dataset, indep_parameters, dep_parameters):
+        if framework == 'OpenVINO DLDT':
+            return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
+
+    @abc.abstractmethod
+    def get_report(self):
+        pass
+
+class OpenVINO_test(test):
+    def __init__(self, model, dataset, indep_parameters, dep_parameters):
+        super().__init__(model, dataset, indep_parameters, dep_parameters)
+
+    def get_report(self):
+        parameters = OrderedDict()
+        parameters.update({'Device' : self.indep_param.device})
+        parameters.update({'Async request count' : self.dep_param.async_request})
+        parameters.update({'Iteration count' : self.indep_param.iteration})
+        parameters.update({'Thread count' : self.dep_param.nthreads})
+        parameters.update({'Stream count' : self.dep_param.nstreams})
+        other_param = []
+        for key in parameters:
+            if parameters[key] != None:
+                other_param.append('{}: {}'.format(key, parameters[key]))
+        other_param = ', '.join(other_param)
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
+            self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
+            self.indep_param.inference_framework, self.model.datatype, self.indep_param.batch_size,
+            self.dep_param.mode, other_param
+        )
 
 def process_config(config, log):
     test_parser = parser(log)
@@ -277,9 +308,10 @@ def process_config(config, log):
             Model = test_parser.parse_model(curr_test)
             Dataset = test_parser.parse_dataset(curr_test)
             IndepParameters = test_parser.parse_independent_parameters(curr_test)
-            DepParameters = test_parser.parse_dependent_parameters(curr_test, IndepParameters.inference_framework)
+            framework = IndepParameters.inference_framework
+            DepParameters = test_parser.parse_dependent_parameters(curr_test, framework)
 
-            test_list.append(test(Model, Dataset, IndepParameters, DepParameters))
+            test_list.append(test.get_test((framework, Model, Dataset, IndepParameters, DepParameters))
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
     return test_list
