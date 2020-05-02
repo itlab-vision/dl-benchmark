@@ -84,6 +84,10 @@ class OpenVINO_process(process):
     def __add_nthreads_for_cmd_line(command_line, nthreads):
         return '{0} -nthreads {1}'.format(command_line, nthreads)
 
+    @staticmethod
+    def __add_raw_output_time_for_cmd_line(command_line, raw_output):
+        return '{0} {1}'.format(command_line, raw_output)
+
     def _fill_command_line(self):
         model_xml = self._my_test.model.model
         model_bin = self._my_test.model.weight
@@ -102,6 +106,8 @@ class OpenVINO_process(process):
         if nthreads:
             command_line = OpenVINO_process.__add_nthreads_for_cmd_line(command_line, nthreads)
 
+        command_line = OpenVINO_process.__add_raw_output_time_for_cmd_line(command_line, '--raw_output true')
+
         return command_line
 
     @staticmethod
@@ -116,18 +122,12 @@ class sync_OpenVINO_process(OpenVINO_process):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
-    @staticmethod
-    def __add_raw_output_time_for_cmd_line(command_line, raw_output):
-        return '{0} {1}'.format(command_line, raw_output)
-
     def _fill_command_line(self):
         path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
-
-        command_line = sync_OpenVINO_process.__add_raw_output_time_for_cmd_line(command_line, '--raw_output true')
 
         return command_line
 
@@ -151,7 +151,7 @@ class async_OpenVINO_process(OpenVINO_process):
 
     @staticmethod
     def __add_requests_for_cmd_line(command_line, requests):
-        return '{0} -requests {1}'.format(command_line, requests)
+        return '{0} --requests {1}'.format(command_line, requests)
 
     def _fill_command_line(self):
         path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_async_mode.py'))
@@ -164,7 +164,7 @@ class async_OpenVINO_process(OpenVINO_process):
         if nstreams:
             command_line = async_OpenVINO_process.__add_nstreams_for_cmd_line(command_line, nstreams)
 
-        requests = self._my_test.dep_parameters.requests
+        requests = self._my_test.dep_parameters.async_request
         if requests:
             command_line = async_OpenVINO_process.__add_requests_for_cmd_line(command_line, requests)
 
