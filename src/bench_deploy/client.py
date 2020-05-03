@@ -16,6 +16,8 @@ def build_parser():
         help = 'Path to container image on the FTP server.')
     parser.add_argument('-d', '--upload_dir', required = True, type = str,
         help = 'Path to the directory on the target machine where to upload the container image.')
+    parser.add_argument('-n', '--container_name', required = True, type = str,
+        help = 'Name of the docker container.')
     return parser.parse_args()
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log):
@@ -57,7 +59,7 @@ def main():
     os.system('docker load --input {}'.format(file_path))
 
     log.info('Docker run image')
-    os.system('docker run --privileged -d -t {}'.format(image_name.split('.')[0]))
+    os.system('docker run --privileged -d -t --name {} {}'.format(args.container_name, image_name.split('.')[0]))
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
