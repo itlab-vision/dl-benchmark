@@ -10,10 +10,10 @@ class executor(metaclass = abc.ABCMeta):
         self.target_framework = None
 
     @staticmethod
-    def get_executor(env_type, log):
-        if env_type == 'host_machine':
+    def get_executor(executor_type, log):
+        if executor_type == 'host_machine':
             return host_executor(log)
-        elif env_type == 'docker_container':
+        elif executor_type == 'docker_container':
             return docker_executor(log)
 
     def set_target_framework(self, target_framework):
@@ -66,7 +66,18 @@ class docker_executor(executor):
         return '/tmp/openvino-dl-benchmark/src/inference'
 
     def get_infrastructure(self):
-        return ''
+        hardware_command = 'python3 /tmp/openvino-dl-benchmark/src/benchmark/node_info.py'
+        command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
+        output =  self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        if output[0] != 0:
+            return 'None'
+        hardware = [ line.strip().split(': ') for line in output[-1].decode("utf-8").split('\n')[1:-1] ]
+        hardware_info = ''
+        for line in hardware:
+            hardware_info += '{}: {}, '.format(line[0], line[1])
+        hardware_info = hardware_info[:-2]
+
+        return hardware_info
 
     def execute_process(self, command_line):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)

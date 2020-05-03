@@ -96,7 +96,8 @@ class OpenVINO_process(process):
         device = self._my_test.indep_parameters.device
         iteration = self._my_test.indep_parameters.iteration
 
-        command_line = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(model_xml, model_bin, dataset, batch, device, iteration)
+        command_line = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(model_xml,
+            model_bin, dataset, batch, device, iteration)
 
         extension = self._my_test.dep_parameters.extension
         if extension:
@@ -123,7 +124,8 @@ class sync_OpenVINO_process(OpenVINO_process):
         super().__init__(test, executor, log)
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py'))
+        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+            'inference_sync_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
@@ -154,7 +156,8 @@ class async_OpenVINO_process(OpenVINO_process):
         return '{0} --requests {1}'.format(command_line, requests)
 
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_async_mode.py'))
+        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+            'inference_async_mode.py'))
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()

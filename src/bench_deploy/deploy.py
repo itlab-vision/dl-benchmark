@@ -78,7 +78,7 @@ def parse_machine_list(path_to_config):
     return machine_list
 
 def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir,
-                     project_folder, container_name, log):
+    project_folder, container_name, log):
 
     executor = remote_executor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
