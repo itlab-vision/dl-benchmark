@@ -13,7 +13,7 @@ def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type = str, dest = 'config_path',
         help = 'Path to configuration file', required = True)
-    parser.add_argument('-f', '--filename', type = str, dest = 'result_file',
+    parser.add_argument('-r', '--result', type = str, dest = 'result_file',
         help = 'Full name of the resulting file', required = True)
     parser.add_argument('--executor_type', type = str, choices = ['host_machine', 'docker_container'],
         help = 'The environment in which the tests will be executed')
