@@ -7,6 +7,7 @@ from xml.dom import minidom
 
 from remote_executor import remote_executor
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--server_ip', help = 'FTP server IP.',
@@ -27,19 +28,25 @@ def build_parser():
         help = 'Link to github project.')
     return parser.parse_args()
 
+
 def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log):
     log.info('Deploy script is connecting to the FTP server')
     ftp_connection = ftplib.FTP(server_ip, server_login, server_psw)
     log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), upload_dir))
+        log.info('Current directory {} changed to target : {}'.format(
+            ftp_connection.pwd(), upload_dir))
         ftp_connection.cwd(upload_dir)
 
     return ftp_connection
 
-def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_path, log):
-    ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log)
+
+def copy_image_to_server(server_ip, server_login, server_psw, upload_dir,
+    image_path, log):
+
+    ftp_connection = prepare_ftp_connection(server_ip, server_login,
+        server_psw, upload_dir, log)
 
     target_image = open(image_path, 'rb')
     image_name = os.path.split(image_path)[1]
@@ -49,6 +56,7 @@ def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_
     log.info('Image copied to server')
 
     ftp_connection.close()
+
 
 def parse_machine_list(path_to_config):
     CONFIG_ROOT_TAG = 'Computer'
@@ -77,8 +85,9 @@ def parse_machine_list(path_to_config):
 
     return machine_list
 
-def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir,
-                     project_folder, container_name, log):
+
+def client_execution(machine, server_ip, server_login, server_psw,
+    image_path, download_dir, project_folder, container_name, log):
 
     executor = remote_executor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
@@ -90,6 +99,7 @@ def client_execution(machine, server_ip, server_login, server_psw, image_path, d
     executor.execute_command(command)
 
     return executor
+
 
 def main():
     # Enable log formatting
@@ -124,6 +134,7 @@ def main():
     log.info('Deploy status:')
     for client in client_list:
         log.info(client.get_status())
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

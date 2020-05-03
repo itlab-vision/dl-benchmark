@@ -1,6 +1,7 @@
 import ftplib
 from io import StringIO
 
+
 def join_tables(ftp_server, table_name):
     tables = []
     ftp_server.retrlines('NLST', tables.append)

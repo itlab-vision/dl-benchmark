@@ -1,9 +1,11 @@
 import paramiko
 from remote_helper import remote_helper
 
+
 class linux_remote_helper(remote_helper):
     def __init__(self, log):
         super().__init__(log)
+
 
     def connect(self, machine_ip, login, password):
         new_connection = paramiko.SSHClient()
@@ -12,6 +14,7 @@ class linux_remote_helper(remote_helper):
             password = password)
 
         return new_connection
+
 
     def execute(self, con, command):
         transport = con.get_transport()
@@ -26,8 +29,10 @@ class linux_remote_helper(remote_helper):
 
         return channel
 
+
     def execute_python(self, con, command):
         return self.execute(con, 'python3 {}'.format(command))
+
 
     def wait(self, process):
         channel_id = process.get_id()

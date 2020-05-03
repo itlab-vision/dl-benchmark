@@ -4,6 +4,7 @@ import ftplib
 import sys
 import logging as log
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--server_ip', help = 'FTP server IP.',
@@ -20,6 +21,7 @@ def build_parser():
         help = 'Name of the docker container.')
     return parser.parse_args()
 
+
 def prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log):
     log.info('Client script is connecting to the FTP server')
     ftp_connection = ftplib.FTP(server_ip, server_login, server_psw)
@@ -27,19 +29,25 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log)
 
     image_dir = os.path.split(image_path)[0]
     if ftp_connection.pwd() != image_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), image_dir))
+        log.info('Current directory {} changed to target : {}'.format(
+            ftp_connection.pwd(), image_dir))
         ftp_connection.cwd(image_dir)
 
     return ftp_connection
 
-def upload_container_image(server_ip, server_login, server_psw, image_path, upload_dir, file_path, log):
-    ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log)
+
+def upload_container_image(server_ip, server_login, server_psw, image_path,
+    upload_dir, file_path, log):
+
+    ftp_connection = prepare_ftp_connection(server_ip, server_login,
+        server_psw, image_path, log)
 
     log.info('Client script is uploading image from server')
     with open(file_path, 'wb') as container_image:
         ftp_connection.retrbinary('RETR {}'.format(os.path.split(image_path)[1]),
             container_image.write)
     log.info('Upload completed')
+
 
 def main():
     # Enable log formatting

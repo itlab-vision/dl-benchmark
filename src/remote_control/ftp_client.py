@@ -32,8 +32,10 @@ def build_parser():
         'are written', required = True)
     return parser
 
+
 def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
-                     benchmark_executor, os_type, path_to_res_table, log_file):
+    benchmark_executor, os_type, path_to_res_table, log_file):
+
     if os_type == 'Windows':
         launch_benchmark_on_win(path_to_env, path_to_benchmark,
             benchmark_config, benchmark_executor, path_to_res_table, log_file)
@@ -45,20 +47,21 @@ def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
 
 
 def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
-                            benchmark_executor, path_to_res_table, log_file):
+    benchmark_executor, path_to_res_table, log_file):
+
     os.system(('{} > {} & cd {} & python inference_benchmark.py -c {}' + 
         ' -f {} --executor_type {} >> {}').format(path_to_env, log_file, path_to_benchmark,
         benchmark_config, path_to_res_table, benchmark_executor, log_file))
 
 
 def launch_benchmark_on_linux(path_to_env, path_to_benchmark, benchmark_config,
-                              benchmark_executor, path_to_res_table, log_file):
+    benchmark_executor, path_to_res_table, log_file):
+
     sp = subprocess.Popen(('source {} > {}; cd {};' +
         'python3 inference_benchmark.py -c {} -f {} --executor_type {} >> {}').format(path_to_env,
         log_file, path_to_benchmark, benchmark_config, path_to_res_table, benchmark_executor,
         log_file), shell=True, executable='/bin/bash')
     sp.communicate()
-
 
 
 def main():

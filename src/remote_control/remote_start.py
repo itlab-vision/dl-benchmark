@@ -11,6 +11,7 @@ path_to_utils = os.path.normpath(os.path.join(os.getcwd(), PATH_TO_REMOTE_SCRIPT
 sys.path.insert(1, path_to_utils)
 from remote_executor import remote_executor
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type = str,
@@ -30,6 +31,7 @@ def build_parser():
         raise ValueError('Wrong path to configuration file!')
     return args
 
+
 def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log):
     executor = remote_executor(machine.os_type, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
@@ -42,6 +44,7 @@ def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log)
     executor.execute_python(command)
 
     return executor
+
 
 def main():
     log.basicConfig(format = '[ %(levelname)s ] %(message)s',

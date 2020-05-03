@@ -2,6 +2,7 @@ import abc
 import os
 import platform
 
+
 class process(metaclass = abc.ABCMeta):
     def __init__(self, test, executor, log):
         self.__my_log = log
@@ -9,6 +10,7 @@ class process(metaclass = abc.ABCMeta):
         self._my_executor = executor
         self._my_output = None
         self._my_row_output = None
+
 
     def __print_error(self):
         out = self._my_output
@@ -21,9 +23,11 @@ class process(metaclass = abc.ABCMeta):
             if iserror:
                 self.__my_log.error('    {0}'.format(line))
 
+
     @abc.abstractmethod
     def _fill_command_line(self):
         pass
+
 
     @staticmethod
     def _get_cmd_python_version():
@@ -35,12 +39,14 @@ class process(metaclass = abc.ABCMeta):
             cmd_python_version = 'python'
         return cmd_python_version
 
+
     def get_model_shape(self):
         input_shape = []
         for line in self._my_output:
             if 'Shape for input layer' in line:
                 input_shape.append(line.split(':')[-1].strip())
         return ', '.join(input_shape) if len(input_shape) > 0 else 'Undefined'
+
 
     def execute(self):
         command_line = self._fill_command_line()
@@ -60,33 +66,41 @@ class process(metaclass = abc.ABCMeta):
             self.__my_log.warning('Inference test on model: {} was ended with error. Process logs:'.format(self._my_test.model.name))
             self.__print_error()
 
+
     def get_status(self):
         return self._my_row_output[0]
+
 
     @staticmethod
     def get_process(test, executor, log):
         if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
             return OpenVINO_process.create_process(test, executor, log)
 
+
     @abc.abstractmethod
     def get_performance_metrics(self):
         pass
+
 
 class OpenVINO_process(process):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
+
     @staticmethod
     def __add_extension_for_cmd_line(command_line, extension):
         return '{0} -l {1}'.format(command_line, extension)
+
 
     @staticmethod
     def __add_nthreads_for_cmd_line(command_line, nthreads):
         return '{0} -nthreads {1}'.format(command_line, nthreads)
 
+
     @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
+
 
     def _fill_command_line(self):
         model_xml = self._my_test.model.model
@@ -96,20 +110,24 @@ class OpenVINO_process(process):
         device = self._my_test.indep_parameters.device
         iteration = self._my_test.indep_parameters.iteration
 
-        command_line = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(model_xml,
-            model_bin, dataset, batch, device, iteration)
+        command_line = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(
+            model_xml, model_bin, dataset, batch, device, iteration)
 
         extension = self._my_test.dep_parameters.extension
         if extension:
-            command_line = OpenVINO_process.__add_extension_for_cmd_line(command_line, extension)
+            command_line = OpenVINO_process.__add_extension_for_cmd_line(
+                command_line, extension)
 
         nthreads = self._my_test.dep_parameters.nthreads
         if nthreads:
-            command_line = OpenVINO_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+            command_line = OpenVINO_process.__add_nthreads_for_cmd_line(
+                command_line, nthreads)
 
-        command_line = OpenVINO_process.__add_raw_output_time_for_cmd_line(command_line, '--raw_output true')
+        command_line = OpenVINO_process.__add_raw_output_time_for_cmd_line(
+            command_line, '--raw_output true')
 
         return command_line
+
 
     @staticmethod
     def create_process(test, executor, log):
@@ -119,19 +137,24 @@ class OpenVINO_process(process):
         elif mode == 'async':
             return async_OpenVINO_process(test, executor, log)
 
+
 class sync_OpenVINO_process(OpenVINO_process):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-            'inference_sync_mode.py'))
+        path_to_sync_scrypt = os.path.normpath(os.path.join(
+            self._my_executor.get_path_to_inference_folder(),
+            'inference_sync_mode.py')
+        )
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
-        command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
+        command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt,
+            common_params)
 
         return command_line
+
 
     def get_performance_metrics(self):
         if self._my_row_output[0] != 0 or len(self._my_output) == 0:
@@ -143,35 +166,45 @@ class sync_OpenVINO_process(OpenVINO_process):
         latency = float(result[2])
         return average_time, fps, latency
 
+
 class async_OpenVINO_process(OpenVINO_process):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
+
 
     @staticmethod
     def __add_nstreams_for_cmd_line(command_line, nstreams):
         return '{0} -nstreams {1}'.format(command_line, nstreams)
 
+
     @staticmethod
     def __add_requests_for_cmd_line(command_line, requests):
         return '{0} --requests {1}'.format(command_line, requests)
 
+
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-            'inference_async_mode.py'))
+        path_to_async_scrypt = os.path.normpath(os.path.join(
+            self._my_executor.get_path_to_inference_folder(),
+            'inference_async_mode.py')
+        )
 
         python = process._get_cmd_python_version()
         common_params = super()._fill_command_line()
-        command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, common_params)
+        command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt,
+            common_params)
 
         nstreams = self._my_test.dep_parameters.nstreams
         if nstreams:
-            command_line = async_OpenVINO_process.__add_nstreams_for_cmd_line(command_line, nstreams)
+            command_line = async_OpenVINO_process.__add_nstreams_for_cmd_line(
+                command_line, nstreams)
 
         requests = self._my_test.dep_parameters.async_request
         if requests:
-            command_line = async_OpenVINO_process.__add_requests_for_cmd_line(command_line, requests)
+            command_line = async_OpenVINO_process.__add_requests_for_cmd_line(
+                command_line, requests)
 
         return command_line
+
 
     def get_performance_metrics(self):
         if self._my_row_output[0] != 0 or len(self._my_output) == 0:

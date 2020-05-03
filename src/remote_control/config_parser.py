@@ -14,6 +14,7 @@ class machine:
         self.log_file = params[8]
         self.res_file = params[9]
 
+
 def parse_config(config):
     with open(config) as file:
         openconfig = file.read()

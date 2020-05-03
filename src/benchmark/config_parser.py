@@ -8,6 +8,7 @@ class parser:
         CONFIG_ROOT_TAG = 'Test'
         return minidom.parse(config).getElementsByTagName(CONFIG_ROOT_TAG)
 
+
     def parse_model(self, curr_test):
         CONFIG_MODEL_TAG = 'Model'
         CONFIG_MODEL_TASK_TAG = 'Task'
@@ -25,6 +26,7 @@ class parser:
             path = model_tag.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
         )
 
+
     def parse_dataset(self, curr_test):
         CONFIG_DATASET_TAG = 'Dataset'
         CONFIG_DATASET_NAME_TAG = 'Name'
@@ -35,6 +37,7 @@ class parser:
             name = dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
             path = dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
         )
+
 
     def parse_independent_parameters(self, curr_test):
         CONFIG_FRAMEWORK_INDEPENDENT_TAG = 'FrameworkIndependent'
@@ -58,9 +61,11 @@ class parser:
                 CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
         )
 
+
     def parse_dependent_parameters(self, curr_test, framework):
         dep_parser = dependent_parameters_parser.get_parser(framework)
         return dep_parser.parse_parameters(curr_test)
+
 
 class dependent_parameters_parser(metaclass = abc.ABCMeta):
     @staticmethod
@@ -68,9 +73,11 @@ class dependent_parameters_parser(metaclass = abc.ABCMeta):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_parameters_parser()
 
+
     @abc.abstractmethod
     def parse_parameters(self, curr_test):
         pass
+
 
 class OpenVINO_parameters_parser(dependent_parameters_parser):
     def parse_parameters(self, curr_test):
@@ -102,11 +109,13 @@ class OpenVINO_parameters_parser(dependent_parameters_parser):
             stream_count = _stream_count.data if _stream_count else None
         )
 
+
 class model:
     def _parameter_not_is_none(self, parameter):
         if not parameter is None:
             return True
         return False
+
 
     def __init__(self, task, name, path, precision, source_framework):
         self.source_framework = None
@@ -136,11 +145,13 @@ class model:
         else:
             raise ValueError('Precision is required parameter.')
 
+
 class dataset:
     def _parameter_not_is_none(self, parameter):
         if not parameter is None:
             return True
         return False
+
 
     def __init__(self, name, path):
         self.name = None
@@ -154,11 +165,13 @@ class dataset:
         else:
             raise ValueError('Path to dataset is required parameter.')
 
+
 class parameters_methods:
     def _parameter_not_is_none(self, parameter):
         if not parameter is None:
             return True
         return False
+
 
     def _int_value_is_correct(self, int_value):
         for i in range(len(int_value)):
@@ -166,11 +179,13 @@ class parameters_methods:
                 return False
         return True
 
+
     def _float_value_is_correct(self, float_value):
         for i in float_value.split('.'):
             if not self._int_value_is_correct(i):
                 return False
         return True
+
 
 class framework_independent_parameters(parameters_methods):
     def _device_is_correct(self, device):
@@ -179,7 +194,10 @@ class framework_independent_parameters(parameters_methods):
             return True
         return False
 
-    def __init__(self, inference_framework, batch_size, device, iterarion_count, test_time_limit):
+
+    def __init__(self, inference_framework, batch_size, device,
+        iterarion_count, test_time_limit):
+
         self.inference_framework = None
         self.batch_size = None
         self.device = None
@@ -210,6 +228,7 @@ class framework_independent_parameters(parameters_methods):
             raise ValueError('Test time limit is required parameter. \
                 Test time limit can only `take values: float greater than zero.')
 
+
 class OpenVINO_parameters(parameters_methods):
     def _mode_is_correct(self, mode):
         const_correct_mode = ['sync', 'async']
@@ -217,13 +236,16 @@ class OpenVINO_parameters(parameters_methods):
             return True
         return False
 
+
     def _extension_path_is_correct(self, extension):
         if not self._parameter_not_is_none(extension) or os.path.exists(extension):
             return True
         return False
 
+
     def __init__(self, mode, extension, async_request_count,
-                 thread_count, stream_count):
+        thread_count, stream_count):
+
         self.mode = None
         self.extension = None
         self.async_request = None
@@ -257,6 +279,7 @@ class OpenVINO_parameters(parameters_methods):
                 else:
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
+
 class test(metaclass = abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         self.model = model
@@ -264,18 +287,22 @@ class test(metaclass = abc.ABCMeta):
         self.indep_parameters = indep_parameters
         self.dep_parameters = dep_parameters
 
+
     @staticmethod
     def get_test(framework, model, dataset, indep_parameters, dep_parameters):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
 
+
     @abc.abstractmethod
     def get_report(self):
         pass
 
+
 class OpenVINO_test(test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
+
 
     def get_report(self):
         parameters = OrderedDict()
@@ -291,9 +318,10 @@ class OpenVINO_test(test):
         other_param = ', '.join(other_param)
         return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
-            self.indep_parameters.inference_framework, self.model.datatype, self.indep_parameters.batch_size,
-            self.dep_parameters.mode, other_param
+            self.indep_parameters.inference_framework, self.model.datatype,
+            self.indep_parameters.batch_size, self.dep_parameters.mode, other_param
         )
+
 
 def process_config(config, log):
     test_parser = parser()
@@ -308,7 +336,8 @@ def process_config(config, log):
             framework = IndepParameters.inference_framework
             DepParameters = test_parser.parse_dependent_parameters(curr_test, framework)
 
-            test_list.append(test.get_test(framework, Model, Dataset, IndepParameters, DepParameters))
+            test_list.append(test.get_test(framework, Model, Dataset,
+                IndepParameters, DepParameters))
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
     return test_list

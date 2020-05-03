@@ -5,11 +5,13 @@ class windows_remote_hepler(remote_helper):
     def __init__(self, log):
         super().__init__(log)
 
+
     def connect(self, machine_ip, login, password):
         new_connection = wmi.WMI(machine_ip, user = login,
             password = password)
 
         return new_connection
+
 
     def execute(self, con, command):
         process_startup = con.Win32_ProcessStartup.new()
@@ -26,8 +28,10 @@ class windows_remote_hepler(remote_helper):
 
         return watcher
 
+
     def execute_python(self, con, command):
         return self.execute(con, 'python {}'.format(command))
+
 
     def wait(self, process):
         process_status = process()
