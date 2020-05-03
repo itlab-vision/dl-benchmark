@@ -20,6 +20,8 @@ def build_parser():
         help = 'Path to config file.', required = True)
     parser.add_argument('-os', '--os_type', type = str,
         help = 'Type of operating system.', required = True)
+    parser.add_argument('--ftp_dir', type = str,
+        help = 'Path to the directory with results on the FTP.', required = True)
     parser.add_argument('--res_file', type = str,
         help = 'The name of the file to which the results'
         'are written', required = True)
@@ -77,6 +79,7 @@ def main():
         param_list.benchmark_config, param_list.os_type,
         path_to_res_table, log_file)
 
+    ftp_connection.cwd(param_list.ftp_dir)
     result_table = open(path_to_res_table, 'rb')
     ftp_connection.storbinary('STOR {}_result_table.csv'.format(platform.node()),
         result_table)
