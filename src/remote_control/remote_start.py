@@ -33,10 +33,11 @@ def build_parser():
 def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log):
     executor = remote_executor(machine.os_type, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
-    command = (('{} -ip {} -l {} -p {} -env {} -b {} -os {} --res_file ' + 
-        '{} --ftp_dir {} --log_file {}').format(machine.path_to_ftp_client,
-        server_ip, server_login, server_psw, machine.path_to_OpenVINO_env,
-        machine.benchmark_config, machine.os_type, machine.res_file,
+    command = (('{} -ip {} -l {} -p {} -env {} -b {} --benchmark_executor {}'
+        ' -os {} --res_file {} --ftp_dir {} --log_file {}').format(
+        machine.path_to_ftp_client, server_ip, server_login, server_psw,
+        machine.path_to_OpenVINO_env, machine.benchmark_config,
+        machine.benchmark_executor, machine.os_type, machine.res_file,
         ftp_dir, machine.log_file))
     executor.execute_python(command)
 

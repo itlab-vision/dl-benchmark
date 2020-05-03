@@ -8,7 +8,7 @@ def join_tables(ftp_server, table_name):
     ftp_server.retrlines('RETR ' + tables[0], reader.write)
     reader.seek(0)
     csv_table = reader.getvalue().split(';')
-    number_columns_in_table = 9
+    number_columns_in_table = 15
     formatted_table = open(table_name, 'w')
     for curr_line in range(0, len(csv_table) - 1, number_columns_in_table):
         next_row = csv_table[curr_line: (curr_line + number_columns_in_table)]
