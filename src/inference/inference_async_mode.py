@@ -40,6 +40,9 @@ def build_parser():
         Use MULTI:<Device1>,<Device2>,... for MULTI plugin. \
         Sample will look for a suitable plugin for device specified \
         (CPU by default)', default = 'CPU', type = str, dest = 'device')
+    parser.add_argument('--default_device', help = 'Default device for heterogeneous inference',
+        choices = ['CPU', 'GPU', 'MYRIAD', 'FGPA'], 
+        default = None, type = str, dest = 'default_device')
     parser.add_argument('-p', '--priority', help = 'Priority for \
         multi-device inference in descending order. \
         Use format <Device1>,<Device2> First device has top priority',
@@ -148,7 +151,7 @@ def main():
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
             args.nthreads, args.nstreams, args.dump, 'async', log)
         net = utils.create_network(args.model_xml, args.model_bin, log)
-        utils.configure_network(iecore, net, args.device, args.affinity)
+        utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))

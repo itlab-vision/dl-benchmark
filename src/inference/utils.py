@@ -23,14 +23,19 @@ def parse_affinity(affinity_file):
     return affinity
 
 
-def configure_network(ie, net, device, affinity_file):
+def configure_network(ie, net, device, default_device, affinity_file):
     if 'HETERO' not in device:
         return
     layers = net.layers
     if affinity_file:
+        if not default_device:
+            raise ValueError('--default_device is required parameter for heterogeneous inference')
         affinity = parse_affinity(affinity_file)
         for layer in layers:
-            layers[layer].affinity = affinity[layer]
+            if layer in affinity.keys():
+                layers[layer].affinity = affinity[layer]
+            else:
+                layers[layer].affinity = default_device
     else:
         layers_map = ie.query_network(network = net, device_name = device)
         for layer, device in layers_map.items():
