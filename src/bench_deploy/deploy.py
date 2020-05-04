@@ -7,6 +7,7 @@ from xml.dom import minidom
 
 from remote_executor import remote_executor
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--server_ip', help = 'FTP server IP.',
@@ -19,11 +20,14 @@ def build_parser():
         help = 'Path to the container image on the host machine.')
     parser.add_argument('-d', '--upload_dir', required = True, type = str,
         help = 'Path to the directory on the FTP server to copy the container image.')
+    parser.add_argument('-n', '--container_name', required = True, type = str,
+        help = 'Name of the docker container.')
     parser.add_argument('--machine_list',  required = True, type = str,
         help = 'Path to the config file in .xml format.')
     parser.add_argument('--project_folder',  required = True, type = str,
         help = 'Link to github project.')
     return parser.parse_args()
+
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log):
     log.info('Deploy script is connecting to the FTP server')
@@ -31,13 +35,18 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log)
     log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), upload_dir))
+        log.info('Current directory {} changed to target : {}'.format(
+            ftp_connection.pwd(), upload_dir))
         ftp_connection.cwd(upload_dir)
 
     return ftp_connection
 
-def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_path, log):
-    ftp_connection = prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log)
+
+def copy_image_to_server(server_ip, server_login, server_psw, upload_dir,
+    image_path, log):
+
+    ftp_connection = prepare_ftp_connection(server_ip, server_login,
+        server_psw, upload_dir, log)
 
     target_image = open(image_path, 'rb')
     image_name = os.path.split(image_path)[1]
@@ -47,6 +56,7 @@ def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_
     log.info('Image copied to server')
 
     ftp_connection.close()
+
 
 def parse_machine_list(path_to_config):
     CONFIG_ROOT_TAG = 'Computer'
@@ -75,16 +85,21 @@ def parse_machine_list(path_to_config):
 
     return machine_list
 
-def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder, log):
+
+def client_execution(machine, server_ip, server_login, server_psw,
+    image_path, download_dir, project_folder, container_name, log):
+
     executor = remote_executor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
     joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
-    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} > log.txt'.format(
-        project_folder, server_ip, server_login, server_psw, image_path, download_dir))
+    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} -n {} > log.txt'.format(
+        project_folder, server_ip, server_login, server_psw, image_path, download_dir,
+        container_name))
     executor.execute_command(command)
 
     return executor
+
 
 def main():
     # Enable log formatting
@@ -109,7 +124,7 @@ def main():
     for machine in machine_list:
         client_list.append(client_execution(machine, args.server_ip,
             args.server_login, args.server_psw, image_ftp_path,
-            machine['download_folder'], args.project_folder, log))
+            machine['download_folder'], args.project_folder, args.container_name, log))
 
     # Fourth stage wait all clients
     log.info('Deploy script is waiting clients')
@@ -119,6 +134,7 @@ def main():
     log.info('Deploy status:')
     for client in client_list:
         log.info(client.get_status())
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
