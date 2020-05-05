@@ -1,4 +1,4 @@
-# Результаты проверки корректности вывода с использованием разных режимов
+# Проверка корректности вывода для моделей Intel с использованием разных режимов
 
 ## Результаты детектирования
 
@@ -6,7 +6,10 @@
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
+
+
+Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" height="150" src="images\berlin_000000_000019_leftImg8bit.png">
@@ -33,7 +36,10 @@ pedestrian-and-vehicle-detector-adas-0001 | Окаймляющий прямоу�
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
+
+
+Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" height="150" src="images\vehicle-detection-adas-0002.png">
@@ -58,10 +64,12 @@ vehicle-detection-adas-binary-0001 | Окаймляющий прямоуголь
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
+
+
+Входное изображение и результат детектирования:
 
 <div style='float: center'>
-
 <img width="300" height="150" src="images\person-vehicle-bike-detection-crossroad.png">
 <img width="300" height="150" src="detection\person-vehicle-bike-detection-crossroad.png">
 </div>
@@ -87,7 +95,10 @@ person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямо
 
 Источник: набор данных [GitHub][github_plate] 
 
-Разрешение: 799 x 637
+Исходное разрешение: 799 x 637
+
+
+Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" height="239" src="images\vehicle-license-plate-detection-barrier-01.png">
@@ -105,7 +116,10 @@ vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямо
 
 Источник: набор данных [Интернет][internet_person_asl] 
 
-Разрешение: 320 x 320
+Исходное разрешение: 320 x 320
+
+
+Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="320" height="320" src="images\person-detection-asl-0001.bmp">
@@ -124,7 +138,10 @@ person-detection-asl-0001 | Окаймляющий прямоугольник:<b
 
 Источник: набор данных [Интернет][internet_product] 
 
-Разрешение: 512 x 512
+Исходное разрешение: 512 x 512
+
+
+Изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" height="300" src="images\product-detection-0001.bmp">
@@ -138,13 +155,16 @@ SPRITE (240, 487), (380, 10)<br>
 ----------------------|-----------------------------------------|-----------------------------------------|
 product-detection-0001 | Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>| Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>|
 
-## Результаты распознования
+## Результаты распознавания
 
 ### Тестовое изображение 1
 
 Источник: набор данных [GitHub][github_age_gender] 
 
-Разрешение: 62 x 62
+Исходное разрешение: 62 x 62
+
+
+Изображение:
 
 <div style='float: center'>
 <img src="images\age-gender-recognition-retail-0001.jpg">
@@ -158,7 +178,10 @@ age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 
 Источник: набор данных [GitHub][github_age_gender] 
 
-Разрешение: 62 x 62
+Исходное разрешение: 62 x 62
+
+
+Изображение:
 
 <div style='float: center'>
 <img src="images\age-gender-recognition-retail-0002.png">
@@ -172,7 +195,10 @@ age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 
 Источник: набор данных [GitHub][github_age_gender] 
 
-Разрешение: 62 x 62
+Исходное разрешение: 62 x 62
+
+
+Изображение:
 
 <div style='float: center'>
 <img src="images\age-gender-recognition-retail-0003.png">
@@ -186,7 +212,10 @@ age-gender-recognition-retail-0013 | Male, 28.49 | Male, 28.49 |
 
 Источник: набор данных [VGGFace2][vgg_face2] 
 
-Разрешение: 48 x 48
+Исходное разрешение: 48 x 48
+
+
+Изображение и результат распознавания:
 
 <div style='float: center'>
 <img src="images\landmarks.jpg">
@@ -208,7 +237,10 @@ landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (17, 18),<b
 
 Источник: набор данных [Интернет][internet_kerzhakov]
 
-Разрешение: 60 x 60
+Исходное разрешение: 60 x 60
+
+
+Изображение и результат распознавания:
 
 <div style='float: center'>
 <img src="images\facial-landmarks-35-adas.png">
@@ -232,7 +264,10 @@ facial-landmarks-35-adas-0002 | Лицевые метки:<br>LEFT EYE (17, 22),
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 80 x 160
+Исходное разрешение: 80 x 160
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="80" height="160" src="images\person-attributes-recognition-crossroad-01.png">
@@ -246,7 +281,10 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 
 Источник: набор данных [CityScapes][cityscapes] 
 
-Разрешение: 80 x 160
+Исходное разрешение: 80 x 160
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="80" height="160" src="images\person-attributes-recognition-crossroad-02.png">
@@ -260,7 +298,10 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 
 Источник: набор данных [BKHD][bkhd] 
 
-Разрешение: 60 x 60
+Исходное разрешение: 60 x 60
+
+
+Изображение и результат распознавания:
 
 <div style='float: center'>
 <img src="images\out_head_pose.bmp">
@@ -275,7 +316,10 @@ head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"
 
 Источник: набор данных [BKHD][bkhd] 
 
-Разрешение: 60 x 60
+Исходное разрешение: 60 x 60
+
+
+Изображение и результат распознавания:
 
 <div style='float: center'>
 <img src="images\left_eye.jpg">
@@ -291,7 +335,10 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 
 Источник: набор данных [GitHub][github_license_plate] 
 
-Разрешение: 24 x 94
+Исходное разрешение: 24 x 94
+
+
+Изображение:
 
 <div style='float: center'>
 <img height = '24' width = '94' src="images\license-plate-recognition-barrier.JPG">
@@ -301,13 +348,16 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 ----------------------|-----------------------------------------|-----------------------------------------|
 license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;FA9512 |
 
-## Результаты распознования лиц
+## Результаты распознавания лиц
 
 ### Тестовое изображение 1
 
 Источник: набор данных [VGGFace2][vgg_face2]  
 
-Разрешение: 96 x 112
+Исходное разрешение: 96 x 112
+
+
+Изображение:
 
 <div style='float: center'>
 <img src="images\sphereface.jpg">
@@ -324,7 +374,10 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 
 Источник: набор данных [GitHub][github_single_image_super_resolution]
 
-Разрешение: 720 x 480
+Исходное разрешение: 720 x 480
+
+
+Изображение и результат обработки:
 
 <div style='float: center'>
 <img width="300" src="images\street_480x270.png"></img>
@@ -338,14 +391,16 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 single-image-super-resolution-1032             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_1.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_1.png"></img></div>|
 single-image-super-resolution-1033             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_2.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_2.png"></img></div>|
 
-
 ## Результаты распознавания позы человека
 
 ### Тестовое изображение 1
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 640 x 425
+Исходное разрешение: 640 x 425
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\COCO_val2014_000000453166.jpg"></img>
@@ -357,14 +412,16 @@ single-image-super-resolution-1033             |<div style='float: center'><img 
 ---------------------|-----------------------------|------------------------------------|
 human-pose-estimation-0001             |<div style='float: center'><img width="300" src="human_pose_estimation\python_sync_COCO_val2014_000000453166.png"></img></div>|<div style='float: center'><img width="300" src="human_pose_estimation\python_async_COCO_val2014_000000453166.png"></img></div>|
 
-
 ## Результаты семантической сегментации
 
 ### Тестовое изображение 1
 
 Источник: набор данных [The Cityscapes Dataset][cityscapes]
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\bielefeld_000000_038924_leftImg8bit.png"></img>
@@ -382,12 +439,14 @@ semantic-segmentation-adas-0001             |<div style='float: center'><img wid
 <img width="200" src="semantic_segmentation\cityscapes_colormap.jpg">
 </div>
 
-
 ### Тестовое изображение 2
 
 Источник: набор данных [GitHub][github_road_segmentation]
 
-Разрешение: 640 x 365
+Исходное разрешение: 640 x 365
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\road-segmentation-adas-1.png"></img>
@@ -405,14 +464,16 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 <img width="200" src="semantic_segmentation\road_segmentation_colormap.jpg">
 </div>
 
-
 ## Результаты векторного описания
 
 ### Тестовое изображение 1
 
 Источник: набор данных [LFW][LFW]
 
-Разрешение: 250 x 250
+Исходное разрешение: 250 x 250
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\Aaron_Peirsol_0002.jpg"></img>
@@ -420,53 +481,52 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 <div style='float: center'>
 </div>
 
-
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_sync] | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_async] |
-
 
 ### Тестовое изображение 2
 
 Источник: набор данных [GitHub][github_ARE]
 
-Разрешение: 960 x 720
+Исходное разрешение: 960 x 720
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\demo.png"></img>
 </div>
-<div style='float: center'>
-</div>
-
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_sync] | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_async] |
 
-
 ### Тестовое изображение 3
 
 Источник: набор данных [GitHub][github_DARE]
 
-Разрешение: 1922 x 1080
+Исходное разрешение: 1922 x 1080
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\action-recognition-kelly.png"></img>
 </div>
-<div style='float: center'>
-</div>
-
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
 
-
-## Результаты распознования действий
+## Результаты распознавания действий
 
 ### Тестовый тензор 1
 
-Источник: [Результат работы модели action-recognition-0001-encoder][ARD]
+Источник: [результат работы модели action-recognition-0001-encoder][ARD]
+
+
+Тензор:
 
 <div style='float: center'>
 0.0794002  0.0583136  0.0020747  0.0903931<br>
@@ -475,18 +535,17 @@ driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334
 0.1126685  0.1257046  0.1392988  0.5075323<br>
 0.0785143  0.0922345  0.0033597  0.3115494
 </div>
-<div style='float: center'>
-</div>
-
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet |
 
-
 ### Тестовый тензор 2
 
 Источник: [Результат работы модели driver-action-recognition-adas-0002-encoder][DARD]
+
+
+Тензор:
 
 <div style='float: center'>
 -0.0142664  -0.0064780  -0.0334583  -0.0108943<br>
@@ -495,14 +554,10 @@ action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying ti
 -0.0093990  -0.0028726   0.0074722   0.0303789<br>
 -0.2324419   0.2686763   0.0168234   0.0029897
 </div>
-<div style='float: center'>
-</div>
-
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand |
-
 
 ## Результаты экземплярной сегментации
 
@@ -510,7 +565,10 @@ driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 640 x 480
+Исходное разрешение: 640 x 480
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\000000118209.jpg"></img>
@@ -519,17 +577,18 @@ driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br
 Входной тензор: 480; 640; 1
 </div>
 
-
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0083             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000118209.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000118209.bmp"></img></div>|
-
 
 ### Тестовое изображение 2
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 640 x 640
+Исходное разрешение: 640 x 640
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\COCO_val2014_000000203438.jpg"></img>
@@ -538,17 +597,18 @@ instance-segmentation-security-0083             |<div style='float: center'><img
 Входной тензор: 480; 480; 1
 </div>
 
-
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_COCO_val2014_000000203438.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_COCO_val2014_000000203438.bmp"></img></div>|
-
 
 ### Тестовое изображение 3
 
 Источник: набор данных [MS COCO][ms_coco]
 
-Разрешение: 640 x 427
+Исходное разрешение: 640 x 427
+
+
+Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\000000367818.jpg"></img>
@@ -556,7 +616,6 @@ instance-segmentation-security-0050             |<div style='float: center'><img
 <div style='float: center'>
 Входной тензор: 800; 1344; 1
 </div>
-
 
    Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
@@ -592,7 +651,6 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
-[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
-[LFW]: http://vis-www.cs.umass.edu/lfw/index.html
+[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description[LFW]: http://vis-www.cs.umass.edu/lfw/index.html
 [cityscapes]: https://www.cityscapes-dataset.com
 [ms_coco]: http://cocodataset.org
