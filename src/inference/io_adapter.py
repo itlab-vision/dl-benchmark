@@ -648,7 +648,7 @@ class license_plate_io(io_adapter):
             for j in range(lex.shape[0]):
                 if (lex[j] == -1):
                     break
-                s = s + str(lexis[int(lex[j])][1])
+                s = s + str(lexis[int(lex[j])])
             log.info('Plate: {}'.format(s))
 
 
