@@ -8,6 +8,8 @@
 
 Исходное разрешение: 709 x 510
 ﻿
+Изображение:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
@@ -38,6 +40,8 @@ vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig
 
 Исходное разрешение: 500 x 500
 ﻿
+Изображение:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
@@ -68,6 +72,8 @@ vgg-19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringill
 
 Исходное разрешение: 333 x 500
 ﻿
+Изображение:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
@@ -100,6 +106,8 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 
 Исходное разрешение: 709 x 510
 ﻿
+Входное изображение и результат детектирования:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
@@ -124,6 +132,8 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 500 x 500
 ﻿
+Входное изображение и результат детектирования:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
@@ -144,6 +154,8 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 333 x 500
 ﻿
+Входное изображение и результат детектирования:
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
@@ -166,6 +178,8 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 2048 x 1024
 ﻿
+Исходное изображение:
+
 <div style='float: center'>
 <img width="150" src="images\berlin_000000_000019_leftImg8bit.png"></img>
 </div>
@@ -182,6 +196,8 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Исходное разрешение: 2048 x 1024
 ﻿
+Исходное изображение:
+
 <div style='float: center'>
 <img width="150" src="images\berlin_000488_000019_leftImg8bit.png">
 </div>
@@ -198,6 +214,8 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Исходное разрешение: 2048 x 1024
 ﻿
+Исходное изображение:
+
 <div style='float: center'>
 <img width="150" src="images\berlin_000533_000019_leftImg8bit.png">
 </div>
