@@ -93,7 +93,7 @@ person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямо
 
 ### Тестовое изображение 4
 
-Источник: набор данных [GitHub][github_plate] 
+Источник: [GitHub][github_plate] 
 
 Исходное разрешение: 799 x 637
 
@@ -114,7 +114,7 @@ vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямо
 
 ### Тестовое изображение 5
 
-Источник: набор данных [Интернет][internet_person_asl] 
+Источник: [Интернет][internet_person_asl] 
 
 Исходное разрешение: 320 x 320
 
@@ -136,7 +136,7 @@ person-detection-asl-0001 | Окаймляющий прямоугольник:<b
 
 ### Тестовое изображение 6
 
-Источник: набор данных [Интернет][internet_product] 
+Источник: [Интернет][internet_product] 
 
 Исходное разрешение: 512 x 512
 
@@ -159,7 +159,7 @@ product-detection-0001 | Окаймляющий прямоугольник:<br>P
 
 ### Тестовое изображение 1
 
-Источник: набор данных [GitHub][github_age_gender] 
+Источник: [GitHub][github_age_gender] 
 
 Исходное разрешение: 62 x 62
 
@@ -176,7 +176,7 @@ age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 
 ### Тестовое изображение 2
 
-Источник: набор данных [GitHub][github_age_gender] 
+Источник: [GitHub][github_age_gender] 
 
 Исходное разрешение: 62 x 62
 
@@ -193,7 +193,7 @@ age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 
 ### Тестовое изображение 3
 
-Источник: набор данных [GitHub][github_age_gender] 
+Источник: [GitHub][github_age_gender] 
 
 Исходное разрешение: 62 x 62
 
@@ -235,7 +235,7 @@ landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (17, 18),<b
 
 ### Тестовое изображение 5
 
-Источник: набор данных [Интернет][internet_kerzhakov]
+Источник: [Интернет][internet_kerzhakov]
 
 Исходное разрешение: 60 x 60
 
@@ -333,7 +333,7 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 
 ### Тестовое изображение 10
 
-Источник: набор данных [GitHub][github_license_plate] 
+Источник: [GitHub][github_license_plate] 
 
 Исходное разрешение: 24 x 94
 
@@ -372,7 +372,7 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 
 ### Тестовое изображение 1
 
-Источник: набор данных [GitHub][github_single_image_super_resolution]
+Источник: [GitHub][github_single_image_super_resolution]
 
 Исходное разрешение: 720 x 480
 
@@ -416,7 +416,7 @@ human-pose-estimation-0001             |<div style='float: center'><img width="3
 
 ### Тестовое изображение 1
 
-Источник: набор данных [The Cityscapes Dataset][cityscapes]
+Источник: набор данных [Cityscapes][cityscapes]
 
 Исходное разрешение: 2048 x 1024
 
@@ -441,7 +441,7 @@ semantic-segmentation-adas-0001             |<div style='float: center'><img wid
 
 ### Тестовое изображение 2
 
-Источник: набор данных [GitHub][github_road_segmentation]
+Источник: [GitHub][github_road_segmentation]
 
 Исходное разрешение: 640 x 365
 
@@ -487,7 +487,7 @@ face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.098
 
 ### Тестовое изображение 2
 
-Источник: набор данных [GitHub][github_ARE]
+Источник: [GitHub][github_ARE]
 
 Исходное разрешение: 960 x 720
 
@@ -504,7 +504,7 @@ action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<
 
 ### Тестовое изображение 3
 
-Источник: набор данных [GitHub][github_DARE]
+Источник: [GitHub][github_DARE]
 
 Исходное разрешение: 1922 x 1080
 
@@ -542,7 +542,7 @@ action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying ti
 
 ### Тестовый тензор 2
 
-Источник: [Результат работы модели driver-action-recognition-adas-0002-encoder][DARD]
+Источник: [результат работы модели driver-action-recognition-adas-0002-encoder][DARD]
 
 
 Тензор:
