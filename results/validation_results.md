@@ -1,4 +1,4 @@
-# Результаты проверки корректности вывода с использованием разных режимов
+# Проверка корректности вывода с использованием разных режимов
 
 ## Результаты классификации
 
@@ -15,7 +15,7 @@
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 alexnet              |0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig| 0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig| 0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|
 densenet-121         |15.7979164 Granny Smith<br>9.9429455 lemon<br>9.3676043 orange<br>8.6181612 banana<br>7.1164074 tennis ball| 15.7979164 Granny Smith<br>9.9429455 lemon<br>9.3676043 orange<br>8.6181612 banana<br>7.1164074 tennis ball|15.7979164 Granny Smith<br>9.9429455 lemon<br>9.3676043 orange<br>8.6181612 banana<br>7.1164074 tennis ball| 15.7979155 Granny Smith<br>9.9429502 lemon<br>9.3676109 orange<br>8.6181631 banana<br>7.1164064 tennis ball|
@@ -48,7 +48,7 @@ vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |0.9979284 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul| 0.9979284 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul| 0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|
 densenet-121         |17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br>8.2504864 magpie| 17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br>8.2504864 magpie|17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br> 8.2504864 magpie| 17.8269730 junco, snowbird<br>11.4734774 brambling, Fringilla montifringilla<br>11.3202305 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598871 chickadee<br>8.2504835 magpie|
@@ -81,7 +81,7 @@ vgg-19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringill
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
 alexnet              |0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck| 0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck| 0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|
 densenet-121         |13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship| 13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship|13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship| 13.9662342 lifeboat<br>7.8177428 drilling platform, offshore rig<br>7.7323399 liner, ocean liner<br>7.5702839 wreck<br>7.5621653 pirate, pirate ship|
@@ -123,7 +123,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 (289,111), (440,255)<br>
 (435,160), (615,310)<br>
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
 ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (76,168), (231,344)| Окаймляющие прямоугольники: (75,165), (232,344),<br> (380,315), (610,410) |
 mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (380,315), (630,415) | Окаймляющий прямоугольник: (377,314), (632,415) |
@@ -146,7 +146,7 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
 (117,86), (365,465)
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
 ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (90,100), (356,448) | Окаймляющий прямоугольник: (90,100), (350,450) |
 mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (92,95), (361,483) | Окаймляющий прямоугольник: (94,94), (361,480) |
@@ -169,7 +169,7 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
 (82,262), (269,376)
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
 ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (81,244), (267,376) | Окаймляющий прямоугольник: (80,244), (267,376) |
 mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (80,140), (270,375) | Окаймляющий прямоугольник: (80,140), (270,375) |
@@ -193,7 +193,7 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
 
@@ -212,7 +212,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
 
@@ -231,7 +231,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   C++ (синхронный режим, пример в OpenVINO)  |  C++ (асинхронный режим, пример в OpenVINO)  |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
 
