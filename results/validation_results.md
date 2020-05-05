@@ -41,6 +41,7 @@ vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig
 
 Исходное разрешение: 500 x 500
 ﻿
+
 Изображение:
 
 <div style='float: center'>
@@ -73,6 +74,7 @@ vgg-19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringill
 
 Исходное разрешение: 333 x 500
 ﻿
+
 Изображение:
 
 <div style='float: center'>
@@ -107,6 +109,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 
 Исходное разрешение: 709 x 510
 ﻿
+
 Входное изображение и результат детектирования:
 
 <div style='float: center'>
@@ -133,6 +136,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 500 x 500
 ﻿
+
 Входное изображение и результат детектирования:
 
 <div style='float: center'>
@@ -155,6 +159,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 333 x 500
 ﻿
+
 Входное изображение и результат детектирования:
 
 <div style='float: center'>
@@ -179,6 +184,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Исходное разрешение: 2048 x 1024
 ﻿
+
 Исходное изображение:
 
 <div style='float: center'>
@@ -197,6 +203,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Исходное разрешение: 2048 x 1024
 ﻿
+
 Исходное изображение:
 
 <div style='float: center'>
@@ -215,6 +222,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Исходное разрешение: 2048 x 1024
 ﻿
+
 Исходное изображение:
 
 <div style='float: center'>
