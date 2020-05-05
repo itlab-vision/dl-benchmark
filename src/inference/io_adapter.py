@@ -28,6 +28,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
+            images[i] = image
         return images, image_shapes
 
 
