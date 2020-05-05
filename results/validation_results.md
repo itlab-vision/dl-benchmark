@@ -6,7 +6,7 @@
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 709 x 510
+Исходное разрешение: 709 x 510
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
@@ -36,7 +36,7 @@ vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 500 x 500
+Исходное разрешение: 500 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
@@ -66,7 +66,7 @@ vgg-19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringill
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 333 x 500
+Исходное разрешение: 333 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
@@ -98,7 +98,7 @@ vgg-19               |0.9965242 lifeboat<br>0.0008823 container ship, containers
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 709 x 510
+Исходное разрешение: 709 x 510
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
@@ -122,7 +122,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 500 x 500
+Исходное разрешение: 500 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
@@ -142,7 +142,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Источник: набор данных [ImageNet][imagenet]
 
-Разрешение: 333 x 500
+Исходное разрешение: 333 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
@@ -164,7 +164,7 @@ ssd512                | Нет теста детектирования, рабо
 
 Источник: набор данных [Cityscapes][cityscapes]
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src="images\berlin_000000_000019_leftImg8bit.png"></img>
@@ -180,7 +180,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Источник: набор данных [Cityscapes][cityscapes]
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src="images\berlin_000488_000019_leftImg8bit.png">
@@ -196,7 +196,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 Источник: набор данных [Cityscapes][cityscapes]
 
-Разрешение: 2048 x 1024
+Исходное разрешение: 2048 x 1024
 ﻿
 <div style='float: center'>
 <img width="150" src="images\berlin_000533_000019_leftImg8bit.png">
