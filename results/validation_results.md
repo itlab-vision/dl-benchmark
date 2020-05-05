@@ -162,7 +162,7 @@ ssd512                | Нет теста детектирования, рабо
 
 ### Тестовое изображение 1
 
-Источник: набор данных [The Cityscapes Dataset][cityscapes]
+Источник: набор данных [Cityscapes][cityscapes]
 
 Разрешение: 2048 x 1024
 ﻿
@@ -178,7 +178,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 ### Тестовое изображение 2
 
-Источник: набор данных [The Cityscapes Dataset][cityscapes]
+Источник: набор данных [Cityscapes][cityscapes]
 
 Разрешение: 2048 x 1024
 ﻿
@@ -194,7 +194,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 ### Тестовое изображение 3
 
-Источник: набор данных [The Cityscapes Dataset][cityscapes]
+Источник: набор данных [Cityscapes][cityscapes]
 
 Разрешение: 2048 x 1024
 ﻿
