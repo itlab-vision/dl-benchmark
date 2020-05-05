@@ -23,9 +23,6 @@ Deep learning benchmark based on [Intel® Distribution of OpenVINO™ toolkit][o
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
   - `configs` contains template configuration files.
-  - `converter` is a set of scripts to convert models to the
-    intermediate representation using Model Optimizer from
-	Intel® Distribution of OpenVINO™ toolkit.
   - `csv2html` is a set of scripts to convert result table
   from csv format to html format.
   - `inference` contains inference implementation based on

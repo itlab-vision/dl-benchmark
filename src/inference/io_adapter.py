@@ -8,6 +8,7 @@ from transformer import transformer
 class io_adapter(metaclass = abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
+        self._original_shapes = None
         self._batch_size = args.batch_size
         self._labels = args.labels
         self._number_top = args.number_top
@@ -20,13 +21,23 @@ class io_adapter(metaclass = abc.ABCMeta):
     def __convert_images(self, shape, data):
         c, h, w  = shape[1:]
         images = np.ndarray(shape = (len(data), c, h, w))
+        image_shapes = []
         for i in range(len(data)):
             image = cv2.imread(data[i])
+            image_shapes.append(image.shape[:-1])
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
-            images[i] = self._transformer.transform(image)
-        return images
+            images[i] = image
+        return images, image_shapes
+
+
+    def __transform_images(self, images):
+        b, c, h, w = images.shape
+        transformed_images = np.zeros(shape = (b, c, h, w))
+        for i in range(b):
+            transformed_images[i] = self._transformer.transform(images[i])
+        return transformed_images
 
 
     def __create_list_images(self, input):
@@ -64,7 +75,9 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     def prepare_input(self, model, input):
+        result = {}
         self._input = {}
+        self._original_shapes = {}
         if ':' in input[0]:
             for str in input:
                 key, value = str.split(':')
@@ -75,8 +88,11 @@ class io_adapter(metaclass = abc.ABCMeta):
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
-                    value = self.__convert_images(shape, value)
+                    value, shapes = self.__convert_images(shape, value)
+                    transformed_value = self.__transform_images(value)
                 self._input.update({key : value})
+                self._original_shapes.update({key : shapes})
+                result.update({key : transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -85,9 +101,12 @@ class io_adapter(metaclass = abc.ABCMeta):
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
-                value = self.__convert_images(shape, value)
+                value, shapes = self.__convert_images(shape, value)
+                transformed_value = self.__transform_images(value)
             self._input.update({input_blob : value})
-        return self._input
+            self._original_shapes.update({input_blob : shapes})
+            result.update({input_blob : transformed_value})
+        return result
 
 
     def get_slice_input(self, iteration):
@@ -153,8 +172,18 @@ class io_adapter(metaclass = abc.ABCMeta):
             return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
             return human_pose_estimation_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-encoder':
+            return action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'driver-action-recognition-encoder':
+            return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
+        elif task == 'reidentification':
+            return reidentification_io(args, io_model_wrapper, transformer)
+        elif task == 'action-recognition-decoder':
+            return action_recognition_decoder_io(args, io_model_wrapper, transformer)
+        elif task == 'driver-action-recognition-decoder':
+            return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
 
-
+        
 class feedforward_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -177,9 +206,9 @@ class classification_io(io_adapter):
         result = result[result_layer_name]
         log.info('Top {} results:'.format(self._number_top))
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'image_net_synset.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
         with open(self._labels, 'r') as f:
-            labels_map = [ x.split(sep = ' ', maxsplit = 1)[-1].strip() for x in f ]
+            labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
@@ -202,16 +231,19 @@ class detection_io(io_adapter):
         result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
-        ib, c, h, w = input.shape
+        shapes = self._original_shapes[input_layer_name]
+        ib = input.shape[0]
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = []
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
-        for batch in range(b):
+            orig_h, orig_w = shapes[i % ib]
+            image = input[i % ib].transpose((1, 2, 0))
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+        for batch in range(0, b, ib):
             for obj in result[batch][0]:
                 if obj[2] > self._threshold:
                     image_number = int(obj[0])
-                    image = images[image_number]
+                    image = images[image_number + batch * ib]
                     initial_h, initial_w = image.shape[:2]
                     xmin = int(obj[3] * initial_w)
                     ymin = int(obj[4] * initial_h)
@@ -227,9 +259,9 @@ class detection_io(io_adapter):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
-            count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
+            count += 1
 
 
 class segmenatation_io(io_adapter):
@@ -243,21 +275,24 @@ class segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[1:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -273,22 +308,25 @@ class adas_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = np.squeeze(data)
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -304,22 +342,25 @@ class road_segmenatation_io(io_adapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_map_road_segmentation.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map_road_segmentation.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = data.transpose((1, 2, 0))
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = np.argmax(data[i][j])
                     classes_map[i, j, :] = classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
 
@@ -598,11 +639,10 @@ class license_plate_io(io_adapter):
             return
         result = result[next(iter(result))]
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'dictionary.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/dictionary.txt')
         lexis = []
         with open(self._labels, 'r') as f:
-            for line in f:
-                lexis.append([str(x) for x in line.split()])
+            lexis = [line.strip() for line in f]
         for lex in result:
             s = ''
             for j in range(lex.shape[0]):
@@ -622,18 +662,19 @@ class instance_segmenatation_io(io_adapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'mscoco_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map.txt')
         classes_color_map = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'mscoco_names.txt')
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names.txt')
         labels_map = []
         labels_map.append('background')
         with open(self._labels, 'r') as f:
-            for x in f:
-                labels_map.append(x.split(sep = ' ', maxsplit = 1)[-1].strip())
+            for line in f:
+                labels_map.append(line.strip())
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         image = self._input['im_data'][0].transpose((1, 2, 0))
         boxes = result['boxes']
         scores = result['scores']
@@ -657,11 +698,13 @@ class instance_segmenatation_io(io_adapter):
                             y = int(boxes[i][1] + j * dh)
                             for c in range(dh):
                                 for t in range(dw):
-                                    image[y + c][x + t] += classes_color_map[classes[i]]
+                                    image[y + c][x + t] = classes_color_map[classes[i] - 1]
         for l in range(len(labels_on_image)):
             image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {}'.format(out_img))
 
@@ -680,7 +723,7 @@ class single_image_super_resolution_io(io_adapter):
         c = 3
         h, w = result.shape[2:]
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.int)
+            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
             colors = data * 255
             np.clip(colors, 0., 255.)
             classes_map = colors.transpose((1, 2, 0))
@@ -776,7 +819,7 @@ class detection_ssd(io_adapter):
         for idx in range(len(detections)):
             max_detection = max(detections, key = lambda detection: detection[0])
             if max_detection[0] < det_threshold: 
-                continue
+                break
             valid_detections.append(max_detection)
             max_detection[0] = 0
             for detection in detections:
@@ -800,8 +843,8 @@ class detection_ssd(io_adapter):
         return valid_detections
 
 
-    def _draw_detections(self, images, batch, valid_detections, action_map):
-        image = images[batch]
+    def _draw_detections(self, images, batch, valid_detections, action_map, h, w):
+        image = cv2.resize(images[batch], (w, h))
         rect_color = (255, 255, 255)
         for detection in valid_detections:
             cv2.rectangle(image, (detection[1][0], detection[1][1]), 
@@ -813,12 +856,13 @@ class detection_ssd(io_adapter):
                 action_color = (0, 0, 255)
             cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+        return image
         
 
     def _save_output_images(self, images, log):
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
@@ -872,7 +916,10 @@ class detection_ssd_old_format(detection_ssd):
         action_map = self._get_action_map()
         num_classes = len(action_map)
         prior_data = result['mbox/priorbox'].flatten()
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['mbox_loc1/out/conv/flat'][batch]
             detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
             action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
@@ -888,12 +935,12 @@ class detection_ssd_old_format(detection_ssd):
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
 
 
 class detection_ssd_new_format(detection_ssd):
@@ -951,7 +998,10 @@ class detection_ssd_new_format(detection_ssd):
             [45.8114572, 107.651852], 
             [63.31491832, 142.595732], 
             [93.5070856, 201.107692]]
+        shapes = self._original_shapes[input_layer_name]
+        output_images = []
         for batch in range(b):
+            orig_h, orig_w = shapes[batch]
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
@@ -980,12 +1030,12 @@ class detection_ssd_new_format(detection_ssd):
                     prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
                 variance_box = self._parse_variance_box()
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h)              
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)              
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
-            self._draw_detections(images, batch, valid_detections, action_map)
-        self._save_output_images(images, log)
+            output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
+        self._save_output_images(output_images, log)
     
 
 class person_detection_action_recognition_old(detection_ssd_old_format):
@@ -1182,11 +1232,12 @@ class human_pose_estimation_io(io_adapter):
             {'startVertex' : 14, 'endVertex': 16},
         ]
         if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'pose_estimation_color_map.txt')
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/pose_estimation_color_map.txt')
         colors = []
         with open(self._color_map, 'r') as f:
             for line in f:
                 colors.append([int(x) for x in line.split()])
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
         for batch, frame in enumerate(self._input['data']):
             frame = frame.transpose((1, 2, 0))
             frame_height = frame.shape[0]
@@ -1203,5 +1254,115 @@ class human_pose_estimation_io(io_adapter):
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
+            orig_h, orig_w = shapes[batch % self._batch_size]
+            frame = cv2.resize(frame, (orig_w, orig_h))
             cv2.imwrite(out_img, frame)
             log.info('Result image was saved to {}'.format(out_img))
+
+
+class action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2]
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class driver_action_recognition_encoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'driver_action_recognition_encoder_out.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('driver_action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class reidentification_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        file_name = os.path.join(os.path.dirname(__file__), 'reidentification.csv')
+        batch_size, dim1 = result.shape[:2] 
+        with open(file_name, 'w+'):
+            probs = np.reshape(np.squeeze(result), (batch_size, dim1))
+            np.savetxt('reidentification.csv', probs, fmt = '%1.7f', delimiter = ';', 
+                header = '{};{}'.format(batch_size, dim1), comments = '')
+        log.info('Result was saved to {}'.format(file_name))
+
+
+class action_recognition_decoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+      
+        
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/kinetics.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [line.strip() for line in f]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        for batch, data in enumerate(result):
+            probs = np.squeeze(result)
+            top_ind = np.argsort(probs)[-self._number_top:][::-1]
+            log.info("\nResult:")
+            for id in top_ind:
+                det_label = labels_map[id] if labels_map else '#{}'.format(id)
+                log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class driver_action_recognition_decoder_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/driver_action_labels.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [line.strip() for line in f]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        for batch, data in enumerate(result):
+            probs = np.squeeze(data)
+            top_ind = np.argsort(probs)[::-1]
+            log.info("\nResult:")
+            for id in top_ind:
+                det_label = labels_map[id] if labels_map else '#{}'.format(id)
+                log.info('{:.7f} {}'.format(probs[id], det_label))
