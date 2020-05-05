@@ -28,7 +28,7 @@ CAR (1092, 413), (1196, 509)<br>
 PERSON (1455, 419), (1482, 491)<br>
 PERSON (1476, 416), (1503, 481)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 pedestrian-and-vehicle-detector-adas-0001 | Окаймляющий прямоугольник:<br>CAR (720, 439), (821, 505),<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>PERSON (1474, 416), (1499, 481)<br>| Окаймляющий прямоугольник:<br>CAR (720, 439), (821, 505),<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>PERSON (1474, 416), (1499, 481)<br>|
 
@@ -55,7 +55,7 @@ CAR (1300, 311), (1825, 605)<br>
 CAR (1599, 314), (2048, 625)<br>
 CAR (1697, 315), (2048, 681)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 vehicle-detection-adas-0002 | Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592),<br>CAR (1618, 305), (2036, 669)<br>| Окаймляющий прямоугольник:<br>CAR (384, 363), (921, 754),<br>CAR (909, 407), (1056, 509),<br>CAR (1272, 348), (1742, 592),<br>CAR (1618, 305), (2036, 669)|
 vehicle-detection-adas-binary-0001 | Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br>| Окаймляющий прямоугольник:<br>CAR (370, 353), (905, 756),<br>CAR (902, 406), (1048, 509),<br>CAR (1246, 320), (2022, 650)<br>|
@@ -86,7 +86,7 @@ PERSON (310, 171), (536, 749)<br>
 PERSON (1779, 268), (1882, 539)<br>
 PERSON (1874, 288), (1976, 545)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-vehicle-bike-detection-crossroad-0078 | Окаймляющий прямоугольник:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>BIKE (319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>| Окаймляющий прямоугольник:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>BIKE(319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>|
 person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>| Окаймляющий прямоугольник:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>|
@@ -108,7 +108,7 @@ person-vehicle-bike-detection-crossroad-1016 | Окаймляющий прямо
 CAR (232, 119), (509, 466)<br>
 PLATE (330, 410), (393, 436)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 vehicle-license-plate-detection-barrier-0106 | Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>| Окаймляющий прямоугольник:<br>CAR (232, 119), (509, 466),<br>PLATE (330, 410), (393, 436)<br>|
 
@@ -130,7 +130,7 @@ PERSON (35, 17), (84, 192)<br>
 PERSON (79, 13), (122, 194)<br>
 PERSON (211, 78), (273, 279)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-detection-asl-0001 | Окаймляющий прямоугольник:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>| Окаймляющий прямоугольник:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>|
 
@@ -151,7 +151,7 @@ person-detection-asl-0001 | Окаймляющий прямоугольник:<b
 PRINGLES (133, 195), (257, 195)<br>
 SPRITE (240, 487), (380, 10)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 product-detection-0001 | Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>| Окаймляющий прямоугольник:<br>PRINGLES (130, 178), (275, 493)<br>|
 
@@ -170,7 +170,7 @@ product-detection-0001 | Окаймляющий прямоугольник:<br>P
 <img src="images\age-gender-recognition-retail-0001.jpg">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 
@@ -187,7 +187,7 @@ age-gender-recognition-retail-0013 | Female, 25.19 | Female, 25.19 |
 <img src="images\age-gender-recognition-retail-0002.png">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 
@@ -204,7 +204,7 @@ age-gender-recognition-retail-0013 | Male, 43.43 | Male, 43.43 |
 <img src="images\age-gender-recognition-retail-0003.png">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 age-gender-recognition-retail-0013 | Male, 28.49 | Male, 28.49 |
 
@@ -229,7 +229,7 @@ NOSE (24, 27),<br>
 LIP CORNER (15, 34),<br>
 LIP CORNER (28, 36)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 landmarks-regression-retail-0009 | Лицевые метки:<br>EYE (17, 18),<br>EYE (35, 21),<br>NOSE (24, 27),<br>LIP CORNER (15, 34),<br>LIP CORNER (28, 36)<br>| Лицевые метки:<br>EYE (17, 18),<br>EYE (35, 21),<br>NOSE (24, 27),<br>LIP CORNER (15, 34),<br>LIP CORNER (28, 36)<br>|
 
@@ -256,7 +256,7 @@ LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>
 RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>
 FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 facial-landmarks-35-adas-0002 | Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>| Лицевые метки:<br>LEFT EYE (17, 22), (9, 22),<br>RIGHT EYE (30, 21), (39, 20),<br>NOSE (21, 33), (23, 37), (17, 35), (30, 34),<br>MOUTH (17, 44), (34, 42), (23, 41), (24, 48),<br>LEFT EYEBROW (6, 17), (11, 15), (18, 17),<br>RIGHT EYEBROW (27, 15), (35, 12), (43, 14),<br>FACE CONTOUR (5, 22), (5, 28), (6, 33), (8, 38), (10, 43), (12, 48), (16, 52), (20, 56), (25, 57), (33, 56), (39, 53), (44, 48), (49, 43), (51, 38), (52, 31), (53, 25), (53, 18)<br>|
 
@@ -273,7 +273,7 @@ facial-landmarks-35-adas-0002 | Лицевые метки:<br>LEFT EYE (17, 22),
 <img width="80" height="160" src="images\person-attributes-recognition-crossroad-01.png">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_1.bmp"> | <img src="recognition\out_person_attributes_async_1.bmp"> |
 
@@ -290,7 +290,7 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 <img width="80" height="160" src="images\person-attributes-recognition-crossroad-02.png">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_attributes_sync_2.bmp"> | <img src="recognition\out_person_attributes_async_2.bmp"> |
 
@@ -308,7 +308,7 @@ person-attributes-recognition-crossroad-0230 | <img src="recognition\out_person_
 <img src="recognition\out_head_pose_1_sync.bmp">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"> | <img src="recognition\out_head_pose_1_async.bmp"> |
 
@@ -327,7 +327,7 @@ head-pose-estimation-adas-0001 | <img src="recognition\out_head_pose_1_sync.bmp"
 <img src="recognition\out_gaze_1_sync.bmp">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img src="recognition\out_gaze_1_async.bmp"> |
 
@@ -344,7 +344,7 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 <img height = '24' width = '94' src="images\license-plate-recognition-barrier.JPG">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;FA9512 |
 
@@ -363,7 +363,7 @@ license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;
 <img src="images\sphereface.jpg">
 </div>
 
-   Название модели   |  Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|-----------------------------------------|-----------------------------------------|
 Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
 
@@ -386,7 +386,7 @@ Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<b
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 single-image-super-resolution-1032             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_1.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_1.png"></img></div>|
 single-image-super-resolution-1033             |<div style='float: center'><img width="300" src="image_processing\python_sync_street_480x270_2.png"></img></div>|<div style='float: center'><img width="300" src="image_processing\python_async_street_480x270_2.png"></img></div>|
@@ -408,7 +408,7 @@ single-image-super-resolution-1033             |<div style='float: center'><img 
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 human-pose-estimation-0001             |<div style='float: center'><img width="300" src="human_pose_estimation\python_sync_COCO_val2014_000000453166.png"></img></div>|<div style='float: center'><img width="300" src="human_pose_estimation\python_async_COCO_val2014_000000453166.png"></img></div>|
 
@@ -429,7 +429,7 @@ human-pose-estimation-0001             |<div style='float: center'><img width="3
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 semantic-segmentation-adas-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_bielefeld_000000_038924_leftImg8bit.bmp"></img></div>|
 
@@ -454,7 +454,7 @@ semantic-segmentation-adas-0001             |<div style='float: center'><img wid
 
 Полученные изображения идентичны и совпадают по пикселям.
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 road-segmentation-adas-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_road-segmentation-adas-1.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_road-segmentation-adas-1.bmp"></img></div>|
 
@@ -481,7 +481,7 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 <div style='float: center'>
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_sync] | -0.1658423  -0.5230426<br> -1.4679441  0.0983598<br> ...<br> 0.8537527  0.8713884<br> -0.8769233  0.6840097<br> [Полный тензор][face_reidentification_async] |
 
@@ -498,7 +498,7 @@ face-reidentification-retail-0095 | -0.1658423  -0.5230426<br> -1.4679441  0.098
 <img width="300" src="images\demo.png"></img>
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_sync] | 0.0794002  0.0583136<br> 0.0020747  0.0903931<br> ...<br> 0.0785143  0.0922345<br> 0.0033597  0.3115494<br> [Полный тензор][ARE_async] |
 
@@ -515,7 +515,7 @@ action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<
 <img width="300" src="images\action-recognition-kelly.png"></img>
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
 
@@ -536,7 +536,7 @@ driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334
 0.0785143  0.0922345  0.0033597  0.3115494
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet | 9.0227661 tying bow tie<br> 7.5208311 tying tie<br> 4.8729849 sign language interpreting<br> 4.3601480 answering questions<br> 4.2990689 tying knot (not on a tie)<br> 4.0868192 whistling<br> 3.9643712 playing harmonica<br> 3.7044604 stretching arm<br> 3.5711651 strumming guitar<br> 3.5514102 playing clarinet |
 
@@ -555,7 +555,7 @@ action-recognition-0001-decoder | 9.0227661 tying bow tie<br> 7.5208311 tying ti
 -0.2324419   0.2686763   0.0168234   0.0029897
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand | 4.3797836 texting by right hand<br> 4.1073933 talking on the phone by right hand<br> 1.6492549 drinking<br> 1.2682760 texting by left hand<br> 0.3225771 reaching behind<br> -1.6658649 safe driving<br> -3.3440599 doing hair or making up<br> -4.6270852 operating the radio<br> -5.3927083 talking on the phone by left hand |
 
@@ -577,7 +577,7 @@ driver-action-recognition-adas-0002-decoder | 4.3797836 texting by right hand<br
 Входной тензор: 480; 640; 1
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0083             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000118209.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000118209.bmp"></img></div>|
 
@@ -597,7 +597,7 @@ instance-segmentation-security-0083             |<div style='float: center'><img
 Входной тензор: 480; 480; 1
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_COCO_val2014_000000203438.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_COCO_val2014_000000203438.bmp"></img></div>|
 
@@ -617,7 +617,7 @@ instance-segmentation-security-0050             |<div style='float: center'><img
 Входной тензор: 800; 1344; 1
 </div>
 
-   Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)        |
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0010             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_000000367818.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_000000367818.bmp"></img></div>|
 
