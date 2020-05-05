@@ -628,11 +628,12 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 <img width="200" src="instance_segmentation\mscoco_colormap.jpg">
 </div>
 
+
 <!-- LINKS -->
 [cityscapes]: https://www.cityscapes-dataset.com
 [github_plate]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/vehicle-license-plate-detection-barrier-0106/description/vehicle-license-plate-detection-barrier-0106.jpeg
 [github_age_gender]: https://github.com/opencv/open_model_zoo/blob/master/models/intel/age-gender-recognition-retail-0013/description
-[vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
+[vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2
 [internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
 [internet_person_asl]:http://rasfokus.ru/photos/topweek/photo3138574.html
 [internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
@@ -651,6 +652,7 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
-[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description[LFW]: http://vis-www.cs.umass.edu/lfw/index.html
+[github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
+[LFW]: http://vis-www.cs.umass.edu/lfw/index.html
 [cityscapes]: https://www.cityscapes-dataset.com
 [ms_coco]: http://cocodataset.org
