@@ -104,7 +104,7 @@ face-recognition-resnet34-arcface|+|-|-|
 face-recognition-resnet50-arcface|+|-|-|
 face-recognition-resnet100-arcface|+|-|-|
 face-recognition-mobilefacenet-arcface|+|-|-|
-Sphereface|+|+|-|
+***Sphereface***|+|+|-|
 
 ### Оценка позы человека (human pose estimation)
 
@@ -156,12 +156,12 @@ person-detection-raisinghand-recognition-0001|+|-|-|
 pedestrian-detection-adas-binary-0001|+|-|-|
 pedestrian-and-vehicle-detector-adas-0001|+|+|+|
 vehicle-detection-adas-0002|+|+|+|
-vehicle-detection-adas-binary-0001|+|+|-|
+***vehicle-detection-adas-binary-0001***|+|+|-|
 person-vehicle-bike-detection-crossroad-0078|+|+|+|
 person-vehicle-bike-detection-crossroad-1016|+|+|+|
 vehicle-license-plate-detection-barrier-0106|+|+|+|
-product-detection-0001|+|+|-|
-person-detection-asl-0001|+|+|-|
+***product-detection-0001***|+|+|-|
+***person-detection-asl-0001***|+|+|-|
 yolo-v2-ava-0001|+|-|-|
 yolo-v2-ava-sparse-35-0001|+|-|-|
 yolo-v2-ava-sparse-70-0001|+|-|-|
@@ -175,13 +175,13 @@ yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
 -|-|-|-|
 age-gender-recognition-retail-0013|+|+|+|
 head-pose-estimation-adas-0001|+|+|+|
-license-plate-recognition-barrier-0001|+|+|-|
+***license-plate-recognition-barrier-0001***|+|+|-|
 vehicle-attributes-recognition-barrier-0039|+|-|-|
 emotions-recognition-retail-0003|+|-|-|
 landmarks-regression-retail-0009|+|+|+|
 facial-landmarks-35-adas-0002|+|+|+|
 person-attributes-recognition-crossroad-0230|+|+|+|
-gaze-estimation-adas-0002|+|+|-|
+***gaze-estimation-adas-0002***|+|+|-|
 
 ### Идентификация объектов (reidentification)
 
@@ -190,7 +190,7 @@ gaze-estimation-adas-0002|+|+|-|
 person-reidentification-retail-0031|+|-|-|
 person-reidentification-retail-0079|+|-|-|
 person-reidentification-retail-0076|+|-|-|
-face-reidentification-retail-0095|+|+|-|
+***face-reidentification-retail-0095***|+|+|-|
 
 ### Семантическая сегментация
 
@@ -208,22 +208,22 @@ icnet-camvid-ava-sparse-60-0001|+|-|-|
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 instance-segmentation-security-1025|+|-|-|
-instance-segmentation-security-0050|+|+|-|
-instance-segmentation-security-0083|+|+|-|
-instance-segmentation-security-0010|+|+|-|
+***instance-segmentation-security-0050***|+|+|-|
+***instance-segmentation-security-0083***|+|+|-|
+***instance-segmentation-security-0010***|+|+|-|
 
 ### Оценка позы человека (human pose estimation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-human-pose-estimation-0001|+|+|-|
+***human-pose-estimation-0001***|+|+|-|
 
 ### Обработка изображений (image processing)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-single-image-super-resolution-1032|+|+|-|
-single-image-super-resolution-1033|+|+|-|
+***single-image-super-resolution-1032***|+|+|-|
+***single-image-super-resolution-1033***|+|+|-|
 text-image-super-resolution-0001|+|-|-|
 
 ### Детектирование текста (text detection)
@@ -253,10 +253,10 @@ text-spotting-0002-recognizer-decoder|+|-|-|
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-driver-action-recognition-adas-0002-encoder|+|+|-|
-driver-action-recognition-adas-0002-decoder|+|+|-|
-action-recognition-0001-encoder|+|+|-|
-action-recognition-0001-decoder|+|+|-|
+***driver-action-recognition-adas-0002-encoder***|+|+|-|
+***driver-action-recognition-adas-0002-decoder***|+|+|-|
+***action-recognition-0001-encoder***|+|+|-|
+***action-recognition-0001-decoder***|+|+|-|
 asl-recognition-0004|+|-|-|
 
 ### Восстановление изображений (image retrieval)
