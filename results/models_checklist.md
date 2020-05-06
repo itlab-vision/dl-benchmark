@@ -87,9 +87,9 @@ mtcnn|+|-|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
-ssd_mobilenet_v1_fpn_coco|-|-|+|
-ssd_mobilenet_v2_coco|-|+|+|
-ssdlite_mobilenet_v2|-|-|-|
+*ssd_mobilenet_v1_fpn_coco*|-|-|+|
+*ssd_mobilenet_v2_coco*|-|+|+|
+*ssdlite_mobilenet_v2*|-|-|-|
 yolo-v1-tiny-tf|+|-|-|
 yolo-v2-tiny-tf|+|-|-|
 yolo-v2-tf|+|-|-|
