@@ -137,22 +137,22 @@ i3d-rgb-tf|+|-|-|
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 faster-rcnn-resnet101-coco-sparse-60-0001|+|-|-|
-face-detection-adas-0001|+|-|+|
+**face-detection-adas-0001**|+|-|+|
 face-detection-adas-binary-0001|+|-|-|
-face-detection-retail-0004|+|-|+|
-face-detection-retail-0005|+|-|+|
+**face-detection-retail-0004**|+|-|+|
+**face-detection-retail-0005**|+|-|+|
 face-detection-0100|+|-|-|
 face-detection-0102|+|-|-|
 face-detection-0104|+|-|-|
 face-detection-0105|+|-|-|
 face-detection-0106|+|-|-|
 person-detection-retail-0002|+|-|-|
-person-detection-retail-0013|+|-|+|
+**person-detection-retail-0013**|+|-|+|
 person-detection-action-recognition-0005|+|-|-|
 person-detection-action-recognition-0006|+|-|-|
 person-detection-action-recognition-teacher-0002|+|-|-|
 person-detection-raisinghand-recognition-0001|+|-|-|
-pedestrian-detection-adas-0002|+|-|+|
+**pedestrian-detection-adas-0002**|+|-|+|
 pedestrian-detection-adas-binary-0001|+|-|-|
 pedestrian-and-vehicle-detector-adas-0001|+|+|+|
 vehicle-detection-adas-0002|+|+|+|
