@@ -22,21 +22,21 @@ googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
 googlenet-v4|+|+|+|
 inception-resnet-v2|+|+|+|
-mobilenet-v1-0.25-128|+|-|+|
-mobilenet-v1-0.50-160|+|-|+|
-mobilenet-v1-0.50-224|+|-|+|
-mobilenet-v1-1.0-224|+|-|+|
-mobilenet-v2|+|-|+|
+**mobilenet-v1-0.25-128**|+|-|+|
+**mobilenet-v1-0.50-160**|+|-|+|
+**mobilenet-v1-0.50-224**|+|-|+|
+**mobilenet-v1-1.0-224**|+|-|+|
+**mobilenet-v2**|+|-|+|
 mobilenet-v2-1.4-224|+|-|-|
 resnet-50|+|название resnet-v1-*|+|
 resnet-101|+|название resnet-v1-*|+|
 resnet-152|+|название resnet-v1-*|+|
-se-inception|+|-|+|
-se-resnet-50|+|-|+|
-se-resnet-101|+|-|+|
-se-resnet-152|+|-|+|
-se-resnext-50|+|-|+|
-se-resnext-101|+|-|+|
+**se-inception**|+|-|+|
+**se-resnet-50**|+|-|+|
+**se-resnet-101**|+|-|+|
+**se-resnet-152**|+|-|+|
+**se-resnext-50**|+|-|+|
+**se-resnext-101**|+|-|+|
 squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
@@ -54,7 +54,7 @@ octave-se-resnet-50-0.125|+|-|-|
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-deeplabv3|+|-|+|
+**deeplabv3**|+|-|+|
 
 ### Сегментация объектов (instance segmentation)
 
