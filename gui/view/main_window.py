@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
-from widgets.widgets_data import *
-from widgets.widgets_config import *
+from view.widgets.widgets_data import *
+from view.widgets.widgets_config import *
 
 
 class MainWindow(QMainWindow):

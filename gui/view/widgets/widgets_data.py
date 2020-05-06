@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
-from tables import *
-from buttons import *
+from view.tables import *
+from view.buttons import *
 
 
 class WidgetModelSettings(QWidget):

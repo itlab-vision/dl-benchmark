@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
-from objects import *
+from models.objects import *
 
 
 class TableModel(QTableWidget):
@@ -9,7 +9,7 @@ class TableModel(QTableWidget):
         self._models = []
         self._count_col = 5
         self._count_row = 50
-        self._headers = ['Task', 'Name', 'Framework', 'PrecisionType', 'Path']
+        self._headers = ['Task', 'Name', 'Precision', 'SourceFramework', 'Path']
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self._headers)
@@ -107,10 +107,10 @@ class TableTestConfig(QTableWidget):
     def __init__(self):
         super().__init__()
         self._tests = []
-        self._count_col = 11
+        self._count_col = 12
         self._count_row = 20
-        self._headers = ['Model', 'Dataset', 'BatchSize', 'Mode', 'Device', 'Extension', 'AsyncRequestCount',
-                         'IterationCount', 'ThreadCount', 'StreamCount', 'MinInferenceTime']
+        self._headers = ['Model', 'Dataset', 'InferenceFramework', 'BatchSize', 'Device', 'IterationCount',
+                         'TestTimeLimit', 'Mode', 'Extension', 'AsyncRequestCount', 'ThreadCount', 'StreamCount']
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self._headers)
