@@ -5,6 +5,7 @@
 ### Классификация изображений (image classification)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 alexnet|+|+|+|
 caffenet|+|-|+|
 densenet-121|+|+|+|
@@ -52,11 +53,13 @@ octave-se-resnet-50-0.125|+|-|-|
 ### Семантическая сегментация (semantic segmentation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 deeplabv3|+|-|+|
 
 ### Сегментация объектов (instance segmentation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 mask_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
 mask_rcnn_inception_v2_coco|+|-|-|
 mask_rcnn_resnet50_atrous_coco|+|-|-|
@@ -64,12 +67,15 @@ mask_rcnn_resnet101_atrous_coco|+|-|-|
 
 ### 3D сегментация (3D segmentation)
 
+Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 brain-tumor-segmentation-0001|+|-|-|
 brain-tumor-segmentation-0002|+|-|-|
 
 ### Детектирование объектов (object detection)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 ctpn|+|-|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
@@ -92,6 +98,7 @@ yolo-v3-tf|+|-|-|
 ### Распознавание лиц (face recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 facenet-20180408-102900|+|-|-|
 face-recognition-resnet34-arcface|+|-|-|
 face-recognition-resnet50-arcface|+|-|-|
@@ -102,28 +109,33 @@ Sphereface|+|+|-|
 ### Оценка позы человека (human pose estimation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 human-pose-estimation-3d-0001|+|-|-|
 single-human-pose-estimation-0001|+|-|-|
 
 ### Оценка глубины (monocular depth estimation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 midasnet|+|-|-|
 
 ### Восстановление изображений (image inpainting)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 gmcnn-places2-tf|+|-|-|
 
 ### Распознавание движений (action recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 i3d-rgb-tf|+|-|-|
 
 ## Модели Intel
 
 ### Детектирование объектов (object detection)
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 faster-rcnn-resnet101-coco-sparse-60-0001|+|-|-|
 face-detection-adas-0001|+|-|+|
 face-detection-adas-binary-0001|+|-|-|
@@ -160,6 +172,7 @@ yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
 ### Распознавание объектов (object recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 age-gender-recognition-retail-0013|+|+|+|
 head-pose-estimation-adas-0001|+|+|+|
 license-plate-recognition-barrier-0001|+|+|-|
@@ -173,6 +186,7 @@ gaze-estimation-adas-0002|+|+|-|
 ### Идентификация объектов (reidentification)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 person-reidentification-retail-0031|+|-|-|
 person-reidentification-retail-0079|+|-|-|
 person-reidentification-retail-0076|+|-|-|
@@ -181,6 +195,7 @@ face-reidentification-retail-0095|+|+|-|
 ### Семантическая сегментация
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 road-segmentation-adas-0001|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|
 unet-camvid-onnx-0001|+|-|-|
@@ -191,6 +206,7 @@ icnet-camvid-ava-sparse-60-0001|+|-|-|
 ### Сегментация объектов (instance segmentation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 instance-segmentation-security-1025|+|-|-|
 instance-segmentation-security-0050|+|+|-|
 instance-segmentation-security-0083|+|+|-|
@@ -199,11 +215,13 @@ instance-segmentation-security-0010|+|+|-|
 ### Оценка позы человека (human pose estimation)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 human-pose-estimation-0001|+|+|-|
 
 ### Обработка изображений (image processing)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 single-image-super-resolution-1032|+|+|-|
 single-image-super-resolution-1033|+|+|-|
 text-image-super-resolution-0001|+|-|-|
@@ -211,12 +229,14 @@ text-image-super-resolution-0001|+|-|-|
 ### Детектирование текста (text detection)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 text-detection-0003|+|-|-|
 text-detection-0004|+|-|-|
 
 ### Распознавание текста (text recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 text-recognition-0012|+|-|-|
 handwritten-score-recognition-0003|+|-|-|
 handwritten-japanese-recognition-0001|+|-|-|
@@ -224,6 +244,7 @@ handwritten-japanese-recognition-0001|+|-|-|
 ### Детектирование и распознавание текста (text spotting)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 text-spotting-0002-detector|+|-|-|
 text-spotting-0002-recognizer-encoder|+|-|-|
 text-spotting-0002-recognizer-decoder|+|-|-|
@@ -231,6 +252,7 @@ text-spotting-0002-recognizer-decoder|+|-|-|
 ### Распознавание движений (action recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 driver-action-recognition-adas-0002-encoder|+|+|-|
 driver-action-recognition-adas-0002-decoder|+|+|-|
 action-recognition-0001-encoder|+|+|-|
@@ -240,4 +262,5 @@ asl-recognition-0004|+|-|-|
 ### Восстановление изображений (image retrieval)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
 image-retrieval-0001|+|-|-|
