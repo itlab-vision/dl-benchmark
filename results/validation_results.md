@@ -188,7 +188,7 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 Исходное изображение:
 
 <div style='float: center'>
-<img width="150" src="images\berlin_000000_000019_leftImg8bit.png"></img>
+<img width="300" src="images\berlin_000000_000019_leftImg8bit.png"></img>
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -207,7 +207,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 Исходное изображение:
 
 <div style='float: center'>
-<img width="150" src="images\berlin_000488_000019_leftImg8bit.png">
+<img width="300" src="images\berlin_000488_000019_leftImg8bit.png">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.
@@ -226,7 +226,7 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 Исходное изображение:
 
 <div style='float: center'>
-<img width="150" src="images\berlin_000533_000019_leftImg8bit.png">
+<img width="300" src="images\berlin_000533_000019_leftImg8bit.png">
 </div>
 
 Полученные изображения идентичны и совпадают по пикселям.

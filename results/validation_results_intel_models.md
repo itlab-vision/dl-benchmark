@@ -625,7 +625,7 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 Карта цветов:
 
 <div style='float: center'>
-<img width="200" src="instance_segmentation\mscoco_colormap.jpg">
+<img width="300" src="instance_segmentation\mscoco_colormap.jpg">
 </div>
 
 
