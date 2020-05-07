@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import *
 from view.tables import *
 from view.buttons import *
+from presenters.deploy_presenter import *
+from view.dialogs import *
 
 
 class WidgetTestConfigs(QWidget):
@@ -29,11 +31,15 @@ class WidgetDeployConfigs(QWidget):
     def __init__(self):
         super().__init__()
         layouts = QHBoxLayout()
-        self._table = TableDeployConfig()
-        self._buttons = GroupButtonDeployConfig()
-        layouts.addWidget(self._table)
-        layouts.addWidget(self._buttons)
+        self.table = TableDeployConfig()
+        self.buttons = GroupButtonDeployConfig()
+        self.dialog_add_computer = DeployDialog()
+        layouts.addWidget(self.table)
+        layouts.addWidget(self.buttons)
         self.setLayout(layouts)
+
+    def show_dialog_add_computer(self):
+        self.dialog_add_computer.exec()
 
 
 class WidgetConfig(QWidget):
@@ -48,6 +54,8 @@ class WidgetConfig(QWidget):
         self._widgets['Составить конфигурацию удаленного запуска'].hide()
         grid.addWidget(self._widgets['Составить конфигурацию резвертки'], 1, 0)
         self._widgets['Составить конфигурацию резвертки'].hide()
+        model = DeployConfig()
+        self._deploy_presenter = DeployPresenter(self._widgets['Составить конфигурацию резвертки'], model)
         self.setLayout(grid)
 
     def __create_combobox(self):
