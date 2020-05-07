@@ -49,6 +49,10 @@ class DeployDialog(QDialog):
             self.addComputerSignal.emit()
             super().accept()
 
+    def reject(self):
+        self.__clear()
+        super().reject()
+
     def get_computer(self):
         computer = DeployComputer(self._ip.text(), self._login.text(), self._password.text(), self._os.text(),
                               self._download_folder.text())
