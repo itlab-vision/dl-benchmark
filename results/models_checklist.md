@@ -264,3 +264,62 @@ asl-recognition-0004|+|-|-|
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 image-retrieval-0001|+|-|-|
+
+## Модели, требующие валидации
+
+1. caffenet
+1. mobilenet-v1-0.25-128
+1. mobilenet-v1-0.50-160
+1. mobilenet-v1-0.50-224
+1. mobilenet-v1-1.0-224
+1. mobilenet-v2
+1. se-inception
+1. se-resnet-50
+1. se-resnet-101
+1. se-resnet-152
+1. se-resnext-50
+1. se-resnext-101
+1. deeplabv3
+1. face-detection-adas-0001
+1. face-detection-retail-0004
+1. face-detection-retail-0005
+1. person-detection-retail-0013
+1. pedestrian-detection-adas-0002
+
+## Модели для следующего этапа расширения
+
+1. efficientnet-b0
+1. efficientnet-b0_auto_aug
+1. efficientnet-b5
+1. efficientnet-b7-pytorch
+1. efficientnet-b7_auto_aug
+1. mobilenet-v2-1.4-224
+1. mask_rcnn_inception_resnet_v2_atrous_coco
+1. mask_rcnn_inception_v2_coco
+1. mask_rcnn_resnet50_atrous_coco
+1. mask_rcnn_resnet101_atrous_coco
+1. unet-camvid-onnx-0001
+1. icnet-camvid-ava-0001
+1. icnet-camvid-ava-sparse-30-0001
+1. icnet-camvid-ava-sparse-60-0001
+1. instance-segmentation-security-1025
+1. faster_rcnn_inception_resnet_v2_atrous_coco
+1. faster_rcnn_inception_v2_coco
+1. faster_rcnn_resnet50_coco
+1. faster_rcnn_resnet101_coco
+1. yolo-v1-tiny-tf
+1. yolo-v2-tiny-tf
+1. yolo-v2-tf
+1. yolo-v3-tf
+1. yolo-v2-ava-0001
+1. yolo-v2-ava-sparse-35-0001
+1. yolo-v2-ava-sparse-70-0001
+1. yolo-v2-tiny-ava-0001
+1. yolo-v2-tiny-ava-sparse-30-0001
+1. yolo-v2-tiny-ava-sparse-60-0001
+1. face-detection-0100
+1. face-detection-0102
+1. face-detection-0104
+1. face-detection-0105
+1. face-detection-0106
+1. person-detection-retail-0002
