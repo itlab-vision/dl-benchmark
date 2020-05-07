@@ -69,21 +69,21 @@ mask_rcnn_resnet101_atrous_coco|+|-|-|
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-brain-tumor-segmentation-0001|+|-|-|
-brain-tumor-segmentation-0002|+|-|-|
+brain-tumor-segmentation-0001|+|отсутствуют данные|-|
+brain-tumor-segmentation-0002|+|отсутствуют данные|-|
 
 ### Детектирование объектов (object detection)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-ctpn|+|-|-|
+ctpn|+|отсутствуют данные|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
 faster_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
 faster_rcnn_inception_v2_coco|+|-|-|
 faster_rcnn_resnet50_coco|+|-|-|
 faster_rcnn_resnet101_coco|+|-|-|
-mtcnn|+|-|-|
+mtcnn|+|пайплайн из трех моделей|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
@@ -99,11 +99,11 @@ yolo-v3-tf|+|-|-|
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-facenet-20180408-102900|+|-|-|
-face-recognition-resnet34-arcface|+|-|-|
-face-recognition-resnet50-arcface|+|-|-|
-face-recognition-resnet100-arcface|+|-|-|
-face-recognition-mobilefacenet-arcface|+|-|-|
+facenet-20180408-102900|+|не известен тренировочный набор данных|-|
+face-recognition-resnet34-arcface|+|не известен тренировочный набор данных|-|
+face-recognition-resnet50-arcface|+|не известен тренировочный набор данных|-|
+face-recognition-resnet100-arcface|+|не известен тренировочный набор данных|-|
+face-recognition-mobilefacenet-arcface|+|не известен тренировочный набор данных|-|
 ***Sphereface***|+|+|-|
 
 ### Оценка позы человека (human pose estimation)
@@ -176,8 +176,8 @@ yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
 age-gender-recognition-retail-0013|+|+|+|
 head-pose-estimation-adas-0001|+|+|+|
 ***license-plate-recognition-barrier-0001***|+|+|-|
-vehicle-attributes-recognition-barrier-0039|+|-|-|
-emotions-recognition-retail-0003|+|-|-|
+vehicle-attributes-recognition-barrier-0039|+|отсутствуют данные|-|
+emotions-recognition-retail-0003|+|нет доступа к набору данных AffectNet|-|
 landmarks-regression-retail-0009|+|+|+|
 facial-landmarks-35-adas-0002|+|+|+|
 person-attributes-recognition-crossroad-0230|+|+|+|
@@ -187,9 +187,9 @@ person-attributes-recognition-crossroad-0230|+|+|+|
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-person-reidentification-retail-0031|+|-|-|
-person-reidentification-retail-0079|+|-|-|
-person-reidentification-retail-0076|+|-|-|
+person-reidentification-retail-0031|+|нет доступа к набору данных Market-1501|-|
+person-reidentification-retail-0079|+|нет доступа к набору данных Market-1501|-|
+person-reidentification-retail-0076|+|нет доступа к набору данных Market-1501|-|
 ***face-reidentification-retail-0095***|+|+|-|
 
 ### Семантическая сегментация
@@ -224,21 +224,21 @@ instance-segmentation-security-1025|+|-|-|
 -|-|-|-|
 ***single-image-super-resolution-1032***|+|+|-|
 ***single-image-super-resolution-1033***|+|+|-|
-text-image-super-resolution-0001|+|-|-|
+text-image-super-resolution-0001|+|нет доступа к набору данных ICDAR|-|
 
 ### Детектирование текста (text detection)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-text-detection-0003|+|-|-|
-text-detection-0004|+|-|-|
+text-detection-0003|+|нет доступа к набору данных ICDAR|-|
+text-detection-0004|+|нет доступа к набору данных ICDAR|-|
 
 ### Распознавание текста (text recognition)
 
 Модель | Наличие в OMZ (2020.05.04)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-text-recognition-0012|+|-|-|
-handwritten-score-recognition-0003|+|-|-|
+text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
+handwritten-score-recognition-0003|+|отсутствуют данные|-|
 handwritten-japanese-recognition-0001|+|-|-|
 
 ### Детектирование и распознавание текста (text spotting)
