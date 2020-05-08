@@ -47,7 +47,7 @@ V.1129. 2019. P. 542-553.
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
 
 - `src` directory contains benchmark sources.
-  - `bench_deploy` is a set of tools for deployment.
+  - `deployment` is a set of tools for deployment.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
   - `configs` contains template configuration files.
@@ -57,35 +57,39 @@ V.1129. 2019. P. 542-553.
   - `remote_control` contains scripts to execute benchmark
     remotely.
 
-## System Deployment
-In order to deploy the benchmark system, you must perform the following
-sequence of actions:
-1. Select the required Dockerfile from the `docker` folder.
-2. Update all the variables in the file, the necessary
-  variables are marked as `ARGS`.
-3. The next step is to build the image, the instruction is
-  presented in `docker/README.md`
-4. It is necessary to prepare the FTP-server in advance,
-  and also create a folder on it where docker images will be uploaded.
-5. You must fill in the `src/configs/deploy_configuration_file_template.xml`
-  configuration file according to the instructions.
-6. Next, you need to run `src/deployment/deploy.py`, the instructions for
-  starting are in the same folder.
-7. The last step is to copy the test data set to the image, using the
-  command: `docker cp <PathToData> <ContainerName>:/tmp/data`.
+## Deployment
 
-## System Startup
-In order to start the system, it is necessary to create two new folders
-on the already created FTP-server, one for the benchmark configuration files,
-and the second for the work results.
-To start testing, you must perform the following steps:
-1. Prepare configuration files, `src/configs/benchmark_configuration_file_template.xml`
-  and `src/configs/remote_configuration_file_template.xml` will be necessary.
-2. Place the benchmark configuration files in a folder on the FTP-server.
-3. Run the `src/remote_control/remote_start.py` script, the instructions
-  for starting are located in the same folder.
-4. Wait for the tests to complete.
-5. Take the results from the FTP-server.
+To deploy DLI, please, follow instructions.
+
+1. Select the required Dockerfile from the `docker` folder.
+1. Update all the variables in the file, the necessary
+   variables are marked as `ARGS`.
+1. The following step is to build the image in accordance with
+   `docker/README.md`
+1. It is required to deploy FTP-server in advance,
+   and create a directory for storing docker images.
+1. Create deployment configuration file according to
+   the `src/configs/deploy_configuration_file_template.xml`.
+1. Execute `src/deployment/deploy.py` in accordance with `src/deployment/README.md`.
+1. Copy the test datasets to the docker image, using the following
+   command line: `docker cp <PathToData> <ContainerName>:/tmp/data`.
+
+## Startup
+
+To start benchmarking, it is required to create two new directories
+on the FTP-server, the first one for the benchmark configuration files,
+and the second one for the file of bencmarking results. Further, please,
+follow instructions.
+
+1. Prepare configuration files (in accordance with
+   `src/configs/benchmark_configuration_file_template.xml` and
+   `src/configs/remote_configuration_file_template.xml`.
+1. Copy the benchmark configuration files to the corresponding directory
+   on the FTP-server.
+1. Execute the `src/remote_control/remote_start.py` script. Please, follow
+   `src/remote_control/README.md`.
+1. Wait for completing the benchmark.
+1. Copy benchmarking results from the FTP-server to the local machine.
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
