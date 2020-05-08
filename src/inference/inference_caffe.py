@@ -31,17 +31,17 @@ def build_argparser():
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
-        for detections filtering', default = 0.5, type = float, dest = 'threshold')
+        for detections filtering', default = 0.2, type = float, dest = 'threshold')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
         default = False, type = bool, dest = 'raw_output')
     parser.add_argument('--channel_swap', help = 'Parameter channel swap',
-        default = (2, 1, 0), type = tuple, dest = 'channel_swap')
+        default = [2, 1, 0], type = float, nargs = 3, dest = 'channel_swap')
     parser.add_argument('--raw_scale', help = 'Parameter raw scale',
-        default = 1, type = int, dest = 'raw_scale')
+        default = 1.0, type = float, dest = 'raw_scale')
     parser.add_argument('--mean', help = 'Parameter mean',
-        default = (0, 0, 0), type = tuple, dest = 'mean')
+        default = [0, 0, 0], type = float, nargs = 3, dest = 'mean')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on (CPU by default)',
         default = 'CPU', type = str, dest = 'device')
