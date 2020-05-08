@@ -33,7 +33,7 @@ class WidgetDeployConfigs(QWidget):
         layouts = QHBoxLayout()
         self.__table = TableDeployConfig()
         self.__buttons = GroupButtonDeployConfig()
-        self.__dialog_add_computer = DeployDialog()
+        self.__dialog_add_computer = DeployDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)

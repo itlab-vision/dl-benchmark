@@ -18,8 +18,8 @@ class TableModel(QTableWidget):
 
     def __resize_columns(self):
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
         self.resizeColumnsToContents()
+        header.setStretchLastSection(True)
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -35,8 +35,6 @@ class TableModel(QTableWidget):
         self.clear()
         count = 0
         # заполнение
-        self.horizontalHeader().setStretchLastSection(True)
-        self.resizeColumnsToContents()
 
 
 class TableData(QTableWidget):
@@ -54,8 +52,8 @@ class TableData(QTableWidget):
 
     def __resize_columns(self):
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
         self.resizeColumnsToContents()
+        header.setStretchLastSection(True)
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -74,7 +72,6 @@ class TableData(QTableWidget):
             self.setItem(count, 0, self.__create_cell(data.name))
             self.setItem(count, 1, self.__create_cell(data.path))
             count += 1
-        self.resizeColumnsToContents()
 
 
 class TableTestConfig(QTableWidget):
@@ -93,8 +90,8 @@ class TableTestConfig(QTableWidget):
 
     def __resize_columns(self):
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
         self.resizeColumnsToContents()
+        header.setStretchLastSection(True)
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -110,7 +107,6 @@ class TableTestConfig(QTableWidget):
         self.clear()
         count = 0
         # заполнение
-        self.resizeColumnsToContents()
 
 
 class TableRemoteConfig(QTableWidget):
@@ -128,8 +124,8 @@ class TableRemoteConfig(QTableWidget):
 
     def __resize_columns(self):
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
         self.resizeColumnsToContents()
+        header.setStretchLastSection(True)
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -145,25 +141,25 @@ class TableRemoteConfig(QTableWidget):
         self.clear()
         count = 0
         # заполнение
-        self.resizeColumnsToContents()
 
 
 class TableDeployConfig(QTableWidget):
     def __init__(self):
         super().__init__()
-        self._count_col = 5
-        self._count_row = 100
-        self._headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
-        self.setColumnCount(self._count_col)
-        self.setRowCount(self._count_row)
-        self.setHorizontalHeaderLabels(self._headers)
+        self.__count_col = 5
+        self.__count_row = 100
+        self.__headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
+        self.setColumnCount(self.__count_col)
+        self.setRowCount(self.__count_row)
+        self.setHorizontalHeaderLabels(self.__headers)
+        self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.__resize_columns()
         self.clear()
 
     def __resize_columns(self):
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
         self.resizeColumnsToContents()
+        header.setStretchLastSection(True)
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
@@ -171,8 +167,8 @@ class TableDeployConfig(QTableWidget):
         return cell
 
     def clear(self):
-        for i in range(self._count_row):
-            for j in range(self._count_col):
+        for i in range(self.__count_row):
+            for j in range(self.__count_col):
                 self.setItem(i, j, self.__create_cell(''))
 
     def update(self, computers):
@@ -185,4 +181,3 @@ class TableDeployConfig(QTableWidget):
             self.setItem(i, 3, self.__create_cell(computers[i].get_os()))
             self.setItem(i, 4, self.__create_cell(computers[i].get_download_folder()))
             count += 1
-        self.resizeColumnsToContents()

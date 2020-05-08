@@ -7,8 +7,8 @@ class DeployDialog(QDialog):
 
     addComputerSignal = QtCore.pyqtSignal()
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.__ip = QLineEdit(self)
         self.__login = QLineEdit(self)
         self.__password = QLineEdit(self)
