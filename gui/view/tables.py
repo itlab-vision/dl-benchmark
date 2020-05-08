@@ -149,12 +149,14 @@ class TableDeployConfig(QTableWidget):
         self.__count_col = 5
         self.__count_row = 100
         self.__headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
+        self.__selected_rows = []
         self.setColumnCount(self.__count_col)
         self.setRowCount(self.__count_row)
         self.setHorizontalHeaderLabels(self.__headers)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.__resize_columns()
         self.clear()
+        self.clicked.connect(self.clicked_table)
 
     def __resize_columns(self):
         header = self.horizontalHeader()
@@ -163,7 +165,7 @@ class TableDeployConfig(QTableWidget):
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
-        cell.setFlags(QtCore.Qt.ItemIsEnabled)
+        cell.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
         return cell
 
     def clear(self):
@@ -181,3 +183,15 @@ class TableDeployConfig(QTableWidget):
             self.setItem(i, 3, self.__create_cell(computers[i].get_os()))
             self.setItem(i, 4, self.__create_cell(computers[i].get_download_folder()))
             count += 1
+
+    def clicked_table(self):
+        self.__selected_rows = list(dict.fromkeys([index.row() for index in self.selectedIndexes()]))
+        self.__selected_rows.sort()
+        self.__selected_rows.reverse()
+
+    def get_selected_rows(self):
+        return self.__selected_rows
+
+    def remove_selection(self):
+        for index in self.selectedIndexes():
+            self.itemFromIndex(index).setSelected(False)

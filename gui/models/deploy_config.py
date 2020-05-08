@@ -34,12 +34,21 @@ class DeployConfig(QObject):
         super().__init__()
         self.__computers = []
 
+    def get_computers(self):
+        return self.__computers
+
     def add_computer(self, ip, login, password, os, download_folder):
         self.__computers.append(DeployComputer(ip, login, password, os, download_folder))
         self.updateSignal.emit()
 
-    def get_computers(self):
-        return self.__computers
+    def delete_computer(self, index):
+        self.__computers.pop(index)
+
+    def delete_computers(self, indexes):
+        for index in indexes:
+            if index < len(self.__computers):
+                self.delete_computer(index)
+        self.updateSignal.emit()
 
     def clear(self):
         self.__computers.clear()

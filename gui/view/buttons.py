@@ -81,6 +81,7 @@ class GroupButtonDeployConfig(QGroupBox):
 
     addSignal = QtCore.pyqtSignal()
     delSignal = QtCore.pyqtSignal()
+    clearSelectedSignal = QtCore.pyqtSignal()
     loadSignal = QtCore.pyqtSignal()
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
@@ -112,6 +113,7 @@ class GroupButtonDeployConfig(QGroupBox):
 
     def del_click(self):
         self.delSignal.emit()
+        self.clearSelectedSignal.emit()
 
     def load_click(self):
         self.loadSignal.emit()

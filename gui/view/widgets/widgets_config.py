@@ -38,6 +38,7 @@ class WidgetDeployConfigs(QWidget):
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
         self.__buttons.addSignal.connect(self.__show_dialog_add_computer)
+        self.__buttons.clearSelectedSignal.connect(self.get_table().remove_selection)
 
     def __show_dialog_add_computer(self):
         self.__dialog_add_computer.clear()
