@@ -1,17 +1,18 @@
 class DeployPresenter(object):
     def __init__(self, view, model):
-        self._view = view
-        self._model = model
-        self._view.buttons.addSignal.connect(self.handle_add_button)
-        self._view.buttons.clearSignal.connect(self.handle_clear_button)
-        self._view.dialog_add_computer.addComputerSignal.connect(self.handle_add_computer)
-
-    def handle_add_button(self):
-        self._view.show_dialog_add_computer()
+        self.__view = view
+        self.__model = model
+        self.__view.get_buttons().clearSignal.connect(self.handle_clear_button)
+        self.__view.get_dialog_add_computer().addComputerSignal.connect(self.handle_add_computer)
+        self.__model.updateSignal.connect(self.update_model)
 
     def handle_clear_button(self):
-        self._view.table.clear()
+        self.__model.clear()
 
     def handle_add_computer(self):
-        self._model.add_computer(self._view.dialog_add_computer.get_computer())
-        self._view.table.update(self._model.computers)
+        dialog = self.__view.get_dialog_add_computer()
+        self.__model.add_computer(dialog.get_ip(), dialog.get_login(), dialog.get_password(),
+                                  dialog.get_os(), dialog.get_download_folder())
+
+    def update_model(self):
+        self.__view.get_table().update(self.__model.get_computers())

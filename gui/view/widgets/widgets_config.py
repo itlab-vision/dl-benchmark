@@ -31,15 +31,31 @@ class WidgetDeployConfigs(QWidget):
     def __init__(self):
         super().__init__()
         layouts = QHBoxLayout()
-        self.table = TableDeployConfig()
-        self.buttons = GroupButtonDeployConfig()
-        self.dialog_add_computer = DeployDialog()
-        layouts.addWidget(self.table)
-        layouts.addWidget(self.buttons)
+        self.__table = TableDeployConfig()
+        self.__buttons = GroupButtonDeployConfig()
+        self.__dialog_add_computer = DeployDialog()
+        layouts.addWidget(self.__table)
+        layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
+        self.__buttons.addSignal.connect(self.__show_dialog_add_computer)
 
-    def show_dialog_add_computer(self):
-        self.dialog_add_computer.exec()
+    def __show_dialog_add_computer(self):
+        self.__dialog_add_computer.clear()
+        self.__dialog_add_computer.exec()
+
+    def get_table(self):
+        return self.__table
+
+    def get_dialog_add_computer(self):
+        return self.__dialog_add_computer
+
+    def get_buttons(self):
+        return self.__buttons
+
+    def get_data_dialog_add(self):
+        return self.__dialog_add_computer.get_ip(), self.__dialog_add_computer.get_login(), \
+               self.__dialog_add_computer.get_password(), self.__dialog_add_computer.get_os(),\
+               self.__dialog_add_computer.get_download_folder()
 
 
 class WidgetConfig(QWidget):

@@ -35,6 +35,7 @@ class TableModel(QTableWidget):
         self.clear()
         count = 0
         # заполнение
+        self.horizontalHeader().setStretchLastSection(True)
         self.resizeColumnsToContents()
 
 
@@ -178,10 +179,10 @@ class TableDeployConfig(QTableWidget):
         self.clear()
         count = 0
         for i in range(len(computers)):
-            self.setItem(i, 0, self.__create_cell(computers[i].ip))
-            self.setItem(i, 1, self.__create_cell(computers[i].login))
-            self.setItem(i, 2, self.__create_cell(computers[i].password))
-            self.setItem(i, 3, self.__create_cell(computers[i].os))
-            self.setItem(i, 4, self.__create_cell(computers[i].download_folder))
+            self.setItem(i, 0, self.__create_cell(computers[i].get_ip()))
+            self.setItem(i, 1, self.__create_cell(computers[i].get_login()))
+            self.setItem(i, 2, self.__create_cell(computers[i].get_password()))
+            self.setItem(i, 3, self.__create_cell(computers[i].get_os()))
+            self.setItem(i, 4, self.__create_cell(computers[i].get_download_folder()))
             count += 1
         self.resizeColumnsToContents()
