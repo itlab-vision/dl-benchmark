@@ -4,23 +4,27 @@
         <Model>
             <Task></Task>
             <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
             <Path></Path>
-            <WeightType></WeightType>
         </Model>
         <Dataset>
             <Name></Name>
             <Path></Path>
         </Dataset>
-        <Parameters>
+        <FrameworkIndependent>
+            <InferenceFramework></InferenceFramework>
             <BatchSize></BatchSize>
-            <Mode></Mode>
             <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode></Mode>
             <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount></IterationCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
+        </FrameworkDependent>
     </Test>
 </Tests>

@@ -58,4 +58,6 @@ def get_system_characteristics():
 
 
 if __name__ == '__main__':
-    print(get_system_characteristics())
+    hardware_dict = get_system_characteristics()
+    for key in hardware_dict:
+        print('{}: {}'.format(key, hardware_dict[key]))
