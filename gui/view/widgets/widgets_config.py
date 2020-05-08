@@ -6,33 +6,33 @@ from view.dialogs import *
 
 
 class WidgetTestConfigs(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         layouts = QHBoxLayout()
-        self._table = TableTestConfig()
-        self._buttons = GroupButtonTestConfig()
+        self._table = TableTestConfig(self)
+        self._buttons = GroupButtonTestConfig(self)
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 
 class WidgetRemoteConfigs(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         layouts = QHBoxLayout()
-        self._table = TableRemoteConfig()
-        self._buttons = GroupButtonRemoteConfig()
+        self._table = TableRemoteConfig(self)
+        self._buttons = GroupButtonRemoteConfig(self)
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 
 class WidgetDeployConfigs(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         layouts = QHBoxLayout()
-        self.__table = TableDeployConfig()
-        self.__buttons = GroupButtonDeployConfig()
+        self.__table = TableDeployConfig(self)
+        self.__buttons = GroupButtonDeployConfig(self)
         self.__dialog_add_computer = DeployDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
@@ -60,8 +60,8 @@ class WidgetDeployConfigs(QWidget):
 
 
 class WidgetConfig(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
@@ -82,9 +82,9 @@ class WidgetConfig(QWidget):
         return menu
 
     def __create_dict(self):
-        tests_configs = WidgetTestConfigs()
-        remote_configs = WidgetRemoteConfigs()
-        deploy_configs = WidgetDeployConfigs()
+        tests_configs = WidgetTestConfigs(self)
+        remote_configs = WidgetRemoteConfigs(self)
+        deploy_configs = WidgetDeployConfigs(self)
         dictionary = {'Составить конфигурацию тестов': tests_configs,
                       'Составить конфигурацию удаленного запуска': remote_configs,
                       'Составить конфигурацию резвертки': deploy_configs}

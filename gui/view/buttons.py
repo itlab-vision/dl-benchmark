@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
 class GroupButtonModels(QGroupBox):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._buttons = self.__create_dict_buttons()
         self.setLayout(self.__create_buttons_vbox())
 
@@ -21,8 +21,8 @@ class GroupButtonModels(QGroupBox):
 
 
 class GroupButtonData(QGroupBox):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._buttons = self.__create_dict_buttons()
         self.setLayout(self.__create_buttons_vbox())
 
@@ -40,8 +40,8 @@ class GroupButtonData(QGroupBox):
 
 
 class GroupButtonTestConfig(QGroupBox):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._buttons = self.__create_dict_buttons()
         self.setLayout(self.__create_buttons_vbox())
 
@@ -59,8 +59,8 @@ class GroupButtonTestConfig(QGroupBox):
 
 
 class GroupButtonRemoteConfig(QGroupBox):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._buttons = self.__create_dict_buttons()
         self.setLayout(self.__create_buttons_vbox())
 
@@ -86,8 +86,8 @@ class GroupButtonDeployConfig(QGroupBox):
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._buttons = self.__create_dict_buttons()
         self.setLayout(self.__create_buttons_vbox())
 

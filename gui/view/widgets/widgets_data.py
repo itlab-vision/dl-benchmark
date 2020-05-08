@@ -4,30 +4,30 @@ from view.buttons import *
 
 
 class WidgetModelSettings(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         layouts = QHBoxLayout()
-        self._table = TableModel()
-        self._buttons = GroupButtonModels()
+        self._table = TableModel(self)
+        self._buttons = GroupButtonModels(self)
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 
 class WidgetDataSettings(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         layouts = QHBoxLayout()
-        self._table = TableData()
-        self._buttons = GroupButtonData()
+        self._table = TableData(self)
+        self._buttons = GroupButtonData(self)
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons)
         self.setLayout(layouts)
 
 
 class WidgetData(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
@@ -44,8 +44,8 @@ class WidgetData(QWidget):
         return menu
 
     def __create_dict(self):
-        model_settings = WidgetModelSettings()
-        data_settings = WidgetDataSettings()
+        model_settings = WidgetModelSettings(self)
+        data_settings = WidgetDataSettings(self)
         dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings}
         return dictionary
 

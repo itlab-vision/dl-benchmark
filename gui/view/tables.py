@@ -4,8 +4,8 @@ from models.deploy_config import *
 
 
 class TableModel(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._models = []
         self._count_col = 5
         self._count_row = 50
@@ -38,8 +38,8 @@ class TableModel(QTableWidget):
 
 
 class TableData(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._data = []
         self._count_col = 2
         self._count_row = 20
@@ -75,8 +75,8 @@ class TableData(QTableWidget):
 
 
 class TableTestConfig(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._tests = []
         self._count_col = 12
         self._count_row = 20
@@ -110,8 +110,8 @@ class TableTestConfig(QTableWidget):
 
 
 class TableRemoteConfig(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self._parameters = []
         self._count_col = 8
         self._count_row = 100
@@ -144,8 +144,8 @@ class TableRemoteConfig(QTableWidget):
 
 
 class TableDeployConfig(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.__count_col = 5
         self.__count_row = 100
         self.__headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
