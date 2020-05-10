@@ -29,7 +29,7 @@ def join_tables(ftp_server, table_name):
     ftp_server.retrlines('NLST', tables.append)
     result_tables = [ table_handler() for i in range(len(tables)) ]
     for idx, table in enumerate(tables):
-        ftp_server.retrlines('RETR ' + tables[0], result_tables[idx].set_line)
+        ftp_server.retrlines('RETR ' + tables[idx], result_tables[idx].set_line)
 
     result_table = open(table_name, 'w')
     for idx in range(len(result_tables)):
