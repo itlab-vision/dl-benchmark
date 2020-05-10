@@ -31,7 +31,7 @@ def build_argparser():
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
-        for detections filtering', default = 0.5, type = float, dest = 'threshold')
+        for detections filtering', default = 0.1, type = float, dest = 'threshold')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
@@ -42,6 +42,8 @@ def build_argparser():
         default = 1.0, type = float, dest = 'raw_scale')
     parser.add_argument('--mean', help = 'Parameter mean',
         default = [0, 0, 0], type = float, nargs = 3, dest = 'mean')
+    parser.add_argument('--input_scale', help = 'Parameter input scale',
+        default = 1.0, type = float, dest = 'input_scale')
     parser.add_argument('-d', '--device', help = 'Specify the target \
         device to infer on (CPU by default)',
         default = 'CPU', type = str, dest = 'device')
@@ -73,12 +75,13 @@ def load_images_to_network(net, input):
         net.blobs[layer].data[...] = input[layer]
 
 
-def inference_caffe(net, number_iter, get_slice):
+def inference_caffe(net, number_iter, input, batch_size):
     result = None
     time_infer = []
-    slice_input = None
+    slice_input = dict.fromkeys(input.keys(), None)
     if number_iter == 1:
-        slice_input = get_slice(0)
+        for key in input:
+            slice_input[key] = input[key][0:batch_size]
         load_images_to_network(net, slice_input)
         t0 = time()
         result = net.forward()
@@ -86,7 +89,9 @@ def inference_caffe(net, number_iter, get_slice):
         time_infer.append(t1 - t0)
     else:
         for i in range(number_iter):
-            slice_input = get_slice(i)
+            for key in input:
+                slice_input[key] = input[key][(i * batch_size) % len(input[key]):
+                    (((i + 1) * batch_size - 1) % len(input[key])) + 1:]
             load_images_to_network(net, slice_input)
             t0 = time()
             net.forward()
@@ -114,7 +119,8 @@ def raw_result_output(average_time, fps, latency):
 
 
 def create_dict_for_transformer(args):
-    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale, 'mean' : args.mean}
+    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale, 'mean' : args.mean,
+        'input_scale' : args.input_scale}
     return dictionary
 
 
@@ -137,10 +143,10 @@ def main():
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         log.info('Prepare input data')
-        io.prepare_input(net, args.input)
+        transformed_input = io.prepare_input(net, args.input)
         log.info('Starting inference ({} iterations)'.
             format(args.number_iter))
-        result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)       
+        result, inference_time = inference_caffe(net, args.number_iter, transformed_input, args.batch_size)       
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
             io.process_output(result, log)   
