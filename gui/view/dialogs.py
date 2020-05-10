@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 
 class DeployDialog(QDialog):
 
-    addComputerSignal = QtCore.pyqtSignal()
+    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -47,7 +47,8 @@ class DeployDialog(QDialog):
                 (self.__os.text() == "") or (self.__download_folder.text() == "")):
             QMessageBox.warning(self, "Warning!", "Not all lines are filled!")
         else:
-            self.addComputerSignal.emit()
+            self.addComputerSignal.emit(self.__ip.text(), self.__login.text(), self.__password.text(),
+                                        self.__os.text(), self.__download_folder.text())
             super().accept()
 
     def reject(self):

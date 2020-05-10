@@ -186,8 +186,7 @@ class TableDeployConfig(QTableWidget):
 
     def clicked_table(self):
         self.__selected_rows = list(dict.fromkeys([index.row() for index in self.selectedIndexes()]))
-        self.__selected_rows.sort()
-        self.__selected_rows.reverse()
+        self.__selected_rows.sort(reverse = True)
 
     def get_selected_rows(self):
         return self.__selected_rows

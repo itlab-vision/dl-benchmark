@@ -81,6 +81,7 @@ class GroupButtonDeployConfig(QGroupBox):
 
     addSignal = QtCore.pyqtSignal()
     delSignal = QtCore.pyqtSignal()
+    changeSignal = QtCore.pyqtSignal()
     clearSelectedSignal = QtCore.pyqtSignal()
     loadSignal = QtCore.pyqtSignal()
     saveSignal = QtCore.pyqtSignal()
@@ -92,11 +93,12 @@ class GroupButtonDeployConfig(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить информацию', 'Удалить информацию', 'Загрузить таблицу', 'Сохранить таблицу',
-                             'Очистить таблицу']
+        list_name_buttons = ['Добавить информацию', 'Удалить информацию', 'Изменить информацию', 'Загрузить таблицу',
+                             'Сохранить таблицу', 'Очистить таблицу']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         buttons['Добавить информацию'].clicked.connect(self.add_click)
         buttons['Удалить информацию'].clicked.connect(self.del_click)
+        buttons['Изменить информацию'].clicked.connect(self.change_click)
         buttons['Загрузить таблицу'].clicked.connect(self.load_click)
         buttons['Сохранить таблицу'].clicked.connect(self.save_click)
         buttons['Очистить таблицу'].clicked.connect(self.clear_click)
@@ -113,6 +115,10 @@ class GroupButtonDeployConfig(QGroupBox):
 
     def del_click(self):
         self.delSignal.emit()
+        self.clearSelectedSignal.emit()
+
+    def change_click(self):
+        self.changeSignal.emit()
         self.clearSelectedSignal.emit()
 
     def load_click(self):
