@@ -38,8 +38,6 @@ def build_argparser():
         default = False, type = bool, dest = 'raw_output')
     parser.add_argument('--channel_swap', help = 'Parameter channel swap',
         default = [2, 1, 0], type = float, nargs = 3, dest = 'channel_swap')
-    parser.add_argument('--raw_scale', help = 'Parameter raw scale',
-        default = 1.0, type = float, dest = 'raw_scale')
     parser.add_argument('--mean', help = 'Parameter mean',
         default = [0, 0, 0], type = float, nargs = 3, dest = 'mean')
     parser.add_argument('--input_scale', help = 'Parameter input scale',
@@ -116,7 +114,7 @@ def raw_result_output(average_time, fps, latency):
 
 
 def create_dict_for_transformer(args):
-    dictionary = {'channel_swap' : args.channel_swap, 'raw_scale' : args.raw_scale, 'mean' : args.mean,
+    dictionary = {'channel_swap' : args.channel_swap, 'mean' : args.mean,
         'input_scale' : args.input_scale}
     return dictionary
 

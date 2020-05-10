@@ -2,17 +2,6 @@ import numpy as np
 
 
 class transformer:
-    def __init__(self):
-        self._transformed_input = {}
-
-
-    def update(self, input):
-        self._transformed_input = input
-
-
-    def get_transformed_input(self):
-        return self._transformed_input
-
     def transform(self, image):
         return image
 
@@ -25,13 +14,6 @@ class intelcaffe_transformer(transformer):
     def __set_channel_swap(self, image):
         if 'channel_swap' in self._converting:
             image = image[self._converting['channel_swap'], :, :]
-    
-
-    def __set_raw_scale(self, image):
-        if 'raw_scale' in self._converting:
-            image[0] *= self._converting['raw_scale']
-            image[1] *= self._converting['raw_scale']
-            image[2] *= self._converting['raw_scale']
 
     
     def __set_mean(self, image):
@@ -51,7 +33,6 @@ class intelcaffe_transformer(transformer):
     def transform(self, image):
         transformed_image = np.copy(image)
         self.__set_channel_swap(transformed_image)
-        self.__set_raw_scale(transformed_image)
         self.__set_mean(transformed_image)
         self.__set_input_scale(transformed_image)
         return transformed_image         
