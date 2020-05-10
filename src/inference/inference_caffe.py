@@ -31,7 +31,7 @@ def build_argparser():
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')
     parser.add_argument('--prob_threshold', help = 'Probability threshold \
-        for detections filtering', default = 0.1, type = float, dest = 'threshold')
+        for detections filtering', default = 0.5, type = float, dest = 'threshold')
     parser.add_argument('-ni', '--number_iter', help = 'Number of inference \
         iterations', default = 1, type = int, dest = 'number_iter')
     parser.add_argument('--raw_output', help = 'Raw output without logs',
@@ -75,13 +75,12 @@ def load_images_to_network(net, input):
         net.blobs[layer].data[...] = input[layer]
 
 
-def inference_caffe(net, number_iter, input, batch_size):
+def inference_caffe(net, number_iter, get_slice):
     result = None
     time_infer = []
-    slice_input = dict.fromkeys(input.keys(), None)
+    slice_input = None
     if number_iter == 1:
-        for key in input:
-            slice_input[key] = input[key][0:batch_size]
+        slice_input = get_slice(0)
         load_images_to_network(net, slice_input)
         t0 = time()
         result = net.forward()
@@ -89,9 +88,7 @@ def inference_caffe(net, number_iter, input, batch_size):
         time_infer.append(t1 - t0)
     else:
         for i in range(number_iter):
-            for key in input:
-                slice_input[key] = input[key][(i * batch_size) % len(input[key]):
-                    (((i + 1) * batch_size - 1) % len(input[key])) + 1:]
+            slice_input = get_slice(i)
             load_images_to_network(net, slice_input)
             t0 = time()
             net.forward()
@@ -143,10 +140,10 @@ def main():
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         log.info('Prepare input data')
-        transformed_input = io.prepare_input(net, args.input)
+        io.prepare_input(net, args.input)
         log.info('Starting inference ({} iterations)'.
             format(args.number_iter))
-        result, inference_time = inference_caffe(net, args.number_iter, transformed_input, args.batch_size)       
+        result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)       
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
             io.process_output(result, log)   

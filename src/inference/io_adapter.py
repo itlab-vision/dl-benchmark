@@ -75,7 +75,6 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     def prepare_input(self, model, input):
-        result = {}
         self._input = {}
         self._original_shapes = {}
         if ':' in input[0]:
@@ -92,7 +91,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                     transformed_value = self.__transform_images(value)
                 self._input.update({key : value})
                 self._original_shapes.update({key : shapes})
-                result.update({key : transformed_value})
+                self._transformer.update({key : transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -105,16 +104,16 @@ class io_adapter(metaclass = abc.ABCMeta):
                 transformed_value = self.__transform_images(value)
             self._input.update({input_blob : value})
             self._original_shapes.update({input_blob : shapes})
-            result.update({input_blob : transformed_value})
-        return result
+            self._transformer.update({input_blob : transformed_value})
 
 
     def get_slice_input(self, iteration):
-        slice_input = dict.fromkeys(self._input.keys(), None)
-        for key in self._input:
-            slice_input[key] = self._input[key][(iteration * self._batch_size)
-                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
-                % len(self._input[key])) + 1:]
+        input = self._transformer.get_transformed_input()
+        slice_input = dict.fromkeys(input.keys(), None)
+        for key in input:
+            slice_input[key] = input[key][(iteration * self._batch_size)
+                % len(input[key]) : (((iteration + 1) * self._batch_size - 1)
+                % len(input[key])) + 1:]
         return slice_input
 
 

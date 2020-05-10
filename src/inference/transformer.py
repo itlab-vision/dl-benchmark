@@ -2,6 +2,17 @@ import numpy as np
 
 
 class transformer:
+    def __init__(self):
+        self._transformed_input = {}
+
+
+    def update(self, input):
+        self._transformed_input = input
+
+
+    def get_transformed_input(self):
+        return self._transformed_input
+
     def transform(self, image):
         return image
 
