@@ -166,7 +166,7 @@ follow instructions.
 1. Fill out the configuration file for the benchmarking script. It is required
    to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
-   Fill it and save on `/benchmark_config/bench_config.xml`.
+   Fill the configuration file and save it to the `/benchmark_config/bench_config.xml`.
 
    ```xml
    <Tests>
