@@ -12,10 +12,10 @@ from io_model_wrapper import intelcaffe_io_model_wrapper
 
 def build_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', help = 'Path to an .caffemodel \
-        file with a trained weights.', required = True, type = str, dest = 'model_caffemodel')
-    parser.add_argument('-w', '--weights', help = 'Path to an .prototxt file \
+    parser.add_argument('-m', '--model', help = 'Path to an .prototxt file \
         with a trained model.', required = True, type = str, dest = 'model_prototxt')
+    parser.add_argument('-w', '--weights', help = 'Path to an .caffemodel \
+        file with a trained weights.', required = True, type = str, dest = 'model_caffemodel')
     parser.add_argument('-i', '--input', help = 'Path to data', required = True, type = str, 
         nargs = '+', dest = 'input')
     parser.add_argument('-b', '--batch_size', help = 'Size of the  \
@@ -63,7 +63,7 @@ def network_input_reshape(net, batch_size):
     return net
 
 
-def load_network(caffemodel, prototxt):
+def load_network(prototxt, caffemodel):
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net
 
@@ -132,7 +132,7 @@ def main():
         log.info('The device has been assigned: {0}'.format(args.device))
         log.info('Loading network files:\n\t {0}\n\t {1}'.format(
             args.model_prototxt, args.model_caffemodel))
-        net = load_network(args.model_caffemodel, args.model_prototxt)
+        net = load_network(args.model_prototxt, args.model_caffemodel)
         net = network_input_reshape(net, args.batch_size)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
