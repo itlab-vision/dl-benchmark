@@ -97,18 +97,18 @@ follow instructions.
 Here is a simple instruction to start with DLI:
 1. For example we will select the OpenVINO Docker container,
    the Dockerfile for build this image can be found in the `docker` folder.
-1. Before build, you should put the current link to download
+2. Before build, you should put the current link to download
    the OpenVINO™ Toolkit it's put in
    `ARG DOWNLOAD_LINK=<Link to download OpenVINO™ Toolkit>`.
-1. To build a Docker image, use the command : `docker build -t <image name> . `
+3. To build a Docker image, use the command : `docker build -t <image name> . `
    - the build looks for the Dockerfile in the current folder and starts
    building the image.
-1. Next step is to add the built Docker-image to the archive,
+4. Next step is to add the built Docker-image to the archive,
    this is done by the command: `docker save OpenVINO_Image > OpenVINO_Image.tar`
-1. After building the image, you need to fill out the configuration file for
+5. After building the image, you need to fill out the configuration file for
    the system deployment script. The configuration file template is also located
-   in the [project folder](`src/config/deploy_configuration_file_template.xml`).
-1. Fill in the configuration file and save it in
+   in the `src/config/deploy_configuration_file_template.xml`.
+6. Fill in the configuration file and save it in
    `/tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml`.
 ```xml
 <Computers>
@@ -121,7 +121,7 @@ Here is a simple instruction to start with DLI:
   </Computer>
 </Computers>
 ```
-1. After that, you need to run the deployment script, to do this call the
+7. After that, you need to run the deployment script, to do this call the
    command: 
    ```bash
    python3 deploy.py -s 2.2.2.2 -l admin -p admin \
@@ -131,15 +131,15 @@ Here is a simple instruction to start with DLI:
    --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
    --project_folder /tmp/openvino-dl-benchmark/
     ```
-1. After this stage, each machine has a running Docker container.
+8. After this stage, each machine has a running Docker container.
    It is necessary to copy the data on which the inference will be perform,
    this is done with the command:
    `docker cp <Path to data on the main machine> OpenVINO_DLDT:/tmp/`
-1. Next step is you need to fill out the configuration file
+9. Next step is you need to fill out the configuration file
    for the performance testing script, in it you need to describe the tests
    that need to be performed, you can find the template in the
-   [project folder](src/config/benchmark_configuration_file_template.xml).
-1. Fill it and save on `FTP-server/benchmark_config/bench_config.xml`.
+   `src/config/benchmark_configuration_file_template.xml`.
+10. Fill it and save on `FTP-server/benchmark_config/bench_config.xml`.
 ```xml
 <Tests>
   <Test>
@@ -171,10 +171,10 @@ Here is a simple instruction to start with DLI:
   </Test>
 </Tests>
 ```
-1. You also need to fill out the configuration file for the
+11. You also need to fill out the configuration file for the
    remote start script, you can find the template in the
-   [project folder](src/config/remote_configuration_file_template.xml).
-1. Fill it and save in
+   `src/config/remote_configuration_file_template.xml`.
+12. Fill it and save in
    `/tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml`.
 ```xml
 <Computers>
@@ -191,16 +191,16 @@ Here is a simple instruction to start with DLI:
   </Computer>
 </Computers>
 ```
-1. After that, you can run the remote start script,
+13. After that, you can run the remote start script,
    this is done using the command:
    ```bash
    python3 remote_start \
    -c /tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml \
    -s 2.2.2.2 -l admin -p admin -r FTP-server/table_folder/all_results.csv
    ```
-1. Wait for completing the benchmark.
-1. Copy benchmarking results from the FTP-server to the local machine.
-1. Convert the results to web-format, for this you need to run the conversion
+14. Wait for completing the benchmark.
+15. Copy benchmarking results from the FTP-server to the local machine.
+16. Convert the results to web-format, for this you need to run the conversion
    script using the following command:
    ```bash
    python -t /tmp/all_results.csv -r /tmp/formatted_results.html
