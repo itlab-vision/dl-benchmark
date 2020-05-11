@@ -66,6 +66,21 @@ class DeployDialog(QDialog):
     def get_download_folder(self):
         return self._download_folder.text()
 
+    def set_ip(self, ip):
+        self._ip.setText(ip)
+
+    def set_login(self, login):
+        self._login.setText(login)
+
+    def set_password(self, password):
+        self._password.setText(password)
+
+    def set_os(self, os):
+        self._os.setText(os)
+
+    def set_download_folder(self, download_folder):
+        self._download_folder.setText(download_folder)
+
     def clear(self):
         self._ip.clear()
         self._login.clear()

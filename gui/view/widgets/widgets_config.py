@@ -29,14 +29,13 @@ class WidgetRemoteConfigs(QWidget):
 
 class WidgetDeployConfigs(QWidget):
 
-    addSignal = QtCore.pyqtSignal()
-    delSignal = QtCore.pyqtSignal()
-    changeSignal = QtCore.pyqtSignal()
+    delSignal = QtCore.pyqtSignal(list)
     loadSignal = QtCore.pyqtSignal()
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
 
     addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
+    changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -52,17 +51,13 @@ class WidgetDeployConfigs(QWidget):
     def __set_connections(self):
         self.__buttons.get_buttons()['Добавить информацию'].clicked.connect(self.__show_dialog_add_computer)
         self.__buttons.get_buttons()['Удалить информацию'].clicked.connect(self.__del_click)
-        self.__buttons.get_buttons()['Изменить информацию'].clicked.connect(self.__change_click)
+        self.__buttons.get_buttons()['Изменить информацию'].clicked.connect(self.__show_dialog_change_computer)
         self.__buttons.get_buttons()['Загрузить таблицу'].clicked.connect(self.loadSignal.emit)
         self.__buttons.get_buttons()['Сохранить таблицу'].clicked.connect(self.saveSignal.emit)
         self.__buttons.get_buttons()['Очистить таблицу'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
-        self.delSignal.emit()
-        self.__table.remove_selection()
-
-    def __change_click(self):
-        self.changeSignal.emit()
+        self.delSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
@@ -71,6 +66,22 @@ class WidgetDeployConfigs(QWidget):
         if dialog.exec():
             self.addComputerSignal.emit(dialog.get_ip(), dialog.get_login(), dialog.get_password(), dialog.get_os(),
                                         dialog.get_download_folder())
+
+    def __show_dialog_change_computer(self):
+        if len(self.__table.get_selected_rows()) != 1:
+            QMessageBox.warning(self, "Warning!", "Choose one row!")
+            return
+        dialog = self.__dialog_add_computer
+        row = self.__table.get_selected_rows()[0]
+        dialog.set_ip(self.__table.item(row, 0).text())
+        dialog.set_login(self.__table.item(row, 1).text())
+        dialog.set_password(self.__table.item(row, 2).text())
+        dialog.set_os(self.__table.item(row, 3).text())
+        dialog.set_download_folder(self.__table.item(row, 4).text())
+        if dialog.exec():
+            self.changeComputerSignal.emit(row, dialog.get_ip(), dialog.get_login(), dialog.get_password(),
+                                           dialog.get_os(), dialog.get_download_folder())
+        self.__table.remove_selection()
 
     def get_selected_rows(self):
         return self.__table.get_selected_rows()

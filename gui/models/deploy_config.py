@@ -56,6 +56,10 @@ class DeployConfig(QObject):
         self.__computers.append(DeployComputer(ip, login, password, os, download_folder))
         self.updateSignal.emit(self.__computers)
 
+    def change_computer(self, row, ip, login, password, os, download_folder):
+        self.__computers[row] = DeployComputer(ip, login, password, os, download_folder)
+        self.updateSignal.emit(self.__computers)
+
     def delete_computer(self, index):
         self.__computers.pop(index)
 
