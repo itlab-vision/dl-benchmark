@@ -49,14 +49,8 @@ class DeployConfig(QObject):
         super().__init__()
         self.__computers = []
 
-    def get_computers(self, indexes=None):
-        if indexes is None:
-            return self.__computers
-        else:
-            computers = []
-            for i in indexes:
-                computers.insert(0, self.__computers[i])
-            return computers
+    def get_computers(self):
+        return self.__computers
 
     def add_computer(self, ip, login, password, os, download_folder):
         self.__computers.append(DeployComputer(ip, login, password, os, download_folder))

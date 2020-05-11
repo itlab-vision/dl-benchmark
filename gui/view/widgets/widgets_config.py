@@ -28,6 +28,16 @@ class WidgetRemoteConfigs(QWidget):
 
 
 class WidgetDeployConfigs(QWidget):
+
+    addSignal = QtCore.pyqtSignal()
+    delSignal = QtCore.pyqtSignal()
+    changeSignal = QtCore.pyqtSignal()
+    loadSignal = QtCore.pyqtSignal()
+    saveSignal = QtCore.pyqtSignal()
+    clearSignal = QtCore.pyqtSignal()
+
+    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
+
     def __init__(self, parent):
         super().__init__(parent)
         layouts = QHBoxLayout()
@@ -37,26 +47,36 @@ class WidgetDeployConfigs(QWidget):
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
-        self.__buttons.addSignal.connect(self.__show_dialog_add_computer)
-        self.__buttons.clearSelectedSignal.connect(self.get_table().remove_selection)
+        self.__set_connections()
+
+    def __set_connections(self):
+        self.__buttons.get_buttons()['Добавить информацию'].clicked.connect(self.__show_dialog_add_computer)
+        self.__buttons.get_buttons()['Удалить информацию'].clicked.connect(self.__del_click)
+        self.__buttons.get_buttons()['Изменить информацию'].clicked.connect(self.__change_click)
+        self.__buttons.get_buttons()['Загрузить таблицу'].clicked.connect(self.loadSignal.emit)
+        self.__buttons.get_buttons()['Сохранить таблицу'].clicked.connect(self.saveSignal.emit)
+        self.__buttons.get_buttons()['Очистить таблицу'].clicked.connect(self.clearSignal.emit)
+
+    def __del_click(self):
+        self.delSignal.emit()
+        self.__table.remove_selection()
+
+    def __change_click(self):
+        self.changeSignal.emit()
+        self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
-        self.__dialog_add_computer.clear()
-        self.__dialog_add_computer.exec()
+        dialog = self.__dialog_add_computer
+        dialog.clear()
+        if dialog.exec():
+            self.addComputerSignal.emit(dialog.get_ip(), dialog.get_login(), dialog.get_password(), dialog.get_os(),
+                                        dialog.get_download_folder())
 
-    def get_table(self):
-        return self.__table
+    def get_selected_rows(self):
+        return self.__table.get_selected_rows()
 
-    def get_dialog_add_computer(self):
-        return self.__dialog_add_computer
-
-    def get_buttons(self):
-        return self.__buttons
-
-    def get_data_dialog_add(self):
-        return self.__dialog_add_computer.get_ip(), self.__dialog_add_computer.get_login(), \
-               self.__dialog_add_computer.get_password(), self.__dialog_add_computer.get_os(),\
-               self.__dialog_add_computer.get_download_folder()
+    def update(self, model):
+        self.__table.update(model)
 
 
 class WidgetConfig(QWidget):

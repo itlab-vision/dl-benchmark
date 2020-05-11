@@ -5,15 +5,13 @@ from PyQt5 import QtCore
 
 class DeployDialog(QDialog):
 
-    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
-
     def __init__(self, parent):
         super().__init__(parent)
-        self.__ip = QLineEdit(self)
-        self.__login = QLineEdit(self)
-        self.__password = QLineEdit(self)
-        self.__os = QLineEdit(self)
-        self.__download_folder = QLineEdit(self)
+        self._ip = QLineEdit(self)
+        self._login = QLineEdit(self)
+        self._password = QLineEdit(self)
+        self._os = QLineEdit(self)
+        self._download_folder = QLineEdit(self)
         self.__init_ui()
 
     def __init_ui(self):
@@ -29,26 +27,24 @@ class DeployDialog(QDialog):
         cancel_btn.clicked.connect(self.reject)
         layout = QGridLayout()
         layout.addWidget(ip_lb, 0, 0)
-        layout.addWidget(self.__ip, 0, 1)
+        layout.addWidget(self._ip, 0, 1)
         layout.addWidget(login_lb, 1, 0)
-        layout.addWidget(self.__login, 1, 1)
+        layout.addWidget(self._login, 1, 1)
         layout.addWidget(password_lb, 2, 0)
-        layout.addWidget(self.__password, 2, 1)
+        layout.addWidget(self._password, 2, 1)
         layout.addWidget(os_lb, 3, 0)
-        layout.addWidget(self.__os, 3, 1)
+        layout.addWidget(self._os, 3, 1)
         layout.addWidget(download_folder_lb, 4, 0)
-        layout.addWidget(self.__download_folder, 4, 1)
+        layout.addWidget(self._download_folder, 4, 1)
         layout.addWidget(ok_btn, 5, 0)
         layout.addWidget(cancel_btn, 5, 1)
         self.setLayout(layout)
 
     def accept(self):
-        if ((self.__ip.text() == "") or (self.__login.text() == "") or (self.__password.text() == "") or
-                (self.__os.text() == "") or (self.__download_folder.text() == "")):
+        if ((self._ip.text() == "") or (self._login.text() == "") or (self._password.text() == "") or
+                (self._os.text() == "") or (self._download_folder.text() == "")):
             QMessageBox.warning(self, "Warning!", "Not all lines are filled!")
         else:
-            self.addComputerSignal.emit(self.__ip.text(), self.__login.text(), self.__password.text(),
-                                        self.__os.text(), self.__download_folder.text())
             super().accept()
 
     def reject(self):
@@ -56,23 +52,23 @@ class DeployDialog(QDialog):
         super().reject()
 
     def get_ip(self):
-        return self.__ip.text()
+        return self._ip.text()
 
     def get_login(self):
-        return self.__login.text()
+        return self._login.text()
 
     def get_password(self):
-        return self.__password.text()
+        return self._password.text()
 
     def get_os(self):
-        return self.__os.text()
+        return self._os.text()
 
     def get_download_folder(self):
-        return self.__download_folder.text()
+        return self._download_folder.text()
 
     def clear(self):
-        self.__ip.clear()
-        self.__login.clear()
-        self.__password.clear()
-        self.__os.clear()
-        self.__download_folder.clear()
+        self._ip.clear()
+        self._login.clear()
+        self._password.clear()
+        self._os.clear()
+        self._download_folder.clear()
