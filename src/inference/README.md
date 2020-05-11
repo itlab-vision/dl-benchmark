@@ -219,8 +219,8 @@ inference_caffe.py
 
 Обязательные аргументы:
 
-- `-m / --model` - путь до xml-файла с описанием модели.
-- `-w / --weights` - путь до бинарного файла, содержащего веса обученной модели.
+- `-m / --model` - путь до prototxt-файла с описанием модели.
+- `-w / --weights` - путь до caffemodel-файла, содержащего веса обученной модели.
 - `-i / --input` - путь до изображения или директории с изображениями
   (расширения файлов `.jpg`, `.png`, `.bmp` и т.д.).
 
@@ -245,7 +245,7 @@ inference_caffe.py
   По умолчанию равен `0.5`.
 - `--channel_swap` - порядок цветовых каналов изображения. 
   По умолчанию порядок `(2, 1, 0)`.
-- `--raw_scale` - коэффициент  масштабирования изображения. По умолчанию равен `1`.
+- `--input_scale` - коэффициент  масштабирования изображения. По умолчанию равен `1`.
 - `--mean` - параметры для вычитания средних по каждому цветовому каналу изображения.
   По умолчанию `(0, 0, 0)`.
 
@@ -256,8 +256,8 @@ inference_caffe.py
 ```bash
 python inference_caffe.py \
     -t classification -i <path_to_image>/<image_name> \
-    -m <path_to_model>/<model_name>.caffemodel \
-    -w <path_to_weights>/<model_name>.prototxt \
+    -m <path_to_model>/<model_name>.prototxt \
+    -w <path_to_weights>/<model_name>.caffemodel \
     --labels <path_to_labels>/image_net_synset.txt
 ```
 
@@ -269,8 +269,8 @@ python inference_caffe.py \
 ```bash
 python inference_caffe.py \
     -t detection -i <path_to_image>/<image_name> \
-    -m <path_to_model>/<model_name>.caffemodel \
-    -w <path_to_weights>/<model_name>.prototxt
+    -m <path_to_model>/<model_name>.prototxt \
+    -w <path_to_weights>/<model_name>.caffemodel
 ```
 
 Результат выполнения: набор окаймляющих прямоугольников, соответствующих
@@ -282,8 +282,8 @@ python inference_caffe.py \
 ```bash
 python inference_caffe.py \
     -t segmentation -i <path_to_image>/<image_name> \
-    -m <path_to_model>/<model_name>.caffemodel \
-    -w <path_to_weights>/<model_name>.prototxt \
+    -m <path_to_model>/<model_name>.prototxt \
+    -w <path_to_weights>/<model_name>.caffemodel \
     --color_map <path_to_color_map>/color_map.txt
 ```
 
