@@ -33,17 +33,17 @@ V.1129. 2019. P. 542-553.
   - [`architecture.md`](docs/architecture.md) is a benchmarking
     system architecture.
 
-- `results` directory contains results.
-  - [`benchmarking`](results/benchmarking) - contains benchmarking 
+- `results` directory contains benchmarking and validation results.
+  - [`benchmarking`](results/benchmarking) contains benchmarking 
     results in html format.
-  - [`validation`](results/validation) - contains tables that confirms 
+  - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implemenration.
     - [`validation_results.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
-      based on Intel® Distribution of OpenVINO™ toolkit for public models.
+      based on Intel Distribution of OpenVINO toolkit for public models.
     - [`validation_results_intel_models.md`](results/validation/validation_results_intel_models.md)
       is a table that confirms correctness of inference implementation 
-      based on Intel® Distribution of OpenVINO™ toolkit for models trained
+      based on Intel Distribution of OpenVINO toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
 
 - `src` directory contains benchmark sources.
