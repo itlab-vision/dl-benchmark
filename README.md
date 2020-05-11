@@ -94,20 +94,22 @@ follow instructions.
 
 ## Deployment example
 
-1. In order to start you need to download DLI. Clone it to `/tmp` folder
-   using the following commands:
+1. Download deep learning inference benchmark. Clone repo to the `/tmp`
+   directory using the following commands:
 
    ```bash
    cd tmp
    git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
    ```
 
-1. It is required to create an FTP-server and create such directories in it:
-   * `docker_image_folder`
-   * `benchmark_config`
-   * `table_folder`
+1. It is required to deploy FTP-server and create directories.
+   For definiteness, we will use the following directory names:
 
-1. For definiteness we select the OpenVINO Docker container. The Dockerfile
+   - `docker_image_folder` is a directory for storing docker image.
+   - `benchmark_config` is a directory for storing configurationn files.
+   - `table_folder` is a directory for storing performance results.
+
+1. For definiteness, we select the OpenVINO Docker container. The Dockerfile
    to build this image can be found in the
    `/tmp/openvino-dl-benchmark/docker/OpenVINO_DLDT` folder.
    Before building, you should put the current link to download
@@ -115,31 +117,31 @@ follow instructions.
 
    `ARG DOWNLOAD_LINK=<Link to download Intel Distribution of OpenVINO Toolkit>`
 
-1. To build a Docker image, please, use the following command:
+1. To build docker image, please, use the following command:
 
    `docker build -t OpenVINO_Image . `
 
-   The `build` searches for the Dockerfile in the current directory and starts
-   building the image.
+   The `build` option searches for the Dockerfile in the current directory
+   and builds the image `OpenVINO_Image`.
 
-1. The following step is to add the Docker-image to the archive by the command:
+1. The following step is to add docker-image to the archive by the command:
 
    `docker save OpenVINO_Image > OpenVINO_Image.tar`
 
 1. After building the image, you need to fill out the configuration file for
-   the system deployment script. The configuration file template is also located
-   in the `src/config/deploy_configuration_file_template.xml`.
-   Fill in the configuration file and save it in
-   `/tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml`.
+   the system deployment script. The configuration file template is located
+   in the `/tmp/openvino-dl-benchmark/src/config/deploy_configuration_file_template.xml`.
+   Fill the configuration file (information to access to the remote computer)
+   and save it to the `/tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml`.
 
    ```xml
    <Computers>
      <Computer>
-     <IP>4.4.4.4</IP>
-     <Login>admin</Login>
-     <Password>admin</Password>
-     <OS>Linux</OS>
-     <DownloadFolder>/tmp/docker_folder</DownloadFolder>
+       <IP>4.4.4.4</IP>
+       <Login>admin</Login>
+       <Password>admin</Password>
+       <OS>Linux</OS>
+       <DownloadFolder>/tmp/docker_folder</DownloadFolder>
      </Computer>
    </Computers>
    ```
@@ -153,7 +155,7 @@ follow instructions.
        --project_folder /tmp/openvino-dl-benchmark/
     ```
 
-   After this stage, there is a Docker container at each computer.
+   After this stage, there is a docker container at each computer.
 
 1. It is required to copy the datasets for inference using the following command:
 
@@ -201,7 +203,7 @@ follow instructions.
 1. Fill out the configuration file for the
    remote start script, you can find the template in the
    `src/config/remote_configuration_file_template.xml`.
-   Fill it and save in
+   Fill it and save to the
    `/tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml`.
 
    ```xml
@@ -228,10 +230,9 @@ follow instructions.
    -s 2.2.2.2 -l admin -p admin -r /table_folder/all_results.csv
    ```
 
-1. Wait for completing the benchmark.
-
-1. After completion, in the `table_folder` folder there will be
-   a table with the combined results named `all_results`.
+1. Wait for completing the benchmark. After completion,
+   the `table_folder` directory will contain a table with the combined results
+   named `all_results`.
 
 1. Copy benchmarking results from the FTP-server to the local machine.
 
