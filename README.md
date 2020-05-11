@@ -23,15 +23,14 @@ Kogteva N. DLI: Deep Learning Inference Benchmark //
 Communications in Computer and Information Science.
 V.1129. 2019. P. 542-553.
 
-## Repo Structure
-- `docker` directory contains Dockerfiles
-  - [`Dockerfile`](docker/Dockerfile) is file to build OpenVINO™ toolkit.
+## Repo structure
+- `docker` directory contains Dockerfiles.
+  - [`Dockerfile`](docker/Dockerfile) is a file to build the OpenVINO toolkit.
 
 - `docs` directory contains project documentation.
   - [`concept.md`](docs/concept.md) is a concept description
     (goals and tasks).
-  - [`technologies.md`](docs/technologies.md) is a list Docker-image with
-    of technologies.
+  - [`technologies.md`](docs/technologies.md) is a list of technologies.
   - [`architecture.md`](docs/architecture.md) is a benchmarking
     system architecture.
 
@@ -49,12 +48,12 @@ V.1129. 2019. P. 542-553.
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
 
 - `src` directory contains benchmark sources.
-  - `deployment` is a set of tools for deployment.
+  - `deployment` is a set of deployment tools.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert result table
-    from csv format to html format.
+    from csv to html.
   - `inference` contains inference implementation.
   - `remote_control` contains scripts to execute benchmark
     remotely.
@@ -93,118 +92,137 @@ follow instructions.
 1. Wait for completing the benchmark.
 1. Copy benchmarking results from the FTP-server to the local machine.
 
-## DLI system startup example
-Here is a simple instruction to start with DLI:
-1. For example we will select the OpenVINO Docker container,
-   the Dockerfile for build this image can be found in the `docker` folder.
-2. Before build, you should put the current link to download
-   the OpenVINO™ Toolkit it's put in
-   `ARG DOWNLOAD_LINK=<Link to download OpenVINO™ Toolkit>`.
-3. To build a Docker image, use the command : `docker build -t <image name> . `
-   - the build looks for the Dockerfile in the current folder and starts
+## Deployment example
+
+1. For definiteness we select the OpenVINO Docker container. The Dockerfile
+   to build this image can be found in the `docker` folder.
+   Before building, you should put the current link to download
+   the OpenVINO toolkit. Please, insert correct path in the following line:
+
+   `ARG DOWNLOAD_LINK=<Link to download Intel Distribution of OpenVINO Toolkit>`
+
+1. To build a Docker image, please, use the following command:
+
+   `docker build -t <image name> . `
+
+   The `build` searches for the Dockerfile in the current directory and starts
    building the image.
-4. Next step is to add the built Docker-image to the archive,
-   this is done by the command: `docker save OpenVINO_Image > OpenVINO_Image.tar`
-5. After building the image, you need to fill out the configuration file for
+
+1. The following step is to add the Docker-image to the archive by the command:
+
+   `docker save OpenVINO_Image > OpenVINO_Image.tar`
+
+1. After building the image, you need to fill out the configuration file for
    the system deployment script. The configuration file template is also located
    in the `src/config/deploy_configuration_file_template.xml`.
-6. Fill in the configuration file and save it in
+   Fill in the configuration file and save it in
    `/tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml`.
-```xml
-<Computers>
-  <Computer>
-  <IP>1.1.1.1</IP>
-  <Login>admin</Login>
-  <Password>admin</Password>
-  <OS>Linux</OS>
-  <DownloadFolder>/tmp/docker_folder</DownloadFolder>
-  </Computer>
-</Computers>
-```
-7. After that, you need to run the deployment script, to do this call the
-   command: 
+
+   ```xml
+   <Computers>
+     <Computer>
+     <IP>1.1.1.1</IP>
+     <Login>admin</Login>
+     <Password>admin</Password>
+     <OS>Linux</OS>
+     <DownloadFolder>/tmp/docker_folder</DownloadFolder>
+     </Computer>
+   </Computers>
+   ```
+1. To run the deployment script, use the following command: 
+
    ```bash
    python3 deploy.py -s 2.2.2.2 -l admin -p admin \
-   -i /tmp/openvino-dl-benchmark/docker/OpenVINO_Image.tar \
-   -d FTP-server/docker_image_folder \
-   -n OpenVINO_DLDT \
-   --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
-   --project_folder /tmp/openvino-dl-benchmark/
+       -i /tmp/openvino-dl-benchmark/docker/OpenVINO_Image.tar \
+       -d FTP-server/docker_image_folder \
+       -n OpenVINO_DLDT \
+       --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
+       --project_folder /tmp/openvino-dl-benchmark/
     ```
-8. After this stage, each machine has a running Docker container.
-   It is necessary to copy the data on which the inference will be perform,
-   this is done with the command:
+
+   After this stage, there is a Docker container at each computer.
+
+1. It is required to copy the datasets for inference using the following command:
+
    `docker cp <Path to data on the main machine> OpenVINO_DLDT:/tmp/`
-9. Next step is you need to fill out the configuration file
-   for the performance testing script, in it you need to describe the tests
-   that need to be performed, you can find the template in the
+
+## Startup example
+
+1. Fill out the configuration file for the benchmarking script. It is required
+   to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
-10. Fill it and save on `FTP-server/benchmark_config/bench_config.xml`.
-```xml
-<Tests>
-  <Test>
-    <Model>
-        <Task>Classification</Task>
-        <Name>densenet-121</Name>
-        <Precision>FP32</Precision>
-        <SourceFramework>Caffe</SourceFramework>
-        <Path>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Path>
-    </Model>
-    <Dataset>
-        <Name>ImageNet</Name>
-        <Path>/tmp/data/</Path>
-    </Dataset>
-    <FrameworkIndependent>
-        <InferenceFramework>OpenVINO_DLDT</InferenceFramework>
-        <BatchSize>2</BatchSize>
-        <Device>CPU</Device>
-        <IterationCount>10</IterationCount>
-        <TestTimeLimit>1000</TestTimeLimit>
-    </FrameworkIndependent>
-    <FrameworkDependent>
-        <Mode>Sync</Mode>
-        <Extension></Extension>
-        <AsyncRequestCount></AsyncRequestCount>
-        <ThreadCount></ThreadCount>
-        <StreamCount></StreamCount>
-    </FrameworkDependent>
-  </Test>
-</Tests>
-```
-11. You also need to fill out the configuration file for the
+   Fill it and save on `FTP-server/benchmark_config/bench_config.xml`.
+
+   ```xml
+   <Tests>
+     <Test>
+       <Model>
+           <Task>Classification</Task>
+           <Name>densenet-121</Name>
+           <Precision>FP32</Precision>
+           <SourceFramework>Caffe</SourceFramework>
+           <Path>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Path>
+       </Model>
+       <Dataset>
+           <Name>ImageNet</Name>
+           <Path>/tmp/data/</Path>
+       </Dataset>
+       <FrameworkIndependent>
+           <InferenceFramework>OpenVINO_DLDT</InferenceFramework>
+           <BatchSize>2</BatchSize>
+           <Device>CPU</Device>
+           <IterationCount>10</IterationCount>
+           <TestTimeLimit>1000</TestTimeLimit>
+       </FrameworkIndependent>
+       <FrameworkDependent>
+           <Mode>Sync</Mode>
+           <Extension></Extension>
+           <AsyncRequestCount></AsyncRequestCount>
+           <ThreadCount></ThreadCount>
+           <StreamCount></StreamCount>
+       </FrameworkDependent>
+     </Test>
+   </Tests>
+   ```
+
+1. Fill out the configuration file for the
    remote start script, you can find the template in the
    `src/config/remote_configuration_file_template.xml`.
-12. Fill it and save in
+   Fill it and save in
    `/tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml`.
-```xml
-<Computers>
-  <Computer>
-    <IP>1.1.1.1</IP>
-    <Login>admin</Login>
-    <Password>admin</Password>
-    <OS>Linux</OS>
-    <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-    <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
-    <BenchmarkConfig>FTP-server/benchmark_config/bench_config.xml</BenchmarkConfig>
-    <LogFile>/tmp/openvino-dl-benchmark/src/remote_start/log.txt</LogFile>
-    <ResultFile>/tmp/openvino-dl-benchmark/src/remote_start/result.csv</ResultFile>
-  </Computer>
-</Computers>
-```
-13. After that, you can run the remote start script,
-   this is done using the command:
+
+   ```xml
+   <Computers>
+     <Computer>
+       <IP>1.1.1.1</IP>
+       <Login>admin</Login>
+       <Password>admin</Password>
+       <OS>Linux</OS>
+       <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
+       <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
+       <BenchmarkConfig>FTP-server/benchmark_config/bench_config.xml</BenchmarkConfig>
+       <LogFile>/tmp/openvino-dl-benchmark/src/remote_start/log.txt</LogFile>
+       <ResultFile>/tmp/openvino-dl-benchmark/src/remote_start/result.csv</ResultFile>
+     </Computer>
+   </Computers>
+   ```
+
+1. Execute the remote start script using the following command:
+
    ```bash
    python3 remote_start \
    -c /tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml \
    -s 2.2.2.2 -l admin -p admin -r FTP-server/table_folder/all_results.csv
    ```
-14. Wait for completing the benchmark.
-15. Copy benchmarking results from the FTP-server to the local machine.
-16. Convert the results to web-format, for this you need to run the conversion
-   script using the following command:
+
+1. Wait for completing the benchmark.
+1. Copy benchmarking results from the FTP-server to the local machine.
+1. Convert the results to html using the following command:
+
    ```bash
    python -t /tmp/all_results.csv -r /tmp/formatted_results.html
    ```
+
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
