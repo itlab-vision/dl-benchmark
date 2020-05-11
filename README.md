@@ -94,8 +94,22 @@ follow instructions.
 
 ## Deployment example
 
+1. In order to start you need to download DLI. Clone it to `/tmp` folder
+   using the following commands:
+
+   ```bash
+   cd tmp
+   git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
+   ```
+
+1. It is required to create an FTP-server and create such directories in it:
+   * `docker_image_folder`
+   * `benchmark_config`
+   * `table_folder`
+
 1. For definiteness we select the OpenVINO Docker container. The Dockerfile
-   to build this image can be found in the `docker` folder.
+   to build this image can be found in the
+   `/tmp/openvino-dl-benchmark/docker/OpenVINO_DLDT` folder.
    Before building, you should put the current link to download
    the OpenVINO toolkit. Please, insert correct path in the following line:
 
@@ -103,7 +117,7 @@ follow instructions.
 
 1. To build a Docker image, please, use the following command:
 
-   `docker build -t <image name> . `
+   `docker build -t OpenVINO_Image . `
 
    The `build` searches for the Dockerfile in the current directory and starts
    building the image.
@@ -121,7 +135,7 @@ follow instructions.
    ```xml
    <Computers>
      <Computer>
-     <IP>1.1.1.1</IP>
+     <IP>4.4.4.4</IP>
      <Login>admin</Login>
      <Password>admin</Password>
      <OS>Linux</OS>
@@ -134,8 +148,7 @@ follow instructions.
    ```bash
    python3 deploy.py -s 2.2.2.2 -l admin -p admin \
        -i /tmp/openvino-dl-benchmark/docker/OpenVINO_Image.tar \
-       -d FTP-server/docker_image_folder \
-       -n OpenVINO_DLDT \
+       -d docker_image_folder -n OpenVINO_DLDT \
        --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
        --project_folder /tmp/openvino-dl-benchmark/
     ```
@@ -144,14 +157,14 @@ follow instructions.
 
 1. It is required to copy the datasets for inference using the following command:
 
-   `docker cp <Path to data on the main machine> OpenVINO_DLDT:/tmp/`
+   `docker cp /tmp/data/ImageNet OpenVINO_DLDT:/tmp/data/`
 
 ## Startup example
 
 1. Fill out the configuration file for the benchmarking script. It is required
    to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
-   Fill it and save on `FTP-server/benchmark_config/bench_config.xml`.
+   Fill it and save on `/benchmark_config/bench_config.xml`.
 
    ```xml
    <Tests>
@@ -194,13 +207,13 @@ follow instructions.
    ```xml
    <Computers>
      <Computer>
-       <IP>1.1.1.1</IP>
+       <IP>4.4.4.4</IP>
        <Login>admin</Login>
        <Password>admin</Password>
        <OS>Linux</OS>
        <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
        <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
-       <BenchmarkConfig>FTP-server/benchmark_config/bench_config.xml</BenchmarkConfig>
+       <BenchmarkConfig>/benchmark_config/bench_config.xml</BenchmarkConfig>
        <LogFile>/tmp/openvino-dl-benchmark/src/remote_start/log.txt</LogFile>
        <ResultFile>/tmp/openvino-dl-benchmark/src/remote_start/result.csv</ResultFile>
      </Computer>
@@ -212,11 +225,18 @@ follow instructions.
    ```bash
    python3 remote_start \
    -c /tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml \
-   -s 2.2.2.2 -l admin -p admin -r FTP-server/table_folder/all_results.csv
+   -s 2.2.2.2 -l admin -p admin -r /table_folder/all_results.csv
    ```
 
 1. Wait for completing the benchmark.
+
+1. After completion, in the `table_folder` folder there will be
+   a table with the combined results named `all_results`.
+
 1. Copy benchmarking results from the FTP-server to the local machine.
+
+   `scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/`
+
 1. Convert the results to html using the following command:
 
    ```bash
