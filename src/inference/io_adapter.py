@@ -240,22 +240,29 @@ class detection_io(io_adapter):
             image = input[i % ib].transpose((1, 2, 0))
             images.append(cv2.resize(image, (orig_w, orig_h)))
         for batch in range(0, b, ib):
-            for obj in result[batch][0]:
-                if obj[2] > self._threshold:
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch + out_num][0]:
                     image_number = int(obj[0])
-                    image = images[image_number + batch * ib]
-                    initial_h, initial_w = image.shape[:2]
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
-                        min(class_id * 5, 255))
-                    cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-                    log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
-                    log.info('Top left: ({0}, {1})'.format(xmin, ymin))
-                    log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
+                            min(class_id * 5, 255))
+                        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                if isbreak:
+                    break
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
