@@ -141,7 +141,7 @@ person-detection-asl-0001 | Окаймляющий прямоугольник:<b
 Исходное разрешение: 512 x 512
 
 
-Входное изображение и результат детектирования:
+Изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" height="300" src="images\product-detection-0001.bmp">
