@@ -77,6 +77,8 @@ class process(metaclass = abc.ABCMeta):
             return OpenVINO_process.create_process(test, executor, log)
         elif test.indep_parameters.inference_framework == 'Caffe':
             return IntelCaffe_process.create_process(test, executor, log)
+        else:
+            raise ValueError('Invalid framework name: only OpenVINO DLDT and Caffe are available')
 
 
     @abc.abstractmethod
