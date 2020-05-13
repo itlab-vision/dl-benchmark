@@ -360,7 +360,7 @@ class test(metaclass = abc.ABCMeta):
         elif framework == 'Caffe':
             return IntelCaffe_test(model, dataset, indep_parameters, dep_parameters)
         else:
-            raise ValueError('Invalid framework name: only OpenVINO DLDT and Caffe are available')
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
 
     @abc.abstractmethod
