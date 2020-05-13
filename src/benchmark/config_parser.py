@@ -207,7 +207,7 @@ class parameters_methods:
         for i in float_value.split('.'):
             if not self._int_value_is_correct(i):
                 return False
-        return True                
+        return True
 
 
 class framework_independent_parameters(parameters_methods):
@@ -309,8 +309,7 @@ class IntelCaffe_parameters(parameters_methods):
         set_in = set(channel_swap.split())
         if set_in == set_check:
             return True
-        else:
-            return False
+        return False
     
     
     def _mean_is_correct(self, mean):
@@ -358,8 +357,10 @@ class test(metaclass = abc.ABCMeta):
     def get_test(framework, model, dataset, indep_parameters, dep_parameters):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
-        elif framework == 'IntelCaffe':
+        elif framework == 'Caffe':
             return IntelCaffe_test(model, dataset, indep_parameters, dep_parameters)
+        else:
+            raise ValueError('Invalid framework name: only OpenVINO DLDT and Caffe are available')
 
 
     @abc.abstractmethod

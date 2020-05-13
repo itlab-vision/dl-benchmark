@@ -75,7 +75,7 @@ class process(metaclass = abc.ABCMeta):
     def get_process(test, executor, log):
         if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
             return OpenVINO_process.create_process(test, executor, log)
-        if test.indep_parameters.inference_framework == 'IntelCaffe':
+        elif test.indep_parameters.inference_framework == 'Caffe':
             return IntelCaffe_process.create_process(test, executor, log)
 
 
