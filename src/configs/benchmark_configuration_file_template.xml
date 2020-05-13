@@ -25,9 +25,9 @@
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
-			<ChannelSwap></ChannelSwap>
-			<Mean></Mean>
-			<InputScale></InputScale>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
         </FrameworkDependent>
     </Test>
 </Tests>
