@@ -72,6 +72,10 @@ class dependent_parameters_parser(metaclass = abc.ABCMeta):
     def get_parser(framework):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_parameters_parser()
+        elif framework == 'Caffe':
+            return IntelCaffe_parameters_parser()
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
 
     @abc.abstractmethod
