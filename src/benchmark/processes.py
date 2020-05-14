@@ -283,6 +283,17 @@ class IntelCaffe_process(process):
         command_line = '{0} {1} {2}'.format(python, path_to_intelcaffe_scrypt,
             common_params)
         return command_line
+    
+    
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+        return average_time, fps, latency
 
 
     @staticmethod
