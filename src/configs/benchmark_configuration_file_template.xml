@@ -6,7 +6,8 @@
             <Name></Name>
             <Precision></Precision>
             <SourceFramework></SourceFramework>
-            <Path></Path>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name></Name>

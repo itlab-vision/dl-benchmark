@@ -28,7 +28,8 @@
 - Тип данных весов описывется внутри тега `Precision`.
 - Фреймворк, с использованием которого обучена модель, описывается внутри
   тега `SourceFramework` (используется для формирования финальной таблицы результатов).
-- Абсолютный путь до директории, где расположена модель, описывается внутри тега `Path`.
+- Абсолютный путь до файла, который содержит описание модели, описывается внутри тега `ModelPath`.
+- Абсолютный путь до файла, который содержит веса модели, описывается внутри тега `WeightsPath`.
 
 Заполнение информации о выборке:
 
@@ -82,7 +83,8 @@
             <Name>densenet-121</Name>
             <Precision>FP32</Precision>
             <SourceFramework>Caffe</SourceFramework>
-            <Path>/home/alexander/models/classification/densenet/121/IR/FP32</Path>
+            <ModelPath>/home/alexander/models/classification/densenet/121/IR/FP32/densenet-121.xml</ModelPath>
+            <WeightsPath>/home/alexander/models/classification/densenet/121/IR/FP32/densenet-121.bin</WeightsPath>
         </Model>
         <Dataset>
             <Name>ImageNET</Name>
@@ -109,7 +111,8 @@
             <Name>densenet-121</Name>
             <Precision>FP32</Precision>
             <SourceFramework>Caffe</SourceFramework>
-            <Path>/home/alexander/models/classification/densenet/121/IR/FP32</Path>
+            <ModelPath>/home/alexander/models/classification/densenet/121/IR/FP32/densenet-121.xml</ModelPath>
+            <WeightsPath>/home/alexander/models/classification/densenet/121/IR/FP32/densenet-121.bin</WeightsPath>
         </Model>
         <Dataset>
             <Name>ImageNET</Name>
