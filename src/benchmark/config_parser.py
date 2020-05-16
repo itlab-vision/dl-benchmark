@@ -15,7 +15,8 @@ class parser:
         CONFIG_MODEL_NAME_TAG = 'Name'
         CONFIG_MODEL_PRECISION_TAG = 'Precision'
         CONFIG_MODEL_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
-        CONFIG_MODEL_PATH_TAG = 'Path'
+        CONFIG_MODEL_MODEL_PATH_TAG = 'ModelPath'
+        CONFIG_MODEL_WEIGHTS_PATH_TAG = 'WeightsPath'
 
         model_tag = curr_test.getElementsByTagName(CONFIG_MODEL_TAG)[0]
         return model(
@@ -23,7 +24,8 @@ class parser:
             name = model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
             precision = model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
             source_framework = model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
-            path = model_tag.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+            model_path = model_tag.getElementsByTagName(CONFIG_MODEL_MODEL_PATH_TAG)[0].firstChild.data,
+            weights_path = model_tag.getElementsByTagName(CONFIG_MODEL_WEIGHTS_PATH_TAG)[0].firstChild.data
         )
 
 
@@ -117,13 +119,13 @@ class model:
         return False
 
 
-    def __init__(self, task, name, path, precision, source_framework):
+    def __init__(self, task, name, model_path, weights_path, precision, source_framework):
         self.source_framework = None
         self.task = task
         self.name = None
         self.model = None
         self.weight = None
-        self.datatype = None
+        self.precision = None
         if self._parameter_not_is_none(source_framework):
             self.source_framework = source_framework
         else:
@@ -132,16 +134,16 @@ class model:
             self.name = name
         else:
             raise ValueError('Model name is required parameter.')
-        if self._parameter_not_is_none(path):
-            self.model = os.path.join(path, '{}.xml'.format(name))
-            self.weight = os.path.join(path, '{}.bin'.format(name))
-            if (self.model is None) or (self.weight is None):
-                raise ValueError('Wrong model IR format. \
-                    The folder should contain .xml and .bin files for only one model.')
-        else:
-            raise ValueError('Path to folder with IR format model is required parameter.')
+        if self._parameter_not_is_none(model_path):
+            self.model = model_path
+        else
+            raise ValueError('Path to model is required parameter.')
+        if self._parameter_not_is_none(weights_path):
+            self.weight = weights_path
+        else
+            raise ValueError('Path to model weights is required parameter.')
         if self._parameter_not_is_none(precision):
-            self.datatype = precision
+            self.precision = precision
         else:
             raise ValueError('Precision is required parameter.')
 
@@ -318,7 +320,7 @@ class OpenVINO_test(test):
         other_param = ', '.join(other_param)
         return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
-            self.indep_parameters.inference_framework, self.model.datatype,
+            self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.dep_parameters.mode, other_param
         )
 
