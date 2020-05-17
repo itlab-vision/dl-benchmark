@@ -136,11 +136,11 @@ class model:
             raise ValueError('Model name is required parameter.')
         if self._parameter_not_is_none(model_path):
             self.model = model_path
-        else
+        else:
             raise ValueError('Path to model is required parameter.')
         if self._parameter_not_is_none(weights_path):
             self.weight = weights_path
-        else
+        else:
             raise ValueError('Path to model weights is required parameter.')
         if self._parameter_not_is_none(precision):
             self.precision = precision
