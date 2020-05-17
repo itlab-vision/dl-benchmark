@@ -4,13 +4,13 @@ import numpy as np
 import logging as log
 import cv2
 from copy import copy
-from openvino.inference_engine import IENetwork, IECore
+from openvino.inference_engine import IECore
 
 
-def create_network(model_xml, model_bin, log):
+def create_network(iecore, model_xml, model_bin, log):
     log.info('Loading network files:\n\t {0}\n\t {1}'.format(
         model_xml, model_bin))
-    network = IENetwork(model = model_xml, weights = model_bin)
+    network = iecore.read_network(model = model_xml, weights = model_bin)
     return network
 
 
