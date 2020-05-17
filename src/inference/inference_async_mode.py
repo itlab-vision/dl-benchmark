@@ -147,7 +147,7 @@ def main():
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
-        net.batch_size = args.batch_size
+        utils.reshape_input(net, args.batch_size)
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')

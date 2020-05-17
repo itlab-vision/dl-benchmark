@@ -107,3 +107,12 @@ def get_input_shape(io_model_wrapper, model):
         shape = shape[:-1]
         layer_shapes.update({input_layer : shape})
     return layer_shapes
+
+
+def reshape_input(net, batch_size):
+    new_shapes = {}
+    for layer in net.inputs:
+        shape = net.inputs[layer].shape
+        shape[0] = batch_size
+        new_shapes.update({layer : shape})
+    net.reshape(new_shapes)
