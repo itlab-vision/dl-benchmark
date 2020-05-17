@@ -64,5 +64,8 @@ RUN python3 converter.py --all --mo /opt/intel/openvino/deployment_tools/model_o
 WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
 
+ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
+RUN git clone $DATASET_DOWNLOAD_LINK
+
 RUN cat /root/.bashrc > tmp && echo 'source /opt/intel/openvino/bin/setupvars.sh' > /root/.bashrc && \
     cat tmp >> /root/.bashrc && rm tmp

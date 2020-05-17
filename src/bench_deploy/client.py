@@ -67,7 +67,7 @@ def main():
     os.system('docker load --input {}'.format(file_path))
 
     log.info('Docker run image')
-    os.system('docker run --privileged -d -t --name {} {}'.format(args.container_name, image_name.split('.')[0]))
+    os.system('docker run --privileged -d -t --name {} –v /dev:/dev –network=host {}'.format(args.container_name, image_name.split('.')[0]))
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
