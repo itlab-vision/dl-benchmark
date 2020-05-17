@@ -70,8 +70,6 @@ def set_config(iecore, devices, nthreads, nstreams, dump, mode):
                 if device in streams_dict.keys() and streams_dict[device]:
                     gpu_throughput['GPU_THROUGHPUT_STREAMS'] = streams_dict['GPU']
                 iecore.set_config(gpu_throughput, 'GPU')
-        if device == 'MYRIAD':
-            iecore.set_config({'LOG_LEVEL': 'LOG_INFO', 'VPU_LOG_LEVEL': 'LOG_WARNING'}, 'MYRIAD')
     if dump:
         if 'HETERO' in devices:
             iecore.set_config({'HETERO_DUMP_GRAPH_DOT': 'YES'}, 'HETERO')
