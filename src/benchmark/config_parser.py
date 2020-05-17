@@ -313,9 +313,7 @@ class IntelCaffe_parameters(parameters_methods):
     def _channel_swap_is_correct(self, channel_swap):
         set_check = {'0', '1', '2'}
         set_in = set(channel_swap.split())
-        if set_in == set_check:
-            return True
-        return False
+        return set_in == set_check
     
     
     def _mean_is_correct(self, mean):
@@ -409,12 +407,11 @@ class IntelCaffe_test(test):
         parameters.update({'Iteration count' : self.indep_parameters.iteration})
         other_param = []
         for key in parameters:
-            if parameters[key] != None:
-                other_param.append('{}: {}'.format(key, parameters[key]))
+            other_param.append('{}: {}'.format(key, parameters[key]))
         other_param = ', '.join(other_param)
         return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
-            self.indep_parameters.inference_framework, self.model.datatype,
+            self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, other_param
         )
 
