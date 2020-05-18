@@ -80,11 +80,14 @@ def main():
     with open(benchmark_config, 'wb') as config_file:
         ftp_connection.retrbinary('RETR {}'.format(param_list.benchmark_config),
             config_file.write)
+    ftp_connection.close()
 
     launch_benchmark(param_list.path_to_env, path_to_benchmark,
         benchmark_config, param_list.benchmark_executor, param_list.os_type,
         path_to_res_table, log_file)
 
+    ftp_connection = ftplib.FTP(param_list.server_ip,
+        param_list.login, param_list.password)
     ftp_connection.cwd(param_list.ftp_dir)
     result_table = open(path_to_res_table, 'rb')
     ftp_connection.storbinary('STOR {}_result_table.csv'.format(platform.node()),
