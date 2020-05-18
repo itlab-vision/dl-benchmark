@@ -74,6 +74,10 @@ class dependent_parameters_parser(metaclass = abc.ABCMeta):
     def get_parser(framework):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_parameters_parser()
+        elif framework == 'Caffe':
+            return IntelCaffe_parameters_parser()
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
 
     @abc.abstractmethod
@@ -109,6 +113,29 @@ class OpenVINO_parameters_parser(dependent_parameters_parser):
             async_request_count = _async_request_count.data if _async_request_count else None,
             thread_count = _thread_count.data if _thread_count else None,
             stream_count = _stream_count.data if _stream_count else None
+        )
+
+
+class IntelCaffe_parameters_parser(dependent_parameters_parser):
+    def parse_parameters(self, curr_test):
+        CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
+        CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
+        CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
+        CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG = 'InputScale'
+
+        dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
+
+        _channel_swap = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _mean = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
+        _input_scale = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
+
+        return IntelCaffe_parameters(
+            channel_swap = _channel_swap.data if _channel_swap else None,
+            mean = _mean.data if _mean else None,
+            input_scale = _input_scale.data if _input_scale else None
         )
 
 
@@ -282,6 +309,46 @@ class OpenVINO_parameters(parameters_methods):
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
 
+class IntelCaffe_parameters(parameters_methods):
+    def _channel_swap_is_correct(self, channel_swap):
+        set_check = {'0', '1', '2'}
+        set_in = set(channel_swap.split())
+        return set_in == set_check
+    
+    
+    def _mean_is_correct(self, mean):
+        mean_check = mean.split()
+        if len(mean_check) != 3:
+            return False
+        for i in mean_check:
+            if not self._float_value_is_correct(i):
+                return False
+        return True
+
+
+    def __init__(self, channel_swap, mean, input_scale):
+
+        self.channel_swap = None
+        self.mean = None
+        self.input_scale = None
+
+        if self._parameter_not_is_none(channel_swap):
+            if self._channel_swap_is_correct(channel_swap):
+                self.channel_swap = channel_swap
+            else:
+                raise ValueError('Channel swap can only take values: list of unique values 0, 1, 2.')
+        if self._parameter_not_is_none(mean):
+            if self._mean_is_correct(mean):
+                self.mean = mean
+            else:
+                raise ValueError('Mean can only take values: list of 3 float elements.')
+        if self._parameter_not_is_none(input_scale):
+            if self._float_value_is_correct(input_scale):
+                self.input_scale = input_scale
+            else:
+                raise ValueError('Input scale can only take values: float greater than zero.')
+
+
 class test(metaclass = abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         self.model = model
@@ -294,6 +361,10 @@ class test(metaclass = abc.ABCMeta):
     def get_test(framework, model, dataset, indep_parameters, dep_parameters):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
+        elif framework == 'Caffe':
+            return IntelCaffe_test(model, dataset, indep_parameters, dep_parameters)
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
 
     @abc.abstractmethod
@@ -322,6 +393,20 @@ class OpenVINO_test(test):
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.dep_parameters.mode, other_param
+        )
+
+
+class IntelCaffe_test(test):
+    def __init__(self, model, dataset, indep_parameters, dep_parameters):
+        super().__init__(model, dataset, indep_parameters, dep_parameters)
+
+
+    def get_report(self):
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Device: {7}, Iteration count: {8}'.format(
+            self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
+            self.indep_parameters.inference_framework, self.model.precision,
+            self.indep_parameters.batch_size, self.indep_parameters.device,
+            self.indep_parameters.iteration
         )
 
 

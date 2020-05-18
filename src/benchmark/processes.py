@@ -75,6 +75,10 @@ class process(metaclass = abc.ABCMeta):
     def get_process(test, executor, log):
         if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
             return OpenVINO_process.create_process(test, executor, log)
+        elif test.indep_parameters.inference_framework == 'Caffe':
+            return IntelCaffe_process.create_process(test, executor, log)
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
 
     @abc.abstractmethod
@@ -214,3 +218,84 @@ class async_OpenVINO_process(OpenVINO_process):
         average_time = float(result[0])
         fps = float(result[1])
         return average_time, fps, 0
+        
+        
+class IntelCaffe_process(process):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+
+    @staticmethod
+    def __add_channel_swap_for_cmd_line(command_line, channel_swap):
+        return '{0} --channel_swap {1}'.format(command_line, channel_swap)
+
+
+    @staticmethod
+    def __add_mean_for_cmd_line(command_line, mean):
+        return '{0} --mean {1}'.format(command_line, mean)
+
+
+    @staticmethod
+    def __add_input_scale_for_cmd_line(command_line, input_scale):
+        return '{0} --input_scale {1}'.format(command_line, input_scale)
+
+
+    @staticmethod
+    def __add_raw_output_time_for_cmd_line(command_line, raw_output):
+        return '{0} {1}'.format(command_line, raw_output)
+
+
+    def _fill_command_line(self):
+        path_to_intelcaffe_scrypt = os.path.normpath(os.path.join(
+            self._my_executor.get_path_to_inference_folder(),
+            'inference_caffe.py')
+        )
+        python = process._get_cmd_python_version()
+    
+        model_prototxt = self._my_test.model.model
+        model_caffemodel = self._my_test.model.weight
+        dataset = self._my_test.dataset.path
+        batch = self._my_test.indep_parameters.batch_size
+        device = self._my_test.indep_parameters.device
+        iteration = self._my_test.indep_parameters.iteration
+
+        common_params = '-m {0} -w {1} -i {2} -b {3} -d {4} -ni {5}'.format(
+            model_prototxt, model_caffemodel, dataset, batch, device, iteration)
+
+        channel_swap = self._my_test.dep_parameters.channel_swap
+        if channel_swap:
+            common_params = IntelCaffe_process.__add_channel_swap_for_cmd_line(
+                common_params, channel_swap)
+
+        mean = self._my_test.dep_parameters.mean
+        if mean:
+            common_params = IntelCaffe_process.__add_mean_for_cmd_line(
+                common_params, mean)
+
+        input_scale = self._my_test.dep_parameters.input_scale
+        if input_scale:
+            common_params = IntelCaffe_process.__add_input_scale_for_cmd_line(
+                common_params, input_scale)
+
+        common_params = IntelCaffe_process.__add_raw_output_time_for_cmd_line(
+            common_params, '--raw_output true')
+
+        command_line = '{0} {1} {2}'.format(python, path_to_intelcaffe_scrypt,
+            common_params)
+        return command_line
+    
+    
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+        return average_time, fps, latency
+
+
+    @staticmethod
+    def create_process(test, executor, log):
+        return IntelCaffe_process(test, executor, log)

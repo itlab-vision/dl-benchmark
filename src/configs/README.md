@@ -70,6 +70,15 @@
   - `StreamCount` - опциональный тег. Может быть заполнен для асинхронного интерфейса.
     Описывает максимальное количество одновременно выполняющихся запросов на вывод.
 
+- Набор тегов для тестирования вывода средствами Intel Optimization for Caffe:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении. По умолчанию будет установлен порядок (2, 0, 1), что соответствует BGR.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения. По умолчанию (0, 0, 0).
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения. По умолчению равен 1.
+
 ### Примеры заполнения
 
 #### Пример заполнения конфигурации для измерения производительности вывода средствами Intel Distribution of OpenVINO Toolkit
@@ -131,6 +140,40 @@
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Intel Optimization for Caffe
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>mobilenet-v1-1.0-224</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>/home/roix/models/public/mobilenet-v1-1.0-224/mobilenet-v1-1.0-224.prototxt</ModelPath>
+            <WeightsPath>/home/roix/models/public/mobilenet-v1-1.0-224/mobilenet-v1-1.0-224.caffemodel</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/home/roix/data/ImageNET</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Caffe</InferenceFramework>
+            <BatchSize>4</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1000</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap>2 1 0</ChannelSwap>
+            <Mean>103.94 116.78 123.68</Mean>
+            <InputScale>0.017</InputScale>
         </FrameworkDependent>
     </Test>
 </Tests>
