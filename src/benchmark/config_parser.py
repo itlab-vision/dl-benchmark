@@ -402,17 +402,11 @@ class IntelCaffe_test(test):
 
 
     def get_report(self):
-        parameters = OrderedDict()
-        parameters.update({'Device' : self.indep_parameters.device})
-        parameters.update({'Iteration count' : self.indep_parameters.iteration})
-        other_param = []
-        for key in parameters:
-            other_param.append('{}: {}'.format(key, parameters[key]))
-        other_param = ', '.join(other_param)
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7}'.format(
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Device: {7}, Iteration count: {8}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
-            self.indep_parameters.batch_size, other_param
+            self.indep_parameters.batch_size, self.indep_parameters.device,
+            self.indep_parameters.iteration
         )
 
 
