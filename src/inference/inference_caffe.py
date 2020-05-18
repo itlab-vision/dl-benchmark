@@ -1,7 +1,6 @@
 import sys
 import argparse
 import caffe
-import utils
 import logging as log
 import postprocessing_data as pp
 from time import time
@@ -37,7 +36,7 @@ def build_argparser():
     parser.add_argument('--raw_output', help = 'Raw output without logs',
         default = False, type = bool, dest = 'raw_output')
     parser.add_argument('--channel_swap', help = 'Parameter channel swap',
-        default = [2, 1, 0], type = float, nargs = 3, dest = 'channel_swap')
+        default = [2, 1, 0], type = int, nargs = 3, dest = 'channel_swap')
     parser.add_argument('--mean', help = 'Parameter mean',
         default = [0, 0, 0], type = float, nargs = 3, dest = 'mean')
     parser.add_argument('--input_scale', help = 'Parameter input scale',
@@ -48,8 +47,20 @@ def build_argparser():
     return parser
 
 
+def get_input_shape(io_model_wrapper, model):
+    layer_shapes = dict()
+    layer_names = io_model_wrapper.get_input_layer_names(model)
+    for input_layer in layer_names:
+        shape = ''
+        for dem in io_model_wrapper.get_input_layer_shape(model, input_layer):
+            shape += '{0}x'.format(dem)
+        shape = shape[:-1]
+        layer_shapes.update({input_layer : shape})
+    return layer_shapes
+
+
 def set_device_to_infer(device):
-    if device is 'CPU':
+    if device == 'CPU':
         caffe.set_mode_cpu()
     else: 
         raise ValueError('The device is not supported')
@@ -134,7 +145,7 @@ def main():
             args.model_prototxt, args.model_caffemodel))
         net = load_network(args.model_prototxt, args.model_caffemodel)
         net = network_input_reshape(net, args.batch_size)
-        input_shapes = utils.get_input_shape(model_wrapper, net)
+        input_shapes = get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         log.info('Prepare input data')
