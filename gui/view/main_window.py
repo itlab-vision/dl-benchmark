@@ -27,8 +27,8 @@ class MainTabWidget(QWidget):
         tab_data = WidgetData(self)
         tab_configuration = WidgetConfig(self)
         tabs.resize(920, 560)
-        tabs.addTab(tab_data, 'Работа с данными')
-        tabs.addTab(tab_configuration, 'Создание конфигураций')
+        tabs.addTab(tab_data, 'Data information')
+        tabs.addTab(tab_configuration, 'Creating Configurations')
         return tabs
 
 

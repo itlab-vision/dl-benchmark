@@ -8,8 +8,8 @@ class GroupButtonModels(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить модель', 'Удалить модель', 'Загрузить таблицу', 'Сохранить таблицу',
-                             'Очистить таблицу']
+        list_name_buttons = ['Add information', 'Delete information', 'Change information', 'Load table',
+                             'Save table', 'Clear table']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 
@@ -27,8 +27,8 @@ class GroupButtonData(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить данные', 'Удалить данные', 'Загрузить таблицу', 'Сохранить таблицу',
-                             'Очистить таблицу']
+        list_name_buttons = ['Add information', 'Delete information', 'Change information', 'Load table',
+                             'Save table', 'Clear table']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 
@@ -46,8 +46,8 @@ class GroupButtonTestConfig(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить информацию', 'Удалить информацию', 'Загрузить таблицу', 'Сохранить таблицу',
-                             'Очистить таблицу']
+        list_name_buttons = ['Add information', 'Delete information', 'Change information', 'Load table',
+                             'Save table', 'Clear table']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 
@@ -65,8 +65,8 @@ class GroupButtonRemoteConfig(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить информацию', 'Удалить информацию', 'Загрузить таблицу', 'Сохранить таблицу',
-                             'Очистить таблицу']
+        list_name_buttons = ['Add information', 'Delete information', 'Change information', 'Load table',
+                             'Save table', 'Clear table']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 
@@ -84,8 +84,8 @@ class GroupButtonDeployConfig(QGroupBox):
         self.setLayout(self.__create_buttons_vbox())
 
     def __create_dict_buttons(self):
-        list_name_buttons = ['Добавить информацию', 'Удалить информацию', 'Изменить информацию', 'Загрузить таблицу',
-                             'Сохранить таблицу', 'Очистить таблицу']
+        list_name_buttons = ['Add information', 'Delete information', 'Change information', 'Load table',
+                             'Save table', 'Clear table']
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 

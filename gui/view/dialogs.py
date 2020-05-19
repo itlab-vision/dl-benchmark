@@ -15,7 +15,7 @@ class DeployDialog(QDialog):
         self.__init_ui()
 
     def __init_ui(self):
-        self.setWindowTitle("Добавить модель")
+        self.setWindowTitle("Information about computer")
         ip_lb = QLabel("IP")
         login_lb = QLabel("Login")
         password_lb = QLabel("Password")

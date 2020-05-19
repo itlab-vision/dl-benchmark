@@ -31,10 +31,10 @@ class WidgetData(QWidget):
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
-        grid.addWidget(self._widgets['Управление моделями'], 1, 0)
-        self._widgets['Управление моделями'].show()
-        grid.addWidget(self._widgets['Управление данными'], 1, 0)
-        self._widgets['Управление данными'].hide()
+        grid.addWidget(self._widgets['Models'], 1, 0)
+        self._widgets['Models'].show()
+        grid.addWidget(self._widgets['Data'], 1, 0)
+        self._widgets['Data'].hide()
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -46,7 +46,7 @@ class WidgetData(QWidget):
     def __create_dict(self):
         model_settings = WidgetModelSettings(self)
         data_settings = WidgetDataSettings(self)
-        dictionary = {'Управление моделями': model_settings, 'Управление данными': data_settings}
+        dictionary = {'Models': model_settings, 'Data': data_settings}
         return dictionary
 
     def onActivated(self, type):

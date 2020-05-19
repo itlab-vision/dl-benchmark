@@ -49,12 +49,12 @@ class WidgetDeployConfigs(QWidget):
         self.__set_connections()
 
     def __set_connections(self):
-        self.__buttons.get_buttons()['Добавить информацию'].clicked.connect(self.__show_dialog_add_computer)
-        self.__buttons.get_buttons()['Удалить информацию'].clicked.connect(self.__del_click)
-        self.__buttons.get_buttons()['Изменить информацию'].clicked.connect(self.__show_dialog_change_computer)
-        self.__buttons.get_buttons()['Загрузить таблицу'].clicked.connect(self.loadSignal.emit)
-        self.__buttons.get_buttons()['Сохранить таблицу'].clicked.connect(self.saveSignal.emit)
-        self.__buttons.get_buttons()['Очистить таблицу'].clicked.connect(self.clearSignal.emit)
+        self.__buttons.get_buttons()['Add information'].clicked.connect(self.__show_dialog_add_computer)
+        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
+        self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_computer)
+        self.__buttons.get_buttons()['Load table'].clicked.connect(self.loadSignal.emit)
+        self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
+        self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
         self.delSignal.emit(self.__table.get_selected_rows())
@@ -96,14 +96,14 @@ class WidgetConfig(QWidget):
         grid = QGridLayout()
         self._widgets = self.__create_dict()
         grid.addWidget(self.__create_combobox(), 0, 0)
-        grid.addWidget(self._widgets['Составить конфигурацию тестов'], 1, 0)
-        self._widgets['Составить конфигурацию тестов'].show()
-        grid.addWidget(self._widgets['Составить конфигурацию удаленного запуска'], 1, 0)
-        self._widgets['Составить конфигурацию удаленного запуска'].hide()
-        grid.addWidget(self._widgets['Составить конфигурацию резвертки'], 1, 0)
-        self._widgets['Составить конфигурацию резвертки'].hide()
+        grid.addWidget(self._widgets['Test configuration'], 1, 0)
+        self._widgets['Test configuration'].show()
+        grid.addWidget(self._widgets['Remote configuration'], 1, 0)
+        self._widgets['Remote configuration'].hide()
+        grid.addWidget(self._widgets['Deploy configuration'], 1, 0)
+        self._widgets['Deploy configuration'].hide()
         model = DeployConfig()
-        self._deploy_presenter = DeployPresenter(self._widgets['Составить конфигурацию резвертки'], model)
+        self._deploy_presenter = DeployPresenter(self._widgets['Deploy configuration'], model)
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -116,9 +116,9 @@ class WidgetConfig(QWidget):
         tests_configs = WidgetTestConfigs(self)
         remote_configs = WidgetRemoteConfigs(self)
         deploy_configs = WidgetDeployConfigs(self)
-        dictionary = {'Составить конфигурацию тестов': tests_configs,
-                      'Составить конфигурацию удаленного запуска': remote_configs,
-                      'Составить конфигурацию резвертки': deploy_configs}
+        dictionary = {'Test configuration': tests_configs,
+                      'Remote configuration': remote_configs,
+                      'Deploy configuration': deploy_configs}
         return dictionary
 
     def onActivated(self, type):

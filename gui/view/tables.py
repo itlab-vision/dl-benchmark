@@ -60,18 +60,15 @@ class TableData(QTableWidget):
         cell.setFlags(QtCore.Qt.ItemIsEnabled)
         return cell
 
-    def clear_table(self):
+    def clear(self):
         for i in range(self._count_row):
             for j in range(self._count_col):
                 self.setItem(i, j, self.__create_cell(''))
 
-    def update(self):
+    def update_table(self):
         self.clear()
         count = 0
-        for data in self._data:
-            self.setItem(count, 0, self.__create_cell(data.name))
-            self.setItem(count, 1, self.__create_cell(data.path))
-            count += 1
+        # заполнение
 
 
 class TableTestConfig(QTableWidget):
@@ -177,11 +174,11 @@ class TableDeployConfig(QTableWidget):
         self.clear()
         count = 0
         for i in range(len(computers)):
-            self.setItem(i, 0, self.__create_cell(computers[i].get_ip()))
-            self.setItem(i, 1, self.__create_cell(computers[i].get_login()))
-            self.setItem(i, 2, self.__create_cell(computers[i].get_password()))
-            self.setItem(i, 3, self.__create_cell(computers[i].get_os()))
-            self.setItem(i, 4, self.__create_cell(computers[i].get_download_folder()))
+            self.setItem(i, 0, self.__create_cell(computers[i].ip))
+            self.setItem(i, 1, self.__create_cell(computers[i].login))
+            self.setItem(i, 2, self.__create_cell(computers[i].password))
+            self.setItem(i, 3, self.__create_cell(computers[i].os))
+            self.setItem(i, 4, self.__create_cell(computers[i].download_folder))
             count += 1
 
     def clicked_table(self):
