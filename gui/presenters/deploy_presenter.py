@@ -3,6 +3,8 @@ class DeployPresenter(object):
         self.__view = view
         self.__model = model
         self.__view.delSignal.connect(self.handle_del_button)
+        self.__view.loadSignal.connect(self.handle_load_button)
+        self.__view.saveSignal.connect(self.handle_save_button)
         self.__view.clearSignal.connect(self.handle_clear_button)
         self.__view.addComputerSignal.connect(self.handle_add_computer)
         self.__view.changeComputerSignal.connect(self.handle_change_computer)
@@ -10,6 +12,13 @@ class DeployPresenter(object):
     def handle_del_button(self, indexes):
         self.__model.delete_computers(indexes)
         self.update_view(self.__model.get_computers())
+
+    def handle_load_button(self, path_to_config):
+        self.__model.parse_config(path_to_config)
+        self.update_view(self.__model.get_computers())
+
+    def handle_save_button(self):
+        self.__view.show_message_status_saving(self.__model.create_config())
 
     def handle_clear_button(self):
         self.__model.clear()

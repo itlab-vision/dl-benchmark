@@ -30,7 +30,7 @@ class WidgetRemoteConfigs(QWidget):
 class WidgetDeployConfigs(QWidget):
 
     delSignal = QtCore.pyqtSignal(list)
-    loadSignal = QtCore.pyqtSignal()
+    loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
 
@@ -52,7 +52,7 @@ class WidgetDeployConfigs(QWidget):
         self.__buttons.get_buttons()['Add information'].clicked.connect(self.__show_dialog_add_computer)
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_computer)
-        self.__buttons.get_buttons()['Load table'].clicked.connect(self.loadSignal.emit)
+        self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
         self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
@@ -82,6 +82,17 @@ class WidgetDeployConfigs(QWidget):
             self.changeComputerSignal.emit(row, dialog.get_ip(), dialog.get_login(), dialog.get_password(),
                                            dialog.get_os(), dialog.get_download_folder())
         self.__table.remove_selection()
+
+    def __show_dialog_parser_config(self):
+        path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
+        if path_to_config:
+            self.loadSignal.emit(path_to_config[0])
+
+    def show_message_status_saving(self, status):
+        if status:
+            QMessageBox.information(self, "Success", "Deploy configuration was created successfully!")
+        else:
+            QMessageBox.warning(self, "Fail", "Deploy configuration was not created!")
 
     def get_selected_rows(self):
         return self.__table.get_selected_rows()
