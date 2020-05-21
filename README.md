@@ -1,4 +1,4 @@
-# DLI: Deep Learning Inference Benchmark based on Intel® Distribution of OpenVINO™ toolkit
+# DLI: Deep Learning Inference Benchmark based on Intel® Distribution of OpenVINO™ Toolkit
 
 ## Introduction
 
@@ -8,7 +8,7 @@ The main advantage of DLI from the existing benchmarks
 is the availability of perfomance results for a large number
 of deep models inferred on Intel platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
-DLI is based on the [Intel® Distribution of OpenVINO™ toolkit][openvino-toolkit].
+DLI is based on the [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 
 More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
