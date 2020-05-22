@@ -120,9 +120,11 @@ follow instructions.
    to build this image can be found in the
    `/tmp/openvino-dl-benchmark/docker/OpenVINO_DLDT` folder.
    Before building, you should put the current link to download
-   the OpenVINO toolkit. Please, insert correct path in the following line:
+   the OpenVINO toolkit and link to dataset it should be a git
+   repository. Please, insert correct path in the following line:
 
    `ARG DOWNLOAD_LINK=<Link to download Intel Distribution of OpenVINO Toolkit>`
+   `ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>`
 
 1. To build docker image, please, use the following command:
 
@@ -169,10 +171,6 @@ follow instructions.
    `--machine_list` configuration file, with a list of machines on which plan to deploy.
 
    After this stage, there is a docker container at each computer.
-
-1. It is required to copy the datasets for inference using the following command:
-
-   `docker cp /tmp/data/ImageNet OpenVINO_DLDT:/tmp/data/`
 
 ## Startup example
 
