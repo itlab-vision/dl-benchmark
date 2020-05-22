@@ -109,6 +109,13 @@ follow instructions.
    - `benchmark_config` is a directory for storing configurationn files.
    - `table_folder` is a directory for storing performance results.
 
+   Use these parameters to connect to FTP-server:
+   ```xml
+   <IP>2.2.2.2</IP>
+   <Login>admin</Login>
+   <Password>admin</Password>
+   ```
+
 1. For definiteness, we select the OpenVINO Docker container. The Dockerfile
    to build this image can be found in the
    `/tmp/openvino-dl-benchmark/docker/OpenVINO_DLDT` folder.
@@ -138,8 +145,8 @@ follow instructions.
    <Computers>
      <Computer>
        <IP>4.4.4.4</IP>
-       <Login>admin</Login>
-       <Password>admin</Password>
+       <Login>user</Login>
+       <Password>user</Password>
        <OS>Linux</OS>
        <DownloadFolder>/tmp/docker_folder</DownloadFolder>
      </Computer>
@@ -154,6 +161,12 @@ follow instructions.
        --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
        --project_folder /tmp/openvino-dl-benchmark/
     ```
+
+   The first three parameters `-s, -l, -p` are responsible for access
+   to the FTP-server, `-i` the path to the archived Docker-image,
+   `-d` the folder on the FTP-server where the Docker-image will be uploaded,
+   `-n` the name with which the Docker-container will be launched,
+   `--machine_list` configuration file, with a list of machines on which plan to deploy.
 
    After this stage, there is a docker container at each computer.
 
@@ -210,8 +223,8 @@ follow instructions.
    <Computers>
      <Computer>
        <IP>4.4.4.4</IP>
-       <Login>admin</Login>
-       <Password>admin</Password>
+       <Login>user</Login>
+       <Password>user</Password>
        <OS>Linux</OS>
        <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
        <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
