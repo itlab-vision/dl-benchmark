@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
+
 class GroupButtonModels(QGroupBox):
     def __init__(self, parent):
         super().__init__(parent)
@@ -75,6 +76,9 @@ class GroupButtonRemoteConfig(QGroupBox):
         for name_button in self._buttons:
             vbox.addWidget(self._buttons[name_button])
         return vbox
+
+    def get_buttons(self):
+        return self._buttons
 
 
 class GroupButtonDeployConfig(QGroupBox):

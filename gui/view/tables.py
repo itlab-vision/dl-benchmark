@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
-from models.deploy_config import *
+from models.models import *
 
 
 class TableModel(QTableWidget):
@@ -118,6 +118,7 @@ class TableRemoteConfig(QTableWidget):
         self.setHorizontalHeaderLabels(self._headers)
         self.__resize_columns()
         self.clear()
+        self.clicked.connect(self.clicked_table)
 
     def __resize_columns(self):
         header = self.horizontalHeader()
@@ -126,7 +127,7 @@ class TableRemoteConfig(QTableWidget):
 
     def __create_cell(self, text):
         cell = QTableWidgetItem(text)
-        cell.setFlags(QtCore.Qt.ItemIsEnabled)
+        cell.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
         return cell
 
     def clear(self):
@@ -134,10 +135,30 @@ class TableRemoteConfig(QTableWidget):
             for j in range(self._count_col):
                 self.setItem(i, j, self.__create_cell(''))
 
-    def update(self):
+    def update(self, computers):
         self.clear()
         count = 0
-        # заполнение
+        for i in range(len(computers)):
+            self.setItem(i, 0, self.__create_cell(computers[i].ip))
+            self.setItem(i, 1, self.__create_cell(computers[i].login))
+            self.setItem(i, 2, self.__create_cell(computers[i].password))
+            self.setItem(i, 3, self.__create_cell(computers[i].os))
+            self.setItem(i, 4, self.__create_cell(computers[i].path_to_ftp_client))
+            self.setItem(i, 5, self.__create_cell(computers[i].benchmark_config))
+            self.setItem(i, 6, self.__create_cell(computers[i].log_file))
+            self.setItem(i, 7, self.__create_cell(computers[i].res_file))
+            count += 1
+
+    def clicked_table(self):
+        self.__selected_rows = list(dict.fromkeys([index.row() for index in self.selectedIndexes()]))
+        self.__selected_rows.sort(reverse=True)
+
+    def get_selected_rows(self):
+        return self.__selected_rows
+
+    def remove_selection(self):
+        for index in self.selectedIndexes():
+            self.itemFromIndex(index).setSelected(False)
 
 
 class TableDeployConfig(QTableWidget):
