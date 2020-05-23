@@ -3,6 +3,22 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from xml.dom import minidom
 
 
+class Model:
+    def __init__(self, task=None, name=None, precision=None, framework=None, model_path=None, weights_path=None):
+        self.task = task
+        self.name = name
+        self.precision = precision
+        self.framework = framework
+        self.model_path = model_path
+        self.weights_path = weights_path
+
+
+class Dataset:
+    def __init__(self, name=None, path=None):
+        self.name = name
+        self.path = path
+
+
 class RemoteComputer:
     def __init__(self, ip=None, login=None, password=None, os=None, path_to_ftp_client=None, benchmark_config=None,
                  log_file=None, res_file=None):
@@ -25,9 +41,53 @@ class DeployComputer:
         self.download_folder = download_folder
 
 
+class Models:
+    def __init__(self):
+        self.__models = []
+
+    def get_models(self):
+        return self.__models
+
+    def add_model(self, task, name, presicion, framework, model_path, weights_path):
+        self.__models.append(Model(task, name, presicion, framework, model_path, weights_path))
+
+    def change_model(self, row, task, name, presicion, framework, model_path, weights_path):
+        self.__models[row] = Model(task, name, presicion, framework, model_path, weights_path)
+
+    def delete_model(self, index):
+        self.__models.pop(index)
+
+    def delete_models(self, indexes):
+        for index in indexes:
+            if index < len(self.__models):
+                self.delete_model(index)
+
+    def clear(self):
+        self.__models.clear()
+
+    def parse_config(self, path_to_config):
+        CONFIG_ROOT_TAG = 'Model'
+        CONFIG_TASK_TAG = 'Task'
+        CONFIG_NAME_TAG = 'Name'
+        CONFIG_PRESICION_TAG = 'Presicion'
+        CONFIG_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
+        CONFIG_MODEL_PATH_TAG = 'ModelPath'
+        CONFIG_WEIGHTS_PATH_TAG = 'WeightsPath'
+        parsed_config = minidom.parse(path_to_config)
+        models = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
+        self.__models.clear()
+        for idx, model in enumerate(models):
+            self.__models.append(Model())
+            self.__models[idx].task = model.getElementsByTagName(CONFIG_TASK_TAG)[0].firstChild.data
+            self.__models[idx].name = model.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+            self.__models[idx].precision = model.getElementsByTagName(CONFIG_PRESICION_TAG)[0].firstChild.data
+            self.__models[idx].framework = model.getElementsByTagName(CONFIG_SOURCE_FRAMEWORK_TAG)[0].firstChild.data
+            self.__models[idx].model_path = model.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+            self.__models[idx].weights_path = model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data
+
+
 class RemoteConfig:
     def __init__(self):
-        super().__init__()
         self.__computers = []
 
     def get_computers(self):
@@ -132,7 +192,6 @@ class RemoteConfig:
 
 class DeployConfig:
     def __init__(self):
-        super().__init__()
         self.__computers = []
 
     def get_computers(self):
