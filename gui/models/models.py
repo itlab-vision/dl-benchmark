@@ -48,11 +48,11 @@ class Models:
     def get_models(self):
         return self.__models
 
-    def add_model(self, task, name, presicion, framework, model_path, weights_path):
-        self.__models.append(Model(task, name, presicion, framework, model_path, weights_path))
+    def add_model(self, task, name, precision, framework, model_path, weights_path):
+        self.__models.append(Model(task, name, precision, framework, model_path, weights_path))
 
-    def change_model(self, row, task, name, presicion, framework, model_path, weights_path):
-        self.__models[row] = Model(task, name, presicion, framework, model_path, weights_path)
+    def change_model(self, row, task, name, precision, framework, model_path, weights_path):
+        self.__models[row] = Model(task, name, precision, framework, model_path, weights_path)
 
     def delete_model(self, index):
         self.__models.pop(index)
@@ -69,7 +69,7 @@ class Models:
         CONFIG_ROOT_TAG = 'Model'
         CONFIG_TASK_TAG = 'Task'
         CONFIG_NAME_TAG = 'Name'
-        CONFIG_PRESICION_TAG = 'Presicion'
+        CONFIG_PRECISION_TAG = 'Precision'
         CONFIG_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
         CONFIG_MODEL_PATH_TAG = 'ModelPath'
         CONFIG_WEIGHTS_PATH_TAG = 'WeightsPath'
@@ -80,7 +80,7 @@ class Models:
             self.__models.append(Model())
             self.__models[idx].task = model.getElementsByTagName(CONFIG_TASK_TAG)[0].firstChild.data
             self.__models[idx].name = model.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
-            self.__models[idx].precision = model.getElementsByTagName(CONFIG_PRESICION_TAG)[0].firstChild.data
+            self.__models[idx].precision = model.getElementsByTagName(CONFIG_PRECISION_TAG)[0].firstChild.data
             self.__models[idx].framework = model.getElementsByTagName(CONFIG_SOURCE_FRAMEWORK_TAG)[0].firstChild.data
             self.__models[idx].model_path = model.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
             self.__models[idx].weights_path = model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data

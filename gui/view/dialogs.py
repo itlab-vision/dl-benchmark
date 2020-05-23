@@ -3,6 +3,66 @@ from models.models import *
 from PyQt5 import QtCore
 
 
+class ModelDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.task = QLineEdit(self)
+        self.name = QLineEdit(self)
+        self.precision = QLineEdit(self)
+        self.framework = QLineEdit(self)
+        self.model_path = QLineEdit(self)
+        self.weights_path = QLineEdit(self)
+        self.__init_ui()
+
+    def __init_ui(self):
+        self.setWindowTitle("Information about model")
+        task_lb = QLabel('Task')
+        name_lb = QLabel('Name')
+        precision_lb = QLabel('Presicion')
+        framework_lb = QLabel('SourceFramework')
+        model_path_lb = QLabel('ModelPath')
+        weights_path_lb = QLabel('WeightsPath')
+        ok_btn = QPushButton("Ok")
+        cancel_btn = QPushButton("Cancel")
+        ok_btn.clicked.connect(self.accept)
+        cancel_btn.clicked.connect(self.reject)
+        layout = QGridLayout()
+        layout.addWidget(task_lb, 0, 0)
+        layout.addWidget(self.task, 0, 1)
+        layout.addWidget(name_lb, 1, 0)
+        layout.addWidget(self.name, 1, 1)
+        layout.addWidget(precision_lb, 2, 0)
+        layout.addWidget(self.precision, 2, 1)
+        layout.addWidget(framework_lb, 3, 0)
+        layout.addWidget(self.framework, 3, 1)
+        layout.addWidget(model_path_lb, 4, 0)
+        layout.addWidget(self.model_path, 4, 1)
+        layout.addWidget(weights_path_lb, 5, 0)
+        layout.addWidget(self.weights_path, 5, 1)
+        layout.addWidget(ok_btn, 6, 0)
+        layout.addWidget(cancel_btn, 6, 1)
+        self.setLayout(layout)
+
+    def accept(self):
+        if ((self.task.text() == "") or (self.name.text() == "") or (self.precision.text() == "") or
+                (self.framework.text() == "") or (self.model_path.text() == "") or (self.weights_path.text() == "")):
+            QMessageBox.warning(self, "Warning!", "Not all lines are filled!")
+        else:
+            super().accept()
+
+    def reject(self):
+        self.clear()
+        super().reject()
+
+    def clear(self):
+        self.task.clear()
+        self.name.clear()
+        self.precision.clear()
+        self.framework.clear()
+        self.model_path.clear()
+        self.weights_path.clear()
+
+
 class RemoteDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)

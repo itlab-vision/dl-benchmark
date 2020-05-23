@@ -49,18 +49,16 @@ class TableModel(Table):
             for j in range(self.__count_col):
                 self.setItem(i, j, self._create_cell(''))
 
-    def update(self, computers):
+    def update(self, models):
         self.clear()
         count = 0
-        for i in range(len(computers)):
-            self.setItem(i, 0, self._create_cell(computers[i].ip))
-            self.setItem(i, 1, self._create_cell(computers[i].login))
-            self.setItem(i, 2, self._create_cell(computers[i].password))
-            self.setItem(i, 3, self._create_cell(computers[i].os))
-            self.setItem(i, 4, self._create_cell(computers[i].path_to_ftp_client))
-            self.setItem(i, 5, self._create_cell(computers[i].benchmark_config))
-            self.setItem(i, 6, self._create_cell(computers[i].log_file))
-            self.setItem(i, 7, self._create_cell(computers[i].res_file))
+        for i in range(len(models)):
+            self.setItem(i, 0, self._create_cell(models[i].task))
+            self.setItem(i, 1, self._create_cell(models[i].name))
+            self.setItem(i, 2, self._create_cell(models[i].precision))
+            self.setItem(i, 3, self._create_cell(models[i].framework))
+            self.setItem(i, 4, self._create_cell(models[i].model_path))
+            self.setItem(i, 5, self._create_cell(models[i].weights_path))
             count += 1
 
 

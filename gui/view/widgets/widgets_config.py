@@ -1,8 +1,10 @@
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
-from view.tables import *
-from view.buttons import *
-from presenters.presenters import *
-from view.dialogs import *
+from view.tables import TableTestConfig, TableRemoteConfig, TableDeployConfig
+from view.buttons import GroupButtons
+from view.dialogs import RemoteDialog, DeployDialog
+from presenters.presenters import RemotePresenter, DeployPresenter
+from models.models import RemoteConfig, DeployConfig
 
 
 class WidgetTestConfigs(QWidget):
@@ -10,7 +12,7 @@ class WidgetTestConfigs(QWidget):
         super().__init__(parent)
         layouts = QHBoxLayout()
         self._table = TableTestConfig(self)
-        self._buttons = GroupButtonTestConfig(self)
+        self._buttons = GroupButtons(self)
         layouts.addWidget(self._table)
         layouts.addWidget(self._buttons)
         self.setLayout(layouts)
@@ -30,7 +32,7 @@ class WidgetRemoteConfigs(QWidget):
         super().__init__(parent)
         layouts = QHBoxLayout()
         self.__table = TableRemoteConfig(self)
-        self.__buttons = GroupButtonRemoteConfig(self)
+        self.__buttons = GroupButtons(self)
         self.__dialog = RemoteDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
@@ -110,7 +112,7 @@ class WidgetDeployConfigs(QWidget):
         super().__init__(parent)
         layouts = QHBoxLayout()
         self.__table = TableDeployConfig(self)
-        self.__buttons = GroupButtonDeployConfig(self)
+        self.__buttons = GroupButtons(self)
         self.__dialog = DeployDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
