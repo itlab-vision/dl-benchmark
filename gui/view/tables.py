@@ -66,7 +66,7 @@ class TableData(Table):
     def __init__(self, parent):
         super().__init__(parent)
         self.__count_col = 2
-        self.__count_row = 20
+        self.__count_row = 100
         self.__headers = ['Name', 'Path']
         self.setColumnCount(self.__count_col)
         self.setRowCount(self.__count_row)
@@ -79,10 +79,13 @@ class TableData(Table):
             for j in range(self.__count_col):
                 self.setItem(i, j, self._create_cell(''))
 
-    def update_table(self):
+    def update(self, data):
         self.clear()
         count = 0
-        # заполнение
+        for i in range(len(data)):
+            self.setItem(i, 0, self._create_cell(data[i].name))
+            self.setItem(i, 1, self._create_cell(data[i].path))
+            count += 1
 
 
 class TableTestConfig(Table):

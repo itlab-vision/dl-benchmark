@@ -86,6 +86,43 @@ class Models:
             self.__models[idx].weights_path = model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data
 
 
+class Data:
+    def __init__(self):
+        self.__data = []
+
+    def get_data(self):
+        return self.__data
+
+    def add_dataset(self, name, path):
+        self.__data.append(Dataset(name, path))
+
+    def change_dataset(self, row, name, path):
+        self.__data[row] = Dataset(name, path)
+
+    def delete_dataset(self, index):
+        self.__data.pop(index)
+
+    def delete_data(self, indexes):
+        for index in indexes:
+            if index < len(self.__data):
+                self.delete_dataset(index)
+
+    def clear(self):
+        self.__data.clear()
+
+    def parse_config(self, path_to_config):
+        CONFIG_ROOT_TAG = 'Dataset'
+        CONFIG_NAME_TAG = 'Name'
+        CONFIG_PATH_TAG = 'Path'
+        parsed_config = minidom.parse(path_to_config)
+        data = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
+        self.__data.clear()
+        for idx, dataset in enumerate(data):
+            self.__data.append(Dataset())
+            self.__data[idx].name = dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+            self.__data[idx].path = dataset.getElementsByTagName(CONFIG_PATH_TAG)[0].firstChild.data
+
+
 class RemoteConfig:
     def __init__(self):
         self.__computers = []

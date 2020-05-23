@@ -63,6 +63,45 @@ class ModelDialog(QDialog):
         self.weights_path.clear()
 
 
+class DataDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.name = QLineEdit(self)
+        self.path = QLineEdit(self)
+        self.__init_ui()
+
+    def __init_ui(self):
+        self.setWindowTitle("Information about dataset")
+        name_lb = QLabel('Name')
+        path_lb = QLabel('Path')
+        ok_btn = QPushButton("Ok")
+        cancel_btn = QPushButton("Cancel")
+        ok_btn.clicked.connect(self.accept)
+        cancel_btn.clicked.connect(self.reject)
+        layout = QGridLayout()
+        layout.addWidget(name_lb, 0, 0)
+        layout.addWidget(self.name, 0, 1)
+        layout.addWidget(path_lb, 1, 0)
+        layout.addWidget(self.path, 1, 1)
+        layout.addWidget(ok_btn, 2, 0)
+        layout.addWidget(cancel_btn, 2, 1)
+        self.setLayout(layout)
+
+    def accept(self):
+        if ((self.name.text() == "") or (self.path.text() == "")):
+            QMessageBox.warning(self, "Warning!", "Not all lines are filled!")
+        else:
+            super().accept()
+
+    def reject(self):
+        self.clear()
+        super().reject()
+
+    def clear(self):
+        self.name.clear()
+        self.path.clear()
+
+
 class RemoteDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
