@@ -110,6 +110,7 @@ follow instructions.
    - `table_folder` is a directory for storing performance results.
 
    Use these parameters to connect to FTP-server:
+   
    ```xml
    <IP>2.2.2.2</IP>
    <Login>admin</Login>
@@ -154,6 +155,7 @@ follow instructions.
      </Computer>
    </Computers>
    ```
+
 1. To run the deployment script, use the following command: 
 
    ```bash
@@ -165,10 +167,11 @@ follow instructions.
     ```
 
    The first three parameters `-s, -l, -p` are responsible for access
-   to the FTP-server, `-i` the path to the archived Docker-image,
-   `-d` the folder on the FTP-server where the Docker-image will be uploaded,
-   `-n` the name with which the Docker-container will be launched,
-   `--machine_list` configuration file, with a list of machines on which plan to deploy.
+   to the FTP-server, `-i` is a path to the archived Docker-image,
+   `-d` is a directory on the FTP-server where the Docker-image will be uploaded,
+   `-n` is an executable name of the Docker-container,
+   `--machine_list` is a configuration file which contains a list of machines
+   on which we plan to deploy our infrastructure.
 
    After this stage, there is a docker container at each computer.
 
