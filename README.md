@@ -258,7 +258,7 @@ follow instructions.
 
    `scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/`
 
-1. Convert the results to html using the following command:
+1. Convert csv to html using the following command:
 
    ```bash
    python -t /tmp/all_results.csv -r /tmp/formatted_results.html
