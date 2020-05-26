@@ -25,9 +25,11 @@ V.1129. 2019. P. 542-553.
 
 ## Repo structure
 - `docker` directory contains Dockerfiles.
+
   - [`Dockerfile`](docker/Dockerfile) is a file to build the OpenVINO toolkit.
 
 - `docs` directory contains project documentation.
+
   - [`concept.md`](docs/concept.md) is a concept description
     (goals and tasks).
   - [`technologies.md`](docs/technologies.md) is a list of technologies.
@@ -35,10 +37,12 @@ V.1129. 2019. P. 542-553.
     system architecture.
 
 - `results` directory contains benchmarking and validation results.
+
   - [`benchmarking`](results/benchmarking) contains benchmarking 
     results in html format.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implemenration.
+
     - [`validation_results.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel Distribution of OpenVINO toolkit for public models.
@@ -48,6 +52,7 @@ V.1129. 2019. P. 542-553.
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
 
 - `src` directory contains benchmark sources.
+
   - `deployment` is a set of deployment tools.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
@@ -180,7 +185,8 @@ follow instructions.
 1. Fill out the configuration file for the benchmarking script. It is required
    to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
-   Fill the configuration file and save it to the `/benchmark_config/bench_config.xml`.
+   Fill the configuration file and save it to the `benchmark_config/bench_config.xml`
+   on the FTP-server.
 
    ```xml
    <Tests>
