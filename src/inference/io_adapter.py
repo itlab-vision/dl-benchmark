@@ -85,6 +85,7 @@ class io_adapter(metaclass = abc.ABCMeta):
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
+                    shapes = [value.shape]
                     transformed_value = value
                 else:
                     value = value.split(',')
@@ -100,6 +101,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
+                shapes = [value.shape]
                 transformed_value = value
             else:
                 value = self.__create_list_images(input)
