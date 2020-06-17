@@ -19,6 +19,27 @@ class Dataset:
         self.path = path
 
 
+class Test:
+    def __init__(self, model=None, dataset=None, framework=None, batch_size=None, device=None, iter_count=None,
+                 test_time_limit=None, mode=None, extension=None, async_req_count=None, thread_count=None,
+                 stream_count=None, channel_swap=None, mean=None, input_scale=None):
+        self.model = model
+        self.dataset = dataset
+        self.framework = framework
+        self.batch_size = batch_size
+        self.device = device
+        self.iter_count = iter_count
+        self.test_time_limit = test_time_limit
+        self.mode = mode
+        self.extension = extension
+        self.async_req_count = async_req_count
+        self.thread_count = thread_count
+        self.stream_count = stream_count
+        self.channel_swap = channel_swap
+        self.mean = mean
+        self.input_scale = input_scale
+
+
 class RemoteComputer:
     def __init__(self, ip=None, login=None, password=None, os=None, path_to_ftp_client=None, benchmark_config=None,
                  log_file=None, res_file=None):
@@ -121,6 +142,45 @@ class Data:
             self.__data.append(Dataset())
             self.__data[idx].name = dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
             self.__data[idx].path = dataset.getElementsByTagName(CONFIG_PATH_TAG)[0].firstChild.data
+
+
+class BenchmarkConfig:
+    def __init__(self):
+        self.__tests = []
+
+    def get_tests(self):
+        return self.__tests
+
+    def add_test(self, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode=None,
+                 extension=None, async_req_count=None, thread_count=None, stream_count=None, channel_swap=None,
+                 mean=None, input_scale=None):
+        self.__tests.append(Test(model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
+                                 extension, async_req_count, thread_count, stream_count, channel_swap, mean,
+                                 input_scale))
+
+    def change_test(self, row, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode=None,
+                    extension=None, async_req_count=None, thread_count=None, stream_count=None, channel_swap=None,
+                    mean=None, input_scale=None):
+        self.__tests[row] = Test(model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
+                                 extension, async_req_count, thread_count, stream_count, channel_swap, mean,
+                                 input_scale)
+
+    def delete_test(self, index):
+        self.__tests.pop(index)
+
+    def delete_tests(self, indexes):
+        for index in indexes:
+            if index < len(self.__tests):
+                self.delete_test(index)
+
+    def clear(self):
+        self.__tests.clear()
+
+    def parse_config(self, path_to_config):
+        pass
+
+    def create_config(self):
+        pass
 
 
 class RemoteConfig:
