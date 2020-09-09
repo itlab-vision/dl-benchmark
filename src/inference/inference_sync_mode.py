@@ -127,8 +127,6 @@ def main():
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
             args.nthreads, None, args.dump, 'sync', log)
-        net = utils.create_network(args.model_xml, args.model_bin, log)
-        utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
         net = utils.create_network(iecore, args.model_xml, args.model_bin, log)
         utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
         input_shapes = utils.get_input_shape(model_wrapper, net)
