@@ -8,6 +8,7 @@ from transformer import transformer
 class io_adapter(metaclass = abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
+        self._transformed_input = None
         self._original_shapes = None
         self._batch_size = args.batch_size
         self._labels = args.labels
@@ -28,6 +29,7 @@ class io_adapter(metaclass = abc.ABCMeta):
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
             image = image.transpose((2, 0, 1))
+            images[i] = image
         return images, image_shapes
 
 
@@ -74,8 +76,8 @@ class io_adapter(metaclass = abc.ABCMeta):
 
 
     def prepare_input(self, model, input):
-        result = {}
         self._input = {}
+        self._transformed_input = {}
         self._original_shapes = {}
         if ':' in input[0]:
             for str in input:
@@ -83,6 +85,8 @@ class io_adapter(metaclass = abc.ABCMeta):
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
+                    shapes = [value.shape]
+                    transformed_value = value
                 else:
                     value = value.split(',')
                     value = self.__create_list_images(value)
@@ -91,12 +95,14 @@ class io_adapter(metaclass = abc.ABCMeta):
                     transformed_value = self.__transform_images(value)
                 self._input.update({key : value})
                 self._original_shapes.update({key : shapes})
-                result.update({key : transformed_value})
+                self._transformed_input.update({key : transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
+                shapes = [value.shape]
+                transformed_value = value
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
@@ -104,16 +110,15 @@ class io_adapter(metaclass = abc.ABCMeta):
                 transformed_value = self.__transform_images(value)
             self._input.update({input_blob : value})
             self._original_shapes.update({input_blob : shapes})
-            result.update({input_blob : transformed_value})
-        return result
+            self._transformed_input.update({input_blob : transformed_value})
 
 
     def get_slice_input(self, iteration):
-        slice_input = dict.fromkeys(self._input.keys(), None)
-        for key in self._input:
-            slice_input[key] = self._input[key][(iteration * self._batch_size)
-                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
-                % len(self._input[key])) + 1:]
+        slice_input = dict.fromkeys(self._transformed_input.keys(), None)
+        for key in self._transformed_input:
+            slice_input[key] = self._transformed_input[key][(iteration * self._batch_size)
+                % len(self._transformed_input[key]) : (((iteration + 1) * self._batch_size - 1)
+                % len(self._transformed_input[key])) + 1:]
         return slice_input
 
 
@@ -239,22 +244,29 @@ class detection_io(io_adapter):
             image = input[i % ib].transpose((1, 2, 0))
             images.append(cv2.resize(image, (orig_w, orig_h)))
         for batch in range(0, b, ib):
-            for obj in result[batch][0]:
-                if obj[2] > self._threshold:
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch + out_num][0]:
                     image_number = int(obj[0])
-                    image = images[image_number + batch * ib]
-                    initial_h, initial_w = image.shape[:2]
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
-                        min(class_id * 5, 255))
-                    cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-                    log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
-                    log.info('Top left: ({0}, {1})'.format(xmin, ymin))
-                    log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
+                            min(class_id * 5, 255))
+                        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                if isbreak:
+                    break
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
@@ -647,7 +659,7 @@ class license_plate_io(io_adapter):
             for j in range(lex.shape[0]):
                 if (lex[j] == -1):
                     break
-                s = s + str(lexis[int(lex[j])][1])
+                s = s + str(lexis[int(lex[j])])
             log.info('Plate: {}'.format(s))
 
 

@@ -150,12 +150,12 @@ def main():
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         iecore = utils.create_ie_core(args.extension, args.cldnn_config, args.device,
             args.nthreads, args.nstreams, args.dump, 'async', log)
-        net = utils.create_network(args.model_xml, args.model_bin, log)
+        net = utils.create_network(iecore, args.model_xml, args.model_bin, log)
         utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
         input_shapes = utils.get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
-        net.batch_size = args.batch_size
+        utils.reshape_input(net, args.batch_size)
         log.info('Prepare input data')
         io.prepare_input(net, args.input)
         log.info('Create executable network')

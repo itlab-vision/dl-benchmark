@@ -4,23 +4,54 @@
         <Model>
             <Task></Task>
             <Name></Name>
-            <Path></Path>
-            <WeightType></WeightType>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name></Name>
             <Path></Path>
         </Dataset>
-        <Parameters>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize></BatchSize>
-            <Mode></Mode>
             <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode></Mode>
             <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
-            <IterationCount></IterationCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
-            <MinInferenceTime></MinInferenceTime>
-        </Parameters>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Caffe</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+        </FrameworkDependent>
     </Test>
 </Tests>
