@@ -570,6 +570,34 @@ road-segmentation-adas-0001             |<div style='float: center'><img width="
 <img width="200" src="semantic_segmentation\road_segmentation_colormap.jpg">
 </div>
 
+### Тестовое изображение 3
+
+Источник: набор данных [CamVid][camvid]
+
+Исходное разрешение: 960 x 720
+
+
+Изображение:
+
+<div style='float: center'>
+<img width="300" src="images\0016E5_08027.png"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+unet-camvid-onnx-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_0016E5_08027_unet.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_0016E5_08027_unet.bmp"></img></div>|
+icnet-camvid-ava-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_0016E5_08027_icnet.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_0016E5_08027_icnet.bmp"></img></div>|
+icnet-camvid-ava-sparse-30-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_0016E5_08027_icnet-30-0001.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_0016E5_08027_icnet-30-0001.bmp"></img></div>|
+icnet-camvid-ava-sparse-60-0001             |<div style='float: center'><img width="300" src="semantic_segmentation\python_sync_0016E5_08027_icnet-60-0001.bmp"></img></div>|<div style='float: center'><img width="300" src="semantic_segmentation\python_async_0016E5_08027_icnet-60-0001.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="200" src="semantic_segmentation\camvid_colormap.jpg">
+</div>
+
 ## Результаты векторного описания
 
 ### Тестовое изображение 1
@@ -766,3 +794,4 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
 [sample_videos]: https://github.com/intel-iot-devkit/sample-videos
 [widerface]: http://shuoyang1213.me/WIDERFACE
+[camvid]: https://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/
