@@ -321,7 +321,7 @@ class adas_segmenatation_io(io_adapter):
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[2:]
+        h, w = result.shape[-2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
