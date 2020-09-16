@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from view.widgets.widgets_data import *
 from view.widgets.widgets_config import *
+from models.models import *
+from presenters.presenters import *
 
 
 class MainWindow(QMainWindow):
@@ -9,32 +11,41 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.resize(920, 560)
         self.setWindowTitle('Configuration Creator')
-        table_widget = MainTabWidget(self)
-        self.setCentralWidget(table_widget)
+        self.tabs = MainTabsWidget(self)
+        self.setCentralWidget(self.tabs)
         self.show()
 
+    def update(self, model):
+        self.tabs.update(model)
 
-class MainTabWidget(QWidget):
+
+class MainTabsWidget(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        self._tabs = self.__create_tabs()
+        tabs = self.__create_tabs()
         layout = QVBoxLayout(self)
-        layout.addWidget(self._tabs)
+        layout.addWidget(tabs)
         self.setLayout(layout)
 
     def __create_tabs(self):
         tabs = QTabWidget()
-        tab_data = WidgetData(self)
-        tab_configuration = WidgetConfig(self)
+        self.data_tab = WidgetData(self)
+        self.config_tab = WidgetConfig(self)
         tabs.resize(920, 560)
-        tabs.addTab(tab_data, 'Data information')
-        tabs.addTab(tab_configuration, 'Creating Configurations')
+        tabs.addTab(self.data_tab, 'Data information')
+        tabs.addTab(self.config_tab, 'Creating Configurations')
         return tabs
+
+    def update(self, model):
+        self.data_tab.update(model)
+        self.config_tab.update(model)
 
 
 def main():
     app = QApplication([])
     main_window = MainWindow()
+    data_base = DataBase()
+    presenter = Presenter(data_base, main_window)
     sys.exit(app.exec_())
 
 

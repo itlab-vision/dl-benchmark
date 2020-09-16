@@ -277,10 +277,10 @@ class RemoteConfig:
             CONFIG_COMPUTER_TAG.appendChild(CONFIG_RESULT_FILE_TAG)
             CONFIG_ROOT_TAG.appendChild(CONFIG_COMPUTER_TAG)
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
-        with open("remote_configuration.xml", 'wb') as f:
+        with open("remote_configuration.xml", "wb") as f:
             f.write(xml_str)
         try:
-            f = open("remote_configuration.xml", 'r')
+            f = open("remote_configuration.xml", "r")
             f.close()
         except IOError:
             return False
@@ -360,11 +360,20 @@ class DeployConfig:
             CONFIG_COMPUTER_TAG.appendChild(CONFIG_DOWNLOAD_FOLDER_TAG)
             CONFIG_ROOT_TAG.appendChild(CONFIG_COMPUTER_TAG)
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
-        with open("deploy_configuration.xml", 'wb') as f:
+        with open("deploy_configuration.xml", "wb") as f:
             f.write(xml_str)
         try:
-            f = open("deploy_configuration.xml", 'r')
+            f = open("deploy_configuration.xml", "r")
             f.close()
         except IOError:
             return False
         return True
+
+
+class DataBase:
+    def __init__(self):
+        self.models = Models()
+        self.data = Data()
+        self.benchmark_config = BenchmarkConfig()
+        self.remote_config = RemoteConfig()
+        self.deploy_config = DeployConfig()

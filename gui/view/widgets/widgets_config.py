@@ -3,19 +3,17 @@ from PyQt5.QtWidgets import *
 from view.tables import TableBenchmarkConfig, TableRemoteConfig, TableDeployConfig
 from view.buttons import GroupButtons
 from view.dialogs import BenchmarkDialog, RemoteDialog, DeployDialog
-from presenters.presenters import BenchmarkPresenter, RemotePresenter, DeployPresenter
-from models.models import BenchmarkConfig, RemoteConfig, DeployConfig
 
 
 class WidgetBenchmarkConfigs(QWidget):
 
-    delSignal = QtCore.pyqtSignal(list)
+    addTestSignal = QtCore.pyqtSignal(str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
+    delTestSignal = QtCore.pyqtSignal(list)
+    changeTestSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
+
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
-
-    addTestSignal = QtCore.pyqtSignal(str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
-    changeTestSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -128,18 +126,18 @@ class WidgetBenchmarkConfigs(QWidget):
         return self.__table.get_selected_rows()
 
     def update(self, model):
-        self.__table.update(model)
+        self.__table.update(model.get_tests())
 
 
 class WidgetRemoteConfigs(QWidget):
 
-    delSignal = QtCore.pyqtSignal(list)
+    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str, str, str, str)
+    delComputerSignal = QtCore.pyqtSignal(list)
+    changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str)
+
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
-
-    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str, str, str, str)
-    changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -161,7 +159,7 @@ class WidgetRemoteConfigs(QWidget):
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
-        self.delSignal.emit(self.__table.get_selected_rows())
+        self.delComputerSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
@@ -208,18 +206,18 @@ class WidgetRemoteConfigs(QWidget):
         return self.__table.get_selected_rows()
 
     def update(self, model):
-        self.__table.update(model)
+        self.__table.update(model.get_computers())
 
 
 class WidgetDeployConfigs(QWidget):
 
-    delSignal = QtCore.pyqtSignal(list)
+    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
+    delComputerSignal = QtCore.pyqtSignal(list)
+    changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str)
+
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
-
-    addComputerSignal = QtCore.pyqtSignal(str, str, str, str, str)
-    changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -241,7 +239,7 @@ class WidgetDeployConfigs(QWidget):
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
-        self.delSignal.emit(self.__table.get_selected_rows())
+        self.delComputerSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
@@ -282,7 +280,7 @@ class WidgetDeployConfigs(QWidget):
         return self.__table.get_selected_rows()
 
     def update(self, model):
-        self.__table.update(model)
+        self.__table.update(model.get_computers())
 
 
 class WidgetConfig(QWidget):
@@ -297,12 +295,6 @@ class WidgetConfig(QWidget):
         self._widgets['Remote configuration'].hide()
         grid.addWidget(self._widgets['Deploy configuration'], 1, 0)
         self._widgets['Deploy configuration'].hide()
-        benchmark_model = BenchmarkConfig()
-        remote_model = RemoteConfig()
-        deploy_model = DeployConfig()
-        self._benchmark_presenter = BenchmarkPresenter(self._widgets['Benchmark configuration'], benchmark_model)
-        self._remote_presenter = RemotePresenter(self._widgets['Remote configuration'], remote_model)
-        self._deploy_presenter = DeployPresenter(self._widgets['Deploy configuration'], deploy_model)
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -312,12 +304,12 @@ class WidgetConfig(QWidget):
         return menu
 
     def __create_dict(self):
-        benchmark_configs = WidgetBenchmarkConfigs(self)
-        remote_configs = WidgetRemoteConfigs(self)
-        deploy_configs = WidgetDeployConfigs(self)
-        dictionary = {'Benchmark configuration': benchmark_configs,
-                      'Remote configuration': remote_configs,
-                      'Deploy configuration': deploy_configs}
+        self.benchmark_configs = WidgetBenchmarkConfigs(self)
+        self.remote_configs = WidgetRemoteConfigs(self)
+        self.deploy_configs = WidgetDeployConfigs(self)
+        dictionary = {'Benchmark configuration': self.benchmark_configs,
+                      'Remote configuration': self.remote_configs,
+                      'Deploy configuration': self.deploy_configs}
         return dictionary
 
     def onActivated(self, type):
@@ -326,3 +318,9 @@ class WidgetConfig(QWidget):
                 self._widgets[key].show()
             else:
                 self._widgets[key].hide()
+
+    def update(self, model):
+        self.benchmark_configs.update(model.benchmark_config)
+        self.remote_configs.update(model.remote_config)
+        self.deploy_configs.update(model.deploy_config)
+

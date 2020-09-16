@@ -3,19 +3,17 @@ from PyQt5.QtWidgets import *
 from view.tables import TableModel, TableData
 from view.buttons import GroupButtons
 from view.dialogs import ModelDialog, DataDialog
-from presenters.presenters import ModelPresenter, DataPresenter
-from models.models import Models, Data
 
 
 class WidgetModelSettings(QWidget):
 
-    delSignal = QtCore.pyqtSignal(list)
+    addModelSignal = QtCore.pyqtSignal(str, str, str, str, str, str)
+    delModelSignal = QtCore.pyqtSignal(list)
+    changeModelSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str)
+
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
-
-    addModelSignal = QtCore.pyqtSignal(str, str, str, str, str, str)
-    changeModelSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -37,7 +35,7 @@ class WidgetModelSettings(QWidget):
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
-        self.delSignal.emit(self.__table.get_selected_rows())
+        self.delModelSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def __show_dialog_add_model(self):
@@ -73,18 +71,18 @@ class WidgetModelSettings(QWidget):
         return self.__table.get_selected_rows()
 
     def update(self, model):
-        self.__table.update(model)
+        self.__table.update(model.get_models())
 
 
 class WidgetDataSettings(QWidget):
 
-    delSignal = QtCore.pyqtSignal(list)
+    addDatasetSignal = QtCore.pyqtSignal(str, str)
+    delDatasetSignal = QtCore.pyqtSignal(list)
+    changeDatasetSignal = QtCore.pyqtSignal(int, str, str)
+
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
-
-    addDatasetSignal = QtCore.pyqtSignal(str, str)
-    changeDatasetSignal = QtCore.pyqtSignal(int, str, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -136,23 +134,19 @@ class WidgetDataSettings(QWidget):
         return self.__table.get_selected_rows()
 
     def update(self, model):
-        self.__table.update(model)
+        self.__table.update(model.get_data())
 
 
 class WidgetData(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        grid = QGridLayout()
         self._widgets = self.__create_dict()
+        grid = QGridLayout()
         grid.addWidget(self.__create_combobox(), 0, 0)
         grid.addWidget(self._widgets['Models'], 1, 0)
-        self._widgets['Models'].show()
         grid.addWidget(self._widgets['Data'], 1, 0)
+        self._widgets['Models'].show()
         self._widgets['Data'].hide()
-        models = Models()
-        data = Data()
-        self._models_presenter = ModelPresenter(self._widgets['Models'], models)
-        self._data_presenter = DataPresenter(self._widgets['Data'], data)
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -162,9 +156,9 @@ class WidgetData(QWidget):
         return menu
 
     def __create_dict(self):
-        model_settings = WidgetModelSettings(self)
-        data_settings = WidgetDataSettings(self)
-        dictionary = {'Models': model_settings, 'Data': data_settings}
+        self.model_settings = WidgetModelSettings(self)
+        self.data_settings = WidgetDataSettings(self)
+        dictionary = {'Models': self.model_settings, 'Data': self.data_settings}
         return dictionary
 
     def onActivated(self, type):
@@ -173,3 +167,8 @@ class WidgetData(QWidget):
                 self._widgets[key].show()
             else:
                 self._widgets[key].hide()
+
+    def update(self, model):
+        self.model_settings.update(model.models)
+        self.data_settings.update(model.data)
+
