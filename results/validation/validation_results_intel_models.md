@@ -237,6 +237,7 @@ pedestrian-detection-adas-binary-0001 | Окаймляющие прямоуго�
 efficientnet-b0 | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange |
 efficientnet-b0_auto_aug | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig |
 efficientnet-b5 | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana |
+efficientnet-b7_auto_aug | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre |
 
 ## Результаты детектирования и распознования действия
 
