@@ -234,7 +234,8 @@ pedestrian-detection-adas-binary-0001 | Окаймляющие прямоуго�
 
    Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
-efficientnet-b0 | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange
+efficientnet-b0 | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange |
+efficientnet-b0_auto_aug | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig |
 
 ## Результаты детектирования и распознования действия
 
