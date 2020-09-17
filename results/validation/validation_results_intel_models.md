@@ -217,6 +217,25 @@ person-detection-retail-0002 | Окаймляющий прямоугольник
 pedestrian-detection-adas-0002 | Окаймляющий прямоугольник:<br>(614, 307) (945, 803) | Окаймляющий прямоугольник:<br>(614, 307) (945, 803)<br>|
 pedestrian-detection-adas-binary-0001 | Окаймляющие прямоугольники:<br> (629, 310) (934, 811),<br>(392, 435) (440, 525)<br>|<br>(629, 310) (934, 811),<br>(392, 435) (440, 525)
 
+## Результаты классификации
+
+### Тестовое изображение 1
+
+Источник: набор данных [ImageNet][imagenet]
+
+Исходное разрешение: 709 x 510
+
+
+Изображение:
+
+<div style='float: center'>
+<img width="300" src="images\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
+
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+efficientnet-b0 | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange
+
 ## Результаты детектирования и распознования действия
 
 ### Тестовое изображение 1
@@ -766,3 +785,4 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
 [sample_videos]: https://github.com/intel-iot-devkit/sample-videos
 [widerface]: http://shuoyang1213.me/WIDERFACE
+[imagenet]: http://www.image-net.org/
