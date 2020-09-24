@@ -11,6 +11,8 @@ class WidgetBenchmarkConfigs(QWidget):
     delTestSignal = QtCore.pyqtSignal(list)
     changeTestSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
 
+    buttonAddSignal = QtCore.pyqtSignal()
+    buttonChangeSignal = QtCore.pyqtSignal()
     loadSignal = QtCore.pyqtSignal(str)
     saveSignal = QtCore.pyqtSignal()
     clearSignal = QtCore.pyqtSignal()
@@ -20,16 +22,15 @@ class WidgetBenchmarkConfigs(QWidget):
         layouts = QHBoxLayout()
         self.__table = TableBenchmarkConfig(self)
         self.__buttons = GroupButtons(self)
-        self.__dialog = BenchmarkDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
         self.__set_connections()
 
     def __set_connections(self):
-        self.__buttons.get_buttons()['Add information'].clicked.connect(self.__show_dialog_add_test)
+        self.__buttons.get_buttons()['Add information'].clicked.connect(self.buttonAddSignal.emit)
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
-        self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_test)
+        self.__buttons.get_buttons()['Change information'].clicked.connect(self.buttonChangeSignal.emit)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
         self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
@@ -38,78 +39,56 @@ class WidgetBenchmarkConfigs(QWidget):
         self.delSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
-    def __show_dialog_add_test(self):
-        dialog = self.__dialog
-        dialog.clear()
+    def show_dialog_add_test(self, models, data):
+        if not models:
+            QMessageBox.warning(self, "Warning!", "Models list is empty!")
+            return
+        if not data:
+            QMessageBox.warning(self, "Warning!", "Datasets list is empty!")
+            return
+        dialog = BenchmarkDialog(self, models, data)
         if dialog.exec():
-            if dialog.framework.currentText() == 'OpenVINO DLDT':
-                mode = dialog.mode.text()
-                extension = dialog.extension.text()
-                async_req_count = dialog.async_req_count.text()
-                thread_count = dialog.thread_count.text()
-                stream_count = dialog.stream_count.text()
-                channel_swap = None
-                mean = None
-                input_scale = None
-            elif dialog.framework.currentText() == 'Caffe':
-                mode = None
-                extension = None
-                async_req_count = None
-                thread_count = None
-                stream_count = None
-                channel_swap = dialog.channel_swap.text()
-                mean = dialog.mean.text()
-                input_scale = dialog.input_scale.text()
-            self.addTestSignal.emit(dialog.model.text(), dialog.dataset.text(), dialog.framework.currentText(),
-                                    dialog.batch_size.text(), dialog.device.text(),  dialog.iter_count.text(),
-                                    dialog.test_time_limit.text(),  mode,  extension, async_req_count,  thread_count,
-                                    stream_count,  channel_swap,  mean, input_scale)
+            framework_independet_values = dialog.get_framework_independet_values()
+            if dialog.get_selected_framework() == 'OpenVINO DLDT':
+                openvino_values = dialog.get_openvino_values()
+                caffe_values = ['None', 'None', 'None']
+            elif dialog.get_selected_framework() == 'Caffe':
+                openvino_values = ['None', 'None', 'None', 'None', 'None']
+                caffe_values = dialog.get_caffe_values()
+            self.addTestSignal.emit(*framework_independet_values, *openvino_values, *caffe_values)
 
-    def __show_dialog_change_test(self):
+    def show_dialog_change_test(self, models, data):
         if len(self.__table.get_selected_rows()) != 1:
             QMessageBox.warning(self, "Warning!", "Choose one row!")
             return
-        dialog = self.__dialog
+        dialog = BenchmarkDialog(self, models, data)
         row = self.__table.get_selected_rows()[0]
-        dialog.model.setText(self.__table.item(row, 0).text())
-        dialog.dataset.setText(self.__table.item(row, 1).text())
-        dialog.framework.setCurrentText(self.__table.item(row, 2).text())
-        dialog.batch_size.setText(self.__table.item(row, 3).text())
-        dialog.device.setText(self.__table.item(row, 4).text())
-        dialog.iter_count.setText(self.__table.item(row, 5).text())
-        dialog.test_time_limit.setText(self.__table.item(row, 6).text())
-        dialog.mode.setText(self.__table.item(row, 7).text())
-        dialog.extension.setText(self.__table.item(row, 8).text())
-        dialog.async_req_count.setText(self.__table.item(row, 9).text())
-        dialog.thread_count.setText(self.__table.item(row, 10).text())
-        dialog.stream_count.setText(self.__table.item(row, 11).text())
-        dialog.channel_swap.setText(self.__table.item(row, 12).text())
-        dialog.mean.setText(self.__table.item(row, 13).text())
-        dialog.input_scale.setText(self.__table.item(row, 14).text())
+        dialog.framework_independet_lines_edit['Model'].setCurrentText(self.__table.item(row, 0).text())
+        dialog.framework_independet_lines_edit['Dataset'].setCurrentText(self.__table.item(row, 1).text())
+        dialog.framework_independet_lines_edit['Framework'].setCurrentText(self.__table.item(row, 2).text())
+        idx = 3
+        for label in dialog.framework_independet_tags[4:]:
+            dialog.framework_independet_lines_edit[label].setText(self.__table.item(row, idx).text())
+            idx += 1
+        framework = dialog.get_selected_framework()
+        if framework == 'OpenVINO DLDT':
+            for label in dialog.openvino_tags[1:]:
+                dialog.openvino_lines_edit[label].setText(self.__table.item(row, idx).text())
+                idx += 1
+        elif framework == 'Caffe':
+            for label in dialog.caffe_tags[1:]:
+                dialog.caffe_lines_edit[label].setText(self.__table.item(row, idx + 5).text())
+                idx += 1
         if dialog.exec():
-            if dialog.framework.currentText() == 'OpenVINO DLDT':
-                mode = dialog.mode.text()
-                extension = dialog.extension.text()
-                async_req_count = dialog.async_req_count.text()
-                thread_count = dialog.thread_count.text()
-                stream_count = dialog.stream_count.text()
-                channel_swap = None
-                mean = None
-                input_scale = None
-            elif dialog.framework.currentText() == 'Caffe':
-                mode = None
-                extension = None
-                async_req_count = None
-                thread_count = None
-                stream_count = None
-                channel_swap = dialog.channel_swap.text()
-                mean = dialog.mean.text()
-                input_scale = dialog.input_scale.text()
-            self.changeTestSignal.emit(row, dialog.model.text(), dialog.dataset.text(), dialog.framework.currentText(),
-                                    dialog.batch_size.text(), dialog.device.text(), dialog.iter_count.text(),
-                                    dialog.test_time_limit.text(), mode, extension, async_req_count, thread_count,
-                                    stream_count, channel_swap, mean, input_scale)
-        self.__table.remove_selection()
+            framework_independet_values = dialog.get_framework_independet_values()
+            if dialog.get_selected_framework() == 'OpenVINO DLDT':
+                openvino_values = dialog.get_openvino_values()
+                caffe_values = ['None', 'None', 'None']
+            elif dialog.get_selected_framework() == 'Caffe':
+                openvino_values = ['None', 'None', 'None', 'None', 'None']
+                caffe_values = dialog.get_caffe_values()
+            self.changeTestSignal.emit(row, *framework_independet_values, *openvino_values, *caffe_values)
+            self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
         path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
@@ -144,7 +123,6 @@ class WidgetRemoteConfigs(QWidget):
         layouts = QHBoxLayout()
         self.__table = TableRemoteConfig(self)
         self.__buttons = GroupButtons(self)
-        self.__dialog = RemoteDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
@@ -163,32 +141,28 @@ class WidgetRemoteConfigs(QWidget):
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
-        dialog = self.__dialog
-        dialog.clear()
+        dialog = RemoteDialog(self)
         if dialog.exec():
-            self.addComputerSignal.emit(dialog.ip.text(), dialog.login.text(), dialog.password.text(), dialog.os.text(),
-                                        dialog.path_to_ftp_client.text(),  dialog.benchmark_config.text(),
-                                        dialog.log_file.text(),  dialog.res_file.text())
+            values = []
+            for key in dialog.lines_edit():
+                values.append(dialog.lines_edit()[key].text())
+            self.addComputerSignal.emit(*values)
 
     def __show_dialog_change_computer(self):
         if len(self.__table.get_selected_rows()) != 1:
             QMessageBox.warning(self, "Warning!", "Choose one row!")
             return
-        dialog = self.__dialog
+        dialog = RemoteDialog(self)
         row = self.__table.get_selected_rows()[0]
-        dialog.ip.setText(self.__table.item(row, 0).text())
-        dialog.login.setText(self.__table.item(row, 1).text())
-        dialog.password.setText(self.__table.item(row, 2).text())
-        dialog.os.setText(self.__table.item(row, 3).text())
-        dialog.path_to_ftp_client.setText(self.__table.item(row, 4).text())
-        dialog.benchmark_config.setText(self.__table.item(row, 5).text())
-        dialog.log_file.setText(self.__table.item(row, 6).text())
-        dialog.res_file.setText(self.__table.item(row, 7).text())
+        idx = 0
+        for label in dialog.lines_edit():
+            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+            idx += 1
         if dialog.exec():
-            self.changeComputerSignal.emit(row, dialog.ip.text(), dialog.login.text(), dialog.password.text(),
-                                           dialog.os.text(), dialog.path_to_ftp_client.text(),
-                                           dialog.benchmark_config.text(), dialog.log_file.text(),
-                                           dialog.res_file.text())
+            values = []
+            for key in dialog.lines_edit():
+                values.append(dialog.lines_edit()[key].text())
+            self.changeComputerSignal.emit(row, *values)
         self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
@@ -224,7 +198,6 @@ class WidgetDeployConfigs(QWidget):
         layouts = QHBoxLayout()
         self.__table = TableDeployConfig(self)
         self.__buttons = GroupButtons(self)
-        self.__dialog = DeployDialog(self)
         layouts.addWidget(self.__table)
         layouts.addWidget(self.__buttons)
         self.setLayout(layouts)
@@ -243,26 +216,28 @@ class WidgetDeployConfigs(QWidget):
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
-        dialog = self.__dialog
-        dialog.clear()
+        dialog = DeployDialog(self)
         if dialog.exec():
-            self.addComputerSignal.emit(dialog.ip.text(), dialog.login.text(), dialog.password.text(), dialog.os.text(),
-                                        dialog.download_folder.text())
+            values = []
+            for key in dialog.lines_edit():
+                values.append(dialog.lines_edit()[key].text())
+            self.addComputerSignal.emit(*values)
 
     def __show_dialog_change_computer(self):
         if len(self.__table.get_selected_rows()) != 1:
             QMessageBox.warning(self, "Warning!", "Choose one row!")
             return
-        dialog = self.__dialog
+        dialog = DeployDialog(self)
         row = self.__table.get_selected_rows()[0]
-        dialog.ip.setText(self.__table.item(row, 0).text())
-        dialog.login.setText(self.__table.item(row, 1).text())
-        dialog.password.setText(self.__table.item(row, 2).text())
-        dialog.os.setText(self.__table.item(row, 3).text())
-        dialog.download_folder.setText(self.__table.item(row, 4).text())
+        idx = 0
+        for label in dialog.lines_edit():
+            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+            idx += 1
         if dialog.exec():
-            self.changeComputerSignal.emit(row, dialog.ip.text(), dialog.login.text(), dialog.password.text(),
-                                           dialog.os.text(), dialog.download_folder.text())
+            values = []
+            for key in dialog.lines_edit():
+                values.append(dialog.lines_edit()[key].text())
+            self.changeComputerSignal.emit(row, *values)
         self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
@@ -323,4 +298,3 @@ class WidgetConfig(QWidget):
         self.benchmark_configs.update(model.benchmark_config)
         self.remote_configs.update(model.remote_config)
         self.deploy_configs.update(model.deploy_config)
-

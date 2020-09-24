@@ -90,7 +90,7 @@ class TableBenchmarkConfig(Table):
         super().__init__(parent)
         self._count_col = 15
         self._count_row = 150
-        self.__headers = ['ID Model', 'ID Dataset', 'InferenceFramework', 'BatchSize', 'Device', 'IterationCount',
+        self.__headers = ['Model', 'Dataset', 'InferenceFramework', 'BatchSize', 'Device', 'IterationCount',
                           'TestTimeLimit', 'Mode', 'Extension', 'AsyncRequestCount', 'ThreadCount', 'StreamCount',
                           'ChannelSwap', 'Mean', 'InputScale']
         self.setColumnCount(self._count_col)

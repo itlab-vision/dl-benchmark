@@ -2,8 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from view.widgets.widgets_data import *
 from view.widgets.widgets_config import *
-from models.models import *
-from presenters.presenters import *
+from models.models import DataBase
+from presenters.presenters import Presenter
 
 
 class MainWindow(QMainWindow):
