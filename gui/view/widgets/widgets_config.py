@@ -14,7 +14,7 @@ class WidgetBenchmarkConfigs(QWidget):
     buttonAddSignal = QtCore.pyqtSignal()
     buttonChangeSignal = QtCore.pyqtSignal()
     loadSignal = QtCore.pyqtSignal(str)
-    saveSignal = QtCore.pyqtSignal()
+    saveSignal = QtCore.pyqtSignal(str)
     clearSignal = QtCore.pyqtSignal()
 
     def __init__(self, parent):
@@ -32,7 +32,7 @@ class WidgetBenchmarkConfigs(QWidget):
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.buttonChangeSignal.emit)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
-        self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
+        self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
@@ -67,17 +67,17 @@ class WidgetBenchmarkConfigs(QWidget):
         dialog.framework_independet_lines_edit['Dataset'].setCurrentText(self.__table.item(row, 1).text())
         dialog.framework_independet_lines_edit['Framework'].setCurrentText(self.__table.item(row, 2).text())
         idx = 3
-        for label in dialog.framework_independet_tags[4:]:
-            dialog.framework_independet_lines_edit[label].setText(self.__table.item(row, idx).text())
+        for tag in dialog.framework_independet_tags[4:]:
+            dialog.framework_independet_lines_edit[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         framework = dialog.get_selected_framework()
         if framework == 'OpenVINO DLDT':
-            for label in dialog.openvino_tags[1:]:
-                dialog.openvino_lines_edit[label].setText(self.__table.item(row, idx).text())
+            for tag in dialog.openvino_tags[1:]:
+                dialog.openvino_lines_edit[tag].setText(self.__table.item(row, idx).text())
                 idx += 1
         elif framework == 'Caffe':
-            for label in dialog.caffe_tags[1:]:
-                dialog.caffe_lines_edit[label].setText(self.__table.item(row, idx + 5).text())
+            for tag in dialog.caffe_tags[1:]:
+                dialog.caffe_lines_edit[tag].setText(self.__table.item(row, idx + 5).text())
                 idx += 1
         if dialog.exec():
             framework_independet_values = dialog.get_framework_independet_values()
@@ -92,8 +92,13 @@ class WidgetBenchmarkConfigs(QWidget):
 
     def __show_dialog_parser_config(self):
         path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
-        if path_to_config:
+        if path_to_config[0]:
             self.loadSignal.emit(path_to_config[0])
+
+    def __show_dialog_create_config(self):
+        path_to_config = QFileDialog.getSaveFileName(self, "Save File", "", "XML files (*.xml)")
+        if path_to_config[0]:
+            self.saveSignal.emit(path_to_config[0])
 
     def show_message_status_saving(self, status):
         if status:
@@ -115,7 +120,7 @@ class WidgetRemoteConfigs(QWidget):
     changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str, str, str, str)
 
     loadSignal = QtCore.pyqtSignal(str)
-    saveSignal = QtCore.pyqtSignal()
+    saveSignal = QtCore.pyqtSignal(str)
     clearSignal = QtCore.pyqtSignal()
 
     def __init__(self, parent):
@@ -133,7 +138,7 @@ class WidgetRemoteConfigs(QWidget):
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_computer)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
-        self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
+        self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
@@ -143,10 +148,7 @@ class WidgetRemoteConfigs(QWidget):
     def __show_dialog_add_computer(self):
         dialog = RemoteDialog(self)
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.addComputerSignal.emit(*values)
+            self.addComputerSignal.emit(*dialog.get_values())
 
     def __show_dialog_change_computer(self):
         if len(self.__table.get_selected_rows()) != 1:
@@ -155,20 +157,22 @@ class WidgetRemoteConfigs(QWidget):
         dialog = RemoteDialog(self)
         row = self.__table.get_selected_rows()[0]
         idx = 0
-        for label in dialog.lines_edit():
-            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+        for tag in dialog.tags:
+            dialog.edits[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.changeComputerSignal.emit(row, *values)
+            self.changeComputerSignal.emit(row, *dialog.get_values())
         self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
         path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
-        if path_to_config:
+        if path_to_config[0]:
             self.loadSignal.emit(path_to_config[0])
+
+    def __show_dialog_create_config(self):
+        path_to_config = QFileDialog.getSaveFileName(self, "Save File", "", "XML files (*.xml)")
+        if path_to_config[0]:
+            self.saveSignal.emit(path_to_config[0])
 
     def show_message_status_saving(self, status):
         if status:
@@ -190,7 +194,7 @@ class WidgetDeployConfigs(QWidget):
     changeComputerSignal = QtCore.pyqtSignal(int, str, str, str, str, str)
 
     loadSignal = QtCore.pyqtSignal(str)
-    saveSignal = QtCore.pyqtSignal()
+    saveSignal = QtCore.pyqtSignal(str)
     clearSignal = QtCore.pyqtSignal()
 
     def __init__(self, parent):
@@ -208,7 +212,7 @@ class WidgetDeployConfigs(QWidget):
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_computer)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
-        self.__buttons.get_buttons()['Save table'].clicked.connect(self.saveSignal.emit)
+        self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
@@ -218,10 +222,7 @@ class WidgetDeployConfigs(QWidget):
     def __show_dialog_add_computer(self):
         dialog = DeployDialog(self)
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.addComputerSignal.emit(*values)
+            self.addComputerSignal.emit(*dialog.get_values())
 
     def __show_dialog_change_computer(self):
         if len(self.__table.get_selected_rows()) != 1:
@@ -230,20 +231,22 @@ class WidgetDeployConfigs(QWidget):
         dialog = DeployDialog(self)
         row = self.__table.get_selected_rows()[0]
         idx = 0
-        for label in dialog.lines_edit():
-            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+        for tag in dialog.tags:
+            dialog.edits[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.changeComputerSignal.emit(row, *values)
+            self.changeComputerSignal.emit(row, *dialog.get_values())
         self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
         path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
-        if path_to_config:
+        if path_to_config[0]:
             self.loadSignal.emit(path_to_config[0])
+
+    def __show_dialog_create_config(self):
+        path_to_config = QFileDialog.getSaveFileName(self, "Save File", "", "XML files (*.xml)")
+        if path_to_config[0]:
+            self.saveSignal.emit(path_to_config[0])
 
     def show_message_status_saving(self, status):
         if status:

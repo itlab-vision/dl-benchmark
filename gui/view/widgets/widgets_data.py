@@ -36,10 +36,7 @@ class WidgetModelSettings(QWidget):
     def __show_dialog_add_model(self):
         dialog = ModelDialog(self)
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.addModelSignal.emit(*values)
+            self.addModelSignal.emit(*dialog.get_values())
 
     def __show_dialog_change_model(self):
         if len(self.__table.get_selected_rows()) != 1:
@@ -48,14 +45,11 @@ class WidgetModelSettings(QWidget):
         dialog = ModelDialog(self)
         row = self.__table.get_selected_rows()[0]
         idx = 0
-        for label in dialog.lines_edit():
-            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+        for tag in dialog.tags:
+            dialog.edits[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.changeModelSignal.emit(row, *values)
+            self.changeModelSignal.emit(row, *dialog.get_values())
         self.__table.remove_selection()
 
     def get_selected_rows(self):
@@ -96,10 +90,7 @@ class WidgetDataSettings(QWidget):
     def __show_dialog_add_dataset(self):
         dialog = DataDialog(self)
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.addDatasetSignal.emit(*values)
+            self.addDatasetSignal.emit(*dialog.get_values())
 
     def __show_dialog_change_dataset(self):
         if len(self.__table.get_selected_rows()) != 1:
@@ -108,14 +99,11 @@ class WidgetDataSettings(QWidget):
         dialog = DataDialog(self)
         row = self.__table.get_selected_rows()[0]
         idx = 0
-        for label in dialog.lines_edit():
-            dialog.lines_edit()[label].setText(self.__table.item(row, idx).text())
+        for tag in dialog.tags:
+            dialog.edits[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         if dialog.exec():
-            values = []
-            for key in dialog.lines_edit():
-                values.append(dialog.lines_edit()[key].text())
-            self.changeComputerSignal.emit(row, *values)
+            self.changeComputerSignal.emit(row, *dialog.get_values())
         self.__table.remove_selection()
 
     def get_selected_rows(self):

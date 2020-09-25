@@ -1,8 +1,5 @@
-from PyQt5 import QtCore
-from PyQt5.QtCore import QObject, pyqtSignal
 from xml.dom import minidom
 
-PATH = r'C:\Users\alexa\Documents\openvino\openvino-dl-benchmark\gui'
 
 class Model:
     def __init__(self, task=None, name=None, precision=None, framework=None, model_path=None, weights_path=None):
@@ -13,11 +10,18 @@ class Model:
         self.model_path = model_path
         self.weights_path = weights_path
 
+    def get_str(self):
+        return self.task + ';' + self.name + ';' + self.precision + ';' + self.framework + ';' + self.model_path + ';' \
+               + self.weights_path
+
 
 class Dataset:
     def __init__(self, name=None, path=None):
         self.name = name
         self.path = path
+
+    def get_str(self):
+        return self.name + ';' + self.path
 
 
 class Test:
@@ -73,10 +77,11 @@ class Models:
     def get_models_list(self):
         models_list = []
         for model in self.__models:
-            str_model = model.task + ';' + model.name + ';' + model.precision + ';' + model.framework + ';' + \
-                        model.model_path + ';' + model.weights_path
-            models_list.append(str_model)
+            models_list.append(model.get_str())
         return models_list
+
+    def set_models(self, models):
+        self.__models = models
 
     def add_model(self, task, name, precision, framework, model_path, weights_path):
         self.__models.append(Model(task, name, precision, framework, model_path, weights_path))
@@ -106,9 +111,11 @@ class Data:
     def get_data_list(self):
         data_list = []
         for data in self.__data:
-            str_data = data.name + ';' + data.path
-            data_list.append(str_data)
+            data_list.append(data.get_str())
         return data_list
+
+    def set_data(self, data):
+        self.__data = data
 
     def add_dataset(self, name, path):
         self.__data.append(Dataset(name, path))
@@ -161,9 +168,104 @@ class BenchmarkConfig:
         self.__tests.clear()
 
     def parse_config(self, path_to_config):
-        pass
+        CONFIG_ROOT_TAG = 'Test'
 
-    def create_config(self):
+        parsed_config = minidom.parse(path_to_config)
+        tests = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
+        self.__tests.clear()
+        models = []
+        data = []
+        for test in tests:
+            model = self.__parse_model(test)
+            dataset = self.__parse_dataset(test)
+            framework_independent = self.__parse_framework_independent(test)
+            framework_dependent = self.__parse_framework_dependent(test, framework_independent[0])
+            models.append(model)
+            data.append(dataset)
+            self.__tests.append(Test(model.get_str(), dataset.get_str(), *framework_independent, *framework_dependent))
+        return models, data
+
+    def __parse_model(self, test):
+        CONFIG_MODEL_TAG = 'Model'
+        CONFIG_TASK_TAG = 'Task'
+        CONFIG_NAME_TAG = 'Name'
+        CONFIG_PRECISION_TAG = 'Precision'
+        CONFIG_SOURCEFRAMEWORK_TAG = 'SourceFramework'
+        CONFIG_MODEL_PATH_TAG = 'ModelPath'
+        CONFIG_WEIGHTS_PATH_TAG = 'WeightsPath'
+
+        parsed_model = test.getElementsByTagName(CONFIG_MODEL_TAG)[0]
+        model = Model()
+        model.task = parsed_model.getElementsByTagName(CONFIG_TASK_TAG)[0].firstChild.data
+        model.name = parsed_model.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+        model.precision = parsed_model.getElementsByTagName(CONFIG_PRECISION_TAG)[0].firstChild.data
+        model.framework = parsed_model.getElementsByTagName(CONFIG_SOURCEFRAMEWORK_TAG)[0].firstChild.data
+        model.model_path = parsed_model.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+        model.weights_path = parsed_model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data
+        return model
+
+    def __parse_dataset(self, test):
+        CONFIG_DATASET_TAG = 'Dataset'
+        CONFIG_NAME_TAG = 'Name'
+        CONFIG_PATH_TAG = 'Path'
+
+        parsed_dataset = test.getElementsByTagName(CONFIG_DATASET_TAG)[0]
+        dataset = Dataset()
+        dataset.name = parsed_dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+        dataset.path = parsed_dataset.getElementsByTagName(CONFIG_PATH_TAG)[0].firstChild.data
+        return dataset
+
+    def __parse_framework_independent(self, test):
+        CONFIG_FRAMEWORK_INDEPENDENT_TAG = 'FrameworkIndependent'
+        CONFIG_INFERENCE_FRAMEWORK_TAG = 'InferenceFramework'
+        CONFIG_BATCH_SIZE_TAG = 'BatchSize'
+        CONFIG_DEVICE_TAG = 'Device'
+        CONFIG_ITERATION_COUNT_TAG = 'IterationCount'
+        CONFIG_TEST_TIME_LIMIT_TAG = 'TestTimeLimit'
+
+        parsed_framework_independent = test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
+        framework = parsed_framework_independent.getElementsByTagName(CONFIG_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data
+        batch_size = parsed_framework_independent.getElementsByTagName(CONFIG_BATCH_SIZE_TAG)[0].firstChild.data
+        device = parsed_framework_independent.getElementsByTagName(CONFIG_DEVICE_TAG)[0].firstChild.data
+        iter_count = parsed_framework_independent.getElementsByTagName(CONFIG_ITERATION_COUNT_TAG)[0].firstChild.data
+        test_time_limit = parsed_framework_independent.getElementsByTagName(CONFIG_TEST_TIME_LIMIT_TAG)[0].firstChild.data
+        return [framework, batch_size, device, iter_count, test_time_limit]
+
+    def __parse_framework_dependent(self, test, framework):
+        CONFIG_FRAMEWORK_INDEPENDENT_TAG = 'FrameworkDependent'
+
+        parsed_framework_dependent = test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
+        if framework == 'OpenVINO DLDT':
+            CONFIG_MODE_TAG = 'Mode'
+            CONFIG_EXTENSION_TAG = 'Extension'
+            CONFIG_ASYNC_REQ_COUNT_TAG = 'AsyncRequestCount'
+            CONFIG_THREAD_COUNT_TAG = 'ThreadCount'
+            CONFIG_STREAM_COUNT_TAG = 'StreamCount'
+
+            mode = parsed_framework_dependent.getElementsByTagName(CONFIG_MODE_TAG)[0].firstChild.data
+            extension = parsed_framework_dependent.getElementsByTagName(CONFIG_EXTENSION_TAG)[0].firstChild.data
+            asynq_req_count = parsed_framework_dependent.getElementsByTagName(CONFIG_ASYNC_REQ_COUNT_TAG)[0].firstChild.data
+            thread_count = parsed_framework_dependent.getElementsByTagName(CONFIG_THREAD_COUNT_TAG)[0].firstChild.data
+            stream_count = parsed_framework_dependent.getElementsByTagName(CONFIG_STREAM_COUNT_TAG)[0].firstChild.data
+            channel_swap = 'None'
+            mean = 'None'
+            input_scale = 'None'
+        elif framework == 'Caffe':
+            CONFIG_CHANNEL_SWAP_TAG = 'ChannelSwap'
+            CONFIG_MEAN_TAG = 'Mean'
+            CONFIG_INPUT_SCALE_TAG = 'InputScale'
+
+            mode = 'None'
+            extension = 'None'
+            asynq_req_count = 'None'
+            thread_count = 'None'
+            stream_count = 'None'
+            channel_swap = parsed_framework_dependent.getElementsByTagName(CONFIG_CHANNEL_SWAP_TAG)[0].firstChild.data
+            mean = parsed_framework_dependent.getElementsByTagName(CONFIG_MEAN_TAG)[0].firstChild.data
+            input_scale = parsed_framework_dependent.getElementsByTagName(CONFIG_INPUT_SCALE_TAG)[0].firstChild.data
+        return [mode, extension, asynq_req_count, thread_count, stream_count, channel_swap, mean, input_scale]
+
+    def create_config(self, path_to_config):
         if len(self.__tests) == 0:
             return False
         file = minidom.Document()
@@ -181,11 +283,10 @@ class BenchmarkConfig:
             CONFIG_TEST_TAG.appendChild(CONFIG_FRAMEWORK_DEPENDENT_TAG)
             CONFIG_ROOT_TAG.appendChild(CONFIG_TEST_TAG)
         xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
-        file_path = PATH + r'\benchmark_configuration.xml'
-        with open(file_path, 'wb') as f:
+        with open(path_to_config, 'wb') as f:
             f.write(xml_str)
         try:
-            f = open(file_path, 'r')
+            f = open(path_to_config, 'r')
             f.close()
         except IOError:
             return False
@@ -264,7 +365,7 @@ class BenchmarkConfig:
             CONFIG_FRAMEWORK_INDEPENDENT_TAG.appendChild(CONFIG_ASYNC_REQ_COUNT_TAG)
             CONFIG_FRAMEWORK_INDEPENDENT_TAG.appendChild(CONFIG_THREAD_COUNT_TAG)
             CONFIG_FRAMEWORK_INDEPENDENT_TAG.appendChild(CONFIG_STREAM_COUNT_TAG)
-        if test.framework == 'Caffe':
+        elif test.framework == 'Caffe':
             CONFIG_CHANNEL_SWAP_TAG = file.createElement('ChannelSwap')
             CONFIG_MEAN_TAG = file.createElement('Mean')
             CONFIG_INPUT_SCALE_TAG = file.createElement('InputScale')
@@ -328,7 +429,7 @@ class RemoteConfig:
             self.__computers[idx].log_file = computer.getElementsByTagName(CONFIG_LOG_FILE_TAG)[0].firstChild.data
             self.__computers[idx].res_file = computer.getElementsByTagName(CONFIG_RESULT_FILE_TAG)[0].firstChild.data
 
-    def create_config(self):
+    def create_config(self, path_to_config):
         if len(self.__computers) == 0:
             return False
         file = minidom.Document()
@@ -363,11 +464,10 @@ class RemoteConfig:
             CONFIG_COMPUTER_TAG.appendChild(CONFIG_RESULT_FILE_TAG)
             CONFIG_ROOT_TAG.appendChild(CONFIG_COMPUTER_TAG)
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
-        file_path = PATH + r'\remote_configuration.xml'
-        with open(file_path, 'wb') as f:
+        with open(path_to_config, 'wb') as f:
             f.write(xml_str)
         try:
-            f = open(file_path, 'r')
+            f = open(path_to_config, 'r')
             f.close()
         except IOError:
             return False
@@ -417,7 +517,7 @@ class DeployConfig:
             self.__computers[idx].os = computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
             self.__computers[idx].download_folder = computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
 
-    def create_config(self):
+    def create_config(self, path_to_config):
         if len(self.__computers) == 0:
             return False
         file = minidom.Document()
@@ -443,11 +543,10 @@ class DeployConfig:
             CONFIG_COMPUTER_TAG.appendChild(CONFIG_DOWNLOAD_FOLDER_TAG)
             CONFIG_ROOT_TAG.appendChild(CONFIG_COMPUTER_TAG)
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
-        file_path = PATH + r'\deploy_configuration.xml'
-        with open(file_path, 'wb') as f:
+        with open(path_to_config, 'wb') as f:
             f.write(xml_str)
         try:
-            f = open(file_path, 'r')
+            f = open(path_to_config, 'r')
             f.close()
         except IOError:
             return False
