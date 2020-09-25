@@ -1,0 +1,12 @@
+alexnet
+caffenet
+googlenet-v1
+googlenet-v2
+mobilenet-v1-1.0-224
+squeezenet1.0
+squeezenet1.1
+vgg16
+vgg19
+ssd300
+ssd512
+mobilenet-ssd
