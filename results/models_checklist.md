@@ -7,7 +7,7 @@
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 alexnet|+|+|+|
-**caffenet**|+|-|+|
+caffenet|+|+|+|
 densenet-121|+|+|+|
 densenet-161|+|+|+|
 densenet-169|+|+|+|
@@ -25,18 +25,18 @@ inception-resnet-v2|-|+|+|
 **mobilenet-v1-0.25-128**|+|-|+|
 **mobilenet-v1-0.50-160**|+|-|+|
 **mobilenet-v1-0.50-224**|+|-|+|
-**mobilenet-v1-1.0-224**|+|-|+|
-**mobilenet-v2**|+|-|+|
+mobilenet-v1-1.0-224|+|+|+|
+mobilenet-v2|+|+|+|
 mobilenet-v2-1.4-224|+|-|-|
 resnet-50|+|название resnet-v1-*|+|
 resnet-101|+|название resnet-v1-*|+|
 resnet-152|+|название resnet-v1-*|+|
-**se-inception**|+|-|+|
-**se-resnet-50**|+|-|+|
-**se-resnet-101**|+|-|+|
-**se-resnet-152**|+|-|+|
-**se-resnext-50**|+|-|+|
-**se-resnext-101**|+|-|+|
+se-inception|+|+|+|
+se-resnet-50|+|+|+|
+se-resnet-101|+|+|+|
+se-resnet-152|+|+|+|
+se-resnext-50|+|+|+|
+se-resnext-101|+|+|+|
 squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
@@ -147,7 +147,7 @@ face-detection-0104|+|-|-|
 face-detection-0105|+|-|-|
 face-detection-0106|+|-|-|
 ***person-detection-retail-0002***|+|+|-|
-**person-detection-retail-0013**|+|-|+|
+person-detection-retail-0013|+|+|+|
 ***person-detection-action-recognition-0005***|+|+|-|
 ***person-detection-action-recognition-0006***|+|+|-|
 ***person-detection-action-recognition-teacher-0002***|+|+|-|
@@ -267,20 +267,10 @@ image-retrieval-0001|+|-|-|
 
 ## Модели, требующие валидации
 
-1. caffenet
 1. mobilenet-v1-0.25-128
 1. mobilenet-v1-0.50-160
 1. mobilenet-v1-0.50-224
-1. mobilenet-v1-1.0-224
-1. mobilenet-v2
-1. se-inception
-1. se-resnet-50
-1. se-resnet-101
-1. se-resnet-152
-1. se-resnext-50
-1. se-resnext-101
 1. deeplabv3
-1. person-detection-retail-0013
 1. ssd_mobilenet_v1_fpn_coco
 
 ## Модели для следующего этапа расширения
