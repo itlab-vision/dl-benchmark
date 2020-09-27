@@ -140,6 +140,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return classification_io(args, io_model_wrapper, transformer)
         elif task == 'detection':
             return detection_io(args, io_model_wrapper, transformer)
+        elif task == 'face-detection':
+            return face_detection_io(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
             return segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
@@ -273,6 +275,47 @@ class detection_io(io_adapter):
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
             count += 1
+
+
+class face_detection_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        labels = result['labels']
+        count_of_detected_faces = 0
+        for i, label in enumerate(labels):
+            if label == -1:
+                count_of_detected_faces = i
+                break
+        boxes = result['boxes'][:count_of_detected_faces]
+        input = self._input[input_layer_name]
+        image = input[0].transpose((1, 2, 0))
+        initial_h, initial_w = image.shape[:2]
+        shapes = self._original_shapes[input_layer_name]
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
+        face_id = 0
+        for obj in boxes:
+            if obj[4] > self._threshold:
+                face_id += 1
+                xmin = int(obj[0] * orig_w / initial_w)
+                ymin = int(obj[1] * orig_h / initial_h)
+                xmax = int(obj[2] * orig_w / initial_w)
+                ymax = int(obj[3] * orig_h / initial_h)
+                color = (0, 0, 0)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('Bounding boxes for face of person {0}'.format(face_id))
+                log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+        out_img = os.path.join(os.path.dirname(__file__), 'out_face_detection.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
 
 
 class segmenatation_io(io_adapter):
