@@ -299,7 +299,6 @@ image-retrieval-0001|+|-|-|
 1. icnet-camvid-ava-sparse-60-0001
 1. text-spotting-0002-detector
 1. image-retrieval-0001
-1. resnet50-binary-0001
 
 ### Модели 2020.4
 1. bert-small-uncased-whole-word-masking-squad-0001
