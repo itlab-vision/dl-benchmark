@@ -89,17 +89,19 @@ def build_parser():
 
 def infer_async(exec_net, number_iter, get_slice):
     result = None
-    iteration = 0
     requests = exec_net.requests
     for i in range(len(requests)):
         utils.set_input_to_blobs(requests[i], get_slice(i))
+    iteration = len(requests)
     inference_time = time()
+    for request in requests:
+        request.async_infer()
     while iteration < number_iter:
         idle_id = exec_net.get_idle_request_id()
         if idle_id < 0:
             exec_net.wait(num_requests=1)
             idle_id = exec_net.get_idle_request_id()
-        utils.set_input_to_blobs(requests[idle_id], get_slice(iteration+len(requests)))
+        utils.set_input_to_blobs(requests[idle_id], get_slice(iteration))
         requests[idle_id].async_infer()
         iteration += 1
     exec_net.wait()
