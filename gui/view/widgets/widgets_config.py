@@ -48,14 +48,14 @@ class WidgetBenchmarkConfigs(QWidget):
             return
         dialog = BenchmarkDialog(self, models, data)
         if dialog.exec():
-            framework_independet_values = dialog.get_framework_independet_values()
+            framework_independent_values = dialog.get_framework_independent_values()
             if dialog.get_selected_framework() == 'OpenVINO DLDT':
                 openvino_values = dialog.get_openvino_values()
                 caffe_values = ['None', 'None', 'None']
             elif dialog.get_selected_framework() == 'Caffe':
                 openvino_values = ['None', 'None', 'None', 'None', 'None']
                 caffe_values = dialog.get_caffe_values()
-            self.addTestSignal.emit(*framework_independet_values, *openvino_values, *caffe_values)
+            self.addTestSignal.emit(*framework_independent_values, *openvino_values, *caffe_values)
 
     def show_dialog_change_test(self, models, data):
         if len(self.__table.get_selected_rows()) != 1:
@@ -63,12 +63,14 @@ class WidgetBenchmarkConfigs(QWidget):
             return
         dialog = BenchmarkDialog(self, models, data)
         row = self.__table.get_selected_rows()[0]
-        dialog.framework_independet_lines_edit['Model'].setCurrentText(self.__table.item(row, 0).text())
-        dialog.framework_independet_lines_edit['Dataset'].setCurrentText(self.__table.item(row, 1).text())
-        dialog.framework_independet_lines_edit['Framework'].setCurrentText(self.__table.item(row, 2).text())
+        dialog.framework_independent_lines_edit['Model'].setCurrentText(self.__table.item(row, 0).text())
+        dialog.framework_independent_lines_edit['Dataset'].setCurrentText(self.__table.item(row, 1).text())
+        dialog.framework_independent_lines_edit['Framework'].setCurrentText(self.__table.item(row, 2).text())
+        dialog.framework_independent_lines_edit['Device'].setCurrentText(self.__table.item(row, 4).text())
         idx = 3
-        for tag in dialog.framework_independet_tags[4:]:
-            dialog.framework_independet_lines_edit[tag].setText(self.__table.item(row, idx).text())
+        for tag in dialog.framework_independent_tags[4:]:
+            if tag != 'Device':
+                dialog.framework_independent_lines_edit[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         framework = dialog.get_selected_framework()
         if framework == 'OpenVINO DLDT':
@@ -80,14 +82,14 @@ class WidgetBenchmarkConfigs(QWidget):
                 dialog.caffe_lines_edit[tag].setText(self.__table.item(row, idx + 5).text())
                 idx += 1
         if dialog.exec():
-            framework_independet_values = dialog.get_framework_independet_values()
+            framework_independent_values = dialog.get_framework_independent_values()
             if dialog.get_selected_framework() == 'OpenVINO DLDT':
                 openvino_values = dialog.get_openvino_values()
                 caffe_values = ['None', 'None', 'None']
             elif dialog.get_selected_framework() == 'Caffe':
                 openvino_values = ['None', 'None', 'None', 'None', 'None']
                 caffe_values = dialog.get_caffe_values()
-            self.changeTestSignal.emit(row, *framework_independet_values, *openvino_values, *caffe_values)
+            self.changeTestSignal.emit(row, *framework_independent_values, *openvino_values, *caffe_values)
             self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):

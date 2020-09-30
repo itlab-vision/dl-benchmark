@@ -168,8 +168,11 @@ class BenchmarkDialog(QDialog):
         self.framework_independent_edits['Framework'].addItems(('OpenVINO DLDT', 'Caffe'))
         self.framework_independent_edits['Framework'].activated[str].connect(self.__framework_choice)
         self.framework_independent_edits['Framework'].currentTextChanged[str].connect(self.__framework_choice)
+        self.framework_independent_edits['Device'] = QComboBox()
+        self.framework_independent_edits['Device'].addItems(('CPU', 'GPU'))
         for tag in self.framework_independent_tags[4:]:
-            self.framework_independent_edits[tag] = QLineEdit(self)
+            if tag != 'Device':
+                self.framework_independent_edits[tag] = QLineEdit(self)
 
     def __create_openvino_edits(self):
         self.openvino_edits = dict.fromkeys(self.openvino_tags[1:])
@@ -243,7 +246,10 @@ class BenchmarkDialog(QDialog):
         values.append(self.framework_independent_edits['Dataset'].currentText())
         values.append(self.framework_independent_edits['Framework'].currentText())
         for tag in self.framework_independent_tags[4:]:
-            values.append(self.framework_independent_edits[tag].text())
+            if tag != 'Device':
+                values.append(self.framework_independent_edits[tag].text())
+            else:
+                values.append(self.framework_independent_edits[tag].currentText())
         return values
 
     def get_openvino_values(self):
@@ -261,7 +267,7 @@ class BenchmarkDialog(QDialog):
     def accept(self):
         check = False
         for tag in self.framework_independent_tags[4:]:
-            if self.framework_independent_edits[tag].text() == '':
+            if tag != 'Device' and self.framework_independent_edits[tag].text() == '':
                 check = True
         framework = self.get_selected_framework()
         if framework == 'OpenVINO DLDT':
