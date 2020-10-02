@@ -775,6 +775,7 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
 [LFW]: http://vis-www.cs.umass.edu/lfw/index.html
 [cityscapes]: https://www.cityscapes-dataset.com
+[ms_coco]: http://cocodataset.org
 [internet_taringa]: https://www.taringa.net/+ciencia_educacion/busca-tu-propia-respuesta-crisis-en-la-educacion_13n2mk
 [internet_walksf]: https://walksf.org/our-work/campaigns/6th-street/
 [sample_videos]: https://github.com/intel-iot-devkit/sample-videos
