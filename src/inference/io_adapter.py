@@ -1441,6 +1441,42 @@ class yolo_v2(io_adapter):
         pass
 
 
+    def __non_max_supression(self, predictions, score_threshold, nms_threshold):
+        predictions.sort(key = lambda prediction: prediction[0], reverse = True)
+        valid_detections = []
+        while (len(predictions) > 0):
+            max_detection = predictions[0]
+            if max_detection[0] < score_threshold: 
+                break
+            valid_detections.append(max_detection)
+            predictions.remove(max_detection)
+            remove_detections = []
+            for detection in predictions:
+                if detection[0] < score_threshold:
+                    remove_detections.append(detection)
+                    continue
+                if not (max_detection[1] == detection[1]):
+                    continue
+                current_rect_area = detection[2][2] * detection[2][3]
+                max_rect_area = max_detection[2][2] * max_detection[2][3]
+                intersection_area = 0
+                if not (detection[2][2] <= 0 or 
+                        detection[2][3] <= 0 or 
+                    max_detection[2][2] <= 0 or 
+                    max_detection[2][3] <= 0):
+                    intersection_area = float(
+                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) - 
+                            max(detection[2][0], max_detection[2][0])) * 
+                        (min(detection[2][1] + detection[2][3], max_detection[2][1] + max_detection[2][3]) -
+                            max(detection[2][1], max_detection[2][1])))
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                if (overlap > nms_threshold):
+                    remove_detections.append(detection)
+            for detection in remove_detections:
+                predictions.remove(detection)
+        return valid_detections
+
+
     def __print_detections(self, detections, labels_map, image, log):
         for detection in detections:
             left = int(detection[2][0])
