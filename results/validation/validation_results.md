@@ -34,7 +34,7 @@ squeezenet-1.0       |0.9988525 Granny Smith<br>0.0004736 fig<br>0.0001965 bell 
 squeezenet-1.1       |0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank| 0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank|0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank| 0.9937357 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank|
 vgg-16               |0.7317343 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig| 0.7317343 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig|0.7317342 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig| 0.7317340 Granny Smith<br>0.0350751 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig|
 vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon| 0.7072732 Granny Smith<br>0.0805917 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon|0.7072731 Granny Smith<br>0.0805916 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon| 0.7072726 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon|
-caffenet             |-|-|0.8602297 Granny SmithБ<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper
+caffenet             |-|-|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper
 mobilenet-v1-1.0-224 |-|-|0.9441368 Granny Smith<br>0.0080110 fig<br>0.0042946 lemon<br>0.0042536 custard apple<br>0.0036513 orange|0.9441368 Granny Smith<br>0.0080110 fig<br>0.0042946 lemon<br>0.0042536 custard apple<br>0.0036513 orange|
 mobilenet-v2         |-|-|0.9951227 Granny Smith<br>0.0009853 fig<br>0.0007886 lemon<br>0.0006782 pomegranate<br>0.0006098 piggy bank, penny bank| 0.9951227 Granny Smith<br>0.0009853 fig<br>0.0007886 lemon<br>0.0006782 pomegranate<br>0.0006098 piggy bank, penny bank|
 se-inception         |-|-|0.7325318 leafhopper<br>0.0065269 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0037833 French loaf<br>0.0036166 hand-held computer, hand-held microcomputer<br>0.0033620 ringlet, ringlet butterfly|0.7325318 leafhopper<br>0.0065269 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0037833 French loaf<br>0.0036166 hand-held computer, hand-held microcomputer<br>0.0033620 ringlet, ringlet butterfly|
@@ -43,6 +43,11 @@ se-resnet-101        |-|-|0.8920754 leafhopper<br>0.0057546 dragonfly, darning n
 se-resnet-152        |-|-|0.9753318 leafhopper<br>0.0012468 French loaf<br>0.0009470 hand-held computer, hand-held microcomputer<br>0.0003147 lemon<br>0.0002425 bannister, banister, balustrade, balusters, handrail|0.9753318 leafhopper<br>0.0012468 French loaf<br>0.0009470 hand-held computer, hand-held microcomputer<br>0.0003147 lemon<br>0.0002425 bannister, banister, balustrade, balusters, handrail|
 se-resnext-50        |-|-|0.9946054 leafhopper<br>0.0000740 hand-held computer, hand-held microcomputer<br>0.0000727 cup<br>0.0000670 hair slide<br>0.0000608 partridge|0.9946054 leafhopper<br>0.0000740 hand-held computer, hand-held microcomputer<br>0.0000727 cup<br>0.0000670 hair slide<br>0.0000608 partridge|
 se-resnext-101       |-|-|0.9269249 leafhopper<br>0.0008046 ringlet, ringlet butterfly<br>0.0006204 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0005282 lacewing, lacewing fly<br>0.0003041 admiral|0.9269249 leafhopper<br>0.0008046 ringlet, ringlet butterfly<br>0.0006204 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0005282 lacewing, lacewing fly<br>0.0003041 admiral|
+efficientnet-b0      |-|-|9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange |
+efficientnet-b0_auto_aug|-|-| 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig |
+efficientnet-b5      |-|-|8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana |
+efficientnet-b7-pytorch |-|-| 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre | 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre |
+efficientnet-b7_auto_aug |-|-| 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre |
 
 ### Тестовое изображение 2
 
@@ -203,6 +208,51 @@ mobilenet-ssd         | - | - | Окаймляющий прямоугольни�
 ssd300                | - | - | Окаймляющий прямоугольник: (80,155), (270,375) | Окаймляющий прямоугольник: (80,157), (274,375) |
 ssd512                | - | - | Окаймляющий прямоугольник: (75,170), (172,370) | Окаймляющий прямоугольник: (73,170), (173,371) |
 
+### Тестовое изображение 4
+Источник: [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 480
+
+
+Входное изображение:
+
+<div style='float: center'>
+<img width="300" src="images\9.jpg">
+<div style='float: center'>
+Входной тензор: 600; 1024; 1
+
+Результат детектирования:
+</div>
+<img width="300" src="detection\faster_rcnn_out.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
+
+   Название модели                          |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
+--------------------------------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
+faster_rcnn_inception_resnet_v2_atrous_coco |-|-| Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461) | Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>|
+faster_rcnn_inception_v2_coco               |-|-| Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
+faster_rcnn_resnet50_coco                   |-|-| Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
+faster_rcnn_resnet101_coco                  |-|-| Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
+
+## Результаты распознавания лиц
+
+### Тестовое изображение 1
+
+Источник: набор данных [VGGFace2][vgg_face2]  
+
+Исходное разрешение: 96 x 112
+
+
+Изображение:
+
+<div style='float: center'>
+<img src="images\sphereface.jpg">
+</div>
+
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+Sphereface           |-|-| 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
+
 ## Результаты сегментации
 
 ### Тестовое изображение 1
@@ -271,4 +321,8 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
+[ms_coco]: http://cocodataset.org
+[vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2
+[sphereface_sync]:recognition/sphereface_out_sync.csv
+[sphereface_async]:recognition/sphereface_out_async.csv
 [cityscapes]: https://www.cityscapes-dataset.com
