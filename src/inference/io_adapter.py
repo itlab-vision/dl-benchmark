@@ -188,6 +188,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return action_recognition_decoder_io(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-decoder':
             return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v2':
+            return yolo_v2_io(args, io_model_wrapper, transformer)
 
         
 class feedforward_io(io_adapter):
@@ -1538,3 +1540,17 @@ class yolo_v2(io_adapter):
         image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), log)
         out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection.bmp')
         cv2.imwrite(out_img, image)
+
+
+class yolo_v2_io(yolo_v2):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _get_anchors(self):
+        anchors = ((1.3221,  1.73145),
+                   (3.19275, 4.00944), 
+                   (5.05587, 8.09892), 
+                   (9.47112, 4.84053), 
+                   (11.2364, 10.0071))
+        return anchors
