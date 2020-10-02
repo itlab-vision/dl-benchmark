@@ -1481,7 +1481,7 @@ class yolo_v2(io_adapter):
         return valid_detections
 
 
-    def __print_detections(self, detections, labels_map, image, scales, orig_shape, log):
+    def __print_detections(self, detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0])
@@ -1490,7 +1490,7 @@ class yolo_v2(io_adapter):
             bottom = int(detection[2][3] + detection[2][1])
             class_id = int(detection[1])
             color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255), min(class_id * 5, 255))
-            log.info('Bounding boxes for object {}'.format(class_id))
+            log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
             log.info('Top left: ({0}, {1})'.format(top, left))
             log.info('Bottom right: ({0}, {1})'.format(bottom, right))
             label = '<' + labels_map[class_id] + '>'
@@ -1515,40 +1515,42 @@ class yolo_v2(io_adapter):
         with open(self._labels, 'r') as f:
             labels_map = [line.strip() for line in f]
         anchors = self._get_anchors()
-        image = self._input['data'][0].transpose((1, 2, 0))
         frameHeight, frameWidth = self._input['data'].shape[-2:]
         result_layer_name = next(iter(result))
-        result = result[result_layer_name][0].reshape((5, 25, 13, 13))
-        cells = result.transpose((2, 3, 0, 1))
-        predictions = []
-        for cx in range(13):
-            for cy in range(13):
-                for anchor_box_number, detection in enumerate(cells[cx, cy]):
-                    tx, ty, tw, th, to = detection[0:5]
-                    bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth)  / 13)
-                    bbox_center_y = (float(cy) + self.__sigmoid(ty)) * (float(frameHeight) / 13)
-                    prior_width, prior_height = anchors[anchor_box_number]
-                    bbox_width  = (np.exp(tw) * prior_width)  * (float(frameWidth)  / 13)
-                    bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / 13)
-                    confidence = self.__sigmoid(to)
-                    scores = detection[5:]
-                    class_id = np.argmax(self.__softmax(scores))
-                    best_class_score = scores[class_id]
-                    confidence_in_class = confidence * best_class_score
-                    if (confidence_in_class > self._threshold):
-                        bbox = [float(bbox_center_x - bbox_width  / 2),
-                                float(bbox_center_y - bbox_height / 2),
-                                float(bbox_width),
-                                float(bbox_height)]
-                        prediction = [best_class_score, class_id, bbox]
-                        predictions.append(prediction)
-        valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
-        orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][0]
-        scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
-        image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), 
-            scales, (orig_w, orig_h), log)
-        out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection.bmp')
-        cv2.imwrite(out_img, image)
+        result = result[result_layer_name].reshape((self._batch_size, 5, 25, 13, 13))
+        for batch, data in enumerate(result):
+            image = self._input['data'][batch].transpose((1, 2, 0))
+            cells = data.transpose((2, 3, 0, 1))
+            predictions = []
+            for cx in range(13):
+                for cy in range(13):
+                    for anchor_box_number, detection in enumerate(cells[cx, cy]):
+                        tx, ty, tw, th, to = detection[0:5]
+                        bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth)  / 13)
+                        bbox_center_y = (float(cy) + self.__sigmoid(ty)) * (float(frameHeight) / 13)
+                        prior_width, prior_height = anchors[anchor_box_number]
+                        bbox_width  = (np.exp(tw) * prior_width)  * (float(frameWidth)  / 13)
+                        bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / 13)
+                        confidence = self.__sigmoid(to)
+                        scores = detection[5:]
+                        class_id = np.argmax(self.__softmax(scores))
+                        best_class_score = scores[class_id]
+                        confidence_in_class = confidence * best_class_score
+                        if (confidence_in_class > self._threshold):
+                            bbox = [float(bbox_center_x - bbox_width  / 2),
+                                    float(bbox_center_y - bbox_height / 2),
+                                    float(bbox_width),
+                                    float(bbox_height)]
+                            prediction = [best_class_score, class_id, bbox]
+                            predictions.append(prediction)
+            valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
+            orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][0]
+            scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
+            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), 
+                scales, (orig_w, orig_h), batch, log)
+            out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
 
 
 class yolo_v2_io(yolo_v2):
