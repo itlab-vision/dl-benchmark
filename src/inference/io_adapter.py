@@ -1517,10 +1517,15 @@ class yolo_v2(io_adapter):
         anchors = self._get_anchors()
         frameHeight, frameWidth = self._input['data'].shape[-2:]
         result_layer_name = next(iter(result))
-        result = result[result_layer_name].reshape((self._batch_size, 5, 25, 13, 13))
+        result = result[result_layer_name]
+        ib, c, h, w = self._input['data'].shape
+        b = result.shape[0]
+        images = np.ndarray(shape = (b, h, w, c))
+        for i in range(b):
+            images[i] = self._input['data'][i % ib].transpose((1, 2, 0))
         for batch, data in enumerate(result):
-            image = self._input['data'][batch].transpose((1, 2, 0))
-            cells = data.transpose((2, 3, 0, 1))
+            image = images[batch]
+            cells = data.reshape((5, 25, 13, 13)).transpose((2, 3, 0, 1))
             predictions = []
             for cx in range(13):
                 for cy in range(13):
