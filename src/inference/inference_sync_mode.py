@@ -67,7 +67,7 @@ def build_argparser():
         'person-detection-action-recognition-teacher', 'human-pose-estimation', 
         'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification', 
         'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection', 
-	'yolo_v2'],
+	'yolo_v2', 'yolo_v2_tiny'],
         default = 'feedforward', type = str, dest = 'task')
     parser.add_argument('--color_map', help = 'Classes color map',
         type = str, default = None, dest = 'color_map')

@@ -190,6 +190,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2':
             return yolo_v2_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v2_tiny':
+            return yolo_v2_tiny_io(args, io_model_wrapper, transformer)
 
         
 class feedforward_io(io_adapter):
@@ -1553,4 +1555,18 @@ class yolo_v2_io(yolo_v2):
                    (5.05587, 8.09892), 
                    (9.47112, 4.84053), 
                    (11.2364, 10.0071))
+        return anchors
+
+
+class yolo_v2_tiny_io(yolo_v2):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def _get_anchors(self):
+        anchors = ((1.08, 1.19),
+                   (3.42, 4.41),
+                   (6.63, 11.38),
+                   (9.42, 5.11),
+                   (16.62, 10.52))
         return anchors
