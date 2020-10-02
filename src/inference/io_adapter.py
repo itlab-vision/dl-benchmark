@@ -1484,24 +1484,21 @@ class yolo_v2(io_adapter):
     def __print_detections(self, detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
-            left = int(detection[2][0])
-            top = int(detection[2][1])
-            right = int(detection[2][2] + detection[2][0])
-            bottom = int(detection[2][3] + detection[2][1])
+            left = int(detection[2][0] * scales['W'])
+            top  = int(detection[2][1] * scales['H'])
+            right  = int((detection[2][2] + detection[2][0]) * scales['W'])
+            bottom = int((detection[2][3] + detection[2][1]) * scales['H'])
             class_id = int(detection[1])
             color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255), min(class_id * 5, 255))
             log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
             log.info('Top left: ({0}, {1})'.format(top, left))
             log.info('Bottom right: ({0}, {1})'.format(bottom, right))
             label = '<' + labels_map[class_id] + '>'
-            image = cv2.rectangle(image, (int(left * scales['W']), int(top * scales['H'])), 
-                (int(right * scales['W']), int(bottom * scales['H'])), color, 3)
+            image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
-            cv2.rectangle(image, 
-                (int(left * scales['W']) - 2, int(top * scales['H']) - 4 - base_line - label_size[1]), 
-                (int(left * scales['W']) + label_size[0], int(top * scales['H'])), color, -2)
-            image = cv2.putText(image, label, 
-                (int(left * scales['W']), int(top * scales['H']) - base_line - 1),
+            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), 
+                (left + label_size[0], top), color, -2)
+            image = cv2.putText(image, label, (left, top - base_line - 1),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
