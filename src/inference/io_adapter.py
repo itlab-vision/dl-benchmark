@@ -1420,3 +1420,64 @@ class driver_action_recognition_decoder_io(io_adapter):
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else '#{}'.format(id)
                 log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class yolo_v2(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def __sigmoid(self, x) -> float:
+        return 1 / (1 + np.exp(-x))
+
+
+    def __softmax(self, x):
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(axis=0)
+
+
+    @abc.abstractmethod
+    def _get_anchors(self):
+        pass
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/pascal_voc.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [line.strip() for line in f]
+        anchors = self._get_anchors()
+        image = self._input['data'][0].transpose((1, 2, 0))
+        frameHeight, frameWidth = self._input['data'].shape[-2:]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name][0].reshape((5, 25, 13, 13))
+        cells = result.transpose((2, 3, 0, 1))
+        predictions = []
+        for cx in range(13):
+            for cy in range(13):
+                for anchor_box_number, detection in enumerate(cells[cx, cy]):
+                    tx, ty, tw, th, to = detection[0:5]
+                    bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth)  / 13)
+                    bbox_center_y = (float(cy) + self.__sigmoid(ty)) * (float(frameHeight) / 13)
+                    prior_width, prior_height = anchors[anchor_box_number]
+                    bbox_width  = (np.exp(tw) * prior_width)  * (float(frameWidth)  / 13)
+                    bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / 13)
+                    confidence = self.__sigmoid(to)
+                    scores = detection[5:]
+                    class_id = np.argmax(self.__softmax(scores))
+                    best_class_score = scores[class_id]
+                    confidence_in_class = confidence * best_class_score
+                    if (confidence_in_class > self._threshold):
+                        bbox = [float(bbox_center_x - bbox_width  / 2),
+                                float(bbox_center_y - bbox_height / 2),
+                                float(bbox_width),
+                                float(bbox_height)]
+                        prediction = [best_class_score, class_id, bbox]
+                        predictions.append(prediction)
+        valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
+        image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), log)
+        out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection.bmp')
+        cv2.imwrite(out_img, image)
