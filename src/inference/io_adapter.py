@@ -1481,7 +1481,8 @@ class yolo_v2(io_adapter):
         return valid_detections
 
 
-    def __print_detections(self, detections, labels_map, image, log):
+    def __print_detections(self, detections, labels_map, image, scales, orig_shape, log):
+        image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0])
             top = int(detection[2][1])
@@ -1493,11 +1494,14 @@ class yolo_v2(io_adapter):
             log.info('Top left: ({0}, {1})'.format(top, left))
             log.info('Bottom right: ({0}, {1})'.format(bottom, right))
             label = '<' + labels_map[class_id] + '>'
-            image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
+            image = cv2.rectangle(image, (int(left * scales['W']), int(top * scales['H'])), 
+                (int(right * scales['W']), int(bottom * scales['H'])), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
-            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), 
-                (left + label_size[0], top), color, -2)
-            image = cv2.putText(image, label, (left, top - base_line - 1),
+            cv2.rectangle(image, 
+                (int(left * scales['W']) - 2, int(top * scales['H']) - 4 - base_line - label_size[1]), 
+                (int(left * scales['W']) + label_size[0], int(top * scales['H'])), color, -2)
+            image = cv2.putText(image, label, 
+                (int(left * scales['W']), int(top * scales['H']) - base_line - 1),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
@@ -1539,7 +1543,10 @@ class yolo_v2(io_adapter):
                         prediction = [best_class_score, class_id, bbox]
                         predictions.append(prediction)
         valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
-        image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), log)
+        orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][0]
+        scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
+        image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), 
+            scales, (orig_w, orig_h), log)
         out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection.bmp')
         cv2.imwrite(out_img, image)
 
