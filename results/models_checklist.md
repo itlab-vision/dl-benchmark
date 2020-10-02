@@ -162,12 +162,12 @@ person-vehicle-bike-detection-crossroad-1016|+|+|+|
 vehicle-license-plate-detection-barrier-0106|+|+|+|
 ***product-detection-0001***|+|+|-|
 ***person-detection-asl-0001***|+|+|-|
-yolo-v2-ava-0001|+|-|-|
-yolo-v2-ava-sparse-35-0001|+|-|-|
-yolo-v2-ava-sparse-70-0001|+|-|-|
-yolo-v2-tiny-ava-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-30-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
+yolo-v2-ava-0001|+|+|-|
+yolo-v2-ava-sparse-35-0001|+|+|-|
+yolo-v2-ava-sparse-70-0001|+|+|-|
+yolo-v2-tiny-ava-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-30-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-60-0001|+|+|-|
 
 ### Распознавание объектов (object recognition)
 
