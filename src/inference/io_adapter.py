@@ -1441,6 +1441,27 @@ class yolo_v2(io_adapter):
         pass
 
 
+    def __print_detections(self, detections, labels_map, image, log):
+        for detection in detections:
+            left = int(detection[2][0])
+            top = int(detection[2][1])
+            right = int(detection[2][2] + detection[2][0])
+            bottom = int(detection[2][3] + detection[2][1])
+            class_id = int(detection[1])
+            color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255), min(class_id * 5, 255))
+            log.info('Bounding boxes for object {}'.format(class_id))
+            log.info('Top left: ({0}, {1})'.format(top, left))
+            log.info('Bottom right: ({0}, {1})'.format(bottom, right))
+            label = '<' + labels_map[class_id] + '>'
+            image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
+            label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
+            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), 
+                (left + label_size[0], top), color, -2)
+            image = cv2.putText(image, label, (left, top - base_line - 1),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
+        return image
+
+
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
