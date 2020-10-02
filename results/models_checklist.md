@@ -283,12 +283,6 @@ image-retrieval-0001|+|-|-|
 1. face-detection-0105
 1. face-detection-0106
 1. unet-camvid-onnx-0001
-1. yolo-v2-ava-0001
-1. yolo-v2-ava-sparse-35-0001
-1. yolo-v2-ava-sparse-70-0001
-1. yolo-v2-tiny-ava-0001
-1. yolo-v2-tiny-ava-sparse-30-0001
-1. yolo-v2-tiny-ava-sparse-60-0001
 1. instance-segmentation-security-1025
 1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001
