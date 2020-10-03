@@ -10,6 +10,10 @@ class Model:
         self.model_path = model_path
         self.weights_path = weights_path
 
+    def __eq__(self, other):
+        return self.task == other.task and self.name == other.name and self.precision == other.precision and \
+               self.framework == other.framework and self.model_path == other.model_path and self.weights_path == other.weights_path
+
     def get_str(self):
         return self.task + ';' + self.name + ';' + self.precision + ';' + self.framework + ';' + self.model_path + ';' \
                + self.weights_path
@@ -19,6 +23,9 @@ class Dataset:
     def __init__(self, name=None, path=None):
         self.name = name
         self.path = path
+
+    def __eq__(self, other):
+        return self.name == other.name and self.path == other.path
 
     def get_str(self):
         return self.name + ';' + self.path
@@ -81,7 +88,10 @@ class Models:
         return models_list
 
     def set_models(self, models):
-        self.__models = models
+        self.__models.clear()
+        for model in models:
+            if model not in self.__models:
+                self.__models.append(model)
 
     def add_model(self, task, name, precision, framework, model_path, weights_path):
         self.__models.append(Model(task, name, precision, framework, model_path, weights_path))
@@ -115,7 +125,10 @@ class Data:
         return data_list
 
     def set_data(self, data):
-        self.__data = data
+        self.__data.clear()
+        for dataset in data:
+            if dataset not in self.__data:
+                self.__data.append(dataset)
 
     def add_dataset(self, name, path):
         self.__data.append(Dataset(name, path))
