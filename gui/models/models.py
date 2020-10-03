@@ -271,10 +271,11 @@ class BenchmarkConfig:
         file = minidom.Document()
         CONFIG_ROOT_TAG = file.createElement('Tests')
         file.appendChild(CONFIG_ROOT_TAG)
-        for test in self.__tests:
+        tests = self.__prepare_tests()
+        for test in tests:
             CONFIG_TEST_TAG = file.createElement('Test')
-            CONFIG_MODEL_TAG = self.__create_model_tag(file, Model(*test.model.split(';')))
-            CONFIG_DATASET_TAG = self.__create_dataset_tag(file, Dataset(*test.dataset.split(';')))
+            CONFIG_MODEL_TAG = self.__create_model_tag(file, test.model)
+            CONFIG_DATASET_TAG = self.__create_dataset_tag(file, test.dataset)
             CONFIG_FRAMEWORK_INDEPENDENT_TAG = self.__create_framework_independent_tag(file, test)
             CONFIG_FRAMEWORK_DEPENDENT_TAG = self.__create_framework_dependent_tag(file, test)
             CONFIG_TEST_TAG.appendChild(CONFIG_MODEL_TAG)
@@ -291,6 +292,48 @@ class BenchmarkConfig:
         except IOError:
             return False
         return True
+
+    def __prepare_tests(self):
+        new_tests = []
+        for test in self.__tests:
+            model = Model(*test.model.split(';'))
+            dataset = Dataset(*test.dataset.split(';'))
+            framework = test.framework
+            batch_sizes = test.batch_size.split(';')
+            devices = test.device.split(';')
+            iteration_counts = test.iter_count.split(';')
+            test_time_limits = test.test_time_limit.split(';')
+            if framework == 'OpenVINO DLDT':
+                modes = test.mode.split(';')
+                extensions = test.extension.split(';')
+                async_req_counts = test.async_req_count.split(';')
+                thread_counts = test.thread_count.split(';')
+                stream_counts = test.stream_count.split(';')
+            elif framework == 'Caffe':
+                channel_swaps = test.channel_swap.split(';')
+                means = test.mean.split(';')
+                input_scales = test.input_scale.split(';')
+            for batch_size in batch_sizes:
+                for device in devices:
+                    for iteration_count in iteration_counts:
+                        for test_time_limit in test_time_limits:
+                            if framework == 'OpenVINO DLDT':
+                                for mode in modes:
+                                    for extension in extensions:
+                                        for async_req_count in async_req_counts:
+                                            for thread_count in thread_counts:
+                                                for stream_count in stream_counts:
+                                                    new_tests.append(Test(model, dataset, framework, batch_size, device,
+                                                                     iteration_count, test_time_limit, mode, extension,
+                                                                     async_req_count, thread_count, stream_count))
+                            elif framework == 'Caffe':
+                                for channel_swap in channel_swaps:
+                                    for mean in means:
+                                        for input_scale in input_scales:
+                                            new_tests.append(Test(model, dataset, framework, batch_size, device,
+                                                             iteration_count, test_time_limit, channel_swap=channel_swap,
+                                                             mean=mean, input_scale=input_scale))
+        return new_tests
 
     def __create_model_tag(self, file, model):
         CONFIG_MODEL_TAG = file.createElement('Model')

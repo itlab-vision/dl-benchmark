@@ -169,7 +169,7 @@ class BenchmarkDialog(QDialog):
         self.framework_independent_edits['Framework'].activated[str].connect(self.__framework_choice)
         self.framework_independent_edits['Framework'].currentTextChanged[str].connect(self.__framework_choice)
         self.framework_independent_edits['Device'] = QComboBox()
-        self.framework_independent_edits['Device'].addItems(('CPU', 'GPU'))
+        self.framework_independent_edits['Device'].addItems(('CPU', 'GPU', 'CPU;GPU'))
         for tag in self.framework_independent_tags[4:]:
             if tag != 'Device':
                 self.framework_independent_edits[tag] = QLineEdit(self)

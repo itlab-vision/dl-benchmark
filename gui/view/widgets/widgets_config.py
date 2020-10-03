@@ -63,23 +63,23 @@ class WidgetBenchmarkConfigs(QWidget):
             return
         dialog = BenchmarkDialog(self, models, data)
         row = self.__table.get_selected_rows()[0]
-        dialog.framework_independent_lines_edit['Model'].setCurrentText(self.__table.item(row, 0).text())
-        dialog.framework_independent_lines_edit['Dataset'].setCurrentText(self.__table.item(row, 1).text())
-        dialog.framework_independent_lines_edit['Framework'].setCurrentText(self.__table.item(row, 2).text())
-        dialog.framework_independent_lines_edit['Device'].setCurrentText(self.__table.item(row, 4).text())
+        dialog.framework_independent_edits['Model'].setCurrentText(self.__table.item(row, 0).text())
+        dialog.framework_independent_edits['Dataset'].setCurrentText(self.__table.item(row, 1).text())
+        dialog.framework_independent_edits['Framework'].setCurrentText(self.__table.item(row, 2).text())
+        dialog.framework_independent_edits['Device'].setCurrentText(self.__table.item(row, 4).text())
         idx = 3
         for tag in dialog.framework_independent_tags[4:]:
             if tag != 'Device':
-                dialog.framework_independent_lines_edit[tag].setText(self.__table.item(row, idx).text())
+                dialog.framework_independent_edits[tag].setText(self.__table.item(row, idx).text())
             idx += 1
         framework = dialog.get_selected_framework()
         if framework == 'OpenVINO DLDT':
             for tag in dialog.openvino_tags[1:]:
-                dialog.openvino_lines_edit[tag].setText(self.__table.item(row, idx).text())
+                dialog.openvino_edits[tag].setText(self.__table.item(row, idx).text())
                 idx += 1
         elif framework == 'Caffe':
             for tag in dialog.caffe_tags[1:]:
-                dialog.caffe_lines_edit[tag].setText(self.__table.item(row, idx + 5).text())
+                dialog.caffe_edits[tag].setText(self.__table.item(row, idx + 5).text())
                 idx += 1
         if dialog.exec():
             framework_independent_values = dialog.get_framework_independent_values()
