@@ -269,15 +269,6 @@ class BenchmarkDialog(QDialog):
         for tag in self.framework_independent_tags[4:]:
             if tag != 'Device' and self.framework_independent_edits[tag].text() == '':
                 check = True
-        framework = self.get_selected_framework()
-        if framework == 'OpenVINO DLDT':
-            for tag in self.openvino_tags[1:]:
-                if self.openvino_edits[tag].text() == '':
-                    check = True
-        elif framework == 'Caffe':
-            for tag in self.caffe_tags[1:]:
-                if self.caffe_edits[tag].text() == '':
-                    check = True
         if check:
             QMessageBox.warning(self, 'Warning!', 'Not all lines are filled!')
         else:
