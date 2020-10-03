@@ -16,6 +16,7 @@ class Presenter:
         self.__view.tabs.data_tab.model_settings.addModelSignal.connect(self.__model_handle_add_button)
         self.__view.tabs.data_tab.model_settings.delModelSignal.connect(self.__model_handle_del_button)
         self.__view.tabs.data_tab.model_settings.changeModelSignal.connect(self.__model_handle_change_button)
+        self.__view.tabs.data_tab.model_settings.clearSignal.connect(self.__model_handle_clear_button)
 
     def __model_handle_add_button(self, task, name, precision, framework, model_path, weights_path):
         self.__model.models.add_model(task, name, precision, framework, model_path, weights_path)
@@ -29,11 +30,16 @@ class Presenter:
         self.__model.models.change_model(row, task, name, precision, framework, model_path, weights_path)
         self.__update_view()
 
+    def __model_handle_clear_button(self):
+        self.__model.models.clear()
+        self.__update_view()
+
     # data signals
     def __connect_data_signals(self):
         self.__view.tabs.data_tab.data_settings.addDatasetSignal.connect(self.__data_handle_add_button)
         self.__view.tabs.data_tab.data_settings.delDatasetSignal.connect(self.__data_handle_del_button)
         self.__view.tabs.data_tab.data_settings.changeDatasetSignal.connect(self.__data_handle_change_button)
+        self.__view.tabs.data_tab.data_settings.clearSignal.connect(self.__data_handle_clear_button)
 
     def __data_handle_add_button(self, name, path):
         self.__model.data.add_dataset(name, path)
@@ -45,6 +51,10 @@ class Presenter:
 
     def __data_handle_change_button(self, row, name, path):
         self.__model.data.change_dataset(row, name, path)
+        self.__update_view()
+
+    def __data_handle_clear_button(self):
+        self.__model.data.clear()
         self.__update_view()
 
     # benchmark signals
