@@ -1,28 +1,5 @@
 # Проверка корректности вывода для моделей Intel с использованием разных режимов
 
-## Результаты классификации
-
-### Тестовое изображение 1
-
-Источник: набор данных [ImageNet][imagenet]
-
-Исходное разрешение: 709 x 510
-
-
-Изображение:
-
-<div style='float: center'>
-<img width="300" src="images\ILSVRC2012_val_00000023.JPEG"></img>
-</div>
-
-   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
----------------------|-----------------------------|------------------------------------|
-efficientnet-b0 | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange |
-efficientnet-b0_auto_aug | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig |
-efficientnet-b5 | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana |
-efficientnet-b7_auto_aug | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre |
-efficientnet-b7-pytorch | 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre | 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre |
-
 ## Результаты детектирования
 
 ### Тестовое изображение 1
@@ -268,33 +245,7 @@ yolo-v2-tiny-ava-0001 | Окаймляющий прямоугольник:<br>AE
 yolo-v2-tiny-ava-sparse-30-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (118, -6), (267, 440)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (118, -6), (267, 440)<br>|
 yolo-v2-tiny-ava-sparse-60-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (94, 42), (225, 473)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (94, 42), (225, 473)<br>|
 
-### Тестовое изображение 10
-Источник: [MS COCO][ms_coco]
-
-Исходное разрешение: 640 x 480
-
-
-Входное изображение:
-
-<div style='float: center'>
-<img width="300" src="images\9.jpg">
-<div style='float: center'>
-Входной тензор: 600; 1024; 1
-
-Результат детектирования:
-</div>
-<img width="300" src="detection\faster_rcnn_out.bmp">
-</div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
-
-Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
-------------------|------------------------------------------|----------------------------------------|
-faster_rcnn_inception_resnet_v2_atrous_coco | Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461) | Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>|
-faster_rcnn_inception_v2_coco | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
-faster_rcnn_resnet50_coco | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
-faster_rcnn_resnet101_coco | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
-
-## Результаты детектирования и распознования действия
+## Результаты детектирования и распознавания действия
 
 ### Тестовое изображение 1
 
@@ -531,24 +482,7 @@ gaze-estimation-adas-0002 | <img src="recognition\out_gaze_1_sync.bmp"> | <img s
 ----------------------|-----------------------------------------|-----------------------------------------|
 license-plate-recognition-barrier-0001 | &lt;Beijing&gt;FA9512 | &lt;Beijing&gt;FA9512 |
 
-## Результаты распознавания лиц
 
-### Тестовое изображение 1
-
-Источник: набор данных [VGGFace2][vgg_face2]  
-
-Исходное разрешение: 96 x 112
-
-
-Изображение:
-
-<div style='float: center'>
-<img src="images\sphereface.jpg">
-</div>
-
-   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
-----------------------|-----------------------------------------|-----------------------------------------|
-Sphereface | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
 
 
 ## Результаты обработки изображений
@@ -850,8 +784,6 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
 [bkhd]:https://www.kaggle.com/kmader/biwi-kinect-head-pose-database
 [github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
-[sphereface_sync]:recognition/sphereface_out_sync.csv
-[sphereface_async]:recognition/sphereface_out_async.csv
 [ARD]: action_recognition/action_recognition_encoder_out.csv
 [DARD]: action_recognition/driver_action_recognition_encoder_out.csv
 [ARE_sync]: encoding/python_sync_demo.csv
