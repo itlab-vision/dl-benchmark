@@ -60,10 +60,10 @@ octave-se-resnet-50-0.125|+|-|-|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-mask_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
-mask_rcnn_inception_v2_coco|+|-|-|
-mask_rcnn_resnet50_atrous_coco|+|-|-|
-mask_rcnn_resnet101_atrous_coco|+|-|-|
+mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|
+mask_rcnn_inception_v2_coco|+|+|-|
+mask_rcnn_resnet50_atrous_coco|+|+|-|
+mask_rcnn_resnet101_atrous_coco|+|+|-|
 
 ### 3D сегментация (3D segmentation)
 
@@ -335,10 +335,6 @@ image-retrieval-0001|+|-|-|
 1. efficientnet-b7-pytorch
 1. efficientnet-b7_auto_aug
 1. mobilenet-v2-1.4-224
-1. mask_rcnn_inception_resnet_v2_atrous_coco
-1. mask_rcnn_inception_v2_coco
-1. mask_rcnn_resnet50_atrous_coco
-1. mask_rcnn_resnet101_atrous_coco
 1. densenet-121-tf
 1. densenet-121-caffe2
 1. densenet-161-tf
