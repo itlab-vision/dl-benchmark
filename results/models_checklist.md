@@ -12,11 +12,11 @@ densenet-121|+|+|+|
 densenet-161|+|+|+|
 densenet-169|+|+|+|
 densenet-201|+|+|+|
-efficientnet-b0|+|-|-|
-efficientnet-b0_auto_aug|+|-|-|
-efficientnet-b5|+|-|-|
-efficientnet-b7-pytorch|+|-|-|
-efficientnet-b7_auto_aug|+|-|-|
+***efficientnet-b0***|+|+|-|
+***efficientnet-b0_auto_aug***|+|+|-|
+***efficientnet-b5***|+|+|-|
+***efficientnet-b7-pytorch***|+|+|-|
+***efficientnet-b7_auto_aug***|+|+|-|
 googlenet-v1|+|+|+|
 googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
@@ -79,10 +79,10 @@ brain-tumor-segmentation-0002|+|отсутствуют данные|-|
 ctpn|+|отсутствуют данные|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
-faster_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
-faster_rcnn_inception_v2_coco|+|-|-|
-faster_rcnn_resnet50_coco|+|-|-|
-faster_rcnn_resnet101_coco|+|-|-|
+***faster_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|
+***faster_rcnn_inception_v2_coco***|+|+|-|
+***faster_rcnn_resnet50_coco***|+|+|-|
+***faster_rcnn_resnet101_coco***|+|+|-|
 mtcnn|+|пайплайн из трех моделей|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
@@ -141,10 +141,10 @@ face-detection-adas-0001|+|+|+|
 ***face-detection-adas-binary-0001***|+|+|-|
 face-detection-retail-0004|+|+|+|
 face-detection-retail-0005|+|+|+|
-face-detection-0100|+|-|-|
-face-detection-0102|+|-|-|
-face-detection-0104|+|-|-|
-face-detection-0105|+|-|-|
+***face-detection-0100***|+|+|-|
+***face-detection-0102***|+|+|-|
+***face-detection-0104***|+|+|-|
+***face-detection-0105***|+|+|-|
 face-detection-0106|+|-|-|
 ***person-detection-retail-0002***|+|+|-|
 person-detection-retail-0013|+|+|+|
@@ -198,10 +198,10 @@ person-reidentification-retail-0076|-|нет доступа к набору да
 -|-|-|-|
 road-segmentation-adas-0001|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|
-unet-camvid-onnx-0001|+|-|-|
-icnet-camvid-ava-0001|+|-|-|
-icnet-camvid-ava-sparse-30-0001|+|-|-|
-icnet-camvid-ava-sparse-60-0001|+|-|-|
+***unet-camvid-onnx-0001***|+|+|-|
+***icnet-camvid-ava-0001***|+|+|-|
+***icnet-camvid-ava-sparse-30-0001***|+|+|-|
+***icnet-camvid-ava-sparse-60-0001***|+|+|-|
 
 ### Сегментация объектов (instance segmentation)
 
@@ -277,12 +277,7 @@ image-retrieval-0001|+|-|-|
 
 ### Модели 2020.2
 1. resnet18-xnor-binary-onnx-0001
-1. face-detection-0100
-1. face-detection-0102
-1. face-detection-0104
-1. face-detection-0105
 1. face-detection-0106
-1. unet-camvid-onnx-0001
 1. yolo-v2-ava-0001
 1. yolo-v2-ava-sparse-35-0001
 1. yolo-v2-ava-sparse-70-0001
@@ -294,9 +289,6 @@ image-retrieval-0001|+|-|-|
 1. faster-rcnn-resnet101-coco-sparse-60-0001
 1. handwritten-japanese-recognition-0001
 1. person-reidentification-retail-0248
-1. icnet-camvid-ava-0001
-1. icnet-camvid-ava-sparse-30-0001
-1. icnet-camvid-ava-sparse-60-0001
 1. text-spotting-0002-detector
 1. image-retrieval-0001
 
@@ -325,15 +317,6 @@ image-retrieval-0001|+|-|-|
 1. yolo-v2-tiny-tf
 1. yolo-v2-tf
 1. yolo-v3-tf
-1. faster_rcnn_inception_resnet_v2_atrous_coco
-1. faster_rcnn_inception_v2_coco
-1. faster_rcnn_resnet50_coco
-1. faster_rcnn_resnet101_coco
-1. efficientnet-b0
-1. efficientnet-b0_auto_aug
-1. efficientnet-b5
-1. efficientnet-b7-pytorch
-1. efficientnet-b7_auto_aug
 1. mobilenet-v2-1.4-224
 1. densenet-121-tf
 1. densenet-121-caffe2
