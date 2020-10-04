@@ -354,7 +354,6 @@ image-retrieval-0001|+|-|-|
 1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
 1. vgg19-caffe2
-1. mask_rcnn_inception_resnet_v2_atrous_coco
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. faceboxes-pytorch
