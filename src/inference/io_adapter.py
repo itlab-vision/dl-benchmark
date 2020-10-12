@@ -17,25 +17,6 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
-    def __convert_images(self, shape, data):
-        c, h, w = shape[1:]
-        images = np.ndarray(shape=(len(data), c, h, w))
-        image_shapes = []
-        for i in range(len(data)):
-            image = cv2.imread(data[i])
-            image_shapes.append(image.shape[:-1])
-            if (image.shape[:-1] != (h, w)):
-                image = cv2.resize(image, (w, h))
-            image = image.transpose((2, 0, 1))
-            images[i] = image
-        return images, image_shapes
-
-    def __transform_images(self, images):
-        b, c, h, w = images.shape
-        transformed_images = np.zeros(shape=(b, c, h, w))
-        for i in range(b):
-            transformed_images[i] = self._transformer.transform(images[i])
-        return transformed_images
 
     def __create_list_images(self, input):
         images = []
@@ -85,11 +66,11 @@ class io_adapter(metaclass=abc.ABCMeta):
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
-                    value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self.__transform_images(value)
-                self._input.update({key: value})
-                self._original_shapes.update({key: shapes})
-                self._transformed_input.update({key: transformed_value})
+                    value, shapes = self._transformer.convert_images(shape, value)
+                    transformed_value = self._transformer.transform_images(value)
+                self._input.update({key : value})
+                self._original_shapes.update({key : shapes})
+                self._transformed_input.update({key : transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -100,11 +81,12 @@ class io_adapter(metaclass=abc.ABCMeta):
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
-                value, shapes = self.__convert_images(shape, value)
-                transformed_value = self.__transform_images(value)
-            self._input.update({input_blob: value})
-            self._original_shapes.update({input_blob: shapes})
-            self._transformed_input.update({input_blob: transformed_value})
+                value, shapes = self._transformer.convert_images(shape, value)
+                transformed_value = self._transformer.transform_images(value)
+            self._input.update({input_blob : value})
+            self._original_shapes.update({input_blob : shapes})
+            self._transformed_input.update({input_blob : transformed_value})
+
 
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
