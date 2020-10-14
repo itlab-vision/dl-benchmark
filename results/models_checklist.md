@@ -162,12 +162,12 @@ person-vehicle-bike-detection-crossroad-1016|+|+|+|
 vehicle-license-plate-detection-barrier-0106|+|+|+|
 ***product-detection-0001***|+|+|-|
 ***person-detection-asl-0001***|+|+|-|
-yolo-v2-ava-0001|+|-|-|
-yolo-v2-ava-sparse-35-0001|+|-|-|
-yolo-v2-ava-sparse-70-0001|+|-|-|
-yolo-v2-tiny-ava-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-30-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
+yolo-v2-ava-0001|+|+|-|
+yolo-v2-ava-sparse-35-0001|+|+|-|
+yolo-v2-ava-sparse-70-0001|+|+|-|
+yolo-v2-tiny-ava-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-30-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-60-0001|+|+|-|
 
 ### Распознавание объектов (object recognition)
 
@@ -278,12 +278,6 @@ image-retrieval-0001|+|-|-|
 ### Модели 2020.2
 1. resnet18-xnor-binary-onnx-0001
 1. face-detection-0106
-1. yolo-v2-ava-0001
-1. yolo-v2-ava-sparse-35-0001
-1. yolo-v2-ava-sparse-70-0001
-1. yolo-v2-tiny-ava-0001
-1. yolo-v2-tiny-ava-sparse-30-0001
-1. yolo-v2-tiny-ava-sparse-60-0001
 1. instance-segmentation-security-1025
 1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001

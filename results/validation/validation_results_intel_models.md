@@ -222,6 +222,29 @@ person-detection-retail-0013 | Окаймляющий прямоугольник
 pedestrian-detection-adas-0002 | Окаймляющий прямоугольник:<br>(614, 307) (945, 803) | Окаймляющий прямоугольник:<br>(614, 307) (945, 803)<br>|
 pedestrian-detection-adas-binary-0001 | Окаймляющие прямоугольники:<br> (629, 310) (934, 811),<br>(392, 435) (440, 525)<br>|<br>(629, 310) (934, 811),<br>(392, 435) (440, 525)
 
+### Тестовое изображение 10
+Источник: [Pascal VOC][pascal_voc]
+
+Исходное разрешение: 500 x 375
+
+
+Входное изображение и результат детектирования:
+
+<div style='float: center'>
+<img width="300" src="images\2011_002352.jpg">
+<img width="300" src="detection\out_yolo_detection.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>AEROPLANE (127, 62), (251, 443)<br>
+
+Название модели   |   Python (синхронный режим, реализация)  |  Python (асинхронный режим, реализация)|
+------------------|------------------------------------------|----------------------------------------|
+yolo-v2-ava-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (127, 62), (251, 443)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (127, 62), (251, 443)<br>|
+yolo-v2-ava-sparse-35-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (129, 19), (258, 410)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (129, 19), (258, 410)<br>|
+yolo-v2-ava-sparse-70-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (100, 66), (222, 450)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (100, 66), (222, 450)<br>|
+yolo-v2-tiny-ava-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (96, 51), (223, 464)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (96, 51), (223, 464)<br>|
+yolo-v2-tiny-ava-sparse-30-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (118, -6), (267, 440)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (118, -6), (267, 440)<br>|
+yolo-v2-tiny-ava-sparse-60-0001 | Окаймляющий прямоугольник:<br>AEROPLANE (94, 42), (225, 473)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (94, 42), (225, 473)<br>|
+
 ## Результаты детектирования и распознавания действия
 
 ### Тестовое изображение 1
@@ -782,3 +805,4 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 [widerface]: http://shuoyang1213.me/WIDERFACE
 [camvid]: https://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/
 [imagenet]: http://www.image-net.org/
+[pascal_voc]: http://host.robots.ox.ac.uk/pascal/VOC/
