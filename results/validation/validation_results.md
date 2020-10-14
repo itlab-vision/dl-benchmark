@@ -318,6 +318,40 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 <img width="300" src="semantic_segmentation\cityscapes_colormap.jpg">
 </div>
 
+## Результаты экземплярной сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 480
+
+
+Изображение:
+
+<div style='float: center'>
+<img width="300" src="images\22.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: 800; 1365; 1
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
+mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
+mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
+mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
+
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="instance_segmentation\mscoco90_colormap.jpg">
+</div>
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org

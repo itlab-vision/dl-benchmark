@@ -188,12 +188,14 @@ class io_adapter(metaclass = abc.ABCMeta):
             return action_recognition_decoder_io(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-decoder':
             return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
+        elif task == 'mask-rcnn':
+            return mask_rcnn_io(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2':
             return yolo_v2_io(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2_tiny':
             return yolo_v2_tiny_io(args, io_model_wrapper, transformer)
 
-        
+
 class feedforward_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -1424,6 +1426,92 @@ class driver_action_recognition_decoder_io(io_adapter):
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else '#{}'.format(id)
                 log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class mask_rcnn_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map_90.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names_90.txt')
+        labels_map = []
+        with open(self._labels, 'r') as f:
+            for line in f:
+                labels_map.append(line.strip())
+
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
+        image = self._input['image_tensor'][0].transpose((1, 2, 0))
+
+        detections_info = result['reshape_do_2d']
+        masks = result['masks']
+
+        count_of_detected_objects = 0
+        for i, detection_info in enumerate(detections_info):
+            image_number = detection_info[0]
+            if image_number == -1:
+                count_of_detected_objects = i
+                break
+        masks = masks[:count_of_detected_objects]
+        detections_info = detections_info[:count_of_detected_objects]
+
+        labels_on_image = []
+
+        for idx, detection_info in enumerate(detections_info):
+            if detection_info[2] > self._threshold:
+                initial_h, initial_w = image.shape[:2]
+                left   = int(detection_info[3] * initial_w)
+                top    = int(detection_info[4] * initial_h)
+                right  = int(detection_info[5] * initial_w)
+                bottom = int(detection_info[6] * initial_h)
+
+                class_id = int(detection_info[1]) - 1
+                mask = masks[idx][class_id]
+                color = classes_color_map[class_id]
+
+                object_width  = abs(right - left)
+                object_height = abs(top - bottom)
+
+                dw = int(object_width  / mask.shape[-1])
+                dh = int(object_height / mask.shape[-2])
+
+                label_on_image_point = (int(left + object_width / 3), int(bottom - object_height / 2))
+                label_on_image = '<' + labels_map[class_id] + '>'
+                labels_on_image.append((label_on_image, label_on_image_point)) 
+
+                for j in range(mask.shape[-2]):
+                    for i in range(mask.shape[-1]):
+                        if (mask[j][i] < self._threshold):
+                            continue
+
+                        x = int(left + i * dw)
+                        y = int(top  + j * dh)
+
+                        for m in range(y, y + dh):
+                            for n in range(x, x + dw):
+                                image[m, n] = color
+
+        for l in range(len(labels_on_image)):
+            image = cv2.putText(cv2.UMat(image), 
+                labels_on_image[l][0], 
+                labels_on_image[l][1],
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+
+        orig_h, orig_w = shapes[0]
+        image = cv2.UMat(cv2.resize(cv2.UMat(image), (orig_w, orig_h)))
+        out_img = os.path.join(os.path.dirname(__file__), 'mask_rcnn_out.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
 
 
 class yolo_v2(io_adapter):
