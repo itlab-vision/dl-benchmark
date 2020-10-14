@@ -1,3 +1,4 @@
+import os
 from xml.dom import minidom
 from model.remote_config.remote_computer import RemoteComputer
 
@@ -90,9 +91,4 @@ class RemoteConfig:
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
-        try:
-            f = open(path_to_config, 'r')
-            f.close()
-        except IOError:
-            return False
-        return True
+        return os.path.exists(path_to_config)

@@ -1,3 +1,4 @@
+import os
 from xml.dom import minidom
 from model.deploy_config.deploy_computer import DeployComputer
 
@@ -73,9 +74,4 @@ class DeployConfig:
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
-        try:
-            f = open(path_to_config, 'r')
-            f.close()
-        except IOError:
-            return False
-        return True
+        return os.path.exists(path_to_config)

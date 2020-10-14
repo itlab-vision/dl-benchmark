@@ -1,3 +1,4 @@
+import os
 from xml.dom import minidom
 from model.models.model import Model
 from model.data.dataset import Dataset
@@ -155,12 +156,7 @@ class BenchmarkConfig:
         xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
-        try:
-            f = open(path_to_config, 'r')
-            f.close()
-        except IOError:
-            return False
-        return True
+        return os.path.exists(path_to_config)
 
     def __prepare_tests(self):
         new_tests = []
