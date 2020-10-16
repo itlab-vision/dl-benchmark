@@ -246,21 +246,22 @@ class detection_io(io_adapter):
         shapes = self._original_shapes[input_layer_name]
         ib = input.shape[0]
         b = result.shape[0]
+        N = result.shape[2] // ib
         images = []
-        for i in range(b):
+        for i in range(b * ib):
             orig_h, orig_w = shapes[i % ib]
             image = input[i % ib].transpose((1, 2, 0))
             images.append(cv2.resize(image, (orig_w, orig_h)))
-        for batch in range(0, b, ib):
+        for batch in range(b):
             for out_num in range(ib):
                 isbreak = False
-                for obj in result[batch + out_num][0]:
+                for obj in result[batch][0][out_num * N : (out_num + 1) * N]:
                     image_number = int(obj[0])
                     if image_number < 0:
                         isbreak = True
                         break
                     if obj[2] > self._threshold:
-                        image = images[image_number + batch]
+                        image = images[image_number + batch * ib]
                         initial_h, initial_w = image.shape[:2]
                         xmin = int(obj[3] * initial_w)
                         ymin = int(obj[4] * initial_h)
