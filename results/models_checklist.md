@@ -22,9 +22,9 @@ googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
 googlenet-v4|-|+|+|
 inception-resnet-v2|-|+|+|
-**mobilenet-v1-0.25-128**|+|-|+|
-**mobilenet-v1-0.50-160**|+|-|+|
-**mobilenet-v1-0.50-224**|+|-|+|
+mobilenet-v1-0.25-128|+|+|+|
+mobilenet-v1-0.50-160|+|+|+|
+mobilenet-v1-0.50-224|+|+|+|
 mobilenet-v1-1.0-224|+|+|+|
 mobilenet-v2|+|+|+|
 mobilenet-v2-1.4-224|+|-|-|
@@ -54,7 +54,7 @@ octave-se-resnet-50-0.125|+|-|-|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-**deeplabv3**|+|-|+|
+deeplabv3|+|+|+|
 
 ### Сегментация объектов (instance segmentation)
 
@@ -87,7 +87,7 @@ mtcnn|+|пайплайн из трех моделей|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
-*ssd_mobilenet_v1_fpn_coco*|+|-|+|
+ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
 ssdlite_mobilenet_v2|+|-|-|
 yolo-v1-tiny-tf|+|-|-|
@@ -264,14 +264,6 @@ asl-recognition-0004|+|-|-|
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 image-retrieval-0001|+|-|-|
-
-## Модели, требующие валидации
-
-1. mobilenet-v1-0.25-128
-1. mobilenet-v1-0.50-160
-1. mobilenet-v1-0.50-224
-1. deeplabv3
-1. ssd_mobilenet_v1_fpn_coco
 
 ## Модели для следующего этапа расширения
 
