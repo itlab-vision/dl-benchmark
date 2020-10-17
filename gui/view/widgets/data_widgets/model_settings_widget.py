@@ -8,7 +8,7 @@ from view.tables.model_table import ModelTable
 class ModelSettingsWidget(QWidget):
 
     addModelSignal = pyqtSignal(str, str, str, str, str, str)
-    delModelSignal = pyqtSignal(list)
+    deleteModelSignal = pyqtSignal(list)
     changeModelSignal = pyqtSignal(int, str, str, str, str, str, str)
     clearSignal = pyqtSignal()
 
@@ -24,13 +24,9 @@ class ModelSettingsWidget(QWidget):
 
     def __set_connections(self):
         self.__buttons.get_buttons()['Add information'].clicked.connect(self.__show_dialog_add_model)
-        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
+        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__click_delete_button)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.__show_dialog_change_model)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
-
-    def __del_click(self):
-        self.delModelSignal.emit(self.__table.get_selected_rows())
-        self.__table.remove_selection()
 
     def __show_dialog_add_model(self):
         dialog = ModelDialog(self)
@@ -49,6 +45,10 @@ class ModelSettingsWidget(QWidget):
             idx += 1
         if dialog.exec():
             self.changeModelSignal.emit(row, *dialog.get_values())
+        self.__table.remove_selection()
+
+    def __click_delete_button(self):
+        self.deleteModelSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def get_selected_rows(self):

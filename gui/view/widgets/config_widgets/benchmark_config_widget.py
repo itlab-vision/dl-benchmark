@@ -8,11 +8,11 @@ from view.tables.benchmark_config_table import BenchmarkConfigTable
 class BenchmarkConfigWidget(QWidget):
 
     addTestSignal = pyqtSignal(str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
-    delTestSignal = pyqtSignal(list)
+    deleteTestSignal = pyqtSignal(list)
     changeTestSignal = pyqtSignal(int, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
 
-    buttonAddSignal = pyqtSignal()
-    buttonChangeSignal = pyqtSignal()
+    showAddTestDialogSignal = pyqtSignal()
+    showChangeTestDialogSignal = pyqtSignal()
     loadSignal = pyqtSignal(str)
     saveSignal = pyqtSignal(str)
     clearSignal = pyqtSignal()
@@ -28,18 +28,14 @@ class BenchmarkConfigWidget(QWidget):
         self.__set_connections()
 
     def __set_connections(self):
-        self.__buttons.get_buttons()['Add information'].clicked.connect(self.buttonAddSignal.emit)
-        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__del_click)
-        self.__buttons.get_buttons()['Change information'].clicked.connect(self.buttonChangeSignal.emit)
+        self.__buttons.get_buttons()['Add information'].clicked.connect(self.showAddTestDialogSignal.emit)
+        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__click_delete_button)
+        self.__buttons.get_buttons()['Change information'].clicked.connect(self.showChangeTestDialogSignal.emit)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
         self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
-    def __del_click(self):
-        self.delSignal.emit(self.__table.get_selected_rows())
-        self.__table.remove_selection()
-
-    def show_dialog_add_test(self, models, data):
+    def show_add_test_dialog(self, models, data):
         if not models:
             QMessageBox.warning(self, "Warning!", "Models list is empty!")
             return
@@ -57,7 +53,7 @@ class BenchmarkConfigWidget(QWidget):
                 caffe_values = dialog.get_caffe_values()
             self.addTestSignal.emit(*framework_independent_values, *openvino_values, *caffe_values)
 
-    def show_dialog_change_test(self, models, data):
+    def show_change_test_dialog(self, models, data):
         if len(self.__table.get_selected_rows()) != 1:
             QMessageBox.warning(self, "Warning!", "Choose one row!")
             return
@@ -101,6 +97,10 @@ class BenchmarkConfigWidget(QWidget):
         path_to_config = QFileDialog.getSaveFileName(self, "Save File", "", "XML files (*.xml)")
         if path_to_config[0]:
             self.saveSignal.emit(path_to_config[0])
+
+    def __click_delete_button(self):
+        self.deleteSignal.emit(self.__table.get_selected_rows())
+        self.__table.remove_selection()
 
     def show_message_status_saving(self, status):
         if status:

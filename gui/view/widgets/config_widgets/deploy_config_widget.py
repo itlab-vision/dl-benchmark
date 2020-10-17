@@ -8,7 +8,7 @@ from view.tables.deploy_config_table import DeployConfigTable
 class DeployConfigWidget(QWidget):
 
     addComputerSignal = pyqtSignal(str, str, str, str, str)
-    delComputerSignal = pyqtSignal(list)
+    deleteComputerSignal = pyqtSignal(list)
     changeComputerSignal = pyqtSignal(int, str, str, str, str, str)
 
     loadSignal = pyqtSignal(str)
