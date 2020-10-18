@@ -1,13 +1,25 @@
 language: python
-python: "3.8"
 
-install:
-    - pip install pytest-pylint pytest-flake8
+jobs:
+  include:
+    - name: "Python linters on Xenial Linux"
+      python: 3.8
+      before_install: pip3 install -r requirements_linux.txt
+    - name: "Python linters on Windows"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - python -m pip install --upgrade pip
+        - pip3 install -r requirements_windows.txt
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+
+install: pip3 install pytest-pylint pytest-flake8
 
 scripts:
     - pylint_status=0;
       while read file; do
-          python3 -m pylint ${file} --errors-only -j0 --max-line-length=200 --ignore-patterns="__init__";
+          pylint ${file} --errors-only -j0 --max-line-length=200 --ignore-patterns="__init__" --extension-pkg-whitelist=cv2;
           if [ $? -ne 0 ]; then
               pylint_status=1;
           fi;
@@ -15,4 +27,4 @@ scripts:
       if [ ${pylint_status} -ne 0 ]; then
           false;
       fi
-    - python3 -m flake8 --max-line-length=200 --statistics --count --per-file-ignores="__init__.py:F401"
+    - flake8 --max-line-length=200 --statistics --count --per-file-ignores="__init__.py:F401"
