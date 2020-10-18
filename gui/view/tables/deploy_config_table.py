@@ -1,4 +1,3 @@
-# from PyQt5.QtWidgets import QAbstractScrollArea
 from view.tables.table import Table
 
 
@@ -8,11 +7,9 @@ class DeployConfigTable(Table):
         self._count_col = 5
         self._count_row = 100
         self.__headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
-        self.__selected_rows = []
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self.__headers)
-        #self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self._resize_columns()
         self.clear()
         self.clicked.connect(self.clicked_table)

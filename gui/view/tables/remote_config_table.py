@@ -4,7 +4,6 @@ from view.tables.table import Table
 class RemoteConfigTable(Table):
     def __init__(self, parent):
         super().__init__(parent)
-        self.__parameters = []
         self._count_col = 8
         self._count_row = 100
         self.__headers = ['IP', 'Login', 'Password', 'OS', 'FTPClientPath', 'BenchmarkConfig', 'LogFile', 'ResultFile']
