@@ -12,7 +12,7 @@ class remote_helper(metaclass = abc.ABCMeta):
             from linux_remote_helper import linux_remote_helper
             return linux_remote_helper(log)
         elif os_type == 'windows':
-            from windows_remote_hepler import windows_remote_hepler
+            from windows_remote_helper import windows_remote_hepler
             return windows_remote_hepler(log)
 
 

@@ -1,4 +1,4 @@
-import wmi
+import wmi # pylint: disable=E0401
 from remote_helper import remote_helper
 
 class windows_remote_hepler(remote_helper):

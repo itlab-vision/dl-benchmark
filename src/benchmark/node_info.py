@@ -2,7 +2,7 @@ import os
 import platform
 import subprocess
 from collections import OrderedDict
-from openvino.inference_engine import IECore
+from openvino.inference_engine import IECore # pylint: disable=E0401
 
 
 def get_cpu_name():

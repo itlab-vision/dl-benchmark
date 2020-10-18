@@ -1,4 +1,4 @@
-import paramiko
+import paramiko # pylint: disable=E0401
 from remote_helper import remote_helper
 
 

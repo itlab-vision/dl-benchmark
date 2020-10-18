@@ -1,6 +1,6 @@
 import sys
 import argparse
-import caffe
+import caffe # pylint: disable=E0401
 import logging as log
 import postprocessing_data as pp
 from time import time

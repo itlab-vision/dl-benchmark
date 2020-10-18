@@ -5,11 +5,7 @@ import logging as log
 import config_parser
 import ftplib
 import table_format
-
-PATH_TO_REMOTE_SCRIPT = '../bench_deploy'
-path_to_utils = os.path.normpath(os.path.join(os.getcwd(), PATH_TO_REMOTE_SCRIPT))
-sys.path.insert(1, path_to_utils)
-from remote_executor import remote_executor
+from ..deployment.remote_executor import remote_executor # pylint: disable=E0402
 
 
 def build_parser():

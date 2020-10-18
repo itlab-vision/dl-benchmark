@@ -4,7 +4,7 @@ import numpy as np
 import logging as log
 import cv2
 from copy import copy
-from openvino.inference_engine import IECore
+from openvino.inference_engine import IECore # pylint: disable=E0401
 
 
 def create_network(iecore, model_xml, model_bin, log):
