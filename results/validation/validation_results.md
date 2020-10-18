@@ -34,7 +34,7 @@ squeezenet-1.0       |0.9988525 Granny Smith<br>0.0004736 fig<br>0.0001965 bell 
 squeezenet-1.1       |0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank| 0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank|0.9937358 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank| 0.9937357 Granny Smith<br>0.0014752 lemon<br>0.0013913 fig<br>0.0008874 tennis ball<br>0.0006791 piggy bank, penny bank|
 vgg-16               |0.7317343 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig| 0.7317343 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig|0.7317342 Granny Smith<br>0.0350750 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig| 0.7317340 Granny Smith<br>0.0350751 bell pepper<br>0.0209236 grocery store, grocery, food market, market<br>0.0137958 saltshaker, salt shaker<br>0.0127183 fig|
 vgg-19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon| 0.7072732 Granny Smith<br>0.0805917 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon|0.7072731 Granny Smith<br>0.0805916 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon| 0.7072726 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon|
-caffenet             |-|-|0.8602297 Granny SmithБ<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper
+caffenet             |-|-|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper
 mobilenet-v1-1.0-224 |-|-|0.9441368 Granny Smith<br>0.0080110 fig<br>0.0042946 lemon<br>0.0042536 custard apple<br>0.0036513 orange|0.9441368 Granny Smith<br>0.0080110 fig<br>0.0042946 lemon<br>0.0042536 custard apple<br>0.0036513 orange|
 mobilenet-v2         |-|-|0.9951227 Granny Smith<br>0.0009853 fig<br>0.0007886 lemon<br>0.0006782 pomegranate<br>0.0006098 piggy bank, penny bank| 0.9951227 Granny Smith<br>0.0009853 fig<br>0.0007886 lemon<br>0.0006782 pomegranate<br>0.0006098 piggy bank, penny bank|
 se-inception         |-|-|0.7325318 leafhopper<br>0.0065269 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0037833 French loaf<br>0.0036166 hand-held computer, hand-held microcomputer<br>0.0033620 ringlet, ringlet butterfly|0.7325318 leafhopper<br>0.0065269 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0037833 French loaf<br>0.0036166 hand-held computer, hand-held microcomputer<br>0.0033620 ringlet, ringlet butterfly|
@@ -43,6 +43,14 @@ se-resnet-101        |-|-|0.8920754 leafhopper<br>0.0057546 dragonfly, darning n
 se-resnet-152        |-|-|0.9753318 leafhopper<br>0.0012468 French loaf<br>0.0009470 hand-held computer, hand-held microcomputer<br>0.0003147 lemon<br>0.0002425 bannister, banister, balustrade, balusters, handrail|0.9753318 leafhopper<br>0.0012468 French loaf<br>0.0009470 hand-held computer, hand-held microcomputer<br>0.0003147 lemon<br>0.0002425 bannister, banister, balustrade, balusters, handrail|
 se-resnext-50        |-|-|0.9946054 leafhopper<br>0.0000740 hand-held computer, hand-held microcomputer<br>0.0000727 cup<br>0.0000670 hair slide<br>0.0000608 partridge|0.9946054 leafhopper<br>0.0000740 hand-held computer, hand-held microcomputer<br>0.0000727 cup<br>0.0000670 hair slide<br>0.0000608 partridge|
 se-resnext-101       |-|-|0.9269249 leafhopper<br>0.0008046 ringlet, ringlet butterfly<br>0.0006204 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0005282 lacewing, lacewing fly<br>0.0003041 admiral|0.9269249 leafhopper<br>0.0008046 ringlet, ringlet butterfly<br>0.0006204 dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk<br>0.0005282 lacewing, lacewing fly<br>0.0003041 admiral|
+efficientnet-b0      |-|-|9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange | 9.8424797 Granny Smith<br>4.8622112 fig<br>4.3583665 lemon<br>3.8766663 bell pepper<br>3.4526284 orange |
+efficientnet-b0_auto_aug|-|-| 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig | 10.1708317 Granny Smith<br>4.3690400 tennis ball<br>4.2338214 lemon<br>3.8555355 pomegranate<br>3.8175268 fig |
+efficientnet-b5      |-|-|8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana | 8.8117380 Granny Smith<br>2.0016692 bee eater<br>1.8805140 green mamba<br>1.6248529 lemon<br>1.5391053 banana |
+efficientnet-b7-pytorch |-|-| 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre | 8.3249321 Granny Smith<br>1.5543858 lemon<br>1.5019686 green mamba<br>1.4437177 syringe<br>1.4299904 home theater, home theatre |
+efficientnet-b7_auto_aug |-|-| 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre | 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.5019683 green mamba<br>1.4437169 syringe<br>1.4299890 home theater, home theatre |
+mobilenet-v1-0.50-224 |-|-| 0.9409788 Granny Smith<br>0.0422395 bell pepper<br>0.0039017 fig<br>0.0032237 piggy bank, penny bank<br>0.0029516 tennis ball | 0.9409788 Granny Smith<br>0.0422395 bell pepper<br>0.0039017 fig<br>0.0032237 piggy bank, penny bank<br>0.0029516 tennis ball |
+mobilenet-v1-0.50-160 |-|-| 0.9844190 Granny Smith<br>0.0103430 bell pepper<br>0.0013505 fig<br>0.0009318 lemon<br>0.0008557 cucumber, cuke | 0.9844190 Granny Smith<br>0.0103430 bell pepper<br>0.0013505 fig<br>0.0009318 lemon<br>0.0008557 cucumber, cuke |
+mobilenet-v1-0.25-128 |-|-| 0.5188023 bell pepper<br>0.1175004 Granny Smith<br>0.0549228 cucumber, cuke<br>0.0392874 strawberry<br>0.0295591 broccoli | 0.5188023 bell pepper<br>0.1175004 Granny Smith<br>0.0549228 cucumber, cuke<br>0.0392874 strawberry<br>0.0295591 broccoli |
 
 ### Тестовое изображение 2
 
@@ -85,6 +93,9 @@ se-resnet-101        |-|-|0.8954772 giant panda, panda, panda bear, coon bear, A
 se-resnet-152        |-|-|0.8786952 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0009026 barracouta, snoek<br>0.0008578 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0006575 rock beauty, Holocanthus tricolor<br>0.0006063 sarong|0.8786952 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0009026 barracouta, snoek<br>0.0008578 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0006575 rock beauty, Holocanthus tricolor<br>0.0006063 sarong|
 se-resnext-50        |-|-|0.9980450 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0000507 basketball<br>0.0000314 buckeye, horse chestnut, conker<br>0.0000309 bell pepper<br>0.0000228 beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon|0.9980450 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0000507 basketball<br>0.0000314 buckeye, horse chestnut, conker<br>0.0000309 bell pepper<br>0.0000228 beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon|
 se-resnext-101       |-|-|0.9044468 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0005567 basketball<br>0.0004812 beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon<br>0.0004283 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0004192 Yorkshire terrier|0.9044468 giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca<br>0.0005567 basketball<br>0.0004812 beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon<br>0.0004283 gar, garfish, garpike, billfish, Lepisosteus osseus<br>0.0004192 Yorkshire terrier|
+mobilenet-v1-0.50-224 |-|-|0.9531036 junco, snowbird<br>0.0448372 chickadee<br>0.0009637 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0007092 jay<br>0.0002787 brambling, Fringilla montifringilla| 0.9531036 junco, snowbird<br>0.0448372 chickadee<br>0.0009637 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0007092 jay<br>0.0002787 brambling, Fringilla montifringilla |
+mobilenet-v1-0.50-160 |-|-| 0.8880324 junco, snowbird<br>0.0335562 chickadee<br>0.0318311 coucal<br>0.0251927 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0153771 brambling, Fringilla montifringilla | 0.8880324 junco, snowbird<br>0.0335562 chickadee<br>0.0318311 coucal<br>0.0251927 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0153771 brambling, Fringilla montifringilla |
+mobilenet-v1-0.25-128 |-|-| 0.9801749 junco, snowbird<br>0.0190141 chickadee<br>0.0003644 brambling, Fringilla montifringilla<br>0.0002570 jay<br>0.0000603 indigo bunting, indigo finch, indigo bird, Passerina cyanea | 0.9801749 junco, snowbird<br>0.0190141 chickadee<br>0.0003644 brambling, Fringilla montifringilla<br>0.0002570 jay<br>0.0000603 indigo bunting, indigo finch, indigo bird, Passerina cyanea |
 
 ### Тестовое изображение 3
 
@@ -127,6 +138,9 @@ se-resnet-101        |-|-|0.9360378 miniature pinscher<br>0.0007210 Cardigan, Ca
 se-resnet-152        |-|-|0.9468850 miniature pinscher<br>0.0012246 wine bottle<br>0.0009628 Polaroid camera, Polaroid Land camera<br>0.0007208 marimba, xylophone<br>0.0005199 submarine, pigboat, sub, U-boat|0.9468850 miniature pinscher<br>0.0012246 wine bottle<br>0.0009628 Polaroid camera, Polaroid Land camera<br>0.0007208 marimba, xylophone<br>0.0005199 submarine, pigboat, sub, U-boat|
 se-resnext-50        |-|-|0.9979483 miniature pinscher<br>0.0000302 parachute, chute<br>0.0000281 Cardigan, Cardigan Welsh corgi<br>0.0000280 black widow, Latrodectus mactans<br>0.0000222 hognose snake, puff adder, sand viper|0.9979483 miniature pinscher<br>0.0000302 parachute, chute<br>0.0000281 Cardigan, Cardigan Welsh corgi<br>0.0000280 black widow, Latrodectus mactans<br>0.0000222 hognose snake, puff adder, sand viper|
 se-resnext-101       |-|-|0.8982230 miniature pinscher<br>0.0006859 Tibetan mastiff<br>0.0005912 Cardigan, Cardigan Welsh corgi<br>0.0004639 eel<br>0.0004079 parachute, chute|0.8982230 miniature pinscher<br>0.0006859 Tibetan mastiff<br>0.0005912 Cardigan, Cardigan Welsh corgi<br>0.0004639 eel<br>0.0004079 parachute, chute|
+mobilenet-v1-0.50-224 |-|-|0.9207528 lifeboat<br>0.0332536 container ship, containership, container vessel<br>0.0132192 liner, ocean liner<br>0.0109554 pirate, pirate ship<br>0.0074297 fireboat| 0.9207528 lifeboat<br>0.0332536 container ship, containership, container vessel<br>0.0132192 liner, ocean liner<br>0.0109554 pirate, pirate ship<br>0.0074297 fireboat |
+mobilenet-v1-0.50-160 |-|-| 0.9510298 lifeboat<br>0.0139963 container ship, containership, container vessel<br>0.0101495 drilling platform, offshore rig<br>0.0084767 pirate, pirate ship<br>0.0035462 liner, ocean liner | 0.9510298 lifeboat<br>0.0139963 container ship, containership, container vessel<br>0.0101495 drilling platform, offshore rig<br>0.0084767 pirate, pirate ship<br>0.0035462 liner, ocean liner |
+mobilenet-v1-0.25-128 |-|-| 0.8000437 lifeboat<br>0.0681745 container ship, containership, container vessel<br>0.0423642 pirate, pirate ship<br>0.0320394 liner, ocean liner<br>0.0205678 fireboat | 0.8000437 lifeboat<br>0.0681745 container ship, containership, container vessel<br>0.0423642 pirate, pirate ship<br>0.0320394 liner, ocean liner<br>0.0205678 fireboat |
 
 ## Результаты детектирования
 
@@ -152,10 +166,11 @@ se-resnext-101       |-|-|0.8982230 miniature pinscher<br>0.0006859 Tibetan mast
 
    Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (76,168), (231,344)| Окаймляющие прямоугольники: (75,165), (232,344),<br> (380,315), (610,410) |
-mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (380,315), (630,415) | Окаймляющий прямоугольник: (377,314), (632,415) |
-ssd300                | - | - | Окаймляющий прямоугольник: (380,165), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
-ssd512                | - | - | Окаймляющий прямоугольник: (377,163), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
+ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (76,168), (231,344)| Окаймляющие прямоугольники: (75,165), (232,344),<br> (380,315), (610,410) |
+mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (380,315), (630,415) | Окаймляющий прямоугольник: (377,314), (632,415) |
+ssd300                    | - | - | Окаймляющий прямоугольник: (380,165), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
+ssd512                    | - | - | Окаймляющий прямоугольник: (377,163), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
+ssd_mobilenet_v1_fpn_coco | - | - | Окаймляющие прямоугольники: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Окаймляющие прямоугольники: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
 
 ### Тестовое изображение 2
 
@@ -175,10 +190,11 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 
    Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (90,100), (356,448) | Окаймляющий прямоугольник: (90,100), (350,450) |
-mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (92,95), (361,483) | Окаймляющий прямоугольник: (94,94), (361,480) |
-ssd300                | - | - | Окаймляющий прямоугольник: (68,100), (336,452) | Окаймляющий прямоугольник: (66,98), (340,455) |
-ssd512                | - | - | Окаймляющий прямоугольник: (75,100), (355,445) | Окаймляющий прямоугольник: (75,100), (355,445)|
+ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (90,100), (356,448) | Окаймляющий прямоугольник: (90,100), (350,450)|
+mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (92,95), (361,483)  | Окаймляющий прямоугольник: (94,94), (361,480) |
+ssd300                    | - | - | Окаймляющий прямоугольник: (68,100), (336,452) | Окаймляющий прямоугольник: (66,98), (340,455) |
+ssd512                    | - | - | Окаймляющий прямоугольник: (75,100), (355,445) | Окаймляющий прямоугольник: (75,100), (355,445)|
+ssd_mobilenet_v1_fpn_coco | - | - |Окаймляющий прямоугольник: (89, 98), (345, 440) |Окаймляющий прямоугольник: (89, 98), (345, 440)|
 
 ### Тестовое изображение 3
 
@@ -198,10 +214,56 @@ ssd512                | - | - | Окаймляющий прямоугольни�
 
    Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco | - | - | Окаймляющий прямоугольник: (81,244), (267,376) | Окаймляющий прямоугольник: (80,244), (267,376) |
-mobilenet-ssd         | - | - | Окаймляющий прямоугольник: (80,140), (270,375) | Окаймляющий прямоугольник: (80,140), (270,375) |
-ssd300                | - | - | Окаймляющий прямоугольник: (80,155), (270,375) | Окаймляющий прямоугольник: (80,157), (274,375) |
-ssd512                | - | - | Окаймляющий прямоугольник: (75,170), (172,370) | Окаймляющий прямоугольник: (73,170), (173,371) |
+ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (81,244), (267,376)  | Окаймляющий прямоугольник: (80,244), (267,376)  |
+mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (80,140), (270,375)  | Окаймляющий прямоугольник: (80,140), (270,375)  |
+ssd300                    | - | - | Окаймляющий прямоугольник: (80,155), (270,375)  | Окаймляющий прямоугольник: (80,157), (274,375)  |
+ssd512                    | - | - | Окаймляющий прямоугольник: (75,170), (172,370)  | Окаймляющий прямоугольник: (73,170), (173,371)  |
+ssd_mobilenet_v1_fpn_coco | - | - | Окаймляющий прямоугольник: (90, 135), (260, 375)| Окаймляющий прямоугольник: (90, 135), (260, 375)|
+
+### Тестовое изображение 4
+Источник: [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 480
+
+
+Входное изображение:
+
+<div style='float: center'>
+<img width="300" src="images\9.jpg">
+<div style='float: center'>
+Входной тензор: 600; 1024; 1
+
+Результат детектирования:
+</div>
+<img width="300" src="detection\faster_rcnn_out.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
+
+   Название модели                          |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
+--------------------------------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
+faster_rcnn_inception_resnet_v2_atrous_coco |-|-| Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461) | Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>|
+faster_rcnn_inception_v2_coco               |-|-| Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
+faster_rcnn_resnet50_coco                   |-|-| Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
+faster_rcnn_resnet101_coco                  |-|-| Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
+
+## Результаты распознавания лиц
+
+### Тестовое изображение 1
+
+Источник: набор данных [VGGFace2][vgg_face2]  
+
+Исходное разрешение: 96 x 112
+
+
+Изображение:
+
+<div style='float: center'>
+<img src="images\sphereface.jpg">
+</div>
+
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+Sphereface           |-|-| 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
 
 ## Результаты сегментации
 
@@ -268,7 +330,71 @@ dilation             |<div style='float: center'><img width="150" src="semantic_
 <img width="300" src="semantic_segmentation\cityscapes_colormap.jpg">
 </div>
 
+### Тестовое изображение 4
+
+Источник: набор данных [PASCAL VOC 2012][PASCAL_VOC_2012]
+
+Исходное разрешение: 500 x 375
+﻿
+
+Исходное изображение:
+
+<div style='float: center'>
+<img width="300" src="images\Sheep.jpg">
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+deeplabv3             |-|-|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_sheep.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_sheep.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="semantic_segmentation\pascal_colormap.jpg">
+</div>
+
+## Результаты экземплярной сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 480
+
+
+Изображение:
+
+<div style='float: center'>
+<img width="300" src="images\22.jpg"></img>
+</div>
+<div style='float: center'>
+Входной тензор: 800; 1365; 1
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
+mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
+mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
+mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
+
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="instance_segmentation\mscoco90_colormap.jpg">
+</div>
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
+[ms_coco]: http://cocodataset.org
+[PASCAL_VOC_2012]: http://host.robots.ox.ac.uk/pascal/VOC/voc2012
+[vgg_face2]:http://www.robots.ox.ac.uk/~vgg/data/vgg_face2
+[sphereface_sync]:recognition/sphereface_out_sync.csv
+[sphereface_async]:recognition/sphereface_out_async.csv
 [cityscapes]: https://www.cityscapes-dataset.com

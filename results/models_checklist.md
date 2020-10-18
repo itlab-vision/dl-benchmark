@@ -12,19 +12,19 @@ densenet-121|+|+|+|
 densenet-161|+|+|+|
 densenet-169|+|+|+|
 densenet-201|+|+|+|
-efficientnet-b0|+|-|-|
-efficientnet-b0_auto_aug|+|-|-|
-efficientnet-b5|+|-|-|
-efficientnet-b7-pytorch|+|-|-|
-efficientnet-b7_auto_aug|+|-|-|
+***efficientnet-b0***|+|+|-|
+***efficientnet-b0_auto_aug***|+|+|-|
+***efficientnet-b5***|+|+|-|
+***efficientnet-b7-pytorch***|+|+|-|
+***efficientnet-b7_auto_aug***|+|+|-|
 googlenet-v1|+|+|+|
 googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
 googlenet-v4|-|+|+|
 inception-resnet-v2|-|+|+|
-**mobilenet-v1-0.25-128**|+|-|+|
-**mobilenet-v1-0.50-160**|+|-|+|
-**mobilenet-v1-0.50-224**|+|-|+|
+mobilenet-v1-0.25-128|+|+|+|
+mobilenet-v1-0.50-160|+|+|+|
+mobilenet-v1-0.50-224|+|+|+|
 mobilenet-v1-1.0-224|+|+|+|
 mobilenet-v2|+|+|+|
 mobilenet-v2-1.4-224|+|-|-|
@@ -54,16 +54,16 @@ octave-se-resnet-50-0.125|+|-|-|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-**deeplabv3**|+|-|+|
+deeplabv3|+|+|+|
 
 ### Сегментация объектов (instance segmentation)
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-mask_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
-mask_rcnn_inception_v2_coco|+|-|-|
-mask_rcnn_resnet50_atrous_coco|+|-|-|
-mask_rcnn_resnet101_atrous_coco|+|-|-|
+mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|
+mask_rcnn_inception_v2_coco|+|+|-|
+mask_rcnn_resnet50_atrous_coco|+|+|-|
+mask_rcnn_resnet101_atrous_coco|+|+|-|
 
 ### 3D сегментация (3D segmentation)
 
@@ -79,15 +79,15 @@ brain-tumor-segmentation-0002|+|отсутствуют данные|-|
 ctpn|+|отсутствуют данные|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
-faster_rcnn_inception_resnet_v2_atrous_coco|+|-|-|
-faster_rcnn_inception_v2_coco|+|-|-|
-faster_rcnn_resnet50_coco|+|-|-|
-faster_rcnn_resnet101_coco|+|-|-|
+***faster_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|
+***faster_rcnn_inception_v2_coco***|+|+|-|
+***faster_rcnn_resnet50_coco***|+|+|-|
+***faster_rcnn_resnet101_coco***|+|+|-|
 mtcnn|+|пайплайн из трех моделей|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
-*ssd_mobilenet_v1_fpn_coco*|+|-|+|
+ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
 ssdlite_mobilenet_v2|+|-|-|
 yolo-v1-tiny-tf|+|-|-|
@@ -141,10 +141,10 @@ face-detection-adas-0001|+|+|+|
 ***face-detection-adas-binary-0001***|+|+|-|
 face-detection-retail-0004|+|+|+|
 face-detection-retail-0005|+|+|+|
-face-detection-0100|+|-|-|
-face-detection-0102|+|-|-|
-face-detection-0104|+|-|-|
-face-detection-0105|+|-|-|
+***face-detection-0100***|+|+|-|
+***face-detection-0102***|+|+|-|
+***face-detection-0104***|+|+|-|
+***face-detection-0105***|+|+|-|
 face-detection-0106|+|-|-|
 ***person-detection-retail-0002***|+|+|-|
 person-detection-retail-0013|+|+|+|
@@ -162,12 +162,12 @@ person-vehicle-bike-detection-crossroad-1016|+|+|+|
 vehicle-license-plate-detection-barrier-0106|+|+|+|
 ***product-detection-0001***|+|+|-|
 ***person-detection-asl-0001***|+|+|-|
-yolo-v2-ava-0001|+|-|-|
-yolo-v2-ava-sparse-35-0001|+|-|-|
-yolo-v2-ava-sparse-70-0001|+|-|-|
-yolo-v2-tiny-ava-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-30-0001|+|-|-|
-yolo-v2-tiny-ava-sparse-60-0001|+|-|-|
+yolo-v2-ava-0001|+|+|-|
+yolo-v2-ava-sparse-35-0001|+|+|-|
+yolo-v2-ava-sparse-70-0001|+|+|-|
+yolo-v2-tiny-ava-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-30-0001|+|+|-|
+yolo-v2-tiny-ava-sparse-60-0001|+|+|-|
 
 ### Распознавание объектов (object recognition)
 
@@ -198,10 +198,10 @@ person-reidentification-retail-0076|-|нет доступа к набору да
 -|-|-|-|
 road-segmentation-adas-0001|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|
-unet-camvid-onnx-0001|+|-|-|
-icnet-camvid-ava-0001|+|-|-|
-icnet-camvid-ava-sparse-30-0001|+|-|-|
-icnet-camvid-ava-sparse-60-0001|+|-|-|
+***unet-camvid-onnx-0001***|+|+|-|
+***icnet-camvid-ava-0001***|+|+|-|
+***icnet-camvid-ava-sparse-30-0001***|+|+|-|
+***icnet-camvid-ava-sparse-60-0001***|+|+|-|
 
 ### Сегментация объектов (instance segmentation)
 
@@ -265,38 +265,16 @@ asl-recognition-0004|+|-|-|
 -|-|-|-|
 image-retrieval-0001|+|-|-|
 
-## Модели, требующие валидации
-
-1. mobilenet-v1-0.25-128
-1. mobilenet-v1-0.50-160
-1. mobilenet-v1-0.50-224
-1. deeplabv3
-1. ssd_mobilenet_v1_fpn_coco
-
 ## Модели для следующего этапа расширения
 
 ### Модели 2020.2
 1. resnet18-xnor-binary-onnx-0001
-1. face-detection-0100
-1. face-detection-0102
-1. face-detection-0104
-1. face-detection-0105
 1. face-detection-0106
-1. unet-camvid-onnx-0001
-1. yolo-v2-ava-0001
-1. yolo-v2-ava-sparse-35-0001
-1. yolo-v2-ava-sparse-70-0001
-1. yolo-v2-tiny-ava-0001
-1. yolo-v2-tiny-ava-sparse-30-0001
-1. yolo-v2-tiny-ava-sparse-60-0001
 1. instance-segmentation-security-1025
 1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001
 1. handwritten-japanese-recognition-0001
 1. person-reidentification-retail-0248
-1. icnet-camvid-ava-0001
-1. icnet-camvid-ava-sparse-30-0001
-1. icnet-camvid-ava-sparse-60-0001
 1. text-spotting-0002-detector
 1. image-retrieval-0001
 
@@ -325,20 +303,7 @@ image-retrieval-0001|+|-|-|
 1. yolo-v2-tiny-tf
 1. yolo-v2-tf
 1. yolo-v3-tf
-1. faster_rcnn_inception_resnet_v2_atrous_coco
-1. faster_rcnn_inception_v2_coco
-1. faster_rcnn_resnet50_coco
-1. faster_rcnn_resnet101_coco
-1. efficientnet-b0
-1. efficientnet-b0_auto_aug
-1. efficientnet-b5
-1. efficientnet-b7-pytorch
-1. efficientnet-b7_auto_aug
 1. mobilenet-v2-1.4-224
-1. mask_rcnn_inception_resnet_v2_atrous_coco
-1. mask_rcnn_inception_v2_coco
-1. mask_rcnn_resnet50_atrous_coco
-1. mask_rcnn_resnet101_atrous_coco
 1. densenet-121-tf
 1. densenet-121-caffe2
 1. densenet-161-tf
@@ -375,7 +340,6 @@ image-retrieval-0001|+|-|-|
 1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
 1. vgg19-caffe2
-1. mask_rcnn_inception_resnet_v2_atrous_coco
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. faceboxes-pytorch

@@ -3,7 +3,6 @@ import utils
 import argparse
 import logging as log
 import postprocessing_data as pp
-from time import time
 from io_adapter import io_adapter
 from transformer import transformer
 from io_model_wrapper import openvino_io_model_wrapper
@@ -60,7 +59,8 @@ def build_argparser():
             'person-detection-action-recognition-new', 'person-detection-raisinghand-recognition',
             'person-detection-action-recognition-teacher', 'human-pose-estimation',
             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
-            'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection'
+            'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
+            'mask-rcnn', 'yolo_v2', 'yolo_v2_tiny'
         ],
         default='feedforward', type=str, dest='task'
     )
@@ -72,20 +72,15 @@ def build_argparser():
 
 
 def infer_sync(exec_net, number_iter, get_slice):
+    request = exec_net.requests[0]
     result = None
     time_infer = []
-    slice_input = None
+    for i in range(number_iter):
+        utils.set_input_to_blobs(request, get_slice(i))
+        request.infer()
+        time_infer.append(request.latency/1000)
     if number_iter == 1:
-        slice_input = get_slice(0)
-        t0 = time()
-        result = exec_net.infer(inputs=slice_input)
-        time_infer.append((time() - t0))
-    else:
-        for i in range(number_iter):
-            slice_input = get_slice(i)
-            t0 = time()
-            exec_net.infer(inputs=slice_input)
-            time_infer.append((time() - t0))
+        result = request.outputs
     return result, time_infer
 
 

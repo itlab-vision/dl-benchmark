@@ -140,3 +140,11 @@ def reshape_input(net, batch_size):
         shape[0] = batch_size
         new_shapes.update({layer: shape})
     net.reshape(new_shapes)
+
+
+def set_input_to_blobs(request, input):
+    blobs = request.inputs
+    for layer, tensor in input.items():
+        if layer not in blobs.keys():
+            raise ValueError("No input layer with name {}".format(layer))
+        blobs[layer][:] = tensor

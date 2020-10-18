@@ -75,7 +75,8 @@ def build_parser():
             'person-detection-action-recognition-new', 'person-detection-raisinghand-recognition',
             'person-detection-action-recognition-teacher', 'human-pose-estimation',
             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
-            'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection'
+            'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
+            'mask-rcnn', 'yolo_v2', 'yolo_v2_tiny'
         ],
         default='feedforward', type=str, dest='task'
     )
@@ -86,45 +87,30 @@ def build_parser():
 
 
 def infer_async(exec_net, number_iter, get_slice):
-    requests_counter = len(exec_net.requests)
     result = None
-    slice_input = None
+    requests = exec_net.requests
+    for i in range(len(requests)):
+        utils.set_input_to_blobs(requests[i], get_slice(i))
+    iteration = len(requests)
+    inference_time = time()
+    for request in requests:
+        request.async_infer()
+    while iteration < number_iter:
+        idle_id = exec_net.get_idle_request_id()
+        if idle_id < 0:
+            exec_net.wait(num_requests=1)
+            idle_id = exec_net.get_idle_request_id()
+        utils.set_input_to_blobs(requests[idle_id], get_slice(iteration))
+        requests[idle_id].async_infer()
+        iteration += 1
+    exec_net.wait()
+    inference_time = time() - inference_time
     if number_iter == 1:
-        time_s = time()
-        for request_id in range(requests_counter):
-            slice_input = get_slice(request_id)
-            exec_net.start_async(
-                request_id=request_id,
-                inputs=slice_input
-            )
-        for request_id in range(requests_counter):
-            exec_net.requests[request_id].wait(-1)
-        time_e = time() - time_s
-        list = [copy(exec_net.requests[request_id].outputs) for request_id in range(requests_counter)]
+        list = [copy(request.outputs) for request in requests]
         result = dict.fromkeys(list[0].keys(), None)
         for key in result:
             result[key] = np.concatenate([array[key] for array in list], axis=0)
-    else:
-        time_s = time()
-        iteration = 0
-        requests_status = [0 for i in range(requests_counter)]
-        while iteration < number_iter:
-            for request_id in range(requests_counter):
-                if requests_status[request_id] == 0:
-                    slice_input = get_slice(iteration)
-                    exec_net.start_async(
-                        request_id=request_id,
-                        inputs=slice_input
-                    )
-                    requests_status[request_id] = 1
-                    iteration += 1
-            for request_id in range(requests_counter):
-                if exec_net.requests[request_id].wait(0) == 0:
-                    requests_status[request_id] = 0
-        for request_id in range(requests_counter):
-            exec_net.requests[request_id].wait(-1)
-        time_e = time() - time_s
-    return result, time_e
+    return result, inference_time
 
 
 def process_result(inference_time, batch_size, iteration_count):
