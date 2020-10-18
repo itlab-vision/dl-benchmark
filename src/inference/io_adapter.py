@@ -243,7 +243,7 @@ class detection_io(io_adapter):
         for batch in range(b):
             for out_num in range(ib):
                 isbreak = False
-                for obj in result[batch][0][out_num * N : (out_num + 1) * N]:
+                for obj in result[batch][0][out_num * N: (out_num + 1) * N]:
                     image_number = int(obj[0])
                     if image_number < 0:
                         isbreak = True
@@ -1484,7 +1484,6 @@ class mask_rcnn_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1522,24 +1521,24 @@ class mask_rcnn_io(io_adapter):
         for idx, detection_info in enumerate(detections_info):
             if detection_info[2] > self._threshold:
                 initial_h, initial_w = image.shape[:2]
-                left   = int(detection_info[3] * initial_w)
-                top    = int(detection_info[4] * initial_h)
-                right  = int(detection_info[5] * initial_w)
+                left = int(detection_info[3] * initial_w)
+                top = int(detection_info[4] * initial_h)
+                right = int(detection_info[5] * initial_w)
                 bottom = int(detection_info[6] * initial_h)
 
                 class_id = int(detection_info[1]) - 1
                 mask = masks[idx][class_id]
                 color = classes_color_map[class_id]
 
-                object_width  = abs(right - left)
+                object_width = abs(right - left)
                 object_height = abs(top - bottom)
 
-                dw = int(object_width  / mask.shape[-1])
+                dw = int(object_width / mask.shape[-1])
                 dh = int(object_height / mask.shape[-2])
 
                 label_on_image_point = (int(left + object_width / 3), int(bottom - object_height / 2))
                 label_on_image = '<' + labels_map[class_id] + '>'
-                labels_on_image.append((label_on_image, label_on_image_point)) 
+                labels_on_image.append((label_on_image, label_on_image_point))
 
                 for j in range(mask.shape[-2]):
                     for i in range(mask.shape[-1]):
@@ -1547,17 +1546,14 @@ class mask_rcnn_io(io_adapter):
                             continue
 
                         x = int(left + i * dw)
-                        y = int(top  + j * dh)
+                        y = int(top + j * dh)
 
                         for m in range(y, y + dh):
                             for n in range(x, x + dw):
                                 image[m, n] = color
 
-        for l in range(len(labels_on_image)):
-            image = cv2.putText(cv2.UMat(image), 
-                labels_on_image[l][0], 
-                labels_on_image[l][1],
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+        for i in range(len(labels_on_image)):
+            image = cv2.putText(cv2.UMat(image), labels_on_image[i][0], labels_on_image[i][1], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
         orig_h, orig_w = shapes[0]
         image = cv2.UMat(cv2.resize(cv2.UMat(image), (orig_w, orig_h)))
@@ -1570,27 +1566,23 @@ class yolo_v2(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def __sigmoid(self, x) -> float:
         return 1 / (1 + np.exp(-x))
-
 
     def __softmax(self, x):
         e_x = np.exp(x - np.max(x))
         return e_x / e_x.sum(axis=0)
 
-
     @abc.abstractmethod
     def _get_anchors(self):
         pass
 
-
     def __non_max_supression(self, predictions, score_threshold, nms_threshold):
-        predictions.sort(key = lambda prediction: prediction[0], reverse = True)
+        predictions.sort(key=lambda prediction: prediction[0], reverse=True)
         valid_detections = []
         while (len(predictions) > 0):
             max_detection = predictions[0]
-            if max_detection[0] < score_threshold: 
+            if max_detection[0] < score_threshold:
                 break
             valid_detections.append(max_detection)
             predictions.remove(max_detection)
@@ -1604,15 +1596,13 @@ class yolo_v2(io_adapter):
                 current_rect_area = detection[2][2] * detection[2][3]
                 max_rect_area = max_detection[2][2] * max_detection[2][3]
                 intersection_area = 0
-                if not (detection[2][2] <= 0 or 
-                        detection[2][3] <= 0 or 
-                    max_detection[2][2] <= 0 or 
-                    max_detection[2][3] <= 0):
+                if not (detection[2][2] <= 0 or detection[2][3] <= 0 or max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
                     intersection_area = float(
-                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) - 
-                            max(detection[2][0], max_detection[2][0])) * 
+                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) -
+                         max(detection[2][0], max_detection[2][0])) *
                         (min(detection[2][1] + detection[2][3], max_detection[2][1] + max_detection[2][3]) -
-                            max(detection[2][1], max_detection[2][1])))
+                         max(detection[2][1], max_detection[2][1]))
+                    )
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
                 if (overlap > nms_threshold):
                     remove_detections.append(detection)
@@ -1620,13 +1610,12 @@ class yolo_v2(io_adapter):
                 predictions.remove(detection)
         return valid_detections
 
-
     def __print_detections(self, detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0] * scales['W'])
-            top  = int(detection[2][1] * scales['H'])
-            right  = int((detection[2][2] + detection[2][0]) * scales['W'])
+            top = int(detection[2][1] * scales['H'])
+            right = int((detection[2][2] + detection[2][0]) * scales['W'])
             bottom = int((detection[2][3] + detection[2][1]) * scales['H'])
             class_id = int(detection[1])
             color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255), min(class_id * 5, 255))
@@ -1636,12 +1625,9 @@ class yolo_v2(io_adapter):
             label = '<' + labels_map[class_id] + '>'
             image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
-            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), 
-                (left + label_size[0], top), color, -2)
-            image = cv2.putText(image, label, (left, top - base_line - 1),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
+            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), (left + label_size[0], top), color, -2)
+            image = cv2.putText(image, label, (left, top - base_line - 1), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -1657,7 +1643,7 @@ class yolo_v2(io_adapter):
         result = result[result_layer_name]
         ib, c, h, w = self._input['data'].shape
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
             images[i] = self._input['data'][i % ib].transpose((1, 2, 0))
         for batch, data in enumerate(result):
@@ -1668,10 +1654,10 @@ class yolo_v2(io_adapter):
                 for cy in range(13):
                     for anchor_box_number, detection in enumerate(cells[cx, cy]):
                         tx, ty, tw, th, to = detection[0:5]
-                        bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth)  / 13)
+                        bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth) / 13)
                         bbox_center_y = (float(cy) + self.__sigmoid(ty)) * (float(frameHeight) / 13)
                         prior_width, prior_height = anchors[anchor_box_number]
-                        bbox_width  = (np.exp(tw) * prior_width)  * (float(frameWidth)  / 13)
+                        bbox_width = (np.exp(tw) * prior_width) * (float(frameWidth) / 13)
                         bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / 13)
                         confidence = self.__sigmoid(to)
                         scores = detection[5:]
@@ -1679,17 +1665,18 @@ class yolo_v2(io_adapter):
                         best_class_score = scores[class_id]
                         confidence_in_class = confidence * best_class_score
                         if (confidence_in_class > self._threshold):
-                            bbox = [float(bbox_center_x - bbox_width  / 2),
-                                    float(bbox_center_y - bbox_height / 2),
-                                    float(bbox_width),
-                                    float(bbox_height)]
+                            bbox = [
+                                float(bbox_center_x - bbox_width / 2),
+                                float(bbox_center_y - bbox_height / 2),
+                                float(bbox_width),
+                                float(bbox_height)
+                            ]
                             prediction = [best_class_score, class_id, bbox]
                             predictions.append(prediction)
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
             orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][0]
             scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
-            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), 
-                scales, (orig_w, orig_h), batch, log)
+            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection_{}.bmp'.format(batch + 1))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
@@ -1699,13 +1686,14 @@ class yolo_v2_io(yolo_v2):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def _get_anchors(self):
-        anchors = ((1.3221,  1.73145),
-                   (3.19275, 4.00944), 
-                   (5.05587, 8.09892), 
-                   (9.47112, 4.84053), 
-                   (11.2364, 10.0071))
+        anchors = (
+            (1.3221,  1.73145),
+            (3.19275, 4.00944),
+            (5.05587, 8.09892),
+            (9.47112, 4.84053),
+            (11.2364, 10.0071)
+        )
         return anchors
 
 
@@ -1713,11 +1701,12 @@ class yolo_v2_tiny_io(yolo_v2):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def _get_anchors(self):
-        anchors = ((1.08, 1.19),
-                   (3.42, 4.41),
-                   (6.63, 11.38),
-                   (9.42, 5.11),
-                   (16.62, 10.52))
+        anchors = (
+            (1.08, 1.19),
+            (3.42, 4.41),
+            (6.63, 11.38),
+            (9.42, 5.11),
+            (16.62, 10.52)
+        )
         return anchors
