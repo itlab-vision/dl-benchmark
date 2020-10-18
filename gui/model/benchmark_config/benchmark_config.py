@@ -53,6 +53,7 @@ class BenchmarkConfig:
             models.append(model)
             data.append(dataset)
             self.__tests.append(Test(model.get_str(), dataset.get_str(), *framework_independent, *framework_dependent))
+        self.__tests_grouping()
         return models, data
 
     def __parse_model(self, test):
@@ -285,3 +286,35 @@ class BenchmarkConfig:
             CONFIG_FRAMEWORK_INDEPENDENT_TAG.appendChild(CONFIG_MEAN_TAG)
             CONFIG_FRAMEWORK_INDEPENDENT_TAG.appendChild(CONFIG_INPUT_SCALE_TAG)
         return CONFIG_FRAMEWORK_INDEPENDENT_TAG
+
+    def __tests_grouping(self):
+        while True:
+            for i in range(len(self.__tests)):
+                if self.__tests[i] is not None:
+                    for j in range(i + 1, len(self.__tests)):
+                        if self.__tests[j] is not None:
+                            parameter = self.__tests[i].grouping_dependent_values_check(self.__tests[j])
+                            if parameter is not None:
+                                values_list_test_i = self.__tests[i].get_values_list()
+                                value_test_j = self.__tests[j].get_values_list()[parameter]
+                                values_list_test_i[parameter] = ';'.join([values_list_test_i[parameter], value_test_j])
+                                self.__tests[i] = Test(*values_list_test_i)
+                                self.__tests[j] = None
+            if None not in self.__tests:
+                break
+            self.__tests = [test for test in self.__tests if test is not None]
+        while True:
+            for i in range(len(self.__tests)):
+                if self.__tests[i] is not None:
+                    for j in range(i + 1, len(self.__tests)):
+                        if self.__tests[j] is not None:
+                            parameter = self.__tests[i].grouping_independent_values_check(self.__tests[j])
+                            if parameter is not None:
+                                values_list_test_i = self.__tests[i].get_values_list()
+                                value_test_j = self.__tests[j].get_values_list()[parameter]
+                                values_list_test_i[parameter] = ';'.join([values_list_test_i[parameter], value_test_j])
+                                self.__tests[i] = Test(*values_list_test_i)
+                                self.__tests[j] = None
+            if None not in self.__tests:
+                break
+            self.__tests = [test for test in self.__tests if test is not None]

@@ -46,7 +46,7 @@ class BenchmarkConfigPresenter:
 
     def __handle_save_button(self, path_to_config):
         status = self.__model.benchmark_config.create_config(path_to_config)
-        self.__view.show_message_status_saving(status)
+        self.__view.tabs.config_tab.benchmark_configs.show_message_status_saving(status)
 
     def __handle_clear_button(self):
         self.__model.benchmark_config.clear()
