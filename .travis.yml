@@ -7,7 +7,7 @@ jobs:
       before_install: pip3 install -r requirements_linux.txt
     - name: "Python linters on Windows"
       os: windows
-      language: shell
+      language: bash
       before_install:
         - choco install python --version 3.8.0
         - python -m pip install --upgrade pip
@@ -27,4 +27,4 @@ scripts:
       if [ ${pylint_status} -ne 0 ]; then
           false;
       fi
-    - flake8 --max-line-length=200 --statistics --count --per-file-ignores="__init__.py"
+    - flake8 --max-line-length=200 --statistics --count --per-file-ignores="__init__.py:F401"
