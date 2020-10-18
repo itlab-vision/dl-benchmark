@@ -1,14 +1,13 @@
-import os
 import platform
 import subprocess
 from collections import OrderedDict
-from openvino.inference_engine import IECore # pylint: disable=E0401
+from openvino.inference_engine import IECore  # pylint: disable=E0401
 
 
 def get_cpu_name():
     ie = IECore()
     try:
-        cpuname = ie.get_metric('CPU',  'FULL_DEVICE_NAME')
+        cpuname = ie.get_metric('CPU', 'FULL_DEVICE_NAME')
     except TypeError:
         cpuname = 'Undefined'
     del ie
@@ -18,7 +17,7 @@ def get_cpu_name():
 def get_gpu_name():
     ie = IECore()
     try:
-        gpuname = ie.get_metric('GPU',  'FULL_DEVICE_NAME')
+        gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
     except TypeError:
         gpuname = 'Undefined'
     del ie
@@ -29,8 +28,7 @@ def get_ram_size(ostype):
     ramsize = 'Undefined'
     if (ostype == 'Windows'):
         command = ['wmic', 'OS', 'get', 'TotalVisibleMemorySize', '/Value']
-        p = subprocess.Popen(command, universal_newlines = True, shell = True, 
-            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        p = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         text = p.stdout.read()
         p.wait()
         text = text.split('=')
@@ -47,13 +45,13 @@ def get_ram_size(ostype):
 def get_system_characteristics():
     ostype = platform.system()
     characteristics = OrderedDict()
-    characteristics.update({'CPU' : get_cpu_name()})
-    characteristics.update({'CPU family' : platform.processor()})
-    characteristics.update({'GPU' : get_gpu_name()})
-    characteristics.update({'RAM size' : get_ram_size(ostype)})
-    characteristics.update({'OS family' : platform.system()})
-    characteristics.update({'OS version' : platform.platform()})
-    characteristics.update({'Python version' : platform.python_version()})
+    characteristics.update({'CPU': get_cpu_name()})
+    characteristics.update({'CPU family': platform.processor()})
+    characteristics.update({'GPU': get_gpu_name()})
+    characteristics.update({'RAM size': get_ram_size(ostype)})
+    characteristics.update({'OS family': platform.system()})
+    characteristics.update({'OS version': platform.platform()})
+    characteristics.update({'Python version': platform.python_version()})
     return characteristics
 
 

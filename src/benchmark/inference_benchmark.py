@@ -11,12 +11,9 @@ from executors import executor
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type = str, dest = 'config_path',
-        help = 'Path to configuration file', required = True)
-    parser.add_argument('-r', '--result', type = str, dest = 'result_file',
-        help = 'Full name of the resulting file', required = True)
-    parser.add_argument('--executor_type', type = str, choices = ['host_machine', 'docker_container'],
-        help = 'The environment in which the tests will be executed')
+    parser.add_argument('-c', '--config', type=str, dest='config_path', help='Path to configuration file', required=True)
+    parser.add_argument('-r', '--result', type=str, dest='result_file', help='Full name of the resulting file', required=True)
+    parser.add_argument('--executor_type', type=str, choices=['host_machine', 'docker_container'], help='The environment in which the tests will be executed')
     config = parser.parse_args().config_path
     result = parser.parse_args().result_file
     executor_type = parser.parse_args().executor_type
@@ -37,8 +34,11 @@ def inference_benchmark(executor_type, test_list, output_handler, log):
 
 if __name__ == '__main__':
     try:
-        log.basicConfig(format = '[ %(levelname)s ] %(message)s',
-            level = log.INFO, stream = sys.stdout)
+        log.basicConfig(
+            format='[ %(levelname)s ] %(message)s',
+            level=log.INFO,
+            stream=sys.stdout
+        )
         config, result_table, executor_type = build_parser()
         test_list = config_parser.process_config(config, log)
         log.info('Create result table with name: {}'.format(result_table))
