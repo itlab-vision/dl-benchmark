@@ -1,16 +1,10 @@
-import os
-import sys
-import numpy as np
-import logging as log
-import cv2
-from copy import copy
-from openvino.inference_engine import IECore # pylint: disable=E0401
+from openvino.inference_engine import IECore  # pylint: disable=E0401
 
 
 def create_network(iecore, model_xml, model_bin, log):
     log.info('Loading network files:\n\t {0}\n\t {1}'.format(
         model_xml, model_bin))
-    network = iecore.read_network(model = model_xml, weights = model_bin)
+    network = iecore.read_network(model=model_xml, weights=model_bin)
     return network
 
 
@@ -19,7 +13,7 @@ def parse_affinity(affinity_file):
     with open(affinity_file, 'r') as f:
         for line in f:
             layer, device = line.strip().split(' ')
-            affinity.update({layer : device})
+            affinity.update({layer: device})
     return affinity
 
 
@@ -37,7 +31,7 @@ def configure_network(ie, net, device, default_device, affinity_file):
             else:
                 layers[layer].affinity = default_device
     else:
-        layers_map = ie.query_network(network = net, device_name = device)
+        layers_map = ie.query_network(network=net, device_name=device)
         for layer, device in layers_map.items():
             layers[layer].affinity = device
 
@@ -106,7 +100,7 @@ def set_config(iecore, devices, nthreads, nstreams, dump, mode):
 
 
 def create_ie_core(path_to_extension, path_to_cldnn_config, device, nthreads, nstreams,
-    dump, mode, log):
+                   dump, mode, log):
     log.info('Inference Engine initialization')
     ie = IECore()
     add_extension(ie, path_to_extension, path_to_cldnn_config, device, log)
@@ -118,8 +112,12 @@ def load_network(iecore, network, device, multi_priority, requests):
     config = {}
     if 'MULTI' in device and multi_priority:
         config.update({'MULTI_DEVICE_PRIORITIES': multi_priority})
-    exec_net = iecore.load_network(network = network, device_name = device,
-        num_requests = (requests or 0), config = config)
+    exec_net = iecore.load_network(
+        network=network,
+        device_name=device,
+        num_requests=(requests or 0),
+        config=config
+    )
     return exec_net
 
 
@@ -131,7 +129,7 @@ def get_input_shape(io_model_wrapper, model):
         for dem in io_model_wrapper.get_input_layer_shape(model, input_layer):
             shape += '{0}x'.format(dem)
         shape = shape[:-1]
-        layer_shapes.update({input_layer : shape})
+        layer_shapes.update({input_layer: shape})
     return layer_shapes
 
 
@@ -140,5 +138,5 @@ def reshape_input(net, batch_size):
     for layer in net.inputs:
         shape = net.inputs[layer].shape
         shape[0] = batch_size
-        new_shapes.update({layer : shape})
+        new_shapes.update({layer: shape})
     net.reshape(new_shapes)
