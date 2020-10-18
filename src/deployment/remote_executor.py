@@ -6,10 +6,9 @@ class remote_executor:
     def __init__(self, os_type, log):
         self.my_process_list = []
         self.my_remote_helper = remote_helper.get_remote_helper(os_type.lower(), log)
-        self.my_wait_counter = 10 # seconds
+        self.my_wait_counter = 10  # seconds
         self.my_attempts_counter = 3
         self.my_status = ''
-
 
     def create_connection(self, machine_ip, login, password):
         self.my_machine_ip = machine_ip
@@ -18,9 +17,8 @@ class remote_executor:
             try:
                 self.my_active_connection = self.my_remote_helper.connect(machine_ip, login, password)
                 break
-            except:
+            except Exception:
                 time.sleep(self.my_wait_counter)
-
 
     def execute_command(self, command, executor=None):
         if executor is None:
@@ -35,18 +33,16 @@ class remote_executor:
             try:
                 new_process = executor(self.my_active_connection, command)
                 break
-            except:
+            except Exception:
                 time.sleep(self.my_wait_counter)
 
-        if not new_process is None:
+        if new_process is not None:
             self.my_process_list.append(new_process)
         else:
             self.my_status = 'Error: failed to creat process on {}!'.format(self.my_machine_ip)
 
-
     def execute_python(self, command):
         self.execute_command(command, executor=self.my_remote_helper.execute_python)
-
 
     def execute_command_and_wait(self, command, executor=None):
         if executor is None:
@@ -61,7 +57,7 @@ class remote_executor:
             try:
                 new_process = self.my_remote_helper.execute(self.my_active_connection, command)
                 break
-            except:
+            except Exception:
                 time.sleep(self.my_wait_counter)
 
         if new_process is not None:
@@ -69,17 +65,14 @@ class remote_executor:
         else:
             self.my_status = 'Error: failed to creat process on {}!'.format(self.my_machine_ip)
 
-
     def execute_python_and_wait(self, command):
         self.execute_command_and_wait(command, executor=self.my_remote_helper.execute_python)
-
 
     def wait_all(self):
         for process in self.my_process_list:
             self.my_remote_helper.wait(process)
         if len(self.my_process_list) > 0:
             self.my_status = 'Success: deploy done on {}!'.format(self.my_machine_ip)
-
 
     def get_status(self):
         return self.my_status

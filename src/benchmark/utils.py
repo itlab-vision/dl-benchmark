@@ -42,12 +42,10 @@ def add_requests_for_cmd_line(command_line, requests):
 
 
 def create_cmd_line_for_sync_test(model_xml, model_bin, dataset, batch, device,
-                                extension, iteration, nthreads, min_inference_time):
+                                  extension, iteration, nthreads, min_inference_time):
     scrypt = get_path_to_sync_scripts()
     python = get_cmd_python_version()
-    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} -mi {8} \
-        --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset,
-        batch, device, iteration, min_inference_time)
+    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} -mi {8} --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset, batch, device, iteration, min_inference_time)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
@@ -55,14 +53,11 @@ def create_cmd_line_for_sync_test(model_xml, model_bin, dataset, batch, device,
     return command_line
 
 
-
 def create_cmd_line_for_async_test(model_xml, model_bin, dataset, batch, device,
-                                extension, iteration, nthreads, nstreams, requests):
+                                   extension, iteration, nthreads, nstreams, requests):
     scrypt = get_path_to_async_scripts()
     python = get_cmd_python_version()
-    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} \
-        --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset,
-        batch, device, iteration)
+    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset, batch, device, iteration)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
@@ -75,8 +70,13 @@ def create_cmd_line_for_async_test(model_xml, model_bin, dataset, batch, device,
 
 
 def run_test(command_line, environment):
-    test = Popen(command_line, env = environment, shell = True,
-        stdout = PIPE, universal_newlines = True)
+    test = Popen(
+        command_line,
+        env=environment,
+        shell=True,
+        stdout=PIPE,
+        universal_newlines=True
+    )
     return_code = test.wait()
     out, _ = test.communicate()
     out = out.split('\n')[:-1]
@@ -100,7 +100,6 @@ def parse_model_input_shape(out):
         if 'Input shape: ' in line:
             input_shape = line.split(' ')[-1]
     return input_shape
-
 
 
 def parse_sync_output(out):

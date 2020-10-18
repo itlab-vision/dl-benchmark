@@ -1,15 +1,10 @@
-import ftplib
-
-
 class table_handler:
     def __init__(self):
         self.__my_lines = []
         self.__my_current_line = 0
 
-
     def set_line(self, line):
         self.__my_lines.append(line)
-
 
     def get_line(self):
         if self.__my_current_line < len(self.__my_lines):
@@ -19,7 +14,6 @@ class table_handler:
         else:
             return None
 
-
     def skip_line(self):
         self.__my_current_line += 1
 
@@ -27,8 +21,8 @@ class table_handler:
 def join_tables(ftp_server, table_name):
     tables = []
     ftp_server.retrlines('NLST', tables.append)
-    result_tables = [ table_handler() for i in range(len(tables)) ]
-    for idx, table in enumerate(tables):
+    result_tables = [table_handler() for i in range(len(tables))]
+    for idx in range(len(tables)):
         ftp_server.retrlines('RETR ' + tables[idx], result_tables[idx].set_line)
 
     result_table = open(table_name, 'w')
@@ -43,5 +37,5 @@ def join_tables(ftp_server, table_name):
     result_table.close()
 
     result_table = open(table_name, 'rb')
-    send = ftp_server.storbinary('STOR ' + table_name, result_table)
+    ftp_server.storbinary('STOR ' + table_name, result_table)
     result_table.close()
