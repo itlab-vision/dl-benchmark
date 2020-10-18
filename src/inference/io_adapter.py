@@ -2,12 +2,12 @@ import os
 import abc
 import cv2
 import numpy as np
-from transformer import transformer
 
 
-class io_adapter(metaclass = abc.ABCMeta):
+class io_adapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
+        self._transformed_input = None
         self._original_shapes = None
         self._batch_size = args.batch_size
         self._labels = args.labels
@@ -17,10 +17,9 @@ class io_adapter(metaclass = abc.ABCMeta):
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
-
     def __convert_images(self, shape, data):
-        c, h, w  = shape[1:]
-        images = np.ndarray(shape = (len(data), c, h, w))
+        c, h, w = shape[1:]
+        images = np.ndarray(shape=(len(data), c, h, w))
         image_shapes = []
         for i in range(len(data)):
             image = cv2.imread(data[i])
@@ -31,14 +30,12 @@ class io_adapter(metaclass = abc.ABCMeta):
             images[i] = image
         return images, image_shapes
 
-
     def __transform_images(self, images):
         b, c, h, w = images.shape
-        transformed_images = np.zeros(shape = (b, c, h, w))
+        transformed_images = np.zeros(shape=(b, c, h, w))
         for i in range(b):
             transformed_images[i] = self._transformer.transform(images[i])
         return transformed_images
-
 
     def __create_list_images(self, input):
         images = []
@@ -59,7 +56,6 @@ class io_adapter(metaclass = abc.ABCMeta):
             raise ValueError('Wrong path to image or to directory with images')
         return images
 
-
     def __parse_tensors(self, filename):
         with open(filename, 'r') as file:
             input = file.readlines()
@@ -69,14 +65,13 @@ class io_adapter(metaclass = abc.ABCMeta):
         value = []
         for str in input:
             value.append([float(number) for number in str.split(';')])
-        result = np.array(value, dtype = np.float32)
+        result = np.array(value, dtype=np.float32)
         result = result.reshape(shape)
         return result
 
-
     def prepare_input(self, model, input):
-        result = {}
         self._input = {}
+        self._transformed_input = {}
         self._original_shapes = {}
         if ':' in input[0]:
             for str in input:
@@ -84,48 +79,48 @@ class io_adapter(metaclass = abc.ABCMeta):
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
+                    shapes = [value.shape]
+                    transformed_value = value
                 else:
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value, shapes = self.__convert_images(shape, value)
                     transformed_value = self.__transform_images(value)
-                self._input.update({key : value})
-                self._original_shapes.update({key : shapes})
-                result.update({key : transformed_value})
+                self._input.update({key: value})
+                self._original_shapes.update({key: shapes})
+                self._transformed_input.update({key: transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
+                shapes = [value.shape]
+                transformed_value = value
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
                 transformed_value = self.__transform_images(value)
-            self._input.update({input_blob : value})
-            self._original_shapes.update({input_blob : shapes})
-            result.update({input_blob : transformed_value})
-        return result
-
+            self._input.update({input_blob: value})
+            self._original_shapes.update({input_blob: shapes})
+            self._transformed_input.update({input_blob: transformed_value})
 
     def get_slice_input(self, iteration):
-        slice_input = dict.fromkeys(self._input.keys(), None)
-        for key in self._input:
-            slice_input[key] = self._input[key][(iteration * self._batch_size)
-                % len(self._input[key]) : (((iteration + 1) * self._batch_size - 1)
-                % len(self._input[key])) + 1:]
+        slice_input = dict.fromkeys(self._transformed_input.keys(), None)
+        for key in self._transformed_input:
+            slice_input[key] = self._transformed_input[key][
+                (iteration * self._batch_size) % len(self._transformed_input[key]):
+                (((iteration + 1) * self._batch_size - 1) % len(self._transformed_input[key])) + 1:
+            ]
         return slice_input
-
 
     def _not_valid_result(self, result):
         return result is None
 
-
     @abc.abstractmethod
     def process_output(self, result, log):
         pass
-
 
     @staticmethod
     def get_io_adapter(args, io_model_wrapper, transformer):
@@ -136,6 +131,8 @@ class io_adapter(metaclass = abc.ABCMeta):
             return classification_io(args, io_model_wrapper, transformer)
         elif task == 'detection':
             return detection_io(args, io_model_wrapper, transformer)
+        elif task == 'face-detection':
+            return face_detection_io(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
             return segmenatation_io(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
@@ -182,12 +179,17 @@ class io_adapter(metaclass = abc.ABCMeta):
             return action_recognition_decoder_io(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-decoder':
             return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
+        elif task == 'mask-rcnn':
+            return mask_rcnn_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v2':
+            return yolo_v2_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v2_tiny':
+            return yolo_v2_tiny_io(args, io_model_wrapper, transformer)
 
-        
+
 class feedforward_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def process_output(self, result, log):
         return
@@ -196,7 +198,6 @@ class feedforward_io(io_adapter):
 class classification_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -222,7 +223,6 @@ class detection_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -234,28 +234,39 @@ class detection_io(io_adapter):
         shapes = self._original_shapes[input_layer_name]
         ib = input.shape[0]
         b = result.shape[0]
+        N = result.shape[2] // ib
         images = []
-        for i in range(b):
+        for i in range(b * ib):
             orig_h, orig_w = shapes[i % ib]
             image = input[i % ib].transpose((1, 2, 0))
             images.append(cv2.resize(image, (orig_w, orig_h)))
-        for batch in range(0, b, ib):
-            for obj in result[batch][0]:
-                if obj[2] > self._threshold:
+        for batch in range(b):
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch][0][out_num * N: (out_num + 1) * N]:
                     image_number = int(obj[0])
-                    image = images[image_number + batch * ib]
-                    initial_h, initial_w = image.shape[:2]
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255),
-                        min(class_id * 5, 255))
-                    cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
-                    log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
-                    log.info('Top left: ({0}, {1})'.format(xmin, ymin))
-                    log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch * ib]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        color = (
+                            min(int(class_id * 12.5), 255),
+                            min(class_id * 7, 255),
+                            min(class_id * 5, 255)
+                        )
+                        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+                if isbreak:
+                    break
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
@@ -264,10 +275,49 @@ class detection_io(io_adapter):
             count += 1
 
 
-class segmenatation_io(io_adapter):
+class face_detection_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        labels = result['labels']
+        count_of_detected_faces = 0
+        for i, label in enumerate(labels):
+            if label == -1:
+                count_of_detected_faces = i
+                break
+        boxes = result['boxes'][:count_of_detected_faces]
+        input = self._input[input_layer_name]
+        image = input[0].transpose((1, 2, 0))
+        initial_h, initial_w = image.shape[:2]
+        shapes = self._original_shapes[input_layer_name]
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
+        face_id = 0
+        for obj in boxes:
+            if obj[4] > self._threshold:
+                face_id += 1
+                xmin = int(obj[0] * orig_w / initial_w)
+                ymin = int(obj[1] * orig_h / initial_h)
+                xmax = int(obj[2] * orig_w / initial_w)
+                ymax = int(obj[3] * orig_h / initial_h)
+                color = (0, 0, 0)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('Bounding boxes for face of person {0}'.format(face_id))
+                log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+        out_img = os.path.join(os.path.dirname(__file__), 'out_face_detection.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
+
+
+class segmenatation_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -285,7 +335,7 @@ class segmenatation_io(io_adapter):
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
+            classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
@@ -301,7 +351,6 @@ class adas_segmenatation_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -310,7 +359,7 @@ class adas_segmenatation_io(io_adapter):
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[2:]
+        h, w = result.shape[-2:]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
         classes_color_map = []
@@ -319,7 +368,7 @@ class adas_segmenatation_io(io_adapter):
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = np.squeeze(data)
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
+            classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
@@ -334,7 +383,6 @@ class adas_segmenatation_io(io_adapter):
 class road_segmenatation_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -353,7 +401,7 @@ class road_segmenatation_io(io_adapter):
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             data = data.transpose((1, 2, 0))
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
+            classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = np.argmax(data[i][j])
@@ -369,7 +417,6 @@ class recognition_face_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -380,14 +427,14 @@ class recognition_face_io(io_adapter):
         result = result[result_layer_name]
         ib, c, h, w = input.shape
         b = result.shape[0]
-        images = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
             images[i] = input[i % ib].transpose((1, 2, 0))
         for i, r in enumerate(result):
             image = images[i]
             initial_h, initial_w = image.shape[:2]
             log.info('Landmarks coordinates for {} image'.format(i))
-            for j in range (0, len(r), 2):
+            for j in range(0, len(r), 2):
                 index = int(j / 2) + 1
                 x = int(r[j] * initial_w)
                 y = int(r[j + 1] * initial_h)
@@ -406,7 +453,6 @@ class person_attributes_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -419,9 +465,17 @@ class person_attributes_io(io_adapter):
         result_bottom = result[next(layer_iter)]
         b = result_attributes.shape[0]
         ib, c, h, w = input.shape
-        images = np.ndarray(shape = (b, h, w * 4, c))
-        attributes = ['is_male', 'has_bag', 'has_backpack', 'has_hat', 'has_longsleeves',
-            'has_longpants', 'has_longhair', 'has_coat_jacket']
+        images = np.ndarray(shape=(b, h, w * 4, c))
+        attributes = [
+            'is_male',
+            'has_bag',
+            'has_backpack',
+            'has_hat',
+            'has_longsleeves',
+            'has_longpants',
+            'has_longhair',
+            'has_coat_jacket'
+        ]
         color_point = (0, 0, 255)
         for i in range(b):
             for x in range(w):
@@ -431,20 +485,32 @@ class person_attributes_io(io_adapter):
             y_top = int(result_top[i][1] * h)
             x_bottom = int(result_bottom[i][0] * w)
             y_bottom = int(result_bottom[i][1] * h)
-            color_top = (int(images[i][y_top][x_top][0]), int(images[i][y_top][x_top][1]),
-                int(images[i][y_top][x_top][2]))
-            color_bottom = (int(images[i][y_bottom][x_bottom][0]), int(images[i][y_bottom][x_bottom][1]),
-                int(images[i][y_bottom][x_bottom][2]))
+            color_top = (
+                int(images[i][y_top][x_top][0]),
+                int(images[i][y_top][x_top][1]),
+                int(images[i][y_top][x_top][2])
+            )
+            color_bottom = (
+                int(images[i][y_bottom][x_bottom][0]),
+                int(images[i][y_bottom][x_bottom][1]),
+                int(images[i][y_bottom][x_bottom][2])
+            )
             cv2.circle(images[i], (x_top, y_top), 3, color_point, -1)
-            cv2.circle(images[i], (x_bottom, y_bottom), 3, color_point, -1)  
+            cv2.circle(images[i], (x_bottom, y_bottom), 3, color_point, -1)
             for x in range(w, 2 * w):
                 for y in range(0, int(h / 2)):
                     images[i][y][x] = color_top
                     images[i][y + int(h / 2)][x] = color_bottom
             for j, val in enumerate(result_attributes[i]):
                 color_attribut = (0, 255 * bool(val > 0.5), 255 * bool(val <= 0.5))
-                cv2.putText(images[i], '{0} {1}'.format(attributes[j], bool(val > 0.5)), 
-                    (w * 2 + 5, 20 + j * 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color_attribut)
+                cv2.putText(
+                    images[i],
+                    '{0} {1}'.format(attributes[j], bool(val > 0.5)),
+                    (w * 2 + 5, 20 + j * 15),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.4,
+                    color_attribut
+                )
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
@@ -456,7 +522,6 @@ class person_attributes_io(io_adapter):
 class age_gender_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -477,7 +542,6 @@ class gaze_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -488,9 +552,9 @@ class gaze_io(io_adapter):
         input_left_eye = self._input['left_eye_image']
         input_right_eye = self._input['right_eye_image']
         ib, c, h, w = input_left_eye.shape
-        images = np.ndarray(shape = (b, h, w * 2, c))
-        images_left_eye = np.ndarray(shape = (b, h, w, c))
-        images_right_eye = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w * 2, c))
+        images_left_eye = np.ndarray(shape=(b, h, w, c))
+        images_right_eye = np.ndarray(shape=(b, h, w, c))
         center_x = int(w / 2)
         center_y = int(h / 2)
         color = (255, 0, 0)
@@ -521,7 +585,6 @@ class head_pose_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -533,7 +596,7 @@ class head_pose_io(io_adapter):
         result_yaw = result['angle_y_fc']
         b = result_pitch.shape[0]
         ib, c, h, w = input.shape
-        images = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w, c))
         center_x = int(w / 2)
         center_y = int(h / 2)
         color_x = (0, 0, 255)
@@ -545,15 +608,21 @@ class head_pose_io(io_adapter):
             yaw = result_yaw[i][0] * np.pi / 180.0
             pitch = result_pitch[i][0] * np.pi / 180.0
             roll = result_roll[i][0] * np.pi / 180.0
-            Rx = np.array([[1, 0, 0], 
-                        [0, np.cos(pitch), -np.sin(pitch)],
-                        [0, np.sin(pitch), np.cos(pitch)]])
-            Ry = np.array([[np.cos(yaw), 0, -np.sin(yaw)], 
-                        [0, 1, 0],
-                        [np.sin(yaw), 0, np.cos(yaw)]])
-            Rz = np.array([[np.cos(roll), -np.sin(roll), 0],
-                        [np.sin(roll), np.cos(roll), 0], 
-                        [0, 0, 1]])
+            Rx = np.array([
+                [1, 0, 0],
+                [0, np.cos(pitch), -np.sin(pitch)],
+                [0, np.sin(pitch), np.cos(pitch)]
+            ])
+            Ry = np.array([
+                [np.cos(yaw), 0, -np.sin(yaw)],
+                [0, 1, 0],
+                [np.sin(yaw), 0, np.cos(yaw)]
+            ])
+            Rz = np.array([
+                [np.cos(roll), -np.sin(roll), 0],
+                [np.sin(roll), np.cos(roll), 0],
+                [0, 0, 1]
+            ])
             R = np.dot(Rx, np.dot(Ry, Rz))
             o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
             o[2] = focal_length
@@ -588,7 +657,6 @@ class person_detection_asl_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -597,7 +665,7 @@ class person_detection_asl_io(io_adapter):
         input = self._input[input_layer_name]
         result = result['17701/Split.0']
         _, c, h, w = input.shape
-        images = np.ndarray(shape = (1, h, w, c))
+        images = np.ndarray(shape=(1, h, w, c))
         images[0] = input[0].transpose((1, 2, 0))
         count = 0
         for obj in result:
@@ -621,17 +689,17 @@ class license_plate_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._input.keys(), None)
-        slice_input['data'] = self._input['data'][(iteration * self._batch_size)
-                % len(self._input['data']) : (((iteration + 1) * self._batch_size - 1)
-                % len(self._input['data'])) + 1:]
-        slice_input['seq_ind'] = self._input['seq_ind'][(iteration * 88 * self._batch_size)
-                % len(self._input['seq_ind']) : (((iteration + 1) * 88 * self._batch_size - 1)
-                % len(self._input['seq_ind'])) + 1:]
+        slice_input['data'] = self._input['data'][
+            (iteration * self._batch_size) % len(self._input['data']):
+            (((iteration + 1) * self._batch_size - 1) % len(self._input['data'])) + 1:
+        ]
+        slice_input['seq_ind'] = self._input['seq_ind'][
+            (iteration * 88 * self._batch_size) % len(self._input['seq_ind']):
+            (((iteration + 1) * 88 * self._batch_size - 1) % len(self._input['seq_ind'])) + 1:
+        ]
         return slice_input
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -655,7 +723,6 @@ class license_plate_io(io_adapter):
 class instance_segmenatation_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
@@ -688,7 +755,7 @@ class instance_segmenatation_io(io_adapter):
                 mask = masks[i][classes[i]]
                 label_on_image_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
                 label_on_image = '<' + labels_map[classes[i]] + '>'
-                labels_on_image.append((label_on_image, label_on_image_point)) 
+                labels_on_image.append((label_on_image, label_on_image_point))
                 for j in range(len(mask)):
                     for k in range(len(mask[j])):
                         if (mask[j][k] > self._threshold):
@@ -699,9 +766,16 @@ class instance_segmenatation_io(io_adapter):
                             for c in range(dh):
                                 for t in range(dw):
                                     image[y + c][x + t] = classes_color_map[classes[i] - 1]
-        for l in range(len(labels_on_image)):
-            image = cv2.putText(image, labels_on_image[l][0], labels_on_image[l][1], \
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+        for i in range(len(labels_on_image)):
+            image = cv2.putText(
+                image,
+                labels_on_image[i][0],
+                labels_on_image[i][1],
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 0, 0),
+                1
+            )
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
         orig_h, orig_w = shapes[0]
         image = cv2.resize(image, (orig_w, orig_h))
@@ -713,7 +787,6 @@ class single_image_super_resolution_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -723,7 +796,7 @@ class single_image_super_resolution_io(io_adapter):
         c = 3
         h, w = result.shape[2:]
         for batch, data in enumerate(result):
-            classes_map = np.zeros(shape = (h, w, c), dtype = np.uint8)
+            classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             colors = data * 255
             np.clip(colors, 0., 255.)
             classes_map = colors.transpose((1, 2, 0))
@@ -736,7 +809,6 @@ class sphereface_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -744,26 +816,29 @@ class sphereface_io(io_adapter):
         result = result[next(iter(result))]
         file_name = os.path.join(os.path.dirname(__file__), 'sphereface_out.csv')
         with open(file_name, 'w+'):
-            np.savetxt('sphereface_out.csv', result, fmt = '%1.2f', delimiter = ';', 
-                        header = '{};{}'.format(result.shape[0], result.shape[1]), comments = '')
+            np.savetxt(
+                'sphereface_out.csv',
+                result,
+                fmt='%1.2f',
+                delimiter=';',
+                header='{};{}'.format(result.shape[0], result.shape[1]),
+                comments=''
+            )
         log.info('Result was saved to {}'.format(file_name))
 
 
 class detection_ssd(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-    
 
     @abc.abstractmethod
     def _get_action_map(self):
         pass
 
-
     def _parse_det_conf(self, detection_conf_data, i):
         return detection_conf_data[i * 2 + 1]
 
-
-    def _parse_action(self, action_data, position, num_classes, scale, shift = 1):
+    def _parse_action(self, action_data, position, num_classes, scale, shift=1):
         action_exp_max = 0.
         action_exp_sum = 0.
         action_id = -1
@@ -780,21 +855,17 @@ class detection_ssd(io_adapter):
             action_conf = 0.
         return action_id, action_conf
 
-
     @abc.abstractmethod
-    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+    def _parse_prior_box(self, prior_data, i, w=0, h=0):
         pass
 
-
     @abc.abstractmethod
-    def _parse_variance_box(self, prior_data = None, i = 0):
+    def _parse_variance_box(self, prior_data=None, i=0):
         pass
-
 
     @abc.abstractmethod
     def _parse_encoded_box(self, encoded_data, i):
         pass
-    
 
     def _parse_decoded_bbox(self, prior_box, variance_box, encoded_box, w, h):
         prior_width = prior_box[2] - prior_box[0]
@@ -812,52 +883,63 @@ class detection_ssd(io_adapter):
         decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
         return decoded_bbox
 
-
     def _non_max_supression(self, detections, det_threshold):
-        detections.sort(key = lambda detection: detection[0], reverse = True)
+        detections.sort(key=lambda detection: detection[0], reverse=True)
         valid_detections = []
         for idx in range(len(detections)):
-            max_detection = max(detections, key = lambda detection: detection[0])
-            if max_detection[0] < det_threshold: 
+            max_detection = max(detections, key=lambda detection: detection[0])
+            if max_detection[0] < det_threshold:
                 break
             valid_detections.append(max_detection)
             max_detection[0] = 0
             for detection in detections:
                 if detection[0] < det_threshold:
                     continue
-                current_rect_area = ((detection[1][2] - detection[1][0]) * 
-                    (detection[1][3] - detection[1][1]))
-                max_rect_area = ((max_detection[1][2] - max_detection[1][0]) * 
-                    (max_detection[1][3] - max_detection[1][1]))
+                current_rect_area = (
+                    (detection[1][2] - detection[1][0]) *
+                    (detection[1][3] - detection[1][1])
+                )
+                max_rect_area = (
+                    (max_detection[1][2] - max_detection[1][0]) *
+                    (max_detection[1][3] - max_detection[1][1])
+                )
                 intersection_area = 0
-                if not (detection[1][0] >= max_detection[1][2] or 
-                    detection[1][1] >= max_detection[1][3] or 
-                    max_detection[1][0] >= detection[1][2] or 
-                    max_detection[1][1] >= detection[1][3]):
-                    intersection_area = ((min(detection[1][2], max_detection[1][2]) - 
-                        max(detection[1][0], max_detection[1][0])) * 
-                        (min(detection[1][3], max_detection[1][3]) - 
-                        max(detection[1][1], max_detection[1][1])))
+                if not (detection[1][0] >= max_detection[1][2] or
+                        detection[1][1] >= max_detection[1][3] or
+                        max_detection[1][0] >= detection[1][2] or
+                        max_detection[1][1] >= detection[1][3]):
+                    intersection_area = (
+                        (min(detection[1][2], max_detection[1][2]) -
+                         max(detection[1][0], max_detection[1][0])) *
+                        (min(detection[1][3], max_detection[1][3]) -
+                         max(detection[1][1], max_detection[1][1]))
+                    )
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
                 detection[0] *= np.exp(-overlap * overlap / 0.6)
         return valid_detections
-
 
     def _draw_detections(self, images, batch, valid_detections, action_map, h, w):
         image = cv2.resize(images[batch], (w, h))
         rect_color = (255, 255, 255)
         for detection in valid_detections:
-            cv2.rectangle(image, (detection[1][0], detection[1][1]), 
-                (detection[1][2], detection[1][3]), rect_color, 1)
+            left_point = (detection[1][0], detection[1][1])
+            right_point = (detection[1][2], detection[1][3])
+            cv2.rectangle(image, left_point, right_point, rect_color, 1)
             action_color = (0, 0, 0)
             if detection[3] == 0:
                 action_color = (0, 255, 0)
             else:
                 action_color = (0, 0, 255)
-            cv2.putText(image, action_map[detection[3]], (detection[1][0], detection[1][1] + 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.4, action_color)
+            text_area = (detection[1][0], detection[1][1] + 10)
+            cv2.putText(
+                image,
+                action_map[detection[3]],
+                text_area,
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.4,
+                action_color
+            )
         return image
-        
 
     def _save_output_images(self, images, log):
         count = 0
@@ -867,7 +949,6 @@ class detection_ssd(io_adapter):
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
 
-    
     @abc.abstractmethod
     def process_output(self, result, log):
         pass
@@ -877,22 +958,19 @@ class detection_ssd_old_format(detection_ssd):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
-    def _parse_prior_box(self, prior_data, i, w = 0, h = 0):
+    def _parse_prior_box(self, prior_data, i, w=0, h=0):
         prior_xmin = prior_data[i * 4]
         prior_ymin = prior_data[i * 4 + 1]
         prior_xmax = prior_data[i * 4 + 2]
         prior_ymax = prior_data[i * 4 + 3]
         return prior_xmin, prior_ymin, prior_xmax, prior_ymax
 
-
-    def _parse_variance_box(self, prior_data = None, i = 0):
+    def _parse_variance_box(self, prior_data=None, i=0):
         variance_xmin = prior_data[(4300 + i) * 4]
         variance_ymin = prior_data[(4300 + i) * 4 + 1]
         variance_xmax = prior_data[(4300 + i) * 4 + 2]
         variance_ymax = prior_data[(4300 + i) * 4 + 3]
         return variance_xmin, variance_ymin, variance_xmax, variance_ymax
-
 
     def _parse_encoded_box(self, encoded_data, i):
         encoded_xmin = encoded_data[i * 4]
@@ -901,7 +979,6 @@ class detection_ssd_old_format(detection_ssd):
         encoded_ymax = encoded_data[i * 4 + 3]
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -909,7 +986,7 @@ class detection_ssd_old_format(detection_ssd):
         input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         b, c, h, w = input.shape
-        images = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
             images[i] = input[i].transpose((1, 2, 0))
         detections = []
@@ -922,7 +999,7 @@ class detection_ssd_old_format(detection_ssd):
             orig_h, orig_w = shapes[batch]
             encoded_data = result['mbox_loc1/out/conv/flat'][batch]
             detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
-            action_blobs = np.ndarray(shape = (4, 25, 43, num_classes))
+            action_blobs = np.ndarray(shape=(4, 25, 43, num_classes))
             for i in range(4):
                 action_blobs[i] = result['out/anchor{}'.format(i + 1)][batch]
             for i in range(4300):
@@ -930,8 +1007,12 @@ class detection_ssd_old_format(detection_ssd):
                 if detection_conf < self._threshold:
                     continue
                 action_data = action_blobs[i % 4].flatten()
-                action_id, action_conf = self._parse_action(action_data,
-                    i // 4 * num_classes, num_classes, 3)
+                action_id, action_conf = self._parse_action(
+                    action_data,
+                    i // 4 * num_classes,
+                    num_classes,
+                    3
+                )
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
                 encoded_box = self._parse_encoded_box(encoded_data, i)
@@ -946,7 +1027,6 @@ class detection_ssd_old_format(detection_ssd):
 class detection_ssd_new_format(detection_ssd):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def _parse_prior_box(self, prior_data, i, w, h):
         blob_size, step = [], 0
@@ -967,10 +1047,8 @@ class detection_ssd_new_format(detection_ssd):
         prior_ymax = (ycenter + 0.5 * prior_data[1]) / h
         return prior_xmin, prior_ymin, prior_xmax, prior_ymax
 
-    
-    def _parse_variance_box(self, prior_data = None, i = 0):
+    def _parse_variance_box(self, prior_data=None, i=0):
         return 0.1, 0.1, 0.2, 0.2
-
 
     def _parse_encoded_box(self, encoded_data, i):
         encoded_xmin = encoded_data[i * 4 + 1]
@@ -979,7 +1057,6 @@ class detection_ssd_new_format(detection_ssd):
         encoded_ymax = encoded_data[i * 4 + 2]
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -987,17 +1064,19 @@ class detection_ssd_new_format(detection_ssd):
         input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         b, c, h, w = input.shape
-        images = np.ndarray(shape = (b, h, w, c))
+        images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
             images[i] = input[i].transpose((1, 2, 0))
         detections = []
         action_map = self._get_action_map()
         num_classes = len(action_map)
         main_anchor = [26.17863728, 58.670372]
-        anchors = [[35.36, 81.829632], 
-            [45.8114572, 107.651852], 
-            [63.31491832, 142.595732], 
-            [93.5070856, 201.107692]]
+        anchors = [
+            [35.36, 81.829632],
+            [45.8114572, 107.651852],
+            [63.31491832, 142.595732],
+            [93.5070856, 201.107692]
+        ]
         shapes = self._original_shapes[input_layer_name]
         output_images = []
         for batch in range(b):
@@ -1005,7 +1084,7 @@ class detection_ssd_new_format(detection_ssd):
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
-            action_blobs = np.ndarray(shape = (4, 6, 25, 43))
+            action_blobs = np.ndarray(shape=(4, 6, 25, 43))
             for i in range(4):
                 action_blobs[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
             detections = []
@@ -1017,12 +1096,22 @@ class detection_ssd_new_format(detection_ssd):
                 action_id, action_conf = 0, 0.
                 if i < 4250:
                     action_data = main_action_data
-                    action_id, action_conf = self._parse_action(main_action_data,
-                        i, num_classes, 16, 4250)
+                    action_id, action_conf = self._parse_action(
+                        main_action_data,
+                        i,
+                        num_classes,
+                        16,
+                        4250
+                    )
                 else:
                     action_data = action_blobs[(i - 4250) % 4].flatten()
-                    action_id, action_conf = self._parse_action(action_data,
-                        (i - 4250) // 4, num_classes, 16, 1075)
+                    action_id, action_conf = self._parse_action(
+                        action_data,
+                        (i - 4250) // 4,
+                        num_classes,
+                        16,
+                        1075
+                    )
                 prior_box = []
                 if i < 4250:
                     prior_box = self._parse_prior_box(main_anchor, i, w, h)
@@ -1030,19 +1119,18 @@ class detection_ssd_new_format(detection_ssd):
                     prior_box = self._parse_prior_box(anchors[(i - 4250) % 4], i, w, h)
                 variance_box = self._parse_variance_box()
                 encoded_box = self._parse_encoded_box(encoded_data, i)
-                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)              
+                decoded_bbox = self._parse_decoded_bbox(prior_box, variance_box, encoded_box, orig_w, orig_h)
                 detection = [detection_conf, decoded_bbox, action_conf, action_id]
                 detections.append(detection)
             valid_detections = self._non_max_supression(detections, self._threshold)
             output_images.append(self._draw_detections(images, batch, valid_detections, action_map, orig_h, orig_w))
         self._save_output_images(output_images, log)
-    
+
 
 class person_detection_action_recognition_old(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    
     def _get_action_map(self):
         action_map = ['sitting', 'standing', 'rasing hand']
         return action_map
@@ -1052,16 +1140,14 @@ class person_detection_raisinghand_recognition(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def _get_action_map(self):
         action_map = ['sitting', 'other']
         return action_map
-    
+
 
 class person_detection_action_recognition_teacher(detection_ssd_old_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
 
     def _get_action_map(self):
         action_map = ['standing', 'writing', 'demonstrating']
@@ -1072,10 +1158,15 @@ class person_detection_action_recognition_new(detection_ssd_new_format):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    
     def _get_action_map(self):
-        action_map = ['sitting', 'writing', 'raising_hand', 'standing',
-            'turned around', 'lie on the desk']
+        action_map = [
+            'sitting',
+            'writing',
+            'raising_hand',
+            'standing',
+            'turned around',
+            'lie on the desk'
+        ]
         return action_map
 
 
@@ -1083,19 +1174,17 @@ class human_pose_estimation_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def __create_pafs(self, fields):
         pafX = [fields[i] for i in range(0, fields.shape[0], 2)]
         pafY = [fields[i] for i in range(1, fields.shape[0], 2)]
         return pafX, pafY
-
 
     def __search_keypoints(self, keypoints_prob_map, frame_height, frame_width):
         keypoints = {}
         keypoint_id = 0
         for i in range(keypoints_prob_map.shape[0] - 1):
             prob_map = cv2.resize(keypoints_prob_map[i], (frame_height, frame_width))
-            mapSmooth = cv2.GaussianBlur(prob_map, (3,3), 0, 0)
+            mapSmooth = cv2.GaussianBlur(prob_map, (3, 3), 0, 0)
             mapMask = np.uint8(mapSmooth > self._threshold)
             contours, _ = cv2.findContours(mapMask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             keypoints[i] = []
@@ -1108,19 +1197,19 @@ class human_pose_estimation_io(io_adapter):
                 keypoint_id += 1
         return keypoints
 
-
     def __create_points(self, keypoints):
         points = []
         point_id = 0
         for part in range(len(keypoints)):
             if not (len(keypoints[part]) == 0):
                 for point in keypoints[part]:
-                    points.append({'coordinates': point['coordinates'], 
-                        'part': part, 
-                        'id': point_id})
+                    points.append({
+                        'coordinates': point['coordinates'],
+                        'part': part,
+                        'id': point_id
+                    })
                     point_id += 1
         return points
-
 
     def __search_connections(self, edges, keypoints, pafX, pafY, frame_width, frame_height):
         valid_connections = []
@@ -1143,10 +1232,19 @@ class human_pose_estimation_io(io_adapter):
                             norm_distance = distance/norm
                         else:
                             continue
-                        interp_coord = list(zip(np.linspace(start_point['coordinates'][0],
-                            end_point['coordinates'][0], num = 10),
-                            np.linspace(start_point['coordinates'][1],
-                            end_point['coordinates'][1], num = 10)))
+                        interp_coord = list(
+                            zip(
+                                np.linspace(
+                                    start_point['coordinates'][0],
+                                    end_point['coordinates'][0],
+                                    num=10
+                                ),
+                                np.linspace(
+                                    start_point['coordinates'][1],
+                                    end_point['coordinates'][1],
+                                    num=10)
+                            )
+                        )
                         paf_interp = []
                         for coord in interp_coord:
                             x = int(round(coord[0]))
@@ -1167,7 +1265,6 @@ class human_pose_estimation_io(io_adapter):
                 valid_connections.append([])
                 invalid_connections.append(edge)
         return valid_connections, invalid_connections
-
 
     def __search_persons_keypoints(self, edges, valid_connections, invalid_connections):
         persons_keypoints = -1 * np.ones((0, 18))
@@ -1191,7 +1288,6 @@ class human_pose_estimation_io(io_adapter):
                         persons_keypoints = np.vstack((persons_keypoints, new_person_points))
         return persons_keypoints
 
-
     def __print_edges(self, edges, persons_keypoints, points, frame, colors):
         for edge in edges:
             for person_points in persons_keypoints:
@@ -1204,32 +1300,31 @@ class human_pose_estimation_io(io_adapter):
                 end_point = points[end_point_id]['coordinates']
                 frame = cv2.line(frame, start_point, end_point, colors[edges.index(edge)], 2, cv2.LINE_AA)
         return frame
-        
 
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         edges = [
-            {'startVertex' : 1, 'endVertex': 8},
-            {'startVertex' : 8, 'endVertex': 9},
-            {'startVertex' : 9, 'endVertex': 10},
-            {'startVertex' : 1, 'endVertex': 11},
-            {'startVertex' : 11, 'endVertex': 12},
-            {'startVertex' : 12, 'endVertex': 13},
-            {'startVertex' : 1, 'endVertex': 2},
-            {'startVertex' : 2, 'endVertex': 3},
-            {'startVertex' : 3, 'endVertex': 4},
-            {'startVertex' : 2, 'endVertex': 16},
-            {'startVertex' : 1, 'endVertex': 5},
-            {'startVertex' : 5, 'endVertex': 6},
-            {'startVertex' : 6, 'endVertex': 7},
-            {'startVertex' : 5, 'endVertex': 17},
-            {'startVertex' : 1, 'endVertex': 0},
-            {'startVertex' : 0, 'endVertex': 14},
-            {'startVertex' : 0, 'endVertex': 15},
-            {'startVertex' : 15, 'endVertex': 17},
-            {'startVertex' : 14, 'endVertex': 16},
+            {'startVertex': 1, 'endVertex': 8},
+            {'startVertex': 8, 'endVertex': 9},
+            {'startVertex': 9, 'endVertex': 10},
+            {'startVertex': 1, 'endVertex': 11},
+            {'startVertex': 11, 'endVertex': 12},
+            {'startVertex': 12, 'endVertex': 13},
+            {'startVertex': 1, 'endVertex': 2},
+            {'startVertex': 2, 'endVertex': 3},
+            {'startVertex': 3, 'endVertex': 4},
+            {'startVertex': 2, 'endVertex': 16},
+            {'startVertex': 1, 'endVertex': 5},
+            {'startVertex': 5, 'endVertex': 6},
+            {'startVertex': 6, 'endVertex': 7},
+            {'startVertex': 5, 'endVertex': 17},
+            {'startVertex': 1, 'endVertex': 0},
+            {'startVertex': 0, 'endVertex': 14},
+            {'startVertex': 0, 'endVertex': 15},
+            {'startVertex': 15, 'endVertex': 17},
+            {'startVertex': 14, 'endVertex': 16},
         ]
         if not self._color_map:
             self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/pose_estimation_color_map.txt')
@@ -1243,14 +1338,18 @@ class human_pose_estimation_io(io_adapter):
             frame_height = frame.shape[0]
             frame_width = frame.shape[1]
             keypoints_prob_map = result['Mconv7_stage2_L2'][batch].transpose(0, 2, 1)
-            W = keypoints_prob_map.shape[1]
-            H = keypoints_prob_map.shape[2]
             fields = result['Mconv7_stage2_L1'][batch]
             pafX, pafY = self.__create_pafs(fields)
             keypoints = self.__search_keypoints(keypoints_prob_map, frame_height, frame_width)
             points = self.__create_points(keypoints)
-            valid_connections, invalid_connections = self.__search_connections(edges, 
-                keypoints, pafX, pafY, frame_width, frame_height)
+            valid_connections, invalid_connections = self.__search_connections(
+                edges,
+                keypoints,
+                pafX,
+                pafY,
+                frame_width,
+                frame_height
+            )
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
             out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
@@ -1264,7 +1363,6 @@ class action_recognition_encoder_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-        
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1275,8 +1373,14 @@ class action_recognition_encoder_io(io_adapter):
         batch_size, dim1 = result.shape[:2]
         with open(file_name, 'w+'):
             probs = np.reshape(np.squeeze(result), (batch_size, dim1))
-            np.savetxt('action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
-                header = '{};{}'.format(batch_size, dim1), comments = '')
+            np.savetxt(
+                'action_recognition_encoder_out.csv',
+                probs,
+                fmt='%1.7f',
+                delimiter=';',
+                header='{};{}'.format(batch_size, dim1),
+                comments=''
+            )
         log.info('Result was saved to {}'.format(file_name))
 
 
@@ -1284,7 +1388,6 @@ class driver_action_recognition_encoder_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-        
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1292,11 +1395,17 @@ class driver_action_recognition_encoder_io(io_adapter):
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         file_name = os.path.join(os.path.dirname(__file__), 'driver_action_recognition_encoder_out.csv')
-        batch_size, dim1 = result.shape[:2] 
+        batch_size, dim1 = result.shape[:2]
         with open(file_name, 'w+'):
             probs = np.reshape(np.squeeze(result), (batch_size, dim1))
-            np.savetxt('driver_action_recognition_encoder_out.csv', probs, fmt = '%1.7f', delimiter = ';', 
-                header = '{};{}'.format(batch_size, dim1), comments = '')
+            np.savetxt(
+                'driver_action_recognition_encoder_out.csv',
+                probs,
+                fmt='%1.7f',
+                delimiter=';',
+                header='{};{}'.format(batch_size, dim1),
+                comments=''
+            )
         log.info('Result was saved to {}'.format(file_name))
 
 
@@ -1304,7 +1413,6 @@ class reidentification_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-        
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1312,19 +1420,24 @@ class reidentification_io(io_adapter):
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         file_name = os.path.join(os.path.dirname(__file__), 'reidentification.csv')
-        batch_size, dim1 = result.shape[:2] 
+        batch_size, dim1 = result.shape[:2]
         with open(file_name, 'w+'):
             probs = np.reshape(np.squeeze(result), (batch_size, dim1))
-            np.savetxt('reidentification.csv', probs, fmt = '%1.7f', delimiter = ';', 
-                header = '{};{}'.format(batch_size, dim1), comments = '')
+            np.savetxt(
+                'reidentification.csv',
+                probs,
+                fmt='%1.7f',
+                delimiter=';',
+                header='{};{}'.format(batch_size, dim1),
+                comments=''
+            )
         log.info('Result was saved to {}'.format(file_name))
 
 
 class action_recognition_decoder_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-      
-        
+
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1348,7 +1461,6 @@ class driver_action_recognition_decoder_io(io_adapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-
     def process_output(self, result, log):
         if (self._not_valid_result(result)):
             log.warning('Model output is processed only for the number iteration = 1')
@@ -1366,3 +1478,235 @@ class driver_action_recognition_decoder_io(io_adapter):
             for id in top_ind:
                 det_label = labels_map[id] if labels_map else '#{}'.format(id)
                 log.info('{:.7f} {}'.format(probs[id], det_label))
+
+
+class mask_rcnn_io(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._color_map:
+            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map_90.txt')
+        classes_color_map = []
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                classes_color_map.append([int(x) for x in line.split()])
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names_90.txt')
+        labels_map = []
+        with open(self._labels, 'r') as f:
+            for line in f:
+                labels_map.append(line.strip())
+
+        shapes = self._original_shapes[next(iter(self._original_shapes))]
+        image = self._input['image_tensor'][0].transpose((1, 2, 0))
+
+        detections_info = result['reshape_do_2d']
+        masks = result['masks']
+
+        count_of_detected_objects = 0
+        for i, detection_info in enumerate(detections_info):
+            image_number = detection_info[0]
+            if image_number == -1:
+                count_of_detected_objects = i
+                break
+        masks = masks[:count_of_detected_objects]
+        detections_info = detections_info[:count_of_detected_objects]
+
+        labels_on_image = []
+
+        for idx, detection_info in enumerate(detections_info):
+            if detection_info[2] > self._threshold:
+                initial_h, initial_w = image.shape[:2]
+                left = int(detection_info[3] * initial_w)
+                top = int(detection_info[4] * initial_h)
+                right = int(detection_info[5] * initial_w)
+                bottom = int(detection_info[6] * initial_h)
+
+                class_id = int(detection_info[1]) - 1
+                mask = masks[idx][class_id]
+                color = classes_color_map[class_id]
+
+                object_width = abs(right - left)
+                object_height = abs(top - bottom)
+
+                dw = int(object_width / mask.shape[-1])
+                dh = int(object_height / mask.shape[-2])
+
+                label_on_image_point = (int(left + object_width / 3), int(bottom - object_height / 2))
+                label_on_image = '<' + labels_map[class_id] + '>'
+                labels_on_image.append((label_on_image, label_on_image_point))
+
+                for j in range(mask.shape[-2]):
+                    for i in range(mask.shape[-1]):
+                        if (mask[j][i] < self._threshold):
+                            continue
+
+                        x = int(left + i * dw)
+                        y = int(top + j * dh)
+
+                        for m in range(y, y + dh):
+                            for n in range(x, x + dw):
+                                image[m, n] = color
+
+        for i in range(len(labels_on_image)):
+            image = cv2.putText(cv2.UMat(image), labels_on_image[i][0], labels_on_image[i][1], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+
+        orig_h, orig_w = shapes[0]
+        image = cv2.UMat(cv2.resize(cv2.UMat(image), (orig_w, orig_h)))
+        out_img = os.path.join(os.path.dirname(__file__), 'mask_rcnn_out.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {}'.format(out_img))
+
+
+class yolo_v2(io_adapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def __sigmoid(self, x) -> float:
+        return 1 / (1 + np.exp(-x))
+
+    def __softmax(self, x):
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(axis=0)
+
+    @abc.abstractmethod
+    def _get_anchors(self):
+        pass
+
+    def __non_max_supression(self, predictions, score_threshold, nms_threshold):
+        predictions.sort(key=lambda prediction: prediction[0], reverse=True)
+        valid_detections = []
+        while (len(predictions) > 0):
+            max_detection = predictions[0]
+            if max_detection[0] < score_threshold:
+                break
+            valid_detections.append(max_detection)
+            predictions.remove(max_detection)
+            remove_detections = []
+            for detection in predictions:
+                if detection[0] < score_threshold:
+                    remove_detections.append(detection)
+                    continue
+                if not (max_detection[1] == detection[1]):
+                    continue
+                current_rect_area = detection[2][2] * detection[2][3]
+                max_rect_area = max_detection[2][2] * max_detection[2][3]
+                intersection_area = 0
+                if not (detection[2][2] <= 0 or detection[2][3] <= 0 or max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
+                    intersection_area = float(
+                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) -
+                         max(detection[2][0], max_detection[2][0])) *
+                        (min(detection[2][1] + detection[2][3], max_detection[2][1] + max_detection[2][3]) -
+                         max(detection[2][1], max_detection[2][1]))
+                    )
+                overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
+                if (overlap > nms_threshold):
+                    remove_detections.append(detection)
+            for detection in remove_detections:
+                predictions.remove(detection)
+        return valid_detections
+
+    def __print_detections(self, detections, labels_map, image, scales, orig_shape, batch, log):
+        image = cv2.resize(image, orig_shape)
+        for detection in detections:
+            left = int(detection[2][0] * scales['W'])
+            top = int(detection[2][1] * scales['H'])
+            right = int((detection[2][2] + detection[2][0]) * scales['W'])
+            bottom = int((detection[2][3] + detection[2][1]) * scales['H'])
+            class_id = int(detection[1])
+            color = (min(int(class_id * 12.5), 255), min(class_id * 7, 255), min(class_id * 5, 255))
+            log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
+            log.info('Top left: ({0}, {1})'.format(top, left))
+            log.info('Bottom right: ({0}, {1})'.format(bottom, right))
+            label = '<' + labels_map[class_id] + '>'
+            image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
+            label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
+            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), (left + label_size[0], top), color, -2)
+            image = cv2.putText(image, label, (left, top - base_line - 1), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
+        return image
+
+    def process_output(self, result, log):
+        if (self._not_valid_result(result)):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        if not self._labels:
+            self._labels = os.path.join(os.path.dirname(__file__), 'labels/pascal_voc.txt')
+        with open(self._labels, 'r') as f:
+            labels_map = [line.strip() for line in f]
+        anchors = self._get_anchors()
+        frameHeight, frameWidth = self._input['data'].shape[-2:]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name]
+        ib, c, h, w = self._input['data'].shape
+        b = result.shape[0]
+        images = np.ndarray(shape=(b, h, w, c))
+        for i in range(b):
+            images[i] = self._input['data'][i % ib].transpose((1, 2, 0))
+        for batch, data in enumerate(result):
+            image = images[batch]
+            cells = data.reshape((5, 25, 13, 13)).transpose((2, 3, 0, 1))
+            predictions = []
+            for cx in range(13):
+                for cy in range(13):
+                    for anchor_box_number, detection in enumerate(cells[cx, cy]):
+                        tx, ty, tw, th, to = detection[0:5]
+                        bbox_center_x = (float(cx) + self.__sigmoid(tx)) * (float(frameWidth) / 13)
+                        bbox_center_y = (float(cy) + self.__sigmoid(ty)) * (float(frameHeight) / 13)
+                        prior_width, prior_height = anchors[anchor_box_number]
+                        bbox_width = (np.exp(tw) * prior_width) * (float(frameWidth) / 13)
+                        bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / 13)
+                        confidence = self.__sigmoid(to)
+                        scores = detection[5:]
+                        class_id = np.argmax(self.__softmax(scores))
+                        best_class_score = scores[class_id]
+                        confidence_in_class = confidence * best_class_score
+                        if (confidence_in_class > self._threshold):
+                            bbox = [
+                                float(bbox_center_x - bbox_width / 2),
+                                float(bbox_center_y - bbox_height / 2),
+                                float(bbox_width),
+                                float(bbox_height)
+                            ]
+                            prediction = [best_class_score, class_id, bbox]
+                            predictions.append(prediction)
+            valid_detections = self.__non_max_supression(predictions, self._threshold, 0.3)
+            orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][0]
+            scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
+            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), scales, (orig_w, orig_h), batch, log)
+            out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection_{}.bmp'.format(batch + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {}'.format(out_img))
+
+
+class yolo_v2_io(yolo_v2):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_anchors(self):
+        anchors = (
+            (1.3221,  1.73145),
+            (3.19275, 4.00944),
+            (5.05587, 8.09892),
+            (9.47112, 4.84053),
+            (11.2364, 10.0071)
+        )
+        return anchors
+
+
+class yolo_v2_tiny_io(yolo_v2):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_anchors(self):
+        anchors = (
+            (1.08, 1.19),
+            (3.42, 4.41),
+            (6.63, 11.38),
+            (9.42, 5.11),
+            (16.62, 10.52)
+        )
+        return anchors

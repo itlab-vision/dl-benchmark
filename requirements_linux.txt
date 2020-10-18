@@ -1,0 +1,5 @@
+docker
+PyYAML
+paramiko
+lxml
+opencv-python

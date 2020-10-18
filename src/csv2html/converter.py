@@ -3,15 +3,15 @@ import sys
 import argparse
 import os
 
+
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--table', type = str,
-        help = 'Path to the inference table in csv format.', required = True)
-    parser.add_argument('-r', '--result_table', type = str,
-        help = 'Full name of the resulting file', required = True)
+    parser.add_argument('-t', '--table', type=str, help='Path to the inference table in csv format.', required=True)
+    parser.add_argument('-r', '--result_table', type=str, help='Full name of the resulting file', required=True)
     path_table_csv = parser.parse_args().table
     path_table_html = parser.parse_args().result_table
     return path_table_csv, path_table_html
+
 
 def open_csv_table(path_table_csv):
     if not os.path.isfile(path_table_csv):
@@ -21,9 +21,11 @@ def open_csv_table(path_table_csv):
         file.close()
     return table_csv
 
+
 def split_table(table_csv):
     for row_index in range(len(table_csv)):
         table_csv[row_index] = table_csv[row_index].split(';')
+
 
 def convert_csv_table_to_html(table_csv):
     framework_config = open('frameworks.yml', 'r')
@@ -36,12 +38,14 @@ def convert_csv_table_to_html(table_csv):
     table_html.write_test_results()
     return table_html
 
+
 def main():
     path_table_csv, path_table_html = build_parser()
     table_csv = open_csv_table(path_table_csv)
     split_table(table_csv)
     table_html = convert_csv_table_to_html(table_csv)
     table_html.save_html_table(path_table_html)
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

@@ -3,11 +3,11 @@ import abc
 from collections import OrderedDict
 from xml.dom import minidom
 
+
 class parser:
     def get_tests_list(self, config):
         CONFIG_ROOT_TAG = 'Test'
         return minidom.parse(config).getElementsByTagName(CONFIG_ROOT_TAG)
-
 
     def parse_model(self, curr_test):
         CONFIG_MODEL_TAG = 'Model'
@@ -15,17 +15,18 @@ class parser:
         CONFIG_MODEL_NAME_TAG = 'Name'
         CONFIG_MODEL_PRECISION_TAG = 'Precision'
         CONFIG_MODEL_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
-        CONFIG_MODEL_PATH_TAG = 'Path'
+        CONFIG_MODEL_MODEL_PATH_TAG = 'ModelPath'
+        CONFIG_MODEL_WEIGHTS_PATH_TAG = 'WeightsPath'
 
         model_tag = curr_test.getElementsByTagName(CONFIG_MODEL_TAG)[0]
         return model(
-            task = model_tag.getElementsByTagName(CONFIG_MODEL_TASK_TAG)[0].firstChild.data,
-            name = model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
-            precision = model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
-            source_framework = model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
-            path = model_tag.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+            task=model_tag.getElementsByTagName(CONFIG_MODEL_TASK_TAG)[0].firstChild.data,
+            name=model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
+            precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
+            source_framework=model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
+            model_path=model_tag.getElementsByTagName(CONFIG_MODEL_MODEL_PATH_TAG)[0].firstChild.data,
+            weights_path=model_tag.getElementsByTagName(CONFIG_MODEL_WEIGHTS_PATH_TAG)[0].firstChild.data
         )
-
 
     def parse_dataset(self, curr_test):
         CONFIG_DATASET_TAG = 'Dataset'
@@ -34,10 +35,9 @@ class parser:
 
         dataset_tag = curr_test.getElementsByTagName(CONFIG_DATASET_TAG)[0]
         return dataset(
-            name = dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
-            path = dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
+            name=dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
+            path=dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
         )
-
 
     def parse_independent_parameters(self, curr_test):
         CONFIG_FRAMEWORK_INDEPENDENT_TAG = 'FrameworkIndependent'
@@ -49,30 +49,27 @@ class parser:
 
         indep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
         return framework_independent_parameters(
-            inference_framework = indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data,
-            batch_size = indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG)[0].firstChild.data,
-            device = indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG)[0].firstChild.data,
-            iterarion_count = indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
-            test_time_limit = indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
+            inference_framework=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data,
+            batch_size=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG)[0].firstChild.data,
+            device=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG)[0].firstChild.data,
+            iterarion_count=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
+            test_time_limit=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
         )
-
 
     def parse_dependent_parameters(self, curr_test, framework):
         dep_parser = dependent_parameters_parser.get_parser(framework)
         return dep_parser.parse_parameters(curr_test)
 
 
-class dependent_parameters_parser(metaclass = abc.ABCMeta):
+class dependent_parameters_parser(metaclass=abc.ABCMeta):
     @staticmethod
     def get_parser(framework):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_parameters_parser()
-
+        elif framework == 'Caffe':
+            return IntelCaffe_parameters_parser()
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
     @abc.abstractmethod
     def parse_parameters(self, curr_test):
@@ -102,28 +99,47 @@ class OpenVINO_parameters_parser(dependent_parameters_parser):
             CONFIG_FRAMEWORK_DEPENDENT_STREAM_COUNT_TAG)[0].firstChild
 
         return OpenVINO_parameters(
-            mode = _mode.data if _mode else None,
-            extension = _extension.data if _extension else None,
-            async_request_count = _async_request_count.data if _async_request_count else None,
-            thread_count = _thread_count.data if _thread_count else None,
-            stream_count = _stream_count.data if _stream_count else None
+            mode=_mode.data if _mode else None,
+            extension=_extension.data if _extension else None,
+            async_request_count=_async_request_count.data if _async_request_count else None,
+            thread_count=_thread_count.data if _thread_count else None,
+            stream_count=_stream_count.data if _stream_count else None
+        )
+
+
+class IntelCaffe_parameters_parser(dependent_parameters_parser):
+    def parse_parameters(self, curr_test):
+        CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
+        CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
+        CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
+        CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG = 'InputScale'
+
+        dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
+
+        _channel_swap = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
+        _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
+
+        return IntelCaffe_parameters(
+            channel_swap=_channel_swap.data if _channel_swap else None,
+            mean=_mean.data if _mean else None,
+            input_scale=_input_scale.data if _input_scale else None
         )
 
 
 class model:
     def _parameter_not_is_none(self, parameter):
-        if not parameter is None:
+        if parameter is not None:
             return True
         return False
 
-
-    def __init__(self, task, name, path, precision, source_framework):
+    def __init__(self, task, name, model_path, weights_path, precision, source_framework):
         self.source_framework = None
         self.task = task
         self.name = None
         self.model = None
         self.weight = None
-        self.datatype = None
+        self.precision = None
         if self._parameter_not_is_none(source_framework):
             self.source_framework = source_framework
         else:
@@ -132,26 +148,25 @@ class model:
             self.name = name
         else:
             raise ValueError('Model name is required parameter.')
-        if self._parameter_not_is_none(path):
-            self.model = os.path.join(path, '{}.xml'.format(name))
-            self.weight = os.path.join(path, '{}.bin'.format(name))
-            if (self.model is None) or (self.weight is None):
-                raise ValueError('Wrong model IR format. \
-                    The folder should contain .xml and .bin files for only one model.')
+        if self._parameter_not_is_none(model_path):
+            self.model = model_path
         else:
-            raise ValueError('Path to folder with IR format model is required parameter.')
+            raise ValueError('Path to model is required parameter.')
+        if self._parameter_not_is_none(weights_path):
+            self.weight = weights_path
+        else:
+            raise ValueError('Path to model weights is required parameter.')
         if self._parameter_not_is_none(precision):
-            self.datatype = precision
+            self.precision = precision
         else:
             raise ValueError('Precision is required parameter.')
 
 
 class dataset:
     def _parameter_not_is_none(self, parameter):
-        if not parameter is None:
+        if parameter is not None:
             return True
         return False
-
 
     def __init__(self, name, path):
         self.name = None
@@ -168,17 +183,15 @@ class dataset:
 
 class parameters_methods:
     def _parameter_not_is_none(self, parameter):
-        if not parameter is None:
+        if parameter is not None:
             return True
         return False
-
 
     def _int_value_is_correct(self, int_value):
         for i in range(len(int_value)):
             if (i < 0) or (9 < i):
                 return False
         return True
-
 
     def _float_value_is_correct(self, float_value):
         for i in float_value.split('.'):
@@ -194,10 +207,7 @@ class framework_independent_parameters(parameters_methods):
             return True
         return False
 
-
-    def __init__(self, inference_framework, batch_size, device,
-        iterarion_count, test_time_limit):
-
+    def __init__(self, inference_framework, batch_size, device, iterarion_count, test_time_limit):
         self.inference_framework = None
         self.batch_size = None
         self.device = None
@@ -210,23 +220,19 @@ class framework_independent_parameters(parameters_methods):
         if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
             self.batch_size = int(batch_size)
         else:
-            raise ValueError('Batch size is required parameter. \
-                Batch size can only take values: integer greater than zero.')
+            raise ValueError('Batch size is required parameter. Batch size can only take values: integer greater than zero.')
         if self._device_is_correct(device):
             self.device = device.upper()
         else:
-            raise ValueError('Device is required parameter. \
-                Device can only take values: CPU, GPU, FPGA, MYRIAD.')
+            raise ValueError('Device is required parameter. Device can only take values: CPU, GPU, FPGA, MYRIAD.')
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
-            raise ValueError('Iteration count is required parameter. \
-                Iteration count can only take values: integer greater than zero.')
+            raise ValueError('Iteration count is required parameter. Iteration count can only take values: integer greater than zero.')
         if self._parameter_not_is_none(test_time_limit) and self._float_value_is_correct(test_time_limit):
             self.test_time_limit = float(test_time_limit)
         else:
-            raise ValueError('Test time limit is required parameter. \
-                Test time limit can only `take values: float greater than zero.')
+            raise ValueError('Test time limit is required parameter. Test time limit can only `take values: float greater than zero.')
 
 
 class OpenVINO_parameters(parameters_methods):
@@ -236,16 +242,12 @@ class OpenVINO_parameters(parameters_methods):
             return True
         return False
 
-
     def _extension_path_is_correct(self, extension):
         if not self._parameter_not_is_none(extension) or os.path.exists(extension):
             return True
         return False
 
-
-    def __init__(self, mode, extension, async_request_count,
-        thread_count, stream_count):
-
+    def __init__(self, mode, extension, async_request_count, thread_count, stream_count):
         self.mode = None
         self.extension = None
         self.async_request = None
@@ -280,19 +282,58 @@ class OpenVINO_parameters(parameters_methods):
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
 
-class test(metaclass = abc.ABCMeta):
+class IntelCaffe_parameters(parameters_methods):
+    def _channel_swap_is_correct(self, channel_swap):
+        set_check = {'0', '1', '2'}
+        set_in = set(channel_swap.split())
+        return set_in == set_check
+
+    def _mean_is_correct(self, mean):
+        mean_check = mean.split()
+        if len(mean_check) != 3:
+            return False
+        for i in mean_check:
+            if not self._float_value_is_correct(i):
+                return False
+        return True
+
+    def __init__(self, channel_swap, mean, input_scale):
+        self.channel_swap = None
+        self.mean = None
+        self.input_scale = None
+
+        if self._parameter_not_is_none(channel_swap):
+            if self._channel_swap_is_correct(channel_swap):
+                self.channel_swap = channel_swap
+            else:
+                raise ValueError('Channel swap can only take values: list of unique values 0, 1, 2.')
+        if self._parameter_not_is_none(mean):
+            if self._mean_is_correct(mean):
+                self.mean = mean
+            else:
+                raise ValueError('Mean can only take values: list of 3 float elements.')
+        if self._parameter_not_is_none(input_scale):
+            if self._float_value_is_correct(input_scale):
+                self.input_scale = input_scale
+            else:
+                raise ValueError('Input scale can only take values: float greater than zero.')
+
+
+class test(metaclass=abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         self.model = model
         self.dataset = dataset
         self.indep_parameters = indep_parameters
         self.dep_parameters = dep_parameters
 
-
     @staticmethod
     def get_test(framework, model, dataset, indep_parameters, dep_parameters):
         if framework == 'OpenVINO DLDT':
             return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
-
+        elif framework == 'Caffe':
+            return IntelCaffe_test(model, dataset, indep_parameters, dep_parameters)
+        else:
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
 
     @abc.abstractmethod
     def get_report(self):
@@ -303,23 +344,35 @@ class OpenVINO_test(test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
-
     def get_report(self):
         parameters = OrderedDict()
-        parameters.update({'Device' : self.indep_parameters.device})
-        parameters.update({'Async request count' : self.dep_parameters.async_request})
-        parameters.update({'Iteration count' : self.indep_parameters.iteration})
-        parameters.update({'Thread count' : self.dep_parameters.nthreads})
-        parameters.update({'Stream count' : self.dep_parameters.nstreams})
+        parameters.update({'Device': self.indep_parameters.device})
+        parameters.update({'Async request count': self.dep_parameters.async_request})
+        parameters.update({'Iteration count': self.indep_parameters.iteration})
+        parameters.update({'Thread count': self.dep_parameters.nthreads})
+        parameters.update({'Stream count': self.dep_parameters.nstreams})
         other_param = []
         for key in parameters:
-            if parameters[key] != None:
+            if parameters[key] is not None:
                 other_param.append('{}: {}'.format(key, parameters[key]))
         other_param = ', '.join(other_param)
         return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
-            self.indep_parameters.inference_framework, self.model.datatype,
+            self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.dep_parameters.mode, other_param
+        )
+
+
+class IntelCaffe_test(test):
+    def __init__(self, model, dataset, indep_parameters, dep_parameters):
+        super().__init__(model, dataset, indep_parameters, dep_parameters)
+
+    def get_report(self):
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}'.format(
+            self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
+            self.indep_parameters.inference_framework, self.model.precision,
+            self.indep_parameters.batch_size, self.indep_parameters.device,
+            self.indep_parameters.iteration
         )
 
 
@@ -336,8 +389,7 @@ def process_config(config, log):
             framework = IndepParameters.inference_framework
             DepParameters = test_parser.parse_dependent_parameters(curr_test, framework)
 
-            test_list.append(test.get_test(framework, Model, Dataset,
-                IndepParameters, DepParameters))
+            test_list.append(test.get_test(framework, Model, Dataset, IndepParameters, DepParameters))
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
     return test_list

@@ -6,14 +6,15 @@
             <Name></Name>
             <Precision></Precision>
             <SourceFramework></SourceFramework>
-            <Path></Path>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name></Name>
             <Path></Path>
         </Dataset>
         <FrameworkIndependent>
-            <InferenceFramework></InferenceFramework>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize></BatchSize>
             <Device></Device>
             <IterationCount></IterationCount>
@@ -25,6 +26,32 @@
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Caffe</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
         </FrameworkDependent>
     </Test>
 </Tests>
