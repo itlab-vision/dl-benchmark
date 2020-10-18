@@ -1,0 +1,18 @@
+language: python
+python: "3.8"
+
+install:
+    - pip install pytest-pylint pytest-flake8
+
+scripts:
+    - pylint_status=0;
+      while read file; do
+          python3 -m pylint ${file} --errors-only -j0 --max-line-length=200 --ignore-patterns="__init__";
+          if [ $? -ne 0 ]; then
+              pylint_status=1;
+          fi;
+      done < <(find . | grep "\.py$" | sort);
+      if [ ${pylint_status} -ne 0 ]; then
+          false;
+      fi
+    - python3 -m flake8 --max-line-length=200 --statistics --count --per-file-ignores="__init__.py:F401"
