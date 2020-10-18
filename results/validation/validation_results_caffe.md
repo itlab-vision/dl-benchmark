@@ -25,7 +25,7 @@ resnet-152        |0.7078075 Granny Smith<br>0.1253205 gong, tam-tam<br>0.010706
 squeezenet-1.0       |0.9992466 Granny Smith<br>0.0001648 tennis ball<br>0.0001631 bell pepper<br>0.0001376 saltshaker, salt shaker<br>0.0001081 piggy bank, penny bank<br>|
 squeezenet-1.1       |0.9995996 Granny Smith<br>0.0002680 tennis ball<br>0.0000614 fig<br>0.0000253 lemon<br>0.0000120 banana<br>|
 vgg-16               |0.9256526 Granny Smith<br>0.0305293 bell pepper<br>0.0080413 saltshaker, salt shaker<br>0.0060264 necklace<br>0.0033264 vase<br>|
-vgg-19               |1<br>2<br>3<br>4<br>5<br>|
+vgg-19               |0.7781622 Granny Smith<br>0.0757968 necklace<br>0.0475143 acorn<br>0.0159689 fig<br>0.0130410 lemon<br>|
 
 ### Тестовое изображение 2
 
@@ -50,7 +50,7 @@ resnet-152        |0.9961464 junco, snowbird<br>0.0013669 chickadee<br>0.0008338
 squeezenet-1.0       |0.9669856 junco, snowbird<br>0.0299453 chickadee<br>0.0015737 brambling, Fringilla montifringilla<br>0.0004190 bulbul<br>0.0003177 jay<br>|
 squeezenet-1.1       |0.9902450 junco, snowbird<br>0.0087430 chickadee<br>0.0005967 brambling, Fringilla montifringilla<br>0.0002337 jay<br>0.0001153 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 vgg-16               |0.9999917 junco, snowbird<br>0.0000070 chickadee<br>0.0000013 brambling, Fringilla montifringilla<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
-vgg-19               |1<br>2<br>3<br>4<br>5<br>|
+vgg-19               |0.9999951 junco, snowbird<br>0.0000039 brambling, Fringilla montifringilla<br>0.0000009 chickadee<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 
 ### Тестовое изображение 3
 
@@ -75,7 +75,7 @@ resnet-152        |0.9505481 lifeboat<br>0.0083380 drilling platform, offshore r
 squeezenet-1.0       |0.4751488 liner, ocean liner<br>0.2905624 lifeboat<br>0.1737312 container ship, containership, container vessel<br>0.0127517 beacon, lighthouse, beacon light, pharos<br>0.0101218 fireboat<br>|
 squeezenet-1.1       |0.6992837 lifeboat<br>0.1367231 drilling platform, offshore rig<br>0.0986509 liner, ocean liner<br>0.0202084 container ship, containership, container vessel<br>0.0170821 submarine, pigboat, sub, U-boat<br>|
 vgg-16               |0.5846901 lifeboat<br>0.3716984 container ship, containership, container vessel<br>0.0152381 liner, ocean liner<br>0.0134273 drilling platform, offshore rig<br>0.0037419 dock, dockage, docking facility<br>|
-vgg-19               |1<br>2<br>3<br>4<br>5<br>|
+vgg-19               |0.9302235 lifeboat<br>0.0434868 container ship, containership, container vessel<br>0.0111730 liner, ocean liner<br>0.0040760 fireboat<br>0.0028543 drilling platform, offshore rig<br>|
 
 ## Результаты детектирования
 
