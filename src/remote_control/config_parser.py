@@ -18,8 +18,8 @@ class machine:
 def parse_config(config):
     with open(config) as file:
         openconfig = file.read()
-    utf_parser = etree.XMLParser(encoding = 'utf-8')
-    root = etree.fromstring(openconfig.encode('utf-8'), parser = utf_parser)
+    utf_parser = etree.XMLParser(encoding='utf-8')
+    root = etree.fromstring(openconfig.encode('utf-8'), parser=utf_parser)
     machine_list = []
     for machine_tag in root.getchildren():
         machine_parameters = [None] * 10
