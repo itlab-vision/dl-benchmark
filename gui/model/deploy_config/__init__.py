@@ -1,1 +1,0 @@
-name = 'deploy_config'

@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QFileDialog
-from view.buttons.group_buttons import GroupButtons
-from view.dialogs.remote_config_dialog import RemoteConfigDialog
-from view.tables.remote_config_table import RemoteConfigTable
+from ...buttons.group_buttons import GroupButtons  # pylint: disable=E0402
+from ...dialogs.remote_config_dialog import RemoteConfigDialog  # pylint: disable=E0402
+from ...tables.remote_config_table import RemoteConfigTable  # pylint: disable=E0402
 
 
 class RemoteConfigWidget(QWidget):

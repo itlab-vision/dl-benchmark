@@ -1,8 +1,8 @@
-from presenter.model_presenter import ModelPresenter
-from presenter.data_presenter import DataPresenter
-from presenter.benchmark_config_presenter import BenchmarkConfigPresenter
-from presenter.remote_config_presenter import RemoteConfigPresenter
-from presenter.deploy_config_presenter import DeployConfigPresenter
+from .model_presenter import ModelPresenter
+from .data_presenter import DataPresenter
+from .benchmark_config_presenter import BenchmarkConfigPresenter
+from .remote_config_presenter import RemoteConfigPresenter
+from .deploy_config_presenter import DeployConfigPresenter
 
 
 class Presenter:

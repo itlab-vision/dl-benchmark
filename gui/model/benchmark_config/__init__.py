@@ -1,1 +1,0 @@
-name = 'benchmark_config'

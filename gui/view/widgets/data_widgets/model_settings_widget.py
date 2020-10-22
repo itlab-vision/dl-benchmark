@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox
-from view.buttons.data_group_buttons import DataGroupButtons
-from view.dialogs.model_dialog import ModelDialog
-from view.tables.model_table import ModelTable
+from ...buttons.data_group_buttons import DataGroupButtons  # pylint: disable=E0402
+from ...dialogs.model_dialog import ModelDialog  # pylint: disable=E0402
+from ...tables.model_table import ModelTable  # pylint: disable=E0402
 
 
 class ModelSettingsWidget(QWidget):

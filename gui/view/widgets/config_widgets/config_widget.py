@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox
-from view.widgets.config_widgets.benchmark_config_widget import BenchmarkConfigWidget
-from view.widgets.config_widgets.remote_config_widget import RemoteConfigWidget
-from view.widgets.config_widgets.deploy_config_widget import DeployConfigWidget
+from .benchmark_config_widget import BenchmarkConfigWidget
+from .remote_config_widget import RemoteConfigWidget
+from .deploy_config_widget import DeployConfigWidget
 
 
 class ConfigWidget(QWidget):

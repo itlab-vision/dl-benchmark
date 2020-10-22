@@ -1,4 +1,4 @@
-from model.data.dataset import Dataset
+from .dataset import Dataset
 
 
 class Data:

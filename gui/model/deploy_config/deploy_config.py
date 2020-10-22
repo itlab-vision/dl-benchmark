@@ -1,6 +1,6 @@
 import os
 from xml.dom import minidom
-from model.deploy_config.deploy_computer import DeployComputer
+from .deploy_computer import DeployComputer
 
 
 class DeployConfig:

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QPushButton
-from view.buttons.group_buttons import GroupButtons
+from .group_buttons import GroupButtons
 
 
 class DataGroupButtons(GroupButtons):

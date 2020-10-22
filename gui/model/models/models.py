@@ -1,4 +1,4 @@
-from model.models.model import Model
+from .model import Model
 
 
 class Models:

@@ -1,6 +1,6 @@
 import os
 from xml.dom import minidom
-from model.remote_config.remote_computer import RemoteComputer
+from .remote_computer import RemoteComputer
 
 
 class RemoteConfig:

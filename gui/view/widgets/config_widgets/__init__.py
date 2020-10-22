@@ -1,1 +1,0 @@
-name = 'config_widgets'

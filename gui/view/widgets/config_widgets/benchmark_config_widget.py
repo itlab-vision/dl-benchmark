@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QFileDialog
-from view.buttons.group_buttons import GroupButtons
-from view.dialogs.benchmark_config_dialog import BenchmarkConfigDialog
-from view.tables.benchmark_config_table import BenchmarkConfigTable
+from ...buttons.group_buttons import GroupButtons  # pylint: disable=E0402
+from ...dialogs.benchmark_config_dialog import BenchmarkConfigDialog  # pylint: disable=E0402
+from ...tables.benchmark_config_table import BenchmarkConfigTable  # pylint: disable=E0402
 
 
 class BenchmarkConfigWidget(QWidget):

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout
-from view.widgets.data_widgets.data_widget import DataWidget
-from view.widgets.config_widgets.config_widget import ConfigWidget
+from .data_widgets.data_widget import DataWidget
+from .config_widgets.config_widget import ConfigWidget
 
 
 class MainWidget(QWidget):

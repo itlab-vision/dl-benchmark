@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
-from view.widgets.main_widget import MainWidget
+from .widgets.main_widget import MainWidget
 
 
 class View(QMainWindow):

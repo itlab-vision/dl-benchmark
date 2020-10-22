@@ -1,8 +1,8 @@
 import os
 from xml.dom import minidom
-from model.models.model import Model
-from model.data.dataset import Dataset
-from model.benchmark_config.test import Test
+from ..models.model import Model
+from ..data.dataset import Dataset
+from .test import Test
 
 
 class BenchmarkConfig:

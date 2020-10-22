@@ -1,8 +1,8 @@
-from model.models.models import Models
-from model.data.data import Data
-from model.benchmark_config.benchmark_config import BenchmarkConfig
-from model.remote_config.remote_config import RemoteConfig
-from model.deploy_config.deploy_config import DeployConfig
+from .models.models import Models
+from .data.data import Data
+from .benchmark_config.benchmark_config import BenchmarkConfig
+from .remote_config.remote_config import RemoteConfig
+from .deploy_config.deploy_config import DeployConfig
 
 
 class DataBase:

@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QFileDialog
-from view.buttons.group_buttons import GroupButtons
-from view.dialogs.deploy_config_dialog import DeployConfigDialog
-from view.tables.deploy_config_table import DeployConfigTable
+from ...buttons.group_buttons import GroupButtons  # pylint: disable=E0402
+from ...dialogs.deploy_config_dialog import DeployConfigDialog  # pylint: disable=E0402
+from ...tables.deploy_config_table import DeployConfigTable  # pylint: disable=E0402
 
 
 class DeployConfigWidget(QWidget):

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox
-from view.widgets.data_widgets.model_settings_widget import ModelSettingsWidget
-from view.widgets.data_widgets.data_settings_widget import DataSettingsWidget
+from .model_settings_widget import ModelSettingsWidget
+from .data_settings_widget import DataSettingsWidget
 
 
 class DataWidget(QWidget):
