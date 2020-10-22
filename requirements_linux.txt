@@ -2,3 +2,4 @@ docker
 PyYAML
 paramiko
 opencv-python
+PyQt5

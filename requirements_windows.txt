@@ -2,3 +2,4 @@ docker
 PyYAML
 wmi
 opencv-python
+PyQt5
