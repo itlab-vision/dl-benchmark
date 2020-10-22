@@ -1,1 +1,1 @@
-NAME = 'model'
+name = 'model'
