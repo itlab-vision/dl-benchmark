@@ -58,12 +58,8 @@ def get_input_shape(io_model_wrapper, model):
     return layer_shapes
 
 
-def network_input_reshape(net, batch_size):
-    for layer_input in net.inputs:
-        _, c, h, w = net.blobs[layer_input].data.shape
-        net.blobs[layer_input].reshape(batch_size, c, h, w)
-    net.reshape()
-    return net
+def prepare_output(result, outputs_name):
+    return {outputs_name : result}
 
 
 def load_network(tensorflow, model):
@@ -88,14 +84,12 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            pass
-            #for i in range(number_iter):
-            #    slice_input = get_slice(i)
-            #    load_images_to_network(net, slice_input)
-            #    t0 = time()
-            #    net.forward()
-            #    t1 = time()
-            #    time_infer.append(t1 - t0)
+            for i in range(number_iter):
+                slice_input = get_slice(i)
+                t0 = time()
+                sess.run(tensor, slice_input)
+                t1 = time()
+                time_infer.append(t1 - t0)
         return result, time_infer
 
 
@@ -141,30 +135,22 @@ def main():
         io.prepare_input(graph, args.input)
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
 
-        inputs = model_wrapper.get_input_layer_names(graph)
-        outputs = model_wrapper.get_outputs_layer_names(graph)
-        result, inference_time = inference_tensorflow(graph, inputs, outputs,
+        inputs_names = model_wrapper.get_input_layer_names(graph)
+        outputs_names = model_wrapper.get_outputs_layer_names(graph)
+        result, inference_time = inference_tensorflow(graph, inputs_names, outputs_names,
             args.number_iter, io.get_slice_input) 
-        log.info('Check me, pls! Res: {}, inf_time: {}'.format(result, inference_time))
 
-        labels_path = "/home/roix/dl-benchmark/openvino-dl-benchmark/src/inference/labels/ImageNetLabels-google-for-tf.txt"
-        labels = []
-        with open(labels_path, 'rt') as lf:
-            for l in lf:
-                labels.append(l.strip())
-        highest_probability_index = np.argmax(result)
-        print('Classified as: ' + labels[highest_probability_index])
-
-        #time, latency, fps = process_result(args.batch_size, inference_time)
-        #if not args.raw_output:
-        #    io.process_output(result, log)   
-        #    result_output(time, fps, latency, log)
-        #else:
-        #    raw_result_output(time, fps, latency)  
+        time, latency, fps = process_result(args.batch_size, inference_time)
+        if not args.raw_output:
+            result = prepare_output(result, outputs_names[0])
+            io.process_output(result, log)   
+            result_output(time, fps, latency, log)
+        else:
+            raw_result_output(time, fps, latency)  
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
-    
+
 
 if __name__ == '__main__':
    sys.exit(main() or 0)

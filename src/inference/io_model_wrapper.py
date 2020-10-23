@@ -41,7 +41,6 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
     def get_input_layer_shape(self, graph, layer_name):
         # graph == tf.compat.v1.get_default_graph()
         shape = graph.get_tensor_by_name(layer_name).shape.as_list()
-        shape[0] = 1 # КОСТЫЛИ
         return shape
 
 
