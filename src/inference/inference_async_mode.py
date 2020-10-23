@@ -76,7 +76,7 @@ def build_parser():
             'person-detection-action-recognition-teacher', 'human-pose-estimation',
             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
             'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
-            'mask-rcnn', 'yolo_v2', 'yolo_v2_tiny'
+            'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3'
         ],
         default='feedforward', type=str, dest='task'
     )
