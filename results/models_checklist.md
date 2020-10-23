@@ -90,10 +90,10 @@ mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
 ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
 ssdlite_mobilenet_v2|+|-|-|
-yolo-v1-tiny-tf|+|-|-|
-yolo-v2-tiny-tf|+|-|-|
-yolo-v2-tf|+|-|-|
-yolo-v3-tf|+|-|-|
+yolo-v1-tiny-tf|+|+|-|
+yolo-v2-tiny-tf|+|+|-|
+yolo-v2-tf|+|+|-|
+yolo-v3-tf|+|+|-|
 
 ### Распознавание лиц (face recognition)
 
@@ -299,10 +299,6 @@ image-retrieval-0001|+|-|-|
 
 
 ### Public модели
-1. yolo-v1-tiny-tf
-1. yolo-v2-tiny-tf
-1. yolo-v2-tf
-1. yolo-v3-tf
 1. mobilenet-v2-1.4-224
 1. densenet-121-tf
 1. densenet-121-caffe2
