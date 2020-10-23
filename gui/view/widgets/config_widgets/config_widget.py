@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox
-from .benchmark_config_widget import BenchmarkConfigWidget
-from .remote_config_widget import RemoteConfigWidget
-from .deploy_config_widget import DeployConfigWidget
+from .benchmark_config_widget import BenchmarkConfigWidget  # pylint: disable=E0402
+from .remote_config_widget import RemoteConfigWidget  # pylint: disable=E0402
+from .deploy_config_widget import DeployConfigWidget  # pylint: disable=E0402
 
 
 class ConfigWidget(QWidget):
@@ -21,7 +21,7 @@ class ConfigWidget(QWidget):
     def __create_combobox(self):
         menu = QComboBox()
         menu.addItems(self._widgets.keys())
-        menu.activated[str].connect(self.onActivated)
+        menu.activated[str].connect(self.onActivated)  # pylint: disable=E1136
         return menu
 
     def __create_dict(self):

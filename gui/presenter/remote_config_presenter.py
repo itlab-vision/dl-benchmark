@@ -20,8 +20,10 @@ class RemoteConfigPresenter:
         self.__model.delete_computers(indexes)
         self.__update_view()
 
-    def __handle_change_button(self, row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file, res_file):
-        self.__model.change_computer(row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file, res_file)
+    def __handle_change_button(self, row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file,
+                               res_file):
+        self.__model.change_computer(row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file,
+                                     res_file)
         self.__update_view()
 
     def __handle_load_button(self, path_to_config):

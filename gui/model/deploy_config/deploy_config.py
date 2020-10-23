@@ -1,6 +1,6 @@
 import os
 from xml.dom import minidom
-from .deploy_computer import DeployComputer
+from .deploy_computer import DeployComputer  # pylint: disable=E0402
 
 
 class DeployConfig:
@@ -40,11 +40,16 @@ class DeployConfig:
         self.__computers.clear()
         for idx, computer in enumerate(computers):
             self.__computers.append(DeployComputer())
-            self.__computers[idx].ip = computer.getElementsByTagName(CONFIG_IP_TAG)[0].firstChild.data
-            self.__computers[idx].login = computer.getElementsByTagName(CONFIG_LOGIN_TAG)[0].firstChild.data
-            self.__computers[idx].password = computer.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data
-            self.__computers[idx].os = computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
-            self.__computers[idx].download_folder = computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
+            self.__computers[idx].ip = computer.getElementsByTagName(
+                CONFIG_IP_TAG)[0].firstChild.data
+            self.__computers[idx].login = computer.getElementsByTagName(
+                CONFIG_LOGIN_TAG)[0].firstChild.data
+            self.__computers[idx].password = computer.getElementsByTagName(
+                CONFIG_PASSWORD_TAG)[0].firstChild.data
+            self.__computers[idx].os = computer.getElementsByTagName(
+                CONFIG_OS_TAG)[0].firstChild.data
+            self.__computers[idx].download_folder = computer.getElementsByTagName(
+                CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
 
     def create_config(self, path_to_config):
         if len(self.__computers) == 0:

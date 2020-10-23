@@ -1,6 +1,6 @@
 import os
 from xml.dom import minidom
-from .remote_computer import RemoteComputer
+from .remote_computer import RemoteComputer  # pylint: disable=E0402
 
 
 class RemoteConfig:
@@ -45,14 +45,22 @@ class RemoteConfig:
         self.__computers.clear()
         for idx, computer in enumerate(computers):
             self.__computers.append(RemoteComputer())
-            self.__computers[idx].ip = computer.getElementsByTagName(CONFIG_IP_TAG)[0].firstChild.data
-            self.__computers[idx].login = computer.getElementsByTagName(CONFIG_LOGIN_TAG)[0].firstChild.data
-            self.__computers[idx].password = computer.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data
-            self.__computers[idx].os = computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
-            self.__computers[idx].path_to_ftp_client = computer.getElementsByTagName(CONFIG_FTP_CLIENT_PATH_TAG)[0].firstChild.data
-            self.__computers[idx].benchmark_config = computer.getElementsByTagName(CONFIG_BENCHMARK_CONFIG_TAG)[0].firstChild.data
-            self.__computers[idx].log_file = computer.getElementsByTagName(CONFIG_LOG_FILE_TAG)[0].firstChild.data
-            self.__computers[idx].res_file = computer.getElementsByTagName(CONFIG_RESULT_FILE_TAG)[0].firstChild.data
+            self.__computers[idx].ip = computer.getElementsByTagName(
+                CONFIG_IP_TAG)[0].firstChild.data
+            self.__computers[idx].login = computer.getElementsByTagName(
+                CONFIG_LOGIN_TAG)[0].firstChild.data
+            self.__computers[idx].password = computer.getElementsByTagName(
+                CONFIG_PASSWORD_TAG)[0].firstChild.data
+            self.__computers[idx].os = computer.getElementsByTagName(
+                CONFIG_OS_TAG)[0].firstChild.data
+            self.__computers[idx].path_to_ftp_client = computer.getElementsByTagName(
+                CONFIG_FTP_CLIENT_PATH_TAG)[0].firstChild.data
+            self.__computers[idx].benchmark_config = computer.getElementsByTagName(
+                CONFIG_BENCHMARK_CONFIG_TAG)[0].firstChild.data
+            self.__computers[idx].log_file = computer.getElementsByTagName(
+                CONFIG_LOG_FILE_TAG)[0].firstChild.data
+            self.__computers[idx].res_file = computer.getElementsByTagName(
+                CONFIG_RESULT_FILE_TAG)[0].firstChild.data
 
     def create_config(self, path_to_config):
         if len(self.__computers) == 0:

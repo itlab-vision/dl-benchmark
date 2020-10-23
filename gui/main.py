@@ -9,7 +9,7 @@ def main():
     app = QApplication([])
     model = DataBase()
     view = View()
-    presenter = Presenter(model, view)
+    _ = Presenter(model, view)
     sys.exit(app.exec_())
 
 

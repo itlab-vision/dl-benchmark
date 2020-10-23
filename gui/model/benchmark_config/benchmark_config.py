@@ -1,8 +1,8 @@
 import os
 from xml.dom import minidom
-from ..models.model import Model
-from ..data.dataset import Dataset
-from .test import Test
+from ..models.model import Model  # pylint: disable=E0402
+from ..data.dataset import Dataset  # pylint: disable=E0402
+from .test import Test  # pylint: disable=E0402
 
 
 class BenchmarkConfig:
@@ -94,12 +94,18 @@ class BenchmarkConfig:
         CONFIG_ITERATION_COUNT_TAG = 'IterationCount'
         CONFIG_TEST_TIME_LIMIT_TAG = 'TestTimeLimit'
 
-        parsed_framework_independent = test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
-        framework = parsed_framework_independent.getElementsByTagName(CONFIG_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data
-        batch_size = parsed_framework_independent.getElementsByTagName(CONFIG_BATCH_SIZE_TAG)[0].firstChild.data
-        device = parsed_framework_independent.getElementsByTagName(CONFIG_DEVICE_TAG)[0].firstChild.data
-        iter_count = parsed_framework_independent.getElementsByTagName(CONFIG_ITERATION_COUNT_TAG)[0].firstChild.data
-        test_time_limit = parsed_framework_independent.getElementsByTagName(CONFIG_TEST_TIME_LIMIT_TAG)[0].firstChild.data
+        parsed_framework_independent = test.getElementsByTagName(
+            CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
+        framework = parsed_framework_independent.getElementsByTagName(
+            CONFIG_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data
+        batch_size = parsed_framework_independent.getElementsByTagName(
+            CONFIG_BATCH_SIZE_TAG)[0].firstChild.data
+        device = parsed_framework_independent.getElementsByTagName(
+            CONFIG_DEVICE_TAG)[0].firstChild.data
+        iter_count = parsed_framework_independent.getElementsByTagName(
+            CONFIG_ITERATION_COUNT_TAG)[0].firstChild.data
+        test_time_limit = parsed_framework_independent.getElementsByTagName(
+            CONFIG_TEST_TIME_LIMIT_TAG)[0].firstChild.data
         return [framework, batch_size, device, iter_count, test_time_limit]
 
     def __parse_framework_dependent(self, test, framework):
@@ -113,11 +119,16 @@ class BenchmarkConfig:
             CONFIG_THREAD_COUNT_TAG = 'ThreadCount'
             CONFIG_STREAM_COUNT_TAG = 'StreamCount'
 
-            mode = parsed_framework_dependent.getElementsByTagName(CONFIG_MODE_TAG)[0].firstChild.data
-            extension = parsed_framework_dependent.getElementsByTagName(CONFIG_EXTENSION_TAG)[0].firstChild.data
-            asynq_req_count = parsed_framework_dependent.getElementsByTagName(CONFIG_ASYNC_REQ_COUNT_TAG)[0].firstChild.data
-            thread_count = parsed_framework_dependent.getElementsByTagName(CONFIG_THREAD_COUNT_TAG)[0].firstChild.data
-            stream_count = parsed_framework_dependent.getElementsByTagName(CONFIG_STREAM_COUNT_TAG)[0].firstChild.data
+            mode = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_MODE_TAG)[0].firstChild.data
+            extension = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_EXTENSION_TAG)[0].firstChild.data
+            asynq_req_count = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_ASYNC_REQ_COUNT_TAG)[0].firstChild.data
+            thread_count = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_THREAD_COUNT_TAG)[0].firstChild.data
+            stream_count = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_STREAM_COUNT_TAG)[0].firstChild.data
             channel_swap = 'None'
             mean = 'None'
             input_scale = 'None'
@@ -131,9 +142,12 @@ class BenchmarkConfig:
             asynq_req_count = 'None'
             thread_count = 'None'
             stream_count = 'None'
-            channel_swap = parsed_framework_dependent.getElementsByTagName(CONFIG_CHANNEL_SWAP_TAG)[0].firstChild.data
-            mean = parsed_framework_dependent.getElementsByTagName(CONFIG_MEAN_TAG)[0].firstChild.data
-            input_scale = parsed_framework_dependent.getElementsByTagName(CONFIG_INPUT_SCALE_TAG)[0].firstChild.data
+            channel_swap = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_CHANNEL_SWAP_TAG)[0].firstChild.data
+            mean = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_MEAN_TAG)[0].firstChild.data
+            input_scale = parsed_framework_dependent.getElementsByTagName(
+                CONFIG_INPUT_SCALE_TAG)[0].firstChild.data
         return [mode, extension, asynq_req_count, thread_count, stream_count, channel_swap, mean, input_scale]
 
     def create_config(self, path_to_config):
@@ -149,6 +163,7 @@ class BenchmarkConfig:
             CONFIG_DATASET_TAG = self.__create_dataset_tag(file, test.dataset)
             CONFIG_FRAMEWORK_INDEPENDENT_TAG = self.__create_framework_independent_tag(file, test)
             CONFIG_FRAMEWORK_DEPENDENT_TAG = self.__create_framework_dependent_tag(file, test)
+
             CONFIG_TEST_TAG.appendChild(CONFIG_MODEL_TAG)
             CONFIG_TEST_TAG.appendChild(CONFIG_DATASET_TAG)
             CONFIG_TEST_TAG.appendChild(CONFIG_FRAMEWORK_INDEPENDENT_TAG)
@@ -197,8 +212,9 @@ class BenchmarkConfig:
                                     for mean in means:
                                         for input_scale in input_scales:
                                             new_tests.append(Test(model, dataset, framework, batch_size, device,
-                                                             iteration_count, test_time_limit, channel_swap=channel_swap,
-                                                             mean=mean, input_scale=input_scale))
+                                                             iteration_count, test_time_limit,
+                                                             channel_swap=channel_swap, mean=mean,
+                                                             input_scale=input_scale))
         return new_tests
 
     def __create_model_tag(self, file, model):

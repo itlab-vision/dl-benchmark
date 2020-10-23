@@ -15,23 +15,25 @@ class BenchmarkConfigPresenter:
         self.__view.tabs.config_tab.benchmark_configs.clearSignal.connect(self.__handle_clear_button)
 
     def __show_add_test_dialog(self):
-        self.__view.tabs.config_tab.benchmark_configs.show_add_test_dialog(self.__model.models.get_models_list(), self.__model.data.get_data_list())
+        self.__view.tabs.config_tab.benchmark_configs.show_add_test_dialog(self.__model.models.get_models_list(),
+                                                                           self.__model.data.get_data_list())
 
     def __show_change_test_dialog(self):
-        self.__view.tabs.config_tab.benchmark_configs.show_change_test_dialog(self.__model.models.get_models_list(), self.__model.data.get_data_list())
+        self.__view.tabs.config_tab.benchmark_configs.show_change_test_dialog(self.__model.models.get_models_list(),
+                                                                              self.__model.data.get_data_list())
 
     def __handle_add_button(self, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
                             extension, async_req_count, thread_count, stream_count, channel_swap, mean, input_scale):
-        self.__model.benchmark_config.add_test(model, dataset, framework, batch_size, device, iter_count, test_time_limit,
-                                               mode, extension, async_req_count, thread_count, stream_count, channel_swap,
-                                               mean, input_scale)
+        self.__model.benchmark_config.add_test(model, dataset, framework, batch_size, device, iter_count,
+                                               test_time_limit, mode, extension, async_req_count, thread_count,
+                                               stream_count, channel_swap, mean, input_scale)
         self.__update_view()
 
     def __handle_change_button(self, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
                                extension, async_req_count, thread_count, stream_count, channel_swap, mean, input_scale):
-        self.__model.benchmark_config.add_test(model, dataset, framework, batch_size, device, iter_count, test_time_limit,
-                                               mode, extension, async_req_count, thread_count, stream_count, channel_swap,
-                                               mean, input_scale)
+        self.__model.benchmark_config.add_test(model, dataset, framework, batch_size, device, iter_count,
+                                               test_time_limit, mode, extension, async_req_count, thread_count,
+                                               stream_count, channel_swap, mean, input_scale)
         self.__update_view()
 
     def __handle_delete_button(self, indexes):

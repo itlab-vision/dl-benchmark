@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QPushButton
-from .group_buttons import GroupButtons
+from .group_buttons import GroupButtons  # pylint: disable=E0402
 
 
 class DataGroupButtons(GroupButtons):

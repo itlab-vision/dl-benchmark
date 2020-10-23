@@ -5,7 +5,7 @@ class BenchmarkConfigDialog(QDialog):
     def __init__(self, parent, models, data):
         super().__init__(parent)
         self.framework_independent_tags = ['FrameworkIndependent:', 'Model', 'Dataset', 'Framework', 'BatchSize',
-                                            'Device', 'IterationCount', 'TestTimeLimit']
+                                           'Device', 'IterationCount', 'TestTimeLimit']
         self.openvino_tags = ['OpenVINO DLDT:', 'Mode', 'Extension', 'AsyncRequestCount', 'ThreadCount', 'StreamCount']
         self.caffe_tags = ['Caffe:', 'ChannelSwap', 'Mean', 'InputScale']
         self.__models_list = models
@@ -49,15 +49,15 @@ class BenchmarkConfigDialog(QDialog):
     def __create_framework_independent_edits(self):
         self.framework_independent_edits = dict.fromkeys(self.framework_independent_tags[1:])
         self.framework_independent_edits['Model'] = QComboBox()
-        for model in self.__models_list:
-            self.framework_independent_edits['Model'].addItem(model)
+        self.framework_independent_edits['Model'].addItems(self.__models_list)
         self.framework_independent_edits['Dataset'] = QComboBox()
-        for data in self.__data_list:
-            self.framework_independent_edits['Dataset'].addItem(data)
+        self.framework_independent_edits['Dataset'].addItems(self.__data_list)
         self.framework_independent_edits['Framework'] = QComboBox()
         self.framework_independent_edits['Framework'].addItems(('OpenVINO DLDT', 'Caffe'))
-        self.framework_independent_edits['Framework'].activated[str].connect(self.__framework_choice)
-        self.framework_independent_edits['Framework'].currentTextChanged[str].connect(self.__framework_choice)
+        self.framework_independent_edits['Framework'].activated[str].connect(
+            self.__framework_choice)  # pylint: disable=E1136
+        self.framework_independent_edits['Framework'].currentTextChanged[str].connect(
+            self.__framework_choice)  # pylint: disable=E1136
         self.framework_independent_edits['Device'] = QComboBox()
         self.framework_independent_edits['Device'].addItems(('CPU', 'GPU', 'CPU;GPU'))
         for tag in self.framework_independent_tags[4:]:

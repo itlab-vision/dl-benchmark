@@ -1,8 +1,8 @@
-from .models.models import Models
-from .data.data import Data
-from .benchmark_config.benchmark_config import BenchmarkConfig
-from .remote_config.remote_config import RemoteConfig
-from .deploy_config.deploy_config import DeployConfig
+from .models.models import Models  # pylint: disable=E0402
+from .data.data import Data  # pylint: disable=E0402
+from .benchmark_config.benchmark_config import BenchmarkConfig  # pylint: disable=E0402
+from .remote_config.remote_config import RemoteConfig  # pylint: disable=E0402
+from .deploy_config.deploy_config import DeployConfig  # pylint: disable=E0402
 
 
 class DataBase:

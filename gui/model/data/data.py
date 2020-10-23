@@ -1,4 +1,4 @@
-from .dataset import Dataset
+from .dataset import Dataset  # pylint: disable=E0402
 
 
 class Data:

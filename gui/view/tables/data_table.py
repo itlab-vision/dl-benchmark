@@ -1,4 +1,4 @@
-from .table import Table
+from .table import Table  # pylint: disable=E0402
 
 
 class DataTable(Table):

@@ -9,7 +9,8 @@ class Model:
 
     def __eq__(self, other):
         return self.task == other.task and self.name == other.name and self.precision == other.precision and \
-               self.framework == other.framework and self.model_path == other.model_path and self.weights_path == other.weights_path
+               self.framework == other.framework and self.model_path == other.model_path and \
+               self.weights_path == other.weights_path
 
     def get_str(self):
         return ';'.join([self.task, self.name, self.precision, self.framework, self.model_path, self.weights_path])

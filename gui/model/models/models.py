@@ -1,4 +1,4 @@
-from .model import Model
+from .model import Model  # pylint: disable=E0402
 
 
 class Models:
