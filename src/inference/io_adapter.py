@@ -1681,7 +1681,7 @@ class yolo(io_adapter):
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
             images[i] = input[i % ib].transpose((1, 2, 0))
-        for batch in range(b):
+        for batch in range(ib):
             image = images[batch]
             predictions = []
             orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch]
