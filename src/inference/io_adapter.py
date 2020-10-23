@@ -1781,8 +1781,8 @@ class yolo_v3_io(yolo):
         bbox_center_y = (float(cy) + ty) * (float(frameWidth)  / dy)
         bbox_width  = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
-        for j in range(80):
-            confidence = detection[5 + j]
+        for class_id in range(80):
+            confidence = detection[5 + class_id]
             if confidence >= self._threshold:
                 bbox = [
                     float(bbox_center_x - bbox_width  / 2),
@@ -1790,7 +1790,7 @@ class yolo_v3_io(yolo):
                     float(bbox_width),
                     float(bbox_height)
                 ]
-                prediction = [confidence, j, bbox]
+                prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
         return predictions
 
@@ -1801,7 +1801,6 @@ class yolo_v3_io(yolo):
             (3, 85, 52, 52)
         ]
         return shapes
-
 
     def _get_anchors(self):
         anchors = [
