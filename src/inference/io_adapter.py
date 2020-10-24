@@ -17,7 +17,6 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
-
     def __create_list_images(self, input):
         images = []
         input_is_correct = True
@@ -68,9 +67,9 @@ class io_adapter(metaclass=abc.ABCMeta):
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value, shapes = self._transformer.convert_images(shape, value)
                     transformed_value = self._transformer.transform_images(value)
-                self._input.update({key : value})
-                self._original_shapes.update({key : shapes})
-                self._transformed_input.update({key : transformed_value})
+                self._input.update({key: value})
+                self._original_shapes.update({key: shapes})
+                self._transformed_input.update({key: transformed_value})
         else:
             input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
@@ -83,10 +82,9 @@ class io_adapter(metaclass=abc.ABCMeta):
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value, shapes = self._transformer.convert_images(shape, value)
                 transformed_value = self._transformer.transform_images(value)
-            self._input.update({input_blob : value})
-            self._original_shapes.update({input_blob : shapes})
-            self._transformed_input.update({input_blob : transformed_value})
-
+            self._input.update({input_blob: value})
+            self._original_shapes.update({input_blob: shapes})
+            self._transformed_input.update({input_blob: transformed_value})
 
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)

@@ -29,7 +29,6 @@ class intelcaffe_io_model_wrapper(io_model_wrapper):
 
 class tensorflow_io_model_wrapper(io_model_wrapper):
     def get_input_layer_names(self, graph):
-        # graph == tf.compat.v1.get_default_graph()
         inputs = [x for x in graph.get_operations() if x.type == "Placeholder"]
         input_names = []
         for input in inputs:
@@ -39,10 +38,8 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
 
     # Должно работать не для всех моделей (resnet_50 - не раб)
     def get_input_layer_shape(self, graph, layer_name):
-        # graph == tf.compat.v1.get_default_graph()
         shape = graph.get_tensor_by_name(layer_name).shape.as_list()
         return shape
-
 
     def get_outputs_layer_names(self, graph, outputs_names=None):
         if outputs_names:
