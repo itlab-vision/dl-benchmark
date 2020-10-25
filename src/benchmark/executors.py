@@ -41,6 +41,7 @@ class host_executor(executor):
         return '../inference'
 
     def get_infrastructure(self):
+        import node_info as info
         hardware = info.get_system_characteristics()
         hardware_info = ''
         for key in hardware:
