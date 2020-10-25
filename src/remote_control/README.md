@@ -4,7 +4,7 @@
 
 Скрипт запускается с использованием следующей командной строки:
 ```bash
-python remote_start \
+python3 remote_start \
     -с <remote_config.xml> -s <server_ip> \
     -l <user_login> -p <user_psw> -r <name_of_result_file.csv>
 ```
