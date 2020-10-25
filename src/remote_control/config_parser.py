@@ -43,5 +43,3 @@ def parse_config(config):
             res_file=available_mashine.getElementsByTagName(CONFIG_RESULT_FILE_TAG)[0].firstChild.data,
         ))
     return machine_list
-
-parse_config('C:/Users/shave/Documents/ITlab/dl/dl-benchmark/src/configs/remote_configuration_file_template.xml')
