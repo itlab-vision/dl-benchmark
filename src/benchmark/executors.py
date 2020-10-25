@@ -1,7 +1,6 @@
 import abc
 import docker
 import os
-import node_info as info
 from subprocess import Popen, PIPE
 
 
