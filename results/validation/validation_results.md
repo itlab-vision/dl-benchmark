@@ -51,6 +51,7 @@ efficientnet-b7_auto_aug |-|-| 8.3249302 Granny Smith<br>1.5543855 lemon<br>1.50
 mobilenet-v1-0.50-224 |-|-| 0.9409788 Granny Smith<br>0.0422395 bell pepper<br>0.0039017 fig<br>0.0032237 piggy bank, penny bank<br>0.0029516 tennis ball | 0.9409788 Granny Smith<br>0.0422395 bell pepper<br>0.0039017 fig<br>0.0032237 piggy bank, penny bank<br>0.0029516 tennis ball |
 mobilenet-v1-0.50-160 |-|-| 0.9844190 Granny Smith<br>0.0103430 bell pepper<br>0.0013505 fig<br>0.0009318 lemon<br>0.0008557 cucumber, cuke | 0.9844190 Granny Smith<br>0.0103430 bell pepper<br>0.0013505 fig<br>0.0009318 lemon<br>0.0008557 cucumber, cuke |
 mobilenet-v1-0.25-128 |-|-| 0.5188023 bell pepper<br>0.1175004 Granny Smith<br>0.0549228 cucumber, cuke<br>0.0392874 strawberry<br>0.0295591 broccoli | 0.5188023 bell pepper<br>0.1175004 Granny Smith<br>0.0549228 cucumber, cuke<br>0.0392874 strawberry<br>0.0295591 broccoli |
+mobilenet-v2-1.4-224 |-|-| 0.8810006 Granny Smith<br>0.0252364 fig<br>0.0074156 jackfruit, jak, jack<br>0.0054692 custard apple<br>0.0037351 lemon | 0.8810006 Granny Smith<br>0.0252364 fig<br>0.0074156 jackfruit, jak, jack<br>0.0054692 custard apple<br>0.0037351 lemon |
 
 ### Тестовое изображение 2
 
@@ -96,6 +97,7 @@ se-resnext-101       |-|-|0.9044468 giant panda, panda, panda bear, coon bear, A
 mobilenet-v1-0.50-224 |-|-|0.9531036 junco, snowbird<br>0.0448372 chickadee<br>0.0009637 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0007092 jay<br>0.0002787 brambling, Fringilla montifringilla| 0.9531036 junco, snowbird<br>0.0448372 chickadee<br>0.0009637 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0007092 jay<br>0.0002787 brambling, Fringilla montifringilla |
 mobilenet-v1-0.50-160 |-|-| 0.8880324 junco, snowbird<br>0.0335562 chickadee<br>0.0318311 coucal<br>0.0251927 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0153771 brambling, Fringilla montifringilla | 0.8880324 junco, snowbird<br>0.0335562 chickadee<br>0.0318311 coucal<br>0.0251927 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0153771 brambling, Fringilla montifringilla |
 mobilenet-v1-0.25-128 |-|-| 0.9801749 junco, snowbird<br>0.0190141 chickadee<br>0.0003644 brambling, Fringilla montifringilla<br>0.0002570 jay<br>0.0000603 indigo bunting, indigo finch, indigo bird, Passerina cyanea | 0.9801749 junco, snowbird<br>0.0190141 chickadee<br>0.0003644 brambling, Fringilla montifringilla<br>0.0002570 jay<br>0.0000603 indigo bunting, indigo finch, indigo bird, Passerina cyanea |
+mobilenet-v2-1.4-224 |-|-| 0.8708093 junco, snowbird<br>0.0020907 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0017842 water ouzel, dipper<br>0.0014236 brambling, Fringilla montifringilla<br>0.0013358 chickadee | 0.8708093 junco, snowbird<br>0.0020907 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0017842 water ouzel, dipper<br>0.0014236 brambling, Fringilla montifringilla<br>0.0013358 chickadee |
 
 ### Тестовое изображение 3
 
@@ -141,6 +143,7 @@ se-resnext-101       |-|-|0.8982230 miniature pinscher<br>0.0006859 Tibetan mast
 mobilenet-v1-0.50-224 |-|-|0.9207528 lifeboat<br>0.0332536 container ship, containership, container vessel<br>0.0132192 liner, ocean liner<br>0.0109554 pirate, pirate ship<br>0.0074297 fireboat| 0.9207528 lifeboat<br>0.0332536 container ship, containership, container vessel<br>0.0132192 liner, ocean liner<br>0.0109554 pirate, pirate ship<br>0.0074297 fireboat |
 mobilenet-v1-0.50-160 |-|-| 0.9510298 lifeboat<br>0.0139963 container ship, containership, container vessel<br>0.0101495 drilling platform, offshore rig<br>0.0084767 pirate, pirate ship<br>0.0035462 liner, ocean liner | 0.9510298 lifeboat<br>0.0139963 container ship, containership, container vessel<br>0.0101495 drilling platform, offshore rig<br>0.0084767 pirate, pirate ship<br>0.0035462 liner, ocean liner |
 mobilenet-v1-0.25-128 |-|-| 0.8000437 lifeboat<br>0.0681745 container ship, containership, container vessel<br>0.0423642 pirate, pirate ship<br>0.0320394 liner, ocean liner<br>0.0205678 fireboat | 0.8000437 lifeboat<br>0.0681745 container ship, containership, container vessel<br>0.0423642 pirate, pirate ship<br>0.0320394 liner, ocean liner<br>0.0205678 fireboat |
+mobilenet-v2-1.4-224 |-|-| 0.8931452 lifeboat<br>0.0078881 container ship, containership, container vessel<br>0.0038566 liner, ocean liner<br>0.0020695 dock, dockage, docking facility<br>0.0017923 pirate, pirate ship | 0.8931452 lifeboat<br>0.0078881 container ship, containership, container vessel<br>0.0038566 liner, ocean liner<br>0.0020695 dock, dockage, docking facility<br>0.0017923 pirate, pirate ship |
 
 ## Результаты детектирования
 
