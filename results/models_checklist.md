@@ -12,6 +12,9 @@ densenet-121|+|+|+|
 densenet-161|+|+|+|
 densenet-169|+|+|+|
 densenet-201|+|+|+|
+densenet-121-tf|+|+|-|
+densenet-161-tf|+|+|-|
+densenet-169-tf|+|+|-|
 ***efficientnet-b0***|+|+|-|
 ***efficientnet-b0_auto_aug***|+|+|-|
 ***efficientnet-b5***|+|+|-|
@@ -27,7 +30,7 @@ mobilenet-v1-0.50-160|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|
 mobilenet-v1-1.0-224|+|+|+|
 mobilenet-v2|+|+|+|
-mobilenet-v2-1.4-224|+|-|-|
+mobilenet-v2-1.4-224|+|+|-|
 resnet-50|+|название resnet-v1-*|+|
 resnet-101|+|название resnet-v1-*|+|
 resnet-152|+|название resnet-v1-*|+|
@@ -303,11 +306,7 @@ image-retrieval-0001|+|-|-|
 1. yolo-v2-tiny-tf
 1. yolo-v2-tf
 1. yolo-v3-tf
-1. mobilenet-v2-1.4-224
-1. densenet-121-tf
 1. densenet-121-caffe2
-1. densenet-161-tf
-1. densenet-169-tf
 1. efficientnet-b0-pytorch
 1. efficientnet-b5-pytorch
 1. hbonet-1.0
