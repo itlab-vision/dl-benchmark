@@ -38,6 +38,7 @@ mobilenet-v2-1.0-224|+|+|-|
 resnet-50|+|название resnet-v1-*|+|
 resnet-101|+|название resnet-v1-*|+|
 resnet-152|+|название resnet-v1-*|+|
+resnet-50-tf|+|+|-|
 se-inception|+|+|+|
 se-resnet-50|+|+|+|
 se-resnet-101|+|+|+|
@@ -335,7 +336,6 @@ image-retrieval-0001|+|-|-|
 1. resnet-34-pytorch
 1. resnet-50-pytorch
 1. resnet-50-caffe2
-1. resnet-50-tf
 1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
 1. vgg19-caffe2

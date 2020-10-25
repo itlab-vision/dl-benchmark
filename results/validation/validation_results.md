@@ -59,6 +59,7 @@ googlenet-v1-tf      |-|-| 0.8873318 Granny Smith<br>0.0083221 lemon<br>0.007310
 inception-resnet-v2-tf |-|-| 9.1892214 Granny Smith<br>4.2343903 pomegranate<br>3.3494303 lemon<br>3.2723582 crate<br>3.2125196 orange | 9.1892214 Granny Smith<br>4.2343903 pomegranate<br>3.3494303 lemon<br>3.2723582 crate<br>3.2125196 orange |
 mobilenet-v1-1.0-224-tf |-|-| 0.7547237 Granny Smith<br>0.0404326 saltshaker, salt shaker<br>0.0232464 lemon<br>0.0218173 fig<br>0.0153219 rubber eraser, rubber, pencil eraser | 0.7547237 Granny Smith<br>0.0404326 saltshaker, salt shaker<br>0.0232464 lemon<br>0.0218173 fig<br>0.0153219 rubber eraser, rubber, pencil eraser |
 mobilenet-v2-1.0-224 |-|-| 0.9844691 Granny Smith<br>0.0003918 piggy bank, penny bank<br>0.0002854 green snake, grass snake<br>0.0002140 bell pepper<br>0.0001963 acorn | 0.9844691 Granny Smith<br>0.0003918 piggy bank, penny bank<br>0.0002854 green snake, grass snake<br>0.0002140 bell pepper<br>0.0001963 acorn |
+resnet-50-tf         |-|-| 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig | 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig |
 
 ### Тестовое изображение 2
 
@@ -112,6 +113,7 @@ googlenet-v1-tf      |-|-| 0.8905121 junco, snowbird<br>0.0376493 brambling, Fri
 inception-resnet-v2-tf |-|-| 10.2546673 junco, snowbird<br>5.3206644 brambling, Fringilla montifringilla<br>3.7312546 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>2.8738835 hamster<br>2.7935846 chickadee | 10.2546673 junco, snowbird<br>5.3206644 brambling, Fringilla montifringilla<br>3.7312546 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>2.8738835 hamster<br>2.7935846 chickadee |
 mobilenet-v1-1.0-224-tf |-|-| 0.9979226 junco, snowbird<br>0.0014879 chickadee<br>0.0005082 brambling, Fringilla montifringilla<br>0.0000585 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000071 jay | 0.9979226 junco, snowbird<br>0.0014879 chickadee<br>0.0005082 brambling, Fringilla montifringilla<br>0.0000585 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000071 jay |
 mobilenet-v2-1.0-224 |-|-| 0.9005620 junco, snowbird<br>0.0027264 chickadee<br>0.0021331 water ouzel, dipper<br>0.0018665 brambling, Fringilla montifringilla<br>0.0008477 indigo bunting, indigo finch, indigo bird, Passerina cyanea | 0.9005620 junco, snowbird<br>0.0027264 chickadee<br>0.0021331 water ouzel, dipper<br>0.0018665 brambling, Fringilla montifringilla<br>0.0008477 indigo bunting, indigo finch, indigo bird, Passerina cyanea |
+resnet-50-tf         |-|-| 0.9999458 junco, snowbird<br>0.0000307 chickadee<br>0.0000170 brambling, Fringilla montifringilla<br>0.0000028 goldfinch, Carduelis carduelis<br>0.0000013 water ouzel, dipper | 0.9999458 junco, snowbird<br>0.0000307 chickadee<br>0.0000170 brambling, Fringilla montifringilla<br>0.0000028 goldfinch, Carduelis carduelis<br>0.0000013 water ouzel, dipper |
 
 ### Тестовое изображение 3
 
@@ -165,6 +167,7 @@ googlenet-v1-tf      |-|-| 0.5706096 lifeboat<br>0.0325632 fireboat<br>0.0318643
 inception-resnet-v2-tf |-|-| 8.9238806 lifeboat<br>5.3607121 fireboat<br>4.2531099 beacon, lighthouse, beacon light, pharos<br>3.9253387 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>3.2657926 ambulance | 8.9238806 lifeboat<br>5.3607121 fireboat<br>4.2531099 beacon, lighthouse, beacon light, pharos<br>3.9253387 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>3.2657926 ambulance |
 mobilenet-v1-1.0-224-tf |-|-| 0.9885072 lifeboat<br>0.0053199 fireboat<br>0.0021362 liner, ocean liner<br>0.0006076 pirate, pirate ship<br>0.0005722 submarine, pigboat, sub, U-boat | 0.9885072 lifeboat<br>0.0053199 fireboat<br>0.0021362 liner, ocean liner<br>0.0006076 pirate, pirate ship<br>0.0005722 submarine, pigboat, sub, U-boat |
 mobilenet-v2-1.0-224 |-|-| 0.2958112 lifeboat<br>0.1187274 wreck<br>0.0404658 beacon, lighthouse, beacon light, pharos<br>0.0361662 liner, ocean liner<br>0.0325511 pirate, pirate ship | 0.2958112 lifeboat<br>0.1187274 wreck<br>0.0404658 beacon, lighthouse, beacon light, pharos<br>0.0361662 liner, ocean liner<br>0.0325511 pirate, pirate ship |
+resnet-50-tf         |-|-| 0.9849118 lifeboat<br>0.0031136 drilling platform, offshore rig<br>0.0026399 pirate, pirate ship<br>0.0016441 submarine, pigboat, sub, U-boat<br>0.0013418 liner, ocean liner | 0.9849118 lifeboat<br>0.0031136 drilling platform, offshore rig<br>0.0026399 pirate, pirate ship<br>0.0016441 submarine, pigboat, sub, U-boat<br>0.0013418 liner, ocean liner |
 
 ## Результаты детектирования
 
