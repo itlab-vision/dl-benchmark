@@ -200,9 +200,10 @@
 - Путь до скрипта `ftp_client.py` в папке `remote_start`
   (на компьютер предварительно нужно склонировать наш репозиторий)
   описывается внутри тегов `FTPClientPath`.
-- Путь до файла, устанавливающего окружение OpenVINO описывается
-  внутри тега `OpenVINOEnvironmentPath`.
 - Путь до конфигурации бенчмарка описывается внутри тега `BenchmarkConfig`.
+- Тип исполнителя вывода при бенчмаркинге описывается внутри тега `BenchmarkExecutor`.
+  Допустимые значения `host_machine ` (запуск вывода производится в окружении пользователя) и
+  `docker_container` (запуск вывода производится в предварительно настроенном docker контейнере)
 - Имя файла, в который запишется лог работы программы, описывается внутри
   тега `LogFile`.
 - Имя таблицы, в которую записывается результат работы программы, описывается
@@ -219,13 +220,14 @@
         <Password>Admin</Password>
         <OS>Windows</OS>
         <FTPClientPath>C:/openvino-dl-benchmark/src/remote_control/ftp_client.py</FTPClientPath>
-        <OpenVINOEnvironmentPath>C:/Intel/computer_vision_sdk_2018.4.420/bin/setupvars.bat</OpenVINOEnvironmentPath>
         <BenchmarkConfig>C:/openvino-dl-benchmark/src/configs/benchmark_configuration.xml</BenchmarkConfig>
+        <BenchmarkExecutor>host_machine</BenchmarkExecutor>
         <LogFile>program_log.txt</LogFile>
         <ResultFile>result_table.csv</ResultFile>
     </Computer>
 </Computers>
 ```
+
 ## Заполнение файла конфигурации для скрипта развертывания инфраструктуры для системы бенчмаркинга
 
 ### Правила заполнения

@@ -237,8 +237,8 @@ follow instructions.
        <Password>user</Password>
        <OS>Linux</OS>
        <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-       <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
        <BenchmarkConfig>/benchmark_config/bench_config.xml</BenchmarkConfig>
+       <BenchmarkExecutor>docker_container</BenchmarkExecutor>
        <LogFile>/tmp/openvino-dl-benchmark/src/remote_start/log.txt</LogFile>
        <ResultFile>/tmp/openvino-dl-benchmark/src/remote_start/result.csv</ResultFile>
      </Computer>
@@ -248,7 +248,7 @@ follow instructions.
 1. Execute the remote start script using the following command:
 
    ```bash
-   python3 remote_start \
+   python3 remote_start.py \
    -c /tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml \
    -s 2.2.2.2 -l admin -p admin -r /table_folder/all_results.csv
    ```
@@ -264,7 +264,7 @@ follow instructions.
 1. Convert csv to html using the following command:
 
    ```bash
-   python -t /tmp/all_results.csv -r /tmp/formatted_results.html
+   python3 -t /tmp/all_results.csv -r /tmp/formatted_results.html
    ```
 
 
