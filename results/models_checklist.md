@@ -24,6 +24,7 @@ googlenet-v1|+|+|+|
 googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
 googlenet-v4|-|+|+|
+googlenet-v1-tf|+|+|-|
 inception-resnet-v2|-|+|+|
 mobilenet-v1-0.25-128|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|
@@ -312,7 +313,6 @@ image-retrieval-0001|+|-|-|
 1. hbonet-1.0
 1. hbonet-0.5
 1. hbonet-0.25
-1. googlenet-v1-tf
 1. googlenet-v2-tf
 1. googlenet-v3-pytorch
 1. googlenet-v4-tf
