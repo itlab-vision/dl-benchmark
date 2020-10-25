@@ -49,14 +49,14 @@ squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
 vgg19|+|+|+|
-octave-densenet-121-0.125|+|-|-|
-octave-resnet-26-0.25|+|-|-|
-octave-resnet-50-0.125|+|-|-|
-octave-resnet-101-0.125|+|-|-|
-octave-resnet-200-0.125|+|-|-|
-octave-resnext-50-0.25|+|-|-|
-octave-resnext-101-0.25|+|-|-|
-octave-se-resnet-50-0.125|+|-|-|
+octave-densenet-121-0.125|+|+|-|
+octave-resnet-26-0.25|+|+|-|
+octave-resnet-50-0.125|+|+|-|
+octave-resnet-101-0.125|+|+|-|
+octave-resnet-200-0.125|+|+|-|
+octave-resnext-50-0.25|+|+|-|
+octave-resnext-101-0.25|+|+|-|
+octave-se-resnet-50-0.125|+|+|-|
 
 ### Семантическая сегментация (semantic segmentation)
 
@@ -323,14 +323,6 @@ image-retrieval-0001|+|-|-|
 1. mobilenet-v2-pytorch
 1. mobilenet-v3-small-1.0-224-tf
 1. mobilenet-v3-large-1.0-224-tf
-1. octave-densenet-121-0.125
-1. octave-resnet-26-0.25
-1. octave-resnet-50-0.125
-1. octave-resnet-101-0.125
-1. octave-resnet-200-0.125
-1. octave-resnext-50-0.25
-1. octave-resnext-101-0.25
-1. octave-se-resnet-50-0.125
 1. open-closed-eye-0001
 1. resnet-18-pytorch
 1. resnet-34-pytorch
