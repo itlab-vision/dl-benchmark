@@ -219,8 +219,8 @@
         <Login>Admin</Login>
         <Password>Admin</Password>
         <OS>Windows</OS>
-        <FTPClientPath>C:/openvino-dl-benchmark/src/remote_control/ftp_client.py</FTPClientPath>
-        <BenchmarkConfig>C:/openvino-dl-benchmark/src/configs/benchmark_configuration.xml</BenchmarkConfig>
+        <FTPClientPath>C:/dl-benchmark/src/remote_control/ftp_client.py</FTPClientPath>
+        <BenchmarkConfig>C:/dl-benchmark/src/configs/benchmark_configuration.xml</BenchmarkConfig>
         <BenchmarkExecutor>host_machine</BenchmarkExecutor>
         <LogFile>program_log.txt</LogFile>
         <ResultFile>result_table.csv</ResultFile>

@@ -64,10 +64,10 @@ class docker_executor(executor):
         self.my_container_dict = {cont.name: cont for cont in client.containers.list()}
 
     def get_path_to_inference_folder(self):
-        return '/tmp/openvino-dl-benchmark/src/inference'
+        return '/tmp/dl-benchmark/src/inference'
 
     def get_infrastructure(self):
-        hardware_command = 'python3 /tmp/openvino-dl-benchmark/src/benchmark/node_info.py'
+        hardware_command = 'python3 /tmp/dl-benchmark/src/benchmark/node_info.py'
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
         output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
         if output[0] != 0:
