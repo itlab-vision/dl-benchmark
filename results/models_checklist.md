@@ -26,6 +26,7 @@ googlenet-v3|+|+|+|
 googlenet-v4|-|+|+|
 googlenet-v1-tf|+|+|-|
 inception-resnet-v2|-|+|+|
+inception-resnet-v2-tf|+|+|-|
 mobilenet-v1-0.25-128|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|
@@ -316,7 +317,6 @@ image-retrieval-0001|+|-|-|
 1. googlenet-v2-tf
 1. googlenet-v3-pytorch
 1. googlenet-v4-tf
-1. inception-resnet-v2-tf
 1. mobilenet-v1-1.0-224-tf
 1. mobilenet-v2-1.0-224
 1. mobilenet-v2-pytorch
