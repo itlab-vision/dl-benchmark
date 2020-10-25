@@ -1641,10 +1641,10 @@ class yolo(io_adapter):
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
         tx, ty, tw, th, to = detection[0:5]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameWidth)  / dx)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameWidth) / dx)
         bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameHeight) / dy)
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_width  = (np.exp(tw) * prior_width)  * (float(frameWidth)  / dx)
+        bbox_width = (np.exp(tw) * prior_width) * (float(frameWidth) / dx)
         bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / dy)
         confidence = self._sigmoid(to)
         scores = detection[5:]
@@ -1696,8 +1696,8 @@ class yolo(io_adapter):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[cy, cx]):
                             if (detection[4] >= 0.5):
-                                prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, 
-                                    anchor_box_number, frameHeight, frameWidth, anchors_boxes)
+                                prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
+                                                                        frameHeight, frameWidth, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
@@ -1778,14 +1778,14 @@ class yolo_v3_io(yolo):
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
         bbox_center_x = (float(cx) + tx) * (float(frameHeight) / dx)
-        bbox_center_y = (float(cy) + ty) * (float(frameWidth)  / dy)
-        bbox_width  = np.exp(tw) * prior_width
+        bbox_center_y = (float(cy) + ty) * (float(frameWidth) / dy)
+        bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
             confidence = detection[5 + class_id]
             if confidence >= self._threshold:
                 bbox = [
-                    float(bbox_center_x - bbox_width  / 2),
+                    float(bbox_center_x - bbox_width / 2),
                     float(bbox_center_y - bbox_height / 2),
                     float(bbox_width),
                     float(bbox_height)
