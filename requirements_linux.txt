@@ -2,4 +2,3 @@ docker
 PyYAML
 paramiko
 opencv-python
-openvino-python
