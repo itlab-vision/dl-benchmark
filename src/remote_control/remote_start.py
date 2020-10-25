@@ -5,7 +5,9 @@ import logging as log
 import config_parser
 import ftplib
 import table_format
-from ..deployment.remote_executor import remote_executor  # pylint: disable=E0402
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'deployment'))
+from remote_executor import remote_executor  # noqa: E402 pylint: disable=E0401
 
 
 def build_parser():
