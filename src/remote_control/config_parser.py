@@ -15,7 +15,7 @@ class machine:
 
 
 def parse_config(config):
-    CONFIG_ROOT_TAG = 'Computers'
+    CONFIG_COMPUTER_TAG = 'Computer'
     CONFIG_IP_TAG = 'IP'
     CONFIG_LOGIN_TAG = 'Login'
     CONFIG_PASSWORD_TAG = 'Password'
@@ -26,9 +26,8 @@ def parse_config(config):
     CONFIG_LOG_FILE_TAG = 'LogFile'
     CONFIG_RESULT_FILE_TAG = 'ResultFile'
 
-    available_mashines = minidom.parse(config).getElementsByTagName(CONFIG_ROOT_TAG)
+    available_mashines = minidom.parse(config).getElementsByTagName(CONFIG_COMPUTER_TAG)
 
-    print(available_mashines)
     machine_list = []
     for available_mashine in available_mashines:
         machine_list.append(machine(
