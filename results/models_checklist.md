@@ -12,6 +12,9 @@ densenet-121|+|+|+|
 densenet-161|+|+|+|
 densenet-169|+|+|+|
 densenet-201|+|+|+|
+densenet-121-tf|+|+|-|
+densenet-161-tf|+|+|-|
+densenet-169-tf|+|+|-|
 ***efficientnet-b0***|+|+|-|
 ***efficientnet-b0_auto_aug***|+|+|-|
 ***efficientnet-b5***|+|+|-|
@@ -21,16 +24,21 @@ googlenet-v1|+|+|+|
 googlenet-v2|+|+|+|
 googlenet-v3|+|+|+|
 googlenet-v4|-|+|+|
+googlenet-v1-tf|+|+|-|
 inception-resnet-v2|-|+|+|
+inception-resnet-v2-tf|+|+|-|
 mobilenet-v1-0.25-128|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|
 mobilenet-v1-1.0-224|+|+|+|
+mobilenet-v1-1.0-224-tf|+|+|-|
 mobilenet-v2|+|+|+|
-mobilenet-v2-1.4-224|+|-|-|
+mobilenet-v2-1.4-224|+|+|-|
+mobilenet-v2-1.0-224|+|+|-|
 resnet-50|+|название resnet-v1-*|+|
 resnet-101|+|название resnet-v1-*|+|
 resnet-152|+|название resnet-v1-*|+|
+resnet-50-tf|+|+|-|
 se-inception|+|+|+|
 se-resnet-50|+|+|+|
 se-resnet-101|+|+|+|
@@ -41,14 +49,14 @@ squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
 vgg19|+|+|+|
-octave-densenet-121-0.125|+|-|-|
-octave-resnet-26-0.25|+|-|-|
-octave-resnet-50-0.125|+|-|-|
-octave-resnet-101-0.125|+|-|-|
-octave-resnet-200-0.125|+|-|-|
-octave-resnext-50-0.25|+|-|-|
-octave-resnext-101-0.25|+|-|-|
-octave-se-resnet-50-0.125|+|-|-|
+octave-densenet-121-0.125|+|+|-|
+octave-resnet-26-0.25|+|+|-|
+octave-resnet-50-0.125|+|+|-|
+octave-resnet-101-0.125|+|+|-|
+octave-resnet-200-0.125|+|+|-|
+octave-resnext-50-0.25|+|+|-|
+octave-resnext-101-0.25|+|+|-|
+octave-se-resnet-50-0.125|+|+|-|
 
 ### Семантическая сегментация (semantic segmentation)
 
@@ -303,40 +311,23 @@ image-retrieval-0001|+|-|-|
 1. yolo-v2-tiny-tf
 1. yolo-v2-tf
 1. yolo-v3-tf
-1. mobilenet-v2-1.4-224
-1. densenet-121-tf
 1. densenet-121-caffe2
-1. densenet-161-tf
-1. densenet-169-tf
 1. efficientnet-b0-pytorch
 1. efficientnet-b5-pytorch
 1. hbonet-1.0
 1. hbonet-0.5
 1. hbonet-0.25
-1. googlenet-v1-tf
 1. googlenet-v2-tf
 1. googlenet-v3-pytorch
 1. googlenet-v4-tf
-1. inception-resnet-v2-tf
-1. mobilenet-v1-1.0-224-tf
-1. mobilenet-v2-1.0-224
 1. mobilenet-v2-pytorch
 1. mobilenet-v3-small-1.0-224-tf
 1. mobilenet-v3-large-1.0-224-tf
-1. octave-densenet-121-0.125
-1. octave-resnet-26-0.25
-1. octave-resnet-50-0.125
-1. octave-resnet-101-0.125
-1. octave-resnet-200-0.125
-1. octave-resnext-50-0.25
-1. octave-resnext-101-0.25
-1. octave-se-resnet-50-0.125
 1. open-closed-eye-0001
 1. resnet-18-pytorch
 1. resnet-34-pytorch
 1. resnet-50-pytorch
 1. resnet-50-caffe2
-1. resnet-50-tf
 1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
 1. vgg19-caffe2
