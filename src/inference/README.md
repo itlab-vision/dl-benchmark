@@ -57,7 +57,7 @@ inference_sync_mode.py
   следующую команду:
 
   ```bash
-  python inference_sync_mode.py -h
+  python3 inference_sync_mode.py -h
   ```
 
 - `--color_map` - путь до карты цветов при решении задачи семантической
@@ -73,7 +73,7 @@ inference_sync_mode.py
 **Командная строка для решения задачи классификации изображений**
 
 ```bash
-python inference_sync_mode.py \
+python3 inference_sync_mode.py \
     -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --labels <path_to_labels>/image_net_synset.txt
@@ -85,7 +85,7 @@ python inference_sync_mode.py \
 **Командная строка для решения задачи детектирования объектов**
 
 ```bash
-python inference_sync_mode.py \
+python3 inference_sync_mode.py \
     -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin
 ```
@@ -97,7 +97,7 @@ python inference_sync_mode.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 
 ```bash
-python inference_sync_mode.py \
+python3 inference_sync_mode.py \
     -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --color_map <path_to_color_map>/color_map.txt
@@ -159,7 +159,7 @@ inference_async_mode.py
   следующую команду:
 
   ```bash
-  python inference_async_mode.py -h
+  python3 inference_async_mode.py -h
   ```
 
 - `--color_map` - путь до карты цветов при решении задачи семантической
@@ -173,7 +173,7 @@ inference_async_mode.py
 **Командная строка для решения задачи классификации изображений**
 
 ```bash
-python inference_async_mode.py \
+python3 inference_async_mode.py \
     -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --labels <path_to_labels>/image_net_synset.txt
@@ -185,7 +185,7 @@ python inference_async_mode.py \
 **Командная строка для решения задачи детектирования объектов**
 
 ```bash
-python inference_async_mode.py \
+python3 inference_async_mode.py \
     -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin
 ```
@@ -197,7 +197,7 @@ python inference_async_mode.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 
 ```bash
-python inference_async_mode.py \
+python3 inference_async_mode.py \
     -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --color_map <path_to_color_map>/color_map.txt
@@ -254,7 +254,7 @@ inference_caffe.py
 **Командная строка для решения задачи классификации изображений**
 
 ```bash
-python inference_caffe.py \
+python3 inference_caffe.py \
     -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.prototxt \
     -w <path_to_weights>/<model_name>.caffemodel \
@@ -267,7 +267,7 @@ python inference_caffe.py \
 **Командная строка для решения задачи детектирования объектов**
 
 ```bash
-python inference_caffe.py \
+python3 inference_caffe.py \
     -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.prototxt \
     -w <path_to_weights>/<model_name>.caffemodel
@@ -280,7 +280,7 @@ python inference_caffe.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 
 ```bash
-python inference_caffe.py \
+python3 inference_caffe.py \
     -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.prototxt \
     -w <path_to_weights>/<model_name>.caffemodel \

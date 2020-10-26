@@ -107,7 +107,7 @@ follow instructions.
 
    ```bash
    cd tmp
-   git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
+   git clone https://github.com/itlab-vision/dl-benchmark.git
    ```
 
 1. It is required to deploy FTP-server and create directories.
@@ -127,7 +127,7 @@ follow instructions.
 
 1. For definiteness, we select the OpenVINO Docker container. The Dockerfile
    to build this image can be found in the
-   `/tmp/openvino-dl-benchmark/docker/OpenVINO_DLDT` folder.
+   `/tmp/dl-benchmark/docker/OpenVINO_DLDT` folder.
    Before building, you should put the current link to download
    the OpenVINO toolkit and link to dataset it should be a git
    repository. Please, insert correct path in the following line:
@@ -148,9 +148,9 @@ follow instructions.
 
 1. After building the image, you need to fill out the configuration file for
    the system deployment script. The configuration file template is located
-   in the `/tmp/openvino-dl-benchmark/src/config/deploy_configuration_file_template.xml`.
+   in the `/tmp/dl-benchmark/src/config/deploy_configuration_file_template.xml`.
    Fill the configuration file (information to access to the remote computer)
-   and save it to the `/tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml`.
+   and save it to the `/tmp/dl-benchmark/src/deployment/deploy_config.xml`.
 
    ```xml
    <Computers>
@@ -168,10 +168,10 @@ follow instructions.
 
    ```bash
    python3 deploy.py -s 2.2.2.2 -l admin -p admin \
-       -i /tmp/openvino-dl-benchmark/docker/OpenVINO_Image.tar \
+       -i /tmp/dl-benchmark/docker/OpenVINO_Image.tar \
        -d docker_image_folder -n OpenVINO_DLDT \
-       --machine_list /tmp/openvino-dl-benchmark/src/deployment/deploy_config.xml \
-       --project_folder /tmp/openvino-dl-benchmark/
+       --machine_list /tmp/dl-benchmark/src/deployment/deploy_config.xml \
+       --project_folder /tmp/dl-benchmark/
     ```
 
    The first three parameters `-s, -l, -p` are responsible for access
@@ -227,7 +227,7 @@ follow instructions.
    remote start script, you can find the template in the
    `src/config/remote_configuration_file_template.xml`.
    Fill it and save to the
-   `/tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml`.
+   `/tmp/dl-benchmark/src/remote_start/remote_config.xml`.
 
    ```xml
    <Computers>
@@ -236,11 +236,11 @@ follow instructions.
        <Login>user</Login>
        <Password>user</Password>
        <OS>Linux</OS>
-       <FTPClientPath>/tmp/openvino-dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-       <OpenVINOEnvironmentPath>/opt/intel/openvino/deployment_tools/bin/setupvars.sh</OpenVINOEnvironmentPath>
+       <FTPClientPath>/tmp/dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
        <BenchmarkConfig>/benchmark_config/bench_config.xml</BenchmarkConfig>
-       <LogFile>/tmp/openvino-dl-benchmark/src/remote_start/log.txt</LogFile>
-       <ResultFile>/tmp/openvino-dl-benchmark/src/remote_start/result.csv</ResultFile>
+       <BenchmarkExecutor>docker_container</BenchmarkExecutor>
+       <LogFile>/tmp/dl-benchmark/src/remote_start/log.txt</LogFile>
+       <ResultFile>/tmp/dl-benchmark/src/remote_start/result.csv</ResultFile>
      </Computer>
    </Computers>
    ```
@@ -248,14 +248,15 @@ follow instructions.
 1. Execute the remote start script using the following command:
 
    ```bash
-   python3 remote_start \
-   -c /tmp/openvino-dl-benchmark/src/remote_start/remote_config.xml \
-   -s 2.2.2.2 -l admin -p admin -r /table_folder/all_results.csv
+   python3 remote_start.py \
+   -c /tmp/dl-benchmark/src/remote_start/remote_config.xml \
+   -s 2.2.2.2 -l admin -p admin -r all_results.csv \
+   --ftp_dir table_folder
    ```
 
 1. Wait for completing the benchmark. After completion,
    the `table_folder` directory will contain a table with the combined results
-   named `all_results`.
+   named `all_results.csv`.
 
 1. Copy benchmarking results from the FTP-server to the local machine.
 
@@ -264,7 +265,8 @@ follow instructions.
 1. Convert csv to html using the following command:
 
    ```bash
-   python -t /tmp/all_results.csv -r /tmp/formatted_results.html
+   cd /tmp/dl-benchmark/csv2html
+   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html
    ```
 
 

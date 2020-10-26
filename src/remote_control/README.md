@@ -4,7 +4,7 @@
 
 Скрипт запускается с использованием следующей командной строки:
 ```bash
-python remote_start \
+python3 remote_start \
     -с <remote_config.xml> -s <server_ip> \
     -l <user_login> -p <user_psw> -r <name_of_result_file.csv>
 ```
@@ -17,6 +17,7 @@ python remote_start \
 - `-l / --server_login <user_login>` - логин для подключения к FTP-серверу.
 - `-p / --server_psw <user_psw>` - пароль для подключения к FTP-серверу.
 - `-r / --result_table <name_of_result_file.csv>` - имя таблицы с результатами.
+- `--ftp_dir` - путь на FTP-сервере, куда будут сохранены результаты запусков.
 
 Примечание: если агрументы не переданы или переданы
 некорректно, скрипт закончит свою работу.

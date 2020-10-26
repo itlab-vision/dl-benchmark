@@ -6,8 +6,8 @@
         <Password></Password>
         <OS></OS>
         <FTPClientPath></FTPClientPath>
-        <OpenVINOEnvironmentPath></OpenVINOEnvironmentPath>
         <BenchmarkConfig></BenchmarkConfig>
+        <BenchmarkExecutor></BenchmarkExecutor>
         <LogFile></LogFile>
         <ResultFile></ResultFile>
     </Computer>
