@@ -1,48 +1,44 @@
-from lxml import etree
+from xml.dom import minidom
 
 
 class machine:
-    def __init__(self, params):
-        self.ip = params[0]
-        self.login = params[1]
-        self.password = params[2]
-        self.os_type = params[3]
-        self.path_to_ftp_client = params[4]
-        self.path_to_OpenVINO_env = params[5]
-        self.benchmark_config = params[6]
-        self.benchmark_executor = params[7]
-        self.log_file = params[8]
-        self.res_file = params[9]
+    def __init__(self, ip, login, password, os_type, path_to_ftp_client, benchmark_config, benchmark_executor, log_file, res_file):
+        self.ip = ip
+        self.login = login
+        self.password = password
+        self.os_type = os_type
+        self.path_to_ftp_client = path_to_ftp_client
+        self.benchmark_config = benchmark_config
+        self.benchmark_executor = benchmark_executor
+        self.log_file = log_file
+        self.res_file = res_file
 
 
 def parse_config(config):
-    with open(config) as file:
-        openconfig = file.read()
-    utf_parser = etree.XMLParser(encoding='utf-8')
-    root = etree.fromstring(openconfig.encode('utf-8'), parser=utf_parser)
+    CONFIG_COMPUTER_TAG = 'Computer'
+    CONFIG_IP_TAG = 'IP'
+    CONFIG_LOGIN_TAG = 'Login'
+    CONFIG_PASSWORD_TAG = 'Password'
+    CONFIG_OS_TAG = 'OS'
+    CONFIG_FTP_CLIENT_PATH_TAG = 'FTPClientPath'
+    CONFIG_BENCHMARK_CONFIG_TAG = 'BenchmarkConfig'
+    CONFIG_BENCHMARK_EXECUTOR_TAG = 'BenchmarkExecutor'
+    CONFIG_LOG_FILE_TAG = 'LogFile'
+    CONFIG_RESULT_FILE_TAG = 'ResultFile'
+
+    available_mashines = minidom.parse(config).getElementsByTagName(CONFIG_COMPUTER_TAG)
+
     machine_list = []
-    for machine_tag in root.getchildren():
-        machine_parameters = [None] * 10
-        for machine_parameter in machine_tag.getchildren():
-            if machine_parameter.tag == 'IP':
-                machine_parameters[0] = machine_parameter.text
-            if machine_parameter.tag == 'Login':
-                machine_parameters[1] = machine_parameter.text
-            if machine_parameter.tag == 'Password':
-                machine_parameters[2] = machine_parameter.text
-            if machine_parameter.tag == 'OS':
-                machine_parameters[3] = machine_parameter.text
-            if machine_parameter.tag == 'FTPClientPath':
-                machine_parameters[4] = (machine_parameter.text)
-            if machine_parameter.tag == 'OpenVINOEnvironmentPath':
-                machine_parameters[5] = (machine_parameter.text)
-            if machine_parameter.tag == 'BenchmarkConfig':
-                machine_parameters[6] = (machine_parameter.text)
-            if machine_parameter.tag == 'BenchmarkExecutor':
-                machine_parameters[7] = (machine_parameter.text)
-            if machine_parameter.tag == 'LogFile':
-                machine_parameters[8] = (machine_parameter.text)
-            if machine_parameter.tag == 'ResultFile':
-                machine_parameters[9] = (machine_parameter.text)
-        machine_list.append(machine(machine_parameters))
+    for available_mashine in available_mashines:
+        machine_list.append(machine(
+            ip=available_mashine.getElementsByTagName(CONFIG_IP_TAG)[0].firstChild.data,
+            login=available_mashine.getElementsByTagName(CONFIG_LOGIN_TAG)[0].firstChild.data,
+            password=available_mashine.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data,
+            os_type=available_mashine.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data,
+            path_to_ftp_client=available_mashine.getElementsByTagName(CONFIG_FTP_CLIENT_PATH_TAG)[0].firstChild.data,
+            benchmark_config=available_mashine.getElementsByTagName(CONFIG_BENCHMARK_CONFIG_TAG)[0].firstChild.data,
+            benchmark_executor=available_mashine.getElementsByTagName(CONFIG_BENCHMARK_EXECUTOR_TAG)[0].firstChild.data,
+            log_file=available_mashine.getElementsByTagName(CONFIG_LOG_FILE_TAG)[0].firstChild.data,
+            res_file=available_mashine.getElementsByTagName(CONFIG_RESULT_FILE_TAG)[0].firstChild.data,
+        ))
     return machine_list

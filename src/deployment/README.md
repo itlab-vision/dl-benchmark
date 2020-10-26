@@ -5,7 +5,7 @@
 Скрипт запускается с использованием следующей командной строки:
 
 ```bash
-python deploy.py \
+python3 deploy.py \
     -s <server_ip> -l <user_login> -p <user_psw> \
     -i <path_to_image> -d <folder_on_FTP> -n <container_name> \
     --machine_list <path_to_config> --project_folder <path_to_project_folder>
