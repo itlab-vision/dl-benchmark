@@ -327,8 +327,11 @@ class BenchmarkConfig:
                             parameter = self.__tests[i].grouping_independent_values_check(self.__tests[j])
                             if parameter is not None:
                                 values_list_test_i = self.__tests[i].get_values_list()
-                                value_test_j = self.__tests[j].get_values_list()[parameter]
-                                values_list_test_i[parameter] = ';'.join([values_list_test_i[parameter], value_test_j])
+                                if values_list_test_i[parameter] in ['CPU', 'GPU']:
+                                    values_list_test_i[parameter] = 'CPU;GPU'
+                                else:
+                                    value_test_j = self.__tests[j].get_values_list()[parameter]
+                                    values_list_test_i[parameter] = ';'.join([values_list_test_i[parameter], value_test_j])
                                 self.__tests[i] = Test(*values_list_test_i)
                                 self.__tests[j] = None
             if None not in self.__tests:

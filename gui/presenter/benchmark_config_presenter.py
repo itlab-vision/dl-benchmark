@@ -29,9 +29,9 @@ class BenchmarkConfigPresenter:
                                                stream_count, channel_swap, mean, input_scale)
         self.__update_view()
 
-    def __handle_change_button(self, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
+    def __handle_change_button(self, row, model, dataset, framework, batch_size, device, iter_count, test_time_limit, mode,
                                extension, async_req_count, thread_count, stream_count, channel_swap, mean, input_scale):
-        self.__model.benchmark_config.add_test(model, dataset, framework, batch_size, device, iter_count,
+        self.__model.benchmark_config.change_test(row, model, dataset, framework, batch_size, device, iter_count,
                                                test_time_limit, mode, extension, async_req_count, thread_count,
                                                stream_count, channel_swap, mean, input_scale)
         self.__update_view()

@@ -99,7 +99,7 @@ class BenchmarkConfigWidget(QWidget):
             self.saveSignal.emit(path_to_config[0])
 
     def __click_delete_button(self):
-        self.deleteSignal.emit(self.__table.get_selected_rows())
+        self.deleteTestSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def show_message_status_saving(self, status):

@@ -34,7 +34,7 @@ class RemoteConfigWidget(QWidget):
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def __del_click(self):
-        self.delComputerSignal.emit(self.__table.get_selected_rows())
+        self.deleteComputerSignal.emit(self.__table.get_selected_rows())
         self.__table.remove_selection()
 
     def __show_dialog_add_computer(self):
