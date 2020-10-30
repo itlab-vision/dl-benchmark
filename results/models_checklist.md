@@ -223,7 +223,7 @@ semantic-segmentation-adas-0001|+|+|+|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-instance-segmentation-security-1025|+|-|-|
+***instance-segmentation-security-1025***|+|+|-|
 ***instance-segmentation-security-0050***|+|+|-|
 ***instance-segmentation-security-0083***|+|+|-|
 ***instance-segmentation-security-0010***|+|+|-|
@@ -284,7 +284,6 @@ image-retrieval-0001|+|-|-|
 ## Модели для следующего этапа расширения
 
 ### Модели 2020.2
-1. instance-segmentation-security-1025
 1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001
 1. handwritten-japanese-recognition-0001
