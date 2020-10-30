@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "envFile": "/home/fuse21/git/dl-benchmark/src/inference/.env",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+             "args": [
+                "-m/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/FP16/alexnet.xml",
+                "-w/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/FP16/alexnet.bin",
+                "-tclassification",
+                "-i/home/fuse21/Desktop/carminicooperrenderpicture_28472.jpg"
+            ],
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "redirectOutput": true
+        },  
+    ]
+}
