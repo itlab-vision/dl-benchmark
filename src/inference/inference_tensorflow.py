@@ -19,7 +19,7 @@ def build_argparser():
     parser.add_argument(
         '-t', '--task',
         help='Output processing method. Default: without postprocess',
-        choices=['classification', 'detection', 'segmentation'],
+        choices=['classification', 'detection', 'yolo_tiny_voc'],
         default='feedforward', type=str, dest='task'
     )
     parser.add_argument('--color_map', help='Classes color map', type=str, default=None, dest='color_map')
@@ -45,7 +45,9 @@ def get_input_shape(io_model_wrapper, model):
     return layer_shapes
 
 
-def prepare_output(result, outputs_name):
+def prepare_output(result, outputs_name, task):
+    if task == 'yolo_tiny_voc':
+        result = result.transpose(0, 3, 1, 2)
     return {outputs_name: result}
 
 
@@ -129,7 +131,7 @@ def main():
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
-            result = prepare_output(result, outputs_names[0])
+            result = prepare_output(result, outputs_names[0], args.task)
             io.process_output(result, log)
             result_output(time, fps, latency, log)
         else:

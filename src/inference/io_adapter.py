@@ -17,6 +17,19 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
+    def __convert_images(self, shape, data):
+        c, h, w = self._transformer.get_order_shape(shape)
+        images = np.ndarray(shape=(len(data), c, h, w))
+        image_shapes = []
+        for i in range(len(data)):
+            image = cv2.imread(data[i])
+            image_shapes.append(image.shape[:-1])
+            if (image.shape[:-1] != (h, w)):
+                image = cv2.resize(image, (w, h))
+            image = image.transpose((2, 0, 1))
+            images[i] = image
+        return images, image_shapes
+
     def __create_list_images(self, input):
         images = []
         input_is_correct = True
@@ -65,7 +78,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
-                    value, shapes = self._transformer.convert_images(shape, value)
+                    value, shapes = self.__convert_images(shape, value)
                     transformed_value = self._transformer.transform_images(value)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
@@ -80,7 +93,7 @@ class io_adapter(metaclass=abc.ABCMeta):
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
-                value, shapes = self._transformer.convert_images(shape, value)
+                value, shapes = self.__convert_images(shape, value)
                 transformed_value = self._transformer.transform_images(value)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
