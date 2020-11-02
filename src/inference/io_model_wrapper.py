@@ -28,6 +28,13 @@ class intelcaffe_io_model_wrapper(io_model_wrapper):
 
 
 class tensorflow_io_model_wrapper(io_model_wrapper):
+    def __init__(self, args):
+        self._shape = args.input_shape
+        self._batch = args.batch_size
+
+    def _create_list_with_input_shape(self):
+        return [self._batch, self._shape[0], self._shape[1], self._shape[2]]
+
     def get_input_layer_names(self, graph):
         inputs = [x for x in graph.get_operations() if x.type == "Placeholder"]
         input_names = []
@@ -36,9 +43,18 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
                 input_names.append(output.name)
         return input_names
 
-    # Должно работать не для всех моделей (resnet_50 - не раб)
     def get_input_layer_shape(self, graph, layer_name):
-        shape = graph.get_tensor_by_name(layer_name).shape.as_list()
+        if self._shape is None:
+            try:
+                shape = graph.get_tensor_by_name(layer_name).shape.as_list()
+            except Exception:
+                raise ValueError('Couldn\'t get the correct shape. Try setting the \'input_shape\' parameter manually.')
+        else:
+            shape = self._create_list_with_input_shape()
+        if shape[0] is None:
+            shape[0] = self._batch
+        if None in shape[1:]:
+            raise ValueError('Invalid shape {}. Try setting the \'input_shape\' parameter manually.'.format(shape))
         return shape
 
     def get_outputs_layer_names(self, graph, outputs_names=None):

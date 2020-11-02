@@ -11,7 +11,7 @@ from io_model_wrapper import tensorflow_io_model_wrapper
 
 def build_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', help='Path to an .pb file with a trained model.', required=True, type=str, dest='model_path')
+    parser.add_argument('-m', '--model', help='Path to an .pb or .meta file with a trained model.', required=True, type=str, dest='model_path')
     parser.add_argument('-i', '--input', help='Path to data', required=True, type=str, nargs='+', dest='input')
     parser.add_argument('-b', '--batch_size', help='Size of the processed pack', default=1, type=int, dest='batch_size')
     parser.add_argument('-l', '--labels', help='Labels mapping file', default=None, type=str, dest='labels')
@@ -30,6 +30,8 @@ def build_argparser():
     parser.add_argument('--mean', help='Parameter mean', default=[0, 0, 0], type=float, nargs=3, dest='mean')
     parser.add_argument('--input_scale', help='Parameter input scale', default=1.0, type=float, dest='input_scale')
     parser.add_argument('-d', '--device', help='Specify the target device to infer on (CPU by default)', default='CPU', type=str, dest='device')
+    parser.add_argument('-is', '--input_shape', help='Input tensor shape in "height width channels" order', default=None, type=int, nargs=3, dest='input_shape')
+    parser.add_argument('--output_names', help='Name of the output tensor', default=None, type=str, nargs='+', dest='output_names')
     return parser
 
 
@@ -51,7 +53,17 @@ def prepare_output(result, outputs_name, task):
     return {outputs_name: result}
 
 
-def load_network(tensorflow, model):
+def load_network(tensorflow, model, output_names=None):
+    suffix = model.rpartition('.')[2]
+    if suffix == 'pb':
+        return load_model_from_pb(tensorflow, model)
+    elif suffix == 'meta':
+        return load_model_from_checkpoint(tensorflow, model, output_names)
+    else:
+        raise ValueError('Unsupported file format of the model: {}'.format(suffix))
+
+
+def load_model_from_pb(tensorflow, model):
     with tensorflow.io.gfile.GFile(model, 'rb') as f:
         graph_def = tensorflow.GraphDef()
         graph_def.ParseFromString(f.read())
@@ -60,12 +72,31 @@ def load_network(tensorflow, model):
         return graph
 
 
+def load_model_from_checkpoint(tensorflow, model, output_names):
+    graph = tensorflow.Graph()
+    prefix = model.rpartition('.')[0]
+    with tf.compat.v1.Session() as sess:
+        saver = tf.compat.v1.train.import_meta_graph(model)
+        sess.run(tf.compat.v1.global_variables_initializer())
+        saver.restore(sess, prefix)
+        frozen_graph_def = tf.compat.v1.graph_util.convert_variables_to_constants(
+            sess,
+            sess.graph_def,
+            output_names)
+    with graph.as_default():
+        tensorflow.import_graph_def(frozen_graph_def, name='')
+    return graph
+
+
 def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice):
     result = None
     time_infer = []
     slice_input = None
-    tensor = graph.get_tensor_by_name('import/{}:0'.format(outputs_names[0]))
-    with tf.Session(graph=graph) as sess:
+    try:
+        tensor = graph.get_tensor_by_name('import/{}:0'.format(outputs_names[0]))
+    except Exception:
+        tensor = graph.get_tensor_by_name('{}:0'.format(outputs_names[0]))
+    with tf.compat.v1.Session(graph=graph) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
             t0 = time()
@@ -111,11 +142,11 @@ def main():
                     level=log.INFO, stream=sys.stdout)
     args = build_argparser().parse_args()
     try:
-        model_wrapper = tensorflow_io_model_wrapper()
+        model_wrapper = tensorflow_io_model_wrapper(args)
         data_transformer = tensorflow_transformer(create_dict_for_transformer(args))
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         log.info('Loading network files:\n\t {0}'.format(args.model_path))
-        graph = load_network(tf, args.model_path)
+        graph = load_network(tf, args.model_path, args.output_names)
         # net = network_input_reshape(net, args.batch_size)
         input_shapes = get_input_shape(model_wrapper, graph)
         for layer in input_shapes:
@@ -125,7 +156,7 @@ def main():
         log.info('Starting inference ({} iterations)'.format(args.number_iter))
 
         inputs_names = model_wrapper.get_input_layer_names(graph)
-        outputs_names = model_wrapper.get_outputs_layer_names(graph)
+        outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)
         result, inference_time = inference_tensorflow(graph, inputs_names, outputs_names,
                                                       args.number_iter, io.get_slice_input)
 
