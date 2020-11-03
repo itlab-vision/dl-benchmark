@@ -745,6 +745,7 @@ instance-segmentation-security-0083             |<div style='float: center'><img
    Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
 ---------------------|-----------------------------|------------------------------------|
 instance-segmentation-security-0050             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_COCO_val2014_000000203438.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_COCO_val2014_000000203438.bmp"></img></div>|
+instance-segmentation-security-1025             |<div style='float: center'><img width="300" src="instance_segmentation\instance-segmentation-security-1025_out_sync.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\instance-segmentation-security-1025_out_async.bmp"></img></div>
 
 ### Тестовое изображение 3
 
@@ -773,6 +774,58 @@ instance-segmentation-security-0010             |<div style='float: center'><img
 <img width="300" src="instance_segmentation\mscoco_colormap.jpg">
 </div>
 
+## Результаты классификации
+
+### Тестовое изображение 1
+
+Источник: набор данных [ImageNet][imagenet]
+
+Исходное разрешение: 709 x 510
+﻿
+
+Изображение:
+
+<div style='float: center'>
+<img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
+
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|---------------------------|---------------------------|
+resnet18-xnor-binary-onnx-0001 |6.5452480 Granny Smith<br>4.1318626 fig<br>3.5715680 bell pepper<br>3.1780813 saltshaker, salt shaker<br>3.1212788 hair slide| 6.5452480 Granny Smith<br>4.1318626 fig<br>3.5715680 bell pepper<br>3.1780813 saltshaker, salt shaker<br>3.1212788 hair slide |
+
+### Тестовое изображение 2
+
+Источник: набор данных [ImageNet][imagenet]
+
+Исходное разрешение: 500 x 500
+﻿
+
+Изображение:
+
+<div style='float: center'>
+<img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
+</div>
+
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
+---------------------|------------------------------|----------------------------|
+resnet18-xnor-binary-onnx-0001 |9.1701651 junco, snowbird<br>5.4874449 chickadee<br>0.4869275 jay<br>0.3719085 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>-1.1992515 brambling, Fringilla montifringilla| 9.1701651 junco, snowbird<br>5.4874449 chickadee<br>0.4869275 jay<br>0.3719085 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>-1.1992515 brambling, Fringilla montifringilla|
+
+### Тестовое изображение 3
+
+Источник: набор данных [ImageNet][imagenet]
+
+Исходное разрешение: 333 x 500
+﻿
+
+Изображение:
+
+<div style='float: center'>
+<img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
+</div>
+
+   Название модели   |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
+---------------------|------------------------------|----------------------------|
+resnet18-xnor-binary-onnx-0001 |4.7719054 lifeboat<br>1.7933186 drilling platform, offshore rig<br>0.1516396 fireboat<br>0.0121927 amphibian, amphibious vehicle<br>-0.2893910 pirate, pirate ship| 4.7719054 lifeboat<br>1.7933186 drilling platform, offshore rig<br>0.1516396 fireboat<br>0.0121927 amphibian, amphibious vehicle<br>-0.2893910 pirate, pirate ship|
 
 <!-- LINKS -->
 [cityscapes]: https://www.cityscapes-dataset.com
