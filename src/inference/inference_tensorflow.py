@@ -19,7 +19,8 @@ def build_argparser():
     parser.add_argument(
         '-t', '--task',
         help='Output processing method. Default: without postprocess',
-        choices=['classification', 'detection', 'yolo_tiny_voc'],
+        choices=['classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
+                 'yolo_v2_tiny_coco', 'yolo_v3'],
         default='feedforward', type=str, dest='task'
     )
     parser.add_argument('--color_map', help='Classes color map', type=str, default=None, dest='color_map')
@@ -30,7 +31,7 @@ def build_argparser():
     parser.add_argument('--mean', help='Parameter mean', default=[0, 0, 0], type=float, nargs=3, dest='mean')
     parser.add_argument('--input_scale', help='Parameter input scale', default=1.0, type=float, dest='input_scale')
     parser.add_argument('-d', '--device', help='Specify the target device to infer on (CPU by default)', default='CPU', type=str, dest='device')
-    parser.add_argument('-is', '--input_shape', help='Input tensor shape in "height width channels" order', default=None, type=int, nargs=3, dest='input_shape')
+    parser.add_argument('--input_shape', help='Input tensor shape in "height width channels" order', default=None, type=int, nargs=3, dest='input_shape')
     parser.add_argument('--output_names', help='Name of the output tensor', default=None, type=str, nargs='+', dest='output_names')
     return parser
 
@@ -48,7 +49,7 @@ def get_input_shape(io_model_wrapper, model):
 
 
 def prepare_output(result, outputs_name, task):
-    if task == 'yolo_tiny_voc':
+    if task in ['yolo_tiny_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3']:
         result = result.transpose(0, 3, 1, 2)
     return {outputs_name: result}
 
@@ -65,7 +66,7 @@ def load_network(tensorflow, model, output_names=None):
 
 def load_model_from_pb(tensorflow, model):
     with tensorflow.io.gfile.GFile(model, 'rb') as f:
-        graph_def = tensorflow.GraphDef()
+        graph_def = tensorflow.compat.v1.GraphDef()
         graph_def.ParseFromString(f.read())
     with tensorflow.Graph().as_default() as graph:
         tensorflow.import_graph_def(graph_def)
@@ -147,7 +148,6 @@ def main():
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         log.info('Loading network files:\n\t {0}'.format(args.model_path))
         graph = load_network(tf, args.model_path, args.output_names)
-        # net = network_input_reshape(net, args.batch_size)
         input_shapes = get_input_shape(model_wrapper, graph)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
