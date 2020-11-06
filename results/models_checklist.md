@@ -255,13 +255,13 @@ text-detection-0004|+|нет доступа к набору данных ICDAR|-
 -|-|-|-|
 text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
 handwritten-score-recognition-0003|+|отсутствуют данные|-|
-handwritten-japanese-recognition-0001|+|-|-|
+handwritten-japanese-recognition-0001|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|
 
 ### Детектирование и распознавание текста (text spotting)
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-text-spotting-0002-detector|-|-|-|
+text-spotting-0002-detector|-|пайплайн из трех моделей|-|
 text-spotting-0002-recognizer-encoder|-|-|-|
 text-spotting-0002-recognizer-decoder|-|-|-|
 
@@ -279,18 +279,12 @@ asl-recognition-0004|+|-|-|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-image-retrieval-0001|+|-|-|
+image-retrieval-0001|+|+|-|
 
 ## Модели для следующего этапа расширения
 
 ### Модели 2020.2
-1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001
-1. handwritten-japanese-recognition-0001
-1. person-reidentification-retail-0248
-1. person-reidentification-retail-0249
-1. text-spotting-0002-detector
-1. image-retrieval-0001
 
 ### Модели 2020.4
 1. bert-small-uncased-whole-word-masking-squad-0001
