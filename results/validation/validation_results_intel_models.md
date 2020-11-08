@@ -664,6 +664,22 @@ action-recognition-0001-encoder | 0.0794002  0.0583136<br> 0.0020747  0.0903931<
 ---------------------|-----------------------------|------------------------------------|
 driver-action-recognition-adas-0002-encoder | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_sync] | -0.0142664  -0.0064784<br> -0.0334583  -0.0108943<br> ...<br> -0.2324419  0.2686763<br> 0.0168234  0.0029897<br> [Полный тензор][DARE_async] |
 
+### Тестовое изображение 3
+
+Источник: [Интернет][internet_pinterest]
+Исходное разрешение: 1922 x 1080
+
+
+Изображение:
+
+<div style='float: center'>
+<img width="300" src="images\image-retrieval-0001.jpg"></img>
+</div>
+
+   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+---------------------|-----------------------------|------------------------------------|
+image-retrieval-0001 | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Полный тензор][ImgRetr_sync] | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Полный тензор][ImgRetr_async] |
+
 ## Результаты распознавания действий
 
 ### Тестовый тензор 1
@@ -835,6 +851,7 @@ resnet18-xnor-binary-onnx-0001 |4.7719054 lifeboat<br>1.7933186 drilling platfor
 [internet_kerzhakov]:http://positime.ru/the-russian-team-contender-for-the-world-cup-alexander-kerzhakov/40266
 [internet_person_asl]:http://rasfokus.ru/photos/topweek/photo3138574.html
 [internet_product]:https://bendoeslife.tumblr.com/post/48135155548/at-work-forgot-my-lunch-and-not-able-to-leave-at
+[internet_pinterest]:https://www.pinterest.ru/
 [bkhd]:https://www.kaggle.com/kmader/biwi-kinect-head-pose-database
 [github_license_plate]:https://github.com/opencv/open_model_zoo/blob/master/models/intel/license-plate-recognition-barrier-0001/description
 [ARD]: action_recognition/action_recognition_encoder_out.csv
@@ -843,6 +860,8 @@ resnet18-xnor-binary-onnx-0001 |4.7719054 lifeboat<br>1.7933186 drilling platfor
 [ARE_async]: encoding/python_async_demo.csv
 [DARE_sync]: encoding/python_sync_action-recognition-kelly.csv
 [DARE_async]: encoding/python_async_action-recognition-kelly.csv
+[ImgRetr_sync]: encoding/image-retrieval-0001_s.csv
+[ImgRetr_async]: encoding/image-retrieval-0001_a.csv
 [face_reidentification_sync]: encoding/python_sync_Aaron_Peirsol_0002.csv
 [face_reidentification_async]: encoding/python_async_Aaron_Peirsol_0002.csv
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description

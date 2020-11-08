@@ -774,7 +774,7 @@ class instance_segmenatation_io(io_adapter):
                                     image[y + c][x + t] = classes_color_map[classes[i] - 1]
         for i in range(len(labels_on_image)):
             image = cv2.putText(
-                image,
+                cv2.UMat(image),
                 labels_on_image[i][0],
                 labels_on_image[i][1],
                 cv2.FONT_HERSHEY_SIMPLEX,
