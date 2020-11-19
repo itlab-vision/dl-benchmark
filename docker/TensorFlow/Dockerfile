@@ -35,3 +35,6 @@ WORKDIR /tmp/
 COPY models.lst models.lst
 RUN python3 ./open_model_zoo/tools/downloader/downloader.py --list models.lst
 RUN rm models.lst
+
+ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
+RUN git clone $DATASET_DOWNLOAD_LINK
