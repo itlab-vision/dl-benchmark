@@ -11,7 +11,6 @@ def build_parser():
     parser.add_argument('-ip', '--server_ip', type=str, help='Main ftp server address.', required=True)
     parser.add_argument('-l', '--login', type=str, help='Login to connect to ftp server.', required=True)
     parser.add_argument('-p', '--password', type=str, help='Password to connect to ftp server.', required=True)
-    parser.add_argument('-env', '--path_to_env', type=str, help='Path to OpenVINO environment.', required=True)
     parser.add_argument('-b', '--benchmark_config', type=str, help='Path to config file.', required=True)
     parser.add_argument('--benchmark_executor', type=str, help='Type of benchmark executor.', required=True)
     parser.add_argument('-os', '--os_type', type=str, help='Type of operating system.', required=True)
@@ -21,11 +20,10 @@ def build_parser():
     return parser
 
 
-def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
+def launch_benchmark(path_to_benchmark, benchmark_config,
                      benchmark_executor, os_type, path_to_res_table, log_file):
     if os_type == 'Windows':
         launch_benchmark_on_win(
-            path_to_env,
             path_to_benchmark,
             benchmark_config,
             benchmark_executor,
@@ -34,7 +32,6 @@ def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
         )
     elif os_type == 'Linux':
         launch_benchmark_on_linux(
-            path_to_env,
             path_to_benchmark,
             benchmark_config,
             benchmark_executor,
@@ -45,11 +42,9 @@ def launch_benchmark(path_to_env, path_to_benchmark, benchmark_config,
         raise ValueError('Unsupported OS')
 
 
-def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
+def launch_benchmark_on_win(path_to_benchmark, benchmark_config,
                             benchmark_executor, path_to_res_table, log_file):
-    os.system(('{} > {} & cd {} & python inference_benchmark.py -c {} -r {} --executor_type {} >> {}').format(
-        path_to_env,
-        log_file,
+    os.system(('cd {} & python inference_benchmark.py -c {} -r {} --executor_type {} > {}').format(
         path_to_benchmark,
         benchmark_config,
         path_to_res_table,
@@ -58,12 +53,10 @@ def launch_benchmark_on_win(path_to_env, path_to_benchmark, benchmark_config,
     ))
 
 
-def launch_benchmark_on_linux(path_to_env, path_to_benchmark, benchmark_config,
+def launch_benchmark_on_linux(path_to_benchmark, benchmark_config,
                               benchmark_executor, path_to_res_table, log_file):
     sp = subprocess.Popen((
-        'source {} > {}; cd {}; python3 inference_benchmark.py -c {} -r {} --executor_type {} >> {}').format(
-            path_to_env,
-            log_file,
+        'cd {}; python3 inference_benchmark.py -c {} -r {} --executor_type {} > {}').format(
             path_to_benchmark,
             benchmark_config,
             path_to_res_table,
@@ -91,7 +84,6 @@ def main():
     ftp_connection.close()
 
     launch_benchmark(
-        param_list.path_to_env,
         path_to_benchmark,
         benchmark_config,
         param_list.benchmark_executor,

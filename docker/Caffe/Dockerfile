@@ -26,7 +26,7 @@ ENV PATH /root/miniconda3/bin:$PATH
 RUN activate base
 
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark
+RUN git clone https://github.com/itlab-vision/dl-benchmark
 RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git
 
 WORKDIR /tmp/open_model_zoo/

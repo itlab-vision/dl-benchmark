@@ -62,7 +62,7 @@ RUN python3 downloader.py --all
 RUN python3 converter.py --all --mo /opt/intel/openvino/deployment_tools/model_optimizer/mo.py || exit 0
 
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark.git
+RUN git clone https://github.com/itlab-vision/dl-benchmark.git
 
 ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
 RUN git clone $DATASET_DOWNLOAD_LINK
