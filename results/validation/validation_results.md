@@ -75,7 +75,10 @@ googlenet-v4-tf |-|-| 0.9901000 Granny Smith<br>0.0003072 Rhodesian ridgeback<br
 mobilenet-v2-pytorch |-|-| 15.8923168 Granny Smith<br>9.9170008 fig<br>9.8310204 banana<br>9.0233030 lemon<br>8.7704887 custard apple | 15.8923168 Granny Smith<br>9.9170008 fig<br>9.8310204 banana<br>9.0233030 lemon<br>8.7704887 custard apple |
 resnet-18-pytorch |-|-| 11.1563597 Granny Smith<br>7.9655943 piggy bank, penny bank<br>7.2275891 teapot<br>7.1502724 lemon<br>7.0498838 saltshaker, salt shaker | 11.1563597 Granny Smith<br>7.9655943 piggy bank, penny bank<br>7.2275891 teapot<br>7.1502724 lemon<br>7.0498838 saltshaker, salt shaker |
 resnet-50-pytorch |-|-| 14.6118250 Granny Smith<br>8.5581856 fig<br>7.5287142 acorn<br>6.9782810 orange<br>6.8520732 custard apple | 14.6118250 Granny Smith<br>8.5581856 fig<br>7.5287142 acorn<br>6.9782810 orange<br>6.8520732 custard apple |
-
+squeezenet-1.1-caffe2 |-|-| 0.9936372 Granny Smith<br>0.0014997 lemon<br>0.0013604 fig<br>0.0009127 tennis ball<br>0.0007328 piggy bank, penny bank<br> |
+resnet-50-caffe2 |-|-| 0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |
+vgg19-caffe2 |-|-| 0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br> |
+densenet-121-caffe2 |-|-| 15.7890606 Granny Smith<br>9.9466267 lemon<br>9.3717031 orange<br>8.6204128 banana<br>7.1169806 tennis ball<br> |
 ### Тестовое изображение 2
 
 Источник: набор данных [ImageNet][imagenet]
@@ -144,7 +147,10 @@ googlenet-v4-tf |-|-| 0.9426626 junco, snowbird<br>0.0005340 chickadee<br>0.0004
 mobilenet-v2-pytorch |-|-| 24.4762611 junco, snowbird<br>17.2693577 brambling, Fringilla montifringilla<br>15.7566624 chickadee<br>14.8050203 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>13.3634481 jay | 124.4762611 junco, snowbird<br>17.2693577 brambling, Fringilla montifringilla<br>15.7566624 chickadee<br>14.8050203 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>13.3634481 jay |
 resnet-18-pytorch |-|-| 26.9606190 junco, snowbird<br>18.8664570 chickadee<br>17.9463902 brambling, Fringilla montifringilla<br>14.6226025 house finch, linnet, Carpodacus mexicanus<br>14.5083055 indigo bunting, indigo finch, indigo bird, Passerina cyanea | 26.9606190 junco, snowbird<br>18.8664570 chickadee<br>17.9463902 brambling, Fringilla montifringilla<br>14.6226025 house finch, linnet, Carpodacus mexicanus<br>14.5083055 indigo bunting, indigo finch, indigo bird, Passerina cyanea |
 resnet-50-pytorch |-|-| 18.4067059 junco, snowbird<br>10.4681416 chickadee<br>9.9149208 goldfinch, Carduelis carduelis<br>9.8933001 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla | 18.4067059 junco, snowbird<br>10.4681416 chickadee<br>9.9149208 goldfinch, Carduelis carduelis<br>9.8933001 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla |
-
+squeezenet-1.1-caffe2 |-|-| 0.9936494 junco, snowbird<br>0.0061753 chickadee<br>0.0000763 jay<br>0.0000375 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0000267 brambling, Fringilla montifringilla<br> |
+resnet-50-caffe2 |-|-| 0.9979601 junco, snowbird<br>0.0007472 chickadee<br>0.0006533 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0004094 brambling, Fringilla montifringilla<br>0.0000683 goldfinch, Carduelis carduelis<br> |
+vgg19-caffe2 |-|-| 0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |
+densenet-121-caffe2 |-|-| 17.8101349 junco, snowbird<br>11.4563322 brambling, Fringilla montifringilla<br>11.3156567 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3476629 chickadee<br>8.2407246 magpie<br> |
 ### Тестовое изображение 3
 
 Источник: набор данных [ImageNet][imagenet]
@@ -213,6 +219,10 @@ googlenet-v4-tf |-|-| 0.9516075 lifeboat<br>0.0006138 fireboat<br>0.0005795 subm
 mobilenet-v2-pytorch |-|-| 12.1402197 lifeboat<br>9.1929836 liner, ocean liner<br>8.8613186 dock, dockage, docking facility<br>8.1034260 pirate, pirate ship<br>7.8462739 container ship, containership, container vessel | 12.1402197 lifeboat<br>9.1929836 liner, ocean liner<br>8.8613186 dock, dockage, docking facility<br>8.1034260 pirate, pirate ship<br>7.8462739 container ship, containership, container vessel |
 resnet-18-pytorch |-|-| 12.5820255 lifeboat<br>8.4857988 submarine, pigboat, sub, U-boat<br>8.3734007 drilling platform, offshore rig<br>8.3499556 pirate, pirate ship<br>8.1648674 liner, ocean liner | 12.5820255 lifeboat<br>8.4857988 submarine, pigboat, sub, U-boat<br>8.3734007 drilling platform, offshore rig<br>8.3499556 pirate, pirate ship<br>8.1648674 liner, ocean liner |
 resnet-50-pytorch |-|-| 15.0844460 lifeboat<br>9.2421970 container ship, containership, container vessel<br>9.0593367 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165682 pirate, pirate ship | 15.0844460 lifeboat<br>9.2421970 container ship, containership, container vessel<br>9.0593367 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165682 pirate, pirate ship |
+squeezenet-1.1-caffe2 |-|-| 0.9580537 lifeboat<br>0.0206635 container ship, containership, container vessel<br>0.0100353 drilling platform, offshore rig<br>0.0032692 pirate, pirate ship<br>0.0029469 dock, dockage, docking facility<br> |
+resnet-50-caffe2 |-|-| 0.9745282 lifeboat<br>0.0084851 drilling platform, offshore rig<br>0.0048212 container ship, containership, container vessel<br>0.0033455 liner, ocean liner<br>0.0024074 wreck<br> |
+vgg19-caffe2 |-|-| 0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br> |
+densenet-121-caffe2 |-|-| 13.9694653 lifeboat<br>7.8196640 drilling platform, offshore rig<br>7.7403646 liner, ocean liner<br>7.5737677 wreck<br>7.5640950 pirate, pirate ship<br> |
 
 ## Результаты детектирования
 
