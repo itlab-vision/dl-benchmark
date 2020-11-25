@@ -26,7 +26,6 @@ squeezenet-1.0       |0.9992466 Granny Smith<br>0.0001648 tennis ball<br>0.00016
 squeezenet-1.1       |0.9995996 Granny Smith<br>0.0002680 tennis ball<br>0.0000614 fig<br>0.0000253 lemon<br>0.0000120 banana<br>|
 vgg-16               |0.9256526 Granny Smith<br>0.0305293 bell pepper<br>0.0080413 saltshaker, salt shaker<br>0.0060264 necklace<br>0.0033264 vase<br>|
 vgg-19               |0.7781622 Granny Smith<br>0.0757968 necklace<br>0.0475143 acorn<br>0.0159689 fig<br>0.0130410 lemon<br>|
-vgg-19-caffe2               |0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br>|
 
 ### Тестовое изображение 2
 
@@ -52,7 +51,6 @@ squeezenet-1.0       |0.9669856 junco, snowbird<br>0.0299453 chickadee<br>0.0015
 squeezenet-1.1       |0.9902450 junco, snowbird<br>0.0087430 chickadee<br>0.0005967 brambling, Fringilla montifringilla<br>0.0002337 jay<br>0.0001153 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 vgg-16               |0.9999917 junco, snowbird<br>0.0000070 chickadee<br>0.0000013 brambling, Fringilla montifringilla<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 vgg-19               |0.9999951 junco, snowbird<br>0.0000039 brambling, Fringilla montifringilla<br>0.0000009 chickadee<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
-vgg-19-caffe2               |0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 
 ### Тестовое изображение 3
 
@@ -78,8 +76,6 @@ squeezenet-1.0       |0.4751488 liner, ocean liner<br>0.2905624 lifeboat<br>0.17
 squeezenet-1.1       |0.6992837 lifeboat<br>0.1367231 drilling platform, offshore rig<br>0.0986509 liner, ocean liner<br>0.0202084 container ship, containership, container vessel<br>0.0170821 submarine, pigboat, sub, U-boat<br>|
 vgg-16               |0.5846901 lifeboat<br>0.3716984 container ship, containership, container vessel<br>0.0152381 liner, ocean liner<br>0.0134273 drilling platform, offshore rig<br>0.0037419 dock, dockage, docking facility<br>|
 vgg-19               |0.9302235 lifeboat<br>0.0434868 container ship, containership, container vessel<br>0.0111730 liner, ocean liner<br>0.0040760 fireboat<br>0.0028543 drilling platform, offshore rig<br>|
-vgg-19-caffe2               |0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br>|
-
 
 ## Результаты детектирования
 
