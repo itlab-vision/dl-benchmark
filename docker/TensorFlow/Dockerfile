@@ -12,8 +12,8 @@ ARG DEPENDENCIES="autoconf \
                   wget \
                   git"
 RUN apt-get update && \
-        apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
-        rm -rf /var/lib/apt/lists/*
+    apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 RUN pip3 install --upgrade pip && \
@@ -21,7 +21,7 @@ RUN pip3 install --upgrade pip && \
 RUN pip3 install openvino-python
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 RUN pip3 install --force-reinstall pip==19.0 && \
-        pip3 install intel-tensorflow==1.15.2
+    pip3 install intel-tensorflow==1.15.2
 
 WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark
