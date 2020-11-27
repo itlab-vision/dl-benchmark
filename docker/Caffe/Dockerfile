@@ -10,23 +10,22 @@ ARG DEPENDENCIES="autoconf \
                   wget \
                   git"
 RUN apt-get update && \
-        apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
-        rm -rf /var/lib/apt/lists/*
+    apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 RUN wget --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-        bash Miniconda3-latest-Linux-x86_64.sh -b && \
-        ./miniconda3/bin/conda config --add channels intel && \
-        ./miniconda3/bin/conda install -c intel caffe=1.1.0 python=3.6.5 && \
-        ./miniconda3/bin/conda install -c menpo opencv3=3.1.0 && \
-        rm -rf /root/miniconda3/pkgs/* && \
-        rm ~/Miniconda3-latest-Linux-x86_64.sh -f
+    bash Miniconda3-latest-Linux-x86_64.sh -b && \
+    ./miniconda3/bin/conda config --add channels intel && \
+    ./miniconda3/bin/conda install -c intel caffe=1.1.0 python=3.6.5 && \
+    ./miniconda3/bin/conda install -c menpo opencv3=3.1.0 && \
+    rm -rf /root/miniconda3/pkgs/* && \
+    rm ~/Miniconda3-latest-Linux-x86_64.sh -f
 
 ENV PATH /root/miniconda3/bin:$PATH
 RUN activate base
 
-RUN conda update pip && \
-        pip install openvino-python
+RUN conda update pip && pip install openvino-python
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /tmp/
