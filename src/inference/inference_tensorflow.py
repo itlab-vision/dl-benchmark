@@ -1,6 +1,7 @@
 import sys
 import argparse
 import tensorflow as tf  # pylint: disable=E0401
+import numpy as np
 import logging as log
 import postprocessing_data as pp
 from time import time
@@ -50,8 +51,27 @@ def get_input_shape(io_model_wrapper, model):
 
 def prepare_output(result, outputs_name, task):
     if task in ['yolo_tiny_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3']:
-        result = result.transpose(0, 3, 1, 2)
-    return {outputs_name: result}
+        output_name = outputs_name[0]
+        result = result[0].transpose(0, 3, 1, 2)
+    elif task in ['detection']:
+        output_name = 'detection_output'
+        batch = len(result[0])
+        n = int(max(result[3]))
+        new_result = np.zeros(shape=(1, 1, batch * n, 7))
+        for bb in range(batch):
+            num_detections = int(result[3][bb])
+            for idx in range(num_detections):
+                label = result[0][bb][idx]
+                conf = result[1][bb][idx]
+                coords = result[2][bb][idx]
+                coords[0], coords[1] = coords[1], coords[0]
+                coords[2], coords[3] = coords[3], coords[2]
+                new_result[0][0][bb * n + idx] = [bb, label, conf, *coords]
+        result = new_result
+    else:
+        output_name = outputs_name[0]
+        result = result[0]
+    return {output_name: result}
 
 
 def load_network(tensorflow, model, output_names=None):
@@ -94,21 +114,21 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
     time_infer = []
     slice_input = None
     try:
-        tensor = graph.get_tensor_by_name('import/{}:0'.format(outputs_names[0]))
+        tensors = [graph.get_tensor_by_name('import/{}:0'.format(name)) for name in outputs_names]
     except Exception:
-        tensor = graph.get_tensor_by_name('{}:0'.format(outputs_names[0]))
+        tensors = [graph.get_tensor_by_name('{}:0'.format(name)) for name in outputs_names]
     with tf.compat.v1.Session(graph=graph) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
             t0 = time()
-            result = sess.run(tensor, slice_input)
+            result = sess.run(tensors, slice_input)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             for i in range(number_iter):
                 slice_input = get_slice(i)
                 t0 = time()
-                sess.run(tensor, slice_input)
+                sess.run(tensors, slice_input)
                 t1 = time()
                 time_infer.append(t1 - t0)
         return result, time_infer
@@ -162,7 +182,7 @@ def main():
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
-            result = prepare_output(result, outputs_names[0], args.task)
+            result = prepare_output(result, outputs_names, args.task)
             io.process_output(result, log)
             result_output(time, fps, latency, log)
         else:
