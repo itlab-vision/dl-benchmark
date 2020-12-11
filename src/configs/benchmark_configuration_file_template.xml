@@ -54,4 +54,32 @@
             <InputScale></InputScale>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath> <!-- Не нужен для TensorFlow. Но проверка обяз-х пар-ов не пройдет, если оставить пустым -->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TensorFlow</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape></InputShape>
+            <OutputNames></OutputNames>
+        </FrameworkDependent>
+    </Test>
 </Tests>
