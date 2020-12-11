@@ -131,7 +131,7 @@ Inference Engine предоставляет 2 программных интер�
 Пример запуска в текущем окружении:
 
 ```bash
-python inference_benchmark.py \
+python3 inference_benchmark.py \
     -r results.csv -c benchmark_configuration.xml \
     --executor_type host_machine
 ```
@@ -139,7 +139,7 @@ python inference_benchmark.py \
 Пример запуска в docker-контейнере:
 
 ```bash
-python inference_benchmark.py \
+python3 inference_benchmark.py \
     -r results.csv -c benchmark_configuration.xml \
     --executor_type docker_container
 ```

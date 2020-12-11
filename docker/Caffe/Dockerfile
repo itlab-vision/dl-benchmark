@@ -29,7 +29,7 @@ RUN conda update pip && pip install openvino-python
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/openvino-dl-benchmark
+RUN git clone https://github.com/itlab-vision/dl-benchmark
 RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git
 
 WORKDIR /tmp/open_model_zoo/
