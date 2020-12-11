@@ -57,6 +57,10 @@ squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
 vgg19|+|+|+|
+squeezenet-1.1-caffe2|-|+|-|
+resnet-50-caffe2|-|+|-|
+vgg19-caffe2|-|+|-|
+densenet-121-caffe2|-|+|-|
 ***octave-densenet-121-0.125***|+|+|-|
 ***octave-resnet-26-0.25***|+|+|-|
 ***octave-resnet-50-0.125***|+|+|-|
@@ -255,13 +259,13 @@ text-detection-0004|+|нет доступа к набору данных ICDAR|-
 -|-|-|-|
 text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
 handwritten-score-recognition-0003|+|отсутствуют данные|-|
-handwritten-japanese-recognition-0001|+|-|-|
+handwritten-japanese-recognition-0001|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|
 
 ### Детектирование и распознавание текста (text spotting)
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-text-spotting-0002-detector|-|-|-|
+text-spotting-0002-detector|-|пайплайн из трех моделей|-|
 text-spotting-0002-recognizer-encoder|-|-|-|
 text-spotting-0002-recognizer-decoder|-|-|-|
 
@@ -279,18 +283,12 @@ asl-recognition-0004|+|-|-|
 
 Модель | Наличие в OMZ (2020.09.23)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-image-retrieval-0001|+|-|-|
+image-retrieval-0001|+|+|-|
 
 ## Модели для следующего этапа расширения
 
 ### Модели 2020.2
-1. asl-recognition-0004
 1. faster-rcnn-resnet101-coco-sparse-60-0001
-1. handwritten-japanese-recognition-0001
-1. person-reidentification-retail-0248
-1. person-reidentification-retail-0249
-1. text-spotting-0002-detector
-1. image-retrieval-0001
 
 ### Модели 2020.4
 1. bert-small-uncased-whole-word-masking-squad-0001
@@ -313,7 +311,6 @@ image-retrieval-0001|+|-|-|
 
 
 ### Public модели
-1. densenet-121-caffe2
 1. hbonet-1.0
 1. hbonet-0.5
 1. hbonet-0.25
@@ -324,10 +321,7 @@ image-retrieval-0001|+|-|-|
 1. open-closed-eye-0001
 1. resnet-18-pytorch
 1. resnet-34-pytorch
-1. resnet-50-caffe2
-1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
-1. vgg19-caffe2
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. faceboxes-pytorch
