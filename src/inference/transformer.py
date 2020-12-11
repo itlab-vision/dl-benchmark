@@ -5,7 +5,7 @@ class transformer:
     def _transform(self, image):
         return image
 
-    def get_order_shape(self, shape):
+    def get_shape_in_chw_order(self, shape):
         return shape[1:]
 
     def transform_images(self, images):
@@ -48,7 +48,7 @@ class tensorflow_transformer(transformer):
     def __init__(self, converting):
         self._converting = converting
 
-    def get_order_shape(self, shape):
+    def get_shape_in_chw_order(self, shape):
         h, w, c = shape[1:]
         return c, h, w
 

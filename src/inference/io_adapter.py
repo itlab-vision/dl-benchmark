@@ -18,7 +18,7 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._transformer = transformer
 
     def __convert_images(self, shape, data):
-        c, h, w = self._transformer.get_order_shape(shape)
+        c, h, w = self._transformer.get_shape_in_chw_order(shape)
         images = np.ndarray(shape=(len(data), c, h, w))
         image_shapes = []
         for i in range(len(data)):
