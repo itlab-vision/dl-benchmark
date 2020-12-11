@@ -57,6 +57,10 @@ squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 vgg16|+|+|+|
 vgg19|+|+|+|
+squeezenet-1.1-caffe2|-|+|-|
+resnet-50-caffe2|-|+|-|
+vgg19-caffe2|-|+|-|
+densenet-121-caffe2|-|+|-|
 ***octave-densenet-121-0.125***|+|+|-|
 ***octave-resnet-26-0.25***|+|+|-|
 ***octave-resnet-50-0.125***|+|+|-|
@@ -307,7 +311,6 @@ image-retrieval-0001|+|+|-|
 
 
 ### Public модели
-1. densenet-121-caffe2
 1. hbonet-1.0
 1. hbonet-0.5
 1. hbonet-0.25
@@ -318,10 +321,7 @@ image-retrieval-0001|+|+|-|
 1. open-closed-eye-0001
 1. resnet-18-pytorch
 1. resnet-34-pytorch
-1. resnet-50-caffe2
-1. squeezenet1.1-caffe2
 1. ssdlite_mobilenet_v2
-1. vgg19-caffe2
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. faceboxes-pytorch
