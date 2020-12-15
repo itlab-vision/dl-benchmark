@@ -27,7 +27,5 @@ class Host_executor(Executor):
     def execute_process(self, command_line):
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
         out, _ = process.communicate()
-        with open('log.txt', 'w+') as file:
-            file.write(out)
         out = out.split('\n')
         return out

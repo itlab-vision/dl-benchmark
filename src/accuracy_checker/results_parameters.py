@@ -1,6 +1,5 @@
 class ResultParameters:
     def __init__(self, status, model, launcher, dataset, precision, objects, accuracy):
-        print(status, model, launcher, dataset, precision, objects, accuracy)
         self.__status = status
         self.__model = model
         self.__launcher = launcher
