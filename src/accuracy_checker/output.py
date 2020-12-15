@@ -11,8 +11,12 @@ class output_handler:
     def add_results(self, process, tests):
         results = process.get_result_parameters()
         for idx, result in enumerate(results):
-            for i in range(len(result)):
-                self.__add_row_to_table(result[i], tests[idx], i)
+            if result[0].get_result()['status'] == 'FAILED':
+                for i in range(len(tests[idx].datasets[0].metrics)):
+                    self.__add_row_to_table(result[0], tests[idx], i)
+            else:
+                for i in range(len(result)):
+                    self.__add_row_to_table(result[i], tests[idx], i)
 
     def __add_row_to_table(self, result, test, index):
         report_row = self.__create_table_row(result, test, index)
@@ -31,7 +35,8 @@ class output_handler:
         elif result['launcher'] != '' and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
             raise ValueError('Result launcher name and config launcher name do not match!')
         else:
-            result_str = result['status'] + ';' + test.launchers[0].adapter + ';' + result['model'] + ';' +\
-                         result['launcher'] + ';' + result['dataset'] + ';' + result['precision'] + ';' +\
-                         result['objects'] + ';' + test.datasets[0].metrics[index].get_type() + ';' + result['accuracy']
+            result_str = result['status'] + ';' + test.launchers[0].adapter + ';' + test.model_name + ';' +\
+                         test.launchers[0].framework + ';' + test.datasets[0].dataset_name + ';' +\
+                         result['precision'] + ';' + result['objects'] + ';' +\
+                         test.datasets[0].metrics[index].get_type() + ';' + result['accuracy']
         return result_str
