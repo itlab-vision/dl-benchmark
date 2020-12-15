@@ -1,4 +1,4 @@
-from .metrics import MetricAccuracy
+from .metrics import MetricAccuracy  # pylint: disable=E0402
 
 
 class Dataset:

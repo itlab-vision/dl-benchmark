@@ -1,5 +1,5 @@
-from .launchers import Launcher
-from .datasets import Dataset
+from .launchers import Launcher  # pylint: disable=E0402
+from .datasets import Dataset  # pylint: disable=E0402
 
 
 class Test:
