@@ -6,7 +6,6 @@ from subprocess import Popen, PIPE, STDOUT
 class Executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
-        self.target_framework = None
 
     @staticmethod
     def get_executor(executor_type, log):

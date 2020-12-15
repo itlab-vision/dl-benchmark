@@ -1,17 +1,17 @@
 class ResultParameters:
     def __init__(self, status, model, launcher, dataset, precision, objects, accuracy):
         print(status, model, launcher, dataset, precision, objects, accuracy)
-        self.status = status
-        self.model = model
-        self.launcher = launcher
-        self.dataset = dataset
-        self.precision = precision
-        self.objects = objects
-        self.accuracy = accuracy
+        self.__status = status
+        self.__model = model
+        self.__launcher = launcher
+        self.__dataset = dataset
+        self.__precision = precision
+        self.__objects = objects
+        self.__accuracy = accuracy
 
     def get_result(self):
-        return {'status': self.status, 'model': self.model, 'launcher': self.launcher, 'dataset': self.dataset,
-                'precision': self.precision, 'objects': self.objects, 'accuracy': self.accuracy}
+        return {'status': self.__status, 'model': self.__model, 'launcher': self.__launcher, 'dataset': self.__dataset,
+                'precision': self.__precision, 'objects': self.__objects, 'accuracy': self.__accuracy}
 
     @staticmethod
     def parser_test_result(result):

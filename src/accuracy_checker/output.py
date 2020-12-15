@@ -24,11 +24,11 @@ class output_handler:
         return '{0}'.format(self.__prepare_result(result.get_result(), test, index))
 
     def __prepare_result(self, result, test, index):
-        if result['model'] is not '' and result['model'] != test.model_name:
+        if result['model'] != '' and result['model'] != test.model_name:
             raise ValueError('Result model name and config model name do not match!')
-        elif result['dataset'] is not '' and result['dataset'] not in [dataset.dataset_name for dataset in test.datasets]:
+        elif result['dataset'] != '' and result['dataset'] not in [dataset.dataset_name for dataset in test.datasets]:
             raise ValueError('Result dataset name and config dataset name do not match!')
-        elif result['launcher'] is not '' and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
+        elif result['launcher'] != '' and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
             raise ValueError('Result launcher name and config launcher name do not match!')
         else:
             result_str = result['status'] + ';' + test.launchers[0].adapter + ';' + result['model'] + ';' +\

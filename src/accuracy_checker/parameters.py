@@ -28,5 +28,4 @@ class Parameters:
         models = tests_dict[MODELS_TAG]
         for model in models:
             tests.append(Test(model))
-
         return tests

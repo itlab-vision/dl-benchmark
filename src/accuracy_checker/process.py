@@ -1,5 +1,3 @@
-import os
-import platform
 from results_parameters import ResultParameters
 
 
