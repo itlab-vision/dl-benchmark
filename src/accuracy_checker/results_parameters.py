@@ -8,7 +8,10 @@ class ResultParameters:
         self.__objects = objects
         self.__accuracy = accuracy
 
-    def get_result(self):
+    def is_failed(self):
+        return self.__status == 'FAILED'
+
+    def get_result_dict(self):
         return {'status': self.__status, 'model': self.__model, 'launcher': self.__launcher, 'dataset': self.__dataset,
                 'precision': self.__precision, 'objects': self.__objects, 'accuracy': self.__accuracy}
 

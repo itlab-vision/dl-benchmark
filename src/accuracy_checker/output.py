@@ -11,8 +11,9 @@ class output_handler:
     def add_results(self, process, tests):
         results = process.get_result_parameters()
         for idx, result in enumerate(results):
-            if result[0].get_result()['status'] == 'FAILED':
-                for i in range(len(tests[idx].datasets[0].metrics)):
+            if result[0].is_failed():
+                metrics_count = len(tests[idx].datasets[0].metrics)
+                for i in range(metrics_count):
                     self.__add_row_to_table(result[0], tests[idx], i)
             else:
                 for i in range(len(result)):
@@ -25,7 +26,7 @@ class output_handler:
             table.close()
 
     def __create_table_row(self, result, test, index):
-        return '{0}'.format(self.__prepare_result(result.get_result(), test, index))
+        return '{0}'.format(self.__prepare_result(result.get_result_dict(), test, index))
 
     def __prepare_result(self, result, test, index):
         if result['model'] != '' and result['model'] != test.model_name:

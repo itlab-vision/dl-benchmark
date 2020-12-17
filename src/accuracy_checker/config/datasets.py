@@ -2,7 +2,7 @@ from .metrics import Metric  # pylint: disable=E0402
 
 
 class Dataset:
-    def __init__(self, data, adapter):
+    def __init__(self, data):
         DATATSET_NAME_TAG = 'name'
         SIZE_TAG = 'subsample_size'
         METRICS_TAG = 'metrics'
