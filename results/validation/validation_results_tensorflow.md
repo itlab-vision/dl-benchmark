@@ -17,10 +17,6 @@
 densenet-121-tf              |0.9885473 Granny Smith<br>0.0030248 lemon<br>0.0019818 orange<br>0.0019432 water jug<br>0.0009727 piggy bank, penny bank|
 densenet-161-tf              |0.9881073 Granny Smith<br>0.0024773 dumbbell<br>0.0022064 pitcher, ewer<br>0.0009395 piggy bank, penny bank<br>0.0007298 lemon|
 densenet-169-tf              |0.9990545 Granny Smith<br>0.0003095 orang<br>0.0002806 lemon<br>0.0001069 banana<br>0.0000673 piggy bank, penny bank|
-efficientnet-b0              |Ещё не запускалась|
-efficientnet-b0_auto_aug     |Ещё не запускалась|
-efficientnet-b5              |Ещё не запускалась|
-efficientnet-b7_auto_aug     |Ещё не запускалась|
 googlenet-v1-tf              |0.6735924 Granny Smith<br>0.0737857 piggy bank, penny bank<br>0.0155380 vase<br>0.0154004 pitcher, ewer<br>0.0136553 saltshaker, salt shaker|
 googlenet-v4-tf              |0.9934986 Granny Smith<br>0.0002234 Rhodesian ridgeback<br>0.0000959 pineapple, ananas<br>0.0000871 hair slide<br>0.0000778 banana|
 inception-resnet-v2-tf       |9.1747961 Granny Smith<br>4.0729275 pomegranate<br>3.7423992 orange<br>3.7375555 bell pepper<br>3.6937809 piggy bank, penny bank|
@@ -47,10 +43,6 @@ resnet-50-tf                 |0.9553046 Granny Smith<br>0.0052122 lemon<br>0.004
 densenet-121-tf              |0.9993927 junco, snowbird<br>0.0003457 brambling, Fringilla montifringilla<br>0.0000980 chickadee<br>0.0000902 water ouzel, dipper<br>0.0000305 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 densenet-161-tf              |0.9974313 junco, snowbird<br>0.0012504 chickadee<br>0.0005084 brambling, Fringilla montifringilla<br>0.0004443 water ouzel, dipper<br>0.0001865 goldfinch, Carduelis carduelis|
 densenet-169-tf              |0.9996991 junco, snowbird<br>0.0001647 brambling, Fringilla montifringilla<br>0.0000364 chickadee<br>0.0000344 water ouzel, dipper<br>0.0000279 house finch, linnet, Carpodacus mexicanus|
-efficientnet-b0              |Ещё не запускалась|
-efficientnet-b0_auto_aug     |Ещё не запускалась|
-efficientnet-b5              |Ещё не запускалась|
-efficientnet-b7_auto_aug     |Ещё не запускалась|
 googlenet-v1-tf              |0.7443165 junco, snowbird<br>0.0474523 brambling, Fringilla montifringilla<br>0.0457435 chickadee<br>0.0213393 goldfinch, Carduelis carduelis<br>0.0085103 house finch, linnet, Carpodacus mexicanus|
 googlenet-v4-tf              |0.9399367 junco, snowbird<br>0.0005925 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005340 chickadee<br>0.0005273 brambling, Fringilla montifringilla<br>0.0004121 house finch, linnet, Carpodacus mexicanus|
 inception-resnet-v2-tf       |10.2994804 junco, snowbird<br>5.9667954 brambling, Fringilla montifringilla<br>3.8809619 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>3.7881384 house finch, linnet, Carpodacus mexicanus<br>3.4699864 goldfinch, Carduelis carduelis|
@@ -77,10 +69,6 @@ resnet-50-tf                 |0.9983401 junco, snowbird<br>0.0004680 brambling, 
 densenet-121-tf              |0.3662359 liner, ocean liner<br>0.1080203 dock, dockage, docking facility<br>0.0820107 container ship, containership, container vessel<br>0.0713347 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0661764 fireboat|
 densenet-161-tf              |0.3889844 lifeboat<br>0.3597548 liner, ocean liner<br>0.0605916 fireboat<br>0.0416730 dock, dockage, docking facility<br>0.0313890 container ship, containership, container vessel|
 densenet-169-tf              |0.5010954 drilling platform, offshore rig<br>0.2035182 beacon, lighthouse, beacon light, pharos<br>0.0995142 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0897753 container ship, containership, container vessel<br>0.0466828 dock, dockage, docking facility|
-efficientnet-b0              |Ещё не запускалась|
-efficientnet-b0_auto_aug     |Ещё не запускалась|
-efficientnet-b5              |Ещё не запускалась|
-efficientnet-b7_auto_aug     |Ещё не запускалась|
 googlenet-v1-tf              |0.1235984 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1017590 liner, ocean liner<br>0.0949447 drilling platform, offshore rig<br>0.0817945 container ship, containership, container vessel<br>0.0486890 fireboat|
 googlenet-v4-tf              |0.4704956 beacon, lighthouse, beacon light, pharos<br>0.1695946 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0431099 lifeboat<br>0.0307508 fireboat<br>0.0149647 dock, dockage, docking facility|
 inception-resnet-v2-tf       |6.6930823 fireboat<br>6.1025157 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>6.0896254 lifeboat<br>5.7389703 container ship, containership, container vessel<br>5.4940562 dock, dockage, docking facility|
@@ -103,7 +91,9 @@ resnet-50-tf                 |0.2357707 breakwater, groin, groyne, mole, bulwark
 Входное изображение:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
+</div>
 Результат детектирования:
+<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
@@ -128,7 +118,9 @@ ssd_mobilenet_v1_fpn_coco     | Окаймляющие прямоугольни�
 Входное изображение:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
+</div>
 Результат детектирования:
+<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -149,7 +141,9 @@ ssd_mobilenet_v1_fpn_coco     | Окаймляющий прямоугольни�
 Входное изображение:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
+</div>
 Результат детектирования:
+<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
 Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
@@ -183,6 +177,48 @@ faster_rcnn_inception_resnet_v2_atrous_coco     | Окаймляющие пря�
 faster_rcnn_inception_v2_coco     | Окаймляющие прямоугольники: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
 faster_rcnn_resnet50_coco     | Окаймляющие прямоугольники: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
 faster_rcnn_resnet101_coco     | Окаймляющие прямоугольники: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
+
+### Тестовое изображение 5
+
+Источник: набор данных [Pascal VOC][PASCAL_VOC_2012]
+
+Исходное разрешение: 500 x 375
+
+Входное изображение:
+<div style='float: center'>
+<img width="300" src="images\2011_002352.jpg">
+</div>
+Результат детектирования:
+<div style='float: center'>
+<img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>AEROPLANE (131, 21), (248, 414)<br>
+
+Название модели   |   Python (реализация)        |
+----------------------|----------------------------------|
+yolo-v1-tiny-tf     | Окаймляющий прямоугольник : AEROPLANE (113, 20), (252, 488)  |
+
+### Тестовое изображение 6
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 427
+
+Входное изображение:
+<div style='float: center'>
+<img width="300" src="images\000000367818.jpg">
+</div>
+Результат детектирования:
+<div style='float: center'>
+<img width="300" src="detection\python_yolo_coco_000000367818.bmp">
+</div>
+Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
+
+Название модели   |   Python (реализация)        |
+----------------------|----------------------------------|
+yolo-v2-tf     | Окаймляющие прямоугольники: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
+yolo-v2-tiny-tf     | Окаймляющий прямоугольник: HORSE (75, 59), (405, 586) |
+yolo-v3-tf     | Окаймляющие прямоугольники: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
 
 
 <!-- LINKS -->
