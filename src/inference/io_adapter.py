@@ -184,6 +184,8 @@ class io_adapter(metaclass=abc.ABCMeta):
             return yolo_v2_tiny_coco_io(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3':
             return yolo_v3_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v3_tf':
+            return yolo_v3_tf_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -1802,3 +1804,29 @@ class yolo_v3_io(yolo):
             ((10, 13), (16, 30), (33, 23))
         ]
         return anchors
+
+
+class yolo_v3_tf_io(yolo_v3_io):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
+        predictions = []
+        tx, ty, tw, th = detection[0:4]
+        prior_width, prior_height = anchors[anchor_box_number]
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameHeight) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameWidth) / dy)
+        bbox_width = np.exp(tw) * prior_width
+        bbox_height = np.exp(th) * prior_height
+        for class_id in range(80):
+            confidence = self._sigmoid(detection[5 + class_id])
+            if confidence >= self._threshold:
+                bbox = [
+                    float(bbox_center_x - bbox_width / 2),
+                    float(bbox_center_y - bbox_height / 2),
+                    float(bbox_width),
+                    float(bbox_height)
+                ]
+                prediction = [confidence, class_id, bbox]
+                predictions.append(prediction)
+        return predictions
