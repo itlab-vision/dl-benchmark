@@ -18,7 +18,7 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._transformer = transformer
 
     def __convert_images(self, shape, data):
-        c, h, w = shape[1:]
+        c, h, w = self._transformer.get_shape_in_chw_order(shape)
         images = np.ndarray(shape=(len(data), c, h, w))
         image_shapes = []
         for i in range(len(data)):
@@ -29,13 +29,6 @@ class io_adapter(metaclass=abc.ABCMeta):
             image = image.transpose((2, 0, 1))
             images[i] = image
         return images, image_shapes
-
-    def __transform_images(self, images):
-        b, c, h, w = images.shape
-        transformed_images = np.zeros(shape=(b, c, h, w))
-        for i in range(b):
-            transformed_images[i] = self._transformer.transform(images[i])
-        return transformed_images
 
     def __create_list_images(self, input):
         images = []
@@ -86,7 +79,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self.__transform_images(value)
+                    transformed_value = self._transformer.transform_images(value)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
                 self._transformed_input.update({key: transformed_value})
@@ -101,7 +94,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
-                transformed_value = self.__transform_images(value)
+                transformed_value = self._transformer.transform_images(value)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
             self._transformed_input.update({input_blob: transformed_value})
