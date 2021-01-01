@@ -314,10 +314,6 @@ image-retrieval-0001|+|+|-|
 1. hbonet-1.0
 1. hbonet-0.5
 1. hbonet-0.25
-1. googlenet-v2-tf
-1. googlenet-v4-tf
-1. mobilenet-v3-small-1.0-224-tf
-1. mobilenet-v3-large-1.0-224-tf
 1. open-closed-eye-0001
 1. resnet-18-pytorch
 1. resnet-34-pytorch
