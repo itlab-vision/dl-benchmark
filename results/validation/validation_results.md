@@ -242,7 +242,7 @@ mobilenet-v3-small-1.0-224-tf |-|-| 0.7360849 lifeboat<br>0.0156675 liner, ocean
 
    Название модели   | Изображение |Особенности  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
 ---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
-open-closed-eye-0001 | <img width="150" src="images\1-closed-eye.PNG"> |Only batch = 1 works correctly  | 0.9999934 closed <br> 0.0000066 open <br> | 0.9999934 closed <br> 0.0000066 open <br> |
+open-closed-eye-0001 | <img width="150" src="images\1-closed-eye.png"> |Only batch = 1 works correctly  | 0.9999934 closed <br> 0.0000066 open <br> | 0.9999934 closed <br> 0.0000066 open <br> |
 
 ## Результаты детектирования
 
