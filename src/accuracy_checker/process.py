@@ -1,7 +1,7 @@
-from results_parameters import ResultParameters
+from result import result
 
 
-class Process:
+class process:
     def __init__(self, log, executor, parameters):
         self.__log = log
         self.__executor = executor
@@ -41,4 +41,4 @@ class Process:
             self.__output = self.__output.decode("utf-8").split('\n')
 
     def get_result_parameters(self):
-        return ResultParameters.parser_test_results(self.__output)
+        return result.parser_test_results(self.__output)

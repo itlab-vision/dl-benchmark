@@ -1,4 +1,4 @@
-class Metric:
+class metric:
     def __init__(self, data):
         TYPE_TAG = 'type'
         self.type = data[TYPE_TAG]
@@ -11,12 +11,12 @@ class Metric:
         TYPE_TAG = 'type'
         type = data[TYPE_TAG]
         if type == 'accuracy':
-            return MetricAccuracy(data)
+            return metric_accuracy(data)
         else:
-            return Metric(data)
+            return metric(data)
 
 
-class MetricAccuracy(Metric):
+class metric_accuracy(metric):
     def __init__(self, data):
         super().__init__(data)
         TOP_K_TAG = 'top_k'

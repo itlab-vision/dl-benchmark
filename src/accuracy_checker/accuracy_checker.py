@@ -2,9 +2,9 @@ import os
 import sys
 import argparse
 import logging as log
-from parameters import Parameters
-from executors import Executor
-from process import Process
+from parameters import parameters
+from executors import executor
+from process import process
 from output import output_handler as out_hand
 
 
@@ -60,12 +60,12 @@ def build_argparser():
     return config, models, source, annotations, definitions, extensions, result
 
 
-def accuracy_check(executor_type, parameters, output_handler, log):
-    process_executor = Executor.get_executor(executor_type, log)
-    tests = parameters.get_config_data()
-    process = Process(log, process_executor, parameters)
-    process.execute()
-    output_handler.add_results(process, tests)
+def accuracy_check(executor_type, test_parameters, output_handler, log):
+    process_executor = executor.get_executor(executor_type, log)
+    tests = test_parameters.get_config_data()
+    test_process = process(log, process_executor, test_parameters)
+    test_process.execute()
+    output_handler.add_results(test_process, tests)
     log.info('Saving test result in file')
 
 
@@ -78,11 +78,11 @@ def main():
 
     try:
         config, models, source, annotations, definitions, extensions, result = build_argparser()
-        parameters = Parameters(config, models, source, annotations, definitions, extensions)
+        test_parameters = parameters(config, models, source, annotations, definitions, extensions)
         output_handler = out_hand(result)
         output_handler.create_table()
         executor_type = 'host_machine'
-        accuracy_check(executor_type, parameters, output_handler, log)
+        accuracy_check(executor_type, test_parameters, output_handler, log)
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)

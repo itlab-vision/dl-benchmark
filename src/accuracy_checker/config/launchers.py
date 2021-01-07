@@ -1,4 +1,4 @@
-class Launcher:
+class launcher:
     def __init__(self, data):
         FRAMEWORK_TAG = 'framework'
         DEVICE_TAG = 'device'

@@ -12,8 +12,7 @@ class output_handler:
         results = process.get_result_parameters()
         for idx, result in enumerate(results):
             if result[0].is_failed():
-                metrics_count = len(tests[idx].datasets[0].metrics)
-                for i in range(metrics_count):
+                for i in range(len(tests[idx].datasets[0].metrics)):
                     self.__add_row_to_table(result[0], tests[idx], i)
             else:
                 for i in range(len(result)):
@@ -29,11 +28,11 @@ class output_handler:
         return '{0}'.format(self.__prepare_result(result.get_result_dict(), test, index))
 
     def __prepare_result(self, result, test, index):
-        if result['model'] != '' and result['model'] != test.model_name:
+        if result['model'] is not None and result['model'] != test.model_name:
             raise ValueError('Result model name and config model name do not match!')
-        elif result['dataset'] != '' and result['dataset'] not in [dataset.dataset_name for dataset in test.datasets]:
+        elif result['dataset'] is not None and result['dataset'] not in [dataset.dataset_name for dataset in test.datasets]:
             raise ValueError('Result dataset name and config dataset name do not match!')
-        elif result['launcher'] != '' and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
+        elif result['launcher'] is not None and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
             raise ValueError('Result launcher name and config launcher name do not match!')
         else:
             result_str = result['status'] + ';' + test.launchers[0].adapter + ';' + test.model_name + ';' +\
