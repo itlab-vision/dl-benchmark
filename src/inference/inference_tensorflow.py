@@ -21,7 +21,7 @@ def build_argparser():
         '-t', '--task',
         help='Output processing method. Default: without postprocess',
         choices=['classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
-                 'yolo_v2_tiny_coco', 'yolo_v3_tf'],
+                 'yolo_v2_tiny_coco', 'yolo_v3_tf', 'mask-rcnn'],
         default='feedforward', type=str, dest='task'
     )
     parser.add_argument('--color_map', help='Classes color map', type=str, default=None, dest='color_map')
@@ -69,6 +69,22 @@ def prepare_output(result, outputs_name, task):
                 coords[2], coords[3] = coords[3], coords[2]
                 new_result[0][0][bb * n + idx] = [bb, label, conf, *coords]
         result = [new_result]
+    elif task in ['mask-rcnn']:
+        outputs_name = ['reshape_do_2d', 'masks']
+        num_detections = int(result[3][0])
+        detection_result = np.zeros(shape=(num_detections + 1, 7))
+        mask = result[4]
+        new_mask = np.zeros(shape=(num_detections, mask.shape[1], mask.shape[2], mask.shape[3]))
+        for idx in range(num_detections):
+            label = int(result[0][0][idx])
+            conf = result[1][0][idx]
+            coords = result[2][0][idx]
+            coords[0], coords[1] = coords[1], coords[0]
+            coords[2], coords[3] = coords[3], coords[2]
+            detection_result[idx] = [0, label, conf, *coords]
+            new_mask[idx][label - 1] = mask[0][idx]
+        detection_result[num_detections][0] = -1
+        result = [detection_result, new_mask]
     return {outputs_name[i]: result[i] for i in range(len(result))}
 
 
