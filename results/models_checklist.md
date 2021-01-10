@@ -61,6 +61,10 @@ squeezenet-1.1-caffe2|-|+|-|
 resnet-50-caffe2|-|+|-|
 vgg19-caffe2|-|+|-|
 densenet-121-caffe2|-|+|-|
+googlenet-v2-tf|-|+|-|
+mobilenet-v3-large-1.0-224-tf|-|+|-|
+mobilenet-v3-small-1.0-224-tf|-|+|-|
+open-closed-eye-0001|-|+|-|
 ***octave-densenet-121-0.125***|+|+|-|
 ***octave-resnet-26-0.25***|+|+|-|
 ***octave-resnet-50-0.125***|+|+|-|
