@@ -220,6 +220,34 @@ yolo-v2-tf     | Окаймляющие прямоугольники: PERSON (51
 yolo-v2-tiny-tf     | Окаймляющий прямоугольник: HORSE (75, 59), (405, 586) |
 yolo-v3-tf     | Окаймляющие прямоугольники: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
 
+## Результаты экземплярной сегментации
+
+### Тестовое изображение 1
+
+Источник: набор данных [MS COCO][ms_coco]
+
+Исходное разрешение: 640 x 480
+
+Входное изображение:
+<div style='float: center'>
+<img width="300" src="images\22.jpg"></img>
+</div>
+
+Полученные изображения идентичны и совпадают по пикселям.
+
+Название модели   |   Python (реализация)        |
+----------------------|----------------------------------|
+mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
+mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
+mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
+mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
+
+Карта цветов:
+
+<div style='float: center'>
+<img width="300" src="instance_segmentation\mscoco90_colormap.jpg">
+</div>
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
