@@ -334,10 +334,10 @@ class TensorFlow_process(process):
         num_intra_threads = self._my_test.dep_parameters.num_intra_threads
         if num_intra_threads:
             common_params = TensorFlow_process.__add_num_intra_threads_for_cmd_line(common_params, num_intra_threads)
-        
+
         common_params = TensorFlow_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
         command_line = '{0} {1} {2}'.format(python, path_to_tensorflow_scrypt, common_params)
-        
+
         nthreads = self._my_test.dep_parameters.nthreads
         if nthreads:
             command_line = TensorFlow_process.__add_nthreads_for_cmd_line(command_line, nthreads)

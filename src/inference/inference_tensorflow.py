@@ -33,6 +33,7 @@ def build_argparser():
     parser.add_argument('--input_scale', help='Parameter input scale', default=1.0, type=float, dest='input_scale')
     parser.add_argument('-d', '--device', help='Specify the target device to infer on (CPU by default)', default='CPU', type=str, dest='device')
     parser.add_argument('--input_shape', help='Input tensor shape in "height width channels" order', default=None, type=int, nargs=3, dest='input_shape')
+    parser.add_argument('--input_name', help='Name of the input tensor', default=None, type=str, nargs=1, dest='input_name')
     parser.add_argument('--output_names', help='Name of the output tensor', default=None, type=str, nargs='+', dest='output_names')
     parser.add_argument('--num_inter_threads', help='Number of threads used for parallelism between independent operations', default=None, type=int, dest='num_inter_threads')
     parser.add_argument('--num_intra_threads', help='Number of threads used within an individual op for parallelism', default=None, type=int, dest='num_intra_threads')

@@ -31,11 +31,14 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
     def __init__(self, args):
         self._shape = args.input_shape
         self._batch = args.batch_size
+        self._input_name = args.input_name
 
     def _create_list_with_input_shape(self):
         return [self._batch, self._shape[0], self._shape[1], self._shape[2]]
 
     def get_input_layer_names(self, graph):
+        if self._input_name:
+            return self._input_name
         inputs = [x for x in graph.get_operations() if x.type == "Placeholder"]
         input_names = []
         for input in inputs:
