@@ -118,6 +118,9 @@ yolo-v1-tiny-tf|+|+|-|
 yolo-v2-tiny-tf|+|+|-|
 yolo-v2-tf|+|+|-|
 yolo-v3-tf|+|+|-|
+retinanet-tf|-|-|+|
+pelee-coco|-|-|+|
+ssd_resnet50_v1_fpn_coco|-|-|+|
 
 ### Распознавание лиц (face recognition)
 
@@ -326,10 +329,7 @@ image-retrieval-0001|+|+|-|
 1. ctdet_coco_dlav0_512
 1. faceboxes-pytorch
 1. mobilefacedet-v1-mxnet
-1. pelee-coco
-1. retinanet-tf
 1. rfcn-resnet101-coco-tf
-1. ssd_resnet50_v1_fpn_coco
 1. ssd-resnet34-1200-onnx
 1. retinaface-resnet50
 1. retinaface-anti-cov
