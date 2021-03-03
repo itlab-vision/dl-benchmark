@@ -182,7 +182,8 @@ def main():
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
-            result = prepare_output(result, outputs_names, args.task)
+            if args.number_iter == 1:
+                result = prepare_output(result, outputs_names, args.task)
             io.process_output(result, log)
             result_output(time, fps, latency, log)
         else:
