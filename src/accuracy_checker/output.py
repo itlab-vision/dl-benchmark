@@ -28,14 +28,13 @@ class output_handler:
         return '{0}'.format(self.__prepare_result(result.get_result_dict(), test, index))
 
     def __prepare_result(self, result, test, index):
-        print(result['device'], test.launchers[0].device)
         if result['model'] is not None and result['model'] != test.model_name:
             raise ValueError('Result model name and config model name do not match!')
-        elif result['launcher'] is not None and result['launcher'] not in [launcher.framework for launcher in test.launchers]:
+        elif result['launcher'] is not None and result['launcher'] not in [launcher.framework.replace(' ', '') for launcher in test.launchers]:
             raise ValueError('Result launcher name and config launcher name do not match!')
-        elif result['device'] is not None and result['device'] not in [launcher.device for launcher in test.launchers]:
+        elif result['device'] is not None and result['device'] not in [launcher.device.replace(' ', '') for launcher in test.launchers]:
             raise ValueError('Result device name and config device name do not match!')
-        elif result['dataset'] is not None and result['dataset'] not in [dataset.dataset_name for dataset in test.datasets]:
+        elif result['dataset'] is not None and result['dataset'] not in [dataset.dataset_name.replace(' ', '') for dataset in test.datasets]:
             raise ValueError('Result dataset name and config dataset name do not match!')
         else:
             result_str = result['status'] + ';' + test.launchers[0].adapter + ';' + test.model_name + ';' +\
