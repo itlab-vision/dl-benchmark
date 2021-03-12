@@ -1,8 +1,9 @@
 class result:
-    def __init__(self, status, model, launcher, dataset, precision, objects, accuracy):
+    def __init__(self, status, model, launcher, device, dataset, precision, objects, accuracy):
         self.__status = status
         self.__model = model
         self.__launcher = launcher
+        self.__device = device
         self.__dataset = dataset
         self.__precision = precision
         self.__objects = objects
@@ -12,8 +13,9 @@ class result:
         return self.__status == 'FAILED'
 
     def get_result_dict(self):
-        return {'status': self.__status, 'model': self.__model, 'launcher': self.__launcher, 'dataset': self.__dataset,
-                'precision': self.__precision, 'objects': self.__objects, 'accuracy': self.__accuracy}
+        return {'status': self.__status, 'model': self.__model, 'launcher': self.__launcher, 'device': self.__device,
+                'dataset': self.__dataset, 'precision': self.__precision, 'objects': self.__objects,
+                'accuracy': self.__accuracy}
 
     @staticmethod
     def has_error(strings):
@@ -28,6 +30,7 @@ class result:
     def parser_test_result(res, idx):
         TAG_MODEL = 'model:'
         TAG_LAUNCHER = 'launcher:'
+        TAG_DEVICE = 'device:'
         TAG_DATASET = 'dataset:'
         TAG_PRECISION = 'precision:'
         TAG_OBJECTS = 'objects'
@@ -44,6 +47,9 @@ class result:
         launchers = [value[len(TAG_LAUNCHER):] for value in res if TAG_LAUNCHER in value] if not error else [None]
         if not launchers:
             raise ValueError('Information about launcher was not found in test result', idx)
+        devices = [value[len(TAG_DEVICE):] for value in res if TAG_DEVICE in value] if not error else [None]
+        if not devices:
+            raise ValueError('Information about device was not found in test result', idx)
         datasets = [value[len(TAG_DATASET):] for value in res if TAG_DATASET in value] if not error else [None]
         if not datasets:
             raise ValueError('Information about dataset was not found in test result', idx)
@@ -57,7 +63,7 @@ class result:
         if not accuracies:
             raise ValueError('Information about accuracy was not found in test result', idx)
 
-        return [result(status, models[0], launchers[0], datasets[0], precisions[0], objects[0], accuracy)
+        return [result(status, models[0], launchers[0], devices[0], datasets[0], precisions[0], objects[0], accuracy)
                 for accuracy in accuracies]
 
     @staticmethod
