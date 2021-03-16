@@ -126,7 +126,7 @@ def load_model_from_checkpoint(tensorflow, model, output_names):
     return graph
 
 
-def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice, num_intra_threads, num_inter_threads):
+def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice, config):
     result = None
     time_infer = []
     slice_input = None
@@ -134,7 +134,6 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
         tensors = [graph.get_tensor_by_name('import/{}:0'.format(name)) for name in outputs_names]
     except Exception:
         tensors = [graph.get_tensor_by_name('{}:0'.format(name)) for name in outputs_names]
-    config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=num_intra_threads, inter_op_parallelism_threads=num_inter_threads)
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
@@ -150,6 +149,13 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
                 t1 = time()
                 time_infer.append(t1 - t0)
         return result, time_infer
+
+
+def create_config_for_inference(num_intra_threads, num_inter_threads):
+    config = tf.compat.v1.ConfigProto(
+        intra_op_parallelism_threads=num_intra_threads,
+        inter_op_parallelism_threads=num_inter_threads)
+    return config
 
 
 def process_result(batch_size, inference_time):
@@ -195,9 +201,10 @@ def main():
 
         inputs_names = model_wrapper.get_input_layer_names(graph)
         outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)
+        config = create_config_for_inference(args.num_intra_threads, args.num_inter_threads)
         result, inference_time = inference_tensorflow(graph, inputs_names, outputs_names,
                                                       args.number_iter, io.get_slice_input,
-                                                      args.num_intra_threads, args.num_inter_threads)
+                                                      config)
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
