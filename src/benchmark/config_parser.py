@@ -339,7 +339,7 @@ class IntelCaffe_parameters(parameters_methods):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
-        self.thread_count = None
+        self.nthreads = None
 
         if self._parameter_not_is_none(channel_swap):
             if self._channel_swap_is_correct(channel_swap):
@@ -358,7 +358,7 @@ class IntelCaffe_parameters(parameters_methods):
                 raise ValueError('Input scale can only take values: float greater than zero.')
         if self._parameter_not_is_none(thread_count):
             if self._int_value_is_correct(thread_count):
-                self.thread_count = thread_count
+                self.nthreads = thread_count
             else:
                 raise ValueError('Threads count can only take integer value')
 
@@ -387,12 +387,15 @@ class TensorFlow_parameters(parameters_methods):
                 return False
         return True
 
-    def __init__(self, channel_swap, mean, input_scale, input_shape, output_names):
+    def __init__(self, channel_swap, mean, input_scale, input_shape, output_names, thread_count, inter_op_parallelism_threads, intra_op_parallelism_threads):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
         self.input_shape = None
         self.output_names = None
+        self.nthreads = None
+        self.num_inter_threads = None
+        self.num_intra_threads = None
 
         if self._parameter_not_is_none(channel_swap):
             if self._channel_swap_is_correct(channel_swap):
@@ -416,6 +419,21 @@ class TensorFlow_parameters(parameters_methods):
                 raise ValueError('Input shape can only take values: list of 3 integer elements greater than zero.')
         if self._parameter_not_is_none(output_names):
             self.output_names = output_names
+        if self._parameter_not_is_none(thread_count):
+            if self._int_value_is_correct(thread_count):
+                self.nthreads = thread_count
+            else:
+                raise ValueError('Threads count can only take integer value')
+        if self._parameter_not_is_none(inter_op_parallelism_threads):
+            if self._int_value_is_correct(inter_op_parallelism_threads):
+                self.num_inter_threads = inter_op_parallelism_threads
+            else:
+                raise ValueError('Inter op parallelism threads can only take integer value')
+        if self._parameter_not_is_none(intra_op_parallelism_threads):
+            if self._int_value_is_correct(intra_op_parallelism_threads):
+                self.num_intra_threads = intra_op_parallelism_threads
+            else:
+                raise ValueError('Intra op parallelism threads can only take integer value')
 
 
 class test(metaclass=abc.ABCMeta):
@@ -469,11 +487,11 @@ class IntelCaffe_test(test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}'.format(
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}; Iteration count: {8}; Thread count: {9}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
-            self.indep_parameters.iteration
+            self.indep_parameters.iteration, self.dep_parameters.nthreads
         )
 
 
@@ -482,11 +500,13 @@ class TensorFlow_test(test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}'.format(
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}; Iteration count: {8}; Thread count: {9}; \
+            Inter threads: {10}; Intra threads: {11}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
-            self.indep_parameters.iteration
+            self.indep_parameters.iteration, self.dep_parameters.nthreads,
+            self.dep_parameters.num_inter_threads, self.dep_parameters.num_intra_threads
         )
 
 
