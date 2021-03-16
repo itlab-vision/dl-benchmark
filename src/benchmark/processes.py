@@ -235,11 +235,13 @@ class IntelCaffe_process(process):
         input_scale = self._my_test.dep_parameters.input_scale
         if input_scale:
             common_params = IntelCaffe_process.__add_input_scale_for_cmd_line(common_params, input_scale)
-        nthreads = self._my_test.dep_parameters.nthreads
-        if nthreads:
-            common_params = IntelCaffe_process.__add_nthreads_for_cmd_line(common_params, nthreads)
         common_params = IntelCaffe_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
         command_line = '{0} {1} {2}'.format(python, path_to_intelcaffe_scrypt, common_params)
+
+        nthreads = self._my_test.dep_parameters.nthreads
+        if nthreads:
+            command_line = IntelCaffe_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+
         return command_line
 
     def get_performance_metrics(self):
@@ -326,17 +328,20 @@ class TensorFlow_process(process):
         output_names = self._my_test.dep_parameters.output_names
         if output_names:
             common_params = TensorFlow_process.__add_output_names_for_cmd_line(common_params, output_names)
-        nthreads = self._my_test.dep_parameters.nthreads
-        if nthreads:
-            common_params = TensorFlow_process.__add_nthreads_for_cmd_line(common_params, nthreads)
         num_inter_threads = self._my_test.dep_parameters.num_inter_threads
         if num_inter_threads:
             common_params = TensorFlow_process.__add_num_inter_threads_for_cmd_line(common_params, num_inter_threads)
         num_intra_threads = self._my_test.dep_parameters.num_intra_threads
         if num_intra_threads:
             common_params = TensorFlow_process.__add_num_intra_threads_for_cmd_line(common_params, num_intra_threads)
+        
         common_params = TensorFlow_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
         command_line = '{0} {1} {2}'.format(python, path_to_tensorflow_scrypt, common_params)
+        
+        nthreads = self._my_test.dep_parameters.nthreads
+        if nthreads:
+            command_line = TensorFlow_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+
         return command_line
 
     def get_performance_metrics(self):

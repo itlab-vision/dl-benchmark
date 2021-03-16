@@ -133,7 +133,7 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
         tensors = [graph.get_tensor_by_name('import/{}:0'.format(name)) for name in outputs_names]
     except Exception:
         tensors = [graph.get_tensor_by_name('{}:0'.format(name)) for name in outputs_names]
-    config = tf.ConfigProto(intra_op_parallelism_threads=num_intra_threads, inter_op_parallelism_threads=num_inter_threads)
+    config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=num_intra_threads, inter_op_parallelism_threads=num_inter_threads)
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
