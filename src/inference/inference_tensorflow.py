@@ -34,6 +34,8 @@ def build_argparser():
     parser.add_argument('-d', '--device', help='Specify the target device to infer on (CPU by default)', default='CPU', type=str, dest='device')
     parser.add_argument('--input_shape', help='Input tensor shape in "height width channels" order', default=None, type=int, nargs=3, dest='input_shape')
     parser.add_argument('--output_names', help='Name of the output tensor', default=None, type=str, nargs='+', dest='output_names')
+    parser.add_argument('--num_inter_threads', help='Number of threads used for parallelism between independent operations', default=None, type=int, dest='num_inter_threads')
+    parser.add_argument('--num_intra_threads', help='Number of threads used within an individual op for parallelism', default=None, type=int, dest='num_intra_threads')
     return parser
 
 
@@ -123,7 +125,7 @@ def load_model_from_checkpoint(tensorflow, model, output_names):
     return graph
 
 
-def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice):
+def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice, num_intra_threads, num_inter_threads):
     result = None
     time_infer = []
     slice_input = None
@@ -131,7 +133,8 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
         tensors = [graph.get_tensor_by_name('import/{}:0'.format(name)) for name in outputs_names]
     except Exception:
         tensors = [graph.get_tensor_by_name('{}:0'.format(name)) for name in outputs_names]
-    with tf.compat.v1.Session(graph=graph) as sess:
+    config = tf.ConfigProto(intra_op_parallelism_threads=num_intra_threads, inter_op_parallelism_threads=num_inter_threads)
+    with tf.compat.v1.Session(graph=graph, config=config) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
             t0 = time()
@@ -192,7 +195,8 @@ def main():
         inputs_names = model_wrapper.get_input_layer_names(graph)
         outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)
         result, inference_time = inference_tensorflow(graph, inputs_names, outputs_names,
-                                                      args.number_iter, io.get_slice_input)
+                                                      args.number_iter, io.get_slice_input,
+                                                      args.num_intra_threads, args.num_inter_threads)
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:

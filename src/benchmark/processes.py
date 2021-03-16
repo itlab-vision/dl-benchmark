@@ -205,7 +205,7 @@ class IntelCaffe_process(process):
 
     @staticmethod
     def __add_nthreads_for_cmd_line(command_line, nthreads):
-        return '{0} -nthreads {1}'.format(command_line, nthreads)
+        return 'OMP_NUM_THREADS={1} {0}'.format(command_line, nthreads)
 
     @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
@@ -281,14 +281,17 @@ class TensorFlow_process(process):
     def __add_output_names_for_cmd_line(command_line, output_names):
         return '{0} --output_names {1}'.format(command_line, output_names)
 
+    @staticmethod
     def __add_nthreads_for_cmd_line(command_line, nthreads):
-        return '{0} -nthreads {1}'.format(command_line, nthreads)
+        return 'OMP_NUM_THREADS={1} {0}'.format(command_line, nthreads)
 
+    @staticmethod
     def __add_num_inter_threads_for_cmd_line(command_line, num_inter_threads):
-        return '{0} -num_inter_threads {1}'.format(command_line, num_inter_threads)
+        return '{0} --num_inter_threads {1}'.format(command_line, num_inter_threads)
 
+    @staticmethod
     def __add_num_intra_threads_for_cmd_line(command_line, num_intra_threads):
-        return '{0} -num_intra_threads {1}'.format(command_line, num_intra_threads)
+        return '{0} --num_intra_threads {1}'.format(command_line, num_intra_threads)
 
     @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
