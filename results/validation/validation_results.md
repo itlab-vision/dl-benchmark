@@ -79,6 +79,9 @@ squeezenet-1.1-caffe2 |-|-| 0.9936372 Granny Smith<br>0.0014997 lemon<br>0.00136
 resnet-50-caffe2 |-|-| 0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |
 vgg19-caffe2 |-|-| 0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br> |0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br> |
 densenet-121-caffe2 |-|-| 15.7890606 Granny Smith<br>9.9466267 lemon<br>9.3717031 orange<br>8.6204128 banana<br>7.1169806 tennis ball<br> |15.7890606 Granny Smith<br>9.9466267 lemon<br>9.3717031 orange<br>8.6204128 banana<br>7.1169806 tennis ball<br> |
+googlenet-v2-tf |-|-| 0.9925616 Granny Smith<br>0.0003350 lemon<br>0.0002447 pomegranate<br>0.0002070 tennis ball<br>0.0001847 banana<br> | 0.9925616 Granny Smith<br>0.0003350 lemon<br>0.0002447 pomegranate<br>0.0002070 tennis ball<br>0.0001847 banana<br> |
+mobilenet-v3-large-1.0-224-tf |-|-| 0.9964523 Granny Smith<br>0.0002238 bell pepper<br>0.0001825 lemon<br>0.0001672 tennis ball<br>0.0001623 fig<br> | 0.9964523 Granny Smith<br>0.0002238 bell pepper<br>0.0001825 lemon<br>0.0001672 tennis ball<br>0.0001623 fig<br> |
+mobilenet-v3-small-1.0-224-tf |-|-| 0.8031732 Granny Smith<br>0.0285428 fig<br>0.0175287 lemon<br>0.0164089 bell pepper<br>0.0091023 strawberry<br> | 0.8031732 Granny Smith<br>0.0285428 fig<br>0.0175287 lemon<br>0.0164089 bell pepper<br>0.0091023 strawberry<br> |
 ### Тестовое изображение 2
 
 Источник: набор данных [ImageNet][imagenet]
@@ -151,6 +154,9 @@ squeezenet-1.1-caffe2 |-|-| 0.9936494 junco, snowbird<br>0.0061753 chickadee<br>
 resnet-50-caffe2 |-|-| 0.9979601 junco, snowbird<br>0.0007472 chickadee<br>0.0006533 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0004094 brambling, Fringilla montifringilla<br>0.0000683 goldfinch, Carduelis carduelis<br> |0.9979601 junco, snowbird<br>0.0007472 chickadee<br>0.0006533 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0004094 brambling, Fringilla montifringilla<br>0.0000683 goldfinch, Carduelis carduelis<br> |
 vgg19-caffe2 |-|-| 0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |
 densenet-121-caffe2 |-|-| 17.8101349 junco, snowbird<br>11.4563322 brambling, Fringilla montifringilla<br>11.3156567 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3476629 chickadee<br>8.2407246 magpie<br> |17.8101349 junco, snowbird<br>11.4563322 brambling, Fringilla montifringilla<br>11.3156567 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3476629 chickadee<br>8.2407246 magpie<br> |
+googlenet-v2-tf |-|-| 0.9513915 junco, snowbird<br>0.0017740 chickadee<br>0.0015845 brambling, Fringilla montifringilla<br>0.0009359 loupe, jeweler's loupe<br>0.0007033 American coot, marsh hen, mud hen, water hen, Fulica americana<br> | 0.9513915 junco, snowbird<br>0.0017740 chickadee<br>0.0015845 brambling, Fringilla montifringilla<br>0.0009359 loupe, jeweler's loupe<br>0.0007033 American coot, marsh hen, mud hen, water hen, Fulica americana<br> |
+mobilenet-v3-large-1.0-224-tf |-|-| 0.8878838 junco, snowbird<br>0.0007329 American coot, marsh hen, mud hen, water hen, Fulica americana<br>0.0007141 brambling, Fringilla montifringilla<br>0.0006302 water ouzel, dipper<br>0.0005295 wood rabbit, cottontail, cottontail rabbit<br> | 0.8878838 junco, snowbird<br>0.0007329 American coot, marsh hen, mud hen, water hen, Fulica americana<br>0.0007141 brambling, Fringilla montifringilla<br>0.0006302 water ouzel, dipper<br>0.0005295 wood rabbit, cottontail, cottontail rabbit<br> |
+mobilenet-v3-small-1.0-224-tf |-|-| 0.9574909 junco, snowbird<br>0.0016714 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0016443 chickadee<br>0.0009580 jay<br>0.0006632 brambling, Fringilla montifringilla<br> | 0.9574909 junco, snowbird<br>0.0016714 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0016443 chickadee<br>0.0009580 jay<br>0.0006632 brambling, Fringilla montifringilla<br> |
 
 ### Тестовое изображение 3
 
@@ -224,6 +230,21 @@ squeezenet-1.1-caffe2 |-|-| 0.9580537 lifeboat<br>0.0206635 container ship, cont
 resnet-50-caffe2 |-|-| 0.9745282 lifeboat<br>0.0084851 drilling platform, offshore rig<br>0.0048212 container ship, containership, container vessel<br>0.0033455 liner, ocean liner<br>0.0024074 wreck<br> |0.9745282 lifeboat<br>0.0084851 drilling platform, offshore rig<br>0.0048212 container ship, containership, container vessel<br>0.0033455 liner, ocean liner<br>0.0024074 wreck<br> |
 vgg19-caffe2 |-|-| 0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br> |0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br> |
 densenet-121-caffe2 |-|-| 13.9694653 lifeboat<br>7.8196640 drilling platform, offshore rig<br>7.7403646 liner, ocean liner<br>7.5737677 wreck<br>7.5640950 pirate, pirate ship<br> |13.9694653 lifeboat<br>7.8196640 drilling platform, offshore rig<br>7.7403646 liner, ocean liner<br>7.5737677 wreck<br>7.5640950 pirate, pirate ship<br> |
+googlenet-v2-tf |-|-| 0.6411989 lifeboat<br>0.0454055 fireboat<br>0.0321753 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0219396 beacon, lighthouse, beacon light, pharos<br>0.0132107 dock, dockage, docking facility<br> | 0.6411989 lifeboat<br>0.0454055 fireboat<br>0.0321753 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0219396 beacon, lighthouse, beacon light, pharos<br>0.0132107 dock, dockage, docking facility<br> |
+mobilenet-v3-large-1.0-224-tf |-|-| 0.8509533 lifeboat<br>0.0020929 drilling platform, offshore rig<br>0.0014489 fireboat<br>0.0013909 freight car<br>0.0013567 yellow lady's slipper, yellow lady-slipper, Cypripedium calceolus, Cypripedium parviflorum<br> | 0.8509533 lifeboat<br>0.0020929 drilling platform, offshore rig<br>0.0014489 fireboat<br>0.0013909 freight car<br>0.0013567 yellow lady's slipper, yellow lady-slipper, Cypripedium calceolus, Cypripedium parviflorum<br> |
+mobilenet-v3-small-1.0-224-tf |-|-| 0.7360849 lifeboat<br>0.0156675 liner, ocean liner<br>0.0123008 pirate, pirate ship<br>0.0066379 fireboat<br>0.0059411 beacon, lighthouse, beacon light, pharos<br> | 0.7360849 lifeboat<br>0.0156675 liner, ocean liner<br>0.0123008 pirate, pirate ship<br>0.0066379 fireboat<br>0.0059411 beacon, lighthouse, beacon light, pharos<br> |
+
+### Классификация, нестандартные модели
+
+Источник: набор данных [MRL Eye Dataset][mrl_eye_dataset]
+
+
+
+   Название модели   | Изображение |Особенности  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
+---------------------|---------------------------|---------------------------|------------------------------|----------------------------|
+open-closed-eye-0001 | <img width="150" src="images\1-closed-eye.png"> |Only batch = 1 works correctly  | 0.9999934 closed <br> 0.0000066 open <br> | 0.9999934 closed <br> 0.0000066 open <br> |
+open-closed-eye-0001 | <img width="150" src="images\2-opened-eye.png"> |Only batch = 1 works correctly  | 0.9999905 open <br> 0.0000094 closed <br> | 0.9999905 open <br> 0.0000094 closed <br> |
+open-closed-eye-0001 | <img width="150" src="images\3-opened-eye.png"> |Only batch = 1 works correctly  | 1.0000000 open <br> 0.0000000 closed <br> | 1.0000000 open <br> 0.0000000 closed <br> |
 
 ## Результаты детектирования
 
@@ -328,6 +349,9 @@ faster_rcnn_inception_resnet_v2_atrous_coco |-|-| Окаймляющий пря�
 faster_rcnn_inception_v2_coco               |-|-| Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
 faster_rcnn_resnet50_coco                   |-|-| Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
 faster_rcnn_resnet101_coco                  |-|-| Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
+pele_coco |-|-| Окаймляющий прямоугольник:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) | Окаймляющий прямоугольник:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) <br>|
+retinanet-tf |-|-| Окаймляющий прямоугольник:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Окаймляющий прямоугольник:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
+ssd_resnet50_v1_fpn_coco |-|-| Окаймляющий прямоугольник:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Окаймляющий прямоугольник:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
 
 ### Тестовое изображение 5
 Источник: [MS COCO][ms_coco]
@@ -348,6 +372,10 @@ faster_rcnn_resnet101_coco                  |-|-| Окаймляющий пря�
 yolo-v3-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565) | Окаймляющий прямоугольник:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>|
 yolo-v2-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590) | Окаймляющий прямоугольник:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590)<br>|
 yolo-v2-tiny-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562) | Окаймляющий прямоугольник:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562)<br>|
+pele_coco                    |-|-| Окаймляющий прямоугольник:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381) | Окаймляющий прямоугольник:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381)<br>|
+retinanet-tf                  |-|-| Окаймляющий прямоугольник:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Окаймляющий прямоугольник:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
+ssd_resnet50_v1_fpn_coco                   |-|-| Окаймляющий прямоугольник:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Окаймляющий прямоугольник:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
+
 
 ### Тестовое изображение 6
 Источник: [Pascal VOC][PASCAL_VOC_2012]
@@ -519,3 +547,4 @@ mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img wid
 [sphereface_sync]:recognition/sphereface_out_sync.csv
 [sphereface_async]:recognition/sphereface_out_async.csv
 [cityscapes]: https://www.cityscapes-dataset.com
+[mrl_eye_dataset]: http://mrl.cs.vsb.cz/eyedataset

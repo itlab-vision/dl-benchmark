@@ -1503,7 +1503,10 @@ class mask_rcnn_io(io_adapter):
                 labels_map.append(line.strip())
 
         shapes = self._original_shapes[next(iter(self._original_shapes))]
-        image = self._input['image_tensor'][0].transpose((1, 2, 0))
+        if 'image_tensor' in self._input:
+            image = self._input['image_tensor'][0].transpose((1, 2, 0))
+        elif 'import/image_tensor:0' in self._input:
+            image = self._input['import/image_tensor:0'][0].transpose((1, 2, 0))
 
         detections_info = result['reshape_do_2d']
         masks = result['masks']
