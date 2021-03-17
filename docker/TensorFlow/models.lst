@@ -1,6 +1,10 @@
 densenet-121-tf
 densenet-161-tf
 densenet-169-tf
+efficientnet-b0
+efficientnet-b0_auto_aug
+efficientnet-b5
+efficientnet-b7_auto_aug
 googlenet-v1-tf
 googlenet-v4-tf
 inception-resnet-v2-tf
