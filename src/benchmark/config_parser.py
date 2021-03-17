@@ -136,6 +136,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG = 'InputScale'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
+        CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG = 'OutputNames'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
@@ -144,6 +145,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
         _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
         _input_shape = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
+        _input_name = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
         _output_names = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
 
         return TensorFlow_parameters(
@@ -151,6 +153,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
             input_shape=_input_shape.data if _input_shape else None,
+            input_name=_input_name.data if _input_name else None, 
             output_names=_output_names.data if _output_names else None
         )
 
@@ -371,11 +374,12 @@ class TensorFlow_parameters(parameters_methods):
                 return False
         return True
 
-    def __init__(self, channel_swap, mean, input_scale, input_shape, output_names):
+    def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
         self.input_shape = None
+        self.input_name = None
         self.output_names = None
 
         if self._parameter_not_is_none(channel_swap):
@@ -398,8 +402,10 @@ class TensorFlow_parameters(parameters_methods):
                 self.input_shape = input_shape
             else:
                 raise ValueError('Input shape can only take values: list of 3 integer elements greater than zero.')
+        if self._parameter_not_is_none(input_name):
+            self.input_name = input_name
         if self._parameter_not_is_none(output_names):
-            self.output_names = output_names  # нужна ли какая-то проверка на корректность строки?
+            self.output_names = output_names
 
 
 class test(metaclass=abc.ABCMeta):
