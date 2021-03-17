@@ -153,7 +153,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
             input_shape=_input_shape.data if _input_shape else None,
-            input_name=_input_name.data if _input_name else None, 
+            input_name=_input_name.data if _input_name else None,
             output_names=_output_names.data if _output_names else None
         )
 
