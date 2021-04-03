@@ -31,11 +31,12 @@ class process:
     def __add_extensions_for_cmd_line(command_line, extensions):
         return '{0} -e {1}'.format(command_line, extensions)
 
-    def execute(self):
+    def execute(self, target_framework):
         command_line = self.__fill_command_line()
         if command_line == '':
             self.__log.error('Command line is empty')
         self.__log.info('Start accuracy check for config: {}'.format(self.__parameters.config))
+        self.__executor.set_target_framework(target_framework)
         self.__output = self.__executor.execute_process(command_line)
         if type(self.__output) is not list:
             self.__output = self.__output.decode("utf-8").split('\n')
