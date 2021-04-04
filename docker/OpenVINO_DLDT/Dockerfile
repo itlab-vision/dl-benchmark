@@ -12,6 +12,7 @@ ARG DEPENDENCIES="apt-utils \
                   cmake \
                   cpio \
                   curl \
+                  dialog \
                   gnupg2 \
                   libdrm2 \
                   libglib2.0-0 \
@@ -25,6 +26,7 @@ ARG DEPENDENCIES="apt-utils \
                   libpython3.6 \
                   udev \
                   unzip \
+                  wget \
                   git"
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
@@ -67,5 +69,22 @@ RUN git clone https://github.com/itlab-vision/dl-benchmark.git
 ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
 RUN git clone $DATASET_DOWNLOAD_LINK
 
-RUN cat /root/.bashrc > tmp && echo 'source /opt/intel/openvino/bin/setupvars.sh' > /root/.bashrc && \
+#create python environment for accuracy checker
+WORKDIR /opt/intel
+RUN mkdir accuracy_checker_env && \
+    python3 -m virtualenv -p /usr/bin/python3 ./accuracy_checker_env
+RUN echo 'source ./accuracy_checker_env/bin/activate' && \
+    pip install opencv-python pyaml docker
+
+#install accuracy_checker
+WORKDIR /opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/accuracy_checker
+RUN python3 setup.py install_core
+RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN tar xvf cifar-10-python.tar.gz -C sample
+RUN /bin/bash -c "source /opt/intel/openvino_2021/bin/setupvars.sh && \
+    export MO_DIR=/opt/intel/openvino_2021/deployment_tools/model_optimizer && \
+    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
+
+RUN cat /root/.bashrc > tmp && echo 'source /opt/intel/openvino_2021/bin/setupvars.sh' > /root/.bashrc && \
+    echo 'export MO_DIR=/opt/intel/openvino_2021/deployment_tools/model_optimizer' >> /root/.bashrc && \
     cat tmp >> /root/.bashrc && rm tmp
