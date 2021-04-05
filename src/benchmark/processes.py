@@ -280,6 +280,10 @@ class TensorFlow_process(process):
         return '{0} --input_shape {1}'.format(command_line, input_shape)
 
     @staticmethod
+    def __add_input_name_for_cmd_line(command_line, input_name):
+        return '{0} --input_name {1}'.format(command_line, input_name)
+
+    @staticmethod
     def __add_output_names_for_cmd_line(command_line, output_names):
         return '{0} --output_names {1}'.format(command_line, output_names)
 
@@ -325,6 +329,9 @@ class TensorFlow_process(process):
         input_shape = self._my_test.dep_parameters.input_shape
         if input_shape:
             common_params = TensorFlow_process.__add_input_shape_for_cmd_line(common_params, input_shape)
+        input_name = self._my_test.dep_parameters.input_name
+        if input_name:
+            common_params = TensorFlow_process.__add_input_name_for_cmd_line(common_params, input_name)
         output_names = self._my_test.dep_parameters.output_names
         if output_names:
             common_params = TensorFlow_process.__add_output_names_for_cmd_line(common_params, output_names)

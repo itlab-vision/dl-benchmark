@@ -1,21 +1,25 @@
-from table_creator import HTMLTable
 import sys
 import argparse
 import os
+from benchmark_table_creator import HTMLBenchmarkTable
+from accuracy_checker_table_creator import HTMLAccuracyCheckerTable
 
 
 def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--table', type=str, help='Path to the inference table in csv format.', required=True)
     parser.add_argument('-r', '--result_table', type=str, help='Full name of the resulting file', required=True)
+    parser.add_argument('-k', '--table_kind', type=str, help='Kind of table: ', choices=['benchmark', 'accuracy_checker'],
+                        default='benchmark', required=True)
     path_table_csv = parser.parse_args().table
     path_table_html = parser.parse_args().result_table
-    return path_table_csv, path_table_html
+    table_kind = parser.parse_args().table_kind
+    return path_table_csv, path_table_html, table_kind
 
 
 def open_csv_table(path_table_csv):
     if not os.path.isfile(path_table_csv):
-        raise ValueError('Wrong path the inference table!')
+        raise ValueError('Wrong path the table!')
     with open(path_table_csv) as file:
         table_csv = file.readlines()
         file.close()
@@ -27,9 +31,12 @@ def split_table(table_csv):
         table_csv[row_index] = table_csv[row_index].split(';')
 
 
-def convert_csv_table_to_html(table_csv):
+def convert_csv_table_to_html(table_csv, table_type):
     framework_config = open('frameworks.yml', 'r')
-    table_html = HTMLTable(table_csv, framework_config)
+    if table_type == 'benchmark':
+        table_html = HTMLBenchmarkTable(table_csv, framework_config)
+    elif table_type == 'accuracy_checker':
+        table_html = HTMLAccuracyCheckerTable(table_csv, framework_config)
     script_dir = os.path.split(os.path.abspath(__file__))[0]
     path_to_styles = os.path.join(script_dir, 'styles.html')
     table_html.add_styles_to_table(path_to_styles)
@@ -40,10 +47,10 @@ def convert_csv_table_to_html(table_csv):
 
 
 def main():
-    path_table_csv, path_table_html = build_parser()
+    path_table_csv, path_table_html, table_type = build_parser()
     table_csv = open_csv_table(path_table_csv)
     split_table(table_csv)
-    table_html = convert_csv_table_to_html(table_csv)
+    table_html = convert_csv_table_to_html(table_csv, table_type)
     table_html.save_html_table(path_table_html)
 
 

@@ -139,6 +139,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG = 'InputScale'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
+        CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG = 'OutputNames'
         CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
         CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG = 'InterOpParallelismThreads'
@@ -150,6 +151,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
         _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
         _input_shape = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
+        _input_name = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
         _output_names = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
         _inter_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG)[0].firstChild
@@ -160,6 +162,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
             input_shape=_input_shape.data if _input_shape else None,
+            input_name=_input_name.data if _input_name else None,
             output_names=_output_names.data if _output_names else None,
             thread_count=_thread_count.data if _thread_count else None,
             inter_op_parallelism_threads=_inter_op_parallelism_threads.data if _inter_op_parallelism_threads else None,
@@ -389,11 +392,12 @@ class TensorFlow_parameters(parameters_methods):
                 return False
         return True
 
-    def __init__(self, channel_swap, mean, input_scale, input_shape, output_names, thread_count, inter_op_parallelism_threads, intra_op_parallelism_threads):
+    def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count, inter_op_parallelism_threads, intra_op_parallelism_threads):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
         self.input_shape = None
+        self.input_name = None
         self.output_names = None
         self.nthreads = None
         self.num_inter_threads = None
@@ -419,6 +423,8 @@ class TensorFlow_parameters(parameters_methods):
                 self.input_shape = input_shape
             else:
                 raise ValueError('Input shape can only take values: list of 3 integer elements greater than zero.')
+        if self._parameter_not_is_none(input_name):
+            self.input_name = input_name
         if self._parameter_not_is_none(output_names):
             self.output_names = output_names
         if self._parameter_not_is_none(thread_count):

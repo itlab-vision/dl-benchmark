@@ -80,6 +80,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <InputShape></InputShape>
+            <InputName></InputName>
             <OutputNames></OutputNames>
             <ThreadCount></ThreadCount>
             <InterOpParallelismThreads></InterOpParallelismThreads>
