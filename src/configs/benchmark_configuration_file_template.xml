@@ -52,6 +52,7 @@
             <ChannelSwap></ChannelSwap>
             <Mean></Mean>
             <InputScale></InputScale>
+            <ThreadCount></ThreadCount>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -81,6 +82,9 @@
             <InputShape></InputShape>
             <InputName></InputName>
             <OutputNames></OutputNames>
+            <ThreadCount></ThreadCount>
+            <InterOpParallelismThreads></InterOpParallelismThreads>
+            <IntraOpParallelismThreads></IntraOpParallelismThreads>
         </FrameworkDependent>
     </Test>
 </Tests>

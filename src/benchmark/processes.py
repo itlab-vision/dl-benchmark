@@ -204,6 +204,10 @@ class IntelCaffe_process(process):
         return '{0} --input_scale {1}'.format(command_line, input_scale)
 
     @staticmethod
+    def __add_nthreads_for_cmd_line(command_line, nthreads):
+        return 'OMP_NUM_THREADS={1} {0}'.format(command_line, nthreads)
+
+    @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
@@ -233,6 +237,11 @@ class IntelCaffe_process(process):
             common_params = IntelCaffe_process.__add_input_scale_for_cmd_line(common_params, input_scale)
         common_params = IntelCaffe_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
         command_line = '{0} {1} {2}'.format(python, path_to_intelcaffe_scrypt, common_params)
+
+        nthreads = self._my_test.dep_parameters.nthreads
+        if nthreads:
+            command_line = IntelCaffe_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+
         return command_line
 
     def get_performance_metrics(self):
@@ -279,6 +288,18 @@ class TensorFlow_process(process):
         return '{0} --output_names {1}'.format(command_line, output_names)
 
     @staticmethod
+    def __add_nthreads_for_cmd_line(command_line, nthreads):
+        return 'OMP_NUM_THREADS={1} {0}'.format(command_line, nthreads)
+
+    @staticmethod
+    def __add_num_inter_threads_for_cmd_line(command_line, num_inter_threads):
+        return '{0} --num_inter_threads {1}'.format(command_line, num_inter_threads)
+
+    @staticmethod
+    def __add_num_intra_threads_for_cmd_line(command_line, num_intra_threads):
+        return '{0} --num_intra_threads {1}'.format(command_line, num_intra_threads)
+
+    @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
@@ -314,8 +335,20 @@ class TensorFlow_process(process):
         output_names = self._my_test.dep_parameters.output_names
         if output_names:
             common_params = TensorFlow_process.__add_output_names_for_cmd_line(common_params, output_names)
+        num_inter_threads = self._my_test.dep_parameters.num_inter_threads
+        if num_inter_threads:
+            common_params = TensorFlow_process.__add_num_inter_threads_for_cmd_line(common_params, num_inter_threads)
+        num_intra_threads = self._my_test.dep_parameters.num_intra_threads
+        if num_intra_threads:
+            common_params = TensorFlow_process.__add_num_intra_threads_for_cmd_line(common_params, num_intra_threads)
+
         common_params = TensorFlow_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
         command_line = '{0} {1} {2}'.format(python, path_to_tensorflow_scrypt, common_params)
+
+        nthreads = self._my_test.dep_parameters.nthreads
+        if nthreads:
+            command_line = TensorFlow_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+
         return command_line
 
     def get_performance_metrics(self):
