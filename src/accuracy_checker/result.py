@@ -41,16 +41,16 @@ class result:
 
         error = result.has_error(res)
         status = 'FAILED' if error else 'SUCCESS'
-        models = [value[len(TAG_MODEL):] for value in res if TAG_MODEL in value] if not error else [None]
+        models = [value[len(TAG_MODEL):] for value in res if TAG_MODEL in value]
         if not models:
             raise ValueError('Information about model was not found in test result', idx)
-        launchers = [value[len(TAG_LAUNCHER):] for value in res if TAG_LAUNCHER in value] if not error else [None]
+        launchers = [value[len(TAG_LAUNCHER):] for value in res if TAG_LAUNCHER in value]
         if not launchers:
             raise ValueError('Information about launcher was not found in test result', idx)
-        devices = [value[len(TAG_DEVICE):] for value in res if TAG_DEVICE in value] if not error else [None]
+        devices = [value[len(TAG_DEVICE):] for value in res if TAG_DEVICE in value]
         if not devices:
             raise ValueError('Information about device was not found in test result', idx)
-        datasets = [value[len(TAG_DATASET):] for value in res if TAG_DATASET in value] if not error else [None]
+        datasets = [value[len(TAG_DATASET):] for value in res if TAG_DATASET in value]
         if not datasets:
             raise ValueError('Information about dataset was not found in test result', idx)
         precisions = [value[len(TAG_PRECISION):] for value in res if TAG_PRECISION in value] if not error else ['']
