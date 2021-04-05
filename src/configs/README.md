@@ -79,6 +79,21 @@
   - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
     изображения. По умолчению равен 1.
 
+- Набор тегов для тестирования вывода средствами Intel Optimization for TensorFlow:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении. По умолчанию будет установлен порядок (2, 0, 1), что соответствует BGR.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения. По умолчанию (0, 0, 0).
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения. По умолчению равен 1.
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора в формате HWC
+    (высота, ширина, число каналов). По умолчанию не установлен.
+  - `InputName` - тег, необязательный для заполнения. Определяет название входного узла модели. 
+    По умолчанию не установлен.
+  - `OutputNames` - тег, необязательный для заполнения. Определяет имена выходных узлов модели. 
+    По умолчанию не установлен.
+
 ### Примеры заполнения
 
 #### Пример заполнения конфигурации для измерения производительности вывода средствами Intel Distribution of OpenVINO Toolkit
@@ -174,6 +189,43 @@
             <ChannelSwap>2 1 0</ChannelSwap>
             <Mean>103.94 116.78 123.68</Mean>
             <InputScale>0.017</InputScale>
+        </FrameworkDependent>
+    </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Intel Optimization for TensorFlow
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>densenet-121-tf</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TensorFlow</SourceFramework>
+            <ModelPath>/home/roix/models/public/densenet-121-tf/tf-densenet121.ckpt.meta</ModelPath>
+            <WeightsPath>/home/roix/models/public/densenet-121-tf/tf-densenet121.ckpt.meta</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/home/roix/data/ImageNET</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TensorFlow</InferenceFramework>
+            <BatchSize>4</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1000</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap>2 1 0</ChannelSwap>
+            <Mean>123.68 116.78 103.94</Mean>
+            <InputScale>58.8235294</InputScale>
+            <InputShape>224 224 3</InputShape>
+            <InputName>Placeholder</InputName>
+            <OutputNames>densenet121/predictions/Reshape_1</OutputNames>
         </FrameworkDependent>
     </Test>
 </Tests>

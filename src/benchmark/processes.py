@@ -70,8 +70,10 @@ class process(metaclass=abc.ABCMeta):
             return OpenVINO_process.create_process(test, executor, log)
         elif test.indep_parameters.inference_framework == 'Caffe':
             return IntelCaffe_process.create_process(test, executor, log)
+        elif test.indep_parameters.inference_framework == 'TensorFlow':
+            return TensorFlow_process.create_process(test, executor, log)
         else:
-            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\' and \'Caffe\' are available')
+            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
 
     @abc.abstractmethod
     def get_performance_metrics(self):
@@ -246,3 +248,86 @@ class IntelCaffe_process(process):
     @staticmethod
     def create_process(test, executor, log):
         return IntelCaffe_process(test, executor, log)
+
+
+class TensorFlow_process(process):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    @staticmethod
+    def __add_channel_swap_for_cmd_line(command_line, channel_swap):
+        return '{0} --channel_swap {1}'.format(command_line, channel_swap)
+
+    @staticmethod
+    def __add_mean_for_cmd_line(command_line, mean):
+        return '{0} --mean {1}'.format(command_line, mean)
+
+    @staticmethod
+    def __add_input_scale_for_cmd_line(command_line, input_scale):
+        return '{0} --input_scale {1}'.format(command_line, input_scale)
+
+    @staticmethod
+    def __add_input_shape_for_cmd_line(command_line, input_shape):
+        return '{0} --input_shape {1}'.format(command_line, input_shape)
+
+    @staticmethod
+    def __add_input_name_for_cmd_line(command_line, input_name):
+        return '{0} --input_name {1}'.format(command_line, input_name)
+
+    @staticmethod
+    def __add_output_names_for_cmd_line(command_line, output_names):
+        return '{0} --output_names {1}'.format(command_line, output_names)
+
+    @staticmethod
+    def __add_raw_output_time_for_cmd_line(command_line, raw_output):
+        return '{0} {1}'.format(command_line, raw_output)
+
+    def _fill_command_line(self):
+        path_to_tensorflow_scrypt = os.path.normpath(os.path.join(
+            self._my_executor.get_path_to_inference_folder(),
+            'inference_tensorflow.py')
+        )
+        python = process._get_cmd_python_version()
+
+        model = self._my_test.model.model
+        dataset = self._my_test.dataset.path
+        batch = self._my_test.indep_parameters.batch_size
+        device = self._my_test.indep_parameters.device
+        iteration = self._my_test.indep_parameters.iteration
+
+        common_params = '-m {0} -i {1} -b {2} -d {3} -ni {4}'.format(model, dataset, batch, device, iteration)
+        channel_swap = self._my_test.dep_parameters.channel_swap
+        if channel_swap:
+            common_params = TensorFlow_process.__add_channel_swap_for_cmd_line(common_params, channel_swap)
+        mean = self._my_test.dep_parameters.mean
+        if mean:
+            common_params = TensorFlow_process.__add_mean_for_cmd_line(common_params, mean)
+        input_scale = self._my_test.dep_parameters.input_scale
+        if input_scale:
+            common_params = TensorFlow_process.__add_input_scale_for_cmd_line(common_params, input_scale)
+        input_shape = self._my_test.dep_parameters.input_shape
+        if input_shape:
+            common_params = TensorFlow_process.__add_input_shape_for_cmd_line(common_params, input_shape)
+        input_name = self._my_test.dep_parameters.input_name
+        if input_name:
+            common_params = TensorFlow_process.__add_input_name_for_cmd_line(common_params, input_name)
+        output_names = self._my_test.dep_parameters.output_names
+        if output_names:
+            common_params = TensorFlow_process.__add_output_names_for_cmd_line(common_params, output_names)
+        common_params = TensorFlow_process.__add_raw_output_time_for_cmd_line(common_params, '--raw_output true')
+        command_line = '{0} {1} {2}'.format(python, path_to_tensorflow_scrypt, common_params)
+        return command_line
+
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+        return average_time, fps, latency
+
+    @staticmethod
+    def create_process(test, executor, log):
+        return TensorFlow_process(test, executor, log)

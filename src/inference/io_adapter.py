@@ -18,7 +18,7 @@ class io_adapter(metaclass=abc.ABCMeta):
         self._transformer = transformer
 
     def __convert_images(self, shape, data):
-        c, h, w = shape[1:]
+        c, h, w = self._transformer.get_shape_in_chw_order(shape)
         images = np.ndarray(shape=(len(data), c, h, w))
         image_shapes = []
         for i in range(len(data)):
@@ -29,13 +29,6 @@ class io_adapter(metaclass=abc.ABCMeta):
             image = image.transpose((2, 0, 1))
             images[i] = image
         return images, image_shapes
-
-    def __transform_images(self, images):
-        b, c, h, w = images.shape
-        transformed_images = np.zeros(shape=(b, c, h, w))
-        for i in range(b):
-            transformed_images[i] = self._transformer.transform(images[i])
-        return transformed_images
 
     def __create_list_images(self, input):
         images = []
@@ -86,7 +79,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self.__transform_images(value)
+                    transformed_value = self._transformer.transform_images(value)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
                 self._transformed_input.update({key: transformed_value})
@@ -101,7 +94,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
-                transformed_value = self.__transform_images(value)
+                transformed_value = self._transformer.transform_images(value)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
             self._transformed_input.update({input_blob: transformed_value})
@@ -191,6 +184,8 @@ class io_adapter(metaclass=abc.ABCMeta):
             return yolo_v2_tiny_coco_io(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3':
             return yolo_v3_io(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v3_tf':
+            return yolo_v3_tf_io(args, io_model_wrapper, transformer)
 
 
 class feedforward_io(io_adapter):
@@ -1508,7 +1503,10 @@ class mask_rcnn_io(io_adapter):
                 labels_map.append(line.strip())
 
         shapes = self._original_shapes[next(iter(self._original_shapes))]
-        image = self._input['image_tensor'][0].transpose((1, 2, 0))
+        if 'image_tensor' in self._input:
+            image = self._input['image_tensor'][0].transpose((1, 2, 0))
+        elif 'import/image_tensor:0' in self._input:
+            image = self._input['import/image_tensor:0'][0].transpose((1, 2, 0))
 
         detections_info = result['reshape_do_2d']
         masks = result['masks']
@@ -1809,3 +1807,29 @@ class yolo_v3_io(yolo):
             ((10, 13), (16, 30), (33, 23))
         ]
         return anchors
+
+
+class yolo_v3_tf_io(yolo_v3_io):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
+        predictions = []
+        tx, ty, tw, th = detection[0:4]
+        prior_width, prior_height = anchors[anchor_box_number]
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameHeight) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameWidth) / dy)
+        bbox_width = np.exp(tw) * prior_width
+        bbox_height = np.exp(th) * prior_height
+        for class_id in range(80):
+            confidence = self._sigmoid(detection[5 + class_id])
+            if confidence >= self._threshold:
+                bbox = [
+                    float(bbox_center_x - bbox_width / 2),
+                    float(bbox_center_y - bbox_height / 2),
+                    float(bbox_width),
+                    float(bbox_height)
+                ]
+                prediction = [confidence, class_id, bbox]
+                predictions.append(prediction)
+        return predictions
