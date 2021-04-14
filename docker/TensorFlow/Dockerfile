@@ -5,6 +5,9 @@ WORKDIR /
 ARG DEPENDENCIES="autoconf \
                   ca-certificates \
                   libgtk2.0-dev \
+                  ffmpeg \
+                  libsm6 \
+                  libxext6 \
                   python3-pip \
                   python3-setuptools \
                   sudo \
@@ -17,7 +20,7 @@ RUN apt-get update && \
 
 WORKDIR /root/
 RUN pip3 install --upgrade pip && \
-    pip3 install opencv-python requests PyYAML
+    pip3 install opencv-python requests PyYAML docker
 RUN pip3 install openvino-python
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 RUN pip3 install --force-reinstall pip==19.0 && \
@@ -38,3 +41,9 @@ RUN rm models.lst
 
 ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
 RUN git clone $DATASET_DOWNLOAD_LINK
+
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN python3 setup.py install_core
+RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN tar xvf cifar-10-python.tar.gz -C sample
+RUN accuracy_check -c /tmp/openvino-dl-benchmark/docker/TensorFlow/config.yml -m data/test_models -s sample
