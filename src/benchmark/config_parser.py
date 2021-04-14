@@ -374,7 +374,7 @@ class IntelCaffe_parameters(parameters_methods):
             else:
                 raise ValueError('Threads count can only take integer value')
         if self._parameter_not_is_none(kmp_affinity):
-            self.kmp_affinity = kmp_affinity  # насчет проверок подумать, мб оставить без них
+            self.kmp_affinity = kmp_affinity
 
 
 class TensorFlow_parameters(parameters_methods):
@@ -454,7 +454,7 @@ class TensorFlow_parameters(parameters_methods):
             else:
                 raise ValueError('Intra op parallelism threads can only take integer value')
         if self._parameter_not_is_none(kmp_affinity):
-            self.kmp_affinity = kmp_affinity  # насчет проверок подумать, мб оставить без них
+            self.kmp_affinity = kmp_affinity
 
 
 class test(metaclass=abc.ABCMeta):

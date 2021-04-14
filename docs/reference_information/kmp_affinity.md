@@ -10,7 +10,7 @@ KMP_AFFINITY=[<modifier>,...]<type>[,<permute>][,<offset>]
 
 ## Поддерживаемые атрибуты
 | **Атрибут** | **По умолчанию** | **Описание** |
-|---------|--------------|----------|
+|-------------|------------------|--------------|
 | *modifier* | *noverbose<br>respect<br>granularity=core*| Необязательный. Строка, состоящая из ключевого слова и спецификатора.<ul><li>*granularity=<*specifier*>*<br>В качестве *specifier* могут быть указаны *fine*, *thread*, *core* или *tile*</li><li>*norespect*</li><li>*noverbose*</li><li>*nowarnings*</li><li>*proclist={<*proc-list*>}*</li><li>*respect*</li><li>*verbose*</li><li>*warnings*</li></ul>|
 | *type* | *none*  | Обязательная строка. Указывает используемую привязку потока.<ul><li>*balanced*</li><li>*compact*</li><li>*disabled*</li><li>*explicit*</li><li>*none*</li><li>*scatter*</li><li>*logical* (устарело; используйте *compact*, опустив значение *permute*)</li><li>*physical* (устарело; используйте *scatter*, возможно, указав значение *offset*)</li></ul>|
 | *permute* | *0* | Опциональный. Положительное целое число. Недопустимо со значениями типов *explicit*, *none* или *disabled*. |

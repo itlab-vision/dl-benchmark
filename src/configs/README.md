@@ -202,6 +202,8 @@
             <ChannelSwap>2 1 0</ChannelSwap>
             <Mean>103.94 116.78 123.68</Mean>
             <InputScale>0.017</InputScale>
+            <ThreadCount>4</ThreadCount>
+            <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
 </Tests>
@@ -239,6 +241,10 @@
             <InputShape>224 224 3</InputShape>
             <InputName>Placeholder</InputName>
             <OutputNames>densenet121/predictions/Reshape_1</OutputNames>
+            <ThreadCount>4</ThreadCount>
+            <InterOpParallelismThreads>2</InterOpParallelismThreads>
+            <IntraOpParallelismThreads>2</IntraOpParallelismThreads>
+            <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
 </Tests>
