@@ -27,7 +27,7 @@ RUN wget --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda
 ENV PATH /root/miniconda3/bin:$PATH
 RUN echo "source activate base" > ~/.bashrc
 
-RUN /bin/bash -c "conda upgrade -c anaconda pip && pip install openvino-python opencv-python"
+RUN /bin/bash -c "conda upgrade -c anaconda pip && pip install openvino-python opencv-python docker"
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /tmp/
