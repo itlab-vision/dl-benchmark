@@ -59,6 +59,8 @@ V.1129. 2019. P. 542-553.
   - `deployment` is a set of deployment tools.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
+  - `accuracy_checker` is a set of scripts to check accuracy of
+    different models at the single local computer.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert result table
     from csv to html.
@@ -266,7 +268,7 @@ follow instructions.
 
    ```bash
    cd /tmp/dl-benchmark/csv2html
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html
+   python3 converter.py -k benchmark -t /tmp/all_results.csv -r /tmp/formatted_results.html
    ```
 
 

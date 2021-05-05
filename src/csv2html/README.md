@@ -3,11 +3,12 @@
 Скрипт запускается с помощью следующей командной строки:
 
 ```bash
-python3 converter.py -t <inf_table.csv> -r <result_file.html>
+python3 converter.py -k <table_type> -t <inf_table.csv> -r <result_file.html>
 ```
 
 Входные параметры скрипта:
 
+- `-k / --table_kind <table_type>` - тип таблицы (`benchmark`, `accuracy_checker`).
 - `-t / --table <inf_table.csv>` - путь до таблицы с результатами 
   вывода глубоких моделей в формате csv.
 - `-r / --result_table <result_file.html>` - полное имя выходного html-файла.
