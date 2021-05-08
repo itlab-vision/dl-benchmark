@@ -51,17 +51,17 @@ RUN ./install_NEO_OCL_driver.sh
 RUN usermod -a -G video root
 
 #install additional openvino dependencies
-WORKDIR /opt/intel/openvino/deployment_tools/demo
+WORKDIR $INSTALL_DIR/deployment_tools/demo
 RUN ./demo_security_barrier_camera.sh || exit 0
 RUN ./demo_security_barrier_camera -d GPU || exit 0
 
 #install model_optimizer dependencies
-WORKDIR /opt/intel/openvino/deployment_tools/model_optimizer/install_prerequisites
+WORKDIR $INSTALL_DIR/deployment_tools/model_optimizer/install_prerequisites
 RUN ./install_prerequisites.sh
 
-WORKDIR /opt/intel/openvino/deployment_tools/tools/model_downloader/
+WORKDIR $INSTALL_DIR/deployment_tools/tools/model_downloader/
 RUN python3 downloader.py --all
-RUN python3 converter.py --all --mo /opt/intel/openvino/deployment_tools/model_optimizer/mo.py || exit 0
+RUN python3 converter.py --all --mo $INSTALL_DIR/deployment_tools/model_optimizer/mo.py || exit 0
 
 WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark.git
@@ -77,7 +77,7 @@ RUN echo 'source ./accuracy_checker_env/bin/activate' && \
     pip install opencv-python pyaml docker
 
 #install accuracy_checker
-WORKDIR /opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/accuracy_checker
+WORKDIR $INSTALL_DIR/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN python3 setup.py install_core
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
