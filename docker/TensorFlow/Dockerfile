@@ -47,3 +47,5 @@ RUN python3 setup.py install_core
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN accuracy_check -c /tmp/openvino-dl-benchmark/docker/TensorFlow/config.yml -m data/test_models -s sample
+
+WORKDIR /tmp/

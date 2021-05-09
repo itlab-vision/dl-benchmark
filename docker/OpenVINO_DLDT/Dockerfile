@@ -81,10 +81,11 @@ WORKDIR $INSTALL_DIR/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN python3 setup.py install_core
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN /bin/bash -c "source /opt/intel/openvino_2021/bin/setupvars.sh && \
-    export MO_DIR=/opt/intel/openvino_2021/deployment_tools/model_optimizer && \
+RUN /bin/bash -c "source $INSTALL_DIR//bin/setupvars.sh && \
+    export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer && \
     accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
-
-RUN cat /root/.bashrc > tmp && echo 'source /opt/intel/openvino_2021/bin/setupvars.sh' > /root/.bashrc && \
-    echo 'export MO_DIR=/opt/intel/openvino_2021/deployment_tools/model_optimizer' >> /root/.bashrc && \
+	
+WORKDIR /tmp/
+RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/bin/setupvars.sh' > /root/.bashrc && \
+    echo 'export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer' >> /root/.bashrc && \
     cat tmp >> /root/.bashrc && rm tmp
