@@ -4,3 +4,9 @@ frameworks:
     CPU: FP32, INT8
     GPU: FP32, FP16
     MYRIAD: FP16
+
+  - name: "Caffe"
+    CPU: FP32
+
+  - name: "TensorFlow"
+    CPU: FP32
