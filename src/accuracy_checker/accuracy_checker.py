@@ -38,33 +38,26 @@ def build_argparser():
         '-e', '--extensions',
         help='Path to directory with InferenceEngine extensions',
         type=str, dest='extensions_path', default=None, required=False)
+    parser.add_argument('--executor_type', type=str, choices=['host_machine', 'docker_container'],
+                        help='The environment in which the tests will be executed', default='host_machine')
     config = parser.parse_args().config_path
+    if not os.path.isfile(config):
+        raise ValueError('Wrong path to configuration file!')
     models = parser.parse_args().models_path
     source = parser.parse_args().source_path
     annotations = parser.parse_args().annotations_path
     definitions = parser.parse_args().definitions_path
     extensions = parser.parse_args().extensions_path
     result = parser.parse_args().result_file
-    if not os.path.isfile(config):
-        raise ValueError('Wrong path to configuration file!')
-    if not os.path.isdir(models):
-        raise ValueError('Wrong path to directory with models!')
-    if not os.path.isdir(source):
-        raise ValueError('Wrong path to directory with source!')
-    if (annotations is not None) and (not os.path.isdir(annotations)):
-        raise ValueError('Wrong path to directory with annotations!')
-    if (definitions is not None) and (not os.path.isfile(definitions)):
-        raise ValueError('Wrong path to definitions!')
-    if (extensions is not None) and (not os.path.isdir(extensions)):
-        raise ValueError('Wrong path to directory with InferenceEngine extensions!')
-    return config, models, source, annotations, definitions, extensions, result
+    executor_type = parser.parse_args().executor_type
+    return config, models, source, annotations, definitions, extensions, result, executor_type
 
 
-def accuracy_check(executor_type, test_parameters, output_handler, log):
-    process_executor = executor.get_executor(executor_type, log)
-    tests = test_parameters.get_config_data()
+def accuracy_check(executor_type, test_parameters, output_handler, config, log):
+    process_executor = executor.get_executor(executor_type, config, log)
+    tests, target_framework = test_parameters.get_config_data()
     test_process = process(log, process_executor, test_parameters)
-    test_process.execute()
+    test_process.execute(target_framework)
     output_handler.add_results(test_process, tests)
     log.info('Saving test result in file')
 
@@ -77,12 +70,11 @@ def main():
     )
 
     try:
-        config, models, source, annotations, definitions, extensions, result = build_argparser()
+        config, models, source, annotations, definitions, extensions, result, executor_type = build_argparser()
         test_parameters = parameters(config, models, source, annotations, definitions, extensions)
         output_handler = out_hand(result)
         output_handler.create_table()
-        executor_type = 'host_machine'
-        accuracy_check(executor_type, test_parameters, output_handler, log)
+        accuracy_check(executor_type, test_parameters, output_handler, config, log)
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
