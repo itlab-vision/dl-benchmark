@@ -116,6 +116,7 @@ class IntelCaffe_parameters_parser(dependent_parameters_parser):
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG = 'InputScale'
         CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
+        CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG = 'KmpAffinity'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -123,12 +124,14 @@ class IntelCaffe_parameters_parser(dependent_parameters_parser):
         _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
         _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
+        _kmp_affinity = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
 
         return IntelCaffe_parameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
-            thread_count=_thread_count.data if _thread_count else None
+            thread_count=_thread_count.data if _thread_count else None,
+            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None
         )
 
 
@@ -144,6 +147,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
         CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG = 'InterOpParallelismThreads'
         CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG = 'IntraOpParallelismThreads'
+        CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG = 'KmpAffinity'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -156,6 +160,7 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         _thread_count = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
         _inter_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG)[0].firstChild
         _intra_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG)[0].firstChild
+        _kmp_affinity = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
 
         return TensorFlow_parameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
@@ -166,7 +171,8 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
             output_names=_output_names.data if _output_names else None,
             thread_count=_thread_count.data if _thread_count else None,
             inter_op_parallelism_threads=_inter_op_parallelism_threads.data if _inter_op_parallelism_threads else None,
-            intra_op_parallelism_threads=_intra_op_parallelism_threads.data if _intra_op_parallelism_threads else None
+            intra_op_parallelism_threads=_intra_op_parallelism_threads.data if _intra_op_parallelism_threads else None,
+            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None
         )
 
 
@@ -340,11 +346,12 @@ class IntelCaffe_parameters(parameters_methods):
                 return False
         return True
 
-    def __init__(self, channel_swap, mean, input_scale, thread_count):
+    def __init__(self, channel_swap, mean, input_scale, thread_count, kmp_affinity):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
         self.nthreads = None
+        self.kmp_affinity = None
 
         if self._parameter_not_is_none(channel_swap):
             if self._channel_swap_is_correct(channel_swap):
@@ -366,6 +373,8 @@ class IntelCaffe_parameters(parameters_methods):
                 self.nthreads = thread_count
             else:
                 raise ValueError('Threads count can only take integer value')
+        if self._parameter_not_is_none(kmp_affinity):
+            self.kmp_affinity = kmp_affinity
 
 
 class TensorFlow_parameters(parameters_methods):
@@ -392,7 +401,8 @@ class TensorFlow_parameters(parameters_methods):
                 return False
         return True
 
-    def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count, inter_op_parallelism_threads, intra_op_parallelism_threads):
+    def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count,
+                 inter_op_parallelism_threads, intra_op_parallelism_threads, kmp_affinity):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
@@ -402,6 +412,7 @@ class TensorFlow_parameters(parameters_methods):
         self.nthreads = None
         self.num_inter_threads = None
         self.num_intra_threads = None
+        self.kmp_affinity = None
 
         if self._parameter_not_is_none(channel_swap):
             if self._channel_swap_is_correct(channel_swap):
@@ -442,6 +453,8 @@ class TensorFlow_parameters(parameters_methods):
                 self.num_intra_threads = intra_op_parallelism_threads
             else:
                 raise ValueError('Intra op parallelism threads can only take integer value')
+        if self._parameter_not_is_none(kmp_affinity):
+            self.kmp_affinity = kmp_affinity
 
 
 class test(metaclass=abc.ABCMeta):
@@ -495,11 +508,12 @@ class IntelCaffe_test(test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}'.format(
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}, KMP_AFFINITY: {10}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
-            self.indep_parameters.iteration, self.dep_parameters.nthreads
+            self.indep_parameters.iteration, self.dep_parameters.nthreads,
+            self.dep_parameters.kmp_affinity
         )
 
 
@@ -508,12 +522,13 @@ class TensorFlow_test(test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}, Inter threads: {10}, Intra threads: {11}'.format(
+        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}, Inter threads: {10}, Intra threads: {11}, KMP_AFFINITY: {12}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
             self.indep_parameters.iteration, self.dep_parameters.nthreads,
-            self.dep_parameters.num_inter_threads, self.dep_parameters.num_intra_threads
+            self.dep_parameters.num_inter_threads, self.dep_parameters.num_intra_threads,
+            self.dep_parameters.kmp_affinity
         )
 
 
