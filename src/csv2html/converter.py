@@ -7,22 +7,28 @@ from accuracy_checker_table_creator import HTMLAccuracyCheckerTable
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--table', type=str, help='Path to the inference table in csv format.', required=True)
+    parser.add_argument('-t', '--tables', type=str, help='Paths to the inference tables in csv format.', nargs='+', required=True)
     parser.add_argument('-r', '--result_table', type=str, help='Full name of the resulting file', required=True)
     parser.add_argument('-k', '--table_kind', type=str, help='Kind of table: ', choices=['benchmark', 'accuracy_checker'],
                         default='benchmark', required=True)
-    path_table_csv = parser.parse_args().table
+    path_table_csv = parser.parse_args().tables
     path_table_html = parser.parse_args().result_table
     table_kind = parser.parse_args().table_kind
     return path_table_csv, path_table_html, table_kind
 
 
 def open_csv_table(path_table_csv):
-    if not os.path.isfile(path_table_csv):
-        raise ValueError('Wrong path the table!')
-    with open(path_table_csv) as file:
-        table_csv = file.readlines()
-        file.close()
+    table_csv = []
+    for table in path_table_csv:
+        if not os.path.isfile(table):
+            raise ValueError('Wrong path the table!')
+        with open(table) as file:
+            lines = file.readlines()
+            for i, line in enumerate(lines):
+                if i == 0 and len(table_csv) != 0:
+                    continue
+                table_csv.append(line)
+            file.close()
     return table_csv
 
 
