@@ -8,9 +8,9 @@ class process:
         self.__parameters = parameters
         self.__output = None
 
-    def __fill_command_line(self):
-        command_line = 'accuracy_check -c {0} -m {1} -s {2}'.format(self.__parameters.config, self.__parameters.models,
-                                                                    self.__parameters.source)
+    def __fill_command_line(self, target_framework):
+        command_line = 'accuracy_check -c {0} -m {1} -s {2}'.format(self.__parameters.configs[target_framework],
+                                                                    self.__parameters.models, self.__parameters.source)
         if self.__parameters.annotations:
             self.__add_annotations_for_cmd_line(command_line, self.__parameters.annotations)
         if self.__parameters.definitions:
@@ -32,10 +32,10 @@ class process:
         return '{0} -e {1}'.format(command_line, extensions)
 
     def execute(self, target_framework):
-        command_line = self.__fill_command_line()
+        command_line = self.__fill_command_line(target_framework)
         if command_line == '':
             self.__log.error('Command line is empty')
-        self.__log.info('Start accuracy check for config: {}'.format(self.__parameters.config))
+        self.__log.info('Start accuracy check for config: {}'.format(self.__parameters.configs[target_framework]))
         self.__executor.set_target_framework(target_framework)
         self.__output = self.__executor.execute_process(command_line)
         if type(self.__output) is not list:

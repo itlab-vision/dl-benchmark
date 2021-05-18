@@ -53,13 +53,15 @@ def build_argparser():
     return config, models, source, annotations, definitions, extensions, result, executor_type
 
 
-def accuracy_check(executor_type, test_parameters, output_handler, config, log):
-    process_executor = executor.get_executor(executor_type, config, log)
-    tests, target_framework = test_parameters.get_config_data()
-    test_process = process(log, process_executor, test_parameters)
-    test_process.execute(target_framework)
-    output_handler.add_results(test_process, tests)
-    log.info('Saving test result in file')
+def accuracy_check(executor_type, test_parameters, output_handler, log):
+    process_executor = executor.get_executor(executor_type, log)
+    for framework in test_parameters.tests_for_config_by_framework:
+        process_executor.set_config(test_parameters.configs[framework])
+        tests = test_parameters.get_config_data_by_framework(framework)
+        test_process = process(log, process_executor, test_parameters)
+        test_process.execute(framework)
+        output_handler.add_results(test_process, tests)
+        log.info('Saving test result in file')
 
 
 def main():
@@ -74,7 +76,7 @@ def main():
         test_parameters = parameters(config, models, source, annotations, definitions, extensions)
         output_handler = out_hand(result)
         output_handler.create_table()
-        accuracy_check(executor_type, test_parameters, output_handler, config, log)
+        accuracy_check(executor_type, test_parameters, output_handler, log)
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
