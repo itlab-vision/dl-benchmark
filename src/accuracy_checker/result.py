@@ -34,10 +34,11 @@ class result:
         TAG_DATASET = 'dataset:'
         TAG_PRECISION = 'precision:'
         TAG_OBJECTS = 'objects'
-        TAG_ACCURACY = 'accuracy:'
 
         res = [str.replace(' ', '') for str in res]
         res = [str.replace('\t', "") for str in res]
+        tmp = [str for str in res if str != '']
+        res = tmp
 
         error = result.has_error(res)
         status = 'FAILED' if error else 'SUCCESS'
@@ -59,7 +60,11 @@ class result:
         objects = [value[:value.find(TAG_OBJECTS)] for value in res if TAG_OBJECTS in value] if not error else ['']
         if not objects:
             raise ValueError('Information about objects was not found in test result', idx)
-        accuracies = [value[len(TAG_ACCURACY):] for value in res if TAG_ACCURACY in value] if not error else ['']
+        if not error:
+            idx = [res.index(value) for value in res if TAG_OBJECTS in value]
+            accuracies = [res[i][res[i].index(':') + 1:] for i in range(idx[0] + 1, len(res))]
+        else:
+            accuracies = ['']
         if not accuracies:
             raise ValueError('Information about accuracy was not found in test result', idx)
 
