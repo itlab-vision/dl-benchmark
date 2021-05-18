@@ -53,6 +53,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <ThreadCount></ThreadCount>
+            <KmpAffinity></KmpAffinity>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -85,6 +86,7 @@
             <ThreadCount></ThreadCount>
             <InterOpParallelismThreads></InterOpParallelismThreads>
             <IntraOpParallelismThreads></IntraOpParallelismThreads>
+            <KmpAffinity></KmpAffinity>
         </FrameworkDependent>
     </Test>
 </Tests>

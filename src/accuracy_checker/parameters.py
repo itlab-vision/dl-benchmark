@@ -24,4 +24,4 @@ class parameters:
         models = test_dict[MODELS_TAG]
         for model in models:
             tests.append(test(model))
-        return tests
+        return tests, tests[0].launchers[0].framework

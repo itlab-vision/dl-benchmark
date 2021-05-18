@@ -208,6 +208,10 @@ class IntelCaffe_process(process):
         return 'OMP_NUM_THREADS={1} {0}'.format(command_line, nthreads)
 
     @staticmethod
+    def __add_kmp_affinity_for_cmd_line(command_line, kmp_affinity):
+        return 'KMP_AFFINITY={1} {0}'.format(command_line, kmp_affinity)
+
+    @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
@@ -241,6 +245,9 @@ class IntelCaffe_process(process):
         nthreads = self._my_test.dep_parameters.nthreads
         if nthreads:
             command_line = IntelCaffe_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+        kmp_affinity = self._my_test.dep_parameters.kmp_affinity
+        if kmp_affinity:
+            command_line = IntelCaffe_process.__add_kmp_affinity_for_cmd_line(command_line, kmp_affinity)
 
         return command_line
 
@@ -300,6 +307,10 @@ class TensorFlow_process(process):
         return '{0} --num_intra_threads {1}'.format(command_line, num_intra_threads)
 
     @staticmethod
+    def __add_kmp_affinity_for_cmd_line(command_line, kmp_affinity):
+        return 'KMP_AFFINITY={1} {0}'.format(command_line, kmp_affinity)
+
+    @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
@@ -348,6 +359,9 @@ class TensorFlow_process(process):
         nthreads = self._my_test.dep_parameters.nthreads
         if nthreads:
             command_line = TensorFlow_process.__add_nthreads_for_cmd_line(command_line, nthreads)
+        kmp_affinity = self._my_test.dep_parameters.kmp_affinity
+        if kmp_affinity:
+            command_line = TensorFlow_process.__add_kmp_affinity_for_cmd_line(command_line, kmp_affinity)
 
         return command_line
 

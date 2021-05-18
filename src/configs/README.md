@@ -81,6 +81,8 @@
   - `ThreadCount` - опциональный тег. Описывает максимальное количество физических
     потоков для выполнения вывода. По умолчанию будет выставлено число потоков, равное
     физическому количеству ядер в системе.
+  - `KmpAffinity` - опциональный тег. Позволяет установить значение переменной окружения KMP_AFFINITY.
+    По умолчанию не задан. Подробнее про атрибуты, принимаемые переменной окружения, [здесь][kmp-affinity-docs].
 
 - Набор тегов для тестирования вывода средствами Intel Optimization for TensorFlow:
 
@@ -101,6 +103,9 @@
     физическому количеству ядер в системе.
   - `InterOpParallelismThreads` - опциональный тег. Определяет количество потоков, используемых для параллелизма между независимыми операциями. По умолчанию не установлен и выбирается TensorFlow автоматически.
   - `IntraOpParallelismThreads` - опциональный тег. Определяет количество потоков, используемых для параллелизма между блокирующими операциями. По умолчанию не установлен и выбирается TensorFlow автоматически.
+  - `KmpAffinity` - опциональный тег. Позволяет установить значение переменной окружения KMP_AFFINITY.
+    По умолчанию не задан. Подробнее про атрибуты, принимаемые переменной окружения, [здесь][kmp-affinity-docs].
+
 
 ### Примеры заполнения
 
@@ -197,6 +202,8 @@
             <ChannelSwap>2 1 0</ChannelSwap>
             <Mean>103.94 116.78 123.68</Mean>
             <InputScale>0.017</InputScale>
+            <ThreadCount>4</ThreadCount>
+            <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
 </Tests>
@@ -234,6 +241,10 @@
             <InputShape>224 224 3</InputShape>
             <InputName>Placeholder</InputName>
             <OutputNames>densenet121/predictions/Reshape_1</OutputNames>
+            <ThreadCount>4</ThreadCount>
+            <InterOpParallelismThreads>2</InterOpParallelismThreads>
+            <IntraOpParallelismThreads>2</IntraOpParallelismThreads>
+            <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
 </Tests>
@@ -323,3 +334,7 @@
     </Computer>
 </Computers>
 ```
+
+
+<!-- LINKS -->
+[kmp-affinity-docs]: ../../docs/reference_information/kmp_affinity.md
