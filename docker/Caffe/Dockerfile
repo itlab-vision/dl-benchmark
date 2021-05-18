@@ -43,7 +43,7 @@ RUN /bin/bash -c "python3 setup.py install_core"
 RUN /bin/bash -c "conda install -c anaconda scikit-image=0.14.2"
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN /bin/bash -c "accuracy_check -c /tmp/openvino-dl-benchmark/docker/Caffe/config.yml -m data/test_models -s sample"
+RUN /bin/bash -c "accuracy_check -c /tmp/dl-benchmark/docker/Caffe/config.yml -m data/test_models -s sample"
 
 WORKDIR /tmp/
 COPY models.lst models.lst

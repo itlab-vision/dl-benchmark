@@ -46,18 +46,18 @@ RUN curl -LOJ "${DOWNLOAD_LINK}" && \
 
 #install openvino dependencies
 WORKDIR $INSTALL_DIR/install_dependencies
-RUN ./install_openvino_dependencies.sh
-RUN ./install_NEO_OCL_driver.sh
+RUN echo y | ./install_openvino_dependencies.sh
+RUN echo y | ./install_NEO_OCL_driver.sh
 RUN usermod -a -G video root
 
 #install additional openvino dependencies
 WORKDIR $INSTALL_DIR/deployment_tools/demo
-RUN ./demo_security_barrier_camera.sh || exit 0
-RUN ./demo_security_barrier_camera -d GPU || exit 0
+RUN echo y | ./demo_security_barrier_camera.sh || exit 0
+RUN echo y | ./demo_security_barrier_camera -d GPU || exit 0
 
 #install model_optimizer dependencies
 WORKDIR $INSTALL_DIR/deployment_tools/model_optimizer/install_prerequisites
-RUN ./install_prerequisites.sh
+RUN echo y | ./install_prerequisites.sh
 
 WORKDIR $INSTALL_DIR/deployment_tools/tools/model_downloader/
 RUN python3 downloader.py --all
