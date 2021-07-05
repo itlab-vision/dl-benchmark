@@ -1,0 +1,79 @@
+{
+    "models": [
+        {
+            "model": {
+                "model_name": "alexnet",
+                "model": "./orig_models/alexnet/alexnet.xml",
+                "weights": "./orig_models/alexnet/alexnet.bin"
+            },
+  
+            "dataset": {
+                "data_source": "ILSVRC2012_img_val",
+                "annotation_file": "ILSVRC2012_img_val/val.txt",
+                "set_size": 300,
+                "preprocessing": {
+                    "image_resize": {
+                        "height": 227, 
+                        "width": 227 
+                    },
+                    "means": [104, 117, 123]
+                }
+            },
+        
+            "algorithms": [
+                {
+                    "name": "DefaultQuantization",
+                    "params": {
+                        "target_device": "CPU",
+                        "preset": "performance",
+                        "stat_subset_size": 300
+                    }
+                }
+            ],
+
+            "engine_config": {
+                "device": "CPU",
+                "stat_requests_number": 4,
+                "eval_requests_number": 4
+            }
+        },
+
+        {
+            "model": {
+                "model_name": "caffenet",
+                "model": "./orig_models/caffenet/caffenet.xml",
+                "weights": "./orig_models/caffenet/caffenet.bin"
+            },
+  
+            "dataset": {
+                "data_source": "ILSVRC2012_img_val",
+                "annotation_file": "ILSVRC2012_img_val/val.txt",
+                "set_size": 300,
+                "preprocessing": {
+                    "image_resize": {
+                        "height": 227, 
+                        "width": 227 
+                    },
+                    "means": [104, 117, 123]
+                }
+            },
+        
+            "algorithms": [
+                {
+                    "name": "DefaultQuantization",
+                    "params": {
+                        "target_device": "CPU",
+                        "preset": "performance",
+                        "stat_subset_size": 300
+                    }
+                }
+            ],
+
+            "engine_config": {
+                "device": "CPU",
+                "stat_requests_number": 4,
+                "eval_requests_number": 4
+            }
+        }
+    ]
+}
