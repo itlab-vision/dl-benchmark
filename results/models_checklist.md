@@ -164,6 +164,8 @@ i3d-rgb-tf|+|-|-|
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 ***resnet18-xnor-binary-onnx-0001***|+|+|-|
+resnet50-binary-0001|+|-|-|
+weld-porosity-detection-0001|+|-|-|
 
 ### Детектирование объектов (object detection)
 
@@ -174,6 +176,11 @@ i3d-rgb-tf|+|-|-|
 ***face-detection-0104***|-|+|-|
 ***face-detection-0105***|-|+|-|
 face-detection-0106|-|-|-|
+face-detection-0200|+|-|-|
+face-detection-0202|+|-|-|
+face-detection-0204|+|-|-|
+face-detection-0205|+|-|-|
+face-detection-0206|+|-|-|
 face-detection-adas-0001|+|+|+|
 ***face-detection-adas-binary-0001***|-|+|-|
 face-detection-retail-0004|+|+|+|
@@ -182,6 +189,11 @@ faster-rcnn-resnet101-coco-sparse-60-0001|+|-|-|
 pedestrian-and-vehicle-detector-adas-0001|+|+|+|
 pedestrian-detection-adas-0002|+|+|+|
 ***pedestrian-detection-adas-binary-0001***|-|+|-|
+person-detection-0106|+|-|-|
+person-detection-0200|+|-|-|
+person-detection-0201|+|-|-|
+person-detection-0202|+|-|-|
+person-detection-0203|+|-|-|
 ***person-detection-action-recognition-0005***|+|+|-|
 ***person-detection-action-recognition-0006***|+|+|-|
 ***person-detection-action-recognition-teacher-0002***|+|+|-|
@@ -189,15 +201,25 @@ pedestrian-detection-adas-0002|+|+|+|
 ***person-detection-raisinghand-recognition-0001***|+|+|-|
 ***person-detection-retail-0002***|+|+|-|
 person-detection-retail-0013|+|+|+|
+person-vehicle-bike-detection-2000|+|-|-|
+person-vehicle-bike-detection-2001|+|-|-|
+person-vehicle-bike-detection-2002|+|-|-|
+person-vehicle-bike-detection-2003|+|-|-|
+person-vehicle-bike-detection-2004|+|-|-|
 person-vehicle-bike-detection-crossroad-0078|+|+|+|
 person-vehicle-bike-detection-crossroad-1016|+|+|+|
+person-vehicle-bike-detection-crossroad-yolov3-1020|+|-|-|
 ***product-detection-0001***|+|+|-|
+vehicle-detection-0200|+|-|-|
+vehicle-detection-0201|+|-|-|
+vehicle-detection-0202|+|-|-|
 vehicle-detection-adas-0002|+|+|+|
 ***vehicle-detection-adas-binary-0001***|-|+|-|
 vehicle-license-plate-detection-barrier-0106|+|+|+|
 yolo-v2-ava-0001|+|+|-|
 yolo-v2-ava-sparse-35-0001|+|+|-|
 yolo-v2-ava-sparse-70-0001|+|+|-|
+yolo-v2-tiny-vehicle-detection-0001|+|-|-|
 yolo-v2-tiny-ava-0001|+|+|-|
 yolo-v2-tiny-ava-sparse-30-0001|+|+|-|
 yolo-v2-tiny-ava-sparse-60-0001|+|+|-|
@@ -214,7 +236,10 @@ head-pose-estimation-adas-0001|+|+|+|
 landmarks-regression-retail-0009|+|+|+|
 ***license-plate-recognition-barrier-0001***|+|+|-|
 person-attributes-recognition-crossroad-0230|+|+|+|
+person-attributes-recognition-crossroad-0234|+|-|-|
+person-attributes-recognition-crossroad-0238|+|-|-|
 vehicle-attributes-recognition-barrier-0039|+|отсутствуют данные|-|
+vehicle-attributes-recognition-barrier-0042|+|-|-|
 
 ### Идентификация объектов (reidentification)
 
@@ -223,6 +248,10 @@ vehicle-attributes-recognition-barrier-0039|+|отсутствуют данны�
 person-reidentification-retail-0031|-|нет доступа к набору данных Market-1501|-|
 person-reidentification-retail-0076|-|нет доступа к набору данных Market-1501|-|
 person-reidentification-retail-0079|-|нет доступа к набору данных Market-1501|-|
+person-reidentification-retail-0277|+|-|-|
+person-reidentification-retail-0286|+|-|-|
+person-reidentification-retail-0287|+|-|-|
+person-reidentification-retail-0288|+|-|-|
 ***face-reidentification-retail-0095***|+|+|-|
 
 ### Семантическая сегментация
@@ -240,16 +269,24 @@ semantic-segmentation-adas-0001|+|+|+|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+instance-segmentation-security-0002|+|-|-|
 ***instance-segmentation-security-0010***|-|+|-|
 ***instance-segmentation-security-0050***|-|+|-|
 ***instance-segmentation-security-0083***|-|+|-|
+instance-segmentation-security-0091|+|-|-|
+instance-segmentation-security-0228|+|-|-|
 ***instance-segmentation-security-1025***|-|+|-|
+instance-segmentation-security-1039|+|-|-|
+instance-segmentation-security-1040|+|-|-|
 
 ### Оценка позы человека (human pose estimation)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 ***human-pose-estimation-0001***|+|+|-|
+human-pose-estimation-0005|+|-|-|
+human-pose-estimation-0006|+|-|-|
+human-pose-estimation-0007|+|-|-|
 
 ### Обработка изображений (image processing)
 
@@ -263,6 +300,7 @@ text-image-super-resolution-0001|+|нет доступа к набору дан�
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+horizontal-text-detection-0001|+|-|-|
 text-detection-0003|+|нет доступа к набору данных ICDAR|-|
 text-detection-0004|+|нет доступа к набору данных ICDAR|-|
 
@@ -270,9 +308,14 @@ text-detection-0004|+|нет доступа к набору данных ICDAR|-
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+formula-recognition-medium-scan-0001|+|-|-|
+formula-recognition-polynomials-handwritten-0001|+|-|-|
 handwritten-japanese-recognition-0001|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|
 handwritten-score-recognition-0003|+|отсутствуют данные|-|
+handwritten-simplified-chinese-recognition-0001|+|-|-|
 text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
+text-recognition-0014|+|-|-|
+text-recognition-0015|+|-|-|
 
 ### Детектирование и распознавание текста (text spotting)
 
@@ -281,22 +324,59 @@ text-recognition-0012|+|нет доступа к набору данных ICDAR
 text-spotting-0002-detector|-|пайплайн из трех моделей|-|
 text-spotting-0002-recognizer-decoder|-|-|-|
 text-spotting-0002-recognizer-encoder|-|-|-|
+text-spotting-0005|+|-|-|
 
 ### Распознавание движений (action recognition)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-***action-recognition-0001-decoder***|-|+|-|
-***action-recognition-0001-encoder***|-|+|-|
+***action-recognition-0001-decoder***|+ (action-recognition-0001)|+|-|
+***action-recognition-0001-encoder***|+ (action-recognition-0001)|+|-|
 asl-recognition-0004|+|-|-|
-***driver-action-recognition-adas-0002-decoder***|-|+|-|
-***driver-action-recognition-adas-0002-encoder***|-|+|-|
+common-sign-language-0002|+|-|-|
+***driver-action-recognition-adas-0002-decoder***|+ (driver-action-recognition-adas-0002)|+|-|
+***driver-action-recognition-adas-0002-encoder***|+ (driver-action-recognition-adas-0002)|+|-|
 
 ### Восстановление изображений (image retrieval)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 image-retrieval-0001|+|+|-|
+
+### Ответ на вопрос (question answering)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+bert-large-uncased-whole-word-masking-squad-0001|+|-|-|
+bert-large-uncased-whole-word-masking-squad-emb-0001|+|-|-|
+bert-large-uncased-whole-word-masking-squad-int8-0001|+|-|-|
+bert-small-uncased-whole-word-masking-squad-0001|+|-|-|
+bert-small-uncased-whole-word-masking-squad-0002|+|-|-|
+bert-small-uncased-whole-word-masking-squad-emb-int8-0001|+|-|-|
+bert-small-uncased-whole-word-masking-squad-int8-0002|+|-|-|
+
+### Перевод текстов с одного языка на другой (machine translation)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+machine-translation-nar-de-en-0002|+|-|-|
+machine-translation-nar-en-de-0002|+|-|-|
+machine-translation-nar-en-ru-0001|+|-|-|
+machine-translation-nar-ru-en-0001|+|-|-|
+
+### Подавление шумов (noise suppression)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+noise-suppression-poconetlike-0001|+|-|-|
+
+### Синтезирование речи (speech synthesis)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+text-to-speech-en-0001|+|-|-|
+text-to-speech-en-multi-0001|+|-|-|
+
+### Прогнозирование временного ряда (Time Series Forecasting)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+time-series-forecasting-electricity-0001|+|-|-|
 
 ## Модели для следующего этапа расширения
 
@@ -318,7 +398,6 @@ image-retrieval-0001|+|+|-|
 1. person-reidentification-retail-0267
 1. person-reidentification-retail-0270
 1. text-spotting-0002
-1. driver-action-recognition-adas-0002
 1. action-recognition-0001
 
 
