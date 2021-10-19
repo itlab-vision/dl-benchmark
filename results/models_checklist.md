@@ -9,26 +9,28 @@
 alexnet|+|+|+|
 caffenet|+|+|+|
 densenet-121|+|+|+|
-densenet-161|+|+|+|
-densenet-169|+|+|+|
-densenet-201|+|+|+|
+***densenet-121-caffe2***|+|+|-|
 ***densenet-121-tf***|+|+|-|
+densenet-161|+|+|+|
 ***densenet-161-tf***|+|+|-|
+densenet-169|+|+|+|
 ***densenet-169-tf***|+|+|-|
+densenet-201|+|+|+|
 ***efficientnet-b0***|+|+|-|
 ***efficientnet-b0_auto_aug***|+|+|-|
 ***efficientnet-b0-pytorch***|+|+|-|
 ***efficientnet-b5***|+|+|-|
 ***efficientnet-b5-pytorch***|+|+|-|
-***efficientnet-b7-pytorch***|+|+|-|
 ***efficientnet-b7_auto_aug***|+|+|-|
+***efficientnet-b7-pytorch***|+|+|-|
 googlenet-v1|+|+|+|
+***googlenet-v1-tf***|+|+|-|
 googlenet-v2|+|+|+|
+googlenet-v2-tf|+|+|-|
 googlenet-v3|+|+|+|
 ***googlenet-v3-pytorch***|+|+|-|
 googlenet-v4|-|+|+|
 ***googlenet-v4-tf***|+|+|-|
-***googlenet-v1-tf***|+|+|-|
 inception-resnet-v2|-|+|+|
 ***inception-resnet-v2-tf***|+|+|-|
 mobilenet-v1-0.25-128|+|+|+|
@@ -37,41 +39,39 @@ mobilenet-v1-0.50-224|+|+|+|
 mobilenet-v1-1.0-224|+|+|+|
 ***mobilenet-v1-1.0-224-tf***|+|+|-|
 mobilenet-v2|+|+|+|
-***mobilenet-v2-pytorch***|+|+|-|
-***mobilenet-v2-1.4-224***|+|+|-|
 ***mobilenet-v2-1.0-224***|+|+|-|
-resnet-50|-|название resnet-v1-*|+|
-***resnet-50-pytorch***|+|+|-|
-resnet-101|-|название resnet-v1-*|+|
-resnet-152|-|название resnet-v1-*|+|
-***resnet-50-tf***|+|+|-|
-***resnet-18-pytorch***|+|+|-|
-se-inception|+|+|+|
-se-resnet-50|+|+|+|
-se-resnet-101|+|+|+|
-se-resnet-152|+|+|+|
-se-resnext-50|+|+|+|
-se-resnext-101|+|+|+|
-squeezenet1.0|+|+|+|
-squeezenet1.1|+|+|+|
-vgg16|+|+|+|
-vgg19|+|+|+|
-squeezenet1.1-caffe2|+|+|-|
-resnet-50-caffe2|+|+|-|
-vgg19-caffe2|+|+|-|
-densenet-121-caffe2|+|+|-|
-googlenet-v2-tf|+|+|-|
+***mobilenet-v2-1.4-224***|+|+|-|
+***mobilenet-v2-pytorch***|+|+|-|
 mobilenet-v3-large-1.0-224-tf|+|+|-|
 mobilenet-v3-small-1.0-224-tf|+|+|-|
-open-closed-eye-0001|+|+|-|
 ***octave-densenet-121-0.125***|+|+|-|
-***octave-resnet-26-0.25***|+|+|-|
-***octave-resnet-50-0.125***|+|+|-|
 ***octave-resnet-101-0.125***|+|+|-|
 ***octave-resnet-200-0.125***|+|+|-|
-***octave-resnext-50-0.25***|+|+|-|
+***octave-resnet-26-0.25***|+|+|-|
+***octave-resnet-50-0.125***|+|+|-|
 ***octave-resnext-101-0.25***|+|+|-|
+***octave-resnext-50-0.25***|+|+|-|
 ***octave-se-resnet-50-0.125***|+|+|-|
+open-closed-eye-0001|+|+|-|
+resnet-101|-|название resnet-v1-*|+|
+resnet-152|-|название resnet-v1-*|+|
+***resnet-18-pytorch***|+|+|-|
+resnet-50|-|название resnet-v1-*|+|
+***resnet-50-caffe2***|+|+|-|
+***resnet-50-pytorch***|+|+|-|
+***resnet-50-tf***|+|+|-|
+se-inception|+|+|+|
+se-resnet-101|+|+|+|
+se-resnet-152|+|+|+|
+se-resnet-50|+|+|+|
+se-resnext-101|+|+|+|
+se-resnext-50|+|+|+|
+squeezenet1.0|+|+|+|
+squeezenet1.1|+|+|+|
+squeezenet1.1-caffe2|+|+|-|
+vgg16|+|+|+|
+vgg19|+|+|+|
+vgg19-caffe2|+|+|-|
 
 ### Семантическая сегментация (semantic segmentation)
 
@@ -85,8 +85,8 @@ deeplabv3|+|+|+|
 -|-|-|-|
 mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|
 mask_rcnn_inception_v2_coco|+|+|-|
-mask_rcnn_resnet50_atrous_coco|+|+|-|
 mask_rcnn_resnet101_atrous_coco|+|+|-|
+mask_rcnn_resnet50_atrous_coco|+|+|-|
 
 ### 3D сегментация (3D segmentation)
 
@@ -99,37 +99,37 @@ brain-tumor-segmentation-0002|+|отсутствуют данные|-|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-ctpn|+|отсутствуют данные|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
+ctpn|+|отсутствуют данные|-|
 ***faster_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|
 ***faster_rcnn_inception_v2_coco***|+|+|-|
-***faster_rcnn_resnet50_coco***|+|+|-|
 ***faster_rcnn_resnet101_coco***|+|+|-|
+***faster_rcnn_resnet50_coco***|+|+|-|
+mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
 mtcnn|+|пайплайн из трех моделей|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
-mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
+ssdlite_mobilenet_v2|+|-|-|
 ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
-ssdlite_mobilenet_v2|+|-|-|
+ssd_resnet50_v1_fpn_coco|+|-|+|
 yolo-v1-tiny-tf|+|+|-|
 yolo-v2-tiny-tf|+|+|-|
 yolo-v2-tf|+|+|-|
 yolo-v3-tf|+|+|-|
 retinanet-tf|+|-|+|
 pelee-coco|+|-|+|
-ssd_resnet50_v1_fpn_coco|+|-|+|
 
 ### Распознавание лиц (face recognition)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 facenet-20180408-102900|+|не известен тренировочный набор данных|-|
+face-recognition-mobilefacenet-arcface|-|не известен тренировочный набор данных|-|
+face-recognition-resnet100-arcface|-|не известен тренировочный набор данных|-|
 face-recognition-resnet34-arcface|-|не известен тренировочный набор данных|-|
 face-recognition-resnet50-arcface|-|не известен тренировочный набор данных|-|
-face-recognition-resnet100-arcface|-|не известен тренировочный набор данных|-|
-face-recognition-mobilefacenet-arcface|-|не известен тренировочный набор данных|-|
 ***Sphereface***|+|+|-|
 
 ### Оценка позы человека (human pose estimation)
@@ -166,34 +166,35 @@ i3d-rgb-tf|+|-|-|
 ***resnet18-xnor-binary-onnx-0001***|+|+|-|
 
 ### Детектирование объектов (object detection)
+
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-faster-rcnn-resnet101-coco-sparse-60-0001|+|-|-|
-face-detection-adas-0001|+|+|+|
-***face-detection-adas-binary-0001***|-|+|-|
-face-detection-retail-0004|+|+|+|
-face-detection-retail-0005|+|+|+|
 ***face-detection-0100***|-|+|-|
 ***face-detection-0102***|-|+|-|
 ***face-detection-0104***|-|+|-|
 ***face-detection-0105***|-|+|-|
 face-detection-0106|-|-|-|
-***person-detection-retail-0002***|+|+|-|
-person-detection-retail-0013|+|+|+|
+face-detection-adas-0001|+|+|+|
+***face-detection-adas-binary-0001***|-|+|-|
+face-detection-retail-0004|+|+|+|
+face-detection-retail-0005|+|+|+|
+faster-rcnn-resnet101-coco-sparse-60-0001|+|-|-|
+pedestrian-and-vehicle-detector-adas-0001|+|+|+|
+pedestrian-detection-adas-0002|+|+|+|
+***pedestrian-detection-adas-binary-0001***|-|+|-|
 ***person-detection-action-recognition-0005***|+|+|-|
 ***person-detection-action-recognition-0006***|+|+|-|
 ***person-detection-action-recognition-teacher-0002***|+|+|-|
+***person-detection-asl-0001***|+|+|-|
 ***person-detection-raisinghand-recognition-0001***|+|+|-|
-pedestrian-detection-adas-0002|+|+|+|
-***pedestrian-detection-adas-binary-0001***|-|+|-|
-pedestrian-and-vehicle-detector-adas-0001|+|+|+|
-vehicle-detection-adas-0002|+|+|+|
-***vehicle-detection-adas-binary-0001***|-|+|-|
+***person-detection-retail-0002***|+|+|-|
+person-detection-retail-0013|+|+|+|
 person-vehicle-bike-detection-crossroad-0078|+|+|+|
 person-vehicle-bike-detection-crossroad-1016|+|+|+|
-vehicle-license-plate-detection-barrier-0106|+|+|+|
 ***product-detection-0001***|+|+|-|
-***person-detection-asl-0001***|+|+|-|
+vehicle-detection-adas-0002|+|+|+|
+***vehicle-detection-adas-binary-0001***|-|+|-|
+vehicle-license-plate-detection-barrier-0106|+|+|+|
 yolo-v2-ava-0001|+|+|-|
 yolo-v2-ava-sparse-35-0001|+|+|-|
 yolo-v2-ava-sparse-70-0001|+|+|-|
@@ -206,43 +207,43 @@ yolo-v2-tiny-ava-sparse-60-0001|+|+|-|
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 age-gender-recognition-retail-0013|+|+|+|
-head-pose-estimation-adas-0001|+|+|+|
-***license-plate-recognition-barrier-0001***|+|+|-|
-vehicle-attributes-recognition-barrier-0039|+|отсутствуют данные|-|
 emotions-recognition-retail-0003|+|нет доступа к набору данных AffectNet|-|
-landmarks-regression-retail-0009|+|+|+|
 facial-landmarks-35-adas-0002|+|+|+|
-person-attributes-recognition-crossroad-0230|+|+|+|
 ***gaze-estimation-adas-0002***|+|+|-|
+head-pose-estimation-adas-0001|+|+|+|
+landmarks-regression-retail-0009|+|+|+|
+***license-plate-recognition-barrier-0001***|+|+|-|
+person-attributes-recognition-crossroad-0230|+|+|+|
+vehicle-attributes-recognition-barrier-0039|+|отсутствуют данные|-|
 
 ### Идентификация объектов (reidentification)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 person-reidentification-retail-0031|-|нет доступа к набору данных Market-1501|-|
-person-reidentification-retail-0079|-|нет доступа к набору данных Market-1501|-|
 person-reidentification-retail-0076|-|нет доступа к набору данных Market-1501|-|
+person-reidentification-retail-0079|-|нет доступа к набору данных Market-1501|-|
 ***face-reidentification-retail-0095***|+|+|-|
 
 ### Семантическая сегментация
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-road-segmentation-adas-0001|+|+|+|
-semantic-segmentation-adas-0001|+|+|+|
-***unet-camvid-onnx-0001***|+|+|-|
 ***icnet-camvid-ava-0001***|+|+|-|
 ***icnet-camvid-ava-sparse-30-0001***|+|+|-|
 ***icnet-camvid-ava-sparse-60-0001***|+|+|-|
+road-segmentation-adas-0001|+|+|+|
+semantic-segmentation-adas-0001|+|+|+|
+***unet-camvid-onnx-0001***|+|+|-|
 
 ### Сегментация объектов (instance segmentation)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-***instance-segmentation-security-1025***|-|+|-|
+***instance-segmentation-security-0010***|-|+|-|
 ***instance-segmentation-security-0050***|-|+|-|
 ***instance-segmentation-security-0083***|-|+|-|
-***instance-segmentation-security-0010***|-|+|-|
+***instance-segmentation-security-1025***|-|+|-|
 
 ### Оценка позы человека (human pose estimation)
 
@@ -269,27 +270,27 @@ text-detection-0004|+|нет доступа к набору данных ICDAR|-
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
-handwritten-score-recognition-0003|+|отсутствуют данные|-|
 handwritten-japanese-recognition-0001|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|
+handwritten-score-recognition-0003|+|отсутствуют данные|-|
+text-recognition-0012|+|нет доступа к набору данных ICDAR|-|
 
 ### Детектирование и распознавание текста (text spotting)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 text-spotting-0002-detector|-|пайплайн из трех моделей|-|
-text-spotting-0002-recognizer-encoder|-|-|-|
 text-spotting-0002-recognizer-decoder|-|-|-|
+text-spotting-0002-recognizer-encoder|-|-|-|
 
 ### Распознавание движений (action recognition)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-***driver-action-recognition-adas-0002-encoder***|-|+|-|
-***driver-action-recognition-adas-0002-decoder***|-|+|-|
-***action-recognition-0001-encoder***|-|+|-|
 ***action-recognition-0001-decoder***|-|+|-|
+***action-recognition-0001-encoder***|-|+|-|
 asl-recognition-0004|+|-|-|
+***driver-action-recognition-adas-0002-decoder***|-|+|-|
+***driver-action-recognition-adas-0002-encoder***|-|+|-|
 
 ### Восстановление изображений (image retrieval)
 
