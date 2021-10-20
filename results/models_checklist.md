@@ -7,6 +7,7 @@
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 alexnet|+|+|+|
+anti-spoof-mn3|+|-|-|
 caffenet|+|+|+|
 densenet-121|+|+|+|
 ***densenet-121-caffe2***|+|+|-|
@@ -16,6 +17,8 @@ densenet-161|+|+|+|
 densenet-169|+|+|+|
 ***densenet-169-tf***|+|+|-|
 densenet-201|+|+|+|
+densenet-201-tf|+|-|-|
+dla-34|+|-|-|
 ***efficientnet-b0***|+|+|-|
 ***efficientnet-b0_auto_aug***|+|+|-|
 ***efficientnet-b0-pytorch***|+|+|-|
@@ -23,6 +26,8 @@ densenet-201|+|+|+|
 ***efficientnet-b5-pytorch***|+|+|-|
 ***efficientnet-b7_auto_aug***|+|+|-|
 ***efficientnet-b7-pytorch***|+|+|-|
+efficientdet-d0-tf|+|-|-|
+efficientdet-d1-tf|+|-|-|
 googlenet-v1|+|+|+|
 ***googlenet-v1-tf***|+|+|-|
 googlenet-v2|+|+|+|
@@ -31,8 +36,12 @@ googlenet-v3|+|+|+|
 ***googlenet-v3-pytorch***|+|+|-|
 googlenet-v4|-|+|+|
 ***googlenet-v4-tf***|+|+|-|
+hbonet-0.25|+|-|-|
+hbonet-0.5|+|-|-|
+hbonet-1.0|+|-|-|
 inception-resnet-v2|-|+|+|
 ***inception-resnet-v2-tf***|+|+|-|
+mixnet-l|+|-|-|
 mobilenet-v1-0.25-128|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|
@@ -44,6 +53,7 @@ mobilenet-v2|+|+|+|
 ***mobilenet-v2-pytorch***|+|+|-|
 mobilenet-v3-large-1.0-224-tf|+|+|-|
 mobilenet-v3-small-1.0-224-tf|+|+|-|
+nfnet-f0|+|-|-|
 ***octave-densenet-121-0.125***|+|+|-|
 ***octave-resnet-101-0.125***|+|+|-|
 ***octave-resnet-200-0.125***|+|+|-|
@@ -53,19 +63,27 @@ mobilenet-v3-small-1.0-224-tf|+|+|-|
 ***octave-resnext-50-0.25***|+|+|-|
 ***octave-se-resnet-50-0.125***|+|+|-|
 open-closed-eye-0001|+|+|-|
+regnetx-3.2gf|+|-|-|
+repvgg-a0|+|-|-|
+repvgg-b1|+|-|-|
+repvgg-b3|+|-|-|
+resnest-50-pytorch|+|-|-|
 resnet-101|-|название resnet-v1-*|+|
 resnet-152|-|название resnet-v1-*|+|
 ***resnet-18-pytorch***|+|+|-|
+resnet-34-pytorch|+|-|-|
 resnet-50|-|название resnet-v1-*|+|
 ***resnet-50-caffe2***|+|+|-|
 ***resnet-50-pytorch***|+|+|-|
 ***resnet-50-tf***|+|+|-|
+rexnet-v1-x1.0|+|-|-|
 se-inception|+|+|+|
 se-resnet-101|+|+|+|
 se-resnet-152|+|+|+|
 se-resnet-50|+|+|+|
 se-resnext-101|+|+|+|
 se-resnext-50|+|+|+|
+shufflenet-v2-x1.0|+|-|-|
 squeezenet1.0|+|+|+|
 squeezenet1.1|+|+|+|
 squeezenet1.1-caffe2|+|+|-|
@@ -78,6 +96,9 @@ vgg19-caffe2|+|+|-|
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 deeplabv3|+|+|+|
+fastseg-large|+|-|-|
+fastseg-small|+|-|-|
+pspnet-pytorch|+|-|-|
 
 ### Сегментация объектов (instance segmentation)
 
@@ -87,6 +108,7 @@ mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|
 mask_rcnn_inception_v2_coco|+|+|-|
 mask_rcnn_resnet101_atrous_coco|+|+|-|
 mask_rcnn_resnet50_atrous_coco|+|+|-|
+yolact-resnet50-fpn-pytorch|+|-|-|
 
 ### 3D сегментация (3D segmentation)
 
@@ -102,24 +124,35 @@ brain-tumor-segmentation-0002|+|отсутствуют данные|-|
 ctdet_coco_dlav0_384|+|-|-|
 ctdet_coco_dlav0_512|+|-|-|
 ctpn|+|отсутствуют данные|-|
+faceboxes-pytorch|+|-|-|
+face-detection-retail-0044|+|-|-|
 ***faster_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|
 ***faster_rcnn_inception_v2_coco***|+|+|-|
 ***faster_rcnn_resnet101_coco***|+|+|-|
 ***faster_rcnn_resnet50_coco***|+|+|-|
+mobilefacedet-v1-mxnet|+|-|-|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
 mtcnn|+|пайплайн из трех моделей|-|
+pelee-coco|+|-|+|
+retinanet-tf|+|-|-|
+rfcn-resnet101-coco-tf|+|-|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
 ssdlite_mobilenet_v2|+|-|-|
 ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
+ssd-resnet34-1200-onnx|+|-|-|
 ssd_resnet50_v1_fpn_coco|+|-|+|
+ultra-lightweight-face-detection-rfb-320|+|-|-|
+ultra-lightweight-face-detection-slim-320|+|-|-|
+vehicle-license-plate-detection-barrier-0123|+|-|-|
 yolo-v1-tiny-tf|+|+|-|
 yolo-v2-tiny-tf|+|+|-|
 yolo-v2-tf|+|+|-|
+yolo-v3-tiny-tf|+|-|-|
 yolo-v3-tf|+|+|-|
-retinanet-tf|+|-|+|
-pelee-coco|+|-|+|
+yolo-v4-tiny-tf|+|-|-|
+yolo-v4-tf|+|-|-|
 
 ### Распознавание лиц (face recognition)
 
@@ -128,6 +161,7 @@ pelee-coco|+|-|+|
 facenet-20180408-102900|+|не известен тренировочный набор данных|-|
 face-recognition-mobilefacenet-arcface|-|не известен тренировочный набор данных|-|
 face-recognition-resnet100-arcface|-|не известен тренировочный набор данных|-|
+face-recognition-resnet100-arcface-onnx|+|-|-|
 face-recognition-resnet34-arcface|-|не известен тренировочный набор данных|-|
 face-recognition-resnet50-arcface|-|не известен тренировочный набор данных|-|
 ***Sphereface***|+|+|-|
@@ -136,8 +170,10 @@ face-recognition-resnet50-arcface|-|не известен тренировочн
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+higher-hrnet-w32-human-pose-estimation|+|-|-|
 human-pose-estimation-3d-0001|+|-|-|
 single-human-pose-estimation-0001|+|-|-|
+
 
 ### Оценка глубины (monocular depth estimation)
 
@@ -155,7 +191,88 @@ gmcnn-places2-tf|+|-|-|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+common-sign-language-0001
 i3d-rgb-tf|+|-|-|
+
+### Классификация звуков (sound classification)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+aclnet|+|-|-|
+aclnet-int8|+|-|-|
+
+### Распознавание именованных объектов (Named Entity Recognition)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+bert-base-ner|+|-|-|
+
+### Генерация изображений (image translation)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+cocosnet|+|-|-|
+
+### Раскрашивание изображений
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+colorization-siggraph|+|-|-|
+colorization-v2|+|-|-|
+
+### Повышение четкости изображения (image deblurring)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+deblurgan-v2
+
+### Детектирование заметных объектов (Salient object detection)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+f3net|+|-|-|
+
+### Перенос стиля (Style Transfer)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+fast-neural-style-mosaic-onnx|+|-|-|
+
+### Monodepth
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+fcrn-dp-nyu-depth-v2-tf|+|-|-|
+
+### Синтезирование речи (speech synthesis)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+forward-tacotron-duration-prediction model specification|+|-|-|
+wavernn|+|-|-|
+
+### Распознавание речи (Speech recognition)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+mozilla-deepspeech-0.6.1|+|-|-|
+mozilla-deepspeech-0.8.2|+|-|-|
+quartznet-15x5-en|+|-|-|
+
+### Place recognition
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+netvlad-tf|+|-|-|
+
+### Face Localization
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+retinaface-resnet50-pytorch|+|-|-|
+
+### Scene Text Recognition
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+text-recognition-resnet-fc|+|-|-|
+
+### Распознавание объектов (Object recognition)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+license-plate-recognition-barrier-0007|+|-|-|
+
+### Распознавание транспорта (vehicle reidentification)
+Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
+-|-|-|-|
+vehicle-reid-0001|+|-|-|
 
 ## Модели Intel
 
