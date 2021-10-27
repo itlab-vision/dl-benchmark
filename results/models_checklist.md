@@ -133,8 +133,8 @@ face-detection-retail-0044|+|-|-|
 mobilefacedet-v1-mxnet|+|-|-|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|
 mtcnn|+|пайплайн из трех моделей|-|
-pelee-coco|+|-|+|
-retinanet-tf|+|-|-|
+pelee-coco|+|+|+|
+retinanet-tf|+|+|-|
 rfcn-resnet101-coco-tf|+|-|-|
 ssd300|+|+|+|
 ssd512|+|+|+|
@@ -142,7 +142,7 @@ ssdlite_mobilenet_v2|+|-|-|
 ssd_mobilenet_v1_fpn_coco|+|+|+|
 ssd_mobilenet_v2_coco|+|+|+|
 ssd-resnet34-1200-onnx|+|-|-|
-ssd_resnet50_v1_fpn_coco|+|-|+|
+ssd_resnet50_v1_fpn_coco|+|+|+|
 ultra-lightweight-face-detection-rfb-320|+|-|-|
 ultra-lightweight-face-detection-slim-320|+|-|-|
 vehicle-license-plate-detection-barrier-0123|+|-|-|
@@ -175,10 +175,11 @@ human-pose-estimation-3d-0001|+|-|-|
 single-human-pose-estimation-0001|+|-|-|
 
 
-### Оценка глубины (monocular depth estimation)
+### Оценка глубины (Monodepth)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
+fcrn-dp-nyu-depth-v2-tf|+|-|-|
 midasnet|+|-|-|
 
 ### Восстановление изображений (image inpainting)
@@ -191,7 +192,7 @@ gmcnn-places2-tf|+|-|-|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-common-sign-language-0001
+common-sign-language-0001|+|-|-|
 i3d-rgb-tf|+|-|-|
 
 ### Классификация звуков (sound classification)
@@ -210,16 +211,16 @@ bert-base-ner|+|-|-|
 -|-|-|-|
 cocosnet|+|-|-|
 
-### Раскрашивание изображений
+### Раскрашивание изображений (colorization)
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 colorization-siggraph|+|-|-|
 colorization-v2|+|-|-|
 
-### Повышение четкости изображения (image deblurring)
+### Обработка изображений (image processing)
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
-deblurgan-v2
+deblurgan-v2|+|-|-|
 
 ### Детектирование заметных объектов (Salient object detection)
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
@@ -230,11 +231,6 @@ f3net|+|-|-|
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
 -|-|-|-|
 fast-neural-style-mosaic-onnx|+|-|-|
-
-### Monodepth
-Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
--|-|-|-|
-fcrn-dp-nyu-depth-v2-tf|+|-|-|
 
 ### Синтезирование речи (speech synthesis)
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) |
@@ -497,49 +493,147 @@ time-series-forecasting-electricity-0001|+|-|-|
 
 ## Модели для следующего этапа расширения
 
-### Модели 2020.2
-1. faster-rcnn-resnet101-coco-sparse-60-0001
-
-### Модели 2020.4
+### Модели Intel
+1. asl-recognition-0004
 1. bert-small-uncased-whole-word-masking-squad-0001
-1. bert-large-uncased-whole-word-masking-squad-fp32-0001
+1. bert-large-uncased-whole-word-masking-squad-emb-0001
 1. bert-large-uncased-whole-word-masking-squad-int8-0001
+1. bert-large-uncased-whole-word-masking-squad-fp32-0001
+1. bert-small-uncased-whole-word-masking-squad-0001
+1. bert-small-uncased-whole-word-masking-squad-0002
+1. bert-small-uncased-whole-word-masking-squad-emb-int8-0001
+1. bert-small-uncased-whole-word-masking-squad-int8-0002
+1. common-sign-language-0002
+1. face-detection-0106
+1. face-detection-0200
+1. face-detection-0202
+1. face-detection-0204
+1. face-detection-0205
+1. face-detection-0206
+1. faster-rcnn-resnet101-coco-sparse-60-0001
+1. formula-recognition-medium-scan-0001
+1. formula-recognition-polynomials-handwritten-0001
+1. handwritten-simplified-chinese-recognition-0001
+1. horizontal-text-detection-0001
+1. human-pose-estimation-0005
+1. human-pose-estimation-0006
+1. human-pose-estimation-0007
+1. instance-segmentation-security-0002
+1. instance-segmentation-security-0091
+1. instance-segmentation-security-0228
+1. instance-segmentation-security-1039
+1. instance-segmentation-security-1040
+1. machine-translation-nar-de-en-0002
+1. machine-translation-nar-en-de-0002
+1. machine-translation-nar-en-ru-0001
+1. machine-translation-nar-ru-en-0001
+1. noise-suppression-poconetlike-0001
+1. person-attributes-recognition-crossroad-0234
+1. person-attributes-recognition-crossroad-0238
 1. person-detection-0100
 1. person-detection-0101
 1. person-detection-0102
 1. person-detection-0106
+1. person-detection-0200
+1. person-detection-0201
+1. person-detection-0202
+1. person-detection-0203
 1. person-reidentification-retail-0265
-1. yolo-v2-tiny-vehicle-detection-0001
+1. person-reidentification-retail-0277
+1. person-reidentification-retail-0286
+1. person-reidentification-retail-0287
+1. person-reidentification-retail-0288
+1. person-vehicle-bike-detection-2000
+1. person-vehicle-bike-detection-2001
+1. person-vehicle-bike-detection-2002
+1. person-vehicle-bike-detection-2003
+1. person-vehicle-bike-detection-2004
+1. person-vehicle-bike-detection-crossroad-yolov3-1020
+1. text-recognition-0014
+1. text-recognition-0015
+1. text-to-speech-en-0001
+1. text-to-speech-en-multi-0001
+1. time-series-forecasting-electricity-0001
 1. vehicle-attributes-recognition-barrier-0042
+1. vehicle-detection-0200
+1. vehicle-detection-0201
+1. vehicle-detection-0202
 1. weld-porosity-detection-0001
 1. person-reidentification-retail-0267
 1. person-reidentification-retail-0270
+1. resnet50-binary-0001
 1. text-spotting-0002
-1. action-recognition-0001
-
-
+1. text-spotting-0002-recognizer-decoder
+1. text-spotting-0002-recognizer-encoder
+1. text-spotting-0005
+1. weld-porosity-detection-0001
+1. yolo-v2-tiny-vehicle-detection-0001
 
 ### Public модели
-1. hbonet-1.0
-1. hbonet-0.5
-1. hbonet-0.25
-1. open-closed-eye-0001
-1. resnet-18-pytorch
-1. resnet-34-pytorch
-1. ssdlite_mobilenet_v2
-1. ctdet_coco_dlav0_384
-1. ctdet_coco_dlav0_512
-1. faceboxes-pytorch
-1. mobilefacedet-v1-mxnet
-1. rfcn-resnet101-coco-tf
-1. ssd-resnet34-1200-onnx
-1. retinaface-resnet50
-1. retinaface-anti-cov
-1. human-pose-estimation-3d-0001
-1. single-human-pose-estimation-0001
-1. midasnet
-1. gmcnn-places2-tf
-1. fast-neural-style-mosaic-onnx
-1. i3d-rgb-tf
+1. aclnet
+1. aclnet-int8
+1. anti-spoof-mn3
+1. bert-base-ner
+1. cocosnet
+1. colorization-siggraph
 1. colorization-v2
 1. colorization-v2-norebal
+1. common-sign-language-0001
+1. ctdet_coco_dlav0_384
+1. ctdet_coco_dlav0_512
+1. deblurgan-v2
+1. densenet-201-tf
+1. dla-34
+1. efficientdet-d0-tf
+1. efficientdet-d1-tf
+1. f3net
+1. faceboxes-pytorch
+1. face-detection-retail-0044
+1. face-recognition-resnet100-arcface-onnx
+1. fastseg-large
+1. fastseg-small
+1. fast-neural-style-mosaic-onnx
+1. fcrn-dp-nyu-depth-v2-tf
+1. forward-tacotron
+1. gmcnn-places2-tf
+1. hbonet-0.25
+1. hbonet-0.5
+1. hbonet-1.0
+1. higher-hrnet-w32-human-pose-estimation
+1. human-pose-estimation-3d-0001
+1. i3d-rgb-tf
+1. license-plate-recognition-barrier-0007
+1. midasnet
+1. mixnet-l
+1. mobilefacedet-v1-mxnet
+1. mozilla-deepspeech-0.6.1
+1. mozilla-deepspeech-0.8.2
+1. netvlad-tf
+1. nfnet-f0
+1. pspnet-pytorch
+1. quartznet-15x5-en
+1. regnetx-3.2gf
+1. repvgg-a0
+1. repvgg-b1
+1. repvgg-b3
+1. resnest-50-pytorch
+1. resnet-34-pytorch
+1. retinaface-anti-cov
+1. retinaface-resnet50
+1. retinaface-resnet50-pytorch
+1. rexnet-v1-x1.0
+1. rfcn-resnet101-coco-tf
+1. shufflenet-v2-x1.0
+1. single-human-pose-estimation-0001
+1. ssdlite_mobilenet_v2
+1. ssd-resnet34-1200-onnx
+1. text-recognition-resnet-fc
+1. ultra-lightweight-face-detection-rfb-320
+1. ultra-lightweight-face-detection-slim-320
+1. vehicle-license-plate-detection-barrier-0123
+1. vehicle-reid-0001
+1. wavernn
+1. yolact-resnet50-fpn-pytorch
+1. yolo-v3-tiny-tf
+1. yolo-v4-tiny-tf
+1. yolo-v4-tf
