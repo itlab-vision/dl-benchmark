@@ -37,8 +37,8 @@ googlenet-v3|+|+|+|+|
 ***googlenet-v4***|-|+|+|-|
 ***googlenet-v4-tf***|+|+|-|+|
 hbonet-0.25|+|-|-|-|
-hbonet-0.5|+|-|-|-|
-hbonet-1.0|+|-|-|-|
+hbonet-0.5|+|+|-|-|
+hbonet-1.0|+|+|-|-|
 ***inception-resnet-v2***|-|+|+|-|
 ***inception-resnet-v2-tf***|+|+|-|+|
 mixnet-l|+|-|-|-|
@@ -53,7 +53,7 @@ mobilenet-v2|+|+|+|+|
 ***mobilenet-v2-pytorch***|+|+|-|+|
 mobilenet-v3-large-1.0-224-tf|+|+|-|+|
 mobilenet-v3-small-1.0-224-tf|+|+|-|+|
-nfnet-f0|+|-|-|-|
+nfnet-f0|+|+|-|-|
 ***octave-densenet-121-0.125***|+|+|-|+|
 ***octave-resnet-101-0.125***|+|+|-|+|
 ***octave-resnet-200-0.125***|+|+|-|+|
@@ -63,10 +63,10 @@ nfnet-f0|+|-|-|-|
 ***octave-resnext-50-0.25***|+|+|-|+|
 ***octave-se-resnet-50-0.125***|+|+|-|+|
 ***open-closed-eye-0001***|+|+|-|-|
-regnetx-3.2gf|+|-|-|-|
-repvgg-a0|+|-|-|-|
-repvgg-b1|+|-|-|-|
-repvgg-b3|+|-|-|-|
+regnetx-3.2gf|+|+|-|-|
+repvgg-a0|+|+|-|-|
+repvgg-b1|+|+|-|-|
+repvgg-b3|+|+|-|-|
 resnest-50-pytorch|+|-|-|-|
 ***resnet-101***|-|название resnet-v1-*|+|-|
 ***resnet-152***|-|название resnet-v1-*|+|-|
@@ -76,14 +76,14 @@ resnet-34-pytorch|+|-|-|-|
 ***resnet-50-caffe2***|+|+|-|+|
 ***resnet-50-pytorch***|+|+|-|+|
 ***resnet-50-tf***|+|+|-|+|
-rexnet-v1-x1.0|+|-|-|-|
+rexnet-v1-x1.0|+|+|-|-|
 se-inception|+|+|+|+|
 se-resnet-101|+|+|+|+|
 se-resnet-152|+|+|+|+|
 ***se-resnet-50***|+|+|+|-|
 ***se-resnext-101***|+|+|+|-|
 ***se-resnext-50***|+|+|+|-|
-shufflenet-v2-x1.0|+|-|-|-|
+shufflenet-v2-x1.0|+|+|-|-|
 squeezenet1.0|+|+|+|+|
 squeezenet1.1|+|+|+|+|
 squeezenet1.1-caffe2|+|+|-|+|
