@@ -82,6 +82,7 @@ densenet-121-caffe2 |-|-| 15.7890606 Granny Smith<br>9.9466267 lemon<br>9.371703
 googlenet-v2-tf |-|-| 0.9925616 Granny Smith<br>0.0003350 lemon<br>0.0002447 pomegranate<br>0.0002070 tennis ball<br>0.0001847 banana<br> | 0.9925616 Granny Smith<br>0.0003350 lemon<br>0.0002447 pomegranate<br>0.0002070 tennis ball<br>0.0001847 banana<br> |
 mobilenet-v3-large-1.0-224-tf |-|-| 0.9964523 Granny Smith<br>0.0002238 bell pepper<br>0.0001825 lemon<br>0.0001672 tennis ball<br>0.0001623 fig<br> | 0.9964523 Granny Smith<br>0.0002238 bell pepper<br>0.0001825 lemon<br>0.0001672 tennis ball<br>0.0001623 fig<br> |
 mobilenet-v3-small-1.0-224-tf |-|-| 0.8031732 Granny Smith<br>0.0285428 fig<br>0.0175287 lemon<br>0.0164089 bell pepper<br>0.0091023 strawberry<br> | 0.8031732 Granny Smith<br>0.0285428 fig<br>0.0175287 lemon<br>0.0164089 bell pepper<br>0.0091023 strawberry<br> |
+hbonet-0.5 | 17.1083469 Granny Smith<br>13.3649635 acorn<br>12.9453735 piggy bank, penny bank<br> 11.7255564 saltshaker, salt shaker<br>11.4459381 fig<br>11.4441767 bell pepper<br>10.3811026 tennis ball<br>10.0209780 lemon<br>9.9105597 teapot<br>9.0016518 banana |-|-|-|
 ### Тестовое изображение 2
 
 Источник: набор данных [ImageNet][imagenet]
