@@ -17,8 +17,8 @@ densenet-161|+|+|+|+|
 densenet-169|+|+|+|+|
 ***densenet-169-tf***|+|+|-|+|
 densenet-201|+|+|+|+|
-densenet-201-tf|+|-|-|-|
-dla-34|+|-|-|-|
+densenet-201-tf|+|+|-|-|
+dla-34|+|+|-|-|
 ***efficientnet-b0***|+|+|-|+|
 ***efficientnet-b0_auto_aug***|+|+|-|+|
 ***efficientnet-b0-pytorch***|+|+|-|+|
@@ -36,12 +36,12 @@ googlenet-v3|+|+|+|+|
 ***googlenet-v3-pytorch***|+|+|-|+|
 ***googlenet-v4***|-|+|+|-|
 ***googlenet-v4-tf***|+|+|-|+|
-hbonet-0.25|+|-|-|-|
+hbonet-0.25|+|+|-|-|
 hbonet-0.5|+|-|-|-|
 hbonet-1.0|+|-|-|-|
 ***inception-resnet-v2***|-|+|+|-|
 ***inception-resnet-v2-tf***|+|+|-|+|
-mixnet-l|+|-|-|-|
+mixnet-l|+|+|-|-|
 mobilenet-v1-0.25-128|+|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|+|
@@ -71,7 +71,7 @@ resnest-50-pytorch|+|-|-|-|
 ***resnet-101***|-|название resnet-v1-*|+|-|
 ***resnet-152***|-|название resnet-v1-*|+|-|
 ***resnet-18-pytorch***|+|+|-|+|
-resnet-34-pytorch|+|-|-|-|
+resnet-34-pytorch|+|+|-|-|
 ***resnet-50***|-|название resnet-v1-*|+|-|
 ***resnet-50-caffe2***|+|+|-|+|
 ***resnet-50-pytorch***|+|+|-|+|
