@@ -3,46 +3,35 @@ class output_handler:
         self.__table_name = table_name
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Inference Framework;Device;Dataset;Accuracy type;Precision;Objects;Accuracy;'  # noqa: E501
+        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
         with open(self.__table_name, 'w') as table:
             table.write(HEADERS + '\n')
             table.close()
 
-    def add_results(self, process, tests):
+    def add_results(self, test, process):
         result_list = process.get_result_parameters()
         for results in result_list:
             for idx, result in enumerate(results):
                 result_dict = result.get_result_dict()
-                result_list = [result_dict['model'], result_dict['launcher'], result_dict['dataset'],
-                               result_dict['device']]
-                test = self.__find_test(tests, *result_list)
-                if not test:
-                    raise ValueError('Test "', *result_dict, '" was not found!')
-                result_dict['adapter'] = test['adapter']
+                result_dict['model'] = test.model.name
+                result_dict['launcher'] = test.framework
+                result_dict['precision'] = test.model.precision
+                result_dict['task'] = test.model.task
+                result_dict['source_framework'] = test.model.framework
                 if result.is_failed():
-                    for metric in test['metrics']:
-                        result_dict['metric'] = metric.get_type()
+                    for metric in test.metrics:
+                        result_dict['metric'] = metric
                         self.__add_row_to_table(result_dict)
                 else:
-                    result_dict['metric'] = test['metrics'][idx].get_type()
+                    result_dict['metric'] = test.metrics[idx]
                     self.__add_row_to_table(result_dict)
 
-    def __find_test(self, tests, model, framework, dataset, device):
-        for test in tests:
-            if model == test.model_name:
-                for launcher in test.launchers:
-                    if framework == launcher.framework and device == launcher.device:
-                        for data in test.datasets:
-                            if dataset == data.dataset_name:
-                                return {'adapter': launcher.adapter, 'metrics': data.metrics}
-        return None
-
-    def __add_row_to_table(self, result_dict):
-        report_row = self.__create_table_row(result_dict)
+    def __add_row_to_table(self, result):
+        report_row = self.__create_table_row(result)
         with open(self.__table_name, 'a') as table:
             table.write(report_row + '\n')
             table.close()
 
     def __create_table_row(self, result_dict):
-        return '{status};{adapter};{model};{launcher};{device};{dataset};{metric};{precision};{objects};{accuracy};'.\
-            format(**result_dict)
+        return '{status};{task};{model};{source_framework};{launcher};{device};{dataset};{metric};' \
+               '{precision};{accuracy};'.format(**result_dict)
