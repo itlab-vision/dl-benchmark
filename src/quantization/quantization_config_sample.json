@@ -1,0 +1,211 @@
+{
+    "global_pot_parameters": {
+        "output_dir": ".//quantization_results/"
+    },
+    "parameters": [
+        {
+            "config_id": "AlexNet_1_DQ",
+            "config_parameters": {
+                "model": {
+                    "model_name": "AlexNet",
+                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
+                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
+                },
+                
+                "engine": {
+                    "type": "simplified",
+                    "data_source": "C:/Users/murad/Desktop/ITMM/ITLab/quantize/ILSVRC2012_img_val"
+                },
+                
+                "compression": {
+                    "target_device": "ANY",
+                
+                    "model_type": "None",
+
+                    "dump_intermediate_model": "False",
+
+                    "algorithms": [
+                        {
+                            "name": "DefaultQuantization",
+                            "params": {
+                                "preset": "mixed",
+
+                                "stat_subset_size": 300,
+
+                                "shuffle_data": false,
+
+                                "seed": 0,
+
+                                "weights": {
+                                    "bits": 8,
+                                    "mode": "symmetric",
+                                    "granularity": "perchannel",
+                                    "level_low": -127,
+                                    "level_high": 127,
+
+                                    "range_estimator": {
+                                        "max": {
+                                            "type": "quantile",
+                                            "outlier_prob": 0.0001
+                                        }
+                                    }
+                                },
+
+                                "activations": {
+                                    "bits": 8,
+                                    "mode": "symmetric",
+                                    "granularity": "pertensor",
+
+                                    "range_estimator": {
+                                        "preset": "quantile"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "config_id": "AlexNet_2_DQ",
+            "config_parameters": {
+                "model": {
+                    "model_name": "AlexNet",
+                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
+                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
+                },
+                
+                "engine": {
+                    "type": "simplified",
+                    "data_source": "C:/Users/murad/Desktop/ITMM/ITLab/quantize/ILSVRC2012_img_val"
+                },
+                
+                "compression": {
+                    "target_device": "ANY",
+                
+                    "model_type": "None",
+
+                    "dump_intermediate_model": "False",
+
+                    "algorithms": [
+                        {
+                            "name": "DefaultQuantization",
+                            "params": {
+                                "preset": "mixed",
+
+                                "stat_subset_size": 300,
+
+                                "shuffle_data": false,
+
+                                "seed": 0,
+
+                                "weights": {
+                                    "bits": 8,
+                                    "mode": "symmetric",
+                                    "granularity": "perchannel",
+                                    "level_low": -127,
+                                    "level_high": 127,
+
+                                    "range_estimator": {
+                                        "max": {
+                                            "type": "quantile",
+                                            "outlier_prob": 0.0001
+                                        }
+                                    }
+                                },
+
+                                "activations": {
+                                    "bits": 8,
+                                    "mode": "symmetric",
+                                    "granularity": "pertensor",
+
+                                    "range_estimator": {
+                                        "preset": "quantile"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "config_id": "AlexNet_AAQ",
+            "config_parameters": {
+                "model": {
+                    "model_name": "AlexNet",
+                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
+                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
+                },
+                
+                "engine": {
+                    "stat_requests_number": 8,
+                    "eval_requests_number": 8,
+                    "config": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet_accuracy_checker_config.yml"
+                },
+                
+                "compression": {
+                    "target_device": "ANY",
+                
+                    "algorithms": [
+                        {
+                            "name": "AccuracyAwareQuantization",
+                            "params": {
+                                "ranking_subset_size": 300,
+
+                                "max_iter_num": 20,
+
+                                "maximal_drop": 0.005,
+
+                                "drop_type": "absolute",
+
+                                "use_prev_if_drop_increase": false,
+
+                                "base_algorithm": "DefaultQuantization",
+
+                                "annotation_free": false,
+
+                                "annotation_conf_threshold": 0.6,
+
+                                "convert_to_mixed_preset": false,
+
+                                "metric_subset_ratio": 0.5,
+
+                                "tune_hyperparams": false,
+
+                                "preset": "mixed",
+
+                                "stat_subset_size": 300,
+
+                                "weights": {
+                                    "bits": 8,
+                                    "mode": "symmetric",
+                                    "granularity": "perchannel",
+                                    "level_low": -127,
+                                    "level_high": 127,
+
+                                    "range_estimator": {
+                                        "max": {
+                                            "type": "quantile",
+                                            "outlier_prob": 0.0001
+                                        }
+                                    }
+                                },
+
+                                "activations": {
+                                    "bits": 8,
+                                    "mode": "asymmetric",
+                                    "granularity": "pertensor",
+
+                                    "range_estimator": {
+                                        "preset": "quantile"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
