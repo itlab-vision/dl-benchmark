@@ -6,6 +6,7 @@ from parameters import parameters
 from executors import executor
 from process import process
 from output import output_handler as out_hand
+from config_parser import parser
 
 
 def build_argparser():
@@ -15,10 +16,6 @@ def build_argparser():
         help='Path to configuration file',
         type=str, dest='config_path', required=True)
     parser.add_argument(
-        '-m', '--models',
-        help='Path to directory in which models and weights declared in config file will be searched',
-        type=str, dest='models_path', required=True)
-    parser.add_argument(
         '-s', '--source',
         help='Path to directory in which input images will be searched',
         type=str, dest='source_path', required=True)
@@ -27,13 +24,13 @@ def build_argparser():
         help='Full name of the resulting file',
         type=str, dest='result_file', required=True)
     parser.add_argument(
+        '-d', '--definitions',
+        help='Path to the global datasets configuration file',
+        type=str, dest='definitions_path', default=None, required=True)
+    parser.add_argument(
         '-a', '--annotations',
         help='Path to directory in which annotation and meta files will be searched',
         type=str, dest='annotations_path', default=None, required=False)
-    parser.add_argument(
-        '-d', '--definitions',
-        help='Path to the global datasets configuration file',
-        type=str, dest='definitions_path', default=None, required=False)
     parser.add_argument(
         '-e', '--extensions',
         help='Path to directory with InferenceEngine extensions',
@@ -43,23 +40,23 @@ def build_argparser():
     config = parser.parse_args().config_path
     if not os.path.isfile(config):
         raise ValueError('Wrong path to configuration file!')
-    models = parser.parse_args().models_path
     source = parser.parse_args().source_path
     annotations = parser.parse_args().annotations_path
     definitions = parser.parse_args().definitions_path
     extensions = parser.parse_args().extensions_path
     result = parser.parse_args().result_file
     executor_type = parser.parse_args().executor_type
-    return config, models, source, annotations, definitions, extensions, result, executor_type
+    return config, source, annotations, definitions, extensions, result, executor_type
 
 
-def accuracy_check(executor_type, test_parameters, output_handler, config, log):
-    process_executor = executor.get_executor(executor_type, config, log)
-    tests, target_framework = test_parameters.get_config_data()
-    test_process = process(log, process_executor, test_parameters)
-    test_process.execute(target_framework)
-    output_handler.add_results(test_process, tests)
-    log.info('Saving test result in file')
+def accuracy_check(executor_type, test_list, output_handler, log):
+    process_executor = executor.get_executor(executor_type, log)
+    process_executor.prepare_executor(test_list)
+    for idx, test in enumerate(test_list):
+        test_process = process(log, process_executor, test)
+        test_process.execute(idx)
+        log.info('Saving test result in file')
+        output_handler.add_results(test, test_process)
 
 
 def main():
@@ -70,11 +67,16 @@ def main():
     )
 
     try:
-        config, models, source, annotations, definitions, extensions, result, executor_type = build_argparser()
-        test_parameters = parameters(config, models, source, annotations, definitions, extensions)
-        output_handler = out_hand(result)
+        config, source, annotations, definitions, extensions, result_table, executor_type = build_argparser()
+        test_parameters = parameters(source, annotations, definitions, extensions)
+        test_list = parser.get_test_list(config, test_parameters)
+        log.info('Create result table with name: {}'.format(result_table))
+        output_handler = out_hand(result_table)
         output_handler.create_table()
-        accuracy_check(executor_type, test_parameters, output_handler, config, log)
+        log.info('Start {} accuracy tests'.format(len(test_list)))
+        accuracy_check(executor_type, test_list, output_handler, log)
+        log.info('End inference tests')
+        log.info('Work is done!')
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)

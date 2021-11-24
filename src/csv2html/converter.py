@@ -7,7 +7,8 @@ from accuracy_checker_table_creator import HTMLAccuracyCheckerTable
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--tables', type=str, help='Paths to the inference tables in csv format.', nargs='+', required=True)
+    parser.add_argument('-t', '--tables', type=str, help='Paths to the inference tables in csv format.', nargs='+',
+                        required=True)
     parser.add_argument('-r', '--result_table', type=str, help='Full name of the resulting file', required=True)
     parser.add_argument('-k', '--table_kind', type=str, help='Kind of table: ', choices=['benchmark', 'accuracy_checker'],
                         default='benchmark', required=True)
