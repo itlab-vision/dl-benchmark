@@ -17,8 +17,8 @@ densenet-161|+|+|+|+|
 densenet-169|+|+|+|+|
 ***densenet-169-tf***|+|+|-|+|
 densenet-201|+|+|+|+|
-densenet-201-tf|+|-|-|-|
-dla-34|+|-|-|-|
+densenet-201-tf|+|+|-|-|
+dla-34|+|+|-|-|
 ***efficientnet-b0***|+|+|-|+|
 ***efficientnet-b0_auto_aug***|+|+|-|+|
 ***efficientnet-b0-pytorch***|+|+|-|+|
@@ -36,12 +36,12 @@ googlenet-v3|+|+|+|+|
 ***googlenet-v3-pytorch***|+|+|-|+|
 ***googlenet-v4***|-|+|+|-|
 ***googlenet-v4-tf***|+|+|-|+|
-hbonet-0.25|+|-|-|-|
+hbonet-0.25|+|+|-|-|
 hbonet-0.5|+|-|-|-|
 hbonet-1.0|+|-|-|-|
 ***inception-resnet-v2***|-|+|+|-|
 ***inception-resnet-v2-tf***|+|+|-|+|
-mixnet-l|+|-|-|-|
+mixnet-l|+|+|-|-|
 mobilenet-v1-0.25-128|+|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|+|
@@ -71,7 +71,7 @@ resnest-50-pytorch|+|-|-|-|
 ***resnet-101***|-|название resnet-v1-*|+|-|
 ***resnet-152***|-|название resnet-v1-*|+|-|
 ***resnet-18-pytorch***|+|+|-|+|
-resnet-34-pytorch|+|-|-|-|
+resnet-34-pytorch|+|+|-|-|
 ***resnet-50***|-|название resnet-v1-*|+|-|
 ***resnet-50-caffe2***|+|+|-|+|
 ***resnet-50-pytorch***|+|+|-|+|
@@ -582,8 +582,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. deblurgan-v2
-1. densenet-201-tf
-1. dla-34
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
 1. f3net
@@ -596,7 +594,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. fcrn-dp-nyu-depth-v2-tf
 1. forward-tacotron
 1. gmcnn-places2-tf
-1. hbonet-0.25
 1. hbonet-0.5
 1. hbonet-1.0
 1. higher-hrnet-w32-human-pose-estimation
@@ -616,8 +613,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. repvgg-a0
 1. repvgg-b1
 1. repvgg-b3
-1. resnest-50-pytorch
-1. resnet-34-pytorch
 1. retinaface-anti-cov
 1. retinaface-resnet50
 1. retinaface-resnet50-pytorch
