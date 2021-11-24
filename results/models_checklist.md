@@ -582,8 +582,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
 1. deblurgan-v2
-1. densenet-201-tf
-1. dla-34
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
 1. f3net
@@ -596,7 +594,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. fcrn-dp-nyu-depth-v2-tf
 1. forward-tacotron
 1. gmcnn-places2-tf
-1. hbonet-0.25
 1. hbonet-0.5
 1. hbonet-1.0
 1. higher-hrnet-w32-human-pose-estimation
@@ -616,8 +613,6 @@ time-series-forecasting-electricity-0001|+|-|-|-|
 1. repvgg-a0
 1. repvgg-b1
 1. repvgg-b3
-1. resnest-50-pytorch
-1. resnet-34-pytorch
 1. retinaface-anti-cov
 1. retinaface-resnet50
 1. retinaface-resnet50-pytorch
