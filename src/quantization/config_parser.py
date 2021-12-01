@@ -17,7 +17,7 @@ class config_parser:
             os.mkdir(self.__folder_with_configs)
 
     def parse(self):
-        with open(self.__config_path,'r') as config_file:
+        with open(self.__config_path, 'r') as config_file:
             all_params = all_parameters(json.load(config_file))
         for m_params in all_params.models_list:
             config_file_path = self.__create_pot_config_file(m_params)
