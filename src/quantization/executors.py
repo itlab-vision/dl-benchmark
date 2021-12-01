@@ -1,5 +1,5 @@
 import abc
-import docker
+#import docker
 import os
 from subprocess import Popen, PIPE, STDOUT
 
@@ -7,7 +7,6 @@ from subprocess import Popen, PIPE, STDOUT
 class executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
-
 
     @staticmethod
     def get_executor(executor_type, log):
@@ -18,7 +17,6 @@ class executor(metaclass=abc.ABCMeta):
         else:
             raise ValueError('Wrong executor type!')
 
-
     @abc.abstractmethod
     def execute_process(self, command_line):
         pass
@@ -28,7 +26,6 @@ class host_executor(executor):
     def __init__(self, log):
         super().__init__(log)
         self.my_environment = os.environ.copy()
-
 
     def execute_process(self, command_line):
         process = Popen(
@@ -43,13 +40,13 @@ class host_executor(executor):
         return out
 
 
-
+'''
 class docker_executor(executor):
     def __init__(self, log):
         super().__init__(log)
         client = docker.from_env()
         self.my_container_dict = {cont.name: cont for cont in client.containers.list()}
 
-
     def execute_process(self, command_line):
         pass
+'''

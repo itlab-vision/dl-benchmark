@@ -1,20 +1,24 @@
 {
     "global_pot_parameters": {
-        "output_dir": ".//quantization_results/"
+        "output_dir": "./quantization_results/"
     },
     "parameters": [
         {
             "config_id": "AlexNet_1_DQ",
+            "pot_parameters": {
+                "output_dir": "/opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/INT8_DQ/",
+                "direct_dump": true
+            },
             "config_parameters": {
                 "model": {
-                    "model_name": "AlexNet",
-                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
-                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
+                    "model_name": "alexnet",
+                    "model": "/opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/FP32/alexnet.xml",
+                    "weights": "/opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/FP32/alexnet.bin"
                 },
                 
                 "engine": {
                     "type": "simplified",
-                    "data_source": "C:/Users/murad/Desktop/ITMM/ITLab/quantize/ILSVRC2012_img_val"
+                    "data_source": "/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/"
                 },
                 
                 "compression": {
@@ -30,7 +34,7 @@
                             "params": {
                                 "preset": "mixed",
 
-                                "stat_subset_size": 300,
+                                "stat_subset_size": 32,
 
                                 "shuffle_data": false,
 
@@ -70,14 +74,13 @@
             "config_id": "AlexNet_2_DQ",
             "config_parameters": {
                 "model": {
-                    "model_name": "AlexNet",
-                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
-                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
+                    "model_name": "AlexNet_2_DQ",
+                    "model": "/opt/intel/openvino_2021/deployment_tools/open_model_zoo/tools/downloader/public/alexnet/FP32/alexnet.xml"
                 },
                 
                 "engine": {
                     "type": "simplified",
-                    "data_source": "C:/Users/murad/Desktop/ITMM/ITLab/quantize/ILSVRC2012_img_val"
+                    "data_source": "/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/"
                 },
                 
                 "compression": {
@@ -93,7 +96,7 @@
                             "params": {
                                 "preset": "mixed",
 
-                                "stat_subset_size": 300,
+                                "stat_subset_size": 32,
 
                                 "shuffle_data": false,
 
@@ -117,84 +120,6 @@
                                 "activations": {
                                     "bits": 8,
                                     "mode": "symmetric",
-                                    "granularity": "pertensor",
-
-                                    "range_estimator": {
-                                        "preset": "quantile"
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "config_id": "AlexNet_AAQ",
-            "config_parameters": {
-                "model": {
-                    "model_name": "AlexNet",
-                    "model": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.xml",
-                    "weights": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet 2021.4/alexnet.bin"
-                },
-                
-                "engine": {
-                    "stat_requests_number": 8,
-                    "eval_requests_number": 8,
-                    "config": "C:/Users/murad/Desktop/ITMM/ITLab/23.11.2021/alexnet_accuracy_checker_config.yml"
-                },
-                
-                "compression": {
-                    "target_device": "ANY",
-                
-                    "algorithms": [
-                        {
-                            "name": "AccuracyAwareQuantization",
-                            "params": {
-                                "ranking_subset_size": 300,
-
-                                "max_iter_num": 20,
-
-                                "maximal_drop": 0.005,
-
-                                "drop_type": "absolute",
-
-                                "use_prev_if_drop_increase": false,
-
-                                "base_algorithm": "DefaultQuantization",
-
-                                "annotation_free": false,
-
-                                "annotation_conf_threshold": 0.6,
-
-                                "convert_to_mixed_preset": false,
-
-                                "metric_subset_ratio": 0.5,
-
-                                "tune_hyperparams": false,
-
-                                "preset": "mixed",
-
-                                "stat_subset_size": 300,
-
-                                "weights": {
-                                    "bits": 8,
-                                    "mode": "symmetric",
-                                    "granularity": "perchannel",
-                                    "level_low": -127,
-                                    "level_high": 127,
-
-                                    "range_estimator": {
-                                        "max": {
-                                            "type": "quantile",
-                                            "outlier_prob": 0.0001
-                                        }
-                                    }
-                                },
-
-                                "activations": {
-                                    "bits": 8,
-                                    "mode": "asymmetric",
                                     "granularity": "pertensor",
 
                                     "range_estimator": {

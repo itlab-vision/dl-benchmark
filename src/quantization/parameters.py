@@ -1,15 +1,16 @@
 from utils import get_param_from_data
 
+
 class all_parameters:
     def __init__(self, data):
         GLOBAL_PARAMS_TAG = 'global_pot_parameters'
         PARAMETERS_TAG = 'parameters'
-        
+
         self.global_pot_parameters = pot_parameters(
             get_param_from_data(data, GLOBAL_PARAMS_TAG)
         )
         self.models_list = [
-            model_parameters(m_params, self.global_pot_parameters) 
+            model_parameters(m_params, self.global_pot_parameters)
             for m_params in get_param_from_data(data, PARAMETERS_TAG)
         ]
 
@@ -31,14 +32,11 @@ class model_parameters:
         if params is not None:
             self.__pot_parameters = pot_parameters(params)
 
-
     def get_config_parameters(self):
         return self.__config_parameters
 
-
     def get_pot_parameters(self):
         return self.__pot_parameters
-
 
     def get_config_json_filename(self):
         return self.__config_id + '.json'
@@ -77,10 +75,9 @@ class pot_parameters:
         self.progress_bar = get_param_from_data(data, PROGRESS_BAR_TAG)
         self.stream_output = get_param_from_data(data, STREAM_OUTPUT)
         self.keep_uncompressed_weights = get_param_from_data(
-            data, 
+            data,
             KEEP_WEIGHTS
         )
-
 
     def rewrite_config_path(self, new_path):
         self.config = new_path

@@ -16,7 +16,6 @@ class config_parser:
         if not os.path.isdir(self.__folder_with_configs):
             os.mkdir(self.__folder_with_configs)
 
-
     def parse(self):
         with open(self.__config_path,'r') as config_file:
             all_params = all_parameters(json.load(config_file))
@@ -29,7 +28,6 @@ class config_parser:
             self.__pot_parameters.append(copy.copy(pot_params))
         return self.__pot_parameters
 
-
     def __create_pot_config_file(self, model_params):
         filename = model_params.get_config_json_filename()
         filename = os.path.join(self.__folder_with_configs, filename)
@@ -41,7 +39,6 @@ class config_parser:
             )
         return os.path.abspath(filename)
 
-
     def clean(self):
         for config_file_path in self.__config_file_paths:
             if os.path.isfile(config_file_path):
@@ -51,10 +48,8 @@ class config_parser:
         if os.path.isdir(self.__folder_with_configs):
             os.rmdir(self.__folder_with_configs)
 
-
     # def __get_pot_parameters(self, model_parameters):
     #     return model_parameters.pot_parameters
-
 
     # def __get_pot_config_path(self, model_parameters):
     #     pot_config_file_path = self.__pot_parameters
