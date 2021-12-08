@@ -78,7 +78,7 @@ def main():
     # Connect to FTP and take benchmark config file
     ftp_connection = ftplib.FTP(param_list.server_ip, param_list.login, param_list.password)
 
-    benchmark_config = os.path.join(path_to_benchmark, param_list.benchmark_config[1])
+    benchmark_config = os.path.join(path_to_benchmark, "benchmark_config.xml")
     with open(benchmark_config, 'wb') as config_file:
         ftp_connection.retrbinary('RETR {}'.format(param_list.benchmark_config), config_file.write)
     ftp_connection.close()
