@@ -1,7 +1,7 @@
 import os
 from xml.dom import minidom
 from .model import Model  # pylint: disable=E0402
-from tags import CONFIG_MODELS_TAG  # pylint: disable-next=E0401
+from tags import CONFIG_MODELS_TAG  # pylint: disable=E0401
 
 
 class Models:
