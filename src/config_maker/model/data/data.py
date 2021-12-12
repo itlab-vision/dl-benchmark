@@ -1,4 +1,7 @@
+import os
+from xml.dom import minidom
 from .dataset import Dataset  # pylint: disable=E0402
+from tags import CONFIG_DATASETS_TAG  # pylint: disable-next=E0401
 
 
 class Data:
@@ -41,3 +44,20 @@ class Data:
 
     def clear(self):
         self.__data.clear()
+
+    def parse_config(self, path_to_config):
+        parsed_config = minidom.parse(path_to_config)
+        self.__data = Dataset.parse(parsed_config)
+
+    def create_config(self, path_to_config):
+        if len(self.__data) == 0:
+            return False
+        file = minidom.Document()
+        DOM_ROOT_TAG = file.createElement(CONFIG_DATASETS_TAG)
+        file.appendChild(DOM_ROOT_TAG)
+        for model in self.__data:
+            DOM_ROOT_TAG.appendChild(model.create_dom(file))
+        xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
+        with open(path_to_config, 'wb') as f:
+            f.write(xml_str)
+        return os.path.exists(path_to_config)

@@ -25,7 +25,10 @@ class Dataset:
 
     @staticmethod
     def parse(dom):
-        parsed_dataset = dom.getElementsByTagName(CONFIG_DATASET_TAG)[0]
-        name = parsed_dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
-        path = parsed_dataset.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
-        return Dataset(name, path)
+        parsed_datasets = dom.getElementsByTagName(CONFIG_DATASET_TAG)
+        datasets = []
+        for parsed_dataset in parsed_datasets:
+            name = parsed_dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+            path = parsed_dataset.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
+            datasets.append(Dataset(name, path))
+        return datasets
