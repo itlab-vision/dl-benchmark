@@ -30,4 +30,4 @@ class ConfigGroupButtons(GroupButtons):
 class DataGroupButtons(GroupButtons):
     def __init__(self, parent):
         super().__init__(parent, ['Add information', 'Delete information', 'Change information', 'Copy information',
-                                  'Clear table'])
+                                  'Load data', 'Save data', 'Clear table'])

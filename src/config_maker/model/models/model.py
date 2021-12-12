@@ -46,12 +46,14 @@ class Model:
 
     @staticmethod
     def parse(dom):
-        parsed_model = dom.getElementsByTagName(CONFIG_MODEL_TAG)[0]
-        task = parsed_model.getElementsByTagName(CONFIG_TASK_TAG)[0].firstChild.data
-        name = parsed_model.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
-        precision = parsed_model.getElementsByTagName(CONFIG_PRECISION_TAG)[0].firstChild.data
-        framework = parsed_model.getElementsByTagName(CONFIG_SOURCE_FRAMEWORK_TAG)[0].firstChild.data
-        model_path = parsed_model.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
-        weights_path = parsed_model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data
-
-        return Model(task, name, precision, framework, model_path, weights_path)
+        parsed_models = dom.getElementsByTagName(CONFIG_MODEL_TAG)
+        models = []
+        for parsed_model in parsed_models:
+            task = parsed_model.getElementsByTagName(CONFIG_TASK_TAG)[0].firstChild.data
+            name = parsed_model.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
+            precision = parsed_model.getElementsByTagName(CONFIG_PRECISION_TAG)[0].firstChild.data
+            framework = parsed_model.getElementsByTagName(CONFIG_SOURCE_FRAMEWORK_TAG)[0].firstChild.data
+            model_path = parsed_model.getElementsByTagName(CONFIG_MODEL_PATH_TAG)[0].firstChild.data
+            weights_path = parsed_model.getElementsByTagName(CONFIG_WEIGHTS_PATH_TAG)[0].firstChild.data
+            models.append(Model(task, name, precision, framework, model_path, weights_path))
+        return models
