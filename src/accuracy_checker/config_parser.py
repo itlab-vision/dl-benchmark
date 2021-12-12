@@ -3,12 +3,13 @@ from xml.dom import minidom
 
 
 class model:
-    def __init__(self, name, directory, precision, task, framework):
+    def __init__(self, name, directory, precision, task, framework, config):
         self.name = name
         self.directory = directory
         self.precision = precision
         self.task = task
         self.framework = framework
+        self.config = config
 
     @staticmethod
     def parse(dom):
@@ -18,6 +19,7 @@ class model:
         CONFIG_MODEL_PRECISION_TAG = 'Precision'
         CONFIG_MODEL_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
         CONFIG_MODEL_DIRECTORY_TAG = 'Directory'
+        CONFIG_MODEL_CONFIGPATH_TAG = 'ConfigPath'
 
         model_tag = dom.getElementsByTagName(CONFIG_MODEL_TAG)[0]
         return model(
@@ -25,18 +27,18 @@ class model:
             name=model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
             precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
             framework=model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
-            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data
+            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data,
+            config=model_tag.getElementsByTagName(CONFIG_MODEL_CONFIGPATH_TAG)[0].firstChild.data,
         )
 
 
 class test:
-    def __init__(self, model=None, path_to_config=None, device=None, framework=None, parameters=None):
+    def __init__(self, model=None,  device=None, framework=None, parameters=None):
         self.model = model
-        self.path_to_config = path_to_config
         self.device = device
         self.framework = framework
         self.parameters = parameters
-        self.metrics = self.__init_metrics_from_config(path_to_config)
+        self.metrics = self.__init_metrics_from_config(model.config)
 
     def __init_metrics_from_config(self, config):
         MODELS_TAG = 'models'
@@ -92,14 +94,12 @@ class test:
     @staticmethod
     def parse(dom, test_parameters=None):
         CONFIG_PARAMETERS_TAG = 'Parameters'
-        CONFIG_PARAMETERS_CONFIGPATH_TAG = 'ConfigPath'
         CONFIG_PARAMETERS_DEVICE_TAG = 'Device'
         CONFIG_PARAMETERS_FRAMEWORK_TAG = 'Framework'
 
         parameters_tag = dom.getElementsByTagName(CONFIG_PARAMETERS_TAG)[0]
         return test(
             model=model.parse(dom),
-            path_to_config=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_CONFIGPATH_TAG)[0].firstChild.data,
             device=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_DEVICE_TAG)[0].firstChild.data,
             framework=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_FRAMEWORK_TAG)[0].firstChild.data,
             parameters=test_parameters
