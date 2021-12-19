@@ -1,12 +1,15 @@
 from .table import Table  # pylint: disable=E0402
+# pylint: disable-next=E0401
+from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_DOWNLOAD_FOLDER_TAG
 
 
 class DeployConfigTable(Table):
     def __init__(self, parent):
         super().__init__(parent)
-        self._count_col = 5
+        self.__headers = [CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG,
+                          CONFIG_DOWNLOAD_FOLDER_TAG]
+        self._count_col = len(self.__headers)
         self._count_row = 100
-        self.__headers = ['IP', 'Login', 'Password', 'OS', 'DownloadFolder']
         self.setColumnCount(self._count_col)
         self.setRowCount(self._count_row)
         self.setHorizontalHeaderLabels(self.__headers)
