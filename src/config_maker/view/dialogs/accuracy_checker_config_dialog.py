@@ -1,4 +1,3 @@
-import abc
 from PyQt5.QtWidgets import QDialog, QLabel, QComboBox, QLineEdit, QPushButton, QGridLayout, QMessageBox
 # pylint: disable-next=E0401
 from tags import CONFIG_MODEL_TAG, CONFIG_PARAMETERS_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_DEVICE_TAG, CONFIG_CONFIG_TAG
