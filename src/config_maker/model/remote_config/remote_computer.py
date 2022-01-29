@@ -12,8 +12,8 @@ class RemoteComputer:
         self.password = password
         self.os = os
         self.path_to_ftp_client = path_to_ftp_client
-        self.benchmark = BenchmarkComponent(*args[0:4]) if len(args) > 2 else args[0]
-        self.accuracy_checker = AccuracyCheckerComponent(*args[4:-1]) if len(args) > 2 else args[1]
+        self.benchmark = BenchmarkComponent(*args[0:4]) if len(args) > 2 else args[0]  # pylint: disable=E1120
+        self.accuracy_checker = AccuracyCheckerComponent(*args[4:-1]) if len(args) > 2 else args[1]  # pylint: disable=E1120
 
     def create_dom(self, file):
         DOM_COMPUTER_TAG = file.createElement(CONFIG_COMPUTER_TAG)
