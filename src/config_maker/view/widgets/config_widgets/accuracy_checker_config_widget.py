@@ -29,7 +29,7 @@ class AccuracyCheckerConfigWidget(QWidget):
         self.__set_connections()
 
     def __set_connections(self):
-        self.__buttons.get_buttons()['Add information'].clicked.connect(self.showAddTgiestDialogSignal.emit)
+        self.__buttons.get_buttons()['Add information'].clicked.connect(self.showAddTestDialogSignal.emit)
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__click_delete_button)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.showChangeTestDialogSignal.emit)
         self.__buttons.get_buttons()['Copy information'].clicked.connect(self.__copy_tests)

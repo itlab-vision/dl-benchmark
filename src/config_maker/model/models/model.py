@@ -23,8 +23,8 @@ class Model:
 
     @staticmethod
     def directory2IR(model, directory):
-        model_path = os.path.join(directory, model + '.xml')
-        weights_path = os.path.join(directory, model + '.bin')
+        model_path = directory + '\\' + model + '.xml'
+        weights_path = directory + '\\' + model + '.bin'
         return model_path, weights_path
 
     @staticmethod

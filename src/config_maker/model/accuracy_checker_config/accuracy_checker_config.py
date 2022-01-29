@@ -38,13 +38,12 @@ class AccuracyCheckerConfig:
         tests = parsed_config.getElementsByTagName(CONFIG_TEST_TAG)
         self.__tests.clear()
         models = []
-        data = []
         for dom in tests:
             test = Test.parse(dom)
             self.__tests.append(test)
             models.append(test.parameters[CONFIG_MODEL_TAG])
         self.__tests_grouping()
-        return models, data
+        return models
 
     def create_config(self, path_to_config):
         if len(self.__tests) == 0:
