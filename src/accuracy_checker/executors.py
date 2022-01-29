@@ -74,7 +74,7 @@ class docker_executor(executor):
             process.communicate()
 
     def prepare_command_line(self, test, command_line):
-        return self.__copy_config(test.model.config, command_line)
+        return self.__copy_config(test.config, command_line)
 
     def __copy_config(self, path_to_config, command_line):
         docker_config = '/tmp/config.yml'

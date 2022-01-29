@@ -3,13 +3,12 @@ from xml.dom import minidom
 
 
 class model:
-    def __init__(self, name, directory, precision, task, framework, config):
+    def __init__(self, name, directory, precision, task, framework):
         self.name = name
         self.directory = directory
         self.precision = precision
         self.task = task
         self.framework = framework
-        self.config = config
 
     @staticmethod
     def parse(dom):
@@ -19,7 +18,6 @@ class model:
         CONFIG_MODEL_PRECISION_TAG = 'Precision'
         CONFIG_MODEL_SOURCE_FRAMEWORK_TAG = 'SourceFramework'
         CONFIG_MODEL_DIRECTORY_TAG = 'Directory'
-        CONFIG_MODEL_CONFIGPATH_TAG = 'ConfigPath'
 
         model_tag = dom.getElementsByTagName(CONFIG_MODEL_TAG)[0]
         return model(
@@ -27,16 +25,16 @@ class model:
             name=model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
             precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
             framework=model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
-            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data,
-            config=model_tag.getElementsByTagName(CONFIG_MODEL_CONFIGPATH_TAG)[0].firstChild.data,
+            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data
         )
 
 
 class test:
-    def __init__(self, model=None,  device=None, framework=None, parameters=None):
+    def __init__(self, model=None,  device=None, framework=None, config=None, parameters=None):
         self.model = model
         self.device = device
         self.framework = framework
+        self.config = config
         self.parameters = parameters
         self.metrics = self.__init_metrics_from_config(model.config)
 
@@ -95,13 +93,15 @@ class test:
     def parse(dom, test_parameters=None):
         CONFIG_PARAMETERS_TAG = 'Parameters'
         CONFIG_PARAMETERS_DEVICE_TAG = 'Device'
-        CONFIG_PARAMETERS_FRAMEWORK_TAG = 'Framework'
+        CONFIG_PARAMETERS_FRAMEWORK_TAG = 'InferenceFramework'
+        CONFIG_PARAMETERS_CONFIG_TAG = 'Config'
 
         parameters_tag = dom.getElementsByTagName(CONFIG_PARAMETERS_TAG)[0]
         return test(
             model=model.parse(dom),
             device=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_DEVICE_TAG)[0].firstChild.data,
             framework=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_FRAMEWORK_TAG)[0].firstChild.data,
+            config=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_CONFIG_TAG)[0].firstChild.data,
             parameters=test_parameters
         )
 
