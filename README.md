@@ -70,12 +70,15 @@ Novgorod State University Publishing House, 2021. – 423 p.
       is a table that confirms correctness of inference implementation 
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-	- [`validation_results_caffe.md`](results/validation/validation_results.md) 
+    - [`validation_results_caffe.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel® Optimization for Caffe for several public models.
-	- [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
+    - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel® Optimization for TensorFlow for several public models.
+
+  - [`models_checklist.md`](results/models_checklist.md) contains a list
+    of supported deep models (in accordance with Open Model Zoo).
 
 - `src` directory contains benchmark sources.
 
