@@ -560,7 +560,7 @@ image-retrieval-0001|+|+|-|-*|
 1. text-spotting-0005
 1. yolo-v2-tiny-vehicle-detection-0001
 
-### Public модели
+### Открытые модели
 1. aclnet
 1. aclnet-int8
 1. anti-spoof-mn3
