@@ -13,12 +13,12 @@ densenet-121|+|+|+|+|
 densenet-121-caffe2|+|+|-|+|
 densenet-121-tf|+|+|-|+|
 densenet-161|+|+|+|+|
-densenet-161-tf|+|+|-|-|
+densenet-161-tf|+|+|-|-*|
 densenet-169|+|+|+|+|
 densenet-169-tf|+|+|-|+|
 densenet-201|+|+|+|+|
-densenet-201-tf|+|+|-|-|
-dla-34|+|+|-|-|
+densenet-201-tf|+|+|-|-*|
+dla-34|+|+|-|-*|
 efficientnet-b0|+|+|-|+|
 efficientnet-b0_auto_aug|+|+|-|+|
 efficientnet-b0-pytorch|+|+|-|+|
@@ -26,22 +26,22 @@ efficientnet-b5|+|+|-|+|
 efficientnet-b5-pytorch|+|+|-|+|
 efficientnet-b7_auto_aug|+|+|-|+|
 efficientnet-b7-pytorch|+|+|-|+|
-efficientdet-d0-tf|+|-|-|-|
-efficientdet-d1-tf|+|-|-|-|
+efficientdet-d0-tf|+|-|-|-*|
+efficientdet-d1-tf|+|-|-|-*|
 googlenet-v1|+|+|+|+|
 googlenet-v1-tf|+|+|-|+|
 googlenet-v2|+|+|+|+|
 googlenet-v2-tf|+|+|-|+|
 googlenet-v3|+|+|+|+|
 googlenet-v3-pytorch|+|+|-|+|
-googlenet-v4|-|+|+|-|
+googlenet-v4|-|+|+|-*|
 googlenet-v4-tf|+|+|-|+|
-hbonet-0.25|+|+|-|-|
+hbonet-0.25|+|+|-|-*|
 ***hbonet-0.5***|+|-|-|-|
 ***hbonet-1.0***|+|-|-|-|
-inception-resnet-v2|-|+|+|-|
+inception-resnet-v2|-|+|+|-*|
 inception-resnet-v2-tf|+|+|-|+|
-mixnet-l|+|+|-|-|
+mixnet-l|+|+|-|-*|
 mobilenet-v1-0.25-128|+|+|+|+|
 mobilenet-v1-0.50-160|+|+|+|+|
 mobilenet-v1-0.50-224|+|+|+|+|
@@ -62,7 +62,7 @@ octave-resnet-50-0.125|+|+|-|+|
 octave-resnext-101-0.25|+|+|-|+|
 octave-resnext-50-0.25|+|+|-|+|
 octave-se-resnet-50-0.125|+|+|-|+|
-open-closed-eye-0001|+|+|-|-|
+open-closed-eye-0001|+|+|-|-*|
 ***regnetx-3.2gf***|+|-|-|-|
 ***repvgg-a0***|+|-|-|-|
 ***repvgg-b1***|+|-|-|-|
@@ -71,7 +71,7 @@ open-closed-eye-0001|+|+|-|-|
 resnet-101|-|название resnet-v1-*|+|-|
 resnet-152|-|название resnet-v1-*|+|-|
 resnet-18-pytorch|+|+|-|+|
-resnet-34-pytorch|+|+|-|-|
+resnet-34-pytorch|+|+|-|-*|
 resnet-50|-|название resnet-v1-*|+|-|
 resnet-50-caffe2|+|+|-|+|
 resnet-50-pytorch|+|+|-|+|
@@ -80,9 +80,9 @@ resnet-50-tf|+|+|-|+|
 se-inception|+|+|+|+|
 se-resnet-101|+|+|+|+|
 se-resnet-152|+|+|+|+|
-se-resnet-50|+|+|+|-|
-se-resnext-101|+|+|+|-|
-se-resnext-50|+|+|+|-|
+se-resnet-50|+|+|+|-*|
+se-resnext-101|+|+|+|-*|
+se-resnext-50|+|+|+|-*|
 ***shufflenet-v2-x1.0***|+|-|-|-|
 squeezenet1.0|+|+|+|+|
 squeezenet1.1|+|+|+|+|
@@ -104,10 +104,10 @@ deeplabv3|+|+|+|+|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-|
-mask_rcnn_inception_v2_coco|+|+|-|-|
-mask_rcnn_resnet101_atrous_coco|+|+|-|-|
-mask_rcnn_resnet50_atrous_coco|+|+|-|-|
+mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|
+mask_rcnn_inception_v2_coco|+|+|-|-*|
+mask_rcnn_resnet101_atrous_coco|+|+|-|-*|
+mask_rcnn_resnet50_atrous_coco|+|+|-|-*|
 ***yolact-resnet50-fpn-pytorch***|+|-|-|-|
 
 ### 3D сегментация (3D segmentation)
@@ -126,15 +126,15 @@ mask_rcnn_resnet50_atrous_coco|+|+|-|-|
 ***ctpn***|+|отсутствуют данные|-|-|
 ***faceboxes-pytorch***|+|-|-|-|
 ***face-detection-retail-0044***|+|-|-|-|
-faster_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-|
-faster_rcnn_inception_v2_coco|+|+|-|-|
-faster_rcnn_resnet101_coco|+|+|-|-|
-faster_rcnn_resnet50_coco|+|+|-|-|
+faster_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|
+faster_rcnn_inception_v2_coco|+|+|-|-*|
+faster_rcnn_resnet101_coco|+|+|-|-*|
+faster_rcnn_resnet50_coco|+|+|-|-*|
 ***mobilefacedet-v1-mxnet***|+|-|-|-|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|+|+|
 ***mtcnn***|+|пайплайн из трех моделей|-|-|
-pelee-coco|+|+|+|-|
-retinanet-tf|+|+|-|-|
+pelee-coco|+|+|+|-*|
+retinanet-tf|+|+|-|-*|
 ***rfcn-resnet101-coco-tf***|+|-|-|-|
 ssd300|+|+|+|+|
 ssd512|+|+|+|+|
@@ -150,7 +150,7 @@ yolo-v1-tiny-tf|+|+|-|+|
 yolo-v2-tiny-tf|+|+|-|+|
 yolo-v2-tf|+|+|-|+|
 ***yolo-v3-tiny-tf***|+|-|-|-|
-yolo-v3-tf|+|+|-|-|
+yolo-v3-tf|+|+|-|-*|
 ***yolo-v4-tiny-tf***|+|-|-|-|
 ***yolo-v4-tf***|+|-|-|-|
 
@@ -164,7 +164,7 @@ face-recognition-resnet100-arcface|-|не известен тренировоч�
 ***face-recognition-resnet100-arcface-onnx***|+|-|-|-|
 face-recognition-resnet34-arcface|-|не известен тренировочный набор данных|-|-|
 face-recognition-resnet50-arcface|-|не известен тренировочный набор данных|-|-|
-Sphereface|+|+|-|-|
+Sphereface|+|+|-|-*|
 
 ### Оценка позы человека (human pose estimation)
 
@@ -173,7 +173,6 @@ Sphereface|+|+|-|-|
 ***higher-hrnet-w32-human-pose-estimation***|+|-|-|-|
 ***human-pose-estimation-3d-0001***|+|-|-|-|
 ***single-human-pose-estimation-0001***|+|-|-|-|
-
 
 ### Оценка глубины (Monodepth)
 
@@ -276,7 +275,7 @@ Sphereface|+|+|-|-|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-resnet18-xnor-binary-onnx-0001|+|+|-|-|
+resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 ***resnet50-binary-0001***|+|-|-|-|
 ***weld-porosity-detection-0001***|+|-|-|-|
 
@@ -310,8 +309,8 @@ pedestrian-detection-adas-binary-0001|-|+|-|-|
 person-detection-action-recognition-0005|+|+|-|+|
 person-detection-action-recognition-0006|+|+|-|+|
 person-detection-action-recognition-teacher-0002|+|+|-|+|
-person-detection-asl-0001|+|+|-|-|
-person-detection-raisinghand-recognition-0001|+|+|-|-|
+person-detection-asl-0001|+|+|-|-*|
+person-detection-raisinghand-recognition-0001|+|+|-|-*|
 person-detection-retail-0002|+|+|-|+|
 person-detection-retail-0013|+|+|+|+|
 ***person-vehicle-bike-detection-2000***|+|-|-|-|
@@ -328,7 +327,7 @@ product-detection-0001|+|+|-|+|
 ***vehicle-detection-0202***|+|-|-|-|
 vehicle-detection-adas-0002|+|+|+|+|
 vehicle-detection-adas-binary-0001|-|+|-|-|
-vehicle-license-plate-detection-barrier-0106|+|+|+|-|
+vehicle-license-plate-detection-barrier-0106|+|+|+|-*|
 yolo-v2-ava-0001|+|+|-|+|
 yolo-v2-ava-sparse-35-0001|+|+|-|+|
 yolo-v2-ava-sparse-70-0001|+|+|-|+|
@@ -371,12 +370,12 @@ face-reidentification-retail-0095|+|+|-|+|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-icnet-camvid-ava-0001|+|+|-|-|
-icnet-camvid-ava-sparse-30-0001|+|+|-|-|
-icnet-camvid-ava-sparse-60-0001|+|+|-|-|
+icnet-camvid-ava-0001|+|+|-|-*|
+icnet-camvid-ava-sparse-30-0001|+|+|-|-*|
+icnet-camvid-ava-sparse-60-0001|+|+|-|-*|
 road-segmentation-adas-0001|+|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|+|
-unet-camvid-onnx-0001|+|+|-|-|
+unet-camvid-onnx-0001|+|+|-|-*|
 
 ### Сегментация объектов (instance segmentation)
 
@@ -421,8 +420,8 @@ single-image-super-resolution-1033|+|+|-|+|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-***formula-recognition-medium-scan-0001|+|-|-|-|
-***formula-recognition-polynomials-handwritten-0001|+|-|-|-|
+***formula-recognition-medium-scan-0001***|+|-|-|-|
+***formula-recognition-polynomials-handwritten-0001***|+|-|-|-|
 ***handwritten-japanese-recognition-0001***|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|-|
 ***handwritten-score-recognition-0003***|+|отсутствуют данные|-|-|
 ***handwritten-simplified-chinese-recognition-0001***|+|-|-|-|
@@ -443,18 +442,18 @@ text-spotting-0002-recognizer-encoder|-|-|-|-|
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-|
-action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-|
+action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|
+action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|
 ***asl-recognition-0004***|+|-|-|-|
 ***common-sign-language-0002***|+|-|-|-|
-driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-|
-driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-|
+driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-*|
+driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-*|
 
 ### Восстановление изображений (image retrieval)
 
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-image-retrieval-0001|+|+|-|-|
+image-retrieval-0001|+|+|-|-*|
 
 ### Ответ на вопрос (question answering)
 Модель | Наличие в OMZ (2021.10.19)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
