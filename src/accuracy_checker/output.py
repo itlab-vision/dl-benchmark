@@ -3,7 +3,7 @@ class output_handler:
         self.__table_name = table_name
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
+        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
         with open(self.__table_name, 'w') as table:
             table.write(HEADERS + '\n')
             table.close()
