@@ -4,7 +4,7 @@ class result:
             'status': status,
             'task': task,
             'model': model,
-            'source_framework' : source_framework,
+            'source_framework': source_framework,
             'launcher': launcher,
             'device': device,
             'dataset': dataset,
@@ -43,15 +43,15 @@ class result:
         if not error:
             datasets = [value[len(TAG_DATASET):].replace('\r', '') for value in res if TAG_DATASET in value]
             if not datasets:
-                raise ValueError('Information about dataset was not found in test result', idx)
+                raise ValueError('Information about dataset was not found in test result')
             idx = [res.index(value) for value in res if TAG_OBJECTS in value]
             accuracies = [res[i][res[i].index(':') + 1:].replace('\r', '') for i in range(idx[0] + 1, len(res))]
         else:
             accuracies = ['']
             datasets = ['']
         if not accuracies:
-            raise ValueError('Information about accuracy was not found in test result', idx)
+            raise ValueError('Information about accuracy was not found in test result')
 
-        return [result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework, \
-                       source_framework=test.model.framework, device=test.device, dataset=datasets[0], \
+        return [result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework,
+                       source_framework=test.model.framework, device=test.device, dataset=datasets[0],
                        precision=test.model.precision, metric='', accuracy=accuracy) for accuracy in accuracies]
