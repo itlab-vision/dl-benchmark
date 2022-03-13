@@ -17,7 +17,10 @@ def get_cpu_name():
 def get_gpu_name():
     ie = IECore()
     try:
-        gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
+        if 'GPU' in ie.available_devices:
+            gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
+        else:
+            gpuname = 'Underfined'
     except TypeError:
         gpuname = 'Undefined'
     del ie
