@@ -1,0 +1,4355 @@
+<style>
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            border-style: hidden;
+        }
+        table td {
+            padding: 0px;
+            border: 1px solid black;
+        }
+        .main {
+            border-style: solid;
+        }
+        .standard_table {
+            width: 200px;
+            height: 100%;
+        }
+        .one_type_table {
+            width: 100px;
+            height: 100%;
+        }
+
+        .lock {
+            width: 100%;
+        }
+        .double {
+            width: 50%;
+        }
+        .result_column {
+            width: 100px;
+            height: 120px;
+        }
+
+        .border_columns {
+            width: 100%;
+            height: 120px;
+        }
+</style>
+
+<table align="center" border="1"cellspacing="0" cellpadding="0" class="main">
+<tr>
+<th>Task type</th>
+<th>Topology name</th>
+<th>Framework</th>
+<th>Input blob sizes</th>
+<th>Batch size</th>
+<th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<th>CPU: Intel(R) Core(TM) i3-8100 CPU @ 3.60GHz, CPU family: x86_64, GPU: Intel(R) Gen9 HD Graphics, RAM size: 32757916 kB, OS family: Linux, OS version: Linux-5.3.0-51-generic-x86_64-with-Ubuntu-18.04-bionic, Python version: 3.6.9</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="{}">
+<tr>
+<th>OpenVINO DLDT</th></tr><tr><td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<th>CPU</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th colspan="2">FP32</th>
+</tr><tr><th class="double">Latency Mode</th>
+<th class="double">Throughput Mode</th></tr>
+</table></th><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th colspan="2">INT8</th>
+</tr><tr><th class="double">Latency Mode</th>
+<th class="double">Throughput Mode</th></tr>
+</table></th></tr></table></td></tr>
+</table>
+</th><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<th>GPU</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th colspan="2">FP32</th>
+</tr><tr>
+<th>Latency<br>Mode</th>
+</tr></table></th>
+<th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th colspan="2">FP16</th>
+</tr><tr>
+<th>Latency<br>Mode</th>
+</tr></table></th>
+</tr></table></td></tr>
+</table>
+</th>
+</tr></table></td></tr>
+</table>
+</th>
+</tr>
+</table></td></tr>
+</table>
+</th>
+<th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<th>CPU: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz, CPU family: x86_64, GPU: Intel(R) Gen9 HD Graphics, RAM size: 65727564 kB, OS family: Linux, OS version: Linux-5.3.0-51-generic-x86_64-with-Ubuntu-18.04-bionic, Python version: 3.6.9</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="{}">
+<tr>
+<th>OpenVINO DLDT</th></tr><tr><td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<th>CPU</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th colspan="2">FP32</th>
+</tr><tr><th class="double">Latency Mode</th>
+<th class="double">Throughput Mode</th></tr>
+</table></th><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><th colspan="2">INT8</th>
+</tr><tr><th class="double">Latency Mode</th>
+<th class="double">Throughput Mode</th></tr>
+</table></th></tr></table></td></tr>
+</table>
+</th><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<th>GPU</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th colspan="2">FP32</th>
+</tr><tr>
+<th>Latency<br>Mode</th>
+</tr></table></th>
+<th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th colspan="2">FP16</th>
+</tr><tr>
+<th>Latency<br>Mode</th>
+</tr></table></th>
+</tr></table></td></tr>
+</table>
+</th><th> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<th>MYRIAD</th>
+</tr>
+<tr>
+<td> <table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th><table align="center" width="100%"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><th colspan="2">FP16</th>
+</tr><tr><th>Throughput<br>Mode</th>
+</tr>
+</table></th></tr></table></td></tr>
+</table>
+</th>
+</tr></table></td></tr>
+</table>
+</th>
+</tr>
+</table></td></tr>
+</table>
+</th>
+</tr>
+
+<tr><td>Object detection</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">face-detection-adas-0001</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">face-detection-retail-0004</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">face-detection-retail-0005</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">person-detection-retail-0013</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">pedestrian-detection-adas-0002</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">pedestrian-and-vehicle-detector-adas-0001</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">vehicle-detection-adas-0002</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">person-vehicle-bike-detection-crossroad-0078</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">person-vehicle-bike-detection-crossroad-1016</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">vehicle-license-plate-detection-barrier-0106</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x384x672</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x300x300</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x300x300</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x320x544</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x384x672</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x384x672</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x384x672</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x1024x1024</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x512x512</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x300x300</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">95.226
+</td>
+<td class="double" align="right">99.792
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">90.393
+</td>
+<td class="double" align="right">99.095
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">48.271
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">55.724
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">71.86
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">96.114
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">251.291
+</td>
+<td class="double" align="right">311.997
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">259.328
+</td>
+<td class="double" align="right">304.387
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">125.422
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">170.007
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">150.436
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">244.744
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">263.296
+</td>
+<td class="double" align="right">268.78
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">-</td>
+<td class="double" align="right">-</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">106.839
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">136.127
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">139.794
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">148.993
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">100.39
+</td>
+<td class="double" align="right">92.752
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">78.411
+</td>
+<td class="double" align="right">80.695
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">51.924
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">58.371
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">74.881
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">67.889
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">92.994
+</td>
+<td class="double" align="right">97.923
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">85.977
+</td>
+<td class="double" align="right">98.398
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">51.108
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">59.866
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">77.228
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">100.679
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">71.388
+</td>
+<td class="double" align="right">73.502
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">65.329
+</td>
+<td class="double" align="right">73.538
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">41.906
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">47.408
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">65.466
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">83.932
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">94.364
+</td>
+<td class="double" align="right">98.534
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">87.345
+</td>
+<td class="double" align="right">99.272
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">52.637
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">61.035
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">80.951
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">102.333
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">32.782
+</td>
+<td class="double" align="right">35.659
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">31.191
+</td>
+<td class="double" align="right">34.169
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">24.834
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">27.392
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">33.14
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">30.972
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">69.416
+</td>
+<td class="double" align="right">73.597
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">-</td>
+<td class="double" align="right">-</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">39.926
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">46.202
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">57.662
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">83.349
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">370.915
+</td>
+<td class="double" align="right">418.743
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">168.179
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">197.463
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">155.158
+</td>
+<td class="double" align="right">174.836
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">122.012
+</td>
+<td class="double" align="right">132.042
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">56.677
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">65.125
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">82.092
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">108.489
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">23.46
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">24.809
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">401.446
+</td>
+<td class="double" align="right">552.218
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">407.828
+</td>
+<td class="double" align="right">486.199
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">138.016
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">190.715
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">167.264
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">271.694
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">122.271
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">127.593
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">416.742
+</td>
+<td class="double" align="right">496.756
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">-</td>
+<td class="double" align="right">-</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">120.077
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">155.316
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">154.566
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">167.841
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">51.342
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">52.377
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">179.998
+</td>
+<td class="double" align="right">172.286
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">107.204
+</td>
+<td class="double" align="right">92.634
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">63.582
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">66.746
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">84.655
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">77.007
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">15.469
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">15.848
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">151.326
+</td>
+<td class="double" align="right">170.45
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">120.065
+</td>
+<td class="double" align="right">134.174
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">60.959
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">69.361
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">88.179
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">114.041
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">24.392
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">24.484
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">120.741
+</td>
+<td class="double" align="right">130.664
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">94.935
+</td>
+<td class="double" align="right">99.113
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">49.472
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">55.039
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">74.981
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">94.845
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">20.001
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">20.365
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">154.632
+</td>
+<td class="double" align="right">169.249
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">122.095
+</td>
+<td class="double" align="right">134.786
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">61.537
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">70.822
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">93.753
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">116.13
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">23.969
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">25.032
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">51.317
+</td>
+<td class="double" align="right">55.636
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">41.077
+</td>
+<td class="double" align="right">45.884
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">28.729
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">31.215
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">37.679
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">35.121
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">7.468
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">7.472
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">114.611
+</td>
+<td class="double" align="right">113.629
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">-</td>
+<td class="double" align="right">-</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">45.974
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">52.681
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">65.298
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">94.558
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">15.87
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">15.555
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">569.375
+</td>
+<td class="double" align="right">550.797
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">198.585
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">222.109
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">73.538
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Object recognition</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">age-gender-recognition-retail-0013</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">head-pose-estimation-adas-0001</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">license-plate-recognition-barrier-0001</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">landmarks-regression-retail-0009</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">facial-landmarks-35-adas-0002</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">person-attributes-recognition-crossroad-0230</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">gaze-estimation-adas-0002</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x62x62</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x60x60</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x24x94, 88x1</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x48x48</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x60x60</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x160x80</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3, 1x3x60x60, 1x3x60x60</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1739.653
+</td>
+<td class="double" align="right">2252.962
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2607.79
+</td>
+<td class="double" align="right">2986.068
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">600.215
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1756.317
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">717.098
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">2037.43
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1801.677
+</td>
+<td class="double" align="right">2332.737
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2704.04
+</td>
+<td class="double" align="right">2914.438
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">537.525
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1483.659
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">582.3
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1764.815
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">799.982
+</td>
+<td class="double" align="right">932.969
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">277.199
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">315.836
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">6543.376
+</td>
+<td class="double" align="right">9975.892
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">13825.477
+</td>
+<td class="double" align="right">14589.93
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1046.483
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4545.439
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1018.529
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4298.544
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">653.013
+</td>
+<td class="double" align="right">1561.07
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2410.433
+</td>
+<td class="double" align="right">3552.789
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">165.075
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1100.109
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">178.527
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1111.221
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1028.52
+</td>
+<td class="double" align="right">1548.828
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1494.164
+</td>
+<td class="double" align="right">1496.271
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">252.974
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">707.28
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">284.302
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">775.682
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1271.001
+</td>
+<td class="double" align="right">1800.637
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">490.964
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">582.826
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">3043.762
+</td>
+<td class="double" align="right">4472.98
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">4230.795
+</td>
+<td class="double" align="right">5223.275
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">750.054
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">2027.948
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">873.268
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">2397.43
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">554.747
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">1111.137
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2913.723
+</td>
+<td class="double" align="right">4517.558
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">4804.128
+</td>
+<td class="double" align="right">5604.384
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">666.927
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1678.897
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">747.914
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">2055.276
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">464.519
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">861.756
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1253.528
+</td>
+<td class="double" align="right">1584.87
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">324.16
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">366.731
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">364.379
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">7543.712
+</td>
+<td class="double" align="right">12704.391
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">20422.661
+</td>
+<td class="double" align="right">27055.597
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1089.713
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5201.431
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1094.261
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4675.273
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">507.586
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">1218.593
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">834.687
+</td>
+<td class="double" align="right">1831.085
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2813.907
+</td>
+<td class="double" align="right">6040.701
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">182.401
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1261.255
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">208.765
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">1286.202
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">248.587
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">362.011
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">1311.95
+</td>
+<td class="double" align="right">2459.46
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2425.68
+</td>
+<td class="double" align="right">3057.795
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">322.701
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">781.408
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">362.202
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">856.636
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">264.128
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">363.129
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">2003.968
+</td>
+<td class="double" align="right">3104.42
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">604.628
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">754.914
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">445.094
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Reidentification</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">face-reidentification-retail-0095</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x128x128</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">342.197
+</td>
+<td class="double" align="right">417.449
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">414.836
+</td>
+<td class="double" align="right">392.371
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">166.295
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">309.593
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">193.786
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">500.469
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">550.289
+</td>
+<td class="double" align="right">781.929
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">715.462
+</td>
+<td class="double" align="right">606.16
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">187.313
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">362.692
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">248.008
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">555.5
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">83.693
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">88.163
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Semantic segmentation</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">road-segmentation-adas-0001</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">semantic-segmentation-adas-0001</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x512x896</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x1024x2048</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">26.975
+</td>
+<td class="double" align="right">27.101
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">22.789
+</td>
+<td class="double" align="right">24.315
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">19.894
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">18.75
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">32.024
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">20.822
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">3.648
+</td>
+<td class="double" align="right">4.107
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">3.62
+</td>
+<td class="double" align="right">4.057
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.028
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.25
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">6.262
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">7.714
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">38.676
+</td>
+<td class="double" align="right">37.916
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">26.433
+</td>
+<td class="double" align="right">26.821
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">23.062
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">21.666
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">37.427
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">23.64
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">5.228
+</td>
+<td class="double" align="right">6.123
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">5.097
+</td>
+<td class="double" align="right">6.11
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.779
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5.005
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">7.174
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">8.949
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Human pose estimation</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">human-pose-estimation-0001</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x256x456</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">25.351
+</td>
+<td class="double" align="right">23.554
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">22.735
+</td>
+<td class="double" align="right">23.599
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">18.189
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">18.738
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">31.982
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">34.792
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">40.573
+</td>
+<td class="double" align="right">39.799
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">33.146
+</td>
+<td class="double" align="right">35.198
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">20.938
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">21.239
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">36.045
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">39.491
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">10.071
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">10.052
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Image processing</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">single-image-super-resolution-1032</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">single-image-super-resolution-1033</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x270x480, 1x3x1080x1920</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x360x640, 1x3x1080x1920</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">5.948
+</td>
+<td class="double" align="right">7.503
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.565
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5.211
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">5.183
+</td>
+<td class="double" align="right">6.745
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.041
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">4.796
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">7.782
+</td>
+<td class="double" align="right">8.608
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5.157
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5.855
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">2.958
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">θών.95
+</td>
+<td class="double" align="right">8.246
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">ΰοπ.56
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">5.402
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">2.705
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr><td>Action recognition</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">driver-action-recognition-adas-0002-encoder</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">driver-action-recognition-adas-0002-decoder</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">action-recognition-0001-encoder</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">action-recognition-0001-decoder</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">OpenVINO DLDT</td>
+</tr>
+</table></td></tr></table>
+</td><td> <table align="center" class="lock" height="100%"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x224x224</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x16x512</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x3x224x224</td>
+</tr>
+</table></td></tr><tr><td>
+<table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td align="left">1x16x512</td>
+</tr>
+</table></td></tr></table>
+</td><td > <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="right">8</td>
+</tr>
+</table>
+</td></tr><tr>
+ <td> <table align="center" class="border_columns"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td align="right">1</td>
+</tr>
+</table>
+</td></tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">366.251
+</td>
+<td class="double" align="right">438.509
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">421.877
+</td>
+<td class="double" align="right">427.312
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">185.228
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">242.821
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">235.45
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">438.987
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">32.209
+</td>
+<td class="double" align="right">37.455
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">132.442
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">128.506
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">51.159
+</td>
+<td class="double" align="right">52.281
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">54.35
+</td>
+<td class="double" align="right">53.285
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">37.687
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">43.744
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">65.041
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">80.352
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">99.942
+</td>
+<td class="double" align="right">114.815
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">138.166
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">134.532
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td><td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">503.095
+</td>
+<td class="double" align="right">647.723
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">672.582
+</td>
+<td class="double" align="right">636.278
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">206.861
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">273.619
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">261.327
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">504.601
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">92.104
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">95.959
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">54.905
+</td>
+<td class="double" align="right">100.631
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">144.164
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">141.786
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">168.988
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">80.243
+</td>
+<td class="double" align="right">84.143
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">88.607
+</td>
+<td class="double" align="right">85.872
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">43.419
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">49.705
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">74.187
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">90.749
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">52.966
+</td>
+</tr>
+</table></td>
+</tr>
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">54.341
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr><tr>
+<td> <table align="center" class="lock"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">142.055
+</td>
+<td class="double" align="right">279.196
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr>
+<td class="double" align="right">N/A</td>
+<td class="double" align="right">N/A</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">150.145
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr>
+<td class="double" align="right">147.515
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td><td height="120px"> <table align="center" class="result_column"border="1" cellspacing="0" cellpadding="0" class="standard_table">
+<tr><td> <table align="center"border="1" cellspacing="0" cellpadding="0" class="one_type_table">
+<tr><td class="double" align="right">157.193
+</td>
+</tr>
+</table></td>
+</tr></table>
+</td></table>
+</td>
+</tr></table>
+</td>
+</tr></table>

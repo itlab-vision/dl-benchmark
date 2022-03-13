@@ -5,13 +5,14 @@
 This is a repo of deep learning inference benchmark, called DLI.
 DLI is a benchmark for deep learning inference on various hardware.
 The main advantage of DLI from the existing benchmarks
-is the availability of perfomance results for a large number
+is the availability of performance results for a large number
 of deep models inferred on Intel platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports: 
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
-- [Intel® Optimization for Caffe][intel-caffe]
+- [Intel® Optimization for Caffe][intel-caffe].
+- [Intel® Optimization for TensorFlow][intel-tensorflow].
 
 More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
@@ -19,17 +20,33 @@ or [here][dli-web-page] (in English).
 
 ## Cite
 
-Please consider citing the following paper.
+Please consider citing the following papers.
 
-Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
+1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
 Kogteva N. DLI: Deep Learning Inference Benchmark //
 Communications in Computer and Information Science.
 V.1129. 2019. P. 542-553.
 
+1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
+Kustikova V.D. Automation of collecting performance indicators 
+for the inference of deep neural networks in Deep Learning 
+Inference Benchmark // Mathematical modeling and supercomputer 
+technologies. Proceedings of the XXI International Conference 
+(N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
+Novgorod State University Publishing House, 2021. – 423 p.
+[https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
+(In Russian)
+
 ## Repo structure
+
 - `docker` directory contains Dockerfiles.
 
-  - [`Dockerfile`](docker/Dockerfile) is a file to build the OpenVINO toolkit.
+  - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel® 
+    Distribution of OpenVINO™ Toolkit.
+  - `Caffe`is a directory of Dockerfiles for Intel® Optimization 
+    for Caffe.
+  - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
+    for TensorFlow.
 
 - `docs` directory contains project documentation.
 
@@ -48,20 +65,33 @@ V.1129. 2019. P. 542-553.
 
     - [`validation_results.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
-      based on Intel Distribution of OpenVINO toolkit for public models.
+      based on Intel Distribution of OpenVINO™ toolkit for public models.
     - [`validation_results_intel_models.md`](results/validation/validation_results_intel_models.md)
       is a table that confirms correctness of inference implementation 
-      based on Intel Distribution of OpenVINO toolkit for models trained
+      based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
+    - [`validation_results_caffe.md`](results/validation/validation_results.md) 
+      is a table that confirms correctness of inference implementation 
+      based on Intel® Optimization for Caffe for several public models.
+    - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
+      is a table that confirms correctness of inference implementation 
+      based on Intel® Optimization for TensorFlow for several public models.
+
+  - [`models_checklist.md`](results/models_checklist.md) contains a list
+    of supported deep models (in accordance with Open Model Zoo).
 
 - `src` directory contains benchmark sources.
 
-  - `deployment` is a set of deployment tools.
+  - `accuracy_checker` contains scripts to check deep model accuracy
+    using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
+  - `config_maker`contains GUI application to make configuration files
+    of the benchmark components.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert result table
     from csv to html.
+  - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
   - `remote_control` contains scripts to execute benchmark
     remotely.
@@ -90,15 +120,17 @@ on the FTP-server, the first one for the benchmark configuration files,
 and the second one for the file of bencmarking results. Further, please,
 follow instructions.
 
-1. Prepare configuration files (in accordance with
+1. Prepare configuration files in accordance with
    `src/configs/benchmark_configuration_file_template.xml` and
-   `src/configs/remote_configuration_file_template.xml`.
+   `src/configs/remote_configuration_file_template.xml`. Please, use 
+   GUI application (`src/config_maker`).
 1. Copy the benchmark configuration files to the corresponding directory
    on the FTP-server.
 1. Execute the `src/remote_control/remote_start.py` script. Please, follow
    `src/remote_control/README.md`.
 1. Wait for completing the benchmark.
-1. Copy benchmarking results from the FTP-server to the local machine.
+1. Copy benchmarking results from the FTP-server to the local machine
+   for the further analysis.
 
 ## Deployment example
 
@@ -111,7 +143,7 @@ follow instructions.
    ```
 
 1. It is required to deploy FTP-server and create directories.
-   For definiteness, we will use the following directory names:
+   For definiteness, we will use the following names:
 
    - `docker_image_folder` is a directory for storing docker image.
    - `benchmark_config` is a directory for storing configurationn files.
@@ -129,7 +161,7 @@ follow instructions.
    to build this image can be found in the
    `/tmp/dl-benchmark/docker/OpenVINO_DLDT` folder.
    Before building, you should put the current link to download
-   the OpenVINO toolkit and link to dataset it should be a git
+   the OpenVINO toolkit and link to dataset, it should be a git
    repository. Please, insert correct path in the following line:
 
    `ARG DOWNLOAD_LINK=<Link to download Intel Distribution of OpenVINO Toolkit>`
@@ -151,6 +183,7 @@ follow instructions.
    in the `/tmp/dl-benchmark/src/config/deploy_configuration_file_template.xml`.
    Fill the configuration file (information to access to the remote computer)
    and save it to the `/tmp/dl-benchmark/src/deployment/deploy_config.xml`.
+   Please, use the developed GUI application (config maker).
 
    ```xml
    <Computers>
@@ -175,9 +208,9 @@ follow instructions.
     ```
 
    The first three parameters `-s, -l, -p` are responsible for access
-   to the FTP-server, `-i` is a path to the archived Docker-image,
-   `-d` is a directory on the FTP-server where the Docker-image will be uploaded,
-   `-n` is an executable name of the Docker-container,
+   to the FTP-server, `-i` is a path to the archived Docker image,
+   `-d` is a directory on the FTP-server where the Docker image will be uploaded,
+   `-n` is an executable name of the Docker container,
    `--machine_list` is a configuration file which contains a list of machines
    on which we plan to deploy our infrastructure.
 
@@ -189,7 +222,7 @@ follow instructions.
    to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
    Fill the configuration file and save it to the `benchmark_config/bench_config.xml`
-   on the FTP-server.
+   on the FTP-server. Please, use the developed GUI application (config maker).
 
    ```xml
    <Tests>
@@ -228,6 +261,7 @@ follow instructions.
    `src/config/remote_configuration_file_template.xml`.
    Fill it and save to the
    `/tmp/dl-benchmark/src/remote_start/remote_config.xml`.
+   Please, use the developed GUI application (config maker).
 
    ```xml
    <Computers>
@@ -260,7 +294,9 @@ follow instructions.
 
 1. Copy benchmarking results from the FTP-server to the local machine.
 
-   `scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/`
+   ```bash
+   scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/
+   ```
 
 1. Convert csv to html using the following command:
 
@@ -273,6 +309,8 @@ follow instructions.
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
+[intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
+[mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
