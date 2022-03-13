@@ -36,7 +36,7 @@ class test:
         self.framework = framework
         self.config = config
         self.parameters = parameters
-        self.metrics = self.__init_metrics_from_config(model.config)
+        self.metrics = self.__init_metrics_from_config(self.config)
 
     def __init_metrics_from_config(self, config):
         MODELS_TAG = 'models'
@@ -61,7 +61,8 @@ class test:
                             if 'name' in metric.keys():
                                 model_metric.append(metric['name'])
                             else:
-                                model_metric.append('_'.join(metric.values()))
+                                values = [str(value) for value in metric.values()]
+                                model_metric.append('_'.join(values))
             if len(model_metric) == 0:
                 for launcher in launchers:
                     if self.__convert_framework_from_config(launcher[FRAMEWORK_TAG]) == self.framework:
@@ -74,7 +75,8 @@ class test:
                                         if 'name' in metric.keys():
                                             model_metric.append(metric['name'])
                                         else:
-                                            model_metric.append('_'.join(metric.values()))
+                                            values = [str(value) for value in metric.values()]
+                                            model_metric.append('_'.join(values))
             metrics.extend(model_metric)
         return metrics
 
@@ -87,7 +89,7 @@ class test:
         elif framework == 'tf':
             return 'TensorFlow'
         else:
-            raise ValueError('Framework {} is not supported!'.format(framework))
+            return 'Unsupported framework'
 
     @staticmethod
     def parse(dom, test_parameters=None):
