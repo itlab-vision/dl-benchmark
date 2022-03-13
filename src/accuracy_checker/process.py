@@ -53,4 +53,4 @@ class process:
         print(self.__output)
 
     def get_result_parameters(self):
-        return result.parser_test_results(self.__output)
+        return result.parser_test_result(self.__output, self.__test)

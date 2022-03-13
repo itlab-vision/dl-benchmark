@@ -23,6 +23,10 @@ class executor(metaclass=abc.ABCMeta):
         self.my_target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
+    def get_infrastructure(self):
+        pass
+
+    @abc.abstractmethod
     def execute_process(self, command_line):
         pass
 
@@ -38,6 +42,15 @@ class executor(metaclass=abc.ABCMeta):
 class host_executor(executor):
     def __init__(self, log):
         super().__init__(log)
+
+    def get_infrastructure(self):
+        import node_info as info
+        hardware = info.get_system_characteristics()
+        hardware_info = ''
+        for key in hardware:
+            hardware_info += '{}: {}, '.format(key, hardware[key])
+        hardware_info = hardware_info[:-2]
+        return hardware_info
 
     def execute_process(self, command_line):
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
@@ -88,4 +101,17 @@ class docker_executor(executor):
     def execute_process(self, command_line):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
-        return out
+        return
+
+    def get_infrastructure(self):
+        hardware_command = 'python3 /tmp/dl-benchmark/src/accuracy_checker/node_info.py'
+        command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
+        output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        if output[0] != 0:
+            return 'None'
+        hardware = [line.strip().split(': ') for line in output[-1].decode("utf-8").split('\n')[1:-1]]
+        hardware_info = ''
+        for line in hardware:
+            hardware_info += '{}: {}, '.format(line[0], line[1])
+        hardware_info = hardware_info[:-2]
+        return hardware_info
