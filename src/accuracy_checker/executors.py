@@ -101,7 +101,7 @@ class docker_executor(executor):
     def execute_process(self, command_line):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
-        return
+        return out
 
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/accuracy_checker/node_info.py'
