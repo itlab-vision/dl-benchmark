@@ -7,11 +7,19 @@ class result:
             'source_framework': source_framework,
             'launcher': launcher,
             'device': device,
-            'dataset': dataset,
+            'dataset': self.update_dataset(dataset),
             'metric': metric,
             'precision': precision,
             'accuracy': accuracy
         }
+
+    def update_dataset(self, dataset):
+        if 'imagenet' in dataset.lower():
+            return 'ImageNet'
+        elif 'coco' in dataset.lower():
+            return 'MS COCO'
+        else:
+            return dataset
 
     def is_failed(self):
         return self.__params['status'] == 'FAILED'
