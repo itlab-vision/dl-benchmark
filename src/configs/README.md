@@ -276,13 +276,27 @@
 - Путь до скрипта `ftp_client.py` в папке `remote_control`
   (на компьютер предварительно нужно склонировать наш репозиторий)
   описывается внутри тегов `FTPClientPath`.
-- Путь до конфигурации бенчмарка описывается внутри тега `BenchmarkConfig`.
-- Тип окружения, используемого при бенчмаркинге, описывается внутри тега `BenchmarkExecutor`.
-  Допустимые значения `host_machine ` (запуск вывода производится в окружении пользователя) и
+- Набор тегов для тестирования моделей на производительность описываются внутри тега `Benchmark`:
+  - Путь до конфигурации описывается внутри тега `Config`.
+  - Тип окружения, используемого при бенчмаркинге, описывается внутри тега `Executor`.
+  Допустимые значения `host_machine` (запуск вывода производится в окружении пользователя) и
   `docker_container` (запуск вывода производится в предварительно настроенном docker-контейнере).
-- Имя файла, в который логируется работа программы, описывается внутри
+  - Имя файла, в который логируется работа программы, описывается внутри
   тега `LogFile`.
-- Имя таблицы, в которую записывается результат работы программы, описывается
+  - Имя таблицы, в которую записывается результат работы программы, описывается
+  внутри тега `ResultFile`.
+- Набор тегов для тестирования моделей на качество описываются внутри тега `AccuracyChecker`:
+  - Путь до конфигурации описывается внутри тега `Config`.
+  - Тип окружения, используемого при проверке на качество, описывается внутри тега `Executor`.
+  Допустимые значения `host_machine` (запуск вывода производится в окружении пользователя) и
+  `docker_container` (запуск вывода производится в предварительно настроенном docker-контейнере).
+  - Путь до директории с наборами данных описывается внутри
+  тега `DatasetPath`.
+  - Путь до конфигурационного файла из репозитория [Open Model Zoo][open-model-zoo] с описанием
+  наборов данных описывается внутри тега `DefinitionPath`.
+  - Имя файла, в который логируется работа программы, описывается внутри
+  тега `LogFile`.
+  - Имя таблицы, в которую записывается результат работы программы, описывается
   внутри тега `ResultFile`.
 
 ### Пример заполнения
@@ -296,10 +310,20 @@
         <Password>Admin</Password>
         <OS>Windows</OS>
         <FTPClientPath>C:/dl-benchmark/src/remote_control/ftp_client.py</FTPClientPath>
-        <BenchmarkConfig>C:/dl-benchmark/src/configs/benchmark_configuration.xml</BenchmarkConfig>
-        <BenchmarkExecutor>host_machine</BenchmarkExecutor>
-        <LogFile>program_log.txt</LogFile>
-        <ResultFile>result_table.csv</ResultFile>
+		<Benchmark>
+			<Config>C:/dl-benchmark/src/configs/benchmark_configuration.xml</Config>
+			<Executor>host_machine</Executor>
+			<LogFile>benchmark_log.txt</LogFile>
+			<ResultFile>benchmark_result_table.csv</ResultFile>
+		</Benchmark>
+		<AccuracyChecker>
+			<Config>C:/dl-benchmark/src/configs/accuracy_checker_configuration.xml</Config>
+			<Executor>host_machine</Executor>
+			<DatasetPath>C:/datasets/</DatasetPath>
+			<DefinitionPath>C:/open_model_zoo/tools/accuracy_checker/dataset_definitions.yml</DefinitionPath>
+			<LogFile>accuracy_checker_log.txt</LogFile>
+			<ResultFile>accuracy_checker_result_table.csv</ResultFile>
+		</AccuracyChecker>
     </Computer>
 </Computers>
 ```
@@ -343,3 +367,4 @@
 
 <!-- LINKS -->
 [kmp-affinity-docs]: ../../docs/reference_information/kmp_affinity.md
+[open-model-zoo]: https://github.com/opencv/open_model_zoo

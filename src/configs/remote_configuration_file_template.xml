@@ -6,9 +6,19 @@
         <Password></Password>
         <OS></OS>
         <FTPClientPath></FTPClientPath>
-        <BenchmarkConfig></BenchmarkConfig>
-        <BenchmarkExecutor></BenchmarkExecutor>
-        <LogFile></LogFile>
-        <ResultFile></ResultFile>
+		<Benchmark>
+			<Config></Config>
+			<Executor></Executor>
+			<LogFile></LogFile>
+			<ResultFile></ResultFile>
+		</Benchmark>
+		<AccuracyChecker>
+			<Config></Config>
+			<Executor></Executor>
+			<DatasetPath></DatasetPath>
+			<DefinitionPath></DefinitionPath>
+			<LogFile></LogFile>
+			<ResultFile></ResultFile>
+		</AccuracyChecker>
     </Computer>
 </Computers>
