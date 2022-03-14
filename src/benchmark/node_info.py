@@ -6,9 +6,9 @@ from openvino.inference_engine import IECore  # pylint: disable=E0401
 
 def get_cpu_name():
     ie = IECore()
-    try:
+    if 'CPU' in ie.available_devices:
         cpuname = ie.get_metric('CPU', 'FULL_DEVICE_NAME')
-    except TypeError:
+    else:
         cpuname = 'Undefined'
     del ie
     return cpuname
@@ -16,13 +16,10 @@ def get_cpu_name():
 
 def get_gpu_name():
     ie = IECore()
-    try:
-        if 'GPU' in ie.available_devices:
-            gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
-        else:
-            gpuname = 'Underfined'
-    except TypeError:
-        gpuname = 'Undefined'
+    if 'GPU' in ie.available_devices:
+        gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
+    else:
+        gpuname = 'Underfined'
     del ie
     return gpuname
 
