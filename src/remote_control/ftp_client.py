@@ -10,7 +10,7 @@ import subprocess
 class launcher(metaclass=abc.ABCMeta):
     def __init__(self, target, path_to_ftp_client, params_config, executor, os_type, result, logs):
         self.target = target
-        self.path_to_target = os.path.normpath(path_to_ftp_client + "//..//" + self.target)
+        self.path_to_target = os.path.join(path_to_ftp_client, "..", self.target)
         self.executor = executor
         self.os_type = os_type
         self.result = os.path.join(path_to_ftp_client, result)
