@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+	<Test>
+		<Model>
+			<Task></Task>
+			<Name></Name>
+			<Precision></Precision>
+			<SourceFramework></SourceFramework>
+			<Directory></Directory>
+		</Model>
+		<Parameters>
+			<Device></Device>
+			<InferenceFramework></InferenceFramework>
+			<Config></Config>
+		</Parameters>
+	</Test>
+</Tests>

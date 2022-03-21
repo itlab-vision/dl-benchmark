@@ -7,9 +7,9 @@ from view.tables.remote_config_table import RemoteConfigTable  # pylint: disable
 
 class RemoteConfigWidget(QWidget):
 
-    addComputerSignal = pyqtSignal(str, str, str, str, str, str, str, str)
+    addComputerSignal = pyqtSignal(str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
     deleteComputerSignal = pyqtSignal(list)
-    changeComputerSignal = pyqtSignal(int, str, str, str, str, str, str, str, str)
+    changeComputerSignal = pyqtSignal(int, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)
     copyComputerSignal = pyqtSignal(list)
 
     loadSignal = pyqtSignal(str)

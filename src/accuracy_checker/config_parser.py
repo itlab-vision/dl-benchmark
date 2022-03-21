@@ -30,13 +30,13 @@ class model:
 
 
 class test:
-    def __init__(self, model=None, path_to_config=None, device=None, framework=None, parameters=None):
+    def __init__(self, model=None,  device=None, framework=None, config=None, parameters=None):
         self.model = model
-        self.path_to_config = path_to_config
         self.device = device
         self.framework = framework
+        self.config = config
         self.parameters = parameters
-        self.metrics = self.__init_metrics_from_config(path_to_config)
+        self.metrics = self.__init_metrics_from_config(self.config)
 
     def __init_metrics_from_config(self, config):
         MODELS_TAG = 'models'
@@ -61,7 +61,8 @@ class test:
                             if 'name' in metric.keys():
                                 model_metric.append(metric['name'])
                             else:
-                                model_metric.append('_'.join(metric.values()))
+                                values = [str(value) for value in metric.values()]
+                                model_metric.append('_'.join(values))
             if len(model_metric) == 0:
                 for launcher in launchers:
                     if self.__convert_framework_from_config(launcher[FRAMEWORK_TAG]) == self.framework:
@@ -74,7 +75,8 @@ class test:
                                         if 'name' in metric.keys():
                                             model_metric.append(metric['name'])
                                         else:
-                                            model_metric.append('_'.join(metric.values()))
+                                            values = [str(value) for value in metric.values()]
+                                            model_metric.append('_'.join(values))
             metrics.extend(model_metric)
         return metrics
 
@@ -87,21 +89,21 @@ class test:
         elif framework == 'tf':
             return 'TensorFlow'
         else:
-            raise ValueError('Framework {} is not supported!'.format(framework))
+            return 'Unsupported framework'
 
     @staticmethod
     def parse(dom, test_parameters=None):
         CONFIG_PARAMETERS_TAG = 'Parameters'
-        CONFIG_PARAMETERS_CONFIGPATH_TAG = 'ConfigPath'
         CONFIG_PARAMETERS_DEVICE_TAG = 'Device'
-        CONFIG_PARAMETERS_FRAMEWORK_TAG = 'Framework'
+        CONFIG_PARAMETERS_FRAMEWORK_TAG = 'InferenceFramework'
+        CONFIG_PARAMETERS_CONFIG_TAG = 'Config'
 
         parameters_tag = dom.getElementsByTagName(CONFIG_PARAMETERS_TAG)[0]
         return test(
             model=model.parse(dom),
-            path_to_config=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_CONFIGPATH_TAG)[0].firstChild.data,
             device=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_DEVICE_TAG)[0].firstChild.data,
             framework=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_FRAMEWORK_TAG)[0].firstChild.data,
+            config=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_CONFIG_TAG)[0].firstChild.data,
             parameters=test_parameters
         )
 

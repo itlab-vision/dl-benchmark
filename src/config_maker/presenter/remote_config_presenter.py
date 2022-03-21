@@ -13,18 +13,16 @@ class RemoteConfigPresenter:
         self.__view.saveSignal.connect(self.__handle_save_button)
         self.__view.clearSignal.connect(self.__handle_clear_button)
 
-    def __handle_add_button(self, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file, res_file):
-        self.__model.add_computer(ip, login, password, os, path_to_ftp_client, benchmark_config, log_file, res_file)
+    def __handle_add_button(self, *args):
+        self.__model.add_computer(*args)
         self.__update_view()
 
     def __handle_delete_button(self, indexes):
         self.__model.delete_computers(indexes)
         self.__update_view()
 
-    def __handle_change_button(self, row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file,
-                               res_file):
-        self.__model.change_computer(row, ip, login, password, os, path_to_ftp_client, benchmark_config, log_file,
-                                     res_file)
+    def __handle_change_button(self, row, *args):
+        self.__model.change_computer(row, *args)
         self.__update_view()
 
     def __handle_copy_button(self, indexes):

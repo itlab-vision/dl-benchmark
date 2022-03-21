@@ -10,7 +10,7 @@ class process:
         self.__supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
 
     def __fill_command_line(self):
-        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3}'.format(self.__test.path_to_config,
+        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3}'.format(self.__test.config,
                                                                             self.__test.model.directory,
                                                                             self.__test.parameters.source,
                                                                             self.__test.device
@@ -53,4 +53,4 @@ class process:
         print(self.__output)
 
     def get_result_parameters(self):
-        return result.parser_test_results(self.__output)
+        return result.parser_test_result(self.__output, self.__test)
