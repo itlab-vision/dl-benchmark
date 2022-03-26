@@ -1,4 +1,3 @@
-import yaml
 from xml.dom import minidom
 
 
@@ -36,49 +35,6 @@ class test:
         self.framework = framework
         self.config = config
         self.parameters = parameters
-        self.metrics = self.__init_metrics_from_config(self.config)
-
-    def __init_metrics_from_config(self, config):
-        MODELS_TAG = 'models'
-        LAUNCHERS_TAG = 'launchers'
-        FRAMEWORK_TAG = 'framework'
-        DATASETS_TAG = 'datasets'
-        METRICS_TAG = 'metrics'
-
-        metrics = []
-        with open(config, 'r') as f:
-            test_dict = yaml.safe_load(f)
-        models = test_dict[MODELS_TAG]
-        for model in models:
-            model_metric = []
-            launchers = model[LAUNCHERS_TAG]
-            for launcher in launchers:
-                if self.__convert_framework_from_config(launcher[FRAMEWORK_TAG]) == self.framework:
-                    dataset = model[DATASETS_TAG][0]
-                    if METRICS_TAG in dataset:
-                        config_metrics = dataset[METRICS_TAG]
-                        for metric in config_metrics:
-                            if 'name' in metric.keys():
-                                model_metric.append(metric['name'])
-                            else:
-                                values = [str(value) for value in metric.values()]
-                                model_metric.append('_'.join(values))
-            if len(model_metric) == 0:
-                for launcher in launchers:
-                    if self.__convert_framework_from_config(launcher[FRAMEWORK_TAG]) == self.framework:
-                        needed_dataset = model[DATASETS_TAG][0]
-                        for index, dataset in enumerate(self.parameters.list_of_datasets):
-                            if 'name' in dataset and dataset['name'] == needed_dataset['name']:
-                                if METRICS_TAG in dataset:
-                                    config_metrics = dataset[METRICS_TAG]
-                                    for metric in config_metrics:
-                                        if 'name' in metric.keys():
-                                            model_metric.append(metric['name'])
-                                        else:
-                                            values = [str(value) for value in metric.values()]
-                                            model_metric.append('_'.join(values))
-            metrics.extend(model_metric)
-        return metrics
 
     @staticmethod
     def __convert_framework_from_config(framework):
