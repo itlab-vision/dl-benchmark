@@ -1,5 +1,6 @@
 import csv
 
+
 class result:
     def __init__(self, status, task, model, launcher, source_framework, device, dataset, precision, metric, accuracy):
         self.__params = {
@@ -54,10 +55,10 @@ class result:
                 with open(csv_file_name) as csvfile:
                     csv_file = csv.DictReader(csvfile, delimiter=',')
                     for row in csv_file:
-                        accuracies[row['metric_name']]= row['metric_value']
+                        accuracies[row['metric_name']] = row['metric_value']
                         dataset = row['dataset']
-            except:
-                raise ValueError('File {} is not found!'.format(csv_file_name))
+            except Exception as ex:
+                print('ERROR! : {0}'.format(str(ex)))
         else:
             accuracies = ['']
             dataset = 'N/A'
@@ -66,4 +67,5 @@ class result:
 
         return [result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework,
                        source_framework=test.model.framework, device=test.device, dataset=dataset,
-                       precision=test.model.precision, metric=metric, accuracy=accuracies[metric]) for metric in accuracies.keys()]
+                       precision=test.model.precision, metric=metric, accuracy=accuracies[metric]) for metric in
+                accuracies.keys()]
