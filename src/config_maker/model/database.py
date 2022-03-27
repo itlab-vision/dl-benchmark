@@ -4,6 +4,7 @@ from .benchmark_config.benchmark_config import BenchmarkConfig  # pylint: disabl
 from .accuracy_checker_config.accuracy_checker_config import AccuracyCheckerConfig  # pylint: disable=E0402
 from .remote_config.remote_config import RemoteConfig  # pylint: disable=E0402
 from .deploy_config.deploy_config import DeployConfig  # pylint: disable=E0402
+from .quantization_config.quantization_config import QuantizationConfig  # pylint: disable=E0402
 
 
 class DataBase:
@@ -14,3 +15,4 @@ class DataBase:
         self.accuracy_checker_config = AccuracyCheckerConfig()
         self.remote_config = RemoteConfig()
         self.deploy_config = DeployConfig()
+        self.quantization_config = QuantizationConfig()
