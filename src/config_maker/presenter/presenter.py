@@ -4,6 +4,7 @@ from .accuracy_checker_config_presenter import AccuracyCheckerConfigPresenter  #
 from .benchmark_config_presenter import BenchmarkConfigPresenter  # pylint: disable=E0402
 from .remote_config_presenter import RemoteConfigPresenter  # pylint: disable=E0402
 from .deploy_config_presenter import DeployConfigPresenter  # pylint: disable=E0402
+from .quantization_config_presenter import QuantizationConfigPresenter  # pylint: disable=E0402
 
 
 class Presenter:
@@ -18,3 +19,4 @@ class Presenter:
                                                                self.__view.tabs.config_tab.remote_configs)
         self.__deploy_config_presenter = DeployConfigPresenter(self.__model.deploy_config,
                                                                self.__view.tabs.config_tab.deploy_configs)
+        self.__quantization_config_presenter = QuantizationConfigPresenter(self.__model, self.__view)
