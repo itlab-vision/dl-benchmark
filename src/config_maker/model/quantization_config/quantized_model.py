@@ -1,9 +1,10 @@
 # import os
+import abc
 import re
 from xml.dom.minidom import Node
 # pylint: disable-next=E0401
-from tags import CONFIG_MODEL_TAG, CONFIG_TASK_TAG, CONFIG_NAME_TAG, CONFIG_PRECISION_TAG, \
-    CONFIG_SOURCE_FRAMEWORK_TAG, CONFIG_MODEL_PATH_TAG, CONFIG_WEIGHTS_PATH_TAG, CONFIG_DIRECTORY_TAG
+from tags import CONFIG_ALGORITHM_NAME_TAG, CONFIG_ALGORITHMS_TAG, CONFIG_COMPRESSION_PARAMS, CONFIG_COMPRESSION_PARAMS_TAG, CONFIG_MODEL_TAG, CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_TARGET_DEVICE_TAG, CONFIG_TASK_TAG, CONFIG_NAME_TAG, CONFIG_PRECISION_TAG, \
+    CONFIG_SOURCE_FRAMEWORK_TAG, CONFIG_MODEL_PATH_TAG, CONFIG_WEIGHTS_PATH_TAG, CONFIG_DIRECTORY_TAG, DEFAULT_QUANTIZATION_PARAMS_COUNT, HEADER_AAQ_PARAMS_TAGS, HEADER_DQ_PARAMS_TAGS
 from tags import CONFIG_POT_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, \
     CONFIG_DIRECT_DUMP_TAG, CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, \
     CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG
@@ -17,7 +18,7 @@ from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_
 
 
 class QModel:
-    def __init__(self, pot_params, model_params):
+    def __init__(self, pot_params, model_params, dependent_params):
         self.__pot_params = [*pot_params]
 
         COUNT_OF_CONFIG_MODEL_PARAMS = 3
@@ -45,15 +46,20 @@ class QModel:
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_ENGINE_TAGS):
             self.parameters[param_name] = self.__model_params[1][i]
 
+        self.parameters['DependentParams'] = CompressionParameters.get_parameters(
+            self.__quantization_method,
+            dependent_params
+        )
+
 
     # def get_all_params(self):
     #     return self.__pot_params + self.__model_params[0] + self.__model_params[1] + self.__model_params[2]
 
 
-    @staticmethod
-    def camel_to_snake(string):
-        groups = re.findall('([A-z][a-z0-9]*)', string)
-        return '_'.join([i.lower() for i in groups])
+    # @staticmethod
+    # def camel_to_snake(string):
+    #     groups = re.findall('([A-z][a-z0-9]*)', string)
+    #     return '_'.join([i.lower() for i in groups])
 
 
     def create_dom(self, file, i):
@@ -97,7 +103,16 @@ class QModel:
 
     def __create_dom_model_params_compression(self, file):
         DOM_COMPRESSION_TAG = file.createElement(CONFIG_COMPRESSION_TAG)
-        # TODO: compression_parser
+        target_device = self.__model_params[2][0]
+        if target_device:
+            self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_TARGET_DEVICE_TAG, target_device)
+        DOM_ALGORITHMS_TAG = self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_ALGORITHMS_TAG)
+        self.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG, self.__model_params[2][1])
+        DOM_PARAMS_TAG = self.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_COMPRESSION_PARAMS_TAG)
+        self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_PRESET_TAG, self.__model_params[2][2])
+        self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, self.__model_params[2][3])
+        self.parameters['DependentParams'].create_dom(file, DOM_PARAMS_TAG)
+        # TODO: compression_parser (weights, activations, ignored)
         pass
         return DOM_COMPRESSION_TAG
 
@@ -112,18 +127,18 @@ class QModel:
         DOM_EVAL_REQUESTS_NUMBER_TAG = file.createElement(CONFIG_EVAL_REQUESTS_NUMBER_TAG)
         DOM_ENGINE_TAG.appendChild(DOM_EVAL_REQUESTS_NUMBER_TAG)
         '''
-        self.__create_node(file, DOM_ENGINE_TAG, CONFIG_STAT_REQUESTS_NUMBER_TAG, self.__model_params[1][0])
-        self.__create_node(file, DOM_ENGINE_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, self.__model_params[1][1])
+        self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_STAT_REQUESTS_NUMBER_TAG, self.__model_params[1][0])
+        self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, self.__model_params[1][1])
         if (self.__quantization_method == 'AccuracyAwareQuantization'):
-            self.__create_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
+            self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
         # if (self.__quantization_method == 'DefaultQuantization'):
         else:
-            self.__create_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TYPE_TAG, self.__engine_type)
+            self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TYPE_TAG, self.__engine_type)
             if (self.__engine_type == 'accuracy_checker'):
-                self.__create_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
+                self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
             # if (self.__engine_type == 'simplified'):
             else:
-                self.__create_node(file, DOM_ENGINE_TAG, CONFIG_DATA_SOURCE_TAG, self.__model_params[1][4])
+                self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_DATA_SOURCE_TAG, self.__model_params[1][4])
         return DOM_ENGINE_TAG
 
 
@@ -139,6 +154,9 @@ class QModel:
     def __create_dom_pot_params(self, file):
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
 
+        for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
+            self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[0])
+        '''
         DOM_POT_CONFIG_TAG = file.createElement(CONFIG_POT_CONFIG_TAG)
         DOM_EVALUATION_TAG = file.createElement(CONFIG_EVALUATION_TAG)
         DOM_OUTPUT_DIR_TAG = file.createElement(CONFIG_OUTPUT_DIR_TAG)
@@ -165,13 +183,14 @@ class QModel:
         DOM_POT_PARAMETERS_TAG.appendChild(DOM_PROGRESS_BAR_TAG)
         DOM_POT_PARAMETERS_TAG.appendChild(DOM_STREAM_OUTPUT_TAG)
         DOM_POT_PARAMETERS_TAG.appendChild(DOM_KEEP_WEIGHTS_TAG)
-
+        '''
         return DOM_POT_PARAMETERS_TAG
 
     @staticmethod
-    def __create_node(file, parent, child_name, text):
+    def create_dom_node(file, parent, child_name, text=None):
         child = file.createElement(child_name)
-        child.appendChild(file.createTextNode(text))
+        if text != None:
+            child.appendChild(file.createTextNode(text))
         parent.appendChild(child)
         return child
 
@@ -194,9 +213,9 @@ class QModel:
         '''
         dom_model_params = dom.getElementsByTagName(CONFIG_MODEL_PARAMETERS_TAG)[0]
         m_params = QModel.parse_model_params(dom_model_params.getElementsByTagName(CONFIG_MODEL_TAG)[0])
-        c_params = QModel.parse_engine_params(dom_model_params.getElementsByTagName(CONFIG_ENGINE_TAG)[0])
-        e_params = QModel.parse_compression_params(dom_model_params.getElementsByTagName(CONFIG_COMPRESSION_TAG)[0])
-        model_params = m_params + c_params + e_params
+        e_params = QModel.parse_engine_params(dom_model_params.getElementsByTagName(CONFIG_ENGINE_TAG)[0])
+        c_params = QModel.parse_compression_params(dom_model_params.getElementsByTagName(CONFIG_COMPRESSION_TAG)[0])
+        model_params = m_params + e_params + c_params
         return QModel(pot_params, model_params)
 
 
@@ -212,25 +231,136 @@ class QModel:
     @staticmethod
     def parse_engine_params(dom):
         engine_params = [
-            dom.getElementsByTagName(CONFIG_STAT_REQUESTS_NUMBER_TAG)[0].firstChild.data,
-            dom.getElementsByTagName(CONFIG_EVAL_REQUESTS_NUMBER_TAG)[0].firstChild.data
+            QModel.get_element_by_tag(dom, CONFIG_STAT_REQUESTS_NUMBER_TAG),
+            QModel.get_element_by_tag(dom, CONFIG_EVAL_REQUESTS_NUMBER_TAG),
+            QModel.get_element_by_tag(dom, CONFIG_CONFIG_TAG),
+            QModel.get_element_by_tag(dom, CONFIG_CONFIG_TYPE_TAG),
+            QModel.get_element_by_tag(dom, CONFIG_DATA_SOURCE_TAG)
+            # dom.getElementsByTagName(CONFIG_STAT_REQUESTS_NUMBER_TAG)[0].firstChild.data,
+            # dom.getElementsByTagName(CONFIG_EVAL_REQUESTS_NUMBER_TAG)[0].firstChild.data
         ]
 
-        config = dom.getElementsByTagName(CONFIG_CONFIG_TAG)
-        engine_params.append(config[0].firstChild.data if len(config) != 0 else None)
+        # config = dom.getElementsByTagName(CONFIG_CONFIG_TAG)
+        # engine_params.append(config[0].firstChild.data if len(config) != 0 else None)
 
-        config_type = dom.getElementsByTagName(CONFIG_CONFIG_TYPE_TAG)
-        engine_params.append(config_type[0].firstChild.data if len(config_type) != 0 else None)
+        # config_type = dom.getElementsByTagName(CONFIG_CONFIG_TYPE_TAG)
+        # engine_params.append(config_type[0].firstChild.data if len(config_type) != 0 else None)
 
-        config_data = dom.getElementsByTagName(CONFIG_DATA_SOURCE_TAG)
-        engine_params.append(config_data[0].firstChild.data if len(config_data) != 0 else None)
+        # config_data = dom.getElementsByTagName(CONFIG_DATA_SOURCE_TAG)
+        # engine_params.append(config_data[0].firstChild.data if len(config_data) != 0 else None)
 
         return engine_params
 
 
     @staticmethod
+    def get_element_by_tag(dom, tag):
+        nodes = dom.getElementsByTagName(tag)
+        return nodes[0].firstChild.data if len(nodes) != 0 else None
+
+
+    @staticmethod
     def parse_compression_params(dom):
-        compression_params = []
-        # TODO: compression_parser
+        compression_params = [QModel.get_element_by_tag(dom, CONFIG_TARGET_DEVICE_TAG)]
+        # target_device = dom.getElementsByTagName(CONFIG_TARGET_DEVICE_TAG)
+        # compression_params.append(target_device[0].firstChild.data if len(target_device) != 0 else None)
+        algo_node = dom.getElementsByTagName(CONFIG_ALGORITHMS_TAG)[0]
+        algorithm = algo_node.getElementsByTagName(CONFIG_ALGORITHM_NAME_TAG)[0]
+        compression_params.append(algorithm.firstChild.data)
+        dependent_params = CompressionParameters.parse(algorithm, algo_node)
+        compression_params.append(*dependent_params)
+        # TODO: compression_parser for weights, activations, ignored
         pass
         return compression_params
+
+
+class CompressionParameters(metaclass=abc.ABCMeta):
+    def __init__(self):
+        # self.parameter_count = -1
+        self.parameters = {}
+
+    @staticmethod
+    def get_parameters(quantization_method, args):
+        if quantization_method == 'DefaultQuantization':
+            return DefaultQuantizationParameters(*args)
+        elif quantization_method == 'AccuracyAwareQuantization':
+            return AccuracyAwareQuantizationParameters(*args)
+        else:
+            raise ValueError('Unknown quantization method: {0} !'.format(quantization_method))
+
+    def get_parameter_list(self):
+        return list(self.parameters.values())
+
+    def get_parameter_dict(self):
+        return self.parameters
+
+    @staticmethod
+    def parse(quantization_method, dom):
+        params_dom = dom.getElementsByTagName(CONFIG_COMPRESSION_PARAMS_TAG)[0]
+        if quantization_method == 'DefaultQuantization':
+            return DefaultQuantizationParameters._parse_params(params_dom)
+        elif quantization_method == 'AccuracyAwareQuantization':
+            return AccuracyAwareQuantizationParameters._parse_params(params_dom)
+
+    @abc.abstractmethod
+    def _parse_params(self):
+        pass
+
+    @abc.abstractmethod
+    def create_dom(self, file, parent_node=None):
+        pass
+
+
+class DefaultQuantizationParameters(CompressionParameters):
+    def __init__(self, params):
+        # self.parameter_count = DEFAULT_QUANTIZATION_PARAMS_COUNT
+        for i, param in enumerate(params):
+            self.__model_params[2][i] = param
+        for i, param_name in enumerate(HEADER_DQ_PARAMS_TAGS):
+            self.parameters[param_name] = self.__model_params[2][i]
+
+    @staticmethod
+    def _parse_params(dom):
+        # TODO: compression_parser metrics?
+        params = []
+        for param_name in HEADER_DQ_PARAMS_TAGS:
+            # param_node = dom.getElementsByTagName(param_name)[0].firstChild
+            param_node = dom.getElementsByTagName(param_name)
+            params.append(param_node[0].firstChild.data if param_node else '')
+        return DefaultQuantizationParameters(params)
+
+    def create_dom(self, file, parent_node=None):
+        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
+            else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
+
+        for key in self.parameters:
+            QModel.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
+            # DOM_PARAMETER = file.createElement(key)
+            # DOM_PARAMETER.appendChild(file.createTextNode(self.parameters[key]))
+            # DOM_COMPRESSION_PARAMS_TAG.appendChild(DOM_PARAMETER)
+
+        return DOM_COMPRESSION_PARAMS_TAG
+
+
+class AccuracyAwareQuantizationParameters(CompressionParameters):
+    def __init__(self, params):
+        # self.parameter_count = ACCURACY_AWARE_QUANTIZATION_PARAMS_COUNT
+        for i, param in enumerate(params):
+            self.__model_params[2][i] = param
+        for i, param_name in enumerate(HEADER_AAQ_PARAMS_TAGS):
+            self.parameters[param_name] = self.__model_params[2][i]
+
+    @staticmethod
+    def _parse_params(dom):
+        params = []
+        for param_name in HEADER_AAQ_PARAMS_TAGS:
+            # param_node = dom.getElementsByTagName(param_name)[0].firstChild
+            param_node = dom.getElementsByTagName(param_name)
+            params.append(param_node[0].firstChild.data if param_node else '')
+        return AccuracyAwareQuantizationParameters(params)
+
+    def create_dom(self, file, parent_node=None):
+        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
+            else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
+
+        for key in self.parameters:
+            QModel.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
