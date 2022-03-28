@@ -23,11 +23,11 @@ class QuantizationConfig:
     # def change_q_model(self, row, *args):
     #     self.__q_models[row] = QModel(*args)
 
-    def add_q_model(self, pot_params, model_params):
-        self.__q_models.append(QModel(pot_params, model_params))
+    def add_q_model(self, pot_params, model_params, dependent_params):
+        self.__q_models.append(QModel(pot_params, model_params, dependent_params))
 
-    def change_q_model(self, row, pot_params, model_params):
-        self.__q_models[row] = QModel(pot_params, model_params)
+    def change_q_model(self, row, pot_params, model_params, dependent_params):
+        self.__q_models[row] = QModel(pot_params, model_params, dependent_params)
 
     def delete_q_model(self, index):
         self.__q_models.pop(index)

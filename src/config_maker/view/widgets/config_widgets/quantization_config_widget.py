@@ -7,9 +7,9 @@ from view.tables.quantization_config_table import QuantizationConfigTable  # pyl
 
 class QuantizationConfigWidget(QWidget):
 
-    addQModelSignal = pyqtSignal(list, list)
+    addQModelSignal = pyqtSignal(list, list, list)
     deleteQModelSignal = pyqtSignal(list)
-    changeQModelSignal = pyqtSignal(int, list, list)
+    changeQModelSignal = pyqtSignal(int, list, list, list)
     copyQModelSignal = pyqtSignal(list)
 
     showAddQModelDialogSignal = pyqtSignal()
@@ -47,8 +47,8 @@ class QuantizationConfigWidget(QWidget):
         dialog = QuantizationConfigDialog(self, models, data)
         if dialog.exec():
             # TODO: fix
-            pot_params, model_params = dialog.get_values()
-            self.addQModelSignal.emit(pot_params, model_params)
+            pot_params, model_params, dependent_params = dialog.get_values()
+            self.addQModelSignal.emit(pot_params, model_params, dependent_params)
 
     def show_change_q_model_dialog(self, models, data):
         if len(self.__table.get_selected_rows()) != 1:
@@ -59,8 +59,8 @@ class QuantizationConfigWidget(QWidget):
         dialog.load_values_from_table_row(self.__table, row)
         if dialog.exec():
             # TODO: fix
-            pot_params, model_params = dialog.get_values()
-            self.changeQModelSignal.emit(row, pot_params, model_params)
+            pot_params, model_params, dependent_params = dialog.get_values()
+            self.changeQModelSignal.emit(row, pot_params, model_params, dependent_params)
             self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):

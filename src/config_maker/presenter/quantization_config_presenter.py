@@ -31,12 +31,12 @@ class QuantizationConfigPresenter:
     #     self.__model.quantization_config.change_q_model(*args)
     #     self.__update_view()
 
-    def __handle_add_button(self, pot_params, model_params):
-        self.__model.quantization_config.add_q_model(pot_params, model_params)
+    def __handle_add_button(self, pot_params, model_params, dependent_params):
+        self.__model.quantization_config.add_q_model(pot_params, model_params, dependent_params)
         self.__update_view()
 
-    def __handle_change_button(self, row, pot_params, model_params):
-        self.__model.quantization_config.change_q_model(row, pot_params, model_params)
+    def __handle_change_button(self, row, pot_params, model_params, dependent_params):
+        self.__model.quantization_config.change_q_model(row, pot_params, model_params, dependent_params)
         self.__update_view()
 
     def __handle_delete_button(self, indexes):
