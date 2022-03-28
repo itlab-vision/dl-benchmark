@@ -21,7 +21,8 @@
 			<Engine>
 				<StatRequestsNumber></StatRequestsNumber>
 				<EvalRequestsNumber></EvalRequestsNumber>
-				<Type>simplified</Type>
+				<Config></Config>
+				<Type></Type>
 				<DataSource></DataSource>
 			</Engine>
 			<Compression>
@@ -33,49 +34,39 @@
 						<StatSubsetSize></StatSubsetSize>
 						<ShuffleData></ShuffleData>
 						<Seed></Seed>
-						<Weights/>
-						<Activations/>
-						<Ignored/>
-					</Params>
-				</Algorithms>
-			</Compression>
-		</ConfigParameters>
-	</QuantizationConfig>
-	<QuantizationConfig>
-		<ConfigId></ConfigId>
-		<PotParameters>
-			<PotQuantizationConfig></PotQuantizationConfig>
-			<Evaluation></Evaluation>
-			<OutputDirPath></OutputDirPath>
-			<DirectDump></DirectDump>
-			<LogLevel></LogLevel>
-			<ProgressBar></ProgressBar>
-			<StreamOutput></StreamOutput>
-			<KeepUncompressedWeights></KeepUncompressedWeights>
-		</PotParameters>
-		<ConfigParameters>
-			<Model>
-				<ModelName></ModelName>
-				<Model></Model>
-				<Weights></Weights>
-			</Model>
-			<Engine>
-				<StatRequestsNumber></StatRequestsNumber>
-				<EvalRequestsNumber></EvalRequestsNumber>
-				<Config></Config>
-				<Type>accuracy_checker</Type>
-			</Engine>
-			<Compression>
-				<TargetDevice></TargetDevice>
-				<Algorithms>
-					<Name>DefaultQuantization</Name>
-					<Params>
-						<Preset></Preset>
-						<StatSubsetSize></StatSubsetSize>
-						<ShuffleData></ShuffleData>
-						<Seed></Seed>
-						<Weights/>
-						<Activations/>
+						<Weights>
+							<Bits></Bits>
+							<Mode></Mode>
+							<Granularity></Granularity>
+							<LevelLow></LevelLow>
+							<LevelHigh></LevelHigh>
+							<RangeEstimator>
+								<Max>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Max>
+							</RangeEstimator>
+						</Weights>
+						<Activations>
+							<Bits></Bits>
+							<Mode></Mode>
+							<Granularity></Granularity>
+							<RangeEstimator>
+								<Preset></Preset>
+								<Min>
+									<ClippingValue></ClippingValue>
+									<Aggregator></Aggregator>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Min>
+								<Max>
+									<ClippingValue></ClippingValue>
+									<Aggregator></Aggregator>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Max>
+							</RangeEstimator>
+						</Activations>
 						<Ignored/>
 					</Params>
 				</Algorithms>
@@ -123,8 +114,39 @@
 						<ConvertToMixedPreset></ConvertToMixedPreset>
 						<MetricSubsetRatio></MetricSubsetRatio>
 						<TuneHyperparams></TuneHyperparams>
-						<Weights/>
-						<Activations/>
+						<Weights>
+							<Bits></Bits>
+							<Mode></Mode>
+							<Granularity></Granularity>
+							<LevelLow></LevelLow>
+							<LevelHigh></LevelHigh>
+							<RangeEstimator>
+								<Max>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Max>
+							</RangeEstimator>
+						</Weights>
+						<Activations>
+							<Bits></Bits>
+							<Mode></Mode>
+							<Granularity></Granularity>
+							<RangeEstimator>
+								<Preset></Preset>
+								<Min>
+									<ClippingValue></ClippingValue>
+									<Aggregator></Aggregator>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Min>
+								<Max>
+									<ClippingValue></ClippingValue>
+									<Aggregator></Aggregator>
+									<Type></Type>
+									<OutlierProb></OutlierProb>
+								</Max>
+							</RangeEstimator>
+						</Activations>
 						<Ignored/>
 					</Params>
 				</Algorithms>
