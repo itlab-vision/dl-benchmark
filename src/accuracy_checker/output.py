@@ -14,13 +14,7 @@ class output_handler:
         for idx, result in enumerate(results):
             result_dict = result.get_result_dict()
             result_dict['hardware'] = hardware_info
-            if result.is_failed():
-                for metric in test.metrics:
-                    result_dict['metric'] = metric
-                    self.__add_row_to_table(result_dict)
-            else:
-                result_dict['metric'] = test.metrics[idx]
-                self.__add_row_to_table(result_dict)
+            self.__add_row_to_table(result_dict)
 
     def __add_row_to_table(self, result):
         report_row = self.__create_table_row(result)

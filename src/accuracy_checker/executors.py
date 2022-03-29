@@ -54,7 +54,9 @@ class host_executor(executor):
         hardware_info = hardware_info[:-2]
         return hardware_info
 
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, csv_file_name):
+        if os.path.exists(csv_file_name):
+            command_line = "rm {0} && {1}".format(csv_file_name, command_line)
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
         out, _ = process.communicate()
@@ -100,9 +102,10 @@ class docker_executor(executor):
 
         return command_line.replace(path_to_config, docker_config)
 
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, csv_file_name):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        self.move_csv_file_with_results(csv_file_name)
         return out
 
     def get_infrastructure(self):
@@ -117,3 +120,13 @@ class docker_executor(executor):
             hardware_info += '{}: {}, '.format(line[0], line[1])
         hardware_info = hardware_info[:-2]
         return hardware_info
+
+    def move_csv_file_with_results(self, csv_file_name):
+        docker_csv_file = os.path.join('/tmp', csv_file_name)
+        local_csv_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), csv_file_name)
+        cp_command = 'docker cp -L {0}:{1} {2}'.format(self.my_target_framework, docker_csv_file, local_csv_file)
+        process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
+                        universal_newlines=True)
+        process.communicate()
+        self.my_container_dict[self.my_target_framework].exec_run('rm {}'.format(csv_file_name), tty=True,
+                                                                  privileged=True)
