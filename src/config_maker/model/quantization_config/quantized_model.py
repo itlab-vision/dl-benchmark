@@ -126,9 +126,29 @@ class QModel:
         self.__quantization_method = self.__compression_params.get_quantization_method_name()
         # self.__quantization_method = 'DefaultQuantization' # self.__model_params[2][1]
 
+        self.__dependent_params = dependent_params
+        self.__independent_params = [
+            *self.__pot_params,
+            *self.__model_params[0],
+            *self.__model_params[1],
+            *self.__model_params[2]
+        ]
+
 
     # def get_all_params(self):
     #     return self.__pot_params + self.__model_params[0] + self.__model_params[1] + self.__model_params[2]
+
+
+    def get_quantization_method(self):
+        return self.__quantization_method
+
+
+    def get_independent_params_list(self):
+        return self.__independent_params
+
+
+    def get_params(self):
+        return self.__independent_params, self.__dependent_params
 
 
     def create_dom(self, file, i):
@@ -258,6 +278,7 @@ class QModel:
         '''
         return DOM_POT_PARAMETERS_TAG
 
+
     @staticmethod
     def create_dom_node(file, parent, child_name, text=None):
         child = file.createElement(child_name)
@@ -354,6 +375,7 @@ class QModel:
         # pass
         return dependent_params, compression_params
         '''
+
 
     @staticmethod
     def camel_to_snake(string):

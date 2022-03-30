@@ -23,14 +23,6 @@ class QuantizationConfigPresenter:
         self.__view.tabs.config_tab.quantization_configs.show_change_q_model_dialog(
             self.__model.models.get_model_list_in_strings(), self.__model.data.get_dataset_list_in_strings())
 
-    # TODO: fix
-    # def __handle_add_button(self, args):
-    #     self.__model.quantization_config.add_q_model(*args)
-    #     self.__update_view()
-    # def __handle_change_button(self, args):
-    #     self.__model.quantization_config.change_q_model(*args)
-    #     self.__update_view()
-
     def __handle_add_button(self, pot_params, model_params, dependent_params):
         self.__model.quantization_config.add_q_model(pot_params, model_params, dependent_params)
         self.__update_view()

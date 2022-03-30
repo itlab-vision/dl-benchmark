@@ -32,7 +32,7 @@ class QuantizationConfigWidget(QWidget):
         self.__buttons.get_buttons()['Add information'].clicked.connect(self.showAddQModelDialogSignal.emit)
         self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__click_delete_button)
         self.__buttons.get_buttons()['Change information'].clicked.connect(self.showChangeQModelDialogSignal.emit)
-        self.__buttons.get_buttons()['Copy information'].clicked.connect(self.__copy_tests)
+        self.__buttons.get_buttons()['Copy information'].clicked.connect(self.__copy_q_models)
         self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
         self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
@@ -46,7 +46,7 @@ class QuantizationConfigWidget(QWidget):
         #     return
         dialog = QuantizationConfigDialog(self, models, data)
         if dialog.exec():
-            # TODO: fix
+            # -TODO: fix
             pot_params, model_params, dependent_params = dialog.get_values()
             self.addQModelSignal.emit(pot_params, model_params, dependent_params)
 
@@ -58,7 +58,7 @@ class QuantizationConfigWidget(QWidget):
         dialog = QuantizationConfigDialog(self, models, data)
         dialog.load_values_from_table_row(self.__table, row)
         if dialog.exec():
-            # TODO: fix
+            # -TODO: fix
             pot_params, model_params, dependent_params = dialog.get_values()
             self.changeQModelSignal.emit(row, pot_params, model_params, dependent_params)
             self.__table.remove_selection()
@@ -83,7 +83,7 @@ class QuantizationConfigWidget(QWidget):
         else:
             QMessageBox.warning(self, "Fail", "Quantization configuration was not created!")
 
-    def __copy_tests(self):
+    def __copy_q_models(self):
         self.copyQModelSignal.emit(self.get_selected_rows())
 
     def get_selected_rows(self):
