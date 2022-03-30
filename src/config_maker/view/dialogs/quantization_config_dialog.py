@@ -1,11 +1,12 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox
+import abc
+from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox, QComboBox
 # from config_maker.tags import CONFIG_MODEL_NAME_TAG, CONFIG_WEIGHTS_TAG
 # from tags import CONFIG_CONFIG_TAG, CONFIG_QUANTIZATION_METHOD_TAG, CONFIG_NAME_TAG, \
 #     CONFIG_MODEL_PATH_TAG, CONFIG_WEIGHTS_PATH_TAG, CONFIG_PRESET_TAG, CONFIG_AC_CONFIG_TAG, \
 #     CONFIG_MAX_DROP_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
 #     CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG
 from tags import CONFIG_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
-    CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
+    CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
 from tags import CONFIG_MODEL_NAME_TAG, CONFIG_MODEL_TAG, CONFIG_WEIGHTS_TAG
 from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS
 
@@ -14,22 +15,276 @@ class QuantizationConfigDialog(QDialog):
     def __init__(self, parent, models, data):
         super().__init__(parent)
         self.__title = 'Information about model'
-        # self.__pot_params_tags = [CONFIG_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, \
-        #     CONFIG_DIRECT_DUMP_TAG, CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, \
-        #     CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG]
-        # self.__model_params_model_tags = [CONFIG_MODEL_NAME_TAG, CONFIG_MODEL_TAG, CONFIG_WEIGHTS_TAG]
+        self.__q_method_dependent_params = {
+            'DefaultQuantization': DefaultQuantizationDialog(self),
+            'AccuracyAwareQuantization': AccuracyAwareQuantizationDialog(self)
+        }
+        self.__q_method_independent_params = IndependentParameters(
+            self, models, data, self.__q_method_dependent_params.keys(), self.__q_method_choice)
+        self.__selected_q_method = 'DefaultQuantization'
         self.__pot_params_tags = HEADER_POT_PARAMS_TAGS
         self.__model_params_tags = HEADER_MODEL_PARAMS_MODEL_TAGS + \
             HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
-        # self.__model_params_model_tags = HEADER_MODEL_PARAMS_MODEL_TAGS
-        # self.__model_params_engine_tags = []
-        # self.__model_params_compression_tags = []
-        self.tags = []
-        self.tags.extend(self.__pot_params_tags)
-        self.tags.extend(self.__model_params_tags)
-        # self.tags.extend(self.__model_params_model_tags)
-        # self.tags.extend(self.__model_params_engine_tags)
-        # self.tags.extend(self.__model_params_compression_tags)
+        self.tags = [*self.__pot_params_tags, *self.__model_params_tags]
+        self.__init_ui()
+
+    def __init_ui(self):
+        self.setWindowTitle(self.__title)
+        self.__create_layout()
+
+    def __create_layout(self):
+        layout = QGridLayout()
+        idx = 0
+        idx = self.__q_method_independent_params.attach_to_layout(layout, idx)
+        dict_q_method_idx = dict.fromkeys(self.__q_method_dependent_params.keys(), idx)
+        for key in self.__q_method_dependent_params:
+            dict_q_method_idx[key] = self.__q_method_dependent_parameters[key].attach_to_layout(layout, idx, False)
+        self.__q_method_dependent_parameters['DefaultQuantization'].show()
+        ok_btn = QPushButton('Ok')
+        cancel_btn = QPushButton('Cancel')
+        ok_btn.clicked.connect(self.accept)
+        cancel_btn.clicked.connect(self.reject)
+        layout.addWidget(ok_btn, max(*dict_q_method_idx.values()), 0)
+        layout.addWidget(cancel_btn, max(*dict_q_method_idx.values()), 1)
+        self.setLayout(layout)
+
+    def __q_method_choice(self, q_method):
+        for key in self.__q_method_dependent_params:
+            if key == q_method:
+                self.__q_method_dependent_params[key].show()
+                self.__selected_q_method = key
+            else:
+                self.__q_method_dependent_params[key].hide()
+
+    def get_values(self):
+        return [*self.__q_method_independent_params.get_values(),
+                *self.__q_method_dependent_params[self.__selected_q_method].get_values()]
+
+    def load_values_from_table_row(self, table, row):
+        self.__q_method_independent_params.load_values_from_table_row(table, row)
+        self.__q_method_dependent_params[self.__selected_q_method].load_values_from_table_row(table, row)
+
+    def accept(self):
+        is_ok = self.__q_method_independent_params.check()
+        is_ok = is_ok and self.__q_method_dependent_params[self.__selected_q_method].check()
+        if is_ok:
+            super().accept()
+        else:
+            QMessageBox.warning(self, 'Warning!', 'Not all lines are filled!')
+
+
+class ParametersDialog(metaclass=abc.ABCMeta):
+    def __init__(self, parent, tags):
+        self._parent = parent
+        self._tags = tags
+        self._labels = []
+        self._edits = []
+        self.__init_ui()
+
+    def __init_ui(self):
+        self.__create_labels()
+        self._create_edits()
+
+    def __create_labels(self):
+        self._labels = {}
+        for id, tag in enumerate(self._tags):
+            self._labels[id] = QLabel(tag, self._parent)
+        self._labels[0].setStyleSheet("font-weight: bold")
+        '''
+        self._labels = dict.fromkeys(self._tags)
+        for key in self._labels:
+            self._labels[key] = QLabel(key, self._parent)
+        self._labels[self._tags[0]].setStyleSheet("font-weight: bold")
+        '''
+
+    @abc.abstractmethod
+    def _create_edits(self):
+        pass
+
+    @abc.abstractmethod
+    def get_values(self):
+        pass
+
+    @abc.abstractmethod
+    def load_values_from_table_row(self, table, row):
+        pass
+
+    def hide(self):
+        self._labels[0].hide()
+        for id, tag in enumerate(self._tags[1:]):
+            self._labels[id].hide()
+            self._edits[id].hide()
+        '''
+        self._labels[self._tags[0]].hide()
+        for tag in self._tags[1:]:
+            self._labels[tag].hide()
+            self._edits[tag].hide()
+        '''
+
+    def show(self):
+        self._labels[0].show()
+        for id, tag in enumerate(self._tags[1:]):
+            self._labels[id].show()
+            self._edits[id].show()
+        '''
+        self._labels[self._tags[0]].show()
+        for tag in self._tags[1:]:
+            self._labels[tag].show()
+            self._edits[tag].show()
+        '''
+
+    def attach_to_layout(self, layout, idx, show=True):
+        # layout.addWidget(self._labels[self._tags[0]], idx, 0)
+        layout.addWidget(self._labels[0], idx, 0)
+        self_idx = idx + 1
+        for id, tag in enumerate(self._tags[1:]):
+            layout.addWidget(self._labels[id], self_idx, 0)
+            layout.addWidget(self._edits[id], self_idx, 1)
+            self_idx += 1
+        '''
+        for tag in self._tags[1:]:
+            layout.addWidget(self._labels[tag], self_idx, 0)
+            layout.addWidget(self._edits[tag], self_idx, 1)
+            self_idx += 1
+        '''
+        if show:
+            self.show()
+        else:
+            self.hide()
+        return self_idx
+
+
+class IndependentParameters(ParametersDialog):
+    def __init__(self, parent, models, data, q_methods, q_method_choice):
+        self.__models = models
+        self.__data = data
+        self.__q_methods = q_methods
+        self.__q_method_choice = q_method_choice
+        super().__init__(parent, ['QuantizationMethodIndependent:', *HEADER_INDEPENDENT_PARAMS_TAGS])
+
+    def _create_edits(self):
+        self._edits = {}
+
+        self.__ignored_idx = []
+        q_methods_idx = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS\
+            + HEADER_MODEL_PARAMS_ENGINE_TAGS + 1)
+        self._edits[q_methods_idx] = QComboBox(self._parent)
+        self._edits[q_methods_idx].addItems(self.__q_methods)
+        self._edits[q_methods_idx].activated[str].connect(self.__q_method_choice)
+        self._edits[q_methods_idx].currentTextChanged[str].connect(self.__q_method_choice)
+        self.__ignored_idx.append(q_methods_idx)
+
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                self._edits[id] = QLineEdit(self._parent)
+        '''
+        self._edits = dict.fromkeys(self._tags[1:])
+        self._edits[CONFIG_MODEL_TAG] = QComboBox(self._parent)
+        self._edits[CONFIG_MODEL_TAG].addItems(self.__models)
+        self._edits[CONFIG_DATASET_TAG] = QComboBox(self._parent)
+        self._edits[CONFIG_DATASET_TAG].addItems(self.__data)
+        self._edits[CONFIG_FRAMEWORK_TAG] = QComboBox(self._parent)
+        self._edits[CONFIG_FRAMEWORK_TAG].addItems(self.__frameworks)
+        self._edits[CONFIG_FRAMEWORK_TAG].activated[str].connect(self.__framework_choice)
+        self._edits[CONFIG_FRAMEWORK_TAG].currentTextChanged[str].connect(self.__framework_choice)
+        self._edits[CONFIG_DEVICE_TAG] = QComboBox(self._parent)
+        self._edits[CONFIG_DEVICE_TAG].addItems(('CPU', 'GPU', 'MYRIAD', 'CPU;GPU', 'CPU;MYRIAD', 'GPU;MYRIAD',
+                                                 'CPU;GPU;MYRIAD'))
+        for tag in self._tags[4:]:
+            if tag != CONFIG_DEVICE_TAG:
+                self._edits[tag] = QLineEdit(self._parent)
+        '''
+
+    def get_values(self):
+        values = []
+        
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                values.append(self._edits[id].text())
+            else:
+                values.append(self._edits[id].currentText())
+        return values
+        '''
+        values = []
+        values.append(self._edits[CONFIG_MODEL_TAG].currentText())
+        values.append(self._edits[CONFIG_DATASET_TAG].currentText())
+        values.append(self._edits[CONFIG_FRAMEWORK_TAG].currentText())
+        for tag in self._tags[4:]:
+            if tag != CONFIG_DEVICE_TAG:
+                values.append(self._edits[tag].text())
+            else:
+                values.append(self._edits[tag].currentText())
+        return values
+        '''
+
+    def load_values_from_table_row(self, table, row):
+        self._edits[CONFIG_MODEL_TAG].setCurrentText(table.item(row, 0).text())
+        self._edits[CONFIG_DATASET_TAG].setCurrentText(table.item(row, 1).text())
+        self._edits[CONFIG_FRAMEWORK_TAG].setCurrentText(table.item(row, 2).text())
+        self._edits[CONFIG_DEVICE_TAG].setCurrentText(table.item(row, 4).text())
+        idx = 3
+        for tag in self._tags[4:]:
+            if tag != CONFIG_DEVICE_TAG:
+                self._edits[tag].setText(table.item(row, idx).text())
+            idx += 1
+
+    def check(self):
+        for tag in self._tags[4:]:
+            if tag != CONFIG_DEVICE_TAG and self._edits[tag].text() == '':
+                return False
+        return True
+
+
+class DependentParameters(ParametersDialog):
+    def __init__(self, parent, tags):
+        super().__init__(parent, tags)
+
+    def _create_edits(self):
+        self._edits = dict.fromkeys(self._tags[1:])
+        for key in self._edits:
+            self._edits[key] = QLineEdit(self._parent)
+
+    def get_values(self):
+        values = []
+        for tag in self._tags[1:]:
+            values.append(self._edits[tag].text())
+        return values
+
+    def load_values_from_table_row(self, table, row):
+        for tag in self._tags[1:]:
+            self._edits[tag].setText(table.item(row, table.headers.index(tag)).text())
+
+    def check(self):
+        return True
+
+
+class OpenVINODialog(DependentParameters):
+    def __init__(self, parent):
+        super().__init__(parent,
+                         ['OpenVINO DLDT:', CONFIG_MODE_TAG, CONFIG_EXTENSION_TAG, CONFIG_ASYNC_REQ_COUNT_TAG,
+                          CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG])
+
+    def check(self):
+        if self._edits[CONFIG_MODE_TAG].text() == '':
+            return False
+        return True
+
+
+class CaffeDialog(DependentParameters):
+    def __init__(self, parent):
+        super().__init__(parent,
+                         ['Caffe:', CONFIG_CHANNEL_SWAP_TAG, CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG,
+                          CONFIG_THREAD_COUNT_TAG, CONFIG_KMP_AFFINITY_TAG])
+
+
+'''
+    def __init__(self, parent, models, data):
+        super().__init__(parent)
+        self.__title = 'Information about model'
+        self.__pot_params_tags = HEADER_POT_PARAMS_TAGS
+        self.__model_params_tags = HEADER_MODEL_PARAMS_MODEL_TAGS + \
+            HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
+        self.tags = [*self.__pot_params_tags, *self.__model_params_tags]
         self.__init_ui()
 
     def __init_ui(self):
@@ -101,3 +356,4 @@ class QuantizationConfigDialog(QDialog):
         #     if tag != CONFIG_DEVICE_TAG:
         #         self._edits[tag].setText(table.item(row, idx).text())
         #     idx += 1
+'''
