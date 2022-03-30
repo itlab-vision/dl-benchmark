@@ -38,8 +38,8 @@ class QuantizationConfigDialog(QDialog):
         idx = self.__q_method_independent_params.attach_to_layout(layout, idx)
         dict_q_method_idx = dict.fromkeys(self.__q_method_dependent_params.keys(), idx)
         for key in self.__q_method_dependent_params:
-            dict_q_method_idx[key] = self.__q_method_dependent_parameters[key].attach_to_layout(layout, idx, False)
-        self.__q_method_dependent_parameters['DefaultQuantization'].show()
+            dict_q_method_idx[key] = self.__q_method_dependent_params[key].attach_to_layout(layout, idx, False)
+        self.__q_method_dependent_params['DefaultQuantization'].show()
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
         ok_btn.clicked.connect(self.accept)
@@ -57,8 +57,10 @@ class QuantizationConfigDialog(QDialog):
                 self.__q_method_dependent_params[key].hide()
 
     def get_values(self):
-        return [*self.__q_method_independent_params.get_values(),
-                *self.__q_method_dependent_params[self.__selected_q_method].get_values()]
+        return self.__q_method_independent_params.get_values(), \
+            self.__q_method_dependent_params[self.__selected_q_method].get_values()
+        # return [*self.__q_method_independent_params.get_values(),
+        #         *self.__q_method_dependent_params[self.__selected_q_method].get_values()]
 
     def load_values_from_table_row(self, table, row):
         self.__q_method_independent_params.load_values_from_table_row(table, row)
@@ -137,10 +139,15 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         # layout.addWidget(self._labels[self._tags[0]], idx, 0)
         layout.addWidget(self._labels[0], idx, 0)
         self_idx = idx + 1
-        for id, tag in enumerate(self._tags[1:]):
+        for id, tag in enumerate(self._tags[1:5]):
             layout.addWidget(self._labels[id], self_idx, 0)
             layout.addWidget(self._edits[id], self_idx, 1)
             self_idx += 1
+        self_idx_2 = idx + 1
+        for id, tag in enumerate(self._tags[5:-1]):
+            layout.addWidget(self._labels[id], self_idx_2, 2)
+            layout.addWidget(self._edits[id], self_idx_2, 3)
+            self_idx_2 += 1
         '''
         for tag in self._tags[1:]:
             layout.addWidget(self._labels[tag], self_idx, 0)
@@ -151,7 +158,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
             self.show()
         else:
             self.hide()
-        return self_idx
+        return max(self_idx_2, self_idx)
 
 
 class IndependentParameters(ParametersDialog):
@@ -166,8 +173,8 @@ class IndependentParameters(ParametersDialog):
         self._edits = {}
 
         self.__ignored_idx = []
-        q_methods_idx = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS\
-            + HEADER_MODEL_PARAMS_ENGINE_TAGS + 1)
+        q_methods_idx = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS + \
+            HEADER_MODEL_PARAMS_ENGINE_TAGS) + 1
         self._edits[q_methods_idx] = QComboBox(self._parent)
         self._edits[q_methods_idx].addItems(self.__q_methods)
         self._edits[q_methods_idx].activated[str].connect(self.__q_method_choice)
@@ -196,13 +203,19 @@ class IndependentParameters(ParametersDialog):
         '''
 
     def get_values(self):
-        values = []
-        for id, tag in enumerate(self._tags[1:]):
+        pot_values = []
+        for id, tag in enumerate(self._tags[1:len(HEADER_POT_PARAMS_TAGS)]):
             if id not in self.__ignored_idx:
-                values.append(self._edits[id].text())
+                pot_values.append(self._edits[id].text())
             else:
-                values.append(self._edits[id].currentText())
-        return values
+                pot_values.append(self._edits[id].currentText())
+        model_values = []
+        for id, tag in enumerate(self._tags[len(HEADER_POT_PARAMS_TAGS):]):
+            if id not in self.__ignored_idx:
+                model_values.append(self._edits[id].text())
+            else:
+                model_values.append(self._edits[id].currentText())
+        return pot_values, model_values
         '''
         values = []
         values.append(self._edits[CONFIG_MODEL_TAG].currentText())
