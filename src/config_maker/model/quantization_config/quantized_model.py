@@ -85,16 +85,11 @@ class QModel:
                         |       |-- ...
                         |
                         |-- compression_params_dict
-                                |-- CONFIG_TARGET_DEVICE_TAG (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
-                                |-- CONFIG_ALGORITHM_NAME_TAG (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
-                                |-- ... (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
-                                |-- DEPENDENT_PARAMETERS_TAG
+                                |-- ... (CompressionParameters.parameters)
         '''
         pot_params_dict = {}
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
             pot_params_dict[param_name] = self.__pot_params[i]
-
-        config_params_dict = {}
 
         model_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_MODEL_TAGS):
@@ -107,7 +102,6 @@ class QModel:
         self.__compression_params = CompressionParameters(self.__model_params[2], dependent_params)
         compression_params_dict = self.__compression_params.get_parameters_dict()
 
-
         '''
         compression_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS):
@@ -119,12 +113,14 @@ class QModel:
         )
         '''
 
-        self.parameters[CONFIG_POT_PARAMETERS_TAG] = pot_params_dict
-        config_params_dict[CONFIG_MODEL_TAG] = model_params_dict
-        config_params_dict[CONFIG_ENGINE_TAG] = engine_params_dict
-        config_params_dict[CONFIG_COMPRESSION_TAG] = compression_params_dict
-        self.parameters[CONFIG_Q_CONFIG_TAG] = config_params_dict
+        config_params_dict = {
+            CONFIG_MODEL_TAG : model_params_dict,
+            CONFIG_ENGINE_TAG : engine_params_dict,
+            CONFIG_COMPRESSION_TAG : compression_params_dict
+        }
 
+        self.parameters[CONFIG_POT_PARAMETERS_TAG] = pot_params_dict
+        self.parameters[CONFIG_Q_CONFIG_TAG] = config_params_dict
 
         self.__engine_type = self.__model_params[1][3]
         self.__quantization_method = self.__compression_params.get_quantization_method_name()

@@ -5,33 +5,81 @@ from model.quantization_config.quantized_model import QModel
 
 class CompressionParameters:
     def __init__(self, independent_params, dependent_params):
-        self.parameters = {}
         self.__quantization_method = independent_params[1]
         self.__dependent_params = DependentParameters.get_parameters(
             self.__quantization_method,
             dependent_params
         )
+        dependent_params_dict = self.__dependent_params.get_parameters_dict()
+        independent_params_dict = self.__create_independent_parameters_dict(independent_params)
+        self.parameters = {**independent_params_dict, **dependent_params_dict}
 
     def get_quantization_method_name(self):
         return self.quantization_method
 
-    @staticmethod
-    def get_parameters(quantization_method, args):
-        if quantization_method == 'DefaultQuantization':
-            return DefaultQuantizationParameters(*args)
-        elif quantization_method == 'AccuracyAwareQuantization':
-            return AccuracyAwareQuantizationParameters(*args)
-        else:
-            raise ValueError('Unknown quantization method: {0} !'.format(quantization_method))
-
-    def get_parameter_list(self):
-        return list(self.parameters.values())
-
     def get_parameters_dict(self):
-        # TODO: create dict
-        pass
         return self.parameters
 
+    def __create_independent_parameters_dict(self, independent_params):
+        '''
+        independent_params = [
+            [00]<TargetDevice>,
+            [01]<Algorithm>,
+            [02]<Preset>,
+            [03]<StatSubsetSize>,
+
+            [04]<Weights::Bits>,
+            [05]<Weights::Mode>,
+            [06]<Weights::Granularity>,
+            [07]<Weights::LevelLow>,
+            [08]<Weights::LevelHigh>,
+
+            [09]<Weights::RangeEstimator::Max::Type>,
+            [10]<Weights::RangeEstimator::Max::OutlierProb>,
+
+            [11]<Activations::Bits>,
+            [12]<Activations::Mode>,
+            [13]<Activations::Granularity>,
+
+            [14]<Activations::RangeEstimator::Preset>,
+
+            [15]<Activations::RangeEstimator::Min::ClippingValue>,
+            [16]<Activations::RangeEstimator::Min::Aggregator>,
+            [17]<Activations::RangeEstimator::Min::Type>,
+            [18]<Activations::RangeEstimator::Min::OutlierProb>,
+
+            [19]<Activations::RangeEstimator::Max::ClippingValue>,
+            [20]<Activations::RangeEstimator::Max::Aggregator>,
+            [21]<Activations::RangeEstimator::Max::Type>,
+            [22]<Activations::RangeEstimator::Max::OutlierProb>
+        ]
+        '''
+        weights_params_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[4:9]):
+            weights_params_dict[param_name] = independent_params[i]
+        w_re_params_dict = { CONFIG_WEIGHTS_MAX_TAG : {} }
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[9:11]):
+            w_re_params_dict[CONFIG_WEIGHTS_MAX_TAG][param_name] = independent_params[i]
+        weights_params_dict[CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG] = w_re_params_dict
+
+        activations_params_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[11:14]):
+            activations_params_dict[param_name] = independent_params[i]
+        a_re_params_dict = { CONFIG_ACTIVATIONS_PRESET_TAG : independent_params[14],
+            CONFIG_ACTIVATIONS_MIN_TAG : {}, CONFIG_ACTIVATIONS_MAX_TAG : {} }
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[15:19]):
+            a_re_params_dict[CONFIG_ACTIVATIONS_MIN_TAG][param_name] = independent_params[i]
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[19:23]):
+            a_re_params_dict[CONFIG_ACTIVATIONS_MAX_TAG][param_name] = independent_params[i]
+        activations_params_dict[CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG] = a_re_params_dict
+
+        parameters_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[0:4]):
+            parameters_dict[param_name] = independent_params[i]
+        parameters_dict[CONFIG_WEIGHTS_TAG] = weights_params_dict
+        parameters_dict[CONFIG_ACTIVATIONS_TAG] = activations_params_dict
+
+        return parameters_dict
 
     @staticmethod
     def parse(dom):
@@ -177,8 +225,8 @@ class DependentParameters(metaclass=abc.ABCMeta):
     # def get_parameter_list(self):
     #     return list(self.parameters.values())
 
-    # def get_parameter_dict(self):
-    #     return self.parameters
+    def get_parameters_dict(self):
+        return self.parameters
 
     @staticmethod
     def parse(quantization_method, dom):
@@ -186,7 +234,6 @@ class DependentParameters(metaclass=abc.ABCMeta):
             return DefaultQuantizationParameters._parse_params(dom)
         elif quantization_method == 'AccuracyAwareQuantization':
             return AccuracyAwareQuantizationParameters._parse_params(dom)
-
 
     @abc.abstractmethod
     def _parse_params(self):
