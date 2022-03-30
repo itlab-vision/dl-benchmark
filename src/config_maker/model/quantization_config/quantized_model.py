@@ -33,14 +33,11 @@ class QModel:
         self.__model_params = [
             model_params[idx_0:idx_1],  # config_model_params (model_name, model (.xml), weights (.bin))
             model_params[idx_1:idx_2],  # config_engine_params
-            model_params[idx_2:idx_3],  # config_compression_params (target_device, algorithm, preset,
+            model_params[idx_2:idx_3],  # config_common_compression_params (target_device, algorithm, preset,
                                         #   stat_subset_size, weights, activations)
         ]
 
-        self.__engine_type = self.__model_params[1][3]
-        self.__quantization_method = 'DefaultQuantization' # self.__model_params[2][1]
-
-        self.parameters = Parameters(self.__pot_params, self.__model_params, dependent_params)
+        # self.parameters = Parameters(self.__pot_params, self.__model_params, dependent_params)
 
         '''
         self.parameters = {}
@@ -66,6 +63,72 @@ class QModel:
             dependent_params
         )
         '''
+
+        self.parameters = {}
+        '''
+        self.parameters
+                |
+                |-- pot_params_dict
+                |       |-- CONFIG_POT_CONFIG_TAG (HEADER_POT_PARAMS_TAGS)
+                |       |-- CONFIG_EVALUATION_TAG (HEADER_POT_PARAMS_TAGS)
+                |       |-- ...
+                |
+                |-- config_params_dict
+                        |-- model_params_dict
+                        |       |-- CONFIG_MODEL_NAME_TAG (HEADER_MODEL_PARAMS_MODEL_TAGS)
+                        |       |-- CONFIG_MODEL_TAG (HEADER_MODEL_PARAMS_MODEL_TAGS)
+                        |       |-- CONFIG_WEIGHTS_TAG (HEADER_MODEL_PARAMS_MODEL_TAGS)
+                        |
+                        |-- engine_params_dict
+                        |       |-- CONFIG_STAT_REQUESTS_NUMBER_TAG (HEADER_MODEL_PARAMS_ENGINE_TAGS)
+                        |       |-- CONFIG_EVAL_REQUESTS_NUMBER_TAG (HEADER_MODEL_PARAMS_MODEL_TAGS)
+                        |       |-- ...
+                        |
+                        |-- compression_params_dict
+                                |-- CONFIG_TARGET_DEVICE_TAG (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
+                                |-- CONFIG_ALGORITHM_NAME_TAG (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
+                                |-- ... (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
+                                |-- DEPENDENT_PARAMETERS_TAG
+        '''
+        pot_params_dict = {}
+        for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
+            pot_params_dict[param_name] = self.__pot_params[i]
+
+        config_params_dict = {}
+
+        model_params_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_MODEL_TAGS):
+            model_params_dict[param_name] = self.__model_params[0][i]
+
+        engine_params_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_ENGINE_TAGS):
+            engine_params_dict[param_name] = self.__model_params[1][i]
+
+        self.__compression_params = CompressionParameters(self.__model_params[2], dependent_params)
+        compression_params_dict = self.__compression_params.get_parameters_dict()
+
+
+        '''
+        compression_params_dict = {}
+        for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS):
+            compression_params_dict[param_name] = model_params[2][i]
+
+        compression_params_dict[DEPENDENT_PARAMETERS_TAG] = CompressionParameters.get_parameters(
+            self.__quantization_method,
+            dependent_params
+        )
+        '''
+
+        self.parameters[CONFIG_POT_PARAMETERS_TAG] = pot_params_dict
+        config_params_dict[CONFIG_MODEL_TAG] = model_params_dict
+        config_params_dict[CONFIG_ENGINE_TAG] = engine_params_dict
+        config_params_dict[CONFIG_COMPRESSION_TAG] = compression_params_dict
+        self.parameters[CONFIG_Q_CONFIG_TAG] = config_params_dict
+
+
+        self.__engine_type = self.__model_params[1][3]
+        self.__quantization_method = self.__compression_params.get_quantization_method_name()
+        # self.__quantization_method = 'DefaultQuantization' # self.__model_params[2][1]
 
 
     # def get_all_params(self):
@@ -112,7 +175,8 @@ class QModel:
 
 
     def __create_dom_model_params_compression(self, file):
-        return self.parameters.get_compression_params().create_dom(file)
+        # return self.parameters.get_compression_params().create_dom(file)
+        return self.__compression_params().create_dom(file)
         '''
         DOM_COMPRESSION_TAG = file.createElement(CONFIG_COMPRESSION_TAG)
         target_device = self.__model_params[2][0]
@@ -295,6 +359,11 @@ class QModel:
         return dependent_params, compression_params
         '''
 
+    @staticmethod
+    def camel_to_snake(string):
+        groups = re.findall('([A-z][a-z0-9]*)', string)
+        return '_'.join([i.lower() for i in groups])
+
 
 
 class Parameters:
@@ -339,7 +408,8 @@ class Parameters:
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_ENGINE_TAGS):
             engine_params_dict[param_name] = model_params[1][i]
 
-        compression_params_dict = CompressionParameters.get_parameters(model_params[2], dependent_params)
+        self.__compression_params = CompressionParameters(model_params[2], dependent_params)
+        compression_params_dict = self.__compression_params.get_parameters_dict()
 
         '''
         compression_params_dict = {}
@@ -359,7 +429,7 @@ class Parameters:
         self.__params[CONFIG_Q_CONFIG_TAG] = config_params_dict
 
         # self.__params = []
-        ''''
+        '''
         self.__params = {
             'pot_parameters': {},
             'config_parameters': {
@@ -370,11 +440,8 @@ class Parameters:
         }
         '''
 
-
-    @staticmethod
-    def camel_to_snake(string):
-        groups = re.findall('([A-z][a-z0-9]*)', string)
-        return '_'.join([i.lower() for i in groups])
+    def get_compression_params(self):
+        return self.__compression_params
 
 
     def __getitem__(self, keys):
@@ -383,4 +450,3 @@ class Parameters:
 
     def __setitem__(self, key, value):
         self.__params[key] = value
-
