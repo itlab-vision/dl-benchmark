@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout
 #     CONFIG_MAX_DROP_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
 #     CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG
 from tags import CONFIG_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
-    CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
+    CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, HEADER_AAQ_PARAMS_TAGS, HEADER_DQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
 from tags import CONFIG_MODEL_NAME_TAG, CONFIG_MODEL_TAG, CONFIG_WEIGHTS_TAG
 from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS
 
@@ -197,7 +197,6 @@ class IndependentParameters(ParametersDialog):
 
     def get_values(self):
         values = []
-        
         for id, tag in enumerate(self._tags[1:]):
             if id not in self.__ignored_idx:
                 values.append(self._edits[id].text())
@@ -218,6 +217,12 @@ class IndependentParameters(ParametersDialog):
         '''
 
     def load_values_from_table_row(self, table, row):
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                self._edits[id].setText(table.item(row, id).text())
+            else:
+                self._edits[id].setCurrentText(table.item(row, id).text())
+        '''
         self._edits[CONFIG_MODEL_TAG].setCurrentText(table.item(row, 0).text())
         self._edits[CONFIG_DATASET_TAG].setCurrentText(table.item(row, 1).text())
         self._edits[CONFIG_FRAMEWORK_TAG].setCurrentText(table.item(row, 2).text())
@@ -227,10 +232,11 @@ class IndependentParameters(ParametersDialog):
             if tag != CONFIG_DEVICE_TAG:
                 self._edits[tag].setText(table.item(row, idx).text())
             idx += 1
+        '''
 
     def check(self):
-        for tag in self._tags[4:]:
-            if tag != CONFIG_DEVICE_TAG and self._edits[tag].text() == '':
+        for id, tag in enumerate(self._tags[1:]):
+            if (id not in self.__ignored_idx) and (self._edits[tag].text() == ''):
                 return False
         return True
 
@@ -240,41 +246,63 @@ class DependentParameters(ParametersDialog):
         super().__init__(parent, tags)
 
     def _create_edits(self):
+        self._edits = {}
+        self.__ignored_idx = []
+
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                self._edits[id] = QLineEdit(self._parent)
+        '''
         self._edits = dict.fromkeys(self._tags[1:])
         for key in self._edits:
             self._edits[key] = QLineEdit(self._parent)
+        '''
 
     def get_values(self):
+        values = []
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                values.append(self._edits[id].text())
+            else:
+                values.append(self._edits[id].currentText())
+        return values
+        '''
         values = []
         for tag in self._tags[1:]:
             values.append(self._edits[tag].text())
         return values
+        '''
 
     def load_values_from_table_row(self, table, row):
+        for id, tag in enumerate(self._tags[1:]):
+            if id not in self.__ignored_idx:
+                self._edits[id].setText(table.item(row, id).text())
+            else:
+                self._edits[id].setCurrentText(table.item(row, id).text())
+        '''
         for tag in self._tags[1:]:
             self._edits[tag].setText(table.item(row, table.headers.index(tag)).text())
+        '''
 
     def check(self):
         return True
 
 
-class OpenVINODialog(DependentParameters):
+class DefaultQuantizationDialog(DependentParameters):
     def __init__(self, parent):
-        super().__init__(parent,
-                         ['OpenVINO DLDT:', CONFIG_MODE_TAG, CONFIG_EXTENSION_TAG, CONFIG_ASYNC_REQ_COUNT_TAG,
-                          CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG])
+        super().__init__(parent, ['DefaultQuantization', *HEADER_DQ_PARAMS_TAGS])
 
     def check(self):
+        '''
         if self._edits[CONFIG_MODE_TAG].text() == '':
             return False
+        '''
         return True
 
 
-class CaffeDialog(DependentParameters):
+class AccuracyAwareQuantizationDialog(DependentParameters):
     def __init__(self, parent):
-        super().__init__(parent,
-                         ['Caffe:', CONFIG_CHANNEL_SWAP_TAG, CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG,
-                          CONFIG_THREAD_COUNT_TAG, CONFIG_KMP_AFFINITY_TAG])
+        super().__init__(parent, ['DefaultQuantization:', *HEADER_AAQ_PARAMS_TAGS])
 
 
 '''
