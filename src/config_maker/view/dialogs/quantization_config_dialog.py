@@ -21,6 +21,7 @@ class QuantizationConfigDialog(QDialog):
         self.__model_params_tags = HEADER_MODEL_PARAMS_MODEL_TAGS + \
             HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
         self.tags = [*self.__pot_params_tags, *self.__model_params_tags]
+        # self.__dependent_params_start_idx = self.__calculate_start_index(self.__selected_q_method)
         self.__init_ui()
 
     def __init_ui(self):
@@ -50,9 +51,20 @@ class QuantizationConfigDialog(QDialog):
             if key == q_method:
                 self.__q_method_dependent_params[key].show()
                 self.__selected_q_method = key
+                # self.__dependent_params_start_idx = self.__calculate_start_index(q_method)
             else:
                 self.__q_method_dependent_params[key].hide()
-                pass
+
+    def __calculate_start_index(self, quantization_method):
+        start_idx = len(self.tags)
+        methods = {
+            'DefaultQuantization': len(HEADER_DQ_PARAMS_TAGS),
+            'AccuracyAwareQuantization': len(HEADER_AAQ_PARAMS_TAGS)
+        }
+        for method_name in methods.keys():
+            if quantization_method == method_name:
+                return start_idx
+            start_idx += methods[method_name]
 
     def get_values(self):
         pot_params, model_params = self.__q_method_independent_params.get_values()
@@ -61,7 +73,9 @@ class QuantizationConfigDialog(QDialog):
 
     def load_values_from_table_row(self, table, row):
         self.__q_method_independent_params.load_values_from_table_row(table, row)
-        self.__q_method_dependent_params[self.__selected_q_method].load_values_from_table_row(table, row)
+        self.__q_method_dependent_params[self.__selected_q_method].load_values_from_table_row(
+            table, row, self.__calculate_start_index(self.__selected_q_method))
+            # table, row, self.__dependent_params_start_idx)
 
     def accept(self):
         is_ok = self.__q_method_independent_params.check()
@@ -100,7 +114,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def load_values_from_table_row(self, table, row):
+    def load_values_from_table_row(self, table, row, start_idx=0):
         pass
 
     def hide(self):
@@ -158,12 +172,12 @@ class IndependentParameters(ParametersDialog):
                 model_values.append(self._edits[id].currentText())
         return pot_values, model_values
 
-    def load_values_from_table_row(self, table, row):
-        for id in range(1, len(self._tags)):
+    def load_values_from_table_row(self, table, row, start_idx=0):
+        for column, id in enumerate(range(1, len(self._tags))):
             if id not in self.__ignored_idx:
-                self._edits[id].setText(table.item(row, id).text())
+                self._edits[id].setText(table.item(row, column).text())
             else:
-                self._edits[id].setCurrentText(table.item(row, id).text())
+                self._edits[id].setCurrentText(table.item(row, column).text())
 
     def check(self):
         for id in range(1, len(self._tags)):
@@ -328,12 +342,12 @@ class DependentParameters(ParametersDialog):
                 values.append(self._edits[id].currentText())
         return values
 
-    def load_values_from_table_row(self, table, row):
-        for id in range(1, len(self._tags)):
+    def load_values_from_table_row(self, table, row, start_idx=0):
+        for column, id in enumerate(range(1, len(self._tags))):
             if id not in self.__ignored_idx:
-                self._edits[id].setText(table.item(row, id).text())
+                self._edits[id].setText(table.item(row, start_idx + column).text())
             else:
-                self._edits[id].setCurrentText(table.item(row, id).text())
+                self._edits[id].setCurrentText(table.item(row, start_idx + column).text())
 
     def check(self):
         return True
