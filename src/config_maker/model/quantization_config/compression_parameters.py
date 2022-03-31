@@ -22,35 +22,35 @@ class CompressionParameters:
     def __create_independent_parameters_dict(self, independent_params):
         '''
         independent_params = [
-            [00]<TargetDevice>,
-            [01]<Algorithm>,
-            [02]<Preset>,
-            [03]<StatSubsetSize>,
+            [00]<TargetDevice>,     ([?, default:"ANY"])
+            [01]<Algorithm>,        (["DefaultQuantization", "AccuracyAwareQuantization"])
+            [02]<Preset>,           (["mixed", "performance", "accuracy"])
+            [03]<StatSubsetSize>,   (int, default: 100)
 
             [04]<Weights::Bits>,
-            [05]<Weights::Mode>,
-            [06]<Weights::Granularity>,
-            [07]<Weights::LevelLow>,
-            [08]<Weights::LevelHigh>,
+            [05]<Weights::Mode>,            (["symmetric", ""asymmetric"])
+            [06]<Weights::Granularity>,     (["perchannel", "pertensor"])
+            [07]<Weights::LevelLow>,        (int, default: -127)
+            [08]<Weights::LevelHigh>,       (int, default: 127)
 
-            [09]<Weights::RangeEstimator::Max::Type>,
-            [10]<Weights::RangeEstimator::Max::OutlierProb>,
+            [09]<Weights::RangeEstimator::Max::Type>,            (["quantile", "min", "max", "abs_max", "abs_quantile"])
+            [10]<Weights::RangeEstimator::Max::OutlierProb>,     (float, default: 0.0001)
 
-            [11]<Activations::Bits>,
-            [12]<Activations::Mode>,
-            [13]<Activations::Granularity>,
+            [11]<Activations::Bits>,        (int, default: 8)
+            [12]<Activations::Mode>,        (["symmetric", ""asymmetric"])
+            [13]<Activations::Granularity>, (["perchannel", "pertensor"])
 
-            [14]<Activations::RangeEstimator::Preset>,
+            [14]<Activations::RangeEstimator::Preset>,  ([?, default:"quantile"])
 
-            [15]<Activations::RangeEstimator::Min::ClippingValue>,
-            [16]<Activations::RangeEstimator::Min::Aggregator>,
-            [17]<Activations::RangeEstimator::Min::Type>,
-            [18]<Activations::RangeEstimator::Min::OutlierProb>,
+            [15]<Activations::RangeEstimator::Min::ClippingValue>,  (int, default: 0)
+            [16]<Activations::RangeEstimator::Min::Aggregator>,     (["mean", "max", "min", "median", "mean_no_outliers", "median_no_outliers", "hl_estimator"])
+            [17]<Activations::RangeEstimator::Min::Type>,           (["quantile", "min", "max", "abs_max", "abs_quantile"])
+            [18]<Activations::RangeEstimator::Min::OutlierProb>,    (float, default: 0.0001)
 
-            [19]<Activations::RangeEstimator::Max::ClippingValue>,
-            [20]<Activations::RangeEstimator::Max::Aggregator>,
-            [21]<Activations::RangeEstimator::Max::Type>,
-            [22]<Activations::RangeEstimator::Max::OutlierProb>
+            [19]<Activations::RangeEstimator::Max::ClippingValue>,  (int, default: 6)
+            [20]<Activations::RangeEstimator::Max::Aggregator>,     (["mean", "max", "min", "median", "mean_no_outliers", "median_no_outliers", "hl_estimator"])
+            [21]<Activations::RangeEstimator::Max::Type>,           (["quantile", "min", "max", "abs_max", "abs_quantile"])
+            [22]<Activations::RangeEstimator::Max::OutlierProb>     (float, default: 0.0001)
         ]
         '''
         weights_params_dict = {}
