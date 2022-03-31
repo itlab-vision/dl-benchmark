@@ -31,9 +31,9 @@ class QModel:
         idx_3 = -1
 
         self.__model_params = [
-            model_params[idx_0:idx_1],  # config_model_params (model_name, model (.xml), weights (.bin))
+            model_params[:idx_1],  # config_model_params (model_name, model (.xml), weights (.bin))
             model_params[idx_1:idx_2],  # config_engine_params
-            model_params[idx_2:idx_3],  # config_common_compression_params (target_device, algorithm, preset,
+            model_params[idx_2:],       # config_common_compression_params (target_device, algorithm, preset,
                                         #   stat_subset_size, weights, activations)
         ]
 
@@ -192,7 +192,7 @@ class QModel:
 
     def __create_dom_model_params_compression(self, file):
         # return self.parameters.get_compression_params().create_dom(file)
-        return self.__compression_params().create_dom(file)
+        return self.__compression_params.create_dom(file, self.__model_params[2])
         '''
         DOM_COMPRESSION_TAG = file.createElement(CONFIG_COMPRESSION_TAG)
         target_device = self.__model_params[2][0]

@@ -37,15 +37,15 @@ class QuantizationConfigTable(Table):
         for i, q_model in enumerate(q_models):
             independent_params, dependent_params = q_model.get_params()
             quantization_method = q_model.get_quantization_method()
-            for j, param_name in enumerate(self.__headers):
-                self.setItem(i, j, self._create_cell(independent_params[j]))
+            for j, param_value in enumerate(independent_params):
+                self.setItem(i, j, self._create_cell(param_value))
                 # self.setItem(i, j, self._create_cell(q_model.parameters[param_name]))
             self.__update_dependent_parameters(dependent_params, quantization_method, i)
 
     def __update_dependent_parameters(self, parameters, quantization_method, i):
         start_idx = self.__calculate_start_index(quantization_method)
-        for j in len(parameters):
-            self.setItem(i, start_idx + j, self._create_cell(parameters[j]))
+        for j, param_value in enumerate(parameters):
+            self.setItem(i, start_idx + j, self._create_cell(param_value))
 
     def __calculate_start_index(self, quantization_method):
         start_idx = self.__independent_params_count
