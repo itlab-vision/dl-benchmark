@@ -247,7 +247,7 @@ class QModel:
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
 
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
-            self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[0])
+            self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
         '''
         DOM_POT_CONFIG_TAG = file.createElement(CONFIG_POT_CONFIG_TAG)
         DOM_EVALUATION_TAG = file.createElement(CONFIG_EVALUATION_TAG)

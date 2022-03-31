@@ -98,7 +98,7 @@ class CompressionParameters:
 
     @staticmethod
     def __parse_dependent_params(quantization_method, dom):
-        DependentParameters.parse(quantization_method, dom)
+        return DependentParameters.parse(quantization_method, dom).get_parameters_list()
 
     @staticmethod
     def __parse_independent_params(dom):
@@ -112,17 +112,17 @@ class CompressionParameters:
             CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG]:
             independent_params.append(CompressionParameters.get_element_by_tag(weights_params, param_name))
 
-        weights_re = dom.getElementsByTagName(CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG)[0]
+        weights_re = weights_params.getElementsByTagName(CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG)[0]
         weights_max_params = weights_re.getElementsByTagName(CONFIG_WEIGHTS_MAX_TAG)[0]
         for param_name in [CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG]:
             independent_params.append(CompressionParameters.get_element_by_tag(weights_max_params, param_name))
 
-        activations_params = dom.getElementsByTagName(CONFIG_WEIGHTS_TAG)[0]
+        activations_params = dom.getElementsByTagName(CONFIG_ACTIVATIONS_TAG)[0]
         for param_name in [CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
-            CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_PRESET_TAG]:
+            CONFIG_ACTIVATIONS_GRANULARITY_TAG]:
             independent_params.append(CompressionParameters.get_element_by_tag(activations_params, param_name))
 
-        activations_re = dom.getElementsByTagName(CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG)[0]
+        activations_re = activations_params.getElementsByTagName(CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG)[0]
         independent_params.append(CompressionParameters.get_element_by_tag(activations_re, CONFIG_ACTIVATIONS_PRESET_TAG))
 
         activations_min_params = activations_re.getElementsByTagName(CONFIG_ACTIVATIONS_MIN_TAG)[0]
@@ -241,6 +241,21 @@ class DependentParameters(metaclass=abc.ABCMeta):
 
     def get_parameters_dict(self):
         return self.parameters
+
+    def __check_subtree(self, param_tree_node):
+        params = []
+        if not isinstance(param_tree_node, dict):
+            params.append(param_tree_node)
+        else:
+            for key in param_tree_node.keys():
+                params.extend(self.__check_subtree(param_tree_node[key]))
+        return params
+
+    def get_parameters_list(self):
+        params_list = []
+        for key in self.parameters.keys():
+            params_list.extend(self.__check_subtree(self.parameters[key]))
+        return params_list
 
     @staticmethod
     def parse(quantization_method, dom):
