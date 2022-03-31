@@ -14,7 +14,7 @@ class CompressionParameters:
         self.parameters = {**independent_params_dict, **dependent_params_dict}
 
     def get_quantization_method_name(self):
-        return self.quantization_method
+        return self.__quantization_method
 
     def get_parameters_dict(self):
         return self.parameters
@@ -230,9 +230,9 @@ class DependentParameters(metaclass=abc.ABCMeta):
     @staticmethod
     def get_parameters(quantization_method, args):
         if quantization_method == 'DefaultQuantization':
-            return DefaultQuantizationParameters(*args)
+            return DefaultQuantizationParameters(args)
         elif quantization_method == 'AccuracyAwareQuantization':
-            return AccuracyAwareQuantizationParameters(*args)
+            return AccuracyAwareQuantizationParameters(args)
         else:
             raise ValueError('Unknown quantization method: {0} !'.format(quantization_method))
 
@@ -260,6 +260,7 @@ class DependentParameters(metaclass=abc.ABCMeta):
 
 class DefaultQuantizationParameters(DependentParameters):
     def __init__(self, params):
+        self.parameters = {}
         # self.parameter_count = DEFAULT_QUANTIZATION_PARAMS_COUNT
         # for i, param in enumerate(params):
         #     self.__model_params[2][i] = param
@@ -293,6 +294,7 @@ class DefaultQuantizationParameters(DependentParameters):
 
 class AccuracyAwareQuantizationParameters(DependentParameters):
     def __init__(self, params):
+        self.parameters = {}
         # self.parameter_count = ACCURACY_AWARE_QUANTIZATION_PARAMS_COUNT
         # for i, param in enumerate(params):
         #     self.__model_params[2][i] = param

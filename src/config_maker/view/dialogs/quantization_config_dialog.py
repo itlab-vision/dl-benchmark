@@ -55,8 +55,9 @@ class QuantizationConfigDialog(QDialog):
                 pass
 
     def get_values(self):
-        return self.__q_method_independent_params.get_values(), \
-            self.__q_method_dependent_params[self.__selected_q_method].get_values()
+        pot_params, model_params = self.__q_method_independent_params.get_values()
+        dependent_params = self.__q_method_dependent_params[self.__selected_q_method].get_values()
+        return pot_params, model_params, dependent_params
 
     def load_values_from_table_row(self, table, row):
         self.__q_method_independent_params.load_values_from_table_row(table, row)
