@@ -11,8 +11,8 @@ class QuantizationConfigDialog(QDialog):
         super().__init__(parent)
         self.__title = 'Information about model'
         self.__q_method_dependent_params = {
-            'DefaultQuantization': 1, # DefaultQuantizationDialog(self),
-            'AccuracyAwareQuantization': 2# AccuracyAwareQuantizationDialog(self)
+            'DefaultQuantization': DefaultQuantizationDialog(self),
+            'AccuracyAwareQuantization': AccuracyAwareQuantizationDialog(self)
         }
         self.__q_method_independent_params = IndependentParameters(
             self, models, data, self.__q_method_dependent_params.keys(), self.__q_method_choice)
@@ -31,11 +31,11 @@ class QuantizationConfigDialog(QDialog):
         layout = QGridLayout()
         idx = 0
         independent_idx = self.__q_method_independent_params.attach_to_layout(layout)
-        # dict_q_method_idx = dict.fromkeys(self.__q_method_dependent_params.keys(), idx)
-        # for key in self.__q_method_dependent_params:
-        #     dict_q_method_idx[key] = self.__q_method_dependent_params[key].attach_to_layout(layout, idx, False)
-        # self.__q_method_dependent_params['DefaultQuantization'].show()
-        dependent_idx = 0
+        dict_q_method_idx = dict.fromkeys(self.__q_method_dependent_params.keys(), idx)
+        for key in self.__q_method_dependent_params:
+            dict_q_method_idx[key] = self.__q_method_dependent_params[key].attach_to_layout(layout, False)
+        self.__q_method_dependent_params['DefaultQuantization'].show()
+        dependent_idx = max(*dict_q_method_idx.values())
         row_idx = max(independent_idx, dependent_idx)
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
@@ -48,10 +48,10 @@ class QuantizationConfigDialog(QDialog):
     def __q_method_choice(self, q_method):
         for key in self.__q_method_dependent_params:
             if key == q_method:
-                # self.__q_method_dependent_params[key].show()
+                self.__q_method_dependent_params[key].show()
                 self.__selected_q_method = key
             else:
-                # self.__q_method_dependent_params[key].hide()
+                self.__q_method_dependent_params[key].hide()
                 pass
 
     def get_values(self):
@@ -88,6 +88,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         for id, tag in enumerate(self._tags[1:]):
             self._labels[1 + id] = QLabel(tag, self._parent)
         # self._labels[0].setStyleSheet("font-weight: bold")
+        self._labels[0] = QLabel(self._tags[0], self._parent)
 
     @abc.abstractmethod
     def _create_edits(self):
@@ -108,7 +109,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
             self._edits[id].hide()
 
     def show(self):
-        # self._labels[0].show()
+        self._labels[0].show()
         for id in range(1, len(self._tags)):
             self._labels[id].show()
             self._edits[id].show()
@@ -170,8 +171,8 @@ class IndependentParameters(ParametersDialog):
         return True
 
     def attach_to_layout(self, layout, show=True):
-        self_idx_1 = 0
-        self_idx_2 = 0
+        self_idx_1 = 1
+        self_idx_2 = 1
         # self_idx_3 = idx + 1
 
         idx = [0] * 11
@@ -196,6 +197,7 @@ class IndependentParameters(ParametersDialog):
 
         base_tab = '   '
 
+        layout.addWidget(self._labels[0], 0, 0)
         layout.addWidget(QLabel(0 * base_tab + 'Pot Parameters:', self._parent), self_idx_1, 0)
         self_idx_1 += 1
         for id in range(idx[0], idx[1]):
@@ -335,7 +337,30 @@ class DependentParameters(ParametersDialog):
     def check(self):
         return True
 
-    def attach_to_layout(self, layout, idx, show=True):
+    def attach_to_layout(self, layout, show=True):
+        self_idx_3 = 1
+
+        idx = [0] * 2
+        idx[0] = 1
+        idx[1] = len(self._tags)
+
+        base_tab = '   '
+
+        # layout.addWidget(QLabel(0 * base_tab + 'Dependent Parameters:', self._parent), self_idx_3, 4)
+        layout.addWidget(self._labels[0], 0, 4)
+        # self_idx_3 += 1
+        for id in range(idx[0], idx[1]):
+            self._labels[id].setText(1 * base_tab + self._labels[id].text())
+            layout.addWidget(self._labels[id], self_idx_3, 4)
+            layout.addWidget(self._edits[id], self_idx_3, 5)
+            self_idx_3 += 1
+
+        if show:
+            self.show()
+        else:
+            self.hide()
+        return self_idx_3
+        '''
         layout.addWidget(self._labels[0], idx, 0)
         x = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS)
         y = len(HEADER_POT_PARAMS_TAGS)
@@ -354,6 +379,7 @@ class DependentParameters(ParametersDialog):
         else:
             self.hide()
         return max(self_idx_2, self_idx)
+        '''
 
 
 class DefaultQuantizationDialog(DependentParameters):
@@ -366,4 +392,4 @@ class DefaultQuantizationDialog(DependentParameters):
 
 class AccuracyAwareQuantizationDialog(DependentParameters):
     def __init__(self, parent):
-        super().__init__(parent, ['DefaultQuantization:', *HEADER_AAQ_PARAMS_TAGS])
+        super().__init__(parent, ['AccuracyAwareQuantization:', *HEADER_AAQ_PARAMS_TAGS])
