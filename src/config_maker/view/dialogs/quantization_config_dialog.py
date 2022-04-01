@@ -1,4 +1,5 @@
 import abc
+from email.policy import default
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox, QComboBox
 from tags import CONFIG_ALGORITHM_NAME_TAG, CONFIG_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
     CONFIG_LOG_LEVEL_TAG, CONFIG_PRESET_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, CONFIG_TARGET_DEVICE_TAG, CONFIG_WEIGHTS_BITS_TAG, HEADER_AAQ_PARAMS_TAGS, HEADER_DQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
@@ -129,6 +130,14 @@ class ParametersDialog(metaclass=abc.ABCMeta):
             self._labels[id].show()
             self._edits[id].show()
 
+    def _set_qcombobox_edit(self, idx, values, f=None):
+        self._edits[idx] = QComboBox(self._parent)
+        self._edits[idx].addItems(values)
+        if f != None:
+            self._edits[idx].activated[str].connect(f)
+            self._edits[idx].currentTextChanged[str].connect(f)
+        self._ignored_idx.append(idx)
+
     @abc.abstractmethod
     def attach_to_layout(self, layout, show=True):
         pass
@@ -144,29 +153,84 @@ class IndependentParameters(ParametersDialog):
 
     def _create_edits(self):
         self._edits = {}
-        self.__ignored_idx = []
-        q_methods_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS) + 1
+        self._ignored_idx = []
+        start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS)
+
+        self._set_qcombobox_edit(start_idx + 0, ('ANY', 'CPU', 'GPU'))
+        self._set_qcombobox_edit(start_idx + 1, self.__q_methods, self.__q_method_choice)
+        self._set_qcombobox_edit(start_idx + 2, ('mixed', 'performance', 'accuracy'))
+        self._set_qcombobox_edit(start_idx + 5, ('symmetric', 'asymmetric'))
+        self._set_qcombobox_edit(start_idx + 6, ('perchannel', 'pertensor'))
+        self._set_qcombobox_edit(start_idx + 9, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 12, ('symmetric', 'asymmetric'))
+        self._set_qcombobox_edit(start_idx + 13, ('perchannel', 'pertensor'))
+        self._set_qcombobox_edit(start_idx + 14, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile')) # ('quantile',))
+        self._set_qcombobox_edit(start_idx + 16, ('mean', 'max', 'min', 'median', 'mean_no_outliers',
+            'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(start_idx + 17, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 20, ('mean', 'max', 'min', 'median', 'mean_no_outliers',
+            'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(start_idx + 21, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+
+        for id in range(1, len(self._tags)):
+            if id not in self._ignored_idx:
+                self._edits[id] = QLineEdit(self._parent)
+
+        '''
+        q_methods_idx = start_idx + 1
         self._edits[q_methods_idx] = QComboBox(self._parent)
         self._edits[q_methods_idx].addItems(self.__q_methods)
         self._edits[q_methods_idx].activated[str].connect(self.__q_method_choice)
         self._edits[q_methods_idx].currentTextChanged[str].connect(self.__q_method_choice)
-        self.__ignored_idx.append(q_methods_idx)
-        for id in range(1, len(self._tags)):
-            if id not in self.__ignored_idx:
-                self._edits[id] = QLineEdit(self._parent)
-                self._edits[id].setText('_' + str(id) + '_')
+        self._ignored_idx.append(q_methods_idx)
+
+        q_preset_idx = start_idx + 2
+        self._edits[q_preset_idx] = QComboBox(self._parent)
+        self._edits[q_preset_idx].addItems(('mixed', 'performance', 'accuracy'))
+        self._ignored_idx.append(q_preset_idx)
+
+        q_weights_mode_idx = start_idx + 5
+        self._edits[q_weights_mode_idx] = QComboBox(self._parent)
+        self._edits[q_weights_mode_idx].addItems(('symmetric', 'asymmetric'))
+        self._ignored_idx.append(q_weights_mode_idx)
+
+        q_weights_mode_idx = start_idx + 6
+        self._edits[q_weights_mode_idx] = QComboBox(self._parent)
+        self._edits[q_weights_mode_idx].addItems(('perchannel', 'pertensor'))
+        self._ignored_idx.append(q_weights_mode_idx)
+        '''
+
+        default_values = ['ANY', 'DefaultQuantization', 'mixed', str(100), str(8), 'symmetric',
+            'perchannel', str(-127), str(127), 'quantile', str(0.0001), str(8), 'symmetric', 'perchannel',
+            'quantile', str(0), 'mean', 'quantile', str(0.0001), str(6), 'mean', 'quantile', str(0.0001)]
+        
+        stop_iter_idx = len(self._tags)
+        start_iter_idx = stop_iter_idx - len(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
+        for i, id in enumerate(range(start_iter_idx, stop_iter_idx)):
+            if id not in self._ignored_idx:
+                self._edits[id].setText(default_values[i])
+
+    '''
+    def _set_qcombobox_edit(self, idx, values, f=None):
+        self._edits[idx] = QComboBox(self._parent)
+        self._edits[idx].addItems(values)
+        if f != None:
+            self._edits[idx].activated[str].connect(f)
+            self._edits[idx].currentTextChanged[str].connect(f)
+        self._ignored_idx.append(idx)
+    '''
 
     def get_values(self):
         pot_values = []
         for id in range(1, 1 + len(HEADER_POT_PARAMS_TAGS)):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 pot_values.append(self._edits[id].text())
             else:
                 pot_values.append(self._edits[id].currentText())
         model_values = []
         for id in range(1 + len(HEADER_POT_PARAMS_TAGS), len(self._tags)):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 model_values.append(self._edits[id].text())
             else:
                 model_values.append(self._edits[id].currentText())
@@ -174,14 +238,14 @@ class IndependentParameters(ParametersDialog):
 
     def load_values_from_table_row(self, table, row, start_idx=0):
         for column, id in enumerate(range(1, len(self._tags))):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 self._edits[id].setText(table.item(row, column).text())
             else:
                 self._edits[id].setCurrentText(table.item(row, column).text())
 
     def check(self):
         for id in range(1, len(self._tags)):
-            if (id not in self.__ignored_idx) and (self._edits[id].text() == ''):
+            if (id not in self._ignored_idx) and (self._edits[id].text() == ''):
                 return False
         return True
 
@@ -327,16 +391,16 @@ class DependentParameters(ParametersDialog):
 
     def _create_edits(self):
         self._edits = {}
-        self.__ignored_idx = []
+        self._ignored_idx = []
 
         for id in range(1, len(self._tags)):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
 
     def get_values(self):
         values = []
         for id in range(1, len(self._tags)):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 values.append(self._edits[id].text())
             else:
                 values.append(self._edits[id].currentText())
@@ -344,7 +408,7 @@ class DependentParameters(ParametersDialog):
 
     def load_values_from_table_row(self, table, row, start_idx=0):
         for column, id in enumerate(range(1, len(self._tags))):
-            if id not in self.__ignored_idx:
+            if id not in self._ignored_idx:
                 self._edits[id].setText(table.item(row, start_idx + column).text())
             else:
                 self._edits[id].setCurrentText(table.item(row, start_idx + column).text())
@@ -401,6 +465,19 @@ class DefaultQuantizationDialog(DependentParameters):
     def __init__(self, parent):
         super().__init__(parent, ['DefaultQuantization', *HEADER_DQ_PARAMS_TAGS])
 
+    def _create_edits(self):
+        self._edits = {}
+        self._ignored_idx = []
+
+        start_idx = len(['DefaultQuantization:'])
+        self._set_qcombobox_edit(start_idx + 0, (str(False), str(True)))
+
+        default_values = [str(False), str(0)]
+        for i, id in enumerate(range(1, len(self._tags))):
+            if id not in self._ignored_idx:
+                self._edits[id] = QLineEdit(self._parent)
+                self._edits[id].setText(default_values[i])
+
     def check(self):
         return True
 
@@ -408,3 +485,22 @@ class DefaultQuantizationDialog(DependentParameters):
 class AccuracyAwareQuantizationDialog(DependentParameters):
     def __init__(self, parent):
         super().__init__(parent, ['AccuracyAwareQuantization:', *HEADER_AAQ_PARAMS_TAGS])
+
+    def _create_edits(self):
+        self._edits = {}
+        self._ignored_idx = []
+
+        start_idx = len(['AccuracyAwareQuantization:'])
+        self._set_qcombobox_edit(start_idx + 3, ('absolute', 'relative'))
+        self._set_qcombobox_edit(start_idx + 4, (str(False), str(True)))
+        self._set_qcombobox_edit(start_idx + 5, (['DefaultQuantization',]))
+        self._set_qcombobox_edit(start_idx + 6, (str(False), str(True)))
+        self._set_qcombobox_edit(start_idx + 8, (str(False), str(True)))
+        self._set_qcombobox_edit(start_idx + 10, (str(False), str(True)))
+
+        default_values = [str(300), str(20), str(0.005), 'absolute', str(False),
+            'DefaultQuantization', str(False), str(0.6), str(False), str(0.5), str(False)]
+        for i, id in enumerate(range(1, len(self._tags))):
+            if id not in self._ignored_idx:
+                self._edits[id] = QLineEdit(self._parent)
+                self._edits[id].setText(default_values[i])

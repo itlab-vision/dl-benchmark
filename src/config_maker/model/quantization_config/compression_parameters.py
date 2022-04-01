@@ -27,8 +27,8 @@ class CompressionParameters:
             [02]<Preset>,           (["mixed", "performance", "accuracy"])
             [03]<StatSubsetSize>,   (int, default: 100)
 
-            [04]<Weights::Bits>,
-            [05]<Weights::Mode>,            (["symmetric", ""asymmetric"])
+            [04]<Weights::Bits>,            (int, default: 8)
+            [05]<Weights::Mode>,            (["symmetric", "asymmetric"])
             [06]<Weights::Granularity>,     (["perchannel", "pertensor"])
             [07]<Weights::LevelLow>,        (int, default: -127)
             [08]<Weights::LevelHigh>,       (int, default: 127)
@@ -240,6 +240,28 @@ class DependentParameters(metaclass=abc.ABCMeta):
     #     return list(self.parameters.values())
 
     def get_parameters_dict(self):
+        '''
+        for DQ:
+        dependent_params = [
+            [00]<ShuffleData>,  (['false', 'true'])
+            [01]<Seed>,         (int, default: 0)
+        ]
+
+        for AAQ:
+        dependent_params = [
+            [00]<RankingSubsetSize>,        (int, default: 300)
+            [01]<MaxIterNum>,               (int, default: 20)
+            [02]<MaximalDrop>,              (float, default: 0.005)
+            [03]<DropType>,                 (['absolute', 'relative'])
+            [04]<UsePrevIfDropIncrease>,    (['false', 'true'])
+            [05]<BaseAlgorithm>,            (['DefaultQuantization',])
+            [06]<AnnotationFree>,           (['false', 'true'])
+            [07]<AnnotationConfThreshold>,  (float, default: 0.6)
+            [08]<ConvertToMixedPreset>,     (['false', 'true'])
+            [09]<MetricSubsetRatio>,        (float, default: 0.5)
+            [10]<TuneHyperparams>,          (['false', 'true'])
+        ]
+        '''
         return self.parameters
 
     def __check_subtree(self, param_tree_node):
