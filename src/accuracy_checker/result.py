@@ -55,7 +55,8 @@ class result:
                 with open(csv_file_name) as csvfile:
                     csv_file = csv.DictReader(csvfile, delimiter=',')
                     for row in csv_file:
-                        accuracies[row['metric_name']] = row['metric_value']
+                        value = float(row['metric_value']) * 100
+                        accuracies[row['metric_name']] = f"{value:.{2}f}%"
                         dataset = row['dataset']
             except Exception as ex:
                 print('ERROR! : {0}'.format(str(ex)))
