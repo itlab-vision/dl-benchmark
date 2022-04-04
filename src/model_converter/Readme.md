@@ -9,12 +9,6 @@
 
 ### Алгоритм работы скрипта
 
-Скрипт принимает на вход конфигурации тестов. Описание конфигурации 
-тестов можно посмотреть [здесь](../configs/README.md).
-
-Тест представляет собой запуск вывода одной модели с параметрами,
-переданными в конфигурации.
-
 Конвертация моделей проводится последовательно. Каждая конвертация
 запускается в отдельном процессе.
 
@@ -41,7 +35,7 @@ omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
 Общий вид командной строки конвертации:
 
 ```bash
-omz_converter <arguments>
+python model_converter.py <arguments>
 ```
 
 Аргументы командной строки:
@@ -53,7 +47,7 @@ omz_converter <arguments>
 Пример запуска в текущем окружении:
 
 ```bash
-omz_converter \
+python model_converter.py \
     -d /tmp/ -z C:/_dev/env_dlbench/Lib/site-packages/openvino/model_zoo/models/ \
 	-b 1 8
 ```

@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 def make_string_of_one_shape_with_new_batch(original_shape, new_batch):
     dims = original_shape[1:]
     res = f'[{new_batch}'
@@ -8,6 +9,7 @@ def make_string_of_one_shape_with_new_batch(original_shape, new_batch):
         res += f',{dim}'
     res += ']'
     return res
+
 
 def prepare_input_shape_line_with_new_batch(original_shapes, new_batch):
     res = '--input_shape='
@@ -17,6 +19,7 @@ def prepare_input_shape_line_with_new_batch(original_shapes, new_batch):
         res += ','
     res = res[:-1]
     return res
+
 
 def get_new_input_shape_by_model_name(root_dir, model_name, new_batch):
     yaml_name = os.path.join(root_dir, f'public/{model_name}/model.yml')
