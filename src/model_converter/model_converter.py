@@ -1,9 +1,7 @@
-import os
 import sys
 import argparse
 import logging as log
 from process import process
-from shape_parser import get_new_input_shape_by_model_name
 from utils import get_all_downloaded_public_models_in_dir
 
 import traceback
@@ -12,19 +10,19 @@ import traceback
 def build_argparser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-b', '--batch_sizes', 
+        '-b', '--batch_sizes',
         help='Batches to convert models',
-        type = int, nargs='+', default = [8]
+        type=int, nargs='+', default = [1]
     )
     parser.add_argument(
         '-d', '--dir',
-        help = 'Root directory where to store converter models ',
-        type = str, default = './'
+        help='Root directory where to store converter models ',
+        type=str, default='./'
     )
     parser.add_argument(
         '-z', '--zoo_config_dir',
-        help = 'Directory where public models config plased',
-        default = ''
+        help='Directory where public models config plased',
+        default=''
     )
     config = parser.parse_args()
     return config
@@ -49,7 +47,7 @@ def main():
     )
     conversion_parameters = build_argparser()
 
-    try:   
+    try:
         log.info('Start conversion on')
         model_conversion(conversion_parameters, log)
         log.info('End conversion!')

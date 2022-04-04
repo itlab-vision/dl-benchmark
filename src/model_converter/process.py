@@ -5,7 +5,7 @@ from shape_parser import get_new_input_shape_by_model_name
 
 class process:
     def __init__(self, model, batch, parameters, log):
-        self.__model  = model
+        self.__model = model
         self.__batch = batch
         self.__my_log = log
         self.__my_parameters = parameters
@@ -15,7 +15,7 @@ class process:
     def __add_output_dir_for_cmd_line(command_line, output_dir, batch):
         if batch == 1:
             new_path_with_batch = output_dir
-        else: 
+        else:
             new_path_with_batch = os.path.join(output_dir, str(batch))
         return '{0} --output_dir "{1}"'.format(command_line, new_path_with_batch)
 
@@ -47,7 +47,6 @@ class process:
         command_line = '{0} {1} {2}'.format(cmd_line_base, add_mo_params, common_params)
         return command_line
 
-
     def execute(self):
         command_line = self._fill_command_line()
         if command_line == '':
@@ -64,5 +63,5 @@ class process:
         )
         out, _ = process.communicate()
         self.__my_log.info(f'{out}')
-        #if type(out) is not list:
-        #    self.__my_log.info(self.__my_output)
+        # if type(out) is not list:
+        #     self.__my_log.info(self.__my_output)
