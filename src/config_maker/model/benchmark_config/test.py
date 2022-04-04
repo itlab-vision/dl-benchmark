@@ -73,8 +73,8 @@ class Test:
 
     @staticmethod
     def parse(dom):
-        model = Model.parse(dom)
-        dataset = Dataset.parse(dom)
+        model = Model.parse(dom)[0]
+        dataset = Dataset.parse(dom)[0]
 
         parsed_framework_independent = dom.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
         framework = parsed_framework_independent.getElementsByTagName(CONFIG_FRAMEWORK_TAG)[0].firstChild.data

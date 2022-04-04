@@ -1,36 +1,49 @@
-# Установка докера
+# Создание образа тестового вычислительного узла
 
-1. Установить docker.
- ```
- sudo apt install docker.io
- ```
-2. Добавить пользователя в группу docker.
- ```
- sudo usermod -aG docker ${USER}
- ```
-3. Перелогиниться, чтобы активировать изменения.
- ```
- su ${USER}
- ```
+## Установка и настройка Docker
 
-# Сборка образа и архивирование образа
+1. Установить Docker.
+
+   ```bash
+   sudo apt install docker.io
+   ```
+
+1. Добавить пользователя в группу docker.
+
+   ```bash
+   sudo usermod -aG docker ${USER}
+   ```
+
+1. Перелогиниться, чтобы активировать изменения.
+
+   ```bash
+   su ${USER}
+   ```
+
+## Сборка образа и архивирование образа
 
 1. Cобрать образ.
- ```
- docker build -t <image_name>
- ```
-2. Cохранить образ в архив.
- ```
- docker save <image_name> > <image_name>.tar
- ```
 
-# Загрузка заархивированного образа и его запуск
+   ```bash
+   docker build -t <image_name>
+   ```
+
+1. Cохранить образ в архив.
+
+   ```bash
+   docker save <image_name> > <image_name>.tar
+   ```
+
+## Загрузка заархивированного образа и его запуск
 
 1. Загрузить образ в систему.
- ```
- docker load < <image_name>.tar
- ```
-2. Запустить docker.
- ```
- docker run -it <image_name>
- ```
+
+   ```bash
+   docker load < <image_name>.tar
+   ```
+
+1. Запустить docker.
+
+   ```bash
+   docker run -it <image_name>
+   ```

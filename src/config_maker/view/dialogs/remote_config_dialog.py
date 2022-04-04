@@ -1,10 +1,19 @@
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox
+# pylint: disable-next=E0401
+from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG, \
+    CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG, CONFIG_AC_DATASET_PATH_TAG, \
+    CONFIG_DEFINITION_PATH, CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG
 
 
 class RemoteConfigDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
-        self.tags = ['IP', 'Login', 'Password', 'OS', 'FTPClientPath', 'BenchmarkConfig', 'LogFile', 'ResultFile']
+        benchmark_tags = [CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG]
+        accuracy_checker_tags = [CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_AC_DATASET_PATH_TAG,
+                                 CONFIG_DEFINITION_PATH, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG]
+        self.tags = [CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG]
+        self.tags.extend(CONFIG_BENCHMARK_TAG + tag for tag in benchmark_tags)
+        self.tags.extend(CONFIG_ACCURACY_CHECKER_TAG + tag for tag in accuracy_checker_tags)
         self.__init_ui()
 
     def __init_ui(self):

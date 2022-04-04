@@ -1,6 +1,7 @@
 import abc
 import docker
 import os
+import sys
 from subprocess import Popen, PIPE
 
 
@@ -41,7 +42,8 @@ class host_executor(executor):
         return '../inference'
 
     def get_infrastructure(self):
-        import node_info as info
+        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        import node_info as info  # noqa: E402 pylint: disable=E0401
         hardware = info.get_system_characteristics()
         hardware_info = ''
         for key in hardware:
@@ -67,7 +69,7 @@ class docker_executor(executor):
         return '/tmp/dl-benchmark/src/inference'
 
     def get_infrastructure(self):
-        hardware_command = 'python3 /tmp/dl-benchmark/src/benchmark/node_info.py'
+        hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
         output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
         if output[0] != 0:

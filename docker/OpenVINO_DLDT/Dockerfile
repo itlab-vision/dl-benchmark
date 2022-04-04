@@ -84,7 +84,11 @@ RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN /bin/bash -c "source $INSTALL_DIR//bin/setupvars.sh && \
     export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer && \
     accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
-	
+
+#install pot
+WORKDIR $INSTALL_DIR/deployment_tools/tools/post_training_optimization_toolkit
+RUN python3 setup.py install --install-extras
+
 WORKDIR /tmp/
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/bin/setupvars.sh' > /root/.bashrc && \
     echo 'export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer' >> /root/.bashrc && \

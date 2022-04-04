@@ -1,5 +1,6 @@
 import abc
 import os
+import sys
 import docker
 from subprocess import Popen, PIPE, STDOUT
 
@@ -23,6 +24,10 @@ class executor(metaclass=abc.ABCMeta):
         self.my_target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
+    def get_infrastructure(self):
+        pass
+
+    @abc.abstractmethod
     def execute_process(self, command_line):
         pass
 
@@ -39,7 +44,19 @@ class host_executor(executor):
     def __init__(self, log):
         super().__init__(log)
 
-    def execute_process(self, command_line):
+    def get_infrastructure(self):
+        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        import node_info as info  # noqa: E402 pylint: disable=E0401
+        hardware = info.get_system_characteristics()
+        hardware_info = ''
+        for key in hardware:
+            hardware_info += '{}: {}, '.format(key, hardware[key])
+        hardware_info = hardware_info[:-2]
+        return hardware_info
+
+    def execute_process(self, command_line, csv_file_name):
+        if os.path.exists(csv_file_name):
+            command_line = "rm {0} && {1}".format(csv_file_name, command_line)
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
         out, _ = process.communicate()
@@ -74,7 +91,7 @@ class docker_executor(executor):
             process.communicate()
 
     def prepare_command_line(self, test, command_line):
-        return self.__copy_config(test.path_to_config, command_line)
+        return self.__copy_config(test.config, command_line)
 
     def __copy_config(self, path_to_config, command_line):
         docker_config = '/tmp/config.yml'
@@ -85,7 +102,31 @@ class docker_executor(executor):
 
         return command_line.replace(path_to_config, docker_config)
 
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, csv_file_name):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        self.move_csv_file_with_results(csv_file_name)
         return out
+
+    def get_infrastructure(self):
+        hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
+        command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
+        output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        if output[0] != 0:
+            return 'None'
+        hardware = [line.strip().split(': ') for line in output[-1].decode("utf-8").split('\n')[1:-1]]
+        hardware_info = ''
+        for line in hardware:
+            hardware_info += '{}: {}, '.format(line[0], line[1])
+        hardware_info = hardware_info[:-2]
+        return hardware_info
+
+    def move_csv_file_with_results(self, csv_file_name):
+        docker_csv_file = os.path.join('/tmp', csv_file_name)
+        local_csv_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), csv_file_name)
+        cp_command = 'docker cp -L {0}:{1} {2}'.format(self.my_target_framework, docker_csv_file, local_csv_file)
+        process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
+                        universal_newlines=True)
+        process.communicate()
+        self.my_container_dict[self.my_target_framework].exec_run('rm {}'.format(csv_file_name), tty=True,
+                                                                  privileged=True)

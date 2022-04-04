@@ -56,7 +56,7 @@ def accuracy_check(executor_type, test_list, output_handler, log):
         test_process = process(log, process_executor, test)
         test_process.execute(idx)
         log.info('Saving test result in file')
-        output_handler.add_results(test, test_process)
+        output_handler.add_results(test, test_process, process_executor)
 
 
 def main():

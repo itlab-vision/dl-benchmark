@@ -16,7 +16,10 @@ def build_parser():
     parser.add_argument('-s', '--server_ip', type=str, help='FTP server IP', required=True)
     parser.add_argument('-l', '--server_login', type=str, help='Login to FTP server', required=True)
     parser.add_argument('-p', '--server_psw', type=str, help='Password to FTP server', required=True)
-    parser.add_argument('-r', '--result_table', type=str, help='Name of result table', required=True)
+    parser.add_argument('-br', '--benchmark_result_table', type=str,
+                        help='Name of benchmark result table', required=False)
+    parser.add_argument('-acr', '--accuracy_checker_result_table', type=str,
+                        help='Name of accuracy checker result table', required=False)
     parser.add_argument('--ftp_dir', type=str, help='Path to the directory with results on the FTP.', required=True)
     args = parser.parse_args()
     if not os.path.isfile(args.config):
@@ -27,13 +30,30 @@ def build_parser():
 def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log):
     executor = remote_executor(machine.os_type, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
-    command = (('{} -ip {} -l {} -p {} -b {} --benchmark_executor {} -os {} --res_file {} --ftp_dir {} --log_file {}').format(
-        machine.path_to_ftp_client, server_ip, server_login, server_psw,
-        machine.benchmark_config, machine.benchmark_executor, machine.os_type,
-        machine.res_file, ftp_dir, machine.log_file
-    ))
-    executor.execute_python(command)
+    command_line = '{} -ip {} -l {} -p {} -os {} --ftp_dir {}'.format(
+        machine.path_to_ftp_client, server_ip, server_login, server_psw, machine.os_type, ftp_dir)
+    command_line = add_benchmark_arguments(command_line, machine)
+    command_line = add_accuracy_checker_arguments(command_line, machine)
+    executor.execute_python(command_line)
     return executor
+
+
+def add_benchmark_arguments(command_line, machine):
+    if machine.benchmark.config:
+        command_line = '{0} -b {1} --benchmark_executor {2} --benchmark_res_file {3} --benchmark_log_file {4}'.format(
+            command_line, machine.benchmark.config, machine.benchmark.executor, machine.benchmark.res_file,
+            machine.benchmark.log_file)
+    return command_line
+
+
+def add_accuracy_checker_arguments(command_line, machine):
+    if machine.accuracy_checker.config:
+        command_line = '{0} -ac {1} --accuracy_checker_executor {2} --accuracy_checker_res_file {3} \
+        --accuracy_checker_log_file {4} --accuracy_checker_definitions {5} --accuracy_checker_source {6}'.format(
+            command_line, machine.accuracy_checker.config, machine.accuracy_checker.executor,
+            machine.accuracy_checker.res_file, machine.accuracy_checker.log_file, machine.accuracy_checker.definitions,
+            machine.accuracy_checker.datasets)
+    return command_line
 
 
 def main():
@@ -58,7 +78,7 @@ def main():
             log
         ))
 
-    log.info('Executor script is waiting for all benchmarks')
+    log.info('Executor script is waiting for all experiments')
     for client in client_list:
         client.wait_all()
 
@@ -68,7 +88,8 @@ def main():
         args.server_psw
     )
     ftp_connection.cwd(args.ftp_dir)
-    table_format.join_tables(ftp_connection, args.result_table)
+    table_format.join_tables(ftp_connection, args.benchmark_result_table)
+    table_format.join_tables(ftp_connection, args.accuracy_checker_result_table)
     ftp_connection.close()
 
 

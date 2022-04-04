@@ -8,13 +8,15 @@ class process:
         self.__test = test
         self.__output = None
         self.__supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
+        self.__csv_name = "result.csv"
 
     def __fill_command_line(self):
-        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3}'.format(self.__test.path_to_config,
-                                                                            self.__test.model.directory,
-                                                                            self.__test.parameters.source,
-                                                                            self.__test.device
-                                                                            )
+        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} \
+            --csv_result {4}'.format(self.__test.config,
+                                     self.__test.model.directory,
+                                     self.__test.parameters.source,
+                                     self.__test.device,
+                                     self.__csv_name)
         command_line = self.__add_framework_for_cmd_line(command_line, self.__supported_frameworks[self.__test.framework])
         if self.__test.parameters.annotations:
             command_line = self.__add_annotations_for_cmd_line(command_line, self.__test.parameters.annotations)
@@ -47,10 +49,10 @@ class process:
         self.__log.info('Start accuracy check for {0} test: {1}'.format(idx, self.__test.model.name))
         self.__executor.set_target_framework(self.__test.framework)
         command_line = self.__executor.prepare_command_line(self.__test, command_line)
-        self.__output = self.__executor.execute_process(command_line)
+        self.__output = self.__executor.execute_process(command_line, self.__csv_name)
         if type(self.__output) is not list:
             self.__output = self.__output.decode("utf-8").split('\n')
         print(self.__output)
 
     def get_result_parameters(self):
-        return result.parser_test_results(self.__output)
+        return result.parser_test_result(self.__output, self.__test, self.__csv_name)

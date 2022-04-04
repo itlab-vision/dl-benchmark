@@ -9,6 +9,8 @@ class ModelPresenter:
         self.__view.deleteModelSignal.connect(self.__handle_delete_button)
         self.__view.changeModelSignal.connect(self.__handle_change_button)
         self.__view.copyModelSignal.connect(self.__handle_copy_button)
+        self.__view.loadSignal.connect(self.__handle_load_button)
+        self.__view.saveSignal.connect(self.__handle_save_button)
         self.__view.clearSignal.connect(self.__handle_clear_button)
 
     def __handle_add_button(self, task, name, precision, framework, model_path, weights_path):
@@ -22,6 +24,14 @@ class ModelPresenter:
     def __handle_change_button(self, row, task, name, precision, framework, model_path, weights_path):
         self.__model.change_model(row, task, name, precision, framework, model_path, weights_path)
         self.__update_view()
+
+    def __handle_load_button(self, path_to_config):
+        self.__model.parse_config(path_to_config)
+        self.__update_view()
+
+    def __handle_save_button(self, path_to_config):
+        status = self.__model.create_config(path_to_config)
+        self.__view.show_message_status_saving(status)
 
     def __handle_clear_button(self):
         self.__model.clear()

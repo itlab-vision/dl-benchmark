@@ -5,11 +5,13 @@ STATUS_POSITION_IN_TABLE = 0
 TASK_TYPE_POSITION_IN_TABLE = 1
 MODEL_POSITION_IN_TABLE = 2
 FRAMEWORK_POSITION_IN_TABLE = 3
-DEVICE_POSITION_IN_TABLE = 4
-DATASET_POSITION_IN_TABLE = 5
-ACCURACY_TYPE_POSITION_IN_TABLE = 6
-PRECISION_POSITION_IN_TABLE = 7
-ACCURACY_POSITION_IN_TABLE = 9
+INFERENCE_FRAMEWORK_POSITION_IN_TABLE = 4
+DEVICE_POSITION_IN_TABLE = 5
+INFR_POSITION_IN_TABLE = 6
+DATASET_POSITION_IN_TABLE = 7
+ACCURACY_TYPE_POSITION_IN_TABLE = 8
+PRECISION_POSITION_IN_TABLE = 9
+ACCURACY_POSITION_IN_TABLE = 10
 
 
 class HTMLAccuracyCheckerTable(HTMLTable):
@@ -26,6 +28,7 @@ class HTMLAccuracyCheckerTable(HTMLTable):
                     'type': self._table_csv[row_index][TASK_TYPE_POSITION_IN_TABLE],
                     'plugin': self._table_csv[row_index][DEVICE_POSITION_IN_TABLE],
                     'dataset': self._table_csv[row_index][DATASET_POSITION_IN_TABLE],
+                    'framework': self._table_csv[row_index][FRAMEWORK_POSITION_IN_TABLE],
                     'accuracy_type': set()
                 }
         return models_dict
@@ -39,17 +42,24 @@ class HTMLAccuracyCheckerTable(HTMLTable):
             model_dict[model]['accuracy_type'] =  \
                 sorted(model_dict[model]['accuracy_type'])
 
+    def __find_framework_in_tests(self, framework):
+        for row_index in range(1, len(self._table_csv)):
+            if (framework in self._table_csv[row_index][INFERENCE_FRAMEWORK_POSITION_IN_TABLE]):
+                return True
+        return False
+
     def _get_column_dict(self):
         frameworks_dict = dict()
         for row_index in range(1, len(self._table_csv)):
             for framework in self._frameworks_list:
-                if framework['name'] not in frameworks_dict:
-                    frameworks_dict[framework['name']] = {}
-                for plugin in framework:
-                    if plugin == 'name':
-                        continue
-                    if plugin == self._table_csv[row_index][DEVICE_POSITION_IN_TABLE]:
-                        frameworks_dict[framework['name']][plugin] = framework[plugin].replace(' ', '').split(',')
+                if self.__find_framework_in_tests(framework['name']):
+                    if framework['name'] not in frameworks_dict:
+                        frameworks_dict[framework['name']] = {}
+                    for plugin in framework:
+                        if plugin == 'name':
+                            continue
+                        if plugin == self._table_csv[row_index][DEVICE_POSITION_IN_TABLE]:
+                            frameworks_dict[framework['name']][plugin] = framework[plugin].replace(' ', '').split(',')
         return frameworks_dict
 
     def _added_all_test(self, models_dict):
@@ -65,10 +75,9 @@ class HTMLAccuracyCheckerTable(HTMLTable):
                                 self.__find_test(model, framework, plugin, type, weight)
 
     def __find_test(self, model, framework, plugin, accuracy_type, precision):
-        framework = self.__updated_framework(framework)
         for row_index in range(1, len(self._table_csv)):
             if (self._table_csv[row_index][MODEL_POSITION_IN_TABLE] == model and
-                    self._table_csv[row_index][FRAMEWORK_POSITION_IN_TABLE] == framework and
+                    self._table_csv[row_index][INFERENCE_FRAMEWORK_POSITION_IN_TABLE] == framework and
                     self._table_csv[row_index][DEVICE_POSITION_IN_TABLE] == plugin and
                     self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE] == accuracy_type and
                     (self._table_csv[row_index][PRECISION_POSITION_IN_TABLE] == precision or
@@ -79,15 +88,9 @@ class HTMLAccuracyCheckerTable(HTMLTable):
                     return self._table_csv[row_index][ACCURACY_POSITION_IN_TABLE]
         return 'N/A'
 
-    def __updated_framework(self, framework):
-        framework = framework.replace('OpenVINO DLDT', 'dlsdk')
-        framework = framework.replace('Caffe', 'caffe')
-        framework = framework.replace('TensorFlow', 'tf')
-        return framework
-
     def create_table_header(self):
         self._table_html.append('\n<table align="center" border="1" cellspacing="0" cellpadding="0" class="main">')
-        self._table_html.append('\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Dataset</th>\n<th>Accuracy type</th>\n')
+        self._table_html.append('\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Framework</th>\n<th>Dataset</th>\n<th>Accuracy type</th>\n')
         for framework in self._column_dict:
             self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n')
             self._table_html.append('\n<th>{}</th></tr><tr>'.format(framework))
@@ -116,6 +119,15 @@ class HTMLAccuracyCheckerTable(HTMLTable):
             for model in self._task_types_dict[task_type]:
                 self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(model))
+            self._table_html.append('</table>\n</td>')
+
+            # Print framework
+            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
+            for model in self._task_types_dict[task_type]:
+                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')
+                self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
+                    self._task_types_dict[task_type][model]['framework'])
+                )
             self._table_html.append('</table>\n</td>')
 
             # Print dataset
@@ -154,4 +166,5 @@ class HTMLAccuracyCheckerTable(HTMLTable):
                         self._table_html.append('</table>\n</td>\n</tr>')
                     self._table_html.append('</table>\n</td>')
                 self._table_html.append('</table>\n</td>')
+
             self._table_html.append('\n</tr>')

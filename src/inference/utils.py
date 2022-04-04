@@ -60,8 +60,9 @@ def parse_value_per_device(device_list, values):
     if values is None:
         return result
     if values.isdecimal():
+        new_result = result
         for key in result:
-            result[key] = values
+            new_result[key] = values
         return result
     for pair in values.split(','):
         key, value = pair.split(':')
