@@ -3,28 +3,47 @@ import abc
 
 class io_model_wrapper:
     @abc.abstractmethod
-    def get_input_layer_names(self, net):
+    def get_input_layer_names(self, model):
         pass
 
     @abc.abstractmethod
-    def get_input_layer_shape(self, net, layer_name):
+    def get_input_layer_shape(self, model, layer_name):
+        pass
+
+    @abc.abstractmethod
+    def get_input_layer_dtype(self, model, layer_name):
         pass
 
 
 class openvino_io_model_wrapper(io_model_wrapper):
-    def get_input_layer_names(self, net):
-        return list(net.inputs.keys())
+    def get_input_layer_names(self, model):
+        names = []
+        for input in model.inputs:
+            names.append(input.get_any_name())
+        return names
 
-    def get_input_layer_shape(self, net, layer_name):
-        return net.inputs[layer_name].shape
+    def get_input_layer_shape(self, model, node_name):
+        for input in model.inputs:
+            if node_name == input.get_any_name():
+                return input.get_shape()
+        return None
+
+    def get_input_layer_dtype(self, model, node_name):
+        from openvino.runtime.utils.types import get_dtype
+        for input in model.inputs:
+            if node_name == input.get_any_name():
+                return get_dtype(input.get_element_type())
 
 
 class intelcaffe_io_model_wrapper(io_model_wrapper):
-    def get_input_layer_names(self, net):
-        return net.inputs
+    def get_input_layer_names(self, model):
+        return model.inputs
 
-    def get_input_layer_shape(self, net, layer_name):
-        return net.blobs[layer_name].data.shape
+    def get_input_layer_shape(self, model, layer_name):
+        return model.blobs[layer_name].data.shape
+
+    def get_input_layer_dtype(self, model, layer_name):
+        return model.blobs[layer_name].data.dtype
 
 
 class tensorflow_io_model_wrapper(io_model_wrapper):
@@ -75,3 +94,6 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
         if not names:
             raise ValueError('Output blobs in the graph cannot be found')
         return names
+
+    def get_input_layer_dtype(self, graph, layer_name):
+        return graph.get_tensor_by_name(layer_name).dtype.as_numpy_dtype

@@ -6,11 +6,11 @@ class transformer:
         return image
 
     def get_shape_in_chw_order(self, shape):
-        return shape[1:]
+        return shape[1], shape[2], shape[3]
 
-    def transform_images(self, images):
+    def transform_images(self, images, element_type):
         b, c, h, w = images.shape
-        transformed_images = np.zeros(shape=(b, c, h, w))
+        transformed_images = np.zeros(shape=(b, c, h, w), dtype=element_type)
         for i in range(b):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
@@ -75,10 +75,10 @@ class tensorflow_transformer(transformer):
         self.__set_input_scale(transformed_image)
         return transformed_image
 
-    def transform_images(self, images):
+    def transform_images(self, images, element_type):
         images = images.transpose(0, 2, 3, 1)
         b, h, w, c = images.shape
-        transformed_images = np.zeros(shape=(b, h, w, c))
+        transformed_images = np.zeros(shape=(b, h, w, c), dtype=element_type)
         for i in range(b):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
