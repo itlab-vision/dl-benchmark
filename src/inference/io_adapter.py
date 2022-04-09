@@ -78,13 +78,14 @@ class io_adapter(metaclass=abc.ABCMeta):
                     value = value.split(',')
                     value = self.__create_list_images(value)
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
+                    element_type = self._io_model_wrapper.get_input_layer_dtype(model, key)
                     value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self._transformer.transform_images(value)
+                    transformed_value = self._transformer.transform_images(value, element_type)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
                 self._transformed_input.update({key: transformed_value})
         else:
-            input_blob = shape = self._io_model_wrapper.get_input_layer_names(model)[0]
+            input_blob = self._io_model_wrapper.get_input_layer_names(model)[0]
             file_format = input[0].split('.')[-1]
             if 'csv' == file_format:
                 value = self.__parse_tensors(input[0])
@@ -93,8 +94,9 @@ class io_adapter(metaclass=abc.ABCMeta):
             else:
                 value = self.__create_list_images(input)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
+                element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
-                transformed_value = self._transformer.transform_images(value)
+                transformed_value = self._transformer.transform_images(value, element_type)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
             self._transformed_input.update({input_blob: transformed_value})
