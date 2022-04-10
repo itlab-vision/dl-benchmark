@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import shutil
 from subprocess import Popen, PIPE, STDOUT
 from shape_parser import get_new_input_shape_by_model_name
 
@@ -9,14 +11,28 @@ class process:
         self.__batch = batch
         self.__my_log = log
         self.__my_parameters = parameters
-        self.__my_output = None
+
+    def _move_converted_models_to_dir_with_batch_in_name(self):
+        old_dir = os.path.join(self.__my_parameters.dir, 'public', self.__model)
+        new_dir = os.path.join(old_dir, str(self.__batch))
+        Path(new_dir).mkdir(parents=True, exist_ok=True)
+        print(new_dir)
+
+        try:
+            shutil.copytree(os.path.join(old_dir, 'FP16'), 
+                os.path.join(new_dir, 'FP16'), dirs_exist_ok=True)
+        except:
+            self.__my_log.info(f'Cannot move FP16 model to folder {new_dir}')
+
+        try:
+            shutil.copytree(os.path.join(old_dir, 'FP32'), 
+                os.path.join(new_dir, 'FP32'), dirs_exist_ok=True)
+        except:
+            self.__my_log.info(f'Cannot move FP32 model to folder {new_dir}')
 
     @staticmethod
     def __add_output_dir_for_cmd_line(command_line, output_dir, batch):
-        if batch == 1:
-            new_path_with_batch = output_dir
-        else:
-            new_path_with_batch = os.path.join(output_dir, str(batch))
+        new_path_with_batch = output_dir
         return '{0} --output_dir "{1}"'.format(command_line, new_path_with_batch)
 
     @staticmethod
@@ -63,5 +79,5 @@ class process:
         )
         out, _ = process.communicate()
         self.__my_log.info(f'{out}')
-        # if type(out) is not list:
-        #     self.__my_log.info(self.__my_output)
+
+        self._move_converted_models_to_dir_with_batch_in_name()
