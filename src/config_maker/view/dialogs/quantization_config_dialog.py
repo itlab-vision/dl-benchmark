@@ -91,8 +91,11 @@ class QuantizationConfigDialog(QDialog):
         if is_ok:
             super().accept()
         else:
-            QMessageBox.warning(self, 'Warning!',
-                'Not all needed lines (ModelName, Model, Weights, DataSource or Config) are filled!')
+            QMessageBox.warning(
+                self,
+                'Warning!',
+                'Not all needed lines (ModelName, Model, Weights, DataSource or Config) are filled!'
+            )
 
 
 class ParametersDialog(metaclass=abc.ABCMeta):
@@ -217,15 +220,15 @@ class IndependentParameters(ParametersDialog):
 
     def switch_engine_type(self, q_type):
         ac_config_idx = 2 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
         engine_type_idx = 3 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
         data_source_idx = 4 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
         if q_type == 'DefaultQuantization':
@@ -255,11 +258,11 @@ class IndependentParameters(ParametersDialog):
 
     def __choose_engine_type(self, engine_type):
         ac_config_idx = 2 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
         data_source_idx = 4 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
         if engine_type == 'simplified':
@@ -288,11 +291,15 @@ class IndependentParameters(ParametersDialog):
         self._set_qcombobox_edit(start_idx + 12, ('symmetric', 'asymmetric'))
         self._set_qcombobox_edit(start_idx + 13, ('perchannel', 'pertensor'))
         self._set_qcombobox_edit(start_idx + 14, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
-        self._set_qcombobox_edit(start_idx + 16,
-            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(
+            start_idx + 16,
+            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
+        )
         self._set_qcombobox_edit(start_idx + 17, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
-        self._set_qcombobox_edit(start_idx + 20,
-            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(
+            start_idx + 20,
+            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
+        )
         self._set_qcombobox_edit(start_idx + 21, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
 
         stop_iter_idx = len(self._tags)
