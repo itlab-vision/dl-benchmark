@@ -1,4 +1,3 @@
-from unittest import case
 from .table import Table  # pylint: disable=E0402
 # pylint: disable-next=E0401
 from tags import HEADER_ALL_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, \

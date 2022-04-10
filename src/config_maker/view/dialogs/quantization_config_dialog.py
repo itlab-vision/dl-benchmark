@@ -91,8 +91,8 @@ class QuantizationConfigDialog(QDialog):
         if is_ok:
             super().accept()
         else:
-            QMessageBox.warning(self, 'Warning!', 'Not all needed lines ' +
-                '(ModelName, Model, Weights, DataSource or Config) are filled!')
+            QMessageBox.warning(self, 'Warning!',
+                'Not all needed lines (ModelName, Model, Weights, DataSource or Config) are filled!')
 
 
 class ParametersDialog(metaclass=abc.ABCMeta):
@@ -141,7 +141,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
     def _set_qcombobox_edit(self, idx, values, f=None):
         self._edits[idx] = QComboBox(self._parent)
         self._edits[idx].addItems(values)
-        if f != None:
+        if f is not None:
             self._edits[idx].activated[str].connect(f)
             self._edits[idx].currentTextChanged[str].connect(f)
         self._ignored_idx.append(idx)
@@ -177,45 +177,57 @@ class IndependentParameters(ParametersDialog):
         self._set_qcombobox_edit(pot_start_idx + 5, (str(False), str(True)))
         self._set_qcombobox_edit(pot_start_idx + 6, (str(False), str(True)))
         self._set_qcombobox_edit(pot_start_idx + 7, (str(False), str(True)))
-        
+
         for id in range(pot_start_idx, pot_len):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
 
     def _create_model_params_edits(self):
         model_start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
-        model_len = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS)
-        
+        model_len = len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+
         for id in range(model_start_idx, model_len):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
 
     def _create_engine_params_edits(self):
-        engine_start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS)
-        engine_len = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS)
+        engine_start_idx = len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        engine_len = len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS
+        )
 
         self._set_qcombobox_edit(engine_start_idx + 3, ('simplified', 'accuracy_checker'), self.__choose_engine_type)
-        
+
         for id in range(engine_start_idx, engine_len):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
 
         default_values = [str(8), str(8), '', '', '']
-        
+
         for i, id in enumerate(range(engine_start_idx, engine_len)):
             if id not in self._ignored_idx:
                 self._edits[id].setText(default_values[i])
 
     def switch_engine_type(self, q_type):
-        ac_config_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 2
-        engine_type_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 3
-        data_source_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 4
+        ac_config_idx = 2 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        engine_type_idx = 3 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        data_source_idx = 4 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
         if q_type == 'DefaultQuantization':
             self._labels[ac_config_idx].hide()
             self._edits[ac_config_idx].hide()
@@ -241,12 +253,15 @@ class IndependentParameters(ParametersDialog):
             self._labels[data_source_idx].hide()
             self._edits[data_source_idx].hide()
 
-
     def __choose_engine_type(self, engine_type):
-        ac_config_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 2
-        data_source_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 4
+        ac_config_idx = 2 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        data_source_idx = 4 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
         if engine_type == 'simplified':
             self._labels[data_source_idx].show()
             self._edits[data_source_idx].show()
@@ -258,10 +273,11 @@ class IndependentParameters(ParametersDialog):
             self._labels[ac_config_idx].show()
             self._edits[ac_config_idx].show()
 
-
     def _create_compression_params_edits(self):
-        start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS)
+        start_idx = len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS
+        )
 
         self._set_qcombobox_edit(start_idx + 0, ('ANY', 'CPU', 'GPU'))
         self._set_qcombobox_edit(start_idx + 1, self.__q_methods, self.__q_method_choice)
@@ -271,12 +287,12 @@ class IndependentParameters(ParametersDialog):
         self._set_qcombobox_edit(start_idx + 9, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
         self._set_qcombobox_edit(start_idx + 12, ('symmetric', 'asymmetric'))
         self._set_qcombobox_edit(start_idx + 13, ('perchannel', 'pertensor'))
-        self._set_qcombobox_edit(start_idx + 14, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile')) # ('quantile',))
-        self._set_qcombobox_edit(start_idx + 16, ('mean', 'max', 'min', 'median', 'mean_no_outliers',
-            'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(start_idx + 14, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 16,
+            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator'))
         self._set_qcombobox_edit(start_idx + 17, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
-        self._set_qcombobox_edit(start_idx + 20, ('mean', 'max', 'min', 'median', 'mean_no_outliers',
-            'median_no_outliers', 'hl_estimator'))
+        self._set_qcombobox_edit(start_idx + 20,
+            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator'))
         self._set_qcombobox_edit(start_idx + 21, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
 
         stop_iter_idx = len(self._tags)
@@ -284,10 +300,12 @@ class IndependentParameters(ParametersDialog):
         for id in range(start_iter_idx, stop_iter_idx):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
-        default_values = ['ANY', 'DefaultQuantization', 'mixed', str(100), str(8), 'symmetric',
+        default_values = [
+            'ANY', 'DefaultQuantization', 'mixed', str(100), str(8), 'symmetric',
             'perchannel', str(-127), str(127), 'quantile', str(0.0001), str(8), 'symmetric', 'perchannel',
-            'quantile', str(0), 'mean', 'quantile', str(0.0001), str(6), 'mean', 'quantile', str(0.0001)]
-        
+            'quantile', str(0), 'mean', 'quantile', str(0.0001), str(6), 'mean', 'quantile', str(0.0001)
+        ]
+
         for i, id in enumerate(range(start_iter_idx, stop_iter_idx)):
             if id not in self._ignored_idx:
                 self._edits[id].setText(default_values[i])
@@ -317,28 +335,38 @@ class IndependentParameters(ParametersDialog):
     def check(self):
         # check <Model.ModelName>, <Model.Model>, <Model.Weights>
         model_start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
-        model_len = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS)
+        model_len = len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
         for id in range(model_start_idx, model_len):
             if (id not in self._ignored_idx) and (self._edits[id].text() == ''):
                 return False
 
         # check <Engine.Config> or <Engine.DataSource>
-        ac_config_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 2
-        engine_type_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 3
-        data_source_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS) + 4
-        q_method_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
-            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS) + 1
+        ac_config_idx = 2 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        engine_type_idx = 3 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        data_source_idx = 4 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS
+        )
+        q_method_idx = 1 + len(
+            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS
+        )
 
         if self._edits[q_method_idx].currentText() == 'DefaultQuantization':
             if (self._edits[engine_type_idx].currentText() == 'simplified') \
-                and (self._edits[data_source_idx].text() == ''):
+                    and (self._edits[data_source_idx].text() == ''):
                 return False
             if (self._edits[engine_type_idx].currentText() == 'accuracy_checker') \
-                and (self._edits[ac_config_idx].text() == ''):
+                    and (self._edits[ac_config_idx].text() == ''):
                 return False
         if self._edits[q_method_idx].currentText() == 'AccuracyAwareQuantization':
             if (self._edits[ac_config_idx].text() == ''):
@@ -354,20 +382,30 @@ class IndependentParameters(ParametersDialog):
         idx[1] = idx[0] + len(HEADER_POT_PARAMS_TAGS)
         idx[2] = idx[1] + len(HEADER_MODEL_PARAMS_MODEL_TAGS)
         idx[3] = idx[2] + len(HEADER_MODEL_PARAMS_ENGINE_TAGS)
-        idx[4] = idx[3] + len([CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHM_NAME_TAG, CONFIG_PRESET_TAG,
-            CONFIG_STAT_SUBSET_SIZE_TAG])
-        idx[5] = idx[4] + len([CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG,
-            CONFIG_WEIGHTS_GRANULARITY_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG])
+        idx[4] = idx[3] + len([
+            CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHM_NAME_TAG, CONFIG_PRESET_TAG,
+            CONFIG_STAT_SUBSET_SIZE_TAG
+        ])
+        idx[5] = idx[4] + len([
+            CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG,
+            CONFIG_WEIGHTS_GRANULARITY_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG
+        ])
         idx[6] = idx[5] + len([CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG])
-        idx[7] = idx[6] + len([CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
-            CONFIG_ACTIVATIONS_GRANULARITY_TAG])
+        idx[7] = idx[6] + len([
+            CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
+            CONFIG_ACTIVATIONS_GRANULARITY_TAG
+        ])
         idx[8] = idx[7] + len([CONFIG_ACTIVATIONS_PRESET_TAG])
-        idx[9] = idx[8] + len([CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG,
+        idx[9] = idx[8] + len([
+            CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG,
             CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG,
-            CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG])
-        idx[10] = idx[9] + len([CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG,
+            CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG
+        ])
+        idx[10] = idx[9] + len([
+            CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG,
             CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG,
-            CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG])
+            CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG
+        ])
 
         base_tab = '   '
 
@@ -444,7 +482,7 @@ class IndependentParameters(ParametersDialog):
             layout.addWidget(self._labels[id], self_idx_2, 2)
             layout.addWidget(self._edits[id], self_idx_2, 3)
             self_idx_2 += 1
-        
+
         layout.addWidget(QLabel(3 * base_tab + 'Max Parameters:', self._parent), self_idx_2, 2)
         self_idx_2 += 1
         for id in range(idx[9], idx[10]):
@@ -452,7 +490,7 @@ class IndependentParameters(ParametersDialog):
             layout.addWidget(self._labels[id], self_idx_2, 2)
             layout.addWidget(self._edits[id], self_idx_2, 3)
             self_idx_2 += 1
-        
+
         if show:
             self.show()
         else:
@@ -552,13 +590,15 @@ class AccuracyAwareQuantizationDialog(DependentParameters):
         start_idx = len(['AccuracyAwareQuantization:'])
         self._set_qcombobox_edit(start_idx + 3, ('absolute', 'relative'))
         self._set_qcombobox_edit(start_idx + 4, (str(False), str(True)))
-        self._set_qcombobox_edit(start_idx + 5, (['DefaultQuantization',]))
+        self._set_qcombobox_edit(start_idx + 5, (['DefaultQuantization', ]))
         self._set_qcombobox_edit(start_idx + 6, (str(False), str(True)))
         self._set_qcombobox_edit(start_idx + 8, (str(False), str(True)))
         self._set_qcombobox_edit(start_idx + 10, (str(False), str(True)))
 
-        self.__default_values = [str(300), str(20), str(0.005), 'absolute', str(False),
-            'DefaultQuantization', str(False), str(0.6), str(False), str(0.5), str(False)]
+        self.__default_values = [
+            str(300), str(20), str(0.005), 'absolute', str(False), 'DefaultQuantization',
+            str(False), str(0.6), str(False), str(0.5), str(False)
+        ]
         for i, id in enumerate(range(1, len(self._tags))):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)

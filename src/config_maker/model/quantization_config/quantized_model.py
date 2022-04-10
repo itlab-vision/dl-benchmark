@@ -1,5 +1,4 @@
 import re
-from xml.dom.minidom import Node
 from model.quantization_config.compression_parameters import CompressionParameters  # pylint: disable=E0401
 # pylint: disable-next=E0401
 from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, \
@@ -20,7 +19,6 @@ class QModel:
         idx_0 = 0
         idx_1 = idx_0 + COUNT_OF_CONFIG_MODEL_PARAMS
         idx_2 = idx_1 + COUNt_OF_CONFIG_ENGINE_PARAMS
-        idx_3 = -1
 
         self.__model_params = [
             model_params[:idx_1],       # config_model_params (model_name, model (.xml), weights (.bin))
@@ -68,9 +66,9 @@ class QModel:
         compression_params_dict = self.__compression_params.get_parameters_dict()
 
         config_params_dict = {
-            CONFIG_MODEL_TAG : model_params_dict,
-            CONFIG_ENGINE_TAG : engine_params_dict,
-            CONFIG_COMPRESSION_TAG : compression_params_dict
+            CONFIG_MODEL_TAG: model_params_dict,
+            CONFIG_ENGINE_TAG: engine_params_dict,
+            CONFIG_COMPRESSION_TAG: compression_params_dict
         }
 
         self.parameters[CONFIG_POT_PARAMETERS_TAG] = pot_params_dict
@@ -87,25 +85,20 @@ class QModel:
             *self.__model_params[2]
         ]
 
-
     def get_quantization_method(self):
         return self.__quantization_method
-
 
     def get_independent_params_list(self):
         return self.__independent_params
 
-
     def get_params(self):
         return self.__independent_params, self.__dependent_params
-
 
     def create_dom(self, file, i):
         DOM_CONFIG_ID_TAG = self.__create_dom_config_id(file, i)
         DOM_POT_PARAMETERS_TAG = self.__create_dom_pot_params(file)
         DOM_MODEL_PARAMETERS_TAG = self.__create_dom_model_params(file)
         return DOM_CONFIG_ID_TAG, DOM_POT_PARAMETERS_TAG, DOM_MODEL_PARAMETERS_TAG
-
 
     def __create_dom_model_params(self, file):
         DOM_MODEL_PARAMETERS_TAG = file.createElement(CONFIG_MODEL_PARAMETERS_TAG)
@@ -119,7 +112,6 @@ class QModel:
         DOM_MODEL_PARAMETERS_TAG.appendChild(DOM_COMPRESSION_TAG)
 
         return DOM_MODEL_PARAMETERS_TAG
-
 
     def __create_dom_model_params_model(self, file):
         DOM_MODEL_TAG = file.createElement(CONFIG_MODEL_TAG)
@@ -138,10 +130,8 @@ class QModel:
 
         return DOM_MODEL_TAG
 
-
     def __create_dom_model_params_compression(self, file):
         return self.__compression_params.create_dom(file, self.__model_params[2])
-
 
     def __create_dom_model_params_engine(self, file):
         DOM_ENGINE_TAG = file.createElement(CONFIG_ENGINE_TAG)
@@ -157,14 +147,12 @@ class QModel:
                 self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_DATA_SOURCE_TAG, self.__model_params[1][4])
         return DOM_ENGINE_TAG
 
-
     def __create_dom_config_id(self, file, i):
         DOM_CONFIG_ID_TAG = file.createElement(CONFIG_CONFIG_ID_TAG)
         q_type = 'DQ' if (self.__quantization_method == 'DefaultQuantization') else 'AAQ'
         config_id = self.__model_params[0][0] + '_' + q_type + '_' + str(i)
         DOM_CONFIG_ID_TAG.appendChild(file.createTextNode(config_id))
         return DOM_CONFIG_ID_TAG
-
 
     def __create_dom_pot_params(self, file):
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
@@ -173,15 +161,13 @@ class QModel:
                 self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
         return DOM_POT_PARAMETERS_TAG
 
-
     @staticmethod
     def create_dom_node(file, parent, child_name, text=None):
         child = file.createElement(child_name)
-        if text != None:
+        if text is not None:
             child.appendChild(file.createTextNode(text))
         parent.appendChild(child)
         return child
-
 
     @staticmethod
     def parse(dom):
@@ -197,7 +183,6 @@ class QModel:
         model_params = m_params + e_params + common_c_params
         return QModel(pot_params, model_params, dependent_params)
 
-
     @staticmethod
     def parse_pot_params(dom):
         pot_params = []
@@ -205,14 +190,12 @@ class QModel:
             pot_params.append(QModel.get_element_by_tag(dom, tag))
         return pot_params
 
-
     @staticmethod
     def parse_model_params(dom):
         model_params = []
         for tag in HEADER_MODEL_PARAMS_MODEL_TAGS:
             model_params.append(QModel.get_element_by_tag(dom, tag))
         return model_params
-
 
     @staticmethod
     def parse_engine_params(dom):
@@ -225,17 +208,14 @@ class QModel:
         ]
         return engine_params
 
-
     @staticmethod
     def get_element_by_tag(dom, tag):
         nodes = dom.getElementsByTagName(tag)
         return nodes[0].firstChild.data if len(nodes) != 0 else None
 
-
     @staticmethod
     def parse_compression_params(dom):
         return CompressionParameters.parse(dom)
-
 
     @staticmethod
     def camel_to_snake(string):

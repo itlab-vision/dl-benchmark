@@ -40,8 +40,7 @@ class QuantizationConfigPresenter:
         self.__update_view()
 
     def __handle_load_button(self, path_to_config):
-        models = self.__model.quantization_config.parse_config(path_to_config)
-        # self.__model.models.set_models(models)
+        self.__model.quantization_config.parse_config(path_to_config)
         self.__update_view()
 
     def __handle_save_button(self, path_to_config):

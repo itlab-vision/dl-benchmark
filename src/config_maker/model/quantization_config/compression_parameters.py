@@ -72,7 +72,7 @@ class CompressionParameters:
         weights_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[4:9]):
             weights_params_dict[param_name] = independent_params[i]
-        w_re_params_dict = { CONFIG_WEIGHTS_MAX_TAG : {} }
+        w_re_params_dict = {CONFIG_WEIGHTS_MAX_TAG: {}}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[9:11]):
             w_re_params_dict[CONFIG_WEIGHTS_MAX_TAG][param_name] = independent_params[i]
         weights_params_dict[CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG] = w_re_params_dict
@@ -80,8 +80,8 @@ class CompressionParameters:
         activations_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[11:14]):
             activations_params_dict[param_name] = independent_params[i]
-        a_re_params_dict = { CONFIG_ACTIVATIONS_PRESET_TAG : independent_params[14],
-            CONFIG_ACTIVATIONS_MIN_TAG : {}, CONFIG_ACTIVATIONS_MAX_TAG : {} }
+        a_re_params_dict = {CONFIG_ACTIVATIONS_PRESET_TAG: independent_params[14],
+                            CONFIG_ACTIVATIONS_MIN_TAG: {}, CONFIG_ACTIVATIONS_MAX_TAG: {}}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[15:19]):
             a_re_params_dict[CONFIG_ACTIVATIONS_MIN_TAG][param_name] = independent_params[i]
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[19:23]):
@@ -124,8 +124,11 @@ class CompressionParameters:
         ]
 
         weights_params = dom.getElementsByTagName(CONFIG_WEIGHTS_TAG)[0]
-        for param_name in [CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
-            CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG]:
+        weights_params_tags = [
+            CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
+            CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG
+        ]
+        for param_name in weights_params_tags:
             independent_params.append(CompressionParameters.get_element_by_tag(weights_params, param_name))
 
         weights_re = weights_params.getElementsByTagName(CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG)[0]
@@ -134,34 +137,45 @@ class CompressionParameters:
             independent_params.append(CompressionParameters.get_element_by_tag(weights_max_params, param_name))
 
         activations_params = dom.getElementsByTagName(CONFIG_ACTIVATIONS_TAG)[0]
-        for param_name in [CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
-            CONFIG_ACTIVATIONS_GRANULARITY_TAG]:
+        activations_params_tags = [
+            CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG
+        ]
+        for param_name in activations_params_tags:
             independent_params.append(CompressionParameters.get_element_by_tag(activations_params, param_name))
 
         activations_re = activations_params.getElementsByTagName(CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG)[0]
-        independent_params.append(CompressionParameters.get_element_by_tag(activations_re, CONFIG_ACTIVATIONS_PRESET_TAG))
+        independent_params.append(CompressionParameters.get_element_by_tag(
+            activations_re,
+            CONFIG_ACTIVATIONS_PRESET_TAG
+        ))
 
         activations_min_params = activations_re.getElementsByTagName(CONFIG_ACTIVATIONS_MIN_TAG)[0]
-        for param_name in [CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG,
-            CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG]:
+        activations_min_params_tags = [
+            CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG,
+            CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG
+        ]
+        for param_name in activations_min_params_tags:
             independent_params.append(CompressionParameters.get_element_by_tag(activations_min_params, param_name))
 
         activations_max_params = activations_re.getElementsByTagName(CONFIG_ACTIVATIONS_MAX_TAG)[0]
-        for param_name in [CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG,
-            CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG]:
+        activations_max_params_tags = [
+            CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG,
+            CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG
+        ]
+        for param_name in activations_max_params_tags:
             independent_params.append(CompressionParameters.get_element_by_tag(activations_max_params, param_name))
 
         return independent_params
 
     def create_dom(self, file, params, parent_node=None):
-        DOM_COMPRESSION_TAG = parent_node if parent_node != None \
+        DOM_COMPRESSION_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_TAG)
         target_device = params[0]
         if target_device:
-            CompressionParameters.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_TARGET_DEVICE_TAG, target_device)
-        DOM_ALGORITHMS_TAG = CompressionParameters.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_ALGORITHMS_TAG)
-        CompressionParameters.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG, params[1])
-        DOM_PARAMS_TAG = CompressionParameters.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_COMPRESSION_PARAMS_TAG)
+            self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_TARGET_DEVICE_TAG, target_device)
+        DOM_ALGORITHMS_TAG = self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_ALGORITHMS_TAG)
+        self.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG, params[1])
+        DOM_PARAMS_TAG = self.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_COMPRESSION_PARAMS_TAG)
         self.__create_dependent_params_dom(file, DOM_PARAMS_TAG)
         self.__create_independent_params_dom(file, params, DOM_PARAMS_TAG)
         return DOM_COMPRESSION_TAG
@@ -170,56 +184,51 @@ class CompressionParameters:
         self.__dependent_params.create_dom(file, parent_node)
 
     def __create_independent_params_dom(self, file, params, parent_node=None):
-        DOM_PARAMS_TAG = parent_node if parent_node != None \
+        DOM_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
-        
-        CompressionParameters.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_PRESET_TAG, params[2])
-        CompressionParameters.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, params[3])
 
-        DOM_WEIGHTS_TAG = CompressionParameters.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_WEIGHTS_TAG)
+        self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_PRESET_TAG, params[2])
+        self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, params[3])
 
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_BITS_TAG, params[4])
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_MODE_TAG, params[5])
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG, params[6])
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, params[7])
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, params[8])
+        DOM_WEIGHTS_TAG = self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_WEIGHTS_TAG)
 
-        DOM_WEIGHTS_RE_TAG = CompressionParameters.create_dom_node(
+        self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_BITS_TAG, params[4])
+        self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_MODE_TAG, params[5])
+        self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG, params[6])
+        self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, params[7])
+        self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, params[8])
+
+        DOM_WEIGHTS_RE_TAG = self.create_dom_node(
             file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG)
-        DOM_WEIGHTS_MAX_TAG = CompressionParameters.create_dom_node(file, DOM_WEIGHTS_RE_TAG, CONFIG_WEIGHTS_MAX_TAG)
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_TYPE_TAG, params[9])
-        CompressionParameters.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, params[10])
+        DOM_WEIGHTS_MAX_TAG = self.create_dom_node(file, DOM_WEIGHTS_RE_TAG, CONFIG_WEIGHTS_MAX_TAG)
+        self.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_TYPE_TAG, params[9])
+        self.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, params[10])
 
-        DOM_ACTIVATIONS_TAG = CompressionParameters.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_ACTIVATIONS_TAG)
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_BITS_TAG, params[11])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, params[12])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, params[13])
+        DOM_ACTIVATIONS_TAG = self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_ACTIVATIONS_TAG)
+        self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_BITS_TAG, params[11])
+        self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, params[12])
+        self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, params[13])
 
-        DOM_ACTIVATIONS_RE_TAG = CompressionParameters.create_dom_node(
-            file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG)
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, params[14])
+        DOM_ACTIVATIONS_RE_TAG = self.create_dom_node(
+            file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG
+        )
+        self.create_dom_node(file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, params[14])
 
-        DOM_ACTIVATIONS_MIN_TAG = CompressionParameters.create_dom_node(
-            file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MIN_TAG)
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-            CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, params[15])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-            CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, params[16])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-            CONFIG_ACTIVATIONS_MIN_TYPE_TAG, params[17])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-            CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, params[18])
+        DOM_ACTIVATIONS_MIN_TAG = self.create_dom_node(
+            file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MIN_TAG
+        )
+        self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, params[15])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, params[16])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG, params[17])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, params[18])
 
-        DOM_ACTIVATIONS_MAX_TAG = CompressionParameters.create_dom_node(
-            file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MAX_TAG)
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-            CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, params[19])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-            CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, params[20])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-            CONFIG_ACTIVATIONS_MAX_TYPE_TAG, params[21])
-        CompressionParameters.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-            CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, params[22])
+        DOM_ACTIVATIONS_MAX_TAG = self.create_dom_node(
+            file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MAX_TAG
+        )
+        self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, params[19])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, params[20])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG, params[21])
+        self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, params[22])
 
         return DOM_PARAMS_TAG
 
@@ -231,7 +240,7 @@ class CompressionParameters:
     @staticmethod
     def create_dom_node(file, parent, child_name, text=None):
         child = file.createElement(child_name)
-        if (text != None) and (text != ''):
+        if (text is not None) and (text != ''):
             child.appendChild(file.createTextNode(text))
         parent.appendChild(child)
         return child
@@ -321,10 +330,10 @@ class DefaultQuantizationParameters(DependentParameters):
         return DefaultQuantizationParameters(params)
 
     def create_dom(self, file, parent_node=None):
-        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
+        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
+            self.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG
 
 
@@ -343,8 +352,8 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
         return AccuracyAwareQuantizationParameters(params)
 
     def create_dom(self, file, parent_node=None):
-        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
+        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
+            self.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG
