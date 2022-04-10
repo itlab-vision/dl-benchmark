@@ -1,3 +1,6 @@
+import csv
+
+
 class result:
     def __init__(self, status, task, model, launcher, source_framework, device, dataset, precision, metric, accuracy):
         self.__params = {
@@ -37,10 +40,7 @@ class result:
         return has_error
 
     @staticmethod
-    def parser_test_result(res, test):
-        TAG_DATASET = 'dataset:'
-        TAG_OBJECTS = 'objects'
-
+    def parser_test_result(res, test, csv_file_name):
         res = [str.replace(' ', '') for str in res]
         res = [str.replace('\t', "") for str in res]
         tmp = [str for str in res if str != '']
@@ -48,18 +48,25 @@ class result:
 
         error = result.has_error(res)
         status = 'FAILED' if error else 'SUCCESS'
+        accuracies = dict()
+        dataset = None
         if not error:
-            datasets = [value[len(TAG_DATASET):].replace('\r', '') for value in res if TAG_DATASET in value]
-            if not datasets:
-                raise ValueError('Information about dataset was not found in test result')
-            idx = [res.index(value) for value in res if TAG_OBJECTS in value]
-            accuracies = [res[i][res[i].index(':') + 1:].replace('\r', '') for i in range(idx[0] + 1, len(res))]
+            try:
+                with open(csv_file_name) as csvfile:
+                    csv_file = csv.DictReader(csvfile, delimiter=',')
+                    for row in csv_file:
+                        value = float(row['metric_value']) * 100
+                        accuracies[row['metric_name']] = f"{value:.{2}f}%"
+                        dataset = row['dataset']
+            except Exception as ex:
+                print('ERROR! : {0}'.format(str(ex)))
         else:
-            accuracies = ['']
-            datasets = ['']
+            accuracies = {'N/A': ''}
+            dataset = 'N/A'
         if not accuracies:
             raise ValueError('Information about accuracy was not found in test result')
 
         return [result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework,
-                       source_framework=test.model.framework, device=test.device, dataset=datasets[0],
-                       precision=test.model.precision, metric='', accuracy=accuracy) for accuracy in accuracies]
+                       source_framework=test.model.framework, device=test.device, dataset=dataset,
+                       precision=test.model.precision, metric=metric, accuracy=accuracies[metric]) for metric in
+                accuracies.keys()]
