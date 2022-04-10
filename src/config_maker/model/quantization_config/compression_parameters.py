@@ -207,12 +207,10 @@ class CompressionParameters:
 
         return DOM_PARAMS_TAG
 
-
     @staticmethod
     def get_element_by_tag(dom, tag):
         nodes = dom.getElementsByTagName(tag)
         return nodes[0].firstChild.data if len(nodes) != 0 else None
-
 
     @staticmethod
     def create_dom_node(file, parent, child_name, text=None):
@@ -235,9 +233,6 @@ class DependentParameters(metaclass=abc.ABCMeta):
             return AccuracyAwareQuantizationParameters(args)
         else:
             raise ValueError('Unknown quantization method: {0} !'.format(quantization_method))
-
-    # def get_parameter_list(self):
-    #     return list(self.parameters.values())
 
     def get_parameters_dict(self):
         '''
@@ -298,20 +293,13 @@ class DependentParameters(metaclass=abc.ABCMeta):
 class DefaultQuantizationParameters(DependentParameters):
     def __init__(self, params):
         self.parameters = {}
-        # self.parameter_count = DEFAULT_QUANTIZATION_PARAMS_COUNT
-        # for i, param in enumerate(params):
-        #     self.__model_params[2][i] = param
-        # for i, param_name in enumerate(HEADER_DQ_PARAMS_TAGS):
-        #     self.parameters[param_name] = self.__model_params[2][i]
         for i, param_name in enumerate(HEADER_DQ_PARAMS_TAGS):
             self.parameters[param_name] = params[i]
 
     @staticmethod
     def _parse_params(dom):
-        # -TODO: compression_parser metrics?
         params = []
         for param_name in HEADER_DQ_PARAMS_TAGS:
-            # param_node = dom.getElementsByTagName(param_name)[0].firstChild
             param_node = dom.getElementsByTagName(param_name)
             params.append(param_node[0].firstChild.data if param_node else '')
         return DefaultQuantizationParameters(params)
@@ -319,24 +307,14 @@ class DefaultQuantizationParameters(DependentParameters):
     def create_dom(self, file, parent_node=None):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
-
         for key in self.parameters:
             CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
-            # DOM_PARAMETER = file.createElement(key)
-            # DOM_PARAMETER.appendChild(file.createTextNode(self.parameters[key]))
-            # DOM_COMPRESSION_PARAMS_TAG.appendChild(DOM_PARAMETER)
-
         return DOM_COMPRESSION_PARAMS_TAG
 
 
 class AccuracyAwareQuantizationParameters(DependentParameters):
     def __init__(self, params):
         self.parameters = {}
-        # self.parameter_count = ACCURACY_AWARE_QUANTIZATION_PARAMS_COUNT
-        # for i, param in enumerate(params):
-        #     self.__model_params[2][i] = param
-        # for i, param_name in enumerate(HEADER_AAQ_PARAMS_TAGS):
-        #     self.parameters[param_name] = self.__model_params[2][i]
         for i, param_name in enumerate(HEADER_AAQ_PARAMS_TAGS):
             self.parameters[param_name] = params[i]
 
@@ -344,7 +322,6 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
     def _parse_params(dom):
         params = []
         for param_name in HEADER_AAQ_PARAMS_TAGS:
-            # param_node = dom.getElementsByTagName(param_name)[0].firstChild
             param_node = dom.getElementsByTagName(param_name)
             params.append(param_node[0].firstChild.data if param_node else '')
         return AccuracyAwareQuantizationParameters(params)
@@ -352,8 +329,6 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
     def create_dom(self, file, parent_node=None):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node != None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
-
         for key in self.parameters:
             CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
-
         return DOM_COMPRESSION_PARAMS_TAG

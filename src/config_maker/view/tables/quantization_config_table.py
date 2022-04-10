@@ -1,26 +1,13 @@
 from unittest import case
 from .table import Table  # pylint: disable=E0402
 # pylint: disable-next=E0401
-# from tags import CONFIG_CONFIG_TAG, CONFIG_QUANTIZATION_METHOD_TAG, CONFIG_NAME_TAG, \
-#     CONFIG_MODEL_PATH_TAG, CONFIG_WEIGHTS_PATH_TAG, CONFIG_PRESET_TAG, CONFIG_AC_CONFIG_TAG, \
-#     CONFIG_MAX_DROP_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
-#     CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG
-from tags import DEPENDENT_PARAMETERS_TAG, HEADER_AAQ_PARAMS_TAGS, HEADER_ALL_PARAMS_TAGS, HEADER_DQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS
+from tags import HEADER_ALL_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, \
+    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS
 
 
 class QuantizationConfigTable(Table):
     def __init__(self, parent):
         super().__init__(parent)
-        # pot_headers = [CONFIG_CONFIG_TAG, CONFIG_QUANTIZATION_METHOD_TAG, CONFIG_NAME_TAG,
-        #     CONFIG_MODEL_PATH_TAG, CONFIG_WEIGHTS_PATH_TAG, CONFIG_PRESET_TAG, CONFIG_AC_CONFIG_TAG,
-        #     CONFIG_MAX_DROP_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG,
-        #     CONFIG_LOG_LEVEL_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STREAM_OUTPUT_TAG,
-        #     CONFIG_KEEP_WEIGHTS_TAG]
-        # pot_headers = HEADER_POT_PARAMS_TAGS
-        # self.__headers = []
-        # self.__headers.extend(pot_headers)
-        # self.__headers = HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS + \
-        #     HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
         self.__headers = HEADER_ALL_PARAMS_TAGS
         self.__independent_params_count = len(HEADER_INDEPENDENT_PARAMS_TAGS)
         self._count_col = len(self.__headers)
@@ -39,7 +26,6 @@ class QuantizationConfigTable(Table):
             quantization_method = q_model.get_quantization_method()
             for j, param_value in enumerate(independent_params):
                 self.setItem(i, j, self._create_cell(param_value))
-                # self.setItem(i, j, self._create_cell(q_model.parameters[param_name]))
             self.__update_dependent_parameters(dependent_params, quantization_method, i)
 
     def __update_dependent_parameters(self, parameters, quantization_method, i):
@@ -59,17 +45,3 @@ class QuantizationConfigTable(Table):
             if quantization_method == method_name:
                 return start_idx
             start_idx += methods[method_name]
-
-        '''
-        if quantization_method == 'DefaultQuantization':
-            return start_idx
-        else:
-            start_idx += len(HEADER_DQ_PARAMS_TAGS)
-
-        if quantization_method == 'AccuracyAwareQuantization':
-            return start_idx
-        else:
-            start_idx += len(HEADER_AAQ_PARAMS_TAGS)
-        
-        # return - 1
-        '''

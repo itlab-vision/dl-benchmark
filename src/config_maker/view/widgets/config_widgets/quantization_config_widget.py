@@ -38,15 +38,8 @@ class QuantizationConfigWidget(QWidget):
         self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def show_add_q_model_dialog(self, models, data):
-        # if not models:
-        #     QMessageBox.warning(self, "Warning!", "Models list is empty!")
-        #     return
-        # if not data:
-        #     QMessageBox.warning(self, "Warning!", "Datasets list is empty!")
-        #     return
         dialog = QuantizationConfigDialog(self, models, data)
         if dialog.exec():
-            # -TODO: fix
             pot_params, model_params, dependent_params = dialog.get_values()
             self.addQModelSignal.emit(pot_params, model_params, dependent_params)
 
@@ -58,7 +51,6 @@ class QuantizationConfigWidget(QWidget):
         dialog = QuantizationConfigDialog(self, models, data)
         dialog.load_values_from_table_row(self.__table, row)
         if dialog.exec():
-            # -TODO: fix
             pot_params, model_params, dependent_params = dialog.get_values()
             self.changeQModelSignal.emit(row, pot_params, model_params, dependent_params)
             self.__table.remove_selection()

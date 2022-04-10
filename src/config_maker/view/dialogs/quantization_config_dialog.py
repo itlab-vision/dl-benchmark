@@ -1,11 +1,19 @@
 import abc
-from email.policy import default
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox, QComboBox
-from tags import CONFIG_ALGORITHM_NAME_TAG, CONFIG_CONFIG_TAG, CONFIG_EVALUATION_TAG, CONFIG_OUTPUT_DIR_TAG, CONFIG_DIRECT_DUMP_TAG, \
-    CONFIG_LOG_LEVEL_TAG, CONFIG_PRESET_TAG, CONFIG_PROGRESS_BAR_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_STREAM_OUTPUT_TAG, CONFIG_KEEP_WEIGHTS_TAG, CONFIG_TARGET_DEVICE_TAG, CONFIG_WEIGHTS_BITS_TAG, HEADER_AAQ_PARAMS_TAGS, HEADER_DQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS
-from tags import CONFIG_MODEL_NAME_TAG, CONFIG_MODEL_TAG, CONFIG_WEIGHTS_TAG
-from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS
-from tags import *
+# pylint: disable-next=E0401
+from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS, \
+    HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, \
+    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, \
+    CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHM_NAME_TAG, CONFIG_PRESET_TAG, \
+    CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, \
+    CONFIG_WEIGHTS_GRANULARITY_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, \
+    CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_BITS_TAG, \
+    CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, \
+    CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, \
+    CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, \
+    CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, \
+    CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG
+
 
 class QuantizationConfigDialog(QDialog):
     def __init__(self, parent, models, data):
@@ -22,7 +30,6 @@ class QuantizationConfigDialog(QDialog):
         self.__model_params_tags = HEADER_MODEL_PARAMS_MODEL_TAGS + \
             HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
         self.tags = [*self.__pot_params_tags, *self.__model_params_tags]
-        # self.__dependent_params_start_idx = self.__calculate_start_index(self.__selected_q_method)
         self.__init_ui()
         self.__q_method_independent_params.switch_engine_type(self.__selected_q_method)
 
@@ -53,7 +60,6 @@ class QuantizationConfigDialog(QDialog):
             if key == q_method:
                 self.__q_method_dependent_params[key].show()
                 self.__selected_q_method = key
-                # self.__dependent_params_start_idx = self.__calculate_start_index(q_method)
             else:
                 self.__q_method_dependent_params[key].hide()
             self.__q_method_independent_params.switch_engine_type(q_method)
@@ -78,7 +84,6 @@ class QuantizationConfigDialog(QDialog):
         self.__q_method_independent_params.load_values_from_table_row(table, row)
         self.__q_method_dependent_params[self.__selected_q_method].load_values_from_table_row(
             table, row, self.__calculate_start_index(self.__selected_q_method))
-            # table, row, self.__dependent_params_start_idx)
 
     def accept(self):
         is_ok = self.__q_method_independent_params.check()
@@ -106,7 +111,6 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         self._labels = {}
         for id, tag in enumerate(self._tags[1:]):
             self._labels[1 + id] = QLabel(tag, self._parent)
-        # self._labels[0].setStyleSheet("font-weight: bold")
         self._labels[0] = QLabel(self._tags[0], self._parent)
 
     @abc.abstractmethod
@@ -279,31 +283,6 @@ class IndependentParameters(ParametersDialog):
         for id in range(start_iter_idx, stop_iter_idx):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
-
-        '''
-        q_methods_idx = start_idx + 1
-        self._edits[q_methods_idx] = QComboBox(self._parent)
-        self._edits[q_methods_idx].addItems(self.__q_methods)
-        self._edits[q_methods_idx].activated[str].connect(self.__q_method_choice)
-        self._edits[q_methods_idx].currentTextChanged[str].connect(self.__q_method_choice)
-        self._ignored_idx.append(q_methods_idx)
-
-        q_preset_idx = start_idx + 2
-        self._edits[q_preset_idx] = QComboBox(self._parent)
-        self._edits[q_preset_idx].addItems(('mixed', 'performance', 'accuracy'))
-        self._ignored_idx.append(q_preset_idx)
-
-        q_weights_mode_idx = start_idx + 5
-        self._edits[q_weights_mode_idx] = QComboBox(self._parent)
-        self._edits[q_weights_mode_idx].addItems(('symmetric', 'asymmetric'))
-        self._ignored_idx.append(q_weights_mode_idx)
-
-        q_weights_mode_idx = start_idx + 6
-        self._edits[q_weights_mode_idx] = QComboBox(self._parent)
-        self._edits[q_weights_mode_idx].addItems(('perchannel', 'pertensor'))
-        self._ignored_idx.append(q_weights_mode_idx)
-        '''
-
         default_values = ['ANY', 'DefaultQuantization', 'mixed', str(100), str(8), 'symmetric',
             'perchannel', str(-127), str(127), 'quantile', str(0.0001), str(8), 'symmetric', 'perchannel',
             'quantile', str(0), 'mean', 'quantile', str(0.0001), str(6), 'mean', 'quantile', str(0.0001)]
@@ -311,16 +290,6 @@ class IndependentParameters(ParametersDialog):
         for i, id in enumerate(range(start_iter_idx, stop_iter_idx)):
             if id not in self._ignored_idx:
                 self._edits[id].setText(default_values[i])
-
-    '''
-    def _set_qcombobox_edit(self, idx, values, f=None):
-        self._edits[idx] = QComboBox(self._parent)
-        self._edits[idx].addItems(values)
-        if f != None:
-            self._edits[idx].activated[str].connect(f)
-            self._edits[idx].currentTextChanged[str].connect(f)
-        self._ignored_idx.append(idx)
-    '''
 
     def get_values(self):
         pot_values = []
@@ -373,17 +342,11 @@ class IndependentParameters(ParametersDialog):
         if self._edits[q_method_idx].currentText() == 'AccuracyAwareQuantization':
             if (self._edits[ac_config_idx].text() == ''):
                 return False
-        '''
-        for id in range(1, len(self._tags)):
-            if (id not in self._ignored_idx) and (self._edits[id].text() == ''):
-                return False
-        '''
         return True
 
     def attach_to_layout(self, layout, show=True):
         self_idx_1 = 1
         self_idx_2 = 1
-        # self_idx_3 = idx + 1
 
         idx = [0] * 11
         idx[0] = 1
@@ -494,26 +457,6 @@ class IndependentParameters(ParametersDialog):
         else:
             self.hide()
         return max(self_idx_1, self_idx_2)
-        
-        '''
-        x = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS)
-        y = len(HEADER_POT_PARAMS_TAGS)
-        self_idx = idx + 1
-        for id in range(1, x):
-            layout.addWidget(self._labels[id], self_idx, 0)
-            layout.addWidget(self._edits[id], self_idx, 1)
-            self_idx += 1
-        self_idx_2 = idx + 1
-        for id in range(x, len(self._tags)):
-            layout.addWidget(self._labels[id], self_idx_2, 2)
-            layout.addWidget(self._edits[id], self_idx_2, 3)
-            self_idx_2 += 1
-        if show:
-            self.show()
-        else:
-            self.hide()
-        return max(self_idx_2, self_idx)
-        '''
 
 
 class DependentParameters(ParametersDialog):
@@ -558,9 +501,7 @@ class DependentParameters(ParametersDialog):
 
         base_tab = '   '
 
-        # layout.addWidget(QLabel(0 * base_tab + 'Dependent Parameters:', self._parent), self_idx_3, 4)
         layout.addWidget(self._labels[0], 0, 4)
-        # self_idx_3 += 1
         for id in range(idx[0], idx[1]):
             self._labels[id].setText(1 * base_tab + self._labels[id].text())
             layout.addWidget(self._labels[id], self_idx_3, 4)
@@ -572,26 +513,6 @@ class DependentParameters(ParametersDialog):
         else:
             self.hide()
         return self_idx_3
-        '''
-        layout.addWidget(self._labels[0], idx, 0)
-        x = len(HEADER_POT_PARAMS_TAGS + HEADER_MODEL_PARAMS_MODEL_TAGS)
-        y = len(HEADER_POT_PARAMS_TAGS)
-        self_idx = idx + 1
-        for id in range(1, x):
-            layout.addWidget(self._labels[id], self_idx, 0)
-            layout.addWidget(self._edits[id], self_idx, 1)
-            self_idx += 1
-        self_idx_2 = idx + 1
-        for id in range(x, len(self._tags)):
-            layout.addWidget(self._labels[id], self_idx_2, 2)
-            layout.addWidget(self._edits[id], self_idx_2, 3)
-            self_idx_2 += 1
-        if show:
-            self.show()
-        else:
-            self.hide()
-        return max(self_idx_2, self_idx)
-        '''
 
 
 class DefaultQuantizationDialog(DependentParameters):
