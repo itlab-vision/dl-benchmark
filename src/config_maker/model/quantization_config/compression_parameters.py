@@ -231,7 +231,7 @@ class CompressionParameters:
     @staticmethod
     def create_dom_node(file, parent, child_name, text=None):
         child = file.createElement(child_name)
-        if text != None:
+        if (text != None) and (text != ''):
             child.appendChild(file.createTextNode(text))
         parent.appendChild(child)
         return child

@@ -1,6 +1,6 @@
 import re
 from xml.dom.minidom import Node
-from model.quantization_config.compression_parameters import CompressionParameters
+from model.quantization_config.compression_parameters import CompressionParameters  # pylint: disable=E0401
 # pylint: disable-next=E0401
 from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, \
     HEADER_MODEL_PARAMS_ENGINE_TAGS, CONFIG_MODEL_TAG, CONFIG_ENGINE_TAG, \
@@ -169,7 +169,8 @@ class QModel:
     def __create_dom_pot_params(self, file):
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
-            self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
+            if self.__pot_params[i] != '':
+                self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
         return DOM_POT_PARAMETERS_TAG
 
 
@@ -186,9 +187,7 @@ class QModel:
     def parse(dom):
         pot_params = []
         dom_pot_params = dom.getElementsByTagName(CONFIG_POT_PARAMETERS_TAG)[0]
-        for params in dom_pot_params.childNodes:
-            if params.nodeType == Node.ELEMENT_NODE:
-                pot_params.append(params.firstChild.data)
+        pot_params = QModel.parse_pot_params(dom_pot_params)
         dom_model_params = dom.getElementsByTagName(CONFIG_MODEL_PARAMETERS_TAG)[0]
         m_params = QModel.parse_model_params(dom_model_params.getElementsByTagName(CONFIG_MODEL_TAG)[0])
         e_params = QModel.parse_engine_params(dom_model_params.getElementsByTagName(CONFIG_ENGINE_TAG)[0])
@@ -200,11 +199,18 @@ class QModel:
 
 
     @staticmethod
+    def parse_pot_params(dom):
+        pot_params = []
+        for tag in HEADER_POT_PARAMS_TAGS:
+            pot_params.append(QModel.get_element_by_tag(dom, tag))
+        return pot_params
+
+
+    @staticmethod
     def parse_model_params(dom):
         model_params = []
-        for params in dom.childNodes:
-            if params.nodeType == Node.ELEMENT_NODE:
-                model_params.append(params.firstChild.data)
+        for tag in HEADER_MODEL_PARAMS_MODEL_TAGS:
+            model_params.append(QModel.get_element_by_tag(dom, tag))
         return model_params
 
 
