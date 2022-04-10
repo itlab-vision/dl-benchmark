@@ -86,7 +86,8 @@ class QuantizationConfigDialog(QDialog):
         if is_ok:
             super().accept()
         else:
-            QMessageBox.warning(self, 'Warning!', 'Not all lines are filled!')
+            QMessageBox.warning(self, 'Warning!', 'Not all needed lines ' +
+                '(ModelName, Model, Weights, DataSource or Config) are filled!')
 
 
 class ParametersDialog(metaclass=abc.ABCMeta):
@@ -344,9 +345,39 @@ class IndependentParameters(ParametersDialog):
                 self._edits[id].setCurrentText(table.item(row, column).text())
 
     def check(self):
+        # check <Model.ModelName>, <Model.Model>, <Model.Weights>
+        model_start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
+        model_len = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS)
+        for id in range(model_start_idx, model_len):
+            if (id not in self._ignored_idx) and (self._edits[id].text() == ''):
+                return False
+
+        # check <Engine.Config> or <Engine.DataSource>
+        ac_config_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS) + 2
+        engine_type_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS) + 3
+        data_source_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS) + 4
+        q_method_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS + \
+            HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS) + 1
+
+        if self._edits[q_method_idx].currentText() == 'DefaultQuantization':
+            if (self._edits[engine_type_idx].currentText() == 'simplified') \
+                and (self._edits[data_source_idx].text() == ''):
+                return False
+            if (self._edits[engine_type_idx].currentText() == 'accuracy_checker') \
+                and (self._edits[ac_config_idx].text() == ''):
+                return False
+        if self._edits[q_method_idx].currentText() == 'AccuracyAwareQuantization':
+            if (self._edits[ac_config_idx].text() == ''):
+                return False
+        '''
         for id in range(1, len(self._tags)):
             if (id not in self._ignored_idx) and (self._edits[id].text() == ''):
                 return False
+        '''
         return True
 
     def attach_to_layout(self, layout, show=True):
@@ -604,9 +635,12 @@ class AccuracyAwareQuantizationDialog(DependentParameters):
         self._set_qcombobox_edit(start_idx + 8, (str(False), str(True)))
         self._set_qcombobox_edit(start_idx + 10, (str(False), str(True)))
 
-        default_values = [str(300), str(20), str(0.005), 'absolute', str(False),
+        self.__default_values = [str(300), str(20), str(0.005), 'absolute', str(False),
             'DefaultQuantization', str(False), str(0.6), str(False), str(0.5), str(False)]
         for i, id in enumerate(range(1, len(self._tags))):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
-                self._edits[id].setText(default_values[i])
+                self._edits[id].setText(self.__default_values[i])
+
+    def check(self):
+        return True
