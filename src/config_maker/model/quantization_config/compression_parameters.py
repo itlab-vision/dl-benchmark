@@ -1,6 +1,6 @@
 import abc
-from model.benchmark_config.test import DependentParameters
-from tags import *
+from tags import *  # pylint: disable=E0401
+
 
 class CompressionParameters:
     def __init__(self, independent_params, dependent_params):
