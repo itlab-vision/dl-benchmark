@@ -333,7 +333,7 @@ class DefaultQuantizationParameters(DependentParameters):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            self.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
+            CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG
 
 
@@ -355,5 +355,5 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            self.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
+            CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG
