@@ -1,5 +1,4 @@
 import abc
-from model.benchmark_config.test import DependentParameters
 # pylint: disable-next=E0401
 from tags import HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, CONFIG_WEIGHTS_MAX_TAG, \
     CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, \
