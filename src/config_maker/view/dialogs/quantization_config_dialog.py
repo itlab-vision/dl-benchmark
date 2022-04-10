@@ -101,6 +101,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         self._tags = tags
         self._labels = []
         self._edits = []
+        self._ignored_idx = []
         self.__init_ui()
 
     def __init_ui(self):
