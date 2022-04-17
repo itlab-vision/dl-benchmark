@@ -12,7 +12,7 @@ def build_argparser():
     parser.add_argument(
         '-b', '--batch_sizes',
         help='Batches to convert models',
-        type=int, nargs='+', default = [1]
+        type=int, nargs='+', default=[1]
     )
     parser.add_argument(
         '-d', '--dir',

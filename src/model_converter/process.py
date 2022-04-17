@@ -19,15 +19,15 @@ class process:
         print(new_dir)
 
         try:
-            shutil.copytree(os.path.join(old_dir, 'FP16'), 
-                os.path.join(new_dir, 'FP16'), dirs_exist_ok=True)
-        except:
+            shutil.copytree(os.path.join(old_dir, 'FP16'),
+                            os.path.join(new_dir, 'FP16'), dirs_exist_ok=True)
+        except shutil.Error:
             self.__my_log.info(f'Cannot move FP16 model to folder {new_dir}')
 
         try:
-            shutil.copytree(os.path.join(old_dir, 'FP32'), 
-                os.path.join(new_dir, 'FP32'), dirs_exist_ok=True)
-        except:
+            shutil.copytree(os.path.join(old_dir, 'FP32'),
+                            os.path.join(new_dir, 'FP32'), dirs_exist_ok=True)
+        except shutil.Error:
             self.__my_log.info(f'Cannot move FP32 model to folder {new_dir}')
 
     @staticmethod
