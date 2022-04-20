@@ -118,6 +118,8 @@ class docker_executor(executor):
         return self.path_to_docker_csv_file
 
     def execute_process(self, command_line):
+        self.my_container_dict[self.my_target_framework].exec_run('rm {}'.format(self.get_csv_file()), tty=True,
+                                                                  privileged=True)
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
         self.move_csv_file_with_results()
@@ -143,5 +145,3 @@ class docker_executor(executor):
         process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
         process.communicate()
-        self.my_container_dict[self.my_target_framework].exec_run('rm {}'.format(self.path_to_docker_csv_file), tty=True,
-                                                                  privileged=True)
