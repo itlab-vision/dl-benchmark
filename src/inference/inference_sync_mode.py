@@ -4,7 +4,7 @@ import argparse
 import logging as log
 import postprocessing_data as pp
 from io_adapter import io_adapter
-from transformer import transformer
+from transformer import openvino_transformer
 from io_model_wrapper import openvino_io_model_wrapper
 
 
@@ -112,7 +112,7 @@ def main():
     args = build_argparser().parse_args()
     try:
         model_wrapper = openvino_io_model_wrapper()
-        data_transformer = transformer()
+        data_transformer = openvino_transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
         core = utils.create_core(
             args.extension,

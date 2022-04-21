@@ -123,7 +123,10 @@ def get_input_shape(io_model_wrapper, model):
     layer_shapes = dict()
     layer_names = io_model_wrapper.get_input_layer_names(model)
     for input_layer in layer_names:
-        shape = str(io_model_wrapper.get_input_layer_shape(model, input_layer))
+        shape = ''
+        for dim in io_model_wrapper.get_input_layer_shape(model, input_layer):
+            shape += '{0}x'.format(dim)
+        shape = shape[:-1]
         layer_shapes.update({input_layer: shape})
     return layer_shapes
 
