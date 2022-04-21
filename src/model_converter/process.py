@@ -14,7 +14,7 @@ class process:
 
     def _move_converted_models_to_dir_with_batch_in_name(self):
         model_dir = os.path.join(self.__my_parameters.dir, 'public', self.__model)
-        
+
         try:
             src_dir = os.path.join(model_dir, 'FP16/')
             dst_dir = os.path.join(src_dir, str(self.__batch))

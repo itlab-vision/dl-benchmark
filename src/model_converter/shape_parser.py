@@ -4,7 +4,7 @@ import yaml
 
 def make_string_of_one_shape_with_new_batch(original_shape, new_batch):
     dims = original_shape[1:]
-    dims.insert(0,new_batch)
+    dims.insert(0, new_batch)
     res = str(dims).replace(' ', '')
     return res
 
