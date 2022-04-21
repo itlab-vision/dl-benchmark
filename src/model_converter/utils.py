@@ -12,6 +12,6 @@ def get_all_downloaded_public_models_in_dir(root_dir):
 def copy_converted_model_files(src_dir, dst_dir):
     Path(dst_dir).mkdir(parents=True, exist_ok=True)
     src_files_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir)
-                        if f.endswith(('.xml','.bin'))]
+                      if f.endswith(('.xml', '.bin'))]
     for src_file in src_files_list:
         shutil.copy(src_file, dst_dir)
