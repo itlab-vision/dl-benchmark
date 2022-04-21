@@ -29,7 +29,7 @@ class openvino_io_model_wrapper(io_model_wrapper):
         return None
 
     def get_input_layer_dtype(self, model, node_name):
-        from openvino.runtime.utils.types import get_dtype
+        from openvino.runtime.utils.types import get_dtype  # pylint: disable=E0401
         for input in model.inputs:
             if node_name == input.get_any_name():
                 return get_dtype(input.get_element_type())

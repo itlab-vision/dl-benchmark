@@ -8,7 +8,7 @@ from time import time
 from io_adapter import io_adapter
 from transformer import openvino_transformer
 from io_model_wrapper import openvino_io_model_wrapper
-from openvino.runtime import AsyncInferQueue
+from openvino.runtime import AsyncInferQueue  # pylint: disable=E0401
 
 
 def build_parser():
