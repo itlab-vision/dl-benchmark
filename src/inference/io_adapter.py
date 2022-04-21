@@ -19,14 +19,13 @@ class io_adapter(metaclass=abc.ABCMeta):
 
     def __convert_images(self, shape, data):
         c, h, w = self._transformer.get_shape_in_chw_order(shape)
-        images = np.ndarray(shape=(len(data), c, h, w))
+        images = np.ndarray(shape=(len(data), h, w, c))
         image_shapes = []
         for i in range(len(data)):
             image = cv2.imread(data[i])
             image_shapes.append(image.shape[:-1])
             if (image.shape[:-1] != (h, w)):
                 image = cv2.resize(image, (w, h))
-            image = image.transpose((2, 0, 1))
             images[i] = image
         return images, image_shapes
 
@@ -80,7 +79,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     element_type = self._io_model_wrapper.get_input_layer_dtype(model, key)
                     value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self._transformer.transform_images(value, element_type)
+                    transformed_value = self._transformer.transform_images(value, shape, element_type)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
                 self._transformed_input.update({key: transformed_value})
@@ -96,7 +95,7 @@ class io_adapter(metaclass=abc.ABCMeta):
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
-                transformed_value = self._transformer.transform_images(value, element_type)
+                transformed_value = self._transformer.transform_images(value, shape, element_type)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
             self._transformed_input.update({input_blob: transformed_value})
@@ -241,7 +240,7 @@ class detection_io(io_adapter):
         images = []
         for i in range(b * ib):
             orig_h, orig_w = shapes[i % ib]
-            image = input[i % ib].transpose((1, 2, 0))
+            image = input[i % ib]
             images.append(cv2.resize(image, (orig_w, orig_h)))
         for batch in range(b):
             for out_num in range(ib):
@@ -295,7 +294,7 @@ class face_detection_io(io_adapter):
                 break
         boxes = result['boxes'][:count_of_detected_faces]
         input = self._input[input_layer_name]
-        image = input[0].transpose((1, 2, 0))
+        image = input[0]
         initial_h, initial_w = image.shape[:2]
         shapes = self._original_shapes[input_layer_name]
         orig_h, orig_w = shapes[0]
@@ -403,7 +402,6 @@ class road_segmenatation_io(io_adapter):
             for line in f:
                 classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
-            data = data.transpose((1, 2, 0))
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
@@ -428,11 +426,11 @@ class recognition_face_io(io_adapter):
         result_layer_name = next(iter(result))
         input = self._input[input_layer_name]
         result = result[result_layer_name]
-        ib, c, h, w = input.shape
+        ib, h, w, c = input.shape
         b = result.shape[0]
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
+            images[i] = input[i % ib]
         for i, r in enumerate(result):
             image = images[i]
             initial_h, initial_w = image.shape[:2]
@@ -467,7 +465,7 @@ class person_attributes_io(io_adapter):
         result_top = result[next(layer_iter)]
         result_bottom = result[next(layer_iter)]
         b = result_attributes.shape[0]
-        ib, c, h, w = input.shape
+        ib, h, w, c = input.shape
         images = np.ndarray(shape=(b, h, w * 4, c))
         attributes = [
             'is_male',
@@ -483,7 +481,7 @@ class person_attributes_io(io_adapter):
         for i in range(b):
             for x in range(w):
                 for y in range(h):
-                    images[i][y][x] = input[i % ib].transpose((1, 2, 0))[y][x]
+                    images[i][y][x] = input[i % ib][y][x]
             x_top = int(result_top[i][0] * w)
             y_top = int(result_top[i][1] * h)
             x_bottom = int(result_bottom[i][0] * w)
@@ -554,7 +552,7 @@ class gaze_io(io_adapter):
         input_angles = self._input['head_pose_angles']
         input_left_eye = self._input['left_eye_image']
         input_right_eye = self._input['right_eye_image']
-        ib, c, h, w = input_left_eye.shape
+        ib, h, w, c = input_left_eye.shape
         images = np.ndarray(shape=(b, h, w * 2, c))
         images_left_eye = np.ndarray(shape=(b, h, w, c))
         images_right_eye = np.ndarray(shape=(b, h, w, c))
@@ -562,8 +560,8 @@ class gaze_io(io_adapter):
         center_y = int(h / 2)
         color = (255, 0, 0)
         for i in range(b):
-            images_left_eye[i] = input_left_eye[i % ib].transpose((1, 2, 0))
-            images_right_eye[i] = input_right_eye[i % ib].transpose((1, 2, 0))
+            images_left_eye[i] = input_left_eye[i % ib]
+            images_right_eye[i] = input_right_eye[i % ib]
             roll = input_angles[i][1] * np.pi / 180.0
             vector_length = np.linalg.norm(result[i])
             vector_x = result[i][0] / vector_length
@@ -598,7 +596,7 @@ class head_pose_io(io_adapter):
         result_roll = result['angle_r_fc']
         result_yaw = result['angle_y_fc']
         b = result_pitch.shape[0]
-        ib, c, h, w = input.shape
+        ib, h, w, c = input.shape
         images = np.ndarray(shape=(b, h, w, c))
         center_x = int(w / 2)
         center_y = int(h / 2)
@@ -607,7 +605,7 @@ class head_pose_io(io_adapter):
         color_z = (255, 0, 0)
         focal_length = 950.0
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
+            images[i] = input[i % ib]
             yaw = result_yaw[i][0] * np.pi / 180.0
             pitch = result_pitch[i][0] * np.pi / 180.0
             roll = result_roll[i][0] * np.pi / 180.0
@@ -667,9 +665,9 @@ class person_detection_asl_io(io_adapter):
         input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
         result = result['17701/Split.0']
-        _, c, h, w = input.shape
+        _, h, w, c = input.shape
         images = np.ndarray(shape=(1, h, w, c))
-        images[0] = input[0].transpose((1, 2, 0))
+        images[0] = input[0]
         count = 0
         for obj in result:
             if obj[4] > self._threshold:
@@ -745,7 +743,7 @@ class instance_segmenatation_io(io_adapter):
             for line in f:
                 labels_map.append(line.strip())
         shapes = self._original_shapes[next(iter(self._original_shapes))]
-        image = self._input['im_data'][0].transpose((1, 2, 0))
+        image = self._input['im_data'][0]
         boxes = result['boxes']
         scores = result['scores']
         classes = result['classes'].astype(np.uint32)
@@ -802,7 +800,7 @@ class single_image_super_resolution_io(io_adapter):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             colors = data * 255
             np.clip(colors, 0., 255.)
-            classes_map = colors.transpose((1, 2, 0))
+            classes_map = colors
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
             cv2.imwrite(out_img, classes_map)
             log.info('Result image was saved to {}'.format(out_img))
@@ -988,10 +986,10 @@ class detection_ssd_old_format(detection_ssd):
             return
         input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
-        b, c, h, w = input.shape
+        b, h, w, c = input.shape
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i].transpose((1, 2, 0))
+            images[i] = input[i]
         detections = []
         action_map = self._get_action_map()
         num_classes = len(action_map)
@@ -1066,10 +1064,10 @@ class detection_ssd_new_format(detection_ssd):
             return
         input_layer_name = next(iter(self._input))
         input = self._input[input_layer_name]
-        b, c, h, w = input.shape
+        b, h, w, c = input.shape
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i].transpose((1, 2, 0))
+            images[i] = input[i]
         detections = []
         action_map = self._get_action_map()
         num_classes = len(action_map)
@@ -1337,10 +1335,9 @@ class human_pose_estimation_io(io_adapter):
                 colors.append([int(x) for x in line.split()])
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         for batch, frame in enumerate(self._input['data']):
-            frame = frame.transpose((1, 2, 0))
             frame_height = frame.shape[0]
             frame_width = frame.shape[1]
-            keypoints_prob_map = result['Mconv7_stage2_L2'][batch].transpose(0, 2, 1)
+            keypoints_prob_map = result['Mconv7_stage2_L2'][batch]
             fields = result['Mconv7_stage2_L1'][batch]
             pafX, pafY = self.__create_pafs(fields)
             keypoints = self.__search_keypoints(keypoints_prob_map, frame_height, frame_width)
@@ -1506,9 +1503,9 @@ class mask_rcnn_io(io_adapter):
 
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         if 'image_tensor' in self._input:
-            image = self._input['image_tensor'][0].transpose((1, 2, 0))
+            image = self._input['image_tensor'][0]
         elif 'import/image_tensor:0' in self._input:
-            image = self._input['import/image_tensor:0'][0].transpose((1, 2, 0))
+            image = self._input['import/image_tensor:0'][0]
 
         detections_info = result['reshape_do_2d']
         masks = result['masks']
@@ -1676,11 +1673,11 @@ class yolo(io_adapter):
         input = self._input[input_layer_name]
         frameHeight, frameWidth = input.shape[-2:]
         result = list(result.values())
-        ib, c, h, w = input.shape
+        ib, h, w, c = input.shape
         b = result[0].shape[0]
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i % ib].transpose((1, 2, 0))
+            images[i] = input[i % ib]
         for batch in range(ib):
             image = images[batch]
             predictions = []
@@ -1691,7 +1688,7 @@ class yolo(io_adapter):
                 data = array_of_detections[batch]
                 data_shape = shapes[i]
                 dx, dy = data_shape[-2:]
-                cells = data.reshape(data_shape).transpose((2, 3, 0, 1))
+                cells = data.reshape(data_shape)
                 for cx in range(dy):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[cy, cx]):
