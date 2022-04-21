@@ -15,7 +15,7 @@ class DeployConfigTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked.connect(self.clicked_table)
+        self.clicked().connect(self.clicked_table)
 
     def update(self, computers):
         self.clear()
