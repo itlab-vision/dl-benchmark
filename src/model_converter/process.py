@@ -1,8 +1,8 @@
 import os
-from pathlib import Path
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 from shape_parser import get_new_input_shape_by_model_name
+from utils import copy_converted_model_files
 
 
 class process:
@@ -13,22 +13,21 @@ class process:
         self.__my_parameters = parameters
 
     def _move_converted_models_to_dir_with_batch_in_name(self):
-        old_dir = os.path.join(self.__my_parameters.dir, 'public', self.__model)
-        new_dir = os.path.join(old_dir, str(self.__batch))
-        Path(new_dir).mkdir(parents=True, exist_ok=True)
-        print(new_dir)
+        model_dir = os.path.join(self.__my_parameters.dir, 'public', self.__model)
+        
+        try:
+            src_dir = os.path.join(model_dir, 'FP16/')
+            dst_dir = os.path.join(src_dir, str(self.__batch))
+            copy_converted_model_files(src_dir, dst_dir)
+        except shutil.Error:
+            self.__my_log.info(f'Cannot move FP16 model to folder {dst_dir}')
 
         try:
-            shutil.copytree(os.path.join(old_dir, 'FP16'),
-                            os.path.join(new_dir, 'FP16'), dirs_exist_ok=True)
+            src_dir = os.path.join(model_dir, 'FP32/')
+            dst_dir = os.path.join(src_dir, str(self.__batch))
+            copy_converted_model_files(src_dir, dst_dir)
         except shutil.Error:
-            self.__my_log.info(f'Cannot move FP16 model to folder {new_dir}')
-
-        try:
-            shutil.copytree(os.path.join(old_dir, 'FP32'),
-                            os.path.join(new_dir, 'FP32'), dirs_exist_ok=True)
-        except shutil.Error:
-            self.__my_log.info(f'Cannot move FP32 model to folder {new_dir}')
+            self.__my_log.info(f'Cannot move FP32 model to folder {dst_dir}')
 
     @staticmethod
     def __add_output_dir_for_cmd_line(command_line, output_dir, batch):

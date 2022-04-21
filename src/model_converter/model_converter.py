@@ -21,7 +21,7 @@ def build_argparser():
     )
     parser.add_argument(
         '-z', '--zoo_config_dir',
-        help='Directory where public models config plased',
+        help='Directory where public model configurations are placed',
         default=''
     )
     config = parser.parse_args()
