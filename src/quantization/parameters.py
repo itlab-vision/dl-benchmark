@@ -4,7 +4,8 @@ from utils import get_param_from_data
 class all_parameters:
     def __init__(self, data):
         GLOBAL_PARAMS_TAG = 'global_pot_parameters'
-        PARAMETERS_TAG = 'parameters'
+        # PARAMETERS_TAG = 'parameters'
+        PARAMETERS_TAG = 'quantization_config'
 
         self.global_pot_parameters = pot_parameters(
             get_param_from_data(data, GLOBAL_PARAMS_TAG)
