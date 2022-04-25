@@ -29,13 +29,13 @@ class BenchmarkConfigWidget(QWidget):
         self.__set_connections()
 
     def __set_connections(self):
-        self.__buttons.get_buttons()['Add information'].clicked().connect(self.showAddTestDialogSignal.emit)
-        self.__buttons.get_buttons()['Delete information'].clicked().connect(self.__click_delete_button)
-        self.__buttons.get_buttons()['Change information'].clicked().connect(self.showChangeTestDialogSignal.emit)
-        self.__buttons.get_buttons()['Copy information'].clicked().connect(self.__copy_tests)
-        self.__buttons.get_buttons()['Load table'].clicked().connect(self.__show_dialog_parser_config)
-        self.__buttons.get_buttons()['Save table'].clicked().connect(self.__show_dialog_create_config)
-        self.__buttons.get_buttons()['Clear table'].clicked().connect(self.clearSignal.emit)
+        self.__buttons.get_buttons()['Add information'].clicked.connect(self.showAddTestDialogSignal.emit)
+        self.__buttons.get_buttons()['Delete information'].clicked.connect(self.__click_delete_button)
+        self.__buttons.get_buttons()['Change information'].clicked.connect(self.showChangeTestDialogSignal.emit)
+        self.__buttons.get_buttons()['Copy information'].clicked.connect(self.__copy_tests)
+        self.__buttons.get_buttons()['Load table'].clicked.connect(self.__show_dialog_parser_config)
+        self.__buttons.get_buttons()['Save table'].clicked.connect(self.__show_dialog_create_config)
+        self.__buttons.get_buttons()['Clear table'].clicked.connect(self.clearSignal.emit)
 
     def show_add_test_dialog(self, models, data):
         if not models:
