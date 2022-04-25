@@ -13,6 +13,8 @@ def build_parser():
     parser.add_argument('-i', '--image_path', required=True, type=str, help='Path to container image on the FTP server.')
     parser.add_argument('-d', '--upload_dir', required=True, type=str, help='Path to the directory on the target machine where to upload the container image.')
     parser.add_argument('-n', '--container_name', required=True, type=str, help='Name of the docker container.')
+    parser.add_argument('-dp', '--dataset_path', required=True, type=str,
+                        help='Path to directory with datasets to mount into docker container.')
     return parser.parse_args()
 
 
@@ -65,7 +67,8 @@ def main():
     os.system('docker load --input {}'.format(file_path))
 
     log.info('Docker run image')
-    os.system('docker run --privileged -d -t --name {} –v /dev:/dev –network=host {}'.format(args.container_name, image_name.split('.')[0]))
+    os.system('docker run --privileged -d -it --name {} –v /dev:/dev -v {}:/mnt/datasets –network=host {}'.format(
+        args.container_name, args.dataset_path, image_name.split('.')[0]))
 
 
 if __name__ == '__main__':
