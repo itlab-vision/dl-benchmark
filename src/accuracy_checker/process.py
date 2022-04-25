@@ -8,7 +8,7 @@ class process:
         self.__test = test
         self.__output = None
         self.__supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
-        self.__csv_name = "result.csv"
+        self.__csv_name = executor.get_csv_file()
 
     def __fill_command_line(self):
         command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} \
@@ -49,10 +49,11 @@ class process:
         self.__log.info('Start accuracy check for {0} test: {1}'.format(idx, self.__test.model.name))
         self.__executor.set_target_framework(self.__test.framework)
         command_line = self.__executor.prepare_command_line(self.__test, command_line)
-        self.__output = self.__executor.execute_process(command_line, self.__csv_name)
+        self.__output = self.__executor.execute_process(command_line)
         if type(self.__output) is not list:
             self.__output = self.__output.decode("utf-8").split('\n')
         print(self.__output)
 
     def get_result_parameters(self):
-        return result.parser_test_result(self.__output, self.__test, self.__csv_name)
+        result_file = self.__executor.get_path_to_result_file()
+        return result.parser_test_result(self.__output, self.__test, result_file)
