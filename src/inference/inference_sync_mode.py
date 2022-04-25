@@ -4,7 +4,7 @@ import argparse
 import logging as log
 import postprocessing_data as pp
 from io_adapter import io_adapter
-from transformer import transformer
+from transformer import openvino_transformer
 from io_model_wrapper import openvino_io_model_wrapper
 
 
@@ -20,8 +20,8 @@ def build_argparser():
         required=True, type=str, nargs='+', dest='input'
     )
     parser.add_argument('-b', '--batch_size', help='Size of the processed pack', default=1, type=int, dest='batch_size')
-    parser.add_argument('-l', '--extension', help='Path to MKLDNN (CPU, MYRIAD) custom layers', type=str, default=None, dest='extension')
-    parser.add_argument('-c', '--cldnn_config', help='Path to CLDNN config.', type=str, default=None, dest='cldnn_config')
+    parser.add_argument('-l', '--extension', help='Path to INTEL_CPU (CPU, MYRIAD) custom layers', type=str, default=None, dest='extension')
+    parser.add_argument('-c', '--intel_gpu_config', help='Path to INTEL_GPU config.', type=str, default=None, dest='intel_gpu_config')
     parser.add_argument(
         '-d', '--device',
         help='Specify the target'
@@ -33,7 +33,7 @@ def build_argparser():
         default='CPU', type=str, dest='device'
     )
     parser.add_argument('--default_device', help='Default device for heterogeneous inference', choices=['CPU', 'GPU', 'MYRIAD', 'FGPA'], default=None, type=str, dest='default_device')
-    parser.add_argument('--dump', help='Dump information about the model exectution', type=bool, default=False, dest='dump')
+    parser.add_argument('--dump', help='Dump information about the model execution', type=bool, default=False, dest='dump')
     parser.add_argument(
         '-p', '--priority',
         help='Priority for multi-device inference in descending order.'
@@ -71,8 +71,8 @@ def build_argparser():
     return parser
 
 
-def infer_sync(exec_net, number_iter, get_slice):
-    request = exec_net.requests[0]
+def infer_sync(compiled_model, number_iter, get_slice):
+    request = compiled_model.create_infer_request()
     result = None
     time_infer = []
     for i in range(number_iter):
@@ -80,7 +80,7 @@ def infer_sync(exec_net, number_iter, get_slice):
         request.infer()
         time_infer.append(request.latency/1000)
     if number_iter == 1:
-        result = request.outputs
+        result = utils.get_request_result(request)
     return result, time_infer
 
 
@@ -112,11 +112,11 @@ def main():
     args = build_argparser().parse_args()
     try:
         model_wrapper = openvino_io_model_wrapper()
-        data_transformer = transformer()
+        data_transformer = openvino_transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
-        iecore = utils.create_ie_core(
+        core = utils.create_core(
             args.extension,
-            args.cldnn_config,
+            args.intel_gpu_config,
             args.device,
             args.nthreads,
             None,
@@ -124,27 +124,27 @@ def main():
             'sync',
             log
         )
-        net = utils.create_network(iecore, args.model_xml, args.model_bin, log)
-        utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
-        input_shapes = utils.get_input_shape(model_wrapper, net)
+        model = utils.create_model(core, args.model_xml, args.model_bin, log)
+        utils.configure_model(core, model, args.device, args.default_device, args.affinity)
+        input_shapes = utils.get_input_shape(model_wrapper, model)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
-        utils.reshape_input(net, args.batch_size)
+        utils.reshape_input(model, args.batch_size)
         log.info('Prepare input data')
-        io.prepare_input(net, args.input)
+        io.prepare_input(model, args.input)
         log.info('Create executable network')
-        exec_net = utils.load_network(iecore, net, args.device, args.priority, 1)
+        compiled_model = utils.compile_model(core, model, args.device, args.priority)
         log.info('Starting inference ({} iterations) on {}'.format(args.number_iter, args.device))
-        result, time = infer_sync(exec_net, args.number_iter, io.get_slice_input)
+        result, time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
         if not args.raw_output:
             io.process_output(result, log)
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
-        del net
-        del exec_net
-        del iecore
+        del model
+        del compiled_model
+        del core
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
