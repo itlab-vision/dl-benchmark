@@ -8,11 +8,33 @@ class transformer:
     def get_shape_in_chw_order(self, shape):
         return shape[1:]
 
-    def transform_images(self, images):
-        b, c, h, w = images.shape
-        transformed_images = np.zeros(shape=(b, c, h, w))
+    def transform_images(self, images, shape, element_type):
+        b = shape[0]
+        transformed_images = np.zeros(shape=shape, dtype=element_type)
         for i in range(b):
             transformed_images[i] = self._transform(images[i])
+        return transformed_images
+
+
+class openvino_transformer(transformer):
+    def _transform(self, image, shape):
+        if self.__is_nhwc(shape):
+            return image
+        return image.transpose(2, 0, 1)
+
+    def __is_nhwc(self, shape):
+        return (len(shape) in [3, 4]) and (shape[len(shape) - 1] in [1, 3])
+
+    def get_shape_in_chw_order(self, shape):
+        if self.__is_nhwc(shape):
+            return shape[3], shape[1], shape[2]
+        return shape[1], shape[2], shape[3]
+
+    def transform_images(self, images, shape, element_type):
+        b = shape[0]
+        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        for i in range(b):
+            transformed_images[i] = self._transform(images[i], shape)
         return transformed_images
 
 
@@ -38,6 +60,7 @@ class intelcaffe_transformer(transformer):
 
     def _transform(self, image):
         transformed_image = np.copy(image)
+        transformed_image = transformed_image.transpose(1, 2, 0)
         self.__set_channel_swap(transformed_image)
         self.__set_mean(transformed_image)
         self.__set_input_scale(transformed_image)
@@ -75,10 +98,9 @@ class tensorflow_transformer(transformer):
         self.__set_input_scale(transformed_image)
         return transformed_image
 
-    def transform_images(self, images):
-        images = images.transpose(0, 2, 3, 1)
-        b, h, w, c = images.shape
-        transformed_images = np.zeros(shape=(b, h, w, c))
+    def transform_images(self, images, shape, element_type):
+        b = shape[0]
+        transformed_images = np.zeros(shape=shape, dtype=element_type)
         for i in range(b):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
