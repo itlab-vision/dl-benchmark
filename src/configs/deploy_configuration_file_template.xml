@@ -6,5 +6,6 @@
         <Password></Password>
         <OS></OS>
         <DownloadFolder></DownloadFolder>
+        <DatasetFolder></DatasetFolder>
     </Computer>
 </Computers>
