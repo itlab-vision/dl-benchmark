@@ -58,6 +58,7 @@ def parse_machine_list(path_to_config):
     CONFIG_PASSWORD_TAG = 'Password'
     CONFIG_OS_TAG = 'OS'
     CONFIG_DOWNLOAD_FOLDER_TAG = 'DownloadFolder'
+    CONFIG_DATASET_FOLDER_TAG = 'DatasetFolder'
 
     parsed_config = minidom.parse(path_to_config)
     machine_list = []
@@ -70,22 +71,24 @@ def parse_machine_list(path_to_config):
         machine_list[idx]['password'] = computer.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data
         machine_list[idx]['os_type'] = computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
         machine_list[idx]['download_folder'] = computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
+        machine_list[idx]['dataset_folder'] = computer.getElementsByTagName(CONFIG_DATASET_FOLDER_TAG)[0].firstChild.data
     return machine_list
 
 
-def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder, container_name, log):
+def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder, container_name, dataset_path, log):
     executor = remote_executor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
     joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
-    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} -n {} > log.txt'.format(
+    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} -n {} -dp {} > log.txt'.format(
         project_folder,
         server_ip,
         server_login,
         server_psw,
         image_path,
         download_dir,
-        container_name
+        container_name,
+        dataset_path
     ))
     executor.execute_command(command)
     return executor
@@ -130,6 +133,7 @@ def main():
             machine['download_folder'],
             args.project_folder,
             args.container_name,
+            machine['dataset_folder'],
             log
         ))
 
