@@ -5,10 +5,10 @@ import numpy as np
 import logging as log
 import postprocessing_data as pp
 from time import time
-from copy import copy
 from io_adapter import io_adapter
-from transformer import transformer
+from transformer import openvino_transformer
 from io_model_wrapper import openvino_io_model_wrapper
+from openvino.runtime import AsyncInferQueue  # pylint: disable=E0401
 
 
 def build_parser():
@@ -29,8 +29,8 @@ def build_parser():
         default=None, type=int, dest='requests'
     )
     parser.add_argument('-b', '--batch_size', help='Size of the processed pack', default=1, type=int, dest='batch_size')
-    parser.add_argument('-l', '--extension', help='Path to MKLDNN (CPU, MYRIAD) custom layers', type=str, default=None, dest='extension')
-    parser.add_argument('-c', '--cldnn_config', help='Path to CLDNN config.', type=str, default=None, dest='cldnn_config')
+    parser.add_argument('-l', '--extension', help='Path to INTEL_CPU (CPU, MYRIAD) custom layers', type=str, default=None, dest='extension')
+    parser.add_argument('-c', '--intel_gpu_config', help='Path to INTEL_GPU config.', type=str, default=None, dest='intel_gpu_config')
     parser.add_argument(
         '-d', '--device',
         help='Specify the target'
@@ -86,30 +86,27 @@ def build_parser():
     return parser
 
 
-def infer_async(exec_net, number_iter, get_slice):
+def infer_async(compiled_model, number_iter, num_request, get_slice):
     result = None
-    requests = exec_net.requests
-    for i in range(len(requests)):
-        utils.set_input_to_blobs(requests[i], get_slice(i))
-    iteration = len(requests)
+    infer_queue = AsyncInferQueue(compiled_model, num_request)
+    iteration = 0
     inference_time = time()
-    for request in requests:
-        request.async_infer()
-    while iteration < number_iter:
-        idle_id = exec_net.get_idle_request_id()
+    while iteration < max(number_iter, num_request):
+        idle_id = infer_queue.get_idle_request_id()
         if idle_id < 0:
-            exec_net.wait(num_requests=1)
-            idle_id = exec_net.get_idle_request_id()
-        utils.set_input_to_blobs(requests[idle_id], get_slice(iteration))
-        requests[idle_id].async_infer()
+            infer_queue.wait(num_requests=1)
+            idle_id = infer_queue.get_idle_request_id()
+        utils.set_input_to_blobs(infer_queue[idle_id], get_slice(iteration))
+        infer_queue.start_async()
         iteration += 1
-    exec_net.wait()
+    infer_queue.wait_all()
     inference_time = time() - inference_time
     if number_iter == 1:
-        list = [copy(request.outputs) for request in requests]
-        result = dict.fromkeys(list[0].keys(), None)
+        request_results = [utils.get_request_result(request) for request in infer_queue]
+        output_names = request_results[0].keys()
+        result = dict.fromkeys(output_names, None)
         for key in result:
-            result[key] = np.concatenate([array[key] for array in list], axis=0)
+            result[key] = np.concatenate([result[key] for result in request_results], axis=0)
     return result, inference_time
 
 
@@ -137,11 +134,11 @@ def main():
     args = build_parser().parse_args()
     try:
         model_wrapper = openvino_io_model_wrapper()
-        data_transformer = transformer()
+        data_transformer = openvino_transformer()
         io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
-        iecore = utils.create_ie_core(
+        core = utils.create_core(
             args.extension,
-            args.cldnn_config,
+            args.intel_gpu_config,
             args.device,
             args.nthreads,
             args.nstreams,
@@ -149,27 +146,29 @@ def main():
             'async',
             log
         )
-        net = utils.create_network(iecore, args.model_xml, args.model_bin, log)
-        utils.configure_network(iecore, net, args.device, args.default_device, args.affinity)
-        input_shapes = utils.get_input_shape(model_wrapper, net)
+        model = utils.create_model(core, args.model_xml, args.model_bin, log)
+        utils.configure_model(core, model, args.device, args.default_device, args.affinity)
+        input_shapes = utils.get_input_shape(model_wrapper, model)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
-        utils.reshape_input(net, args.batch_size)
+        utils.reshape_input(model, args.batch_size)
         log.info('Prepare input data')
-        io.prepare_input(net, args.input)
+        io.prepare_input(model, args.input)
         log.info('Create executable network')
-        exec_net = utils.load_network(iecore, net, args.device, args.priority, args.requests)
-        log.info('Starting inference ({} iterations) with {} requests on {}'.format(args.number_iter, len(exec_net.requests), args.device))
-        result, time = infer_async(exec_net, args.number_iter, io.get_slice_input)
+        compiled_model = utils.compile_model(core, model, args.device, args.priority)
+        log.info('Starting inference ({} iterations) with {} requests on {}'.format(args.number_iter,
+                                                                                    args.requests,
+                                                                                    args.device))
+        result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
         if not args.raw_output:
             io.process_output(result, log)
             result_output(average_time, fps, log)
         else:
             raw_result_output(average_time, fps)
-        del net
-        del exec_net
-        del iecore
+        del model
+        del compiled_model
+        del core
     except Exception as ex:
         print('ERROR! : {0}'.format(str(ex)))
         sys.exit(1)
