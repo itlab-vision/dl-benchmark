@@ -16,7 +16,7 @@ class QuantizationConfigTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked().connect(self.clicked_table)
+        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
 
     def update(self, q_models):
         self.clear()

@@ -49,8 +49,8 @@ class QuantizationConfigDialog(QDialog):
         row_idx = max(independent_idx, dependent_idx)
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
-        ok_btn.clicked().connect(self.accept)
-        cancel_btn.clicked().connect(self.reject)
+        ok_btn.clicked.connect(self.accept)  # pylint: disable=E1120
+        cancel_btn.clicked.connect(self.reject)  # pylint: disable=E1120
         layout.addWidget(ok_btn, row_idx, 0)
         layout.addWidget(cancel_btn, row_idx, 1)
         self.setLayout(layout)
