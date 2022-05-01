@@ -1,6 +1,7 @@
 import os
 import shutil
 
+
 class process:
     def __init__(self, parameters, executor, log):
         self.__my_log = log
