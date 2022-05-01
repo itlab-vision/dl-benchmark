@@ -1,6 +1,6 @@
 from .table import Table  # pylint: disable=E0402
 # pylint: disable-next=E0401
-from tags import HEADER_ALL_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, \
+from tags import CONFIG_INDEPENDENT_PARAMS_TAGS, HEADER_ALL_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS, \
     HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS
 
 
@@ -8,7 +8,7 @@ class QuantizationConfigTable(Table):
     def __init__(self, parent):
         super().__init__(parent)
         self.__headers = HEADER_ALL_PARAMS_TAGS
-        self.__independent_params_count = len(HEADER_INDEPENDENT_PARAMS_TAGS)
+        self.__independent_params_count = len(CONFIG_INDEPENDENT_PARAMS_TAGS)
         self._count_col = len(self.__headers)
         self._count_row = 100
         self.setColumnCount(self._count_col)

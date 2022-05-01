@@ -1,7 +1,8 @@
+from pyexpat import model
 import re
 from model.quantization_config.compression_parameters import CompressionParameters  # pylint: disable=E0401
 # pylint: disable-next=E0401
-from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, \
+from tags import CONFIG_MODEL_PARAMS_MODEL_TAGS, HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, \
     HEADER_MODEL_PARAMS_ENGINE_TAGS, CONFIG_MODEL_TAG, CONFIG_ENGINE_TAG, \
     CONFIG_COMPRESSION_TAG, CONFIG_POT_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG, \
     CONFIG_MODEL_PARAMETERS_TAG, CONFIG_MODEL_NAME_TAG, CONFIG_WEIGHTS_TAG, \
@@ -13,15 +14,15 @@ class QModel:
     def __init__(self, pot_params, model_params, dependent_params):
         self.__pot_params = [*pot_params]
 
-        COUNT_OF_CONFIG_MODEL_PARAMS = 3
-        COUNt_OF_CONFIG_ENGINE_PARAMS = 5
+        COUNT_OF_CONFIG_MODEL_PARAMS = len(HEADER_MODEL_PARAMS_MODEL_TAGS)
+        COUNt_OF_CONFIG_ENGINE_PARAMS = len(HEADER_MODEL_PARAMS_ENGINE_TAGS)
 
         idx_0 = 0
         idx_1 = idx_0 + COUNT_OF_CONFIG_MODEL_PARAMS
         idx_2 = idx_1 + COUNt_OF_CONFIG_ENGINE_PARAMS
 
-        self.__model_params = [
-            model_params[:idx_1],       # config_model_params (model_name, model (.xml), weights (.bin))
+        model_params_list = [
+            model_params[:idx_1],       # config_model_params (model_name, model)
             model_params[idx_1:idx_2],  # config_engine_params
             model_params[idx_2:],       # config_common_compression_params (target_device, algorithm, preset,
                                         #   stat_subset_size, weights, activations)
@@ -55,8 +56,27 @@ class QModel:
             pot_params_dict[param_name] = self.__pot_params[i]
 
         model_params_dict = {}
-        for i, param_name in enumerate(HEADER_MODEL_PARAMS_MODEL_TAGS):
-            model_params_dict[param_name] = self.__model_params[0][i]
+        model_params_dict[CONFIG_MODEL_NAME_TAG] = model_params_list[0][0]
+        parent_model_params_list = model_params_list[0][1].split(';')
+        self.__parent_model = {
+            'task': parent_model_params_list[0],
+            'name': parent_model_params_list[1],
+            'precision': parent_model_params_list[2],
+            'framework': parent_model_params_list[3],
+            'model_path': parent_model_params_list[4],
+            'weights_path': parent_model_params_list[5],
+        }
+        model_params_dict[CONFIG_MODEL_TAG] = self.__parent_model['model_path']
+        model_params_dict[CONFIG_WEIGHTS_TAG] = self.__parent_model['weights_path']
+
+        self.__model_params = [
+            [model_params_dict[tag] for tag in CONFIG_MODEL_PARAMS_MODEL_TAGS],
+            model_params_list[1],
+            model_params_list[2]
+        ]
+
+        # for i, param_name in enumerate(HEADER_MODEL_PARAMS_MODEL_TAGS):
+        #     model_params_dict[param_name] = self.__model_params[0][i]
 
         engine_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_ENGINE_TAGS):
@@ -135,8 +155,10 @@ class QModel:
 
     def __create_dom_model_params_engine(self, file):
         DOM_ENGINE_TAG = file.createElement(CONFIG_ENGINE_TAG)
-        self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_STAT_REQUESTS_NUMBER_TAG, self.__model_params[1][0])
-        self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, self.__model_params[1][1])
+        if self.__model_params[1][0] != None and self.__model_params[1][0] != '':
+            self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_STAT_REQUESTS_NUMBER_TAG, self.__model_params[1][0])
+        if self.__model_params[1][1] != None and self.__model_params[1][1] != '':
+            self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, self.__model_params[1][1])
         if (self.__quantization_method == 'AccuracyAwareQuantization'):
             self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
         else:
@@ -157,7 +179,7 @@ class QModel:
     def __create_dom_pot_params(self, file):
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
-            if self.__pot_params[i] != '':
+            if self.__pot_params[i] != '' and self.__pot_params[i] != None:
                 self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
         return DOM_POT_PARAMETERS_TAG
 
@@ -175,7 +197,11 @@ class QModel:
         dom_pot_params = dom.getElementsByTagName(CONFIG_POT_PARAMETERS_TAG)[0]
         pot_params = QModel.parse_pot_params(dom_pot_params)
         dom_model_params = dom.getElementsByTagName(CONFIG_MODEL_PARAMETERS_TAG)[0]
-        m_params = QModel.parse_model_params(dom_model_params.getElementsByTagName(CONFIG_MODEL_TAG)[0])
+        m_params_dom = QModel.parse_model_params(dom_model_params.getElementsByTagName(CONFIG_MODEL_TAG)[0])
+        m_params = [
+            m_params_dom[0],
+            '-;-;INT8;OpenVINO_DLDT;' + m_params_dom[1] + ';' + m_params_dom[2]
+        ]
         e_params = QModel.parse_engine_params(dom_model_params.getElementsByTagName(CONFIG_ENGINE_TAG)[0])
         dependent_params, common_c_params = QModel.parse_compression_params(
             dom_model_params.getElementsByTagName(CONFIG_COMPRESSION_TAG)[0]
@@ -193,7 +219,7 @@ class QModel:
     @staticmethod
     def parse_model_params(dom):
         model_params = []
-        for tag in HEADER_MODEL_PARAMS_MODEL_TAGS:
+        for tag in CONFIG_MODEL_PARAMS_MODEL_TAGS:
             model_params.append(QModel.get_element_by_tag(dom, tag))
         return model_params
 

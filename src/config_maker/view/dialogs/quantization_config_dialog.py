@@ -94,7 +94,7 @@ class QuantizationConfigDialog(QDialog):
             QMessageBox.warning(
                 self,
                 'Warning!',
-                'Not all needed lines (ModelName, Model, Weights, DataSource or Config) are filled!'
+                'Not all needed lines (OutputDir, ModelName, Model, Weights, DataSource or Config) are filled!'
             )
 
 
@@ -174,12 +174,12 @@ class IndependentParameters(ParametersDialog):
         pot_start_idx = len(['QuantizationMethodIndependent:'])
         pot_len = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
 
-        self._set_qcombobox_edit(pot_start_idx + 1, (str(False), str(True)))
-        self._set_qcombobox_edit(pot_start_idx + 3, (str(True), str(False)))
-        self._set_qcombobox_edit(pot_start_idx + 4, ('INFO', 'CRITICAL', 'ERROR', 'WARNING', 'DEBUG'))
-        self._set_qcombobox_edit(pot_start_idx + 5, (str(False), str(True)))
-        self._set_qcombobox_edit(pot_start_idx + 6, (str(False), str(True)))
-        self._set_qcombobox_edit(pot_start_idx + 7, (str(False), str(True)))
+        self._set_qcombobox_edit(pot_start_idx + 1, ('', str(False), str(True)))
+        self._set_qcombobox_edit(pot_start_idx + 3, ('', str(True), str(False)))
+        self._set_qcombobox_edit(pot_start_idx + 4, ('', 'INFO', 'CRITICAL', 'ERROR', 'WARNING', 'DEBUG'))
+        self._set_qcombobox_edit(pot_start_idx + 5, ('', str(False), str(True)))
+        self._set_qcombobox_edit(pot_start_idx + 6, ('', str(False), str(True)))
+        self._set_qcombobox_edit(pot_start_idx + 7, ('', str(False), str(True)))
 
         for id in range(pot_start_idx, pot_len):
             if id not in self._ignored_idx:
@@ -191,6 +191,8 @@ class IndependentParameters(ParametersDialog):
             ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
+        self._set_qcombobox_edit(model_start_idx + 1, self.__models)
+        self._edits[model_start_idx + 1].setFixedWidth(300)
 
         for id in range(model_start_idx, model_len):
             if id not in self._ignored_idx:
@@ -212,11 +214,12 @@ class IndependentParameters(ParametersDialog):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
 
+        '''
         default_values = [str(8), str(8), '', '', '']
-
         for i, id in enumerate(range(engine_start_idx, engine_len)):
             if id not in self._ignored_idx:
                 self._edits[id].setText(default_values[i])
+        '''
 
     def switch_engine_type(self, q_type):
         ac_config_idx = 2 + len(
@@ -285,37 +288,41 @@ class IndependentParameters(ParametersDialog):
         self._set_qcombobox_edit(start_idx + 0, ('ANY', 'CPU', 'GPU'))
         self._set_qcombobox_edit(start_idx + 1, self.__q_methods, self.__q_method_choice)
         self._set_qcombobox_edit(start_idx + 2, ('mixed', 'performance', 'accuracy'))
-        self._set_qcombobox_edit(start_idx + 5, ('symmetric', 'asymmetric'))
-        self._set_qcombobox_edit(start_idx + 6, ('perchannel', 'pertensor'))
-        self._set_qcombobox_edit(start_idx + 9, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
-        self._set_qcombobox_edit(start_idx + 12, ('symmetric', 'asymmetric'))
-        self._set_qcombobox_edit(start_idx + 13, ('perchannel', 'pertensor'))
-        self._set_qcombobox_edit(start_idx + 14, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 5, ('', 'symmetric', 'asymmetric'))
+        self._set_qcombobox_edit(start_idx + 6, ('', 'perchannel', 'pertensor'))
+        self._set_qcombobox_edit(start_idx + 9, ('', 'quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 12, ('', 'symmetric', 'asymmetric'))
+        self._set_qcombobox_edit(start_idx + 13, ('', 'perchannel', 'pertensor'))
+        self._set_qcombobox_edit(start_idx + 14, ('', 'quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
         self._set_qcombobox_edit(
             start_idx + 16,
-            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
+            ('', 'mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
         )
-        self._set_qcombobox_edit(start_idx + 17, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 17, ('', 'quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
         self._set_qcombobox_edit(
             start_idx + 20,
-            ('mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
+            ('', 'mean', 'max', 'min', 'median', 'mean_no_outliers', 'median_no_outliers', 'hl_estimator')
         )
-        self._set_qcombobox_edit(start_idx + 21, ('quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
+        self._set_qcombobox_edit(start_idx + 21, ('', 'quantile', 'min', 'max', 'abs_max', 'abs_quantile'))
 
         stop_iter_idx = len(self._tags)
         start_iter_idx = stop_iter_idx - len(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
         for id in range(start_iter_idx, stop_iter_idx):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
+
+        self._edits[start_iter_idx + 3].setText(str(100))
+
+        '''
         default_values = [
             'ANY', 'DefaultQuantization', 'mixed', str(100), str(8), 'symmetric',
             'perchannel', str(-127), str(127), 'quantile', str(0.0001), str(8), 'symmetric', 'perchannel',
             'quantile', str(0), 'mean', 'quantile', str(0.0001), str(6), 'mean', 'quantile', str(0.0001)
         ]
-
         for i, id in enumerate(range(start_iter_idx, stop_iter_idx)):
             if id not in self._ignored_idx:
                 self._edits[id].setText(default_values[i])
+        '''
 
     def get_values(self):
         pot_values = []
@@ -340,6 +347,11 @@ class IndependentParameters(ParametersDialog):
                 self._edits[id].setCurrentText(table.item(row, column).text())
 
     def check(self):
+        # check <OutputDir>
+        start_idx = len(['QuantizationMethodIndependent:'])
+        if (self._edits[start_idx + 2].text() == ''):
+            return False
+
         # check <Model.ModelName>, <Model.Model>, <Model.Weights>
         model_start_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
         model_len = len(

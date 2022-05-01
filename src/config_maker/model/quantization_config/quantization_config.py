@@ -56,7 +56,7 @@ class QuantizationConfig:
             DOM_Q_CONFIG_TAG.appendChild(DOM_CONFIG_ID)
             DOM_Q_CONFIG_TAG.appendChild(DOM_POT_PARAMETERS)
             DOM_Q_CONFIG_TAG.appendChild(DOM_MODEL_PARAMETERS)
-        xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
+        xml_str = file.toprettyxml(indent='    ', encoding='utf-8')
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
         return os.path.exists(path_to_config)
