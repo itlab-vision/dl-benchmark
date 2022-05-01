@@ -1,3 +1,6 @@
+import os
+import shutil
+
 class process:
     def __init__(self, parameters, executor, log):
         self.__my_log = log
@@ -43,6 +46,8 @@ class process:
 
     @staticmethod
     def __add_output_dir_for_cmd_line(command_line, output_dir):
+        if not os.path.isdir(output_dir):
+            os.mkdir(output_dir)
         return '{0} --output-dir "{1}"'.format(command_line, output_dir)
 
     @staticmethod
@@ -135,6 +140,18 @@ class process:
         command_line = '{0} {1} {2}'.format(cmd_line_base, config_params, common_params)
         return command_line
 
+    def __fix_output_dir(self):
+        dir_dst = self.__my_parameters.output_dir
+        dir_src = dir_dst
+        if not self.__my_parameters.direct_dump:
+            curr_dir = os.listdir(dir_src)[0]                        # example: AlexNet_DefaultQuantization
+            curr_version = os.listdir(dir_src + '/' + curr_dir)[0]   # example: 2022-05-01_14-48-47
+            dir_src = dir_src + "/" + curr_dir + '/' + curr_version
+        dir_src = dir_src + '/optimized/'
+        files_list = os.listdir(dir_src)
+        for f in files_list:
+            shutil.move(dir_src + f, dir_dst)
+
     def execute(self):
         command_line = self._fill_command_line()
         if command_line == '':
@@ -143,6 +160,4 @@ class process:
         self.__my_output = self.__my_executor.execute_process(command_line)
         if type(self.__my_output) is not list:
             self.__my_log.info(self.__my_output)
-        # else:
-        #     for out in self.__my_output:
-        #         self.__my_log.info(out)
+        self.__fix_output_dir()
