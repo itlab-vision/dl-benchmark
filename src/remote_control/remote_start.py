@@ -88,8 +88,8 @@ def main():
         args.server_psw
     )
     ftp_connection.cwd(args.ftp_dir)
-    table_format.join_tables(ftp_connection, args.benchmark_result_table)
-    table_format.join_tables(ftp_connection, args.accuracy_checker_result_table)
+    table_format.join_tables(ftp_connection, "benchmark", args.benchmark_result_table)
+    table_format.join_tables(ftp_connection, "accuracy_checker", args.accuracy_checker_result_table)
     ftp_connection.close()
 
 
