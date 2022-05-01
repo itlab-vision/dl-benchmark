@@ -18,12 +18,15 @@ class table_handler:
         self.__my_current_line += 1
 
 
-def join_tables(ftp_server, table_name):
+def join_tables(ftp_server, target, table_name):
+    result_tables = []
     tables = []
     ftp_server.retrlines('NLST', tables.append)
-    result_tables = [table_handler() for i in range(len(tables))]
     for idx in range(len(tables)):
-        ftp_server.retrlines('RETR ' + tables[idx], result_tables[idx].set_line)
+        if target in tables[idx]:
+            result_table = table_handler()
+            ftp_server.retrlines('RETR ' + tables[idx], result_table.set_line)
+            result_tables.append(result_table)
 
     result_table = open(table_name, 'w')
     for idx in range(len(result_tables)):

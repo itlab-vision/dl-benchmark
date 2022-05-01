@@ -33,8 +33,8 @@ class BenchmarkConfigDialog(QDialog):
         self.__framework_dependent_parameters['OpenVINO DLDT'].show()
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
-        ok_btn.clicked().connect(self.accept)
-        cancel_btn.clicked().connect(self.reject)
+        ok_btn.clicked.connect(self.accept)  # pylint: disable=E1120
+        cancel_btn.clicked.connect(self.reject)  # pylint: disable=E1120
         layout.addWidget(ok_btn, max(*dict_framework_idx.values()), 0)
         layout.addWidget(cancel_btn, max(*dict_framework_idx.values()), 1)
         self.setLayout(layout)
