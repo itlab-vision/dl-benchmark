@@ -185,14 +185,14 @@ class CompressionParameters:
                     independent_params.append(CompressionParameters.get_element_by_tag(activations_max_params, param_name))
 
             else:   # activations_re == []
-                independent_params.append(None) # CONFIG_ACTIVATIONS_PRESET_TAG
+                independent_params.append(None)  # CONFIG_ACTIVATIONS_PRESET_TAG
                 for param_name in activations_min_params_tags + activations_max_params_tags:
                     independent_params.append(None)
 
         else:   # activations_params == []
             for param_name in activations_params_tags:
                 independent_params.append(None)
-            independent_params.append(None) # CONFIG_ACTIVATIONS_PRESET_TAG
+            independent_params.append(None)  # CONFIG_ACTIVATIONS_PRESET_TAG
             for param_name in activations_min_params_tags + activations_max_params_tags:
                 independent_params.append(None)
 
@@ -202,7 +202,7 @@ class CompressionParameters:
         DOM_COMPRESSION_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_TAG)
         target_device = params[0]
-        if target_device != None and target_device != '':
+        if target_device is not None and target_device != '':
             self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_TARGET_DEVICE_TAG, target_device)
         DOM_ALGORITHMS_TAG = self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_ALGORITHMS_TAG)
         self.create_dom_node(file, DOM_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG, params[1])
@@ -218,12 +218,12 @@ class CompressionParameters:
         DOM_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
 
-        if params[2] != None and params[2] != '':
+        if params[2] is not None and params[2] != '':
             self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_PRESET_TAG, params[2])
-        if params[3] != None and params[3] != '':
+        if params[3] is not None and params[3] != '':
             self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, params[3])
 
-        if any(p != None and p != '' for p in params[4:11]):
+        if any(p is not None and p != '' for p in params[4:11]):
             DOM_WEIGHTS_TAG = self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_WEIGHTS_TAG)
 
             self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_BITS_TAG, params[4])
@@ -232,50 +232,50 @@ class CompressionParameters:
             self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, params[7])
             self.create_dom_node(file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, params[8])
 
-            if any(p != None and p != '' for p in params[9:11]):
+            if any(p is not None and p != '' for p in params[9:11]):
                 DOM_WEIGHTS_RE_TAG = self.create_dom_node(
                     file, DOM_WEIGHTS_TAG, CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG)
                 DOM_WEIGHTS_MAX_TAG = self.create_dom_node(file, DOM_WEIGHTS_RE_TAG, CONFIG_WEIGHTS_MAX_TAG)
                 self.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_TYPE_TAG, params[9])
                 self.create_dom_node(file, DOM_WEIGHTS_MAX_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, params[10])
 
-        if any(p != None and p != '' for p in params[11:23]):
+        if any(p is not None and p != '' for p in params[11:23]):
             DOM_ACTIVATIONS_TAG = self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_ACTIVATIONS_TAG)
             self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_BITS_TAG, params[11])
             self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, params[12])
             self.create_dom_node(file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, params[13])
 
-            if any(p != None and p != '' for p in params[14:23]):
+            if any(p is not None and p != '' for p in params[14:23]):
                 DOM_ACTIVATIONS_RE_TAG = self.create_dom_node(
                     file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG
                 )
                 self.create_dom_node(file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, params[14])
 
-                if any(p != None and p != '' for p in params[15:19]):
+                if any(p is not None and p != '' for p in params[15:19]):
                     DOM_ACTIVATIONS_MIN_TAG = self.create_dom_node(
                         file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MIN_TAG
                     )
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-                        CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, params[15])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-                        CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, params[16])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-                        CONFIG_ACTIVATIONS_MIN_TYPE_TAG, params[17])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MIN_TAG,
-                        CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, params[18])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, params[15])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, params[16])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG, params[17])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, params[18])
 
-                if any(p != None and p != '' for p in params[19:23]):
+                if any(p is not None and p != '' for p in params[19:23]):
                     DOM_ACTIVATIONS_MAX_TAG = self.create_dom_node(
                         file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MAX_TAG
                     )
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-                        CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, params[19])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-                        CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, params[20])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-                        CONFIG_ACTIVATIONS_MAX_TYPE_TAG, params[21])
-                    self.create_dom_node(file, DOM_ACTIVATIONS_MAX_TAG,
-                        CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, params[22])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, params[19])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, params[20])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG, params[21])
+                    self.create_dom_node(
+                        file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, params[22])
 
         return DOM_PARAMS_TAG
 
@@ -382,7 +382,7 @@ class DefaultQuantizationParameters(DependentParameters):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            if self.parameters[key] != '' and self.parameters[key] != None:
+            if self.parameters[key] != '' and self.parameters[key] is not None:
                 CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG
 
@@ -405,6 +405,6 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
         DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
             else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
-            if self.parameters[key] != '' and self.parameters[key] != None:
+            if self.parameters[key] != '' and self.parameters[key] is not None:
                 CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
         return DOM_COMPRESSION_PARAMS_TAG

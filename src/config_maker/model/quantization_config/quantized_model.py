@@ -1,4 +1,3 @@
-from pyexpat import model
 import re
 from model.quantization_config.compression_parameters import CompressionParameters  # pylint: disable=E0401
 # pylint: disable-next=E0401
@@ -155,9 +154,9 @@ class QModel:
 
     def __create_dom_model_params_engine(self, file):
         DOM_ENGINE_TAG = file.createElement(CONFIG_ENGINE_TAG)
-        if self.__model_params[1][0] != None and self.__model_params[1][0] != '':
+        if self.__model_params[1][0] is not None and self.__model_params[1][0] != '':
             self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_STAT_REQUESTS_NUMBER_TAG, self.__model_params[1][0])
-        if self.__model_params[1][1] != None and self.__model_params[1][1] != '':
+        if self.__model_params[1][1] is not None and self.__model_params[1][1] != '':
             self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, self.__model_params[1][1])
         if (self.__quantization_method == 'AccuracyAwareQuantization'):
             self.create_dom_node(file, DOM_ENGINE_TAG, CONFIG_CONFIG_TAG, self.__model_params[1][2])
@@ -179,7 +178,7 @@ class QModel:
     def __create_dom_pot_params(self, file):
         DOM_POT_PARAMETERS_TAG = file.createElement(CONFIG_POT_PARAMETERS_TAG)
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
-            if self.__pot_params[i] != '' and self.__pot_params[i] != None:
+            if self.__pot_params[i] != '' and self.__pot_params[i] is not None:
                 self.create_dom_node(file, DOM_POT_PARAMETERS_TAG, param_name, self.__pot_params[i])
         return DOM_POT_PARAMETERS_TAG
 
