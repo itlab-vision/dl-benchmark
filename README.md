@@ -93,8 +93,41 @@ Novgorod State University Publishing House, 2021. – 423 p.
     from csv to html.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
+  - `model_converter` contains scripts to convert models with specific batch 
+    sizes.
   - `remote_control` contains scripts to execute benchmark
     remotely.
+
+
+## Software installation
+
+To install software requirements, please follow instructions.
+
+1. Install python 3.8-3.9.
+1. Create and activate virtual environment.
+1. Install openvino-dev pip package using pip:
+   `pip install openvino-dev[caffe,mxnet,onnx,pytorch,tensorflow]==2022.1.0`
+   - There is no way to install tensorflow and tensorflow2 in one virtual
+   environment, so to convert tensorflow2 models please create another one
+   virtual environment and install openvino-dev package with support of
+   tensorflow2: `pip install openvino-dev[tensorflow2]==2022.1.0`
+1. Clone this repository.
+1. Install requirements:
+  - `pip install -r requirements_linux.txt` for Linux.
+  - `pip install -r requirements_windows.txt` for Windows. 
+
+## Model preparing
+
+To prepare models and data for benchmarking, please, follow instructions.
+
+1. Create `<working_dir>` directory which will contain models and datasets.  
+1. Download models you want to test using OpenVINO model donwloader tool to
+   the `<working_dir>` directory:
+   `omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>`
+1. Convert models to OpenVINO format with specific batch sizes using the script
+   `src/model_converter/model_converter.py` in accordiance with 
+   `src/model_converter/README.md`.
+
 
 ## Deployment
 
