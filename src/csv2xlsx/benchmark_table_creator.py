@@ -296,7 +296,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         try:
             return available_elements.index(element)
         except:
-            raise exception_str
+            raise ValueError(exception_str)
     
     def _find_infrastructure_idx(self, infrastructure_name, \
                                  available_infrastructure):
