@@ -9,7 +9,7 @@ import logging
 
 class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
     def __init__(self, paths_table_csv, path_table_xlsx):
-        logging.info('START: __init__(). Input: {}, {}'.format(\
+        logging.info('START: __init__(). Input: {}, {}'.format(
             paths_table_csv, path_table_xlsx))
         
         self._paths_table_csv = paths_table_csv
@@ -26,23 +26,23 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         
         # For the title
         self._cell_format = self._book.add_format(
-            {'align': 'center', 'valign': 'vcenter', 'border': 1, \
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'text_wrap': True, 'font_size': 9})
         self._cell_format_title2 = self._book.add_format(
-            {'align': 'center', 'valign': 'vcenter', 'border': 1, \
-             'bold': True, 'font_size': 9}) # without text wrapping
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'font_size': 9})  # without text wrapping
         self._cell_format_task_type = self._book.add_format(
-            {'align': 'center', 'valign': 'vcenter', 'border': 1, \
-             'bold': True, 'rotation': 90, 'font_size': 9}) # for task type
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'rotation': 90, 'font_size': 9})  # for task type
         # For metric values
         self._cell_format_fps = self._book.add_format(
-            {'valign': 'vcenter', 'border': 1, 'font_size': 9}) # float
+            {'valign': 'vcenter', 'border': 1, 'font_size': 9})  # float
         self._cell_format_nan_fps = self._book.add_format(
-            {'align': 'right', 'valign': 'vcenter', 'border': 1, \
-             'font_size': 9, 'bg_color': '#E28E7D'}) # Nan
+            {'align': 'right', 'valign': 'vcenter', 'border': 1,
+             'font_size': 9, 'bg_color': '#E28E7D'})  # Nan
         self._cell_format_undefined_fps = self._book.add_format(
-            {'align': 'right', 'valign': 'vcenter', 'border': 1, \
-             'font_size': 9, 'bg_color': '#F0EE8A'}) # Underfined
+            {'align': 'right', 'valign': 'vcenter', 'border': 1,
+             'font_size': 9, 'bg_color': '#F0EE8A'})  # Underfined
         
         logging.info('FINISH: _init_xlsx_parameters()')
     
@@ -73,11 +73,11 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         
         self._data = pandas.DataFrame()
         for path_table_csv in self._paths_table_csv:
-            new_table = pandas.read_csv(path_table_csv, sep = ';', \
-                                        encoding='latin-1') # for title
+            new_table = pandas.read_csv(path_table_csv, sep = ';',
+                                        encoding='latin-1')  # for title
             self._data = pandas.concat([self._data, new_table])
         self._data.reset_index(drop=True, inplace=True)
-        self._data_dictionary = self._data.to_dict() # for table rows
+        self._data_dictionary = self._data.to_dict()  # for table rows
         self._init_table_keys()
         
         logging.info('FINISH: read_csv_table()')
@@ -89,7 +89,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._infrastructure = list(
             set(list(self._data_dictionary[self._KEY_INFRASTRUCTURE].values())))
         
-        logging.info('FINISH: _get_infrastructure(). {}'.format(\
+        logging.info('FINISH: _get_infrastructure(). {}'.format(
             self._infrastructure))
     
     def _get_inference_frameworks(self):
@@ -104,7 +104,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     machine_inference_frameworks.append(value)
             self._inference_frameworks.append(machine_inference_frameworks)
         
-        logging.info('FINISH: _get_inference_frameworks(). {}'.format(\
+        logging.info('FINISH: _get_inference_frameworks(). {}'.format(
             self._inference_frameworks))
     
     def _get_devices(self):
