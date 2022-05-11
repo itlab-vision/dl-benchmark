@@ -20,7 +20,7 @@ def build_parser():
     path_table_xlsx = parser.parse_args().result_table
     table_kind = parser.parse_args().table_kind
     
-    logging.info('FINISH: build_parser(). Output: {}, {}, {}'.format(\
+    logging.info('FINISH: build_parser(). Output: {}, {}, {}'.format(
         paths_table_csv, path_table_xlsx, table_kind))
     return paths_table_csv, path_table_xlsx, table_kind
 

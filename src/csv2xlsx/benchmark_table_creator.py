@@ -73,7 +73,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         
         self._data = pandas.DataFrame()
         for path_table_csv in self._paths_table_csv:
-            new_table = pandas.read_csv(path_table_csv, sep = ';',
+            new_table = pandas.read_csv(path_table_csv, sep=';',
                                         encoding='latin-1')  # for title
             self._data = pandas.concat([self._data, new_table])
         self._data.reset_index(drop=True, inplace=True)
@@ -82,7 +82,6 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         
         logging.info('FINISH: read_csv_table()')
         
-    
     def _get_infrastructure(self):
         logging.info('START: _get_infrastructure()')
         
@@ -100,7 +99,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             machine_inference_frameworks = []
             for key, value in self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK].items():
                 if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                   (value in machine_inference_frameworks) == False:
+                   (value in machine_inference_frameworks) is False:
                     machine_inference_frameworks.append(value)
             self._inference_frameworks.append(machine_inference_frameworks)
         
@@ -124,7 +123,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                        self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                             inference_framework and \
-                       (device_name in framework_devices) == False:
+                       (device_name in framework_devices) is False:
                         framework_devices.append(device_name)
                 machine_framework_devices.append(framework_devices)
             self._devices.append(machine_framework_devices)
@@ -152,7 +151,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                            self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                                inference_framework and device_name == device and \
-                           (self._data_dictionary[self._KEY_PRECISION][key] in device_precisions) == False:
+                           (self._data_dictionary[self._KEY_PRECISION][key] \
+                            in device_precisions) is False:
                             device_precisions.append(
                                 self._data_dictionary[self._KEY_PRECISION][key])
                     framework_precisions.append(device_precisions)
@@ -187,7 +187,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                                    inference_framework and device_name == device and \
                                self._data_dictionary[self._KEY_PRECISION][key] == precision and \
-                               (self._data_dictionary[self._KEY_EXECUTION_MODE][key] in device_precision_modes) == False:
+                               (self._data_dictionary[self._KEY_EXECUTION_MODE][key] \
+                                in device_precision_modes) is False:
                                 device_precision_modes.append(
                                     self._data_dictionary[self._KEY_EXECUTION_MODE][key])
                         framework_device_modes.append(device_precision_modes)
@@ -195,7 +196,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 machine_modes.append(framework_modes)
             self._execution_modes.append(machine_modes)
         
-        logging.info('FINISH: _get_execution_modes(). {}'.format(\
+        logging.info('FINISH: _get_execution_modes(). {}'.format(
             self._execution_modes))
     
     def _fill_horizontal_title(self):
@@ -233,14 +234,14 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         for idx5 in range(len(framework_device_precision_modes)):
                             framework_device_precision_mode = \
                                 framework_device_precision_modes[idx5]
-                            self._sheet.write(row_idx, col_idx + idx5, \
-                                              framework_device_precision_mode, \
+                            self._sheet.write(row_idx, col_idx + idx5,
+                                              framework_device_precision_mode,
                                               self._cell_format)
                             col_indeces5.append(col_idx + idx5)
                         k = len(framework_device_precision_modes)
-                        self._sheet.merge_range(row_idx - 1, col_idx1, \
-                                                row_idx - 1, col_idx1 + k - 1, \
-                                                framework_device_precision, \
+                        self._sheet.merge_range(row_idx - 1, col_idx1,
+                                                row_idx - 1, col_idx1 + k - 1,
+                                                framework_device_precision,
                                                 self._cell_format)
                         col_idx += k
                         col_idx1 += k
@@ -248,19 +249,19 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         num_cols2 += k
                         num_cols += k
                         col_indeces4.append(col_indeces5)
-                    self._sheet.merge_range(row_idx - 2, col_idx2, \
-                                            row_idx - 2, col_idx2 + num_cols1 - 1, \
-                                            machine_framework_device, \
+                    self._sheet.merge_range(row_idx - 2, col_idx2,
+                                            row_idx - 2, col_idx2 + num_cols1 - 1,
+                                            machine_framework_device,
                                             self._cell_format)
                     col_idx2 += num_cols1
                     col_indeces3.append(col_indeces4)
-                self._sheet.merge_range(row_idx - 3, col_idx3, \
-                                        row_idx - 3, col_idx3 + num_cols2 - 1, \
+                self._sheet.merge_range(row_idx - 3, col_idx3,
+                                        row_idx - 3, col_idx3 + num_cols2 - 1,
                                         machine_framework, self._cell_format)
                 col_idx3 += num_cols2
                 col_indeces2.append(col_indeces3)
-            self._sheet.merge_range(row_idx - 4, rel_col_idx, \
-                                    row_idx - 4, rel_col_idx + num_cols - 1, \
+            self._sheet.merge_range(row_idx - 4, rel_col_idx,
+                                    row_idx - 4, rel_col_idx + num_cols - 1,
                                     machine, self._cell_format)
             rel_col_idx += num_cols
             self._col_indeces.append(col_indeces2)
@@ -298,46 +299,46 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         except:
             raise ValueError(exception_str)
     
-    def _find_infrastructure_idx(self, infrastructure_name, \
+    def _find_infrastructure_idx(self, infrastructure_name,
                                  available_infrastructure):
-        return self._find_idx(infrastructure_name, available_infrastructure, \
+        return self._find_idx(infrastructure_name, available_infrastructure,
                               'Unknown infrastructure')
     
-    def _find_inference_framework_idx(self, framework_name, \
+    def _find_inference_framework_idx(self, framework_name,
                                       available_inference_frameworks):
-        return self._find_idx(framework_name, available_inference_frameworks, \
+        return self._find_idx(framework_name, available_inference_frameworks,
                               'Unknown inference framework')
     
     def _find_device_idx(self, device_name, available_devices):
-        return self._find_idx(device_name, available_devices, \
+        return self._find_idx(device_name, available_devices,
                               'Unknown device name')
     
     def _find_precision_idx(self, precision, available_precisions):
-        return self._find_idx(precision, available_precisions, \
+        return self._find_idx(precision, available_precisions,
                               'Unknown precision')
     
-    def _find_execution_mode_idx(self, execution_mode, \
+    def _find_execution_mode_idx(self, execution_mode,
                                  available_execution_modes):
-        return self._find_idx(execution_mode, available_execution_modes, \
+        return self._find_idx(execution_mode, available_execution_modes,
                               'Unknown execution mode')
     
     def _find_column_idx(self, value):
-        idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE], \
+        idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
                                              self._infrastructure)    
-        idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK], \
+        idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
                                                   self._inference_frameworks[idx1])
         pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
         matcher = re.match(pattern, value[self._KEY_PARAMETERS])
         device_name = matcher.group('device_name')
         idx3 = self._find_device_idx(device_name, self._devices[idx1][idx2])
-        idx4 = self._find_precision_idx(value[self._KEY_PRECISION], \
+        idx4 = self._find_precision_idx(value[self._KEY_PRECISION],
                                         self._precisions[idx1][idx2][idx3])
-        idx5 = self._find_execution_mode_idx(value[self._KEY_EXECUTION_MODE], \
+        idx5 = self._find_execution_mode_idx(value[self._KEY_EXECUTION_MODE],
                                              self._execution_modes[idx1][idx2][idx3][idx4])
         return self._col_indeces[idx1][idx2][idx3][idx4][idx5]
     
-    def _find_row_records(self, task_type, topology_name, train_framework, \
-                          blob_size, batch_size, experiments, \
+    def _find_row_records(self, task_type, topology_name, train_framework,
+                          blob_size, batch_size, experiments,
                           processed_records_keys):
         records_group = []
         for key, value in experiments.items():
@@ -351,19 +352,18 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 processed_records_keys.append(key)
         return records_group
     
-    def _create_row_record(self, records_group):        
+    def _create_row_record(self, records_group):
         fps_record = {}
         # fill existing FPS values
         for value in records_group:
             col_idx = self._find_column_idx(value)
-            fps_record.update( {col_idx : value[self._KEY_FPS]} )
+            fps_record.update({col_idx: value[self._KEY_FPS]})
         # fill underfined FPS values
-        available_col_indeces = list(deepflatten(self._col_indeces)) # flatten
-        fps_keys = list(fps_record.keys()) # existing indeces
-        undefined_col_indeces = \
-            [idx for idx in available_col_indeces if idx not in fps_keys]
+        available_col_indeces = list(deepflatten(self._col_indeces))  # flatten
+        fps_keys = list(fps_record.keys())  # existing indeces
+        undefined_col_indeces = [idx for idx in available_col_indeces if idx not in fps_keys]
         for idx in undefined_col_indeces:
-            fps_record.update( {idx : 'Undefined'} )
+            fps_record.update({idx: 'Undefined'})
         return fps_record
     
     def _remove_unused_metrics(self, data):
@@ -385,23 +385,23 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         for key, value in experiments.items():
             if key in processed_records_keys:
                 continue
-            records_group = self._find_row_records(value[self._KEY_TASK_TYPE], \
-                value[self._KEY_TOPOLOGY_NAME], value[self._KEY_TRAIN_FRAMEWORK], \
-                value[self._KEY_BLOB_SIZE], value[self._KEY_BATCH_SIZE], \
+            records_group = self._find_row_records(value[self._KEY_TASK_TYPE],
+                value[self._KEY_TOPOLOGY_NAME], value[self._KEY_TRAIN_FRAMEWORK],
+                value[self._KEY_BLOB_SIZE], value[self._KEY_BATCH_SIZE],
                 experiments, processed_records_keys)
             fps_record = self._create_row_record(records_group)
-            record = { self._KEY_TASK_TYPE : value[self._KEY_TASK_TYPE], \
-                       self._KEY_TOPOLOGY_NAME : value[self._KEY_TOPOLOGY_NAME], \
-                       self._KEY_TRAIN_FRAMEWORK : value[self._KEY_TRAIN_FRAMEWORK], \
-                       self._KEY_BLOB_SIZE : value[self._KEY_BLOB_SIZE], \
-                       self._KEY_BATCH_SIZE : value[self._KEY_BATCH_SIZE], \
-                       self._KEY_FPS : fps_record }
+            record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
+                      self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
+                      self._KEY_TRAIN_FRAMEWORK: value[self._KEY_TRAIN_FRAMEWORK],
+                      self._KEY_BLOB_SIZE: value[self._KEY_BLOB_SIZE],
+                      self._KEY_BATCH_SIZE: value[self._KEY_BATCH_SIZE],
+                      self._KEY_FPS: fps_record}
             self._table_records[value[self._KEY_TASK_TYPE]].append(record)
         
         logging.info('FINISH: create_table_rows()')
     
-    def _get_records_group(self, task_records, topology_name, train_framework, \
-                           blob_size, processed_records_idxs):        
+    def _get_records_group(self, task_records, topology_name, train_framework,
+                           blob_size, processed_records_idxs):
         records_group = []
         for idx in range(len(task_records)):
             record = task_records[idx]
@@ -417,40 +417,40 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         logging.info('START: write_test_results()')
         
         row_idx = 5
-        for task_type, task_records in self._table_records.items(): # loop by tasks
+        for task_type, task_records in self._table_records.items():  # loop by tasks
             if len(task_records) <= 0:
                 continue
-            elif len(task_records) > 1: # print task type
-                self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0, \
+            elif len(task_records) > 1:  # print task type
+                self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0,
                                         task_type, self._cell_format_task_type)
             else:
                 self._sheet.write(row_idx, 0, task_type, self._cell_format_task_type)
             
             processed_records_idxs = []
-            for record in task_records: # searching for records for the same topologies
+            for record in task_records:  # searching for records for the same topologies
                 topology_name = record[self._KEY_TOPOLOGY_NAME]
                 train_framework = record[self._KEY_TRAIN_FRAMEWORK]
                 blob_size = record[self._KEY_BLOB_SIZE]
-                records_group = self._get_records_group(task_records, \
-                    topology_name, train_framework, blob_size, \
+                records_group = self._get_records_group(task_records,
+                    topology_name, train_framework, blob_size,
                     processed_records_idxs)
                 topology_num_records = len(records_group)
                 blob_size = blob_size.replace(',', ',\n')
                 if topology_num_records == 0:
                     continue
                 elif topology_num_records > 1:
-                    self._sheet.merge_range(row_idx, 1, row_idx + topology_num_records - 1, 1, \
-                                      topology_name, self._cell_format_title2)
-                    self._sheet.merge_range(row_idx, 2, row_idx + topology_num_records - 1, 2, \
-                                      train_framework, self._cell_format_title2)
-                    self._sheet.merge_range(row_idx, 3, row_idx + topology_num_records - 1, 3, \
-                                      blob_size, self._cell_format_title2)
+                    self._sheet.merge_range(row_idx, 1, row_idx + topology_num_records - 1, 1,
+                        topology_name, self._cell_format_title2)
+                    self._sheet.merge_range(row_idx, 2, row_idx + topology_num_records - 1, 2,
+                        train_framework, self._cell_format_title2)
+                    self._sheet.merge_range(row_idx, 3, row_idx + topology_num_records - 1, 3,
+                        blob_size, self._cell_format_title2)
                 else:
                     self._sheet.write(row_idx, 1, topology_name, self._cell_format_title2)
                     self._sheet.write(row_idx, 2, train_framework, self._cell_format_title2)
                     self._sheet.write(row_idx, 3, blob_size, self._cell_format_title2)
                 for topology_record in records_group:
-                    self._sheet.write(row_idx, 4, topology_record[self._KEY_BATCH_SIZE], \
+                    self._sheet.write(row_idx, 4, topology_record[self._KEY_BATCH_SIZE],
                                       self._cell_format_title2)
                     for key, value in topology_record[self._KEY_FPS].items():
                         formatting = self._cell_format_fps
