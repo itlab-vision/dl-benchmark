@@ -7,8 +7,8 @@ from iteration_utilities import deepflatten
 
 
 class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
-    def __init__(self, path_table_csv, path_table_xlsx):
-        self._path_table_csv = path_table_csv
+    def __init__(self, paths_table_csv, path_table_xlsx):
+        self._paths_table_csv = paths_table_csv
         self._path_table_xlsx = path_table_xlsx
         self._sheet_name = 'Performance'
     
@@ -55,8 +55,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._KEY_FPS = keys[14]
     
     def read_csv_table(self):
-        self._data = pandas.read_csv(self._path_table_csv, sep = ';', \
-                                     encoding='latin-1') # for title
+        self._data = pandas.DataFrame()
+        for path_table_csv in self._paths_table_csv:
+            new_table = pandas.read_csv(path_table_csv, sep = ';', \
+                                        encoding='latin-1') # for title
+            self._data = pandas.concat([self._data, new_table])
+        self._data.reset_index(drop=True, inplace=True)
         self._data_dictionary = self._data.to_dict() # for table rows
         self._init_table_keys()
         
