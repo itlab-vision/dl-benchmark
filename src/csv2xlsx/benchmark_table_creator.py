@@ -273,12 +273,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
     def _get_column_width(self, values, format):
         root = tkinter.Tk()
         max_cell_width = 0
-        used_font = tkinter.font.Font(family=format.font_name, 
+        used_font = tkinter.font.Font(family=format.font_name,
                                       size=format.font_size,
                                       weight=('bold' if format.bold else 'normal'),
                                       slant=('italic' if format.italic else 'roman'),
-                                      underline  = format.underline,
-                                      overstrike = format.font_strikeout)
+                                      underline=format.underline,
+                                      overstrike=format.font_strikeout)
         reference_font = tkinter.font.Font(family='Calibri', size=11)
         for key, value in values.items():
             pixelwidths = (used_font.measure(part) for part in value.split('\n'))
@@ -299,17 +299,17 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
 
         # Write horizontal title (first cells before infrastructure)
         self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format)
-        
+
         col_width = self._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
         self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format)
-        
+
         col_width = self._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
         self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format)
-        
+
         self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format)       
         self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format)
 
