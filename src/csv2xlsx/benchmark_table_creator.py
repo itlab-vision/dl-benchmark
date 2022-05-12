@@ -390,7 +390,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                                    value[self._KEY_TRAIN_FRAMEWORK],
                                                    value[self._KEY_BLOB_SIZE],
                                                    value[self._KEY_BATCH_SIZE],
-                                                   experiments, 
+                                                   experiments,
                                                    processed_records_keys)
             fps_record = self._create_row_record(records_group)
             record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
