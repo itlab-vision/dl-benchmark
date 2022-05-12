@@ -150,7 +150,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         device_name = matcher.group('device_name')
                         if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                            self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
-                               inference_framework and device_name == device and \
+                           inference_framework and device_name == device and \
                            (self._data_dictionary[self._KEY_PRECISION][key]
                            in device_precisions) is False:
                             device_precisions.append(
@@ -185,7 +185,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                             device_name = matcher.group('device_name')
                             if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                                self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
-                                   inference_framework and device_name == device and \
+                               inference_framework and device_name == device and \
                                self._data_dictionary[self._KEY_PRECISION][key] == precision and \
                                (self._data_dictionary[self._KEY_EXECUTION_MODE][key]
                                in device_precision_modes) is False:
@@ -386,9 +386,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             if key in processed_records_keys:
                 continue
             records_group = self._find_row_records(value[self._KEY_TASK_TYPE],
-                value[self._KEY_TOPOLOGY_NAME], value[self._KEY_TRAIN_FRAMEWORK],
-                value[self._KEY_BLOB_SIZE], value[self._KEY_BATCH_SIZE],
-                experiments, processed_records_keys)
+                                                   value[self._KEY_TOPOLOGY_NAME],
+                                                   value[self._KEY_TRAIN_FRAMEWORK],
+                                                   value[self._KEY_BLOB_SIZE],
+                                                   value[self._KEY_BATCH_SIZE],
+                                                   experiments, 
+                                                   processed_records_keys)
             fps_record = self._create_row_record(records_group)
             record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
                       self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
@@ -432,22 +435,27 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 train_framework = record[self._KEY_TRAIN_FRAMEWORK]
                 blob_size = record[self._KEY_BLOB_SIZE]
                 records_group = self._get_records_group(task_records,
-                    topology_name, train_framework, blob_size,
-                    processed_records_idxs)
+                                                        topology_name,
+                                                        train_framework,
+                                                        blob_size,
+                                                        processed_records_idxs)
                 topology_num_records = len(records_group)
                 blob_size = blob_size.replace(',', ',\n')
                 if topology_num_records == 0:
                     continue
                 elif topology_num_records > 1:
                     self._sheet.merge_range(row_idx, 1,
-                        row_idx + topology_num_records - 1, 1, topology_name,
-                        self._cell_format_title2)
+                                            row_idx + topology_num_records - 1,
+                                            1, topology_name,
+                                            self._cell_format_title2)
                     self._sheet.merge_range(row_idx, 2,
-                        row_idx + topology_num_records - 1, 2, train_framework,
-                        self._cell_format_title2)
+                                            row_idx + topology_num_records - 1,
+                                            2, train_framework,
+                                            self._cell_format_title2)
                     self._sheet.merge_range(row_idx, 3,
-                        row_idx + topology_num_records - 1, 3, blob_size,
-                        self._cell_format_title2)
+                                            row_idx + topology_num_records - 1,
+                                            3, blob_size,
+                                            self._cell_format_title2)
                 else:
                     self._sheet.write(row_idx, 1, topology_name, self._cell_format_title2)
                     self._sheet.write(row_idx, 2, train_framework, self._cell_format_title2)
