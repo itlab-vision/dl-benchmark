@@ -310,7 +310,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._sheet.set_column(2, 2, col_width)
         self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format)
 
-        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format)       
+        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format)
         self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format)
 
         self._get_infrastructure()
