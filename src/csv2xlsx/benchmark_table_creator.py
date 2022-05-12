@@ -296,7 +296,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
     def _find_idx(self, element, available_elements, exception_str):
         try:
             return available_elements.index(element)
-        except:
+        except ValueError:
             raise ValueError(exception_str)
 
     def _find_infrastructure_idx(self, infrastructure_name,
@@ -432,7 +432,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 train_framework = record[self._KEY_TRAIN_FRAMEWORK]
                 blob_size = record[self._KEY_BLOB_SIZE]
                 records_group = self._get_records_group(task_records,
-                    topology_name, train_framework, blob_size, 
+                    topology_name, train_framework, blob_size,
                     processed_records_idxs)
                 topology_num_records = len(records_group)
                 blob_size = blob_size.replace(',', ',\n')
