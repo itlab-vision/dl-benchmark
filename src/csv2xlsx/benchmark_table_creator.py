@@ -288,7 +288,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     raise ValueError(msg)
                 col_idx3 += num_cols2
                 col_indeces2.append(col_indeces3)
-            if num_cols > 1:                
+            if num_cols > 1:
                 self._sheet.merge_range(row_idx - 4, rel_col_idx,
                                         row_idx - 4, rel_col_idx + num_cols - 1,
                                         machine, self._cell_format)
