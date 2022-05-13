@@ -293,8 +293,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                         row_idx - 4, rel_col_idx + num_cols - 1,
                                         machine, self._cell_format)
             elif num_cols == 1:
-                self.write(row_idx - 4, rel_col_idx,
-                           machine, self._cell_format)
+                self._sheet.write(row_idx - 4, rel_col_idx,
+                                  machine, self._cell_format)
             else:
                 msg = 'Incorrect number of machines'
                 logging.error(msg)
