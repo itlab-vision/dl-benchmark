@@ -241,30 +241,64 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                               self._cell_format)
                             col_indeces5.append(col_idx + idx5)
                         k = len(framework_device_precision_modes)
-                        self._sheet.merge_range(row_idx - 1, col_idx1,
-                                                row_idx - 1, col_idx1 + k - 1,
-                                                framework_device_precision,
-                                                self._cell_format)
+                        if k > 1:
+                            self._sheet.merge_range(row_idx - 1, col_idx1,
+                                                    row_idx - 1, col_idx1 + k - 1,
+                                                    framework_device_precision,
+                                                    self._cell_format)
+                        elif k == 1:
+                            self._sheet.write(row_idx - 1, col_idx1,
+                                              framework_device_precision,
+                                              self._cell_format)
+                        else:
+                            msg = 'Incorrect number of device precision modes'
+                            logging.error(msg)
+                            raise ValueError(msg)
                         col_idx += k
                         col_idx1 += k
                         num_cols1 += k
                         num_cols2 += k
                         num_cols += k
                         col_indeces4.append(col_indeces5)
-                    self._sheet.merge_range(row_idx - 2, col_idx2,
-                                            row_idx - 2, col_idx2 + num_cols1 - 1,
-                                            machine_framework_device,
-                                            self._cell_format)
+                    if num_cols1 > 1:
+                        self._sheet.merge_range(row_idx - 2, col_idx2,
+                                                row_idx - 2, col_idx2 + num_cols1 - 1,
+                                                machine_framework_device,
+                                                self._cell_format)
+                    elif num_cols1 == 1:
+                        self._sheet.write(row_idx - 2, col_idx2,
+                                          machine_framework_device,
+                                          self._cell_format)
+                    else:
+                        msg = 'Incorrect number of devices'
+                        logging.error(msg)
+                        raise ValueError(msg)
                     col_idx2 += num_cols1
                     col_indeces3.append(col_indeces4)
-                self._sheet.merge_range(row_idx - 3, col_idx3,
-                                        row_idx - 3, col_idx3 + num_cols2 - 1,
-                                        machine_framework, self._cell_format)
+                if num_cols2 > 1:
+                    self._sheet.merge_range(row_idx - 3, col_idx3,
+                                            row_idx - 3, col_idx3 + num_cols2 - 1,
+                                            machine_framework, self._cell_format)
+                elif num_cols2 == 1:
+                    self._sheet.write(row_idx - 3, col_idx3,
+                                      machine_framework, self._cell_format)
+                else:
+                    msg = 'Incorrect number of frameworks'
+                    logging.error(msg)
+                    raise ValueError(msg)
                 col_idx3 += num_cols2
                 col_indeces2.append(col_indeces3)
-            self._sheet.merge_range(row_idx - 4, rel_col_idx,
-                                    row_idx - 4, rel_col_idx + num_cols - 1,
-                                    machine, self._cell_format)
+            if num_cols > 1:                
+                self._sheet.merge_range(row_idx - 4, rel_col_idx,
+                                        row_idx - 4, rel_col_idx + num_cols - 1,
+                                        machine, self._cell_format)
+            elif num_cols == 1:
+                self.write(row_idx - 4, rel_col_idx,
+                           machine, self._cell_format)
+            else:
+                msg = 'Incorrect number of machines'
+                logging.error(msg)
+                raise ValueError(msg)
             rel_col_idx += num_cols
             self._col_indeces.append(col_indeces2)
 
@@ -501,7 +535,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         elif value == 'Undefined':
                             formatting = self._cell_format_undefined_fps
                         else:
-                            value = float(value)
+                            try:
+                                value = float(value)
+                            except ValueError as error:
+                                logging.error('{}'.format(error))
+                                value = 'Incorrect'
+                                formatting = self._cell_format_nan_fps
                         self._sheet.write(row_idx, key, value, formatting)
                     row_idx += 1
 
