@@ -41,7 +41,7 @@ def model_conversion(params, log):
 
 def main():
     log.basicConfig(
-        format='[ %(levelname)s][%(filename)s %(lineno)s] %(message)s',
+        format='[ %(levelname)s ][%(filename)s %(lineno)s] %(message)s',
         level=log.INFO,
         stream=sys.stdout
     )
