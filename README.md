@@ -104,10 +104,10 @@ Novgorod State University Publishing House, 2021. – 423 p.
 To install software requirements, please follow instructions.
 This manual is for Ubuntu 20.04, for other OS it may be different.
 
-1. Install `pip` and `venv` tools for Python (Python 3.8 is already installed
+1. Install Python tools (Python 3.8 is already installed
 by default in Ubuntu 20.04).
     ```bash
-    sudo apt install python3-pip python3-venv
+    sudo apt install python3-pip python3-venv python3-tk
     ```
 1. Create and activate virtual environment.
     ```bash
