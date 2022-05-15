@@ -102,31 +102,58 @@ Novgorod State University Publishing House, 2021. – 423 p.
 ## Software installation
 
 To install software requirements, please follow instructions.
+This manual is for Ubuntu 20.04, for other OS it may be different.
 
-1. Install python 3.8-3.9.
+1. Install `pip` and `venv` tools for python.
+    ```bash
+    sudo apt install python3-pip python3-venv
+    ```
 1. Create and activate virtual environment.
-1. Install openvino-dev pip package using pip:
-   `pip install openvino-dev[caffe,mxnet,onnx,pytorch,tensorflow]==2022.1.0`
-   - There is no way to install tensorflow and tensorflow2 in one virtual
-   environment, so to convert tensorflow2 models please create another one
-   virtual environment and install openvino-dev package with support of
-   tensorflow2: `pip install openvino-dev[tensorflow2]==2022.1.0`
+    ```bash
+    cd ~/
+    python3 -m venv dl-benchmark-env
+    source ~/dl-benchmark-env/bin/activate
+    python3 -m pip install --upgrade pip
+    ```
+1. Install `openvino-dev` package using pip.
+    ```bash
+    pip install openvino-dev[caffe,mxnet,onnx,pytorch,tensorflow]==2022.1.0
+    ```
+     - Note: there is no way to install `tensorflow` and `tensorflow2` packages to the single virtual environment, so to convert `tensorflow2` models, please, create another virtual environment and install `openvino-dev` package with the support of `tensorflow2`:
+    ```bash
+    pip install openvino-dev[tensorflow2]==2022.1.0`
+    ```
 1. Clone this repository.
+    ```bash
+    sudo apt install git
+    git clone https://github.com/itlab-vision/dl-benchmark.git
+    ```
 1. Install requirements:
-  - `pip install -r requirements_linux.txt` for Linux.
-  - `pip install -r requirements_windows.txt` for Windows. 
+  - `pip install -r ~/dl-benchmark/requirements_linux.txt` for Linux.
+  - `pip install -r ~/dl-benchmark/requirements_windows.txt` for Windows. 
 
 ## Model preparing
 
 To prepare models and data for benchmarking, please, follow instructions.
 
-1. Create `<working_dir>` directory which will contain models and datasets.  
-1. Download models you want to test using OpenVINO model donwloader tool to
+1. Create `<working_dir>` directory which will contain models and datasets.
+    ```bash
+    mkdir ~/<working_dir>
+    ```  
+1. Download models using OpenVINO model donwloader tool to
    the `<working_dir>` directory:
-   `omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>`
+    ```bash
+    omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
+    ``` 
 1. Convert models to OpenVINO format with specific batch sizes using the script
    `src/model_converter/model_converter.py` in accordiance with 
    `src/model_converter/README.md`.
+   ```bash
+    python ~/dl-benchmark/src/model_converter/model_converter.py \
+    -d <working_dir> \
+    -z ~/dl-benchmark-env/lib/python3.8/site-packages/openvino/model_zoo/models \
+    -b 1 8
+    ``` 
 
 
 ## Deployment
