@@ -139,7 +139,7 @@ To prepare models and data for benchmarking, please, follow instructions.
 
 1. Create `<working_dir>` directory which will contain models and datasets.
     ```bash
-    mkdir ~/<working_dir>
+    mkdir <working_dir>
     ```  
 1. Download models using OpenVINO model donwloader tool to
    the `<working_dir>` directory:
