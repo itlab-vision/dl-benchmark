@@ -32,7 +32,8 @@ class process:
     @staticmethod
     def __add_output_dir_for_cmd_line(command_line, output_dir, batch):
         new_path_with_batch = output_dir
-        return '{0} --output_dir "{1}"'.format(command_line, new_path_with_batch)
+        return '{0} --download_dir "{1}" --output_dir "{1}"'.format(
+            command_line, new_path_with_batch)
 
     @staticmethod
     def __add_shape_for_cmd_line(command_line, zoo_dir, model_name, batch):
