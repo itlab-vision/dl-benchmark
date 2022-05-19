@@ -189,7 +189,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                inference_framework and device_name == device and \
                                self._data_dictionary[self._KEY_PRECISION][key] == precision and \
                                self._data_dictionary[self._KEY_EXECUTION_MODE][key] \
-                                   not in device_precision_modes:
+                               not in device_precision_modes:
                                 device_precision_modes.append(
                                     self._data_dictionary[self._KEY_EXECUTION_MODE][key])
                         framework_device_modes.append(device_precision_modes)
