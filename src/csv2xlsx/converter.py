@@ -32,6 +32,8 @@ def convert_csv_table_to_xlsx(paths_table_csv, path_table_xlsx, table_type):
         table_xlsx = XlsxBenchmarkTable(paths_table_csv, path_table_xlsx)
     elif table_type == 'accuracy_checker':
         raise ValueError('Table type \'{}\' is not supported'.format(table_type))
+    else:
+        raise ValueError('Incorrect value of table type \'{}\''.format(table_type))
     table_xlsx.read_csv_table()
     table_xlsx.create_table_header()
     table_xlsx.create_table_rows()

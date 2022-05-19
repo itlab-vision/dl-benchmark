@@ -101,7 +101,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             machine_inference_frameworks = []
             for key, value in self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK].items():
                 if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                   (value in machine_inference_frameworks) is False:
+                   value not in machine_inference_frameworks:
                     machine_inference_frameworks.append(value)
             self._inference_frameworks.append(machine_inference_frameworks)
 
@@ -125,7 +125,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                        self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                             inference_framework and \
-                       (device_name in framework_devices) is False:
+                       device_name not in framework_devices:
                         framework_devices.append(device_name)
                 machine_framework_devices.append(framework_devices)
             self._devices.append(machine_framework_devices)
@@ -153,8 +153,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
                            self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                            inference_framework and device_name == device and \
-                           (self._data_dictionary[self._KEY_PRECISION][key]
-                           in device_precisions) is False:
+                           self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions:
                             device_precisions.append(
                                 self._data_dictionary[self._KEY_PRECISION][key])
                     framework_precisions.append(device_precisions)
@@ -189,8 +188,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
                                inference_framework and device_name == device and \
                                self._data_dictionary[self._KEY_PRECISION][key] == precision and \
-                               (self._data_dictionary[self._KEY_EXECUTION_MODE][key]
-                               in device_precision_modes) is False:
+                               self._data_dictionary[self._KEY_EXECUTION_MODE][key] \
+                                   not in device_precision_modes:
                                 device_precision_modes.append(
                                     self._data_dictionary[self._KEY_EXECUTION_MODE][key])
                         framework_device_modes.append(device_precision_modes)
@@ -317,8 +316,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         for key, value in values.items():
             pixelwidths = (used_font.measure(part) for part in value.split('\n'))
             cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
-            if cell_width > max_cell_width:
-                max_cell_width = cell_width
+            max_cell_width = max(max_cell_width, cell_width)
         root.update_idletasks()
         root.destroy()
         return max_cell_width
