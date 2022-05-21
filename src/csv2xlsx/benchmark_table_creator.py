@@ -314,12 +314,19 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                       overstrike=format.font_strikeout)
         reference_font = tkinter.font.Font(family='Calibri', size=11)
         for key, value in values.items():
-            pixelwidths = (used_font.measure(part) for part in value.split('\n'))
-            cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
+            if '\n' in value:
+                pixelwidths = [used_font.measure(part) for part in value.split('\n')]
+                cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
+            else:
+                cell_width = used_font.measure(value + ' ') / reference_font.measure('0')
             max_cell_width = max(max_cell_width, cell_width)
         root.update_idletasks()
         root.destroy()
         return max_cell_width
+
+    def _add_new_line(self, values, sep=','):
+        for key, value in values.items():
+            values[key] = value.replace(sep, ',\n')
 
     def create_table_header(self):
         logging.info('START: create_table_header()')
@@ -342,6 +349,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._sheet.set_column(2, 2, col_width)
         self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format)
 
+        self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
+        col_width = self._get_column_width(
+            self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
+        self._sheet.set_column(3, 3, col_width)
         self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format)
         self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format)
 
@@ -502,7 +513,6 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                                         blob_size,
                                                         processed_records_idxs)
                 topology_num_records = len(records_group)
-                blob_size = blob_size.replace(',', ',\n')
                 if topology_num_records == 0:
                     continue
                 elif topology_num_records > 1:
@@ -517,11 +527,11 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     self._sheet.merge_range(row_idx, 3,
                                             row_idx + topology_num_records - 1,
                                             3, blob_size,
-                                            self._cell_format_title2)
+                                            self._cell_format)
                 else:
                     self._sheet.write(row_idx, 1, topology_name, self._cell_format_title2)
                     self._sheet.write(row_idx, 2, train_framework, self._cell_format_title2)
-                    self._sheet.write(row_idx, 3, blob_size, self._cell_format_title2)
+                    self._sheet.write(row_idx, 3, blob_size, self._cell_format)
                 for topology_record in records_group:
                     self._sheet.write(row_idx, 4, topology_record[self._KEY_BATCH_SIZE],
                                       self._cell_format_title2)
