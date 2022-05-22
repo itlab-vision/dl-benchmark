@@ -38,6 +38,7 @@ def convert_csv_table_to_xlsx(paths_table_csv, path_table_xlsx, table_type):
     table_xlsx.create_table_header()
     table_xlsx.create_table_rows()
     table_xlsx.write_test_results()
+    table_xlsx.beautify_table()
     table_xlsx.close_table()
 
     logging.info('FINISH: convert_csv_table_to_xlsx()')

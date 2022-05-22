@@ -30,6 +30,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._cell_format = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'text_wrap': True, 'font_size': 9})
+        self._cell_format_title1 = self._book.add_format(
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'text_wrap': True, 'font_size': 9,
+             'bg_color': '#F8F8FF'})
         self._cell_format_title2 = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'font_size': 9})  # without text wrapping
@@ -41,10 +45,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             {'valign': 'vcenter', 'border': 1, 'font_size': 9})  # float
         self._cell_format_nan_fps = self._book.add_format(
             {'align': 'right', 'valign': 'vcenter', 'border': 1,
-             'font_size': 9, 'bg_color': '#E28E7D'})  # Nan
+             'font_size': 9, 'bg_color': '#F08080'})  # Nan
         self._cell_format_undefined_fps = self._book.add_format(
             {'align': 'right', 'valign': 'vcenter', 'border': 1,
-             'font_size': 9, 'bg_color': '#F0EE8A'})  # Underfined
+             'font_size': 9, 'bg_color': '#FFFF00'})  # Undefined
 
         logging.info('FINISH: _init_xlsx_parameters()')
 
@@ -237,18 +241,18 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                 framework_device_precision_modes[idx5]
                             self._sheet.write(row_idx, col_idx + idx5,
                                               framework_device_precision_mode,
-                                              self._cell_format)
+                                              self._cell_format_title1)
                             col_indeces5.append(col_idx + idx5)
                         k = len(framework_device_precision_modes)
                         if k > 1:
                             self._sheet.merge_range(row_idx - 1, col_idx1,
                                                     row_idx - 1, col_idx1 + k - 1,
                                                     framework_device_precision,
-                                                    self._cell_format)
+                                                    self._cell_format_title1)
                         elif k == 1:
                             self._sheet.write(row_idx - 1, col_idx1,
                                               framework_device_precision,
-                                              self._cell_format)
+                                              self._cell_format_title1)
                         else:
                             msg = 'Incorrect number of device precision modes'
                             logging.error(msg)
@@ -263,11 +267,11 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         self._sheet.merge_range(row_idx - 2, col_idx2,
                                                 row_idx - 2, col_idx2 + num_cols1 - 1,
                                                 machine_framework_device,
-                                                self._cell_format)
+                                                self._cell_format_title1)
                     elif num_cols1 == 1:
                         self._sheet.write(row_idx - 2, col_idx2,
                                           machine_framework_device,
-                                          self._cell_format)
+                                          self._cell_format_title1)
                     else:
                         msg = 'Incorrect number of devices'
                         logging.error(msg)
@@ -277,10 +281,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 if num_cols2 > 1:
                     self._sheet.merge_range(row_idx - 3, col_idx3,
                                             row_idx - 3, col_idx3 + num_cols2 - 1,
-                                            machine_framework, self._cell_format)
+                                            machine_framework, self._cell_format_title1)
                 elif num_cols2 == 1:
                     self._sheet.write(row_idx - 3, col_idx3,
-                                      machine_framework, self._cell_format)
+                                      machine_framework, self._cell_format_title1)
                 else:
                     msg = 'Incorrect number of frameworks'
                     logging.error(msg)
@@ -290,10 +294,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             if num_cols > 1:
                 self._sheet.merge_range(row_idx - 4, rel_col_idx,
                                         row_idx - 4, rel_col_idx + num_cols - 1,
-                                        machine, self._cell_format)
+                                        machine, self._cell_format_title1)
             elif num_cols == 1:
                 self._sheet.write(row_idx - 4, rel_col_idx,
-                                  machine, self._cell_format)
+                                  machine, self._cell_format_title1)
             else:
                 msg = 'Incorrect number of machines'
                 logging.error(msg)
@@ -337,24 +341,24 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._sheet.freeze_panes(5, 5)
 
         # Write horizontal title (first cells before infrastructure)
-        self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format)
+        self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format_title1)
 
         col_width = self._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
-        self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format)
+        self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
 
         col_width = self._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
-        self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format)
+        self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
 
         self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
         col_width = self._get_column_width(
             self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
         self._sheet.set_column(3, 3, col_width)
-        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format)
-        self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format)
+        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format_title1)
+        self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format_title1)
 
         self._get_infrastructure()
         self._get_inference_frameworks()
@@ -552,7 +556,94 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         self._sheet.write(row_idx, key, value, formatting)
                     row_idx += 1
 
+        self._full_num_rows = row_idx
+
         logging.info('FINISH: write_test_results()')
+
+    def _draw_bold_bolder(self, rel_row_idx, rel_col_idx, num_rows, num_cols):
+        # top left corner
+        self._sheet.conditional_format(rel_row_idx, rel_col_idx,
+                                       rel_row_idx, rel_col_idx,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 5, \
+                                                                         'bottom': 1, \
+                                                                         'left': 5, \
+                                                                         'right': 1})})
+        # bottom left corner
+        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
+                                       rel_row_idx + num_rows - 1, rel_col_idx,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 1, \
+                                                                         'bottom': 5, \
+                                                                         'left': 5, \
+                                                                         'right': 1})})
+        # top right corner
+        self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
+                                       rel_row_idx, rel_col_idx + num_cols - 1,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 5, \
+                                                                         'bottom': 1, \
+                                                                         'left': 1, \
+                                                                         'right': 5})})
+        # bottom right corner
+        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 1, \
+                                                                         'bottom': 5, \
+                                                                         'left': 1, \
+                                                                         'right': 5})})
+        # top
+        self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
+                                       rel_row_idx, rel_col_idx + num_cols - 2,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 5, \
+                                                                         'bottom': 1, \
+                                                                         'left': 1, \
+                                                                         'right': 1})})
+        # bottom
+        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
+                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 1, \
+                                                                         'bottom': 5, \
+                                                                         'left': 1, \
+                                                                         'right': 1})})
+        # left
+        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
+                                       rel_row_idx + num_rows - 2, rel_col_idx,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 1, \
+                                                                         'bottom': 1, \
+                                                                         'left': 5, \
+                                                                         'right': 1})})
+        # right
+        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
+                                       rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
+                                       {'type': 'formula', 'criteria': 'True', \
+                                        'format': self._book.add_format({'top': 1, \
+                                                                         'bottom': 1, \
+                                                                         'left': 1, \
+                                                                         'right': 5})})
+
+    def beautify_table(self):
+        logging.info('START: beautify_table()')
+        rel_col_idx = 5 # task type, topology, framework, blob sizes, batch size
+        rel_row_idx = 0
+        num_header_rows = 5 # infrastructure, framework, device, precision, mode
+        col_depth = 3
+        self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
+        self._draw_bold_bolder(num_header_rows - 1, 0,
+                               self._full_num_rows - num_header_rows + 1,
+                               rel_col_idx)
+        for idx in range(len(self._infrastructure)):
+            execution_modes = list(deepflatten(self._execution_modes[idx], depth=col_depth))
+            num_cols = len(execution_modes)
+            self._draw_bold_bolder(rel_row_idx, rel_col_idx, num_header_rows, num_cols)
+            self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
+                                   self._full_num_rows - num_header_rows + 1, num_cols)
+            rel_col_idx += num_cols
+        logging.info('FINISH: beautify_table()')
 
     def close_table(self):
         logging.info('START: close_table()')
