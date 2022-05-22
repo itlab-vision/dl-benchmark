@@ -564,73 +564,73 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         # top left corner
         self._sheet.conditional_format(rel_row_idx, rel_col_idx,
                                        rel_row_idx, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 5, \
-                                                                         'bottom': 1, \
-                                                                         'left': 5, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 5,
+                                                                         'bottom': 1,
+                                                                         'left': 5,
                                                                          'right': 1})})
         # bottom left corner
         self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
                                        rel_row_idx + num_rows - 1, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 1, \
-                                                                         'bottom': 5, \
-                                                                         'left': 5, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 5,
+                                                                         'left': 5,
                                                                          'right': 1})})
         # top right corner
         self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
                                        rel_row_idx, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 5, \
-                                                                         'bottom': 1, \
-                                                                         'left': 1, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 5,
+                                                                         'bottom': 1,
+                                                                         'left': 1,
                                                                          'right': 5})})
         # bottom right corner
         self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
                                        rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 1, \
-                                                                         'bottom': 5, \
-                                                                         'left': 1, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 5,
+                                                                         'left': 1,
                                                                          'right': 5})})
         # top
         self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
                                        rel_row_idx, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 5, \
-                                                                         'bottom': 1, \
-                                                                         'left': 1, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 5,
+                                                                         'bottom': 1,
+                                                                         'left': 1,
                                                                          'right': 1})})
         # bottom
         self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
                                        rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 1, \
-                                                                         'bottom': 5, \
-                                                                         'left': 1, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 5,
+                                                                         'left': 1,
                                                                          'right': 1})})
         # left
         self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
                                        rel_row_idx + num_rows - 2, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 1, \
-                                                                         'bottom': 1, \
-                                                                         'left': 5, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 1,
+                                                                         'left': 5,
                                                                          'right': 1})})
         # right
         self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
                                        rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True', \
-                                        'format': self._book.add_format({'top': 1, \
-                                                                         'bottom': 1, \
-                                                                         'left': 1, \
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 1,
+                                                                         'left': 1,
                                                                          'right': 5})})
 
     def beautify_table(self):
         logging.info('START: beautify_table()')
-        rel_col_idx = 5 # task type, topology, framework, blob sizes, batch size
+        rel_col_idx = 5  # task type, topology, framework, blob sizes, batch size
         rel_row_idx = 0
-        num_header_rows = 5 # infrastructure, framework, device, precision, mode
+        num_header_rows = 5  # infrastructure, framework, device, precision, mode
         col_depth = 3
         self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
         self._draw_bold_bolder(num_header_rows - 1, 0,
