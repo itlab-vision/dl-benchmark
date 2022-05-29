@@ -95,6 +95,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `inference` contains inference implementation.
   - `model_converter` contains scripts to convert models with specific batch 
     sizes.
+  - `quantization` contains scripts to quantize model to INT8-precision
+    using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
 
@@ -146,6 +148,16 @@ To prepare models and data for benchmarking, please, follow instructions.
     ```bash
     omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
     ``` 
+1. (Optional) Convert models to INT8-precision:
+   1. Prepare configuration files in accordance with
+    `src/configs/quantization_configuration_file_template.xml`. Please, use 
+    GUI application (`src/config_maker`).
+   1. Quantize models to INT8-precision using the script
+    `src/quantization/quantization.py` in accordiance with 
+    `src/quantization/README.md`.
+      ```bash
+      python3 ~/dl-benchmark/src/quantization/quantization.py -c <config_path>
+      ``` 
 1. Convert models to OpenVINO format with specific batch sizes using the script
    `src/model_converter/model_converter.py` in accordiance with 
    `src/model_converter/README.md`.
