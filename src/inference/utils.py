@@ -98,7 +98,7 @@ def set_property(core, devices, nthreads, nstreams, dump, mode):
     if dump:
         if 'HETERO' in devices:
             core.set_property('HETERO', {'OPENVINO_HETERO_VISUALIZE': 'YES'})
-        elif not('MULTI' in devices):
+        elif 'MULTI' not in devices:
             core.set_property(devices, {'DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'})
 
 
