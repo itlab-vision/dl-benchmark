@@ -1,6 +1,7 @@
 import abc
-from model.models.model import Model  # pylint: disable=E0401
+
 from model.data.dataset import Dataset  # pylint: disable=E0401
+from model.models.model import Model  # pylint: disable=E0401
 # pylint: disable-next=E0401
 from tags import CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_DATASET_TAG, CONFIG_FRAMEWORK_INDEPENDENT_TAG, \
     CONFIG_FRAMEWORK_TAG, CONFIG_BATCH_SIZE_TAG, CONFIG_DEVICE_TAG, CONFIG_ITERATION_COUNT_TAG, \
@@ -38,6 +39,7 @@ class Test:
         other_values = other.get_values_list()
         if self_values[:-1] != other_values[:-1]:
             return -1
+
         return self.parameters[CONFIG_FRAMEWORK_DEPENDENT_TAG].get_grouping_parameter(other_values[-1])
 
     def grouping_independent_values_check(self, other):
@@ -60,6 +62,7 @@ class Test:
         self_parameters = self.get_values_list()
         value = other.get_values_list()[parameter]
         self_parameters[parameter] = ';'.join([self_parameters[parameter], value])
+
         return Test(*self_parameters)
 
     @staticmethod
@@ -241,7 +244,6 @@ class OpenVINOParameters(DependentParameters):
             CONFIG_ASYNC_REQ_COUNT_TAG: async_req_count,
             CONFIG_THREAD_COUNT_TAG: thread_count,
             CONFIG_STREAM_COUNT_TAG: stream_count
-
         }
 
     @staticmethod

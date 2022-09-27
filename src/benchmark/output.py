@@ -1,16 +1,18 @@
-class output_handler():
+class OutputHandler:
     def __init__(self, table_name):
         self.__table_name = table_name
 
-    def __create_table_row(self, executor, test, process):
+    @staticmethod
+    def __create_table_row(executor, test, process):
         status = 'Success' if process.get_status() == 0 else 'Failed'
         test_parameters = test.get_report().replace('input_shape', process.get_model_shape())
         average_time, fps, latency = process.get_performance_metrics()
         hardware_info = executor.get_infrastructure()
+
         return '{0};{1};{2};{3};{4};{5}'.format(status, test_parameters, hardware_info, average_time, latency, fps)
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Dataset;Framework;Inference Framework;Input blob sizes;Precision;Batch size;Mode;Parameters;Infrastructure;Average time of single pass (s);Latency;FPS'  # noqa: E501
+        HEADERS = 'Status;Task type;Topology name;Dataset;Framework;Inference Framework;Input blob sizes;Precision;Batch size;Mode;Parameters;Infrastructure;Average time of single pass (s);Latency;FPS'  # pylint: disable=line-too-long
         with open(self.__table_name, 'w') as table:
             table.write(HEADERS + '\n')
             table.close()

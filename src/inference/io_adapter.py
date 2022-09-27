@@ -1,10 +1,11 @@
-import os
 import abc
+import os
+
 import cv2
 import numpy as np
 
 
-class io_adapter(metaclass=abc.ABCMeta):
+class IOAdapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
         self._transformed_input = None
@@ -24,12 +25,13 @@ class io_adapter(metaclass=abc.ABCMeta):
         for i in range(len(data)):
             image = cv2.imread(data[i])
             image_shapes.append(image.shape[:-1])
-            if (image.shape[:-1] != (h, w)):
+            if image.shape[:-1] != (h, w):
                 image = cv2.resize(image, (w, h))
             images[i] = image
         return images, image_shapes
 
-    def __create_list_images(self, input):
+    @staticmethod
+    def __create_list_images(input):
         images = []
         input_is_correct = True
         if os.path.exists(input[0]):
@@ -48,7 +50,8 @@ class io_adapter(metaclass=abc.ABCMeta):
             raise ValueError('Wrong path to image or to directory with images')
         return images
 
-    def __parse_tensors(self, filename):
+    @staticmethod
+    def __parse_tensors(filename):
         with open(filename, 'r') as file:
             input = file.readlines()
         input = [line.strip() for line in input]
@@ -120,76 +123,76 @@ class io_adapter(metaclass=abc.ABCMeta):
     def get_io_adapter(args, io_model_wrapper, transformer):
         task = args.task
         if task == 'feedforward':
-            return feedforward_io(args, io_model_wrapper, transformer)
+            return FeedForwardIO(args, io_model_wrapper, transformer)
         elif task == 'classification':
-            return classification_io(args, io_model_wrapper, transformer)
+            return ClassificationIO(args, io_model_wrapper, transformer)
         elif task == 'detection':
-            return detection_io(args, io_model_wrapper, transformer)
+            return DetectionIO(args, io_model_wrapper, transformer)
         elif task == 'face-detection':
-            return face_detection_io(args, io_model_wrapper, transformer)
+            return FaceDetectionIO(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return segmenatation_io(args, io_model_wrapper, transformer)
+            return SegmenatationIO(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
-            return adas_segmenatation_io(args, io_model_wrapper, transformer)
+            return AdasSegmenatationIO(args, io_model_wrapper, transformer)
         elif task == 'road-segmentation':
-            return road_segmenatation_io(args, io_model_wrapper, transformer)
+            return RoadSegmenatationIO(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
-            return recognition_face_io(args, io_model_wrapper, transformer)
+            return RecognitionFaceIO(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
-            return person_attributes_io(args, io_model_wrapper, transformer)
+            return PersonAttributesIO(args, io_model_wrapper, transformer)
         elif task == 'age-gender':
-            return age_gender_io(args, io_model_wrapper, transformer)
+            return AgeGenderIO(args, io_model_wrapper, transformer)
         elif task == 'gaze':
-            return gaze_io(args, io_model_wrapper, transformer)
+            return GazeIO(args, io_model_wrapper, transformer)
         elif task == 'head-pose':
-            return head_pose_io(args, io_model_wrapper, transformer)
+            return HeadPoseIO(args, io_model_wrapper, transformer)
         elif task == 'person-detection-asl':
-            return person_detection_asl_io(args, io_model_wrapper, transformer)
+            return PersonDetectionAslIO(args, io_model_wrapper, transformer)
         elif task == 'license-plate':
-            return license_plate_io(args, io_model_wrapper, transformer)
+            return LicensePlateIO(args, io_model_wrapper, transformer)
         elif task == 'instance-segmentation':
-            return instance_segmenatation_io(args, io_model_wrapper, transformer)
+            return InstanceSegmenatationIO(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
-            return single_image_super_resolution_io(args, io_model_wrapper, transformer)
+            return SingleImageSuperResolutionIO(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
-            return sphereface_io(args, io_model_wrapper, transformer)
+            return SpherefaceIO(args, io_model_wrapper, transformer)
         elif task == 'person-detection-action-recognition-old':
-            return person_detection_action_recognition_old(args, io_model_wrapper, transformer)
+            return PersonDetectionActionRecognitionOld(args, io_model_wrapper, transformer)
         elif task == 'person-detection-action-recognition-new':
-            return person_detection_action_recognition_new(args, io_model_wrapper, transformer)
+            return PersonDetectionActionRecognitionNew(args, io_model_wrapper, transformer)
         elif task == 'person-detection-raisinghand-recognition':
-            return person_detection_raisinghand_recognition(args, io_model_wrapper, transformer)
+            return PersonDetectionRaisinghandRecognition(args, io_model_wrapper, transformer)
         elif task == 'person-detection-action-recognition-teacher':
-            return person_detection_action_recognition_teacher(args, io_model_wrapper, transformer)
+            return PersonDetectionActionRecognitionTeacher(args, io_model_wrapper, transformer)
         elif task == 'human-pose-estimation':
-            return human_pose_estimation_io(args, io_model_wrapper, transformer)
+            return HumanPoseEstimationIO(args, io_model_wrapper, transformer)
         elif task == 'action-recognition-encoder':
-            return action_recognition_encoder_io(args, io_model_wrapper, transformer)
+            return ActionRecognitionEncoderIO(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-encoder':
-            return driver_action_recognition_encoder_io(args, io_model_wrapper, transformer)
+            return DriverActionRecognitionEncoderIO(args, io_model_wrapper, transformer)
         elif task == 'reidentification':
-            return reidentification_io(args, io_model_wrapper, transformer)
+            return ReidentificationIO(args, io_model_wrapper, transformer)
         elif task == 'action-recognition-decoder':
-            return action_recognition_decoder_io(args, io_model_wrapper, transformer)
+            return ActionRecognitionDecoderIO(args, io_model_wrapper, transformer)
         elif task == 'driver-action-recognition-decoder':
-            return driver_action_recognition_decoder_io(args, io_model_wrapper, transformer)
+            return DriverActionRecognitionDecoderIO(args, io_model_wrapper, transformer)
         elif task == 'mask-rcnn':
-            return mask_rcnn_io(args, io_model_wrapper, transformer)
+            return MaskRCNNIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_tiny_voc':
-            return yolo_tiny_voc_io(args, io_model_wrapper, transformer)
+            return YoloTinyVocIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2_voc':
-            return yolo_v2_voc_io(args, io_model_wrapper, transformer)
+            return YoloV2VocIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2_coco':
-            return yolo_v2_coco_io(args, io_model_wrapper, transformer)
+            return YoloV2CocoIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v2_tiny_coco':
-            return yolo_v2_tiny_coco_io(args, io_model_wrapper, transformer)
+            return YoloV2TinyCocoIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3':
-            return yolo_v3_io(args, io_model_wrapper, transformer)
+            return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
-            return yolo_v3_tf_io(args, io_model_wrapper, transformer)
+            return YoloV3TFIO(args, io_model_wrapper, transformer)
 
 
-class feedforward_io(io_adapter):
+class FeedForwardIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -197,12 +200,12 @@ class feedforward_io(io_adapter):
         return
 
 
-class classification_io(io_adapter):
+class ClassificationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -221,12 +224,12 @@ class classification_io(io_adapter):
                 log.info('{:.7f} {}'.format(probs[id], det_label))
 
 
-class detection_io(io_adapter):
+class DetectionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -277,12 +280,12 @@ class detection_io(io_adapter):
             count += 1
 
 
-class face_detection_io(io_adapter):
+class FaceDetectionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -317,12 +320,12 @@ class face_detection_io(io_adapter):
         log.info('Result image was saved to {}'.format(out_img))
 
 
-class segmenatation_io(io_adapter):
+class SegmenatationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -349,12 +352,12 @@ class segmenatation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class adas_segmenatation_io(io_adapter):
+class AdasSegmenatationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -382,12 +385,12 @@ class adas_segmenatation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class road_segmenatation_io(io_adapter):
+class RoadSegmenatationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -414,12 +417,12 @@ class road_segmenatation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class recognition_face_io(io_adapter):
+class RecognitionFaceIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -450,12 +453,12 @@ class recognition_face_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class person_attributes_io(io_adapter):
+class PersonAttributesIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -520,12 +523,12 @@ class person_attributes_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class age_gender_io(io_adapter):
+class AgeGenderIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         layer_iter = iter(result)
@@ -539,12 +542,12 @@ class age_gender_io(io_adapter):
             log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
 
 
-class gaze_io(io_adapter):
+class GazeIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -582,12 +585,12 @@ class gaze_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class head_pose_io(io_adapter):
+class HeadPoseIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -654,12 +657,12 @@ class head_pose_io(io_adapter):
         log.info('Result angles was saved to {}'.format(file_angles))
 
 
-class person_detection_asl_io(io_adapter):
+class PersonDetectionAslIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -686,7 +689,7 @@ class person_detection_asl_io(io_adapter):
         log.info('Result image was saved to {}'.format(out_img))
 
 
-class license_plate_io(io_adapter):
+class LicensePlateIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -703,7 +706,7 @@ class license_plate_io(io_adapter):
         return slice_input
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -715,18 +718,18 @@ class license_plate_io(io_adapter):
         for lex in result:
             s = ''
             for j in range(lex.shape[0]):
-                if (lex[j] == -1):
+                if lex[j] == -1:
                     break
                 s = s + str(lexis[int(lex[j])])
             log.info('Plate: {}'.format(s))
 
 
-class instance_segmenatation_io(io_adapter):
+class InstanceSegmenatationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._color_map:
@@ -737,8 +740,7 @@ class instance_segmenatation_io(io_adapter):
                 classes_color_map.append([int(x) for x in line.split()])
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names.txt')
-        labels_map = []
-        labels_map.append('background')
+        labels_map = ['background']
         with open(self._labels, 'r') as f:
             for line in f:
                 labels_map.append(line.strip())
@@ -750,7 +752,7 @@ class instance_segmenatation_io(io_adapter):
         masks = result['raw_masks']
         labels_on_image = []
         for i in range(len(classes)):
-            if (scores[i] > self._threshold):
+            if scores[i] > self._threshold:
                 object_width = boxes[i][2] - boxes[i][0]
                 object_height = boxes[i][3] - boxes[i][1]
                 mask = masks[i][classes[i]]
@@ -759,7 +761,7 @@ class instance_segmenatation_io(io_adapter):
                 labels_on_image.append((label_on_image, label_on_image_point))
                 for j in range(len(mask)):
                     for k in range(len(mask[j])):
-                        if (mask[j][k] > self._threshold):
+                        if mask[j][k] > self._threshold:
                             dh = int(object_height / len(mask))
                             dw = int(object_width / len(mask[j]))
                             x = int(boxes[i][0] + k * dw)
@@ -784,12 +786,12 @@ class instance_segmenatation_io(io_adapter):
         log.info('Result image was saved to {}'.format(out_img))
 
 
-class single_image_super_resolution_io(io_adapter):
+class SingleImageSuperResolutionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -806,12 +808,12 @@ class single_image_super_resolution_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class sphereface_io(io_adapter):
+class SpherefaceIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -828,7 +830,7 @@ class sphereface_io(io_adapter):
         log.info('Result was saved to {}'.format(file_name))
 
 
-class detection_ssd(io_adapter):
+class DetectionSSD(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -836,10 +838,12 @@ class detection_ssd(io_adapter):
     def _get_action_map(self):
         pass
 
-    def _parse_det_conf(self, detection_conf_data, i):
+    @staticmethod
+    def _parse_det_conf(detection_conf_data, i):
         return detection_conf_data[i * 2 + 1]
 
-    def _parse_action(self, action_data, position, num_classes, scale, shift=1):
+    @staticmethod
+    def _parse_action(action_data, position, num_classes, scale, shift=1):
         action_exp_max = 0.
         action_exp_sum = 0.
         action_id = -1
@@ -868,7 +872,8 @@ class detection_ssd(io_adapter):
     def _parse_encoded_box(self, encoded_data, i):
         pass
 
-    def _parse_decoded_bbox(self, prior_box, variance_box, encoded_box, w, h):
+    @staticmethod
+    def _parse_decoded_bbox(prior_box, variance_box, encoded_box, w, h):
         prior_width = prior_box[2] - prior_box[0]
         prior_height = prior_box[3] - prior_box[1]
         prior_xcenter = (prior_box[2] + prior_box[0]) / 2
@@ -882,9 +887,11 @@ class detection_ssd(io_adapter):
         decoded_xmax = int((decoded_xcenter + 0.5 * decoded_width) * w)
         decoded_ymax = int((decoded_ycenter + 0.5 * decoded_height) * h)
         decoded_bbox = [decoded_xmin, decoded_ymin, decoded_xmax, decoded_ymax]
+
         return decoded_bbox
 
-    def _non_max_supression(self, detections, det_threshold):
+    @staticmethod
+    def _non_max_supression(detections, det_threshold):
         detections.sort(key=lambda detection: detection[0], reverse=True)
         valid_detections = []
         for idx in range(len(detections)):
@@ -897,12 +904,10 @@ class detection_ssd(io_adapter):
                 if detection[0] < det_threshold:
                     continue
                 current_rect_area = (
-                    (detection[1][2] - detection[1][0]) *
-                    (detection[1][3] - detection[1][1])
+                    (detection[1][2] - detection[1][0]) * (detection[1][3] - detection[1][1])
                 )
                 max_rect_area = (
-                    (max_detection[1][2] - max_detection[1][0]) *
-                    (max_detection[1][3] - max_detection[1][1])
+                    (max_detection[1][2] - max_detection[1][0]) * (max_detection[1][3] - max_detection[1][1])
                 )
                 intersection_area = 0
                 if not (detection[1][0] >= max_detection[1][2] or
@@ -919,7 +924,8 @@ class detection_ssd(io_adapter):
                 detection[0] *= np.exp(-overlap * overlap / 0.6)
         return valid_detections
 
-    def _draw_detections(self, images, batch, valid_detections, action_map, h, w):
+    @staticmethod
+    def _draw_detections(images, batch, valid_detections, action_map, h, w):
         image = cv2.resize(images[batch], (w, h))
         rect_color = (255, 255, 255)
         for detection in valid_detections:
@@ -942,7 +948,8 @@ class detection_ssd(io_adapter):
             )
         return image
 
-    def _save_output_images(self, images, log):
+    @staticmethod
+    def _save_output_images(images, log):
         count = 0
         for image in images:
             out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
@@ -955,7 +962,7 @@ class detection_ssd(io_adapter):
         pass
 
 
-class detection_ssd_old_format(detection_ssd):
+class DetectionSSDOldFormat(DetectionSSD):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -981,7 +988,7 @@ class detection_ssd_old_format(detection_ssd):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1025,7 +1032,7 @@ class detection_ssd_old_format(detection_ssd):
         self._save_output_images(output_images, log)
 
 
-class detection_ssd_new_format(detection_ssd):
+class DetectionSSDNewFormat(DetectionSSD):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1059,7 +1066,7 @@ class detection_ssd_new_format(detection_ssd):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1128,7 +1135,7 @@ class detection_ssd_new_format(detection_ssd):
         self._save_output_images(output_images, log)
 
 
-class person_detection_action_recognition_old(detection_ssd_old_format):
+class PersonDetectionActionRecognitionOld(DetectionSSDOldFormat):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1137,7 +1144,7 @@ class person_detection_action_recognition_old(detection_ssd_old_format):
         return action_map
 
 
-class person_detection_raisinghand_recognition(detection_ssd_old_format):
+class PersonDetectionRaisinghandRecognition(DetectionSSDOldFormat):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1146,7 +1153,7 @@ class person_detection_raisinghand_recognition(detection_ssd_old_format):
         return action_map
 
 
-class person_detection_action_recognition_teacher(detection_ssd_old_format):
+class PersonDetectionActionRecognitionTeacher(DetectionSSDOldFormat):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1155,7 +1162,7 @@ class person_detection_action_recognition_teacher(detection_ssd_old_format):
         return action_map
 
 
-class person_detection_action_recognition_new(detection_ssd_new_format):
+class PersonDetectionActionRecognitionNew(DetectionSSDNewFormat):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1171,7 +1178,7 @@ class person_detection_action_recognition_new(detection_ssd_new_format):
         return action_map
 
 
-class human_pose_estimation_io(io_adapter):
+class HumanPoseEstimationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1221,7 +1228,7 @@ class human_pose_estimation_io(io_adapter):
             fieldY = cv2.resize(pafY[edges.index(edge)], (frame_width, frame_height))
             start_point_candidates = keypoints[edge['startVertex']]
             end_point_candidates = keypoints[edge['endVertex']]
-            if (not (len(start_point_candidates) == 0) and not (len(end_point_candidates) == 0)):
+            if not (len(start_point_candidates) == 0) and not (len(end_point_candidates) == 0):
                 for start_point in start_point_candidates:
                     max_end_point_id = -1
                     max_score = -1
@@ -1230,7 +1237,7 @@ class human_pose_estimation_io(io_adapter):
                         distance = np.subtract(end_point['coordinates'], start_point['coordinates'])
                         norm = np.linalg.norm(distance)
                         if norm:
-                            norm_distance = distance/norm
+                            norm_distance = distance / norm
                         else:
                             continue
                         interp_coord = list(
@@ -1252,14 +1259,14 @@ class human_pose_estimation_io(io_adapter):
                             y = int(round(coord[1]))
                             paf_interp.append((fieldX[y, x], fieldY[y, x]))
                         paf_scores = np.dot(paf_interp, norm_distance)
-                        avg_paf_score = sum(paf_scores)/len(paf_scores)
+                        avg_paf_score = sum(paf_scores) / len(paf_scores)
                         valid_points = np.where(paf_scores > self._threshold)[0]
-                        if ((len(valid_points) / 10) > 0.7):
+                        if (len(valid_points) / 10) > 0.7:
                             if avg_paf_score > max_score:
                                 max_end_point_id = end_point['id']
                                 max_score = avg_paf_score
                                 found = True
-                    if (found):
+                    if found:
                         valid_pairs.append([start_point['id'], max_end_point_id])
                 valid_connections.append(valid_pairs)
             else:
@@ -1267,7 +1274,8 @@ class human_pose_estimation_io(io_adapter):
                 invalid_connections.append(edge)
         return valid_connections, invalid_connections
 
-    def __search_persons_keypoints(self, edges, valid_connections, invalid_connections):
+    @staticmethod
+    def __search_persons_keypoints(edges, valid_connections, invalid_connections):
         persons_keypoints = -1 * np.ones((0, 18))
         for edge in edges:
             if edge not in invalid_connections:
@@ -1289,7 +1297,8 @@ class human_pose_estimation_io(io_adapter):
                         persons_keypoints = np.vstack((persons_keypoints, new_person_points))
         return persons_keypoints
 
-    def __print_edges(self, edges, persons_keypoints, points, frame, colors):
+    @staticmethod
+    def __print_edges(edges, persons_keypoints, points, frame, colors):
         for edge in edges:
             for person_points in persons_keypoints:
                 start_point_id = int(person_points[edge['startVertex']])
@@ -1303,7 +1312,7 @@ class human_pose_estimation_io(io_adapter):
         return frame
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         edges = [
@@ -1359,12 +1368,12 @@ class human_pose_estimation_io(io_adapter):
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class action_recognition_encoder_io(io_adapter):
+class ActionRecognitionEncoderIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1384,12 +1393,12 @@ class action_recognition_encoder_io(io_adapter):
         log.info('Result was saved to {}'.format(file_name))
 
 
-class driver_action_recognition_encoder_io(io_adapter):
+class DriverActionRecognitionEncoderIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1409,12 +1418,12 @@ class driver_action_recognition_encoder_io(io_adapter):
         log.info('Result was saved to {}'.format(file_name))
 
 
-class reidentification_io(io_adapter):
+class ReidentificationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1434,12 +1443,12 @@ class reidentification_io(io_adapter):
         log.info('Result was saved to {}'.format(file_name))
 
 
-class action_recognition_decoder_io(io_adapter):
+class ActionRecognitionDecoderIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
@@ -1457,12 +1466,12 @@ class action_recognition_decoder_io(io_adapter):
                 log.info('{:.7f} {}'.format(probs[id], det_label))
 
 
-class driver_action_recognition_decoder_io(io_adapter):
+class DriverActionRecognitionDecoderIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
@@ -1480,12 +1489,12 @@ class driver_action_recognition_decoder_io(io_adapter):
                 log.info('{:.7f} {}'.format(probs[id], det_label))
 
 
-class mask_rcnn_io(io_adapter):
+class MaskRCNNIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._color_map:
@@ -1556,7 +1565,8 @@ class mask_rcnn_io(io_adapter):
                                 image[m, n] = color
 
         for i in range(len(labels_on_image)):
-            image = cv2.putText(cv2.UMat(image), labels_on_image[i][0], labels_on_image[i][1], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            image = cv2.putText(cv2.UMat(image), labels_on_image[i][0], labels_on_image[i][1],
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
         orig_h, orig_w = shapes[0]
         image = cv2.UMat(cv2.resize(cv2.UMat(image), (orig_w, orig_h)))
@@ -1565,7 +1575,7 @@ class mask_rcnn_io(io_adapter):
         log.info('Result image was saved to {}'.format(out_img))
 
 
-class yolo(io_adapter):
+class yolo(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1587,7 +1597,7 @@ class yolo(io_adapter):
     def __non_max_supression(self, predictions, score_threshold, nms_threshold):
         predictions.sort(key=lambda prediction: prediction[0], reverse=True)
         valid_detections = []
-        while (len(predictions) > 0):
+        while len(predictions) > 0:
             max_detection = predictions[0]
             if max_detection[0] < score_threshold:
                 break
@@ -1603,7 +1613,8 @@ class yolo(io_adapter):
                 current_rect_area = detection[2][2] * detection[2][3]
                 max_rect_area = max_detection[2][2] * max_detection[2][3]
                 intersection_area = 0
-                if not (detection[2][2] <= 0 or detection[2][3] <= 0 or max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
+                if not (detection[2][2] <= 0 or detection[2][3] <= 0 or
+                        max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
                     intersection_area = float(
                         (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) -
                          max(detection[2][0], max_detection[2][0])) *
@@ -1611,13 +1622,14 @@ class yolo(io_adapter):
                          max(detection[2][1], max_detection[2][1]))
                     )
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
-                if (overlap > nms_threshold):
+                if overlap > nms_threshold:
                     remove_detections.append(detection)
             for detection in remove_detections:
                 predictions.remove(detection)
         return valid_detections
 
-    def __print_detections(self, detections, labels_map, image, scales, orig_shape, batch, log):
+    @staticmethod
+    def __print_detections(detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0] * scales['W'])
@@ -1625,15 +1637,18 @@ class yolo(io_adapter):
             right = int((detection[2][2] + detection[2][0]) * scales['W'])
             bottom = int((detection[2][3] + detection[2][1]) * scales['H'])
             class_id = int(detection[1])
-            color = (min(int(class_id / 25 % 5) * 50, 255), min(int(class_id / 5 % 5) * 50, 255), min(int(class_id % 5) * 50, 255))
+            color = (min(int(class_id / 25 % 5) * 50, 255), min(int(class_id / 5 % 5) * 50, 255),
+                     min(int(class_id % 5) * 50, 255))
             log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
             log.info('Top left: ({0}, {1})'.format(top, left))
             log.info('Bottom right: ({0}, {1})'.format(bottom, right))
             label = '<' + labels_map[class_id] + '>'
             image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
-            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]), (left + label_size[0], top), color, -2)
-            image = cv2.putText(image, label, (left, top - base_line - 1), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
+            cv2.rectangle(image, (left - 2, top - 4 - base_line - label_size[1]),
+                          (left + label_size[0], top), color, -2)
+            image = cv2.putText(image, label, (left, top - base_line - 1),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
@@ -1648,7 +1663,7 @@ class yolo(io_adapter):
         class_id = np.argmax(self._softmax(scores))
         best_class_score = scores[class_id]
         confidence_in_class = confidence * best_class_score
-        if (confidence_in_class > self._threshold):
+        if confidence_in_class > self._threshold:
             bbox = [
                 float(bbox_center_x - bbox_width / 2),
                 float(bbox_center_y - bbox_height / 2),
@@ -1660,7 +1675,7 @@ class yolo(io_adapter):
         return None
 
     def process_output(self, result, log):
-        if (self._not_valid_result(result)):
+        if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         if not self._labels:
@@ -1692,19 +1707,20 @@ class yolo(io_adapter):
                 for cx in range(dy):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[cy, cx]):
-                            if (detection[4] >= 0.5):
+                            if detection[4] >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         frameHeight, frameWidth, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
-            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image), scales, (orig_w, orig_h), batch, log)
+            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image),
+                                            scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection_{}.bmp'.format(batch + 1))
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {}'.format(out_img))
 
 
-class yolo_v2_voc_io(yolo):
+class YoloV2VocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1716,12 +1732,12 @@ class yolo_v2_voc_io(yolo):
 
     def _get_anchors(self):
         anchors = [
-            ((1.3221,  1.73145), (3.19275, 4.00944), (5.05587, 8.09892), (9.47112, 4.84053), (11.2364, 10.0071))
+            ((1.3221, 1.73145), (3.19275, 4.00944), (5.05587, 8.09892), (9.47112, 4.84053), (11.2364, 10.0071))
         ]
         return anchors
 
 
-class yolo_tiny_voc_io(yolo):
+class YoloTinyVocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1738,7 +1754,7 @@ class yolo_tiny_voc_io(yolo):
         return anchors
 
 
-class yolo_v2_coco_io(yolo):
+class YoloV2CocoIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1755,7 +1771,7 @@ class yolo_v2_coco_io(yolo):
         return anchors
 
 
-class yolo_v2_tiny_coco_io(yolo_v2_coco_io):
+class YoloV2TinyCocoIO(YoloV2CocoIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1766,7 +1782,7 @@ class yolo_v2_tiny_coco_io(yolo_v2_coco_io):
         return shapes
 
 
-class yolo_v3_io(yolo):
+class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -1808,7 +1824,7 @@ class yolo_v3_io(yolo):
         return anchors
 
 
-class yolo_v3_tf_io(yolo_v3_io):
+class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 

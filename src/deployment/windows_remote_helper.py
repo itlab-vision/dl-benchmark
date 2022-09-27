@@ -1,8 +1,9 @@
 import wmi  # pylint: disable=E0401
-from remote_helper import remote_helper
+
+from remote_helper import RemoteHelper
 
 
-class windows_remote_hepler(remote_helper):
+class WindowsRemoteHepler(RemoteHelper):
     def __init__(self, log):
         super().__init__(log)
 

@@ -1,4 +1,4 @@
-class process:
+class Process:
     def __init__(self, parameters, executor, log):
         self.__my_log = log
         self.__my_executor = executor
@@ -143,6 +143,3 @@ class process:
         self.__my_output = self.__my_executor.execute_process(command_line)
         if type(self.__my_output) is not list:
             self.__my_log.info(self.__my_output)
-        # else:
-        #     for out in self.__my_output:
-        #         self.__my_log.info(out)

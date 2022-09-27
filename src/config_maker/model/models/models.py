@@ -1,7 +1,9 @@
 import os
 from xml.dom import minidom
-from .model import Model  # pylint: disable=E0402
+
 from tags import CONFIG_MODELS_TAG  # pylint: disable=E0401
+
+from .model import Model  # pylint: disable=E0402
 
 
 class Models:
@@ -60,4 +62,5 @@ class Models:
         xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
+
         return os.path.exists(path_to_config)

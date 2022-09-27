@@ -1,21 +1,23 @@
 import abc
-import docker
 import os
 import sys
 from subprocess import Popen, PIPE
 
+import docker
 
-class executor(metaclass=abc.ABCMeta):
+
+class Executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
         self.target_framework = None
+        self.my_target_framework = None
 
     @staticmethod
     def get_executor(executor_type, log):
         if executor_type == 'host_machine':
-            return host_executor(log)
+            return HostExecutor(log)
         elif executor_type == 'docker_container':
-            return docker_executor(log)
+            return DockerExecutor(log)
 
     def set_target_framework(self, target_framework):
         self.my_target_framework = target_framework.replace(' ', '_')
@@ -33,7 +35,7 @@ class executor(metaclass=abc.ABCMeta):
         pass
 
 
-class host_executor(executor):
+class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         self.my_environment = os.environ.copy()
@@ -44,11 +46,13 @@ class host_executor(executor):
     def get_infrastructure(self):
         sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
         import node_info as info  # noqa: E402 pylint: disable=E0401
+
         hardware = info.get_system_characteristics()
         hardware_info = ''
         for key in hardware:
             hardware_info += '{}: {}, '.format(key, hardware[key])
         hardware_info = hardware_info[:-2]
+
         return hardware_info
 
     def execute_process(self, command_line):
@@ -56,10 +60,11 @@ class host_executor(executor):
         return_code = process.wait()
         out, _ = process.communicate()
         out = out.split('\n')[:-1]
+
         return return_code, out
 
 
-class docker_executor(executor):
+class DockerExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         client = docker.from_env()
@@ -79,8 +84,10 @@ class docker_executor(executor):
         for line in hardware:
             hardware_info += '{}: {}, '.format(line[0], line[1])
         hardware_info = hardware_info[:-2]
+
         return hardware_info
 
     def execute_process(self, command_line):
         command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
+
         return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)

@@ -54,11 +54,8 @@ class AccuracyCheckerConfigDialog(QDialog):
         self.setLayout(layout)
 
     def get_values(self):
-        values = []
-        values.append(self.__edits[CONFIG_MODEL_TAG].currentText())
-        values.append(self.__edits[CONFIG_FRAMEWORK_TAG].currentText())
-        values.append(self.__edits[CONFIG_DEVICE_TAG].currentText())
-        values.append(self.__edits[CONFIG_CONFIG_TAG].text())
+        values = [self.__edits[CONFIG_MODEL_TAG].currentText(), self.__edits[CONFIG_FRAMEWORK_TAG].currentText(),
+                  self.__edits[CONFIG_DEVICE_TAG].currentText(), self.__edits[CONFIG_CONFIG_TAG].text()]
         return values
 
     def load_values_from_table_row(self, table, row):

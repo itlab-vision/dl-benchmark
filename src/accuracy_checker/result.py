@@ -1,7 +1,7 @@
 import csv
 
 
-class result:
+class Result:
     def __init__(self, status, task, model, launcher, source_framework, device, dataset, precision, metric, accuracy):
         self.__params = {
             'status': status,
@@ -16,7 +16,8 @@ class result:
             'accuracy': accuracy
         }
 
-    def update_dataset(self, dataset):
+    @staticmethod
+    def update_dataset(dataset):
         if 'imagenet' in dataset.lower():
             return 'ImageNet'
         elif 'coco' in dataset.lower():
@@ -46,9 +47,9 @@ class result:
         tmp = [str for str in res if str != '']
         res = tmp
 
-        error = result.has_error(res)
+        error = Result.has_error(res)
         status = 'FAILED' if error else 'SUCCESS'
-        accuracies = dict()
+        accuracies = {}
         dataset = None
         if not error:
             try:
@@ -59,14 +60,16 @@ class result:
                         accuracies[row['metric_name']] = f"{value:.{2}f}%"
                         dataset = row['dataset']
             except Exception as ex:
-                print('ERROR! : {0}'.format(str(ex)))
+                print(f'ERROR! : {str(ex)}')
         else:
             accuracies = {'N/A': ''}
             dataset = 'N/A'
         if not accuracies:
             raise ValueError('Information about accuracy was not found in test result')
 
-        return [result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework,
-                       source_framework=test.model.framework, device=test.device, dataset=dataset,
-                       precision=test.model.precision, metric=metric, accuracy=accuracies[metric]) for metric in
-                accuracies.keys()]
+        test_result = [Result(status=status, task=test.model.task, model=test.model.name, launcher=test.framework,
+                              source_framework=test.model.framework, device=test.device, dataset=dataset,
+                              precision=test.model.precision, metric=metric, accuracy=accuracies[metric]) for metric in
+                       accuracies.keys()]
+
+        return test_result

@@ -1,10 +1,10 @@
-import os
 import abc
+import os
 from collections import OrderedDict
 from xml.dom import minidom
 
 
-class parser:
+class Parser:
     def get_tests_list(self, config):
         CONFIG_ROOT_TAG = 'Test'
         return minidom.parse(config).getElementsByTagName(CONFIG_ROOT_TAG)
@@ -19,7 +19,8 @@ class parser:
         CONFIG_MODEL_WEIGHTS_PATH_TAG = 'WeightsPath'
 
         model_tag = curr_test.getElementsByTagName(CONFIG_MODEL_TAG)[0]
-        return model(
+
+        return Model(
             task=model_tag.getElementsByTagName(CONFIG_MODEL_TASK_TAG)[0].firstChild.data,
             name=model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
             precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
@@ -34,7 +35,8 @@ class parser:
         CONFIG_DATASET_PATH_TAG = 'Path'
 
         dataset_tag = curr_test.getElementsByTagName(CONFIG_DATASET_TAG)[0]
-        return dataset(
+
+        return Dataset(
             name=dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
             path=dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
         )
@@ -48,37 +50,44 @@ class parser:
         CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG = 'TestTimeLimit'
 
         indep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TAG)[0]
-        return framework_independent_parameters(
-            inference_framework=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data,
-            batch_size=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG)[0].firstChild.data,
-            device=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG)[0].firstChild.data,
-            iterarion_count=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
-            test_time_limit=indep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
+
+        return FrameworkIndependentParameters(
+            inference_framework=indep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_INDEPENDENT_INFERENCE_FRAMEWORK_TAG)[0].firstChild.data,
+            batch_size=indep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_INDEPENDENT_BATCH_SIZE_TAG)[0].firstChild.data,
+            device=indep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_INDEPENDENT_DEVICE_TAG)[0].firstChild.data,
+            iterarion_count=indep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
+            test_time_limit=indep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
         )
 
     def parse_dependent_parameters(self, curr_test, framework):
-        dep_parser = dependent_parameters_parser.get_parser(framework)
+        dep_parser = DependentParametersParser.get_parser(framework)
         return dep_parser.parse_parameters(curr_test)
 
 
-class dependent_parameters_parser(metaclass=abc.ABCMeta):
+class DependentParametersParser(metaclass=abc.ABCMeta):
     @staticmethod
     def get_parser(framework):
         if framework == 'OpenVINO DLDT':
-            return OpenVINO_parameters_parser()
+            return OpenVINOParametersParser()
         elif framework == 'Caffe':
-            return IntelCaffe_parameters_parser()
+            return IntelCaffeParametersParser()
         elif framework == 'TensorFlow':
-            return TensorFlow_parameters_parser()
+            return TensorFlowParametersParser()
         else:
-            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
+            raise ValueError(
+                'Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
 
     @abc.abstractmethod
     def parse_parameters(self, curr_test):
         pass
 
 
-class OpenVINO_parameters_parser(dependent_parameters_parser):
+class OpenVINOParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_MODE_TAG = 'Mode'
@@ -100,7 +109,7 @@ class OpenVINO_parameters_parser(dependent_parameters_parser):
         _stream_count = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_STREAM_COUNT_TAG)[0].firstChild
 
-        return OpenVINO_parameters(
+        return OpenVINOParameters(
             mode=_mode.data if _mode else None,
             extension=_extension.data if _extension else None,
             async_request_count=_async_request_count.data if _async_request_count else None,
@@ -109,7 +118,7 @@ class OpenVINO_parameters_parser(dependent_parameters_parser):
         )
 
 
-class IntelCaffe_parameters_parser(dependent_parameters_parser):
+class IntelCaffeParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
@@ -120,13 +129,18 @@ class IntelCaffe_parameters_parser(dependent_parameters_parser):
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
-        _channel_swap = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
-        _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
-        _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
-        _thread_count = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
-        _kmp_affinity = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
+        _channel_swap = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _mean = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
+        _input_scale = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
+        _thread_count = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
+        _kmp_affinity = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
 
-        return IntelCaffe_parameters(
+        return IntelCaffeParameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
@@ -135,7 +149,7 @@ class IntelCaffe_parameters_parser(dependent_parameters_parser):
         )
 
 
-class TensorFlow_parameters_parser(dependent_parameters_parser):
+class TensorFlowParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
@@ -151,18 +165,28 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
-        _channel_swap = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
-        _mean = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
-        _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
-        _input_shape = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
-        _input_name = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
-        _output_names = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
-        _thread_count = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
-        _inter_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG)[0].firstChild
-        _intra_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG)[0].firstChild
-        _kmp_affinity = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
+        _channel_swap = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _mean = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG)[0].firstChild
+        _input_scale = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INPUT_SCALE_TAG)[0].firstChild
+        _input_shape = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
+        _input_name = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
+        _output_names = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
+        _thread_count = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
+        _inter_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG)[0].firstChild
+        _intra_op_parallelism_threads = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG)[0].firstChild
+        _kmp_affinity = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
 
-        return TensorFlow_parameters(
+        return TensorFlowParameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
@@ -176,11 +200,10 @@ class TensorFlow_parameters_parser(dependent_parameters_parser):
         )
 
 
-class model:
-    def _parameter_not_is_none(self, parameter):
-        if parameter is not None:
-            return True
-        return False
+class Model:
+    @staticmethod
+    def _parameter_not_is_none(parameter):
+        return True if parameter is not None else False
 
     def __init__(self, task, name, model_path, weights_path, precision, source_framework):
         self.source_framework = None
@@ -211,11 +234,10 @@ class model:
             raise ValueError('Precision is required parameter.')
 
 
-class dataset:
-    def _parameter_not_is_none(self, parameter):
-        if parameter is not None:
-            return True
-        return False
+class Dataset:
+    @staticmethod
+    def _parameter_not_is_none(parameter):
+        return True if parameter is not None else False
 
     def __init__(self, name, path):
         self.name = None
@@ -230,13 +252,13 @@ class dataset:
             raise ValueError('Path to dataset is required parameter.')
 
 
-class parameters_methods:
-    def _parameter_not_is_none(self, parameter):
-        if parameter is not None:
-            return True
-        return False
+class ParametersMethods:
+    @staticmethod
+    def _parameter_not_is_none(parameter):
+        return True if parameter is not None else False
 
-    def _int_value_is_correct(self, int_value):
+    @staticmethod
+    def _int_value_is_correct(int_value):
         for i in range(len(int_value)):
             if (i < 0) or (9 < i):
                 return False
@@ -249,8 +271,9 @@ class parameters_methods:
         return True
 
 
-class framework_independent_parameters(parameters_methods):
-    def _device_is_correct(self, device):
+class FrameworkIndependentParameters(ParametersMethods):
+    @staticmethod
+    def _device_is_correct(device):
         const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA']
         if device.upper() in const_correct_devices:
             return True
@@ -269,23 +292,28 @@ class framework_independent_parameters(parameters_methods):
         if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
             self.batch_size = int(batch_size)
         else:
-            raise ValueError('Batch size is required parameter. Batch size can only take values: integer greater than zero.')
+            raise ValueError('Batch size is required parameter. '
+                             'Batch size can only take values: integer greater than zero.')
         if self._device_is_correct(device):
             self.device = device.upper()
         else:
-            raise ValueError('Device is required parameter. Device can only take values: CPU, GPU, FPGA, MYRIAD.')
+            raise ValueError('Device is required parameter. '
+                             'Device can only take values: CPU, GPU, FPGA, MYRIAD.')
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
-            raise ValueError('Iteration count is required parameter. Iteration count can only take values: integer greater than zero.')
+            raise ValueError('Iteration count is required parameter. '
+                             'Iteration count can only take values: integer greater than zero.')
         if self._parameter_not_is_none(test_time_limit) and self._float_value_is_correct(test_time_limit):
             self.test_time_limit = float(test_time_limit)
         else:
-            raise ValueError('Test time limit is required parameter. Test time limit can only `take values: float greater than zero.')
+            raise ValueError('Test time limit is required parameter. '
+                             'Test time limit can only `take values: float greater than zero.')
 
 
-class OpenVINO_parameters(parameters_methods):
-    def _mode_is_correct(self, mode):
+class OpenVINOParameters(ParametersMethods):
+    @staticmethod
+    def _mode_is_correct(mode):
         const_correct_mode = ['sync', 'async']
         if mode.lower() in const_correct_mode:
             return True
@@ -331,8 +359,9 @@ class OpenVINO_parameters(parameters_methods):
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
 
-class IntelCaffe_parameters(parameters_methods):
-    def _channel_swap_is_correct(self, channel_swap):
+class IntelCaffeParameters(ParametersMethods):
+    @staticmethod
+    def _channel_swap_is_correct(channel_swap):
         set_check = {'0', '1', '2'}
         set_in = set(channel_swap.split())
         return set_in == set_check
@@ -377,8 +406,9 @@ class IntelCaffe_parameters(parameters_methods):
             self.kmp_affinity = kmp_affinity
 
 
-class TensorFlow_parameters(parameters_methods):
-    def _channel_swap_is_correct(self, channel_swap):
+class TensorFlowParameters(ParametersMethods):
+    @staticmethod
+    def _channel_swap_is_correct(channel_swap):
         set_check = {'0', '1', '2'}
         set_in = set(channel_swap.split())
         return set_in == set_check
@@ -457,7 +487,7 @@ class TensorFlow_parameters(parameters_methods):
             self.kmp_affinity = kmp_affinity
 
 
-class test(metaclass=abc.ABCMeta):
+class Test(metaclass=abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         self.model = model
         self.dataset = dataset
@@ -467,20 +497,21 @@ class test(metaclass=abc.ABCMeta):
     @staticmethod
     def get_test(framework, model, dataset, indep_parameters, dep_parameters):
         if framework == 'OpenVINO DLDT':
-            return OpenVINO_test(model, dataset, indep_parameters, dep_parameters)
+            return OpenVINOTest(model, dataset, indep_parameters, dep_parameters)
         elif framework == 'Caffe':
-            return IntelCaffe_test(model, dataset, indep_parameters, dep_parameters)
+            return IntelCaffeTest(model, dataset, indep_parameters, dep_parameters)
         elif framework == 'TensorFlow':
-            return TensorFlow_test(model, dataset, indep_parameters, dep_parameters)
+            return TensorFlowTest(model, dataset, indep_parameters, dep_parameters)
         else:
-            raise ValueError('Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
+            raise ValueError(
+                'Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
 
     @abc.abstractmethod
     def get_report(self):
         pass
 
 
-class OpenVINO_test(test):
+class OpenVINOTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
@@ -494,58 +525,64 @@ class OpenVINO_test(test):
         other_param = []
         for key in parameters:
             if parameters[key] is not None:
-                other_param.append('{}: {}'.format(key, parameters[key]))
+                other_param.append(f'{key}: {parameters[key]}')
         other_param = ', '.join(other_param)
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
+
+        report_res = '{0};{1};{2};{3};{4};input_shape;{5};{6};{7};{8}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
-            self.indep_parameters.batch_size, self.dep_parameters.mode, other_param
-        )
+            self.indep_parameters.batch_size, self.dep_parameters.mode, other_param)
+
+        return report_res
 
 
-class IntelCaffe_test(test):
+class IntelCaffeTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}, KMP_AFFINITY: {10}'.format(
+        report_res = '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, ' \
+                     'Iteration count: {8}, Thread count: {9}, KMP_AFFINITY: {10}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
             self.indep_parameters.iteration, self.dep_parameters.nthreads,
-            self.dep_parameters.kmp_affinity
-        )
+            self.dep_parameters.kmp_affinity)
+
+        return report_res
 
 
-class TensorFlow_test(test):
+class TensorFlowTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        return '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, Thread count: {9}, Inter threads: {10}, Intra threads: {11}, KMP_AFFINITY: {12}'.format(
+        report_res = '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, ' \
+                     'Thread count: {9}, Inter threads: {10}, Intra threads: {11}, KMP_AFFINITY: {12}'.format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
             self.indep_parameters.iteration, self.dep_parameters.nthreads,
             self.dep_parameters.num_inter_threads, self.dep_parameters.num_intra_threads,
-            self.dep_parameters.kmp_affinity
-        )
+            self.dep_parameters.kmp_affinity)
+
+        return report_res
 
 
 def process_config(config, log):
-    test_parser = parser()
+    test_parser = Parser()
     test_list = []
 
     tests = test_parser.get_tests_list(config)
     for idx, curr_test in enumerate(tests):
         try:
-            Model = test_parser.parse_model(curr_test)
-            Dataset = test_parser.parse_dataset(curr_test)
-            IndepParameters = test_parser.parse_independent_parameters(curr_test)
-            framework = IndepParameters.inference_framework
-            DepParameters = test_parser.parse_dependent_parameters(curr_test, framework)
+            model = test_parser.parse_model(curr_test)
+            dataset = test_parser.parse_dataset(curr_test)
+            indep_parameters = test_parser.parse_independent_parameters(curr_test)
+            framework = indep_parameters.inference_framework
+            dep_parameters = test_parser.parse_dependent_parameters(curr_test, framework)
 
-            test_list.append(test.get_test(framework, Model, Dataset, IndepParameters, DepParameters))
+            test_list.append(Test.get_test(framework, model, dataset, indep_parameters, dep_parameters))
         except ValueError as valerr:
             log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
     return test_list

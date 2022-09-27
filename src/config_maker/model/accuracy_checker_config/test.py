@@ -38,6 +38,7 @@ class Test:
         self_parameters = self.get_values_dict()
         value = other.get_values_dict()[tag]
         self_parameters[tag] = ';'.join([self_parameters[tag], value])
+
         return Test(*self_parameters.values())
 
     @staticmethod
@@ -85,4 +86,5 @@ class Test:
         for framework in frameworks:
             for device in devices:
                 new_tests.append(Test(model, framework, device, config))
+
         return new_tests

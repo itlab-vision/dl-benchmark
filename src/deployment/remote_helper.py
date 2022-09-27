@@ -1,18 +1,18 @@
 import abc
 
 
-class remote_helper(metaclass=abc.ABCMeta):
+class RemoteHelper(metaclass=abc.ABCMeta):
     def __init__(self, log):
         self.my_log = log
 
     @staticmethod
     def get_remote_helper(os_type, log):
         if os_type == 'linux':
-            from linux_remote_helper import linux_remote_helper
-            return linux_remote_helper(log)
+            from linux_remote_helper import LinuxRemoteHelper
+            return LinuxRemoteHelper(log)
         elif os_type == 'windows':
-            from windows_remote_helper import windows_remote_hepler
-            return windows_remote_hepler(log)
+            from windows_remote_helper import WindowsRemoteHepler
+            return WindowsRemoteHepler(log)
 
     @abc.abstractmethod
     def connect(self, machine_ip, login, password):

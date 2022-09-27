@@ -1,7 +1,9 @@
 import os
 from xml.dom import minidom
-from .test import Test  # pylint: disable=E0402
+
 from tags import CONFIG_TESTS_TAG, CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_DATASET_TAG  # pylint: disable=E0401
+
+from .test import Test  # pylint: disable=E0402
 
 
 class BenchmarkConfig:
@@ -45,6 +47,7 @@ class BenchmarkConfig:
             models.append(test.parameters[CONFIG_MODEL_TAG])
             data.append(test.parameters[CONFIG_DATASET_TAG])
         self.__tests_grouping()
+
         return models, data
 
     def create_config(self, path_to_config):
@@ -60,6 +63,7 @@ class BenchmarkConfig:
         xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
+
         return os.path.exists(path_to_config)
 
     def __prepare_tests(self):
@@ -67,6 +71,7 @@ class BenchmarkConfig:
         for test in self.__tests:
             splitting_tests = test.test_splitting()
             new_tests.extend(splitting_tests)
+
         return new_tests
 
     def __tests_grouping(self):
@@ -77,7 +82,8 @@ class BenchmarkConfig:
                         if self.__tests[j] is not None:
                             parameter = self.__tests[i].grouping_independent_values_check(self.__tests[j])
                             if parameter > 2:
-                                self.__tests[i] = Test.grouping_by_independent(self.__tests[i], self.__tests[j], parameter)
+                                self.__tests[i] = Test.grouping_by_independent(
+                                    self.__tests[i], self.__tests[j], parameter)
                                 self.__tests[j] = None
             if None not in self.__tests:
                 break
@@ -89,7 +95,8 @@ class BenchmarkConfig:
                         if self.__tests[j] is not None:
                             parameter = self.__tests[i].grouping_dependent_values_check(self.__tests[j])
                             if parameter != -1:
-                                self.__tests[i] = Test.grouping_by_dependent(self.__tests[i], self.__tests[j], parameter)
+                                self.__tests[i] = Test.grouping_by_dependent(
+                                    self.__tests[i], self.__tests[j], parameter)
                                 self.__tests[j] = None
             if None not in self.__tests:
                 break

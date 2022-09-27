@@ -1,4 +1,5 @@
 from copy import copy
+
 from openvino.runtime import Core, Tensor, PartialShape  # pylint: disable=E0401
 
 
@@ -120,7 +121,7 @@ def compile_model(core, model, device, multi_priority):
 
 
 def get_input_shape(io_model_wrapper, model):
-    layer_shapes = dict()
+    layer_shapes = {}
     layer_names = io_model_wrapper.get_input_layer_names(model)
     for input_layer in layer_names:
         shape = ''
@@ -148,7 +149,8 @@ def set_input_to_blobs(request, input):
             if model_input.get_any_name() == layer_name:
                 if PartialShape(data.shape) != model_input.get_partial_shape():
                     raise ValueError("Input data and input layer with name {0} has different shapes: \
-                                     {1} and {2}".format(layer_name, PartialShape(data.shape), model_input.get_partial_shape()))
+                                     {1} and {2}".format(
+                        layer_name, PartialShape(data.shape), model_input.get_partial_shape()))
                 new_tensor = Tensor(data)
                 request.set_tensor(model_input.get_any_name(), new_tensor)
                 found_tensor = True
@@ -158,7 +160,7 @@ def set_input_to_blobs(request, input):
 
 
 def get_request_result(request):
-    result = dict()
+    result = {}
     for output_node, tensor in request.results.items():
         result[output_node.get_any_name()] = copy(tensor)
     return result

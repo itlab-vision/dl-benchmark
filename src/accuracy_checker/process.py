@@ -1,7 +1,7 @@
 from result import result
 
 
-class process:
+class Process:
     def __init__(self, log, executor, test):
         self.__log = log
         self.__executor = executor
@@ -17,13 +17,15 @@ class process:
                                      self.__test.parameters.source,
                                      self.__test.device,
                                      self.__csv_name)
-        command_line = self.__add_framework_for_cmd_line(command_line, self.__supported_frameworks[self.__test.framework])
+        command_line = self.__add_framework_for_cmd_line(command_line,
+                                                         self.__supported_frameworks[self.__test.framework])
         if self.__test.parameters.annotations:
             command_line = self.__add_annotations_for_cmd_line(command_line, self.__test.parameters.annotations)
         if self.__test.parameters.definitions:
             command_line = self.__add_definitions_for_cmd_line(command_line, self.__test.parameters.definitions)
         if self.__test.parameters.extensions:
             command_line = self.__add_extensions_for_cmd_line(command_line, self.__test.parameters.extensions)
+
         return command_line
 
     @staticmethod
@@ -56,4 +58,5 @@ class process:
 
     def get_result_parameters(self):
         result_file = self.__executor.get_path_to_result_file()
+
         return result.parser_test_result(self.__output, self.__test, result_file)

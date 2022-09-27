@@ -43,4 +43,5 @@ class DeployComputer:
             os = parsed_computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
             download_folder = parsed_computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
             computers.append(DeployComputer(ip, login, password, os, download_folder))
+
         return computers

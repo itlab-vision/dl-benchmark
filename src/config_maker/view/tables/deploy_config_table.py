@@ -1,6 +1,7 @@
-from .table import Table  # pylint: disable=E0402
 # pylint: disable-next=E0401
 from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_DOWNLOAD_FOLDER_TAG
+
+from .table import Table  # pylint: disable=E0402
 
 
 class DeployConfigTable(Table):

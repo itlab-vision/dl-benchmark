@@ -1,9 +1,9 @@
-class output_handler:
+class OutputHandler:
     def __init__(self, table_name):
         self.__table_name = table_name
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
+        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # pylint: disable=line-too-long
         with open(self.__table_name, 'w') as table:
             table.write(HEADERS + '\n')
             table.close()
@@ -22,6 +22,7 @@ class output_handler:
             table.write(report_row + '\n')
             table.close()
 
-    def __create_table_row(self, result_dict):
+    @staticmethod
+    def __create_table_row(result_dict):
         return '{status};{task};{model};{source_framework};{launcher};{device};{hardware};{dataset};{metric};' \
                '{precision};{accuracy};'.format(**result_dict)

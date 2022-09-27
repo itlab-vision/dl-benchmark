@@ -1,21 +1,45 @@
-import os
 import argparse
 import ftplib
-import sys
 import logging as log
+import os
+import sys
 
 
-def build_parser():
+def cli_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--server_ip', help='FTP server IP.', required=True, type=str)
-    parser.add_argument('-l', '--server_login', type=str, help='Login to the FTP server.', required=True)
-    parser.add_argument('-p', '--server_psw', type=str, help='Password to the FTP server.', required=True)
-    parser.add_argument('-i', '--image_path', required=True, type=str, help='Path to container image on the FTP server.')
-    parser.add_argument('-d', '--upload_dir', required=True, type=str, help='Path to the directory on the target machine where to upload the container image.')
-    parser.add_argument('-n', '--container_name', required=True, type=str, help='Name of the docker container.')
-    parser.add_argument('-dp', '--dataset_path', required=True, type=str,
+
+    parser.add_argument('-s', '--server_ip',
+                        help='FTP server IP.',
+                        required=True,
+                        type=str)
+    parser.add_argument('-l', '--server_login',
+                        type=str,
+                        help='Login to the FTP server.',
+                        required=True)
+    parser.add_argument('-p', '--server_psw',
+                        type=str,
+                        help='Password to the FTP server.',
+                        required=True)
+    parser.add_argument('-i', '--image_path',
+                        required=True,
+                        type=str,
+                        help='Path to container image on the FTP server.')
+    parser.add_argument('-d', '--upload_dir',
+                        required=True,
+                        type=str,
+                        help='Path to the directory on the target machine where to upload the container image.')
+    parser.add_argument('-n', '--container_name',
+                        required=True,
+                        type=str,
+                        help='Name of the docker container.')
+    parser.add_argument('-dp', '--dataset_path',
+                        required=True,
+                        type=str,
                         help='Path to directory with datasets to mount into docker container.')
-    return parser.parse_args()
+
+    args = parser.parse_args()
+
+    return args
 
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log):
@@ -47,7 +71,7 @@ def main():
         stream=sys.stdout
     )
 
-    args = build_parser()
+    args = cli_parser()
 
     image_name = os.path.split(args.image_path)[1]
     joined_pass = os.path.join(args.upload_dir, image_name)

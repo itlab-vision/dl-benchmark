@@ -1,8 +1,9 @@
 import paramiko  # pylint: disable=E0401
-from remote_helper import remote_helper
+
+from remote_helper import RemoteHelper
 
 
-class linux_remote_helper(remote_helper):
+class LinuxRemoteHelper(RemoteHelper):
     def __init__(self, log):
         super().__init__(log)
 

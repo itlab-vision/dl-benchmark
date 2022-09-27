@@ -1,11 +1,12 @@
-import os
-import json
 import copy
-from parameters import all_parameters
+import json
+import os
+
+from parameters import AllParameters
 from utils import get_correct_path
 
 
-class config_parser:
+class ConfigParser:
     def __init__(self, json_config_file_path):
         if not os.path.isfile(json_config_file_path):
             raise ValueError('Wrong path to configuration file!')
@@ -18,7 +19,7 @@ class config_parser:
 
     def parse(self):
         with open(self.__config_path, 'r') as config_file:
-            all_params = all_parameters(json.load(config_file))
+            all_params = AllParameters(json.load(config_file))
         for m_params in all_params.models_list:
             config_file_path = self.__create_pot_config_file(m_params)
             self.__config_file_paths.append(config_file_path)
@@ -47,9 +48,3 @@ class config_parser:
                 raise ValueError('Wrong path to configuration file!')
         if os.path.isdir(self.__folder_with_configs):
             os.rmdir(self.__folder_with_configs)
-
-    # def __get_pot_parameters(self, model_parameters):
-    #     return model_parameters.pot_parameters
-
-    # def __get_pot_config_path(self, model_parameters):
-    #     pot_config_file_path = self.__pot_parameters

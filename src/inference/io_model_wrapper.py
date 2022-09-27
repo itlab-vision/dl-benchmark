@@ -1,7 +1,7 @@
 import abc
 
 
-class io_model_wrapper:
+class IOModelWrapper:
     @abc.abstractmethod
     def get_input_layer_names(self, model):
         pass
@@ -15,7 +15,7 @@ class io_model_wrapper:
         pass
 
 
-class openvino_io_model_wrapper(io_model_wrapper):
+class OpenVINOIOModelWrapper(IOModelWrapper):
     def get_input_layer_names(self, model):
         names = []
         for input in model.inputs:
@@ -35,7 +35,7 @@ class openvino_io_model_wrapper(io_model_wrapper):
                 return get_dtype(input.get_element_type())
 
 
-class intelcaffe_io_model_wrapper(io_model_wrapper):
+class IntelCaffeIOModelWrapper(IOModelWrapper):
     def get_input_layer_names(self, model):
         return model.inputs
 
@@ -46,7 +46,7 @@ class intelcaffe_io_model_wrapper(io_model_wrapper):
         return model.blobs[layer_name].data.dtype
 
 
-class tensorflow_io_model_wrapper(io_model_wrapper):
+class TensorFlowIOModelWrapper(IOModelWrapper):
     def __init__(self, args):
         self._shape = args.input_shape
         self._batch = args.batch_size
@@ -70,7 +70,8 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
             try:
                 shape = graph.get_tensor_by_name(layer_name).shape.as_list()
             except Exception:
-                raise ValueError('Couldn\'t get the correct shape. Try setting the \'input_shape\' parameter manually.')
+                raise ValueError('Couldn\'t get the correct shape. '
+                                 'Try setting the \'input_shape\' parameter manually.')
         else:
             shape = self._create_list_with_input_shape()
         if shape[0] is None:
@@ -79,7 +80,8 @@ class tensorflow_io_model_wrapper(io_model_wrapper):
             raise ValueError('Invalid shape {}. Try setting the \'input_shape\' parameter manually.'.format(shape))
         return shape
 
-    def get_outputs_layer_names(self, graph, outputs_names=None):
+    @staticmethod
+    def get_outputs_layer_names(graph, outputs_names=None):
         if outputs_names:
             return outputs_names
         nodes_map = {}
