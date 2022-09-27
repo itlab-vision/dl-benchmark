@@ -90,22 +90,22 @@ class HTMLAccuracyCheckerTable(HTMLTable):
     def create_table_header(self):
         self._table_html.append('\n<table align="center" border="1" cellspacing="0" cellpadding="0" class="main">')
         self._table_html.append(
-            '\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Framework</th>\n<th>Dataset</th>\n<th>Accuracy type</th>\n')  # pylint: disable=line-too-long
+            '\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Framework</th>\n<th>Dataset</th>\n<th>Accuracy type</th>\n')  # pylint: disable=line-too-long  # noqa: E501
         for framework in self._column_dict:
             self._table_html.append(
-                '<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n')  # pylint: disable=line-too-long
+                '<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n')  # pylint: disable=line-too-long  # noqa: E501
             self._table_html.append('\n<th>{}</th></tr><tr>'.format(framework))
             self._table_html.append(
-                '<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long
+                '<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
             for plugin in self._column_dict[framework]:
                 self._table_html.append(
-                    '<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long
+                    '<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
                 self._table_html.append('\n<th>{}</th>\n</tr>'.format(plugin))
                 self._table_html.append(
-                    '\n<tr>\n<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long
+                    '\n<tr>\n<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
                 for weights in self._column_dict[framework][plugin]:
                     self._table_html.append(
-                        '<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long
+                        '<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                     self._table_html.append('<tr><th >{}</th>\n</tr>'.format(weights))
                     self._table_html.append('\n</table></th>\n')
                 self._table_html.append('</tr>\n</table></td></tr>')
@@ -121,19 +121,19 @@ class HTMLAccuracyCheckerTable(HTMLTable):
 
             # Print models
             self._table_html.append(
-                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
             for model in self._task_types_dict[task_type]:
                 self._table_html.append(
-                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(model))
             self._table_html.append('</table>\n</td>')
 
             # Print framework
             self._table_html.append(
-                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
             for model in self._task_types_dict[task_type]:
                 self._table_html.append(
-                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
                     self._task_types_dict[task_type][model]['framework'])
                 )
@@ -141,10 +141,10 @@ class HTMLAccuracyCheckerTable(HTMLTable):
 
             # Print dataset
             self._table_html.append(
-                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                '<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
             for model in self._task_types_dict[task_type]:
                 self._table_html.append(
-                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                    '<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
                     self._task_types_dict[task_type][model]['dataset'])
                 )
@@ -152,10 +152,10 @@ class HTMLAccuracyCheckerTable(HTMLTable):
 
             # Print accuracy type
             self._table_html.append(
-                '<td > <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                '<td > <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
             for model in self._task_types_dict[task_type]:
                 self._table_html.append(
-                    '<tr>\n <td> <table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long
+                    '<tr>\n <td> <table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                 for accuracy_type in self._task_types_dict[task_type][model]['accuracy_type']:
                     self._table_html.append('<tr>\n<td align="right">{}</td>\n</tr>\n'.format(accuracy_type))
                 self._table_html.append('</table>\n</td></tr>')
@@ -164,19 +164,19 @@ class HTMLAccuracyCheckerTable(HTMLTable):
             # Print results
             for framework in self._column_dict:
                 self._table_html.append(
-                    '<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long
+                    '<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                 for plugin in self._column_dict[framework]:
                     self._table_html.append(
-                        '<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long
+                        '<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                     for model in self._task_types_dict[task_type]:
                         self._table_html.append(
-                            '<tr>\n<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long
+                            '<tr>\n<td><table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                         for weight in self._column_dict[framework][plugin]:
                             self._table_html.append(
-                                '<td height="120px"><table align="center" class="result_column" border="1" cellspacing="0" cellpadding="0" class="one_type_table">')  # pylint: disable=line-too-long
+                                '<td height="120px"><table align="center" class="result_column" border="1" cellspacing="0" cellpadding="0" class="one_type_table">')  # pylint: disable=line-too-long  # noqa: E501
                             for accuracy_type in self._task_types_dict[task_type][model]['accuracy_type']:
                                 self._table_html.append(
-                                    '\n<tr><td><table align="center" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long
+                                    '\n<tr><td><table align="center" border="1" cellspacing="0" cellpadding="0" class="one_type_table">\n')  # pylint: disable=line-too-long  # noqa: E501
                                 self._table_html.append('<tr><td class="double" align="right">{}</td>\n</tr>'.format(
                                     self._column_dict[framework][plugin][weight][model][accuracy_type]))
                                 self._table_html.append('\n</table></td>\n</tr>')

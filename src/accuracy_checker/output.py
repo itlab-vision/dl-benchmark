@@ -3,7 +3,7 @@ class OutputHandler:
         self.__table_name = table_name
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # pylint: disable=line-too-long
+        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # pylint: disable=line-too-long  # noqa: E501
         with open(self.__table_name, 'w') as table:
             table.write(HEADERS + '\n')
             table.close()
