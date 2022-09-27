@@ -1,6 +1,5 @@
 flake8==5.0.4
 flake8-annotations-complexity
-flake8-bandit==2.1.2
 flake8-broken-line
 flake8-bugbear
 flake8-comprehensions
@@ -15,7 +14,6 @@ flake8_commas
 flake8_pep3101
 flake8_quotes
 flake8-rst-docstrings
-flake8-pytest-style
 flake8-expression-complexity
 flake8-class-attributes-order
 flake8-variables-names
