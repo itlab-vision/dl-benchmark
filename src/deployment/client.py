@@ -5,7 +5,7 @@ import os
 import sys
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-s', '--server_ip',
@@ -71,7 +71,7 @@ def main():
         stream=sys.stdout
     )
 
-    args = cli_parser()
+    args = cli_argument_parser()
 
     image_name = os.path.split(args.image_path)[1]
     joined_pass = os.path.join(args.upload_dir, image_name)

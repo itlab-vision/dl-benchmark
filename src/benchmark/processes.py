@@ -1,9 +1,10 @@
 import abc
 import os
 import platform
+from abc import ABC
 
 
-class Process(metaclass=abc.ABCMeta):
+class ProcessHandler(metaclass=abc.ABCMeta):
     def __init__(self, test, executor, log):
         self.__my_log = log
         self._my_test = test
@@ -77,14 +78,14 @@ class Process(metaclass=abc.ABCMeta):
             return TensorFlowProcess.create_process(test, executor, log)
         else:
             raise ValueError(
-                'Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
+                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
 
     @abc.abstractmethod
     def get_performance_metrics(self):
         pass
 
 
-class OpenVINOProcess(Process):
+class OpenVINOProcess(ProcessHandler, ABC):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -139,7 +140,7 @@ class SyncOpenVINOProcess(OpenVINOProcess):
             self._my_executor.get_path_to_inference_folder(),
             'inference_sync_mode.py')
         )
-        python = Process._get_cmd_python_version()
+        python = ProcessHandler._get_cmd_python_version()
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
 
@@ -174,7 +175,7 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
             self._my_executor.get_path_to_inference_folder(),
             'inference_async_mode.py')
         )
-        python = Process._get_cmd_python_version()
+        python = ProcessHandler._get_cmd_python_version()
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, common_params)
         nstreams = self._my_test.dep_parameters.nstreams
@@ -197,7 +198,7 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
         return average_time, fps, 0
 
 
-class IntelCaffeProcess(Process):
+class IntelCaffeProcess(ProcessHandler):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -230,7 +231,7 @@ class IntelCaffeProcess(Process):
             self._my_executor.get_path_to_inference_folder(),
             'inference_caffe.py')
         )
-        python = Process._get_cmd_python_version()
+        python = ProcessHandler._get_cmd_python_version()
 
         model_prototxt = self._my_test.model.model
         model_caffemodel = self._my_test.model.weight
@@ -279,7 +280,7 @@ class IntelCaffeProcess(Process):
         return IntelCaffeProcess(test, executor, log)
 
 
-class TensorFlowProcess(Process):
+class TensorFlowProcess(ProcessHandler):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -332,7 +333,7 @@ class TensorFlowProcess(Process):
             self._my_executor.get_path_to_inference_folder(),
             'inference_tensorflow.py')
         )
-        python = Process._get_cmd_python_version()
+        python = ProcessHandler._get_cmd_python_version()
 
         model = self._my_test.model.model
         dataset = self._my_test.dataset.path

@@ -9,7 +9,7 @@ from io_model_wrapper import OpenVINOIOModelWrapper
 from transformer import OpenVINOTransformer
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
@@ -180,7 +180,7 @@ def main():
         level=log.INFO,
         stream=sys.stdout
     )
-    args = cli_parser()
+    args = cli_argument_parser()
     try:
         model_wrapper = OpenVINOIOModelWrapper()
         data_transformer = OpenVINOTransformer()

@@ -12,7 +12,7 @@ from io_model_wrapper import TensorFlowIOModelWrapper
 from transformer import TensorFlowTransformer
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
@@ -275,7 +275,7 @@ def create_dict_for_transformer(args):
 def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
-    args = cli_parser()
+    args = cli_argument_parser()
     try:
         model_wrapper = TensorFlowIOModelWrapper(args)
         data_transformer = TensorFlowTransformer(create_dict_for_transformer(args))

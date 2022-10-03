@@ -1,4 +1,4 @@
-class Process:
+class ProcessHandler:
     def __init__(self, parameters, executor, log):
         self.__my_log = log
         self.__my_executor = executor

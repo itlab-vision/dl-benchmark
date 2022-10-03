@@ -3,11 +3,11 @@ import logging as log
 import sys
 import traceback
 
-from process import Process
+from process import ProcessHandler
 from utils import get_all_downloaded_public_models_in_dir
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-b', '--batch_sizes',
@@ -34,7 +34,7 @@ def model_conversion(params, log):
     for model in models_list:
         log.info(f'Start conversion model {model}')
         for batch in params.batch_sizes:
-            convert_process = Process(model, batch, params, log)
+            convert_process = ProcessHandler(model, batch, params, log)
             convert_process.execute()
         log.info(f'End conversion model {model}!')
 
@@ -45,7 +45,7 @@ def main():
         level=log.INFO,
         stream=sys.stdout
     )
-    conversion_parameters = cli_parser()
+    conversion_parameters = cli_argument_parser()
 
     try:
         log.info('Start conversion on')

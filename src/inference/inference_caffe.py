@@ -11,7 +11,7 @@ from io_model_wrapper import IntelCaffeIOModelWrapper
 from transformer import IntelCaffeTransformer
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
@@ -194,7 +194,7 @@ def main():
         level=log.INFO,
         stream=sys.stdout
     )
-    args = cli_parser()
+    args = cli_argument_parser()
     try:
         model_wrapper = IntelCaffeIOModelWrapper()
         data_transformer = IntelCaffeTransformer(create_dict_for_transformer(args))

@@ -8,7 +8,7 @@ from xml.dom import minidom
 from remote_executor import RemoteExecutor
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-s', '--server_ip',
@@ -136,7 +136,7 @@ def main():
         stream=sys.stdout
     )
 
-    args = cli_parser()
+    args = cli_argument_parser()
 
     # First stage send container to the FTP server
     copy_image_to_server(

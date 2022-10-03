@@ -1,7 +1,7 @@
 from result import result
 
 
-class Process:
+class ProcessHandler:
     def __init__(self, log, executor, test):
         self.__log = log
         self.__executor = executor

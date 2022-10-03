@@ -64,7 +64,7 @@ class Test:
         )
 
 
-class Parser:
+class TestResultParser:
     @staticmethod
     def get_test_list(config, test_parameters):
         CONFIG_ROOT_TAG = 'Test'

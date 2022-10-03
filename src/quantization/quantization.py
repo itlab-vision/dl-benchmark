@@ -5,10 +5,10 @@ import sys
 
 from config_parser import ConfigParser
 from executors import Executor
-from process import Process
+from process import ProcessHandler
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', '--config',
@@ -35,7 +35,7 @@ def quantization(executor_type, quantization_parameters, log):
     process_executor = Executor.get_executor(executor_type, log)
     for i, params in enumerate(quantization_parameters):
         log.info('Start quantization model #{}!'.format(i + 1))
-        quant_process = Process(params, process_executor, log)
+        quant_process = ProcessHandler(params, process_executor, log)
         quant_process.execute()
         log.info('End quantization model #{}!'.format(i + 1))
 
@@ -47,7 +47,7 @@ def main():
         stream=sys.stdout
     )
     try:
-        args = cli_parser()
+        args = cli_argument_parser()
         parser = ConfigParser(args.config_path)
         quantization_parameters = parser.parse()
 
@@ -57,7 +57,6 @@ def main():
 
         log.info('End quantization!')
         parser.clean()
-        log.info('Work is done!')
     except Exception as exp:
         log.error(str(exp))
         sys.exit(1)

@@ -80,7 +80,7 @@ class AccuracyCheckerLauncher(Launcher):
                                                                                             self.executor)
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-ip', '--server_ip',
@@ -150,7 +150,7 @@ def cli_parser():
 
 
 def main():
-    param_list = cli_parser()
+    param_list = cli_argument_parser()
     path_to_ftp_client = os.path.split(os.path.abspath(__file__))[0]
 
     # benchmark

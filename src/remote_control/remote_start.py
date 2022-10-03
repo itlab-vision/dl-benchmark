@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 
 from remote_executor import RemoteExecutor  # noqa: E402 pylint: disable=E0401
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', '--config',
@@ -89,7 +89,7 @@ def main():
         level=log.INFO,
         stream=sys.stdout
     )
-    args = cli_parser()
+    args = cli_argument_parser()
 
     log.info('Parsing configuration file')
 

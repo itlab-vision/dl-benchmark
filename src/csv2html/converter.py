@@ -6,8 +6,9 @@ from accuracy_checker_table_creator import HTMLAccuracyCheckerTable
 from benchmark_table_creator import HTMLBenchmarkTable
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
+
     parser.add_argument('-t', '--tables',
                         type=str,
                         help='Paths to the inference tables in csv format.',
@@ -68,7 +69,7 @@ def convert_csv_table_to_html(table_csv, table_type):
 
 
 def main():
-    args = cli_parser()
+    args = cli_argument_parser()
 
     table_csv = open_csv_table(args.tables)
     split_table(table_csv)

@@ -6,7 +6,7 @@ from shape_parser import get_new_input_shape_by_model_name
 from utils import copy_converted_model_files
 
 
-class Process:
+class ProcessHandler:
     def __init__(self, model, batch, parameters, log):
         self.__model = model
         self.__batch = batch

@@ -4,7 +4,7 @@ from collections import OrderedDict
 from xml.dom import minidom
 
 
-class Parser:
+class TestResultParser:
     def get_tests_list(self, config):
         CONFIG_ROOT_TAG = 'Test'
         return minidom.parse(config).getElementsByTagName(CONFIG_ROOT_TAG)
@@ -80,7 +80,7 @@ class DependentParametersParser(metaclass=abc.ABCMeta):
             return TensorFlowParametersParser()
         else:
             raise ValueError(
-                'Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
+                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
 
     @abc.abstractmethod
     def parse_parameters(self, curr_test):
@@ -298,7 +298,7 @@ class FrameworkIndependentParameters(ParametersMethods):
             self.device = device.upper()
         else:
             raise ValueError('Device is required parameter. '
-                             'Device can only take values: CPU, GPU, FPGA, MYRIAD.')
+                             'Supported values: CPU, GPU, FPGA, MYRIAD.')
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
@@ -504,7 +504,7 @@ class Test(metaclass=abc.ABCMeta):
             return TensorFlowTest(model, dataset, indep_parameters, dep_parameters)
         else:
             raise ValueError(
-                'Invalid framework name: only \'OpenVINO DLDT\', \'Caffe\' and \'TensorFlow\' are available')
+                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
 
     @abc.abstractmethod
     def get_report(self):
@@ -570,7 +570,7 @@ class TensorFlowTest(Test):
 
 
 def process_config(config, log):
-    test_parser = Parser()
+    test_parser = TestResultParser()
     test_list = []
 
     tests = test_parser.get_tests_list(config)

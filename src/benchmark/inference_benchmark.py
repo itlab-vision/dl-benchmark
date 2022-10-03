@@ -5,12 +5,13 @@ import sys
 
 import config_parser
 from output import OutputHandler
-from processes import Process
+from processes import ProcessHandler
 from executors import Executor
 
 
-def cli_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
+
     parser.add_argument('-c', '--config',
                         type=str,
                         dest='config_path',
@@ -24,7 +25,7 @@ def cli_parser():
     parser.add_argument('--executor_type',
                         type=str,
                         choices=['host_machine', 'docker_container'],
-                        help='The environment in which the tests will be executed',
+                        help='Environment ro execute test: host_machine, docker_container',
                         default='host_machine')
 
     args = parser.parse_args()
@@ -38,7 +39,7 @@ def cli_parser():
 def inference_benchmark(executor_type, test_list, output_handler, log):
     process_executor = Executor.get_executor(executor_type, log)
     for test in test_list:
-        test_process = Process.get_process(test, process_executor, log)
+        test_process = ProcessHandler.get_process(test, process_executor, log)
         test_process.execute()
 
         log.info('Saving test result in file')
@@ -53,7 +54,7 @@ if __name__ == '__main__':
             stream=sys.stdout
         )
 
-        args = cli_parser()
+        args = cli_argument_parser()
         test_list = config_parser.process_config(args.config_path, log)
 
         log.info(f'Create result table with name: {args.result_file}')
@@ -65,7 +66,6 @@ if __name__ == '__main__':
 
         inference_benchmark(args.executor_type, test_list, output_handler, log)
 
-        log.info('End inference tests')
-        log.info('Work is done!')
+        log.info('Inference tests completed')
     except Exception as exp:
         log.error(str(exp))
