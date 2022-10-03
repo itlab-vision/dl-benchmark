@@ -206,6 +206,20 @@ class Model:
         return True if parameter is not None else False
 
     def __init__(self, task, name, model_path, weights_path, precision, source_framework):
+        """
+        :param task:
+        :type task:
+        :param name:
+        :type name:
+        :param model_path:
+        :type model_path:
+        :param weights_path:
+        :type weights_path:
+        :param precision:
+        :type precision:
+        :param source_framework:
+        :type source_framework:
+        """
         self.source_framework = None
         self.task = task
         self.name = None

@@ -3,6 +3,18 @@ from xml.dom import minidom
 
 class Model:
     def __init__(self, name, directory, precision, task, framework):
+        """
+        :param name:
+        :type name:
+        :param directory:
+        :type directory:
+        :param precision:
+        :type precision:
+        :param task:
+        :type task:
+        :param framework:
+        :type framework:
+        """
         self.name = name
         self.directory = directory
         self.precision = precision

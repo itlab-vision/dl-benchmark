@@ -7,6 +7,20 @@ from tags import CONFIG_MODEL_TAG, CONFIG_TASK_TAG, CONFIG_NAME_TAG, CONFIG_PREC
 
 class Model:
     def __init__(self, task=None, name=None, precision=None, framework=None, model_path=None, weights_path=None):
+        """
+        :param task:
+        :type task:
+        :param name:
+        :type name:
+        :param precision:
+        :type precision:
+        :param framework:
+        :type framework:
+        :param model_path:
+        :type model_path:
+        :param weights_path:
+        :type weights_path:
+        """
         self.task = task
         self.name = name
         self.precision = precision
