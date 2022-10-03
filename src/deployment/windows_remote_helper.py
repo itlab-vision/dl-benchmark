@@ -1,4 +1,4 @@
-import wmi  # pylint: disable=E0401
+import wmi
 
 from remote_helper import RemoteHelper
 
@@ -11,7 +11,7 @@ class WindowsRemoteHepler(RemoteHelper):
         new_connection = wmi.WMI(
             machine_ip,
             user=login,
-            password=password
+            password=password,
         )
         return new_connection
 
@@ -19,24 +19,23 @@ class WindowsRemoteHepler(RemoteHelper):
         process_startup = con.Win32_ProcessStartup.new()
         process_id, result = con.Win32_Process.Create(
             CommandLine=command,
-            ProcessStartupInformation=process_startup
+            ProcessStartupInformation=process_startup,
         )
         watcher = None
         if result == 0:
-            self.my_log.info('Process started successfully {}'.format(process_id))
+            self.my_log.info(f'Process started successfully {process_id}')
             con.watch_for(
                 notification_type='Deletion',
                 wmi_class='Win32_Process',
-                ProcessId=process_id
+                ProcessId=process_id,
             )
         else:
-            self.my_log.info('Problem creating process {}'.format(result))
+            self.my_log.info(f'Problem creating process {result}')
         return watcher
 
     def execute_python(self, con, command):
-        return self.execute(con, 'python {}'.format(command))
+        return self.execute(con, f'python {command}')
 
     def wait(self, process):
         process_status = process()
-        self.my_log.info('Ended process on Windows with name {}'.format(
-            process_status.CSName))
+        self.my_log.info(f'Ended process on Windows with name {process_status.CSName}')

@@ -1,17 +1,16 @@
 import abc
 
-from model.data.dataset import Dataset  # pylint: disable=E0401
-from model.models.model import Model  # pylint: disable=E0401
-# pylint: disable-next=E0401
-from tags import CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_DATASET_TAG, CONFIG_FRAMEWORK_INDEPENDENT_TAG, \
-    CONFIG_FRAMEWORK_TAG, CONFIG_BATCH_SIZE_TAG, CONFIG_DEVICE_TAG, CONFIG_ITERATION_COUNT_TAG, \
-    CONFIG_TEST_TIME_LIMIT_TAG, CONFIG_FRAMEWORK_DEPENDENT_TAG, INDEPENDENT_PARAMETER_COUNT
-# pylint: disable-next=E0401
-from tags import OPENVINO_DLDT_PARAMETER_COUNT, CAFFE_PARAMETER_COUNT, TENSORFLOW_PARAMETER_COUNT, CONFIG_MODE_TAG, \
-    CONFIG_EXTENSION_TAG, CONFIG_ASYNC_REQ_COUNT_TAG, CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG, \
-    CONFIG_CHANNEL_SWAP_TAG, CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG, CONFIG_INPUT_SHAPE_TAG, CONFIG_INPUT_NAME_TAG, \
-    CONFIG_OUTPUT_NAMES_TAG, CONFIG_KMP_AFFINITY_TAG, CONFIG_INTER_OP_THREADS_TAG, \
-    CONFIG_INTRA_OP_THREADS_TAG
+from model.data.dataset import Dataset
+from model.models.model import Model
+from tags import (CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_DATASET_TAG, CONFIG_FRAMEWORK_INDEPENDENT_TAG,
+                  CONFIG_FRAMEWORK_TAG, CONFIG_BATCH_SIZE_TAG, CONFIG_DEVICE_TAG, CONFIG_ITERATION_COUNT_TAG,
+                  CONFIG_TEST_TIME_LIMIT_TAG, CONFIG_FRAMEWORK_DEPENDENT_TAG, INDEPENDENT_PARAMETER_COUNT)
+from tags import (OPENVINO_DLDT_PARAMETER_COUNT, CAFFE_PARAMETER_COUNT, TENSORFLOW_PARAMETER_COUNT, CONFIG_MODE_TAG,
+                  CONFIG_EXTENSION_TAG, CONFIG_ASYNC_REQ_COUNT_TAG, CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG,
+                  CONFIG_CHANNEL_SWAP_TAG, CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG, CONFIG_INPUT_SHAPE_TAG,
+                  CONFIG_INPUT_NAME_TAG,
+                  CONFIG_OUTPUT_NAMES_TAG, CONFIG_KMP_AFFINITY_TAG, CONFIG_INTER_OP_THREADS_TAG,
+                  CONFIG_INTRA_OP_THREADS_TAG)
 
 
 class Test:
@@ -25,7 +24,7 @@ class Test:
             CONFIG_ITERATION_COUNT_TAG: iter_count,
             CONFIG_TEST_TIME_LIMIT_TAG: test_time_limit,
             CONFIG_FRAMEWORK_DEPENDENT_TAG: args[0] if isinstance(args[0], DependentParameters) else
-            DependentParameters.get_parameters(framework, args)
+            DependentParameters.get_parameters(framework, args),
         }
 
     def get_values_list(self):
@@ -243,7 +242,7 @@ class OpenVINOParameters(DependentParameters):
             CONFIG_EXTENSION_TAG: extension,
             CONFIG_ASYNC_REQ_COUNT_TAG: async_req_count,
             CONFIG_THREAD_COUNT_TAG: thread_count,
-            CONFIG_STREAM_COUNT_TAG: stream_count
+            CONFIG_STREAM_COUNT_TAG: stream_count,
         }
 
     @staticmethod
@@ -299,7 +298,7 @@ class CaffeParameters(DependentParameters):
             CONFIG_MEAN_TAG: mean,
             CONFIG_INPUT_SCALE_TAG: input_scale,
             CONFIG_THREAD_COUNT_TAG: thread_count,
-            CONFIG_KMP_AFFINITY_TAG: kmp_affinity
+            CONFIG_KMP_AFFINITY_TAG: kmp_affinity,
         }
 
     @staticmethod
@@ -361,7 +360,7 @@ class TensorFlowParameters(DependentParameters):
             CONFIG_THREAD_COUNT_TAG: thread_count,
             CONFIG_INTER_OP_THREADS_TAG: inter_op_threads,
             CONFIG_INTRA_OP_THREADS_TAG: intra_op_threads,
-            CONFIG_KMP_AFFINITY_TAG: kmp_affinity
+            CONFIG_KMP_AFFINITY_TAG: kmp_affinity,
         }
 
     @staticmethod

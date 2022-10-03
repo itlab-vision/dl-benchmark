@@ -3,7 +3,7 @@ import logging as log
 import sys
 from time import time
 
-import caffe  # pylint: disable=E0401
+import caffe
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -133,9 +133,9 @@ def load_network(prototxt, caffemodel):
     return net
 
 
-def load_images_to_network(net, input):
-    for layer in input:
-        net.blobs[layer].data[...] = input[layer]
+def load_images_to_network(net, input_):
+    for layer in input_:
+        net.blobs[layer].data[...] = input_[layer]
 
 
 def inference_caffe(net, number_iter, get_slice):
@@ -183,7 +183,7 @@ def create_dict_for_transformer(args):
     dictionary = {
         'channel_swap': args.channel_swap,
         'mean': args.mean,
-        'input_scale': args.input_scale
+        'input_scale': args.input_scale,
     }
     return dictionary
 
@@ -192,7 +192,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     args = cli_argument_parser()
     try:
@@ -217,7 +217,7 @@ def main():
 
         io.prepare_input(net, args.input)
 
-        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+        log.info(f'Starting inference ({args.number_iter} iterations)')
 
         result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)
         time, latency, fps = process_result(args.batch_size, inference_time)

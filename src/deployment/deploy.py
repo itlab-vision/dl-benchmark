@@ -58,7 +58,7 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log)
     log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), upload_dir))
+        log.info(f'Current directory {ftp_connection.pwd()} changed to target : {upload_dir}')
         ftp_connection.cwd(upload_dir)
     return ftp_connection
 
@@ -69,14 +69,14 @@ def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_
         server_login,
         server_psw,
         upload_dir,
-        log
+        log,
     )
 
     target_image = open(image_path, 'rb')
     image_name = os.path.split(image_path)[1]
 
     log.info('Image copying to server')
-    ftp_connection.storbinary('STOR {}'.format(image_name), target_image)
+    ftp_connection.storbinary(f'STOR {image_name}', target_image)
     log.info('Image copied to server')
 
     ftp_connection.close()
@@ -114,16 +114,14 @@ def client_execution(machine, server_ip, server_login, server_psw, image_path, d
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
     joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
-    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} -n {} -dp {} > log.txt'.format(
-        project_folder,
-        server_ip,
-        server_login,
-        server_psw,
-        image_path,
-        download_dir,
-        container_name,
-        dataset_path
-    ))
+    command = (f'python3 {project_folder}/client.py '
+               f'-s {server_ip} '
+               f'-l {server_login} '
+               f'-p {server_psw} '
+               f'-i {image_path} '
+               f'-d {download_dir} '
+               f'-n {container_name} '
+               f'-dp {dataset_path} > log.txt')
     executor.execute_command(command)
     return executor
 
@@ -133,7 +131,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
     args = cli_argument_parser()
@@ -145,7 +143,7 @@ def main():
         args.server_psw,
         args.upload_dir,
         args.image_path,
-        log
+        log,
     )
 
     # Second stage config file and prepare machine list
@@ -166,7 +164,7 @@ def main():
             args.project_folder,
             args.container_name,
             machine['dataset_folder'],
-            log
+            log,
         ))
 
     # Fourth stage wait all clients

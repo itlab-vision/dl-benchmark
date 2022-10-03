@@ -36,7 +36,7 @@ class Model:
             name=model_tag.getElementsByTagName(CONFIG_MODEL_NAME_TAG)[0].firstChild.data,
             precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
             framework=model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
-            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data
+            directory=model_tag.getElementsByTagName(CONFIG_MODEL_DIRECTORY_TAG)[0].firstChild.data,
         )
 
 
@@ -72,7 +72,7 @@ class Test:
             device=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_DEVICE_TAG)[0].firstChild.data,
             framework=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_FRAMEWORK_TAG)[0].firstChild.data,
             config=parameters_tag.getElementsByTagName(CONFIG_PARAMETERS_CONFIG_TAG)[0].firstChild.data,
-            parameters=test_parameters
+            parameters=test_parameters,
         )
 
 
@@ -85,6 +85,6 @@ class TestResultParser:
         parsed_config = minidom.parse(config)
         tests_tag = parsed_config.getElementsByTagName(CONFIG_ROOT_TAG)
         for current_test in tests_tag:
-            t = Test.parse(current_test, test_parameters)
-            test_list.append(t)
+            test = Test.parse(current_test, test_parameters)
+            test_list.append(test)
         return test_list

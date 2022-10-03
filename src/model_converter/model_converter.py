@@ -43,7 +43,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ][%(filename)s %(lineno)s] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     conversion_parameters = cli_argument_parser()
 

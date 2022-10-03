@@ -39,7 +39,7 @@ class HTMLBenchmarkTable(HTMLTable):
                     'shape': self._table_csv[row_index][SHAPE_POSITION_IN_TABLE],
                     'batch': set(),
                     'type': self._table_csv[row_index][TYPE_POSITION_IN_TABLE],
-                    'framework': self._table_csv[row_index][FRAMEWORK_POSITION_IN_TABLE]
+                    'framework': self._table_csv[row_index][FRAMEWORK_POSITION_IN_TABLE],
                 }
         return models_dict
 
@@ -84,13 +84,13 @@ class HTMLBenchmarkTable(HTMLTable):
 
     def __find_test_in_table(self, curr_infr, plugin, model_name, framework, batch, weight, mode):
         for row_index in range(1, len(self._table_csv)):
-            if (self._table_csv[row_index][MODEL_POSITION_IN_TABLE] == model_name and
-                    self._table_csv[row_index][INFR_POSITION_IN_TABLE] == curr_infr and
-                    plugin in self._table_csv[row_index][PARAMS_POSITION_IN_TABLE] and
-                    self._table_csv[row_index][BATCH_POSITION_IN_TABLE] == batch and
-                    self._table_csv[row_index][WEIGHT_POSITION_IN_TABLE] == weight and
-                    self._table_csv[row_index][MODE_POSITION_IN_TABLE] == mode and
-                    self._table_csv[row_index][INFERENCE_POSITION_IN_TABLE] == framework):
+            if (self._table_csv[row_index][MODEL_POSITION_IN_TABLE] == model_name
+                    and self._table_csv[row_index][INFR_POSITION_IN_TABLE] == curr_infr
+                    and plugin in self._table_csv[row_index][PARAMS_POSITION_IN_TABLE]
+                    and self._table_csv[row_index][BATCH_POSITION_IN_TABLE] == batch
+                    and self._table_csv[row_index][WEIGHT_POSITION_IN_TABLE] == weight
+                    and self._table_csv[row_index][MODE_POSITION_IN_TABLE] == mode
+                    and self._table_csv[row_index][INFERENCE_POSITION_IN_TABLE] == framework):
                 if self._table_csv[row_index][STATUS_POSITION_IN_TABLE] == 'Failed':
                     return '-'
                 else:
@@ -115,25 +115,25 @@ class HTMLBenchmarkTable(HTMLTable):
 
     def create_table_header(self):
         self._table_html.append('\n<table align="center" border="1" cellspacing="0" cellpadding="0" class="main">')
-        self._table_html.append('\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Framework</th>\n<th>Input blob sizes</th>\n<th>Batch size</th>\n')  # pylint: disable=line-too-long  # noqa: E501
+        self._table_html.append('\n<tr>\n<th>Task type</th>\n<th>Topology name</th>\n<th>Framework</th>\n<th>Input blob sizes</th>\n<th>Batch size</th>\n')  # noqa: E501
         for infrastr in self._column_dict:
-            self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
             self._table_html.append('<tr>\n<th>{}</th>\n</tr>'.format(infrastr))
-            self._table_html.append('\n<tr>\n<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('\n<tr>\n<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')  # noqa: E501
             for framework in self._column_dict[infrastr]:
-                self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>')  # noqa: E501
                 self._table_html.append('\n<th>{}</th></tr><tr>'.format(framework))
-                self._table_html.append('<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n<tr>')  # noqa: E501
                 for plugin in self._column_dict[infrastr][framework]:
                     supported_mode = HTMLBenchmarkTable.get_supported_mode(plugin)
-                    table_header_class = "standard_table" if (supported_mode == 'ALL' and len(
-                        self._column_dict[infrastr][framework]) > 1) else "one_type_table"
-                    self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))  # pylint: disable=line-too-long  # noqa: E501
+                    table_header_class = 'standard_table' if (supported_mode == 'ALL' and len(
+                        self._column_dict[infrastr][framework]) > 1) else 'one_type_table'
+                    self._table_html.append('<th> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))  # noqa: E501
                     self._table_html.append('\n<th>{}</th>\n</tr>\n<tr>\n'.format(plugin))
-                    self._table_html.append('<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))  # pylint: disable=line-too-long  # noqa: E501
+                    self._table_html.append('<td> <table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n<tr>'.format(table_header_class))  # noqa: E501
                     for weight in self._column_dict[infrastr][framework][plugin]:
-                        table_class = "standard_table" if supported_mode == 'ALL' else "one_type_table"
-                        self._table_html.append('<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))  # pylint: disable=line-too-long  # noqa: E501
+                        table_class = 'standard_table' if supported_mode == 'ALL' else 'one_type_table'
+                        self._table_html.append('<th><table align="center" width="100%" border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))  # noqa: E501
                         self._table_html.append('<tr><th colspan="2">{}</th>\n</tr>'.format(weight))
                         if supported_mode == 'ALL':
                             self._table_html.append('<tr><th class="double">Latency Mode</th>\n')
@@ -156,34 +156,32 @@ class HTMLBenchmarkTable(HTMLTable):
             self._table_html.append('<td>{}</td>'.format(task_type))
 
             # Print models
-            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
             for model in self._task_types_dict[task_type]:
-                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(model))
             self._table_html.append('</table>\n</td>')
 
             # Print framework
-            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
             for model in self._task_types_dict[task_type]:
-                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
-                    self._task_types_dict[task_type][model]['framework'])
-                )
+                    self._task_types_dict[task_type][model]['framework']))
             self._table_html.append('</table>\n</td>')
 
             # Print shape
-            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('<td> <table align="center" class="lock" height="100%" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
             for model in self._task_types_dict[task_type]:
-                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<tr><td>\n<table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                 self._table_html.append('<tr><td align="left">{}</td>\n</tr>\n</table></td></tr>'.format(
-                    self._task_types_dict[task_type][model]['shape'])
-                )
+                    self._task_types_dict[task_type][model]['shape']))
             self._table_html.append('</table>\n</td>')
 
             # Print batch
-            self._table_html.append('<td > <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+            self._table_html.append('<td > <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
             for model in self._task_types_dict[task_type]:
-                self._table_html.append('<tr>\n <td> <table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<tr>\n <td> <table align="center" class="border_columns" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                 for batch in self._task_types_dict[task_type][model]['batch']:
                     self._table_html.append('<tr>\n<td align="right">{}</td>\n</tr>\n'.format(batch))
                 self._table_html.append('</table>\n</td></tr>')
@@ -191,17 +189,17 @@ class HTMLBenchmarkTable(HTMLTable):
 
             # Print result
             for infrastr in self._column_dict:
-                self._table_html.append('<td> <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                self._table_html.append('<td> <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                 for model in self._task_types_dict[task_type]:
-                    self._table_html.append('<tr>\n<td> <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # pylint: disable=line-too-long  # noqa: E501
+                    self._table_html.append('<tr>\n<td> <table align="center" class="lock" border="1" cellspacing="0" cellpadding="0" class="standard_table">\n')  # noqa: E501
                     for framework in self._column_dict[infrastr]:
                         for plugin in self._column_dict[infrastr][framework]:
                             for weight in self._column_dict[infrastr][framework][plugin]:
-                                self._table_html.append('<td height="120px"> <table align="center" class="result_column" border="1" cellspacing="0" cellpadding="0" class="standard_table">')  # pylint: disable=line-too-long  # noqa: E501
+                                self._table_html.append('<td height="120px"> <table align="center" class="result_column" border="1" cellspacing="0" cellpadding="0" class="standard_table">')  # noqa: E501
                                 for batch in self._task_types_dict[task_type][model]['batch']:
                                     supported_mode = HTMLBenchmarkTable.get_supported_mode(plugin)
-                                    table_class = "standard_table" if supported_mode == 'ALL' else "one_type_table"
-                                    self._table_html.append('\n<tr><td> <table align="center" border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))  # pylint: disable=line-too-long  # noqa: E501
+                                    table_class = 'standard_table' if supported_mode == 'ALL' else 'one_type_table'
+                                    self._table_html.append('\n<tr><td> <table align="center" border="1" cellspacing="0" cellpadding="0" class="{}">\n'.format(table_class))  # noqa: E501
                                     if supported_mode == 'ALL':
                                         self._table_html.append(
                                             '<tr>\n<td class="double" align="right">{}</td>\n'.format(

@@ -31,15 +31,15 @@ class IOAdapter(metaclass=abc.ABCMeta):
         return images, image_shapes
 
     @staticmethod
-    def __create_list_images(input):
+    def __create_list_images(input_):
         images = []
         input_is_correct = True
-        if os.path.exists(input[0]):
-            if os.path.isdir(input[0]):
-                path = os.path.abspath(input[0])
+        if os.path.exists(input_[0]):
+            if os.path.isdir(input_[0]):
+                path = os.path.abspath(input_[0])
                 images = [os.path.join(path, file) for file in os.listdir(path)]
-            elif os.path.isfile(input[0]):
-                for image in input:
+            elif os.path.isfile(input_[0]):
+                for image in input_:
                     if not os.path.isfile(image):
                         input_is_correct = False
                         break
@@ -53,24 +53,24 @@ class IOAdapter(metaclass=abc.ABCMeta):
     @staticmethod
     def __parse_tensors(filename):
         with open(filename, 'r') as file:
-            input = file.readlines()
-        input = [line.strip() for line in input]
-        shape = [int(number) for number in input[0].split(';')]
-        input.pop(0)
+            input_ = file.readlines()
+        input_ = [line.strip() for line in input_]
+        shape = [int(number) for number in input_[0].split(';')]
+        input_.pop(0)
         value = []
-        for str in input:
-            value.append([float(number) for number in str.split(';')])
+        for str_ in input_:
+            value.append([float(number) for number in str_.split(';')])
         result = np.array(value, dtype=np.float32)
         result = result.reshape(shape)
         return result
 
-    def prepare_input(self, model, input):
+    def prepare_input(self, model, input_):
         self._input = {}
         self._transformed_input = {}
         self._original_shapes = {}
-        if ':' in input[0]:
-            for str in input:
-                key, value = str.split(':')
+        if ':' in input_[0]:
+            for str_ in input_:
+                key, value = str_.split(':')
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
@@ -88,13 +88,13 @@ class IOAdapter(metaclass=abc.ABCMeta):
                 self._transformed_input.update({key: transformed_value})
         else:
             input_blob = self._io_model_wrapper.get_input_layer_names(model)[0]
-            file_format = input[0].split('.')[-1]
+            file_format = input_[0].split('.')[-1]
             if 'csv' == file_format:
-                value = self.__parse_tensors(input[0])
+                value = self.__parse_tensors(input_[0])
                 shapes = [value.shape]
                 transformed_value = value
             else:
-                value = self.__create_list_images(input)
+                value = self.__create_list_images(input_)
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
@@ -106,13 +106,13 @@ class IOAdapter(metaclass=abc.ABCMeta):
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
-            slice_input[key] = self._transformed_input[key][
-                (iteration * self._batch_size) % len(self._transformed_input[key]):
-                (((iteration + 1) * self._batch_size - 1) % len(self._transformed_input[key])) + 1:
-            ]
+            slice_input[key] = self._transformed_input[key][(iteration * self._batch_size) % len(
+                self._transformed_input[key]): (((iteration + 1) * self._batch_size - 1)
+                                                % len(self._transformed_input[key])) + 1:]
         return slice_input
 
-    def _not_valid_result(self, result):
+    @staticmethod
+    def _not_valid_result(result):
         return result is None
 
     @abc.abstractmethod
@@ -210,7 +210,7 @@ class ClassificationIO(IOAdapter):
             return
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
-        log.info('Top {} results:'.format(self._number_top))
+        log.info('Top {0} results:'.format(self._number_top))
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
         with open(self._labels, 'r') as f:
@@ -218,10 +218,10 @@ class ClassificationIO(IOAdapter):
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
-            log.info('Result for image {}'.format(batch + 1))
-            for id in top_ind:
-                det_label = labels_map[id] if labels_map else '#{}'.format(id)
-                log.info('{:.7f} {}'.format(probs[id], det_label))
+            log.info('Result for image {0}'.format(batch + 1))
+            for id_ in top_ind:
+                det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
+                log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
 
 
 class DetectionIO(IOAdapter):
@@ -234,16 +234,16 @@ class DetectionIO(IOAdapter):
             return
         input_layer_name = next(iter(self._input))
         result_layer_name = next(iter(result))
-        input = self._input[input_layer_name]
+        input_ = self._input[input_layer_name]
         result = result[result_layer_name]
         shapes = self._original_shapes[input_layer_name]
-        ib = input.shape[0]
+        ib = input_.shape[0]
         b = result.shape[0]
         N = result.shape[2] // ib
         images = []
         for i in range(b * ib):
             orig_h, orig_w = shapes[i % ib]
-            image = input[i % ib]
+            image = input_[i % ib]
             images.append(cv2.resize(image, (orig_w, orig_h)))
         for batch in range(b):
             for out_num in range(ib):
@@ -264,7 +264,7 @@ class DetectionIO(IOAdapter):
                         color = (
                             min(int(class_id * 12.5), 255),
                             min(class_id * 7, 255),
-                            min(class_id * 5, 255)
+                            min(class_id * 5, 255),
                         )
                         cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
                         log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
@@ -274,9 +274,9 @@ class DetectionIO(IOAdapter):
                     break
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{0}.bmp'.format(count + 1))
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
             count += 1
 
 
@@ -296,8 +296,8 @@ class FaceDetectionIO(IOAdapter):
                 count_of_detected_faces = i
                 break
         boxes = result['boxes'][:count_of_detected_faces]
-        input = self._input[input_layer_name]
-        image = input[0]
+        input_ = self._input[input_layer_name]
+        image = input_[0]
         initial_h, initial_w = image.shape[:2]
         shapes = self._original_shapes[input_layer_name]
         orig_h, orig_w = shapes[0]
@@ -317,7 +317,7 @@ class FaceDetectionIO(IOAdapter):
                 log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
         out_img = os.path.join(os.path.dirname(__file__), 'out_face_detection.bmp')
         cv2.imwrite(out_img, image)
-        log.info('Result image was saved to {}'.format(out_img))
+        log.info('Result image was saved to {0}'.format(out_img))
 
 
 class SegmenatationIO(IOAdapter):
@@ -345,11 +345,11 @@ class SegmenatationIO(IOAdapter):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class AdasSegmenatationIO(IOAdapter):
@@ -378,11 +378,11 @@ class AdasSegmenatationIO(IOAdapter):
                 for j in range(w):
                     pixel_class = int(data[i, j])
                     classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class RoadSegmenatationIO(IOAdapter):
@@ -410,11 +410,11 @@ class RoadSegmenatationIO(IOAdapter):
                 for j in range(w):
                     pixel_class = np.argmax(data[i][j])
                     classes_map[i, j, :] = classes_color_map[pixel_class]
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.bmp'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
             cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class RecognitionFaceIO(IOAdapter):
@@ -427,17 +427,17 @@ class RecognitionFaceIO(IOAdapter):
             return
         input_layer_name = next(iter(self._input))
         result_layer_name = next(iter(result))
-        input = self._input[input_layer_name]
+        input_ = self._input[input_layer_name]
         result = result[result_layer_name]
-        ib, h, w, c = input.shape
+        ib, h, w, c = input_.shape
         b = result.shape[0]
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i % ib]
+            images[i] = input_[i % ib]
         for i, r in enumerate(result):
             image = images[i]
             initial_h, initial_w = image.shape[:2]
-            log.info('Landmarks coordinates for {} image'.format(i))
+            log.info('Landmarks coordinates for {0} image'.format(i))
             for j in range(0, len(r), 2):
                 index = int(j / 2) + 1
                 x = int(r[j] * initial_w)
@@ -447,10 +447,10 @@ class RecognitionFaceIO(IOAdapter):
                 log.info('Point {0} - ({1}, {2})'.format(index, x, y))
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_recognition_face_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_recognition_face_{0}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class PersonAttributesIO(IOAdapter):
@@ -462,13 +462,13 @@ class PersonAttributesIO(IOAdapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
+        input_ = self._input[input_layer_name]
         layer_iter = iter(result)
         result_attributes = result[next(layer_iter)]
         result_top = result[next(layer_iter)]
         result_bottom = result[next(layer_iter)]
         b = result_attributes.shape[0]
-        ib, h, w, c = input.shape
+        ib, h, w, c = input_.shape
         images = np.ndarray(shape=(b, h, w * 4, c))
         attributes = [
             'is_male',
@@ -478,13 +478,13 @@ class PersonAttributesIO(IOAdapter):
             'has_longsleeves',
             'has_longpants',
             'has_longhair',
-            'has_coat_jacket'
+            'has_coat_jacket',
         ]
         color_point = (0, 0, 255)
         for i in range(b):
             for x in range(w):
                 for y in range(h):
-                    images[i][y][x] = input[i % ib][y][x]
+                    images[i][y][x] = input_[i % ib][y][x]
             x_top = int(result_top[i][0] * w)
             y_top = int(result_top[i][1] * h)
             x_bottom = int(result_bottom[i][0] * w)
@@ -492,12 +492,12 @@ class PersonAttributesIO(IOAdapter):
             color_top = (
                 int(images[i][y_top][x_top][0]),
                 int(images[i][y_top][x_top][1]),
-                int(images[i][y_top][x_top][2])
+                int(images[i][y_top][x_top][2]),
             )
             color_bottom = (
                 int(images[i][y_bottom][x_bottom][0]),
                 int(images[i][y_bottom][x_bottom][1]),
-                int(images[i][y_bottom][x_bottom][2])
+                int(images[i][y_bottom][x_bottom][2]),
             )
             cv2.circle(images[i], (x_top, y_top), 3, color_point, -1)
             cv2.circle(images[i], (x_bottom, y_bottom), 3, color_point, -1)
@@ -513,14 +513,14 @@ class PersonAttributesIO(IOAdapter):
                     (w * 2 + 5, 20 + j * 15),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.4,
-                    color_attribut
+                    color_attribut,
                 )
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_person_attributes_{0}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class AgeGenderIO(IOAdapter):
@@ -537,9 +537,9 @@ class AgeGenderIO(IOAdapter):
         b = result_age.shape[0]
         gender = ['Male', 'Female']
         for i in range(b):
-            log.info('Information for {} image'.format(i))
-            log.info('Gender: {}'.format(gender[bool(result_gender[i][0] > 0.5)]))
-            log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))
+            log.info('Information for {0} image'.format(i))
+            log.info('Gender: {0}'.format(gender[bool(result_gender[i][0] > 0.5)]))
+            log.info('Years: {:.2f}'.format(result_age[i][0][0][0] * 100))  # noqa: P101
 
 
 class GazeIO(IOAdapter):
@@ -579,10 +579,10 @@ class GazeIO(IOAdapter):
                     images[i][y][x + w] = images_right_eye[i % ib][y][x]
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_gaze_{0}.bmp'.format(count + 1))
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
 
 
 class HeadPoseIO(IOAdapter):
@@ -594,12 +594,12 @@ class HeadPoseIO(IOAdapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
+        input_ = self._input[input_layer_name]
         result_pitch = result['angle_p_fc']
         result_roll = result['angle_r_fc']
         result_yaw = result['angle_y_fc']
         b = result_pitch.shape[0]
-        ib, h, w, c = input.shape
+        ib, h, w, c = input_.shape
         images = np.ndarray(shape=(b, h, w, c))
         center_x = int(w / 2)
         center_y = int(h / 2)
@@ -608,24 +608,24 @@ class HeadPoseIO(IOAdapter):
         color_z = (255, 0, 0)
         focal_length = 950.0
         for i in range(b):
-            images[i] = input[i % ib]
+            images[i] = input_[i % ib]
             yaw = result_yaw[i][0] * np.pi / 180.0
             pitch = result_pitch[i][0] * np.pi / 180.0
             roll = result_roll[i][0] * np.pi / 180.0
             Rx = np.array([
                 [1, 0, 0],
                 [0, np.cos(pitch), -np.sin(pitch)],
-                [0, np.sin(pitch), np.cos(pitch)]
+                [0, np.sin(pitch), np.cos(pitch)],
             ])
             Ry = np.array([
                 [np.cos(yaw), 0, -np.sin(yaw)],
                 [0, 1, 0],
-                [np.sin(yaw), 0, np.cos(yaw)]
+                [np.sin(yaw), 0, np.cos(yaw)],
             ])
             Rz = np.array([
                 [np.cos(roll), -np.sin(roll), 0],
                 [np.sin(roll), np.cos(roll), 0],
-                [0, 0, 1]
+                [0, 0, 1],
             ])
             R = np.dot(Rx, np.dot(Ry, Rz))
             o = np.array(([0, 0, 0]), dtype='float32').reshape(3, 1)
@@ -646,15 +646,16 @@ class HeadPoseIO(IOAdapter):
             point_y1 = int(Z1[1] / Z1[2] * focal_length) + center_y
             cv2.line(images[i], (point_x1, point_y1), (point_x, point_y), color_z)
         for i in range(b):
-            out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{}.bmp'.format(i + 1))
+            out_img = os.path.join(os.path.dirname(__file__), 'out_head_pose_{0}.bmp'.format(i + 1))
             cv2.imwrite(out_img, images[i])
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info('Result image was saved to {0}'.format(out_img))
         file_angles = os.path.join(os.path.dirname(__file__), 'out_head_pose.csv')
         with open(file_angles, 'w+') as f:
-            f.write('{};3\n'.format(b))
+            f.write('{0};3\n'.format(b))
             for i in range(b):
-                f.write('{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))
-        log.info('Result angles was saved to {}'.format(file_angles))
+                f.write(
+                    '{:.3f};{:.3f};{:.3f}\n'.format(result_pitch[i][0], result_roll[i][0], result_yaw[i][0]))  # noqa
+        log.info('Result angles was saved to {0}'.format(file_angles))
 
 
 class PersonDetectionAslIO(IOAdapter):
@@ -666,11 +667,11 @@ class PersonDetectionAslIO(IOAdapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
+        input_ = self._input[input_layer_name]
         result = result['17701/Split.0']
-        _, h, w, c = input.shape
+        _, h, w, c = input_.shape
         images = np.ndarray(shape=(1, h, w, c))
-        images[0] = input[0]
+        images[0] = input_[0]
         count = 0
         for obj in result:
             if obj[4] > self._threshold:
@@ -681,12 +682,12 @@ class PersonDetectionAslIO(IOAdapter):
                 ymax = int(obj[3])
                 color = (0, 0, 255)
                 cv2.rectangle(images[0], (xmin, ymin), (xmax, ymax), color, 2)
-                log.info('Object {} box:'.format(count))
+                log.info('Object {0} box:'.format(count))
                 log.info('Top left: ({0}, {1})'.format(xmin, ymin))
                 log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
         out_img = os.path.join(os.path.dirname(__file__), 'out_person_detection_asl.bmp')
         cv2.imwrite(out_img, images[0])
-        log.info('Result image was saved to {}'.format(out_img))
+        log.info('Result image was saved to {0}'.format(out_img))
 
 
 class LicensePlateIO(IOAdapter):
@@ -695,14 +696,10 @@ class LicensePlateIO(IOAdapter):
 
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._input.keys(), None)
-        slice_input['data'] = self._input['data'][
-            (iteration * self._batch_size) % len(self._input['data']):
-            (((iteration + 1) * self._batch_size - 1) % len(self._input['data'])) + 1:
-        ]
-        slice_input['seq_ind'] = self._input['seq_ind'][
-            (iteration * 88 * self._batch_size) % len(self._input['seq_ind']):
-            (((iteration + 1) * 88 * self._batch_size - 1) % len(self._input['seq_ind'])) + 1:
-        ]
+        slice_input['data'] = self._input['data'][(iteration * self._batch_size) % len(
+            self._input['data']): (((iteration + 1) * self._batch_size - 1) % len(self._input['data'])) + 1:]
+        slice_input['seq_ind'] = self._input['seq_ind'][(iteration * 88 * self._batch_size) % len(
+            self._input['seq_ind']):(((iteration + 1) * 88 * self._batch_size - 1) % len(self._input['seq_ind'])) + 1:]
         return slice_input
 
     def process_output(self, result, log):
@@ -721,7 +718,7 @@ class LicensePlateIO(IOAdapter):
                 if lex[j] == -1:
                     break
                 s = s + str(lexis[int(lex[j])])
-            log.info('Plate: {}'.format(s))
+            log.info(f'Plate: {s}')
 
 
 class InstanceSegmenatationIO(IOAdapter):
@@ -777,13 +774,13 @@ class InstanceSegmenatationIO(IOAdapter):
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.5,
                 (0, 0, 0),
-                1
+                1,
             )
         out_img = os.path.join(os.path.dirname(__file__), 'instance_segmentation_out.bmp')
         orig_h, orig_w = shapes[0]
         image = cv2.resize(image, (orig_w, orig_h))
         cv2.imwrite(out_img, image)
-        log.info('Result image was saved to {}'.format(out_img))
+        log.info(f'Result image was saved to {out_img}')
 
 
 class SingleImageSuperResolutionIO(IOAdapter):
@@ -803,9 +800,9 @@ class SingleImageSuperResolutionIO(IOAdapter):
             colors = data * 255
             np.clip(colors, 0., 255.)
             classes_map = colors
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{}.png'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), f'out_segmentation_{batch + 1}.png')
             cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info(f'Result image was saved to {out_img}')
 
 
 class SpherefaceIO(IOAdapter):
@@ -824,10 +821,10 @@ class SpherefaceIO(IOAdapter):
                 result,
                 fmt='%1.2f',
                 delimiter=';',
-                header='{};{}'.format(result.shape[0], result.shape[1]),
-                comments=''
+                header=f'{result.shape[0]};{result.shape[1]}',
+                comments='',
             )
-        log.info('Result was saved to {}'.format(file_name))
+        log.info(f'Result was saved to {file_name}')
 
 
 class DetectionSSD(IOAdapter):
@@ -894,7 +891,7 @@ class DetectionSSD(IOAdapter):
     def _non_max_supression(detections, det_threshold):
         detections.sort(key=lambda detection: detection[0], reverse=True)
         valid_detections = []
-        for idx in range(len(detections)):
+        for _ in range(len(detections)):
             max_detection = max(detections, key=lambda detection: detection[0])
             if max_detection[0] < det_threshold:
                 break
@@ -903,23 +900,18 @@ class DetectionSSD(IOAdapter):
             for detection in detections:
                 if detection[0] < det_threshold:
                     continue
-                current_rect_area = (
-                    (detection[1][2] - detection[1][0]) * (detection[1][3] - detection[1][1])
-                )
-                max_rect_area = (
-                    (max_detection[1][2] - max_detection[1][0]) * (max_detection[1][3] - max_detection[1][1])
-                )
+                current_rect_area = ((detection[1][2] - detection[1][0]) * (detection[1][3] - detection[1][1]))
+                max_rect_area = ((max_detection[1][2] - max_detection[1][0])
+                                 * (max_detection[1][3] - max_detection[1][1]))
                 intersection_area = 0
-                if not (detection[1][0] >= max_detection[1][2] or
-                        detection[1][1] >= max_detection[1][3] or
-                        max_detection[1][0] >= detection[1][2] or
-                        max_detection[1][1] >= detection[1][3]):
-                    intersection_area = (
-                        (min(detection[1][2], max_detection[1][2]) -
-                         max(detection[1][0], max_detection[1][0])) *
-                        (min(detection[1][3], max_detection[1][3]) -
-                         max(detection[1][1], max_detection[1][1]))
-                    )
+                if not (detection[1][0] >= max_detection[1][2]
+                        or detection[1][1] >= max_detection[1][3]
+                        or max_detection[1][0] >= detection[1][2]
+                        or max_detection[1][1] >= detection[1][3]):
+                    intersection_area = ((min(detection[1][2], max_detection[1][2])
+                                          - max(detection[1][0], max_detection[1][0]))
+                                         * (min(detection[1][3], max_detection[1][3])
+                                            - max(detection[1][1], max_detection[1][1])))
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
                 detection[0] *= np.exp(-overlap * overlap / 0.6)
         return valid_detections
@@ -944,7 +936,7 @@ class DetectionSSD(IOAdapter):
                 text_area,
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.4,
-                action_color
+                action_color,
             )
         return image
 
@@ -952,10 +944,10 @@ class DetectionSSD(IOAdapter):
     def _save_output_images(images, log):
         count = 0
         for image in images:
-            out_img = os.path.join(os.path.dirname(__file__), 'out_human_pose_{}.bmp'.format(count + 1))
+            out_img = os.path.join(os.path.dirname(__file__), f'out_human_pose_{count + 1}.bmp')
             count += 1
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info(f'Result image was saved to {out_img}')
 
     @abc.abstractmethod
     def process_output(self, result, log):
@@ -992,11 +984,11 @@ class DetectionSSDOldFormat(DetectionSSD):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
-        b, h, w, c = input.shape
+        input_ = self._input[input_layer_name]
+        b, h, w, c = input_.shape
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i]
+            images[i] = input_[i]
         detections = []
         action_map = self._get_action_map()
         num_classes = len(action_map)
@@ -1009,7 +1001,7 @@ class DetectionSSDOldFormat(DetectionSSD):
             detection_conf_data = result['mbox_main_conf/out/conv/flat/softmax/flat'][batch]
             action_blobs = np.ndarray(shape=(4, 25, 43, num_classes))
             for i in range(4):
-                action_blobs[i] = result['out/anchor{}'.format(i + 1)][batch]
+                action_blobs[i] = result[f'out/anchor{i + 1}'][batch]
             for i in range(4300):
                 detection_conf = self._parse_det_conf(detection_conf_data, i)
                 if detection_conf < self._threshold:
@@ -1019,7 +1011,7 @@ class DetectionSSDOldFormat(DetectionSSD):
                     action_data,
                     i // 4 * num_classes,
                     num_classes,
-                    3
+                    3,
                 )
                 prior_box = self._parse_prior_box(prior_data, i)
                 variance_box = self._parse_variance_box(prior_data, i)
@@ -1070,11 +1062,11 @@ class DetectionSSDNewFormat(DetectionSSD):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
-        b, h, w, c = input.shape
+        input_ = self._input[input_layer_name]
+        b, h, w, c = input_.shape
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i]
+            images[i] = input_[i]
         detections = []
         action_map = self._get_action_map()
         num_classes = len(action_map)
@@ -1083,7 +1075,7 @@ class DetectionSSDNewFormat(DetectionSSD):
             [35.36, 81.829632],
             [45.8114572, 107.651852],
             [63.31491832, 142.595732],
-            [93.5070856, 201.107692]
+            [93.5070856, 201.107692],
         ]
         shapes = self._original_shapes[input_layer_name]
         output_images = []
@@ -1094,7 +1086,7 @@ class DetectionSSDNewFormat(DetectionSSD):
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
             action_blobs = np.ndarray(shape=(4, 6, 25, 43))
             for i in range(4):
-                action_blobs[i] = result['ActionNet/action_heads/out_head_2_anchor_{}'.format(i + 1)][batch]
+                action_blobs[i] = result[f'ActionNet/action_heads/out_head_2_anchor_{i + 1}'][batch]
             detections = []
             for i in range(8550):
                 detection_conf = self._parse_det_conf(detection_conf_data, i)
@@ -1109,7 +1101,7 @@ class DetectionSSDNewFormat(DetectionSSD):
                         i,
                         num_classes,
                         16,
-                        4250
+                        4250,
                     )
                 else:
                     action_data = action_blobs[(i - 4250) % 4].flatten()
@@ -1118,7 +1110,7 @@ class DetectionSSDNewFormat(DetectionSSD):
                         (i - 4250) // 4,
                         num_classes,
                         16,
-                        1075
+                        1075,
                     )
                 prior_box = []
                 if i < 4250:
@@ -1173,7 +1165,7 @@ class PersonDetectionActionRecognitionNew(DetectionSSDNewFormat):
             'raising_hand',
             'standing',
             'turned around',
-            'lie on the desk'
+            'lie on the desk',
         ]
         return action_map
 
@@ -1214,7 +1206,7 @@ class HumanPoseEstimationIO(IOAdapter):
                     points.append({
                         'coordinates': point['coordinates'],
                         'part': part,
-                        'id': point_id
+                        'id': point_id,
                     })
                     point_id += 1
         return points
@@ -1245,13 +1237,13 @@ class HumanPoseEstimationIO(IOAdapter):
                                 np.linspace(
                                     start_point['coordinates'][0],
                                     end_point['coordinates'][0],
-                                    num=10
+                                    num=10,
                                 ),
                                 np.linspace(
                                     start_point['coordinates'][1],
                                     end_point['coordinates'][1],
-                                    num=10)
-                            )
+                                    num=10),
+                            ),
                         )
                         paf_interp = []
                         for coord in interp_coord:
@@ -1357,15 +1349,15 @@ class HumanPoseEstimationIO(IOAdapter):
                 pafX,
                 pafY,
                 frame_width,
-                frame_height
+                frame_height,
             )
             persons_keypoints = self.__search_persons_keypoints(edges, valid_connections, invalid_connections)
             frame = self.__print_edges(edges, persons_keypoints, points, frame, colors)
-            out_img = os.path.join(os.path.dirname(__file__), 'out_pose_estimation_{}.png'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), f'out_pose_estimation_{batch + 1}.png')
             orig_h, orig_w = shapes[batch % self._batch_size]
             frame = cv2.resize(frame, (orig_w, orig_h))
             cv2.imwrite(out_img, frame)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info(f'Result image was saved to {out_img}')
 
 
 class ActionRecognitionEncoderIO(IOAdapter):
@@ -1387,10 +1379,10 @@ class ActionRecognitionEncoderIO(IOAdapter):
                 probs,
                 fmt='%1.7f',
                 delimiter=';',
-                header='{};{}'.format(batch_size, dim1),
-                comments=''
+                header=f'{batch_size};{dim1}',
+                comments='',
             )
-        log.info('Result was saved to {}'.format(file_name))
+        log.info(f'Result was saved to {file_name}')
 
 
 class DriverActionRecognitionEncoderIO(IOAdapter):
@@ -1412,10 +1404,10 @@ class DriverActionRecognitionEncoderIO(IOAdapter):
                 probs,
                 fmt='%1.7f',
                 delimiter=';',
-                header='{};{}'.format(batch_size, dim1),
-                comments=''
+                header=f'{batch_size};{dim1}',
+                comments='',
             )
-        log.info('Result was saved to {}'.format(file_name))
+        log.info(f'Result was saved to {file_name}')
 
 
 class ReidentificationIO(IOAdapter):
@@ -1437,10 +1429,10 @@ class ReidentificationIO(IOAdapter):
                 probs,
                 fmt='%1.7f',
                 delimiter=';',
-                header='{};{}'.format(batch_size, dim1),
-                comments=''
+                header=f'{batch_size};{dim1}',
+                comments='',
             )
-        log.info('Result was saved to {}'.format(file_name))
+        log.info(f'Result was saved to {file_name}')
 
 
 class ActionRecognitionDecoderIO(IOAdapter):
@@ -1457,13 +1449,13 @@ class ActionRecognitionDecoderIO(IOAdapter):
             labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
-        for batch, data in enumerate(result):
+        for _, _ in enumerate(result):
             probs = np.squeeze(result)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]
-            log.info("\nResult:")
-            for id in top_ind:
-                det_label = labels_map[id] if labels_map else '#{}'.format(id)
-                log.info('{:.7f} {}'.format(probs[id], det_label))
+            log.info('\nResult:')
+            for id_ in top_ind:
+                det_label = labels_map[id_] if labels_map else f'#{id_}'
+                log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa
 
 
 class DriverActionRecognitionDecoderIO(IOAdapter):
@@ -1480,13 +1472,13 @@ class DriverActionRecognitionDecoderIO(IOAdapter):
             labels_map = [line.strip() for line in f]
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
-        for batch, data in enumerate(result):
+        for _, data in enumerate(result):
             probs = np.squeeze(data)
             top_ind = np.argsort(probs)[::-1]
-            log.info("\nResult:")
-            for id in top_ind:
-                det_label = labels_map[id] if labels_map else '#{}'.format(id)
-                log.info('{:.7f} {}'.format(probs[id], det_label))
+            log.info('\nResult:')
+            for id_ in top_ind:
+                det_label = labels_map[id_] if labels_map else f'#{id_}'
+                log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa
 
 
 class MaskRCNNIO(IOAdapter):
@@ -1572,7 +1564,7 @@ class MaskRCNNIO(IOAdapter):
         image = cv2.UMat(cv2.resize(cv2.UMat(image), (orig_w, orig_h)))
         out_img = os.path.join(os.path.dirname(__file__), 'mask_rcnn_out.bmp')
         cv2.imwrite(out_img, image)
-        log.info('Result image was saved to {}'.format(out_img))
+        log.info(f'Result image was saved to {out_img}')
 
 
 class yolo(IOAdapter):
@@ -1613,13 +1605,13 @@ class yolo(IOAdapter):
                 current_rect_area = detection[2][2] * detection[2][3]
                 max_rect_area = max_detection[2][2] * max_detection[2][3]
                 intersection_area = 0
-                if not (detection[2][2] <= 0 or detection[2][3] <= 0 or
-                        max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
+                if not (detection[2][2] <= 0 or detection[2][3] <= 0
+                        or max_detection[2][2] <= 0 or max_detection[2][3] <= 0):
                     intersection_area = float(
-                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2]) -
-                         max(detection[2][0], max_detection[2][0])) *
-                        (min(detection[2][1] + detection[2][3], max_detection[2][1] + max_detection[2][3]) -
-                         max(detection[2][1], max_detection[2][1]))
+                        (min(detection[2][0] + detection[2][2], max_detection[2][0] + max_detection[2][2])
+                         - max(detection[2][0], max_detection[2][0]))
+                        * (min(detection[2][1] + detection[2][3], max_detection[2][1] + max_detection[2][3])
+                           - max(detection[2][1], max_detection[2][1])),
                     )
                 overlap = intersection_area / (current_rect_area + max_rect_area - intersection_area)
                 if overlap > nms_threshold:
@@ -1668,7 +1660,7 @@ class yolo(IOAdapter):
                 float(bbox_center_x - bbox_width / 2),
                 float(bbox_center_y - bbox_height / 2),
                 float(bbox_width),
-                float(bbox_height)
+                float(bbox_height),
             ]
             prediction = [[best_class_score, class_id, bbox]]
             return prediction
@@ -1685,14 +1677,14 @@ class yolo(IOAdapter):
         anchors = self._get_anchors()
         shapes = self._get_shapes()
         input_layer_name = next(iter(self._input))
-        input = self._input[input_layer_name]
-        frameHeight, frameWidth = input.shape[-2:]
+        input_ = self._input[input_layer_name]
+        frameHeight, frameWidth = input_.shape[-2:]
         result = list(result.values())
-        ib, h, w, c = input.shape
+        ib, h, w, c = input_.shape
         b = result[0].shape[0]
         images = np.ndarray(shape=(b, h, w, c))
         for i in range(b):
-            images[i] = input[i % ib]
+            images[i] = input_[i % ib]
         for batch in range(ib):
             image = images[batch]
             predictions = []
@@ -1715,9 +1707,9 @@ class yolo(IOAdapter):
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
             image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image),
                                             scales, (orig_w, orig_h), batch, log)
-            out_img = os.path.join(os.path.dirname(__file__), 'out_yolo_detection_{}.bmp'.format(batch + 1))
+            out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
             cv2.imwrite(out_img, image)
-            log.info('Result image was saved to {}'.format(out_img))
+            log.info(f'Result image was saved to {out_img}')
 
 
 class YoloV2VocIO(yolo):
@@ -1726,13 +1718,13 @@ class YoloV2VocIO(yolo):
 
     def _get_shapes(self):
         shapes = [
-            (5, 25, 13, 13)
+            (5, 25, 13, 13),
         ]
         return shapes
 
     def _get_anchors(self):
         anchors = [
-            ((1.3221, 1.73145), (3.19275, 4.00944), (5.05587, 8.09892), (9.47112, 4.84053), (11.2364, 10.0071))
+            ((1.3221, 1.73145), (3.19275, 4.00944), (5.05587, 8.09892), (9.47112, 4.84053), (11.2364, 10.0071)),
         ]
         return anchors
 
@@ -1743,13 +1735,13 @@ class YoloTinyVocIO(yolo):
 
     def _get_shapes(self):
         shapes = [
-            (5, 25, 13, 13)
+            (5, 25, 13, 13),
         ]
         return shapes
 
     def _get_anchors(self):
         anchors = [
-            ((1.08, 1.19), (3.42, 4.41), (6.63, 11.38), (9.42, 5.11), (16.62, 10.52))
+            ((1.08, 1.19), (3.42, 4.41), (6.63, 11.38), (9.42, 5.11), (16.62, 10.52)),
         ]
         return anchors
 
@@ -1760,13 +1752,13 @@ class YoloV2CocoIO(yolo):
 
     def _get_shapes(self):
         shapes = [
-            (5, 85, 19, 19)
+            (5, 85, 19, 19),
         ]
         return shapes
 
     def _get_anchors(self):
         anchors = [
-            ((0.57273, 0.677385), (1.87446, 2.06253), (3.33843, 5.47434), (7.88282, 3.52778), (9.77052, 9.16828))
+            ((0.57273, 0.677385), (1.87446, 2.06253), (3.33843, 5.47434), (7.88282, 3.52778), (9.77052, 9.16828)),
         ]
         return anchors
 
@@ -1777,7 +1769,7 @@ class YoloV2TinyCocoIO(YoloV2CocoIO):
 
     def _get_shapes(self):
         shapes = [
-            (5, 85, 13, 13)
+            (5, 85, 13, 13),
         ]
         return shapes
 
@@ -1801,7 +1793,7 @@ class YoloV3IO(yolo):
                     float(bbox_center_x - bbox_width / 2),
                     float(bbox_center_y - bbox_height / 2),
                     float(bbox_width),
-                    float(bbox_height)
+                    float(bbox_height),
                 ]
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
@@ -1811,7 +1803,7 @@ class YoloV3IO(yolo):
         shapes = [
             (3, 85, 13, 13),
             (3, 85, 26, 26),
-            (3, 85, 52, 52)
+            (3, 85, 52, 52),
         ]
         return shapes
 
@@ -1819,7 +1811,7 @@ class YoloV3IO(yolo):
         anchors = [
             ((116, 90), (156, 198), (373, 326)),
             ((30, 61), (62, 45), (59, 119)),
-            ((10, 13), (16, 30), (33, 23))
+            ((10, 13), (16, 30), (33, 23)),
         ]
         return anchors
 
@@ -1843,7 +1835,7 @@ class YoloV3TFIO(YoloV3IO):
                     float(bbox_center_x - bbox_width / 2),
                     float(bbox_center_y - bbox_height / 2),
                     float(bbox_width),
-                    float(bbox_height)
+                    float(bbox_height),
                 ]
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)

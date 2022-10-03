@@ -26,7 +26,7 @@ class TestResultParser:
             precision=model_tag.getElementsByTagName(CONFIG_MODEL_PRECISION_TAG)[0].firstChild.data,
             source_framework=model_tag.getElementsByTagName(CONFIG_MODEL_SOURCE_FRAMEWORK_TAG)[0].firstChild.data,
             model_path=model_tag.getElementsByTagName(CONFIG_MODEL_MODEL_PATH_TAG)[0].firstChild.data,
-            weights_path=model_tag.getElementsByTagName(CONFIG_MODEL_WEIGHTS_PATH_TAG)[0].firstChild.data
+            weights_path=model_tag.getElementsByTagName(CONFIG_MODEL_WEIGHTS_PATH_TAG)[0].firstChild.data,
         )
 
     def parse_dataset(self, curr_test):
@@ -38,7 +38,7 @@ class TestResultParser:
 
         return Dataset(
             name=dataset_tag.getElementsByTagName(CONFIG_DATASET_NAME_TAG)[0].firstChild.data,
-            path=dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
+            path=dataset_tag.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data,
         )
 
     def parse_independent_parameters(self, curr_test):
@@ -61,7 +61,7 @@ class TestResultParser:
             iterarion_count=indep_parameters_tag.getElementsByTagName(
                 CONFIG_FRAMEWORK_INDEPENDENT_ITERATION_COUNT_TAG)[0].firstChild.data,
             test_time_limit=indep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data
+                CONFIG_FRAMEWORK_INDEPENDENT_TEST_TIME_LIMIT_TAG)[0].firstChild.data,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):
@@ -79,8 +79,7 @@ class DependentParametersParser(metaclass=abc.ABCMeta):
         elif framework == 'TensorFlow':
             return TensorFlowParametersParser()
         else:
-            raise ValueError(
-                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
+            raise ValueError('Invalid framework name. Supported values: "OpenVINO DLDT", "Caffe", "TensorFlow"')
 
     @abc.abstractmethod
     def parse_parameters(self, curr_test):
@@ -114,7 +113,7 @@ class OpenVINOParametersParser(DependentParametersParser):
             extension=_extension.data if _extension else None,
             async_request_count=_async_request_count.data if _async_request_count else None,
             thread_count=_thread_count.data if _thread_count else None,
-            stream_count=_stream_count.data if _stream_count else None
+            stream_count=_stream_count.data if _stream_count else None,
         )
 
 
@@ -145,7 +144,7 @@ class IntelCaffeParametersParser(DependentParametersParser):
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
             thread_count=_thread_count.data if _thread_count else None,
-            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None
+            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None,
         )
 
 
@@ -196,15 +195,11 @@ class TensorFlowParametersParser(DependentParametersParser):
             thread_count=_thread_count.data if _thread_count else None,
             inter_op_parallelism_threads=_inter_op_parallelism_threads.data if _inter_op_parallelism_threads else None,
             intra_op_parallelism_threads=_intra_op_parallelism_threads.data if _intra_op_parallelism_threads else None,
-            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None
+            kmp_affinity=_kmp_affinity.data if _kmp_affinity else None,
         )
 
 
 class Model:
-    @staticmethod
-    def _parameter_not_is_none(parameter):
-        return True if parameter is not None else False
-
     def __init__(self, task, name, model_path, weights_path, precision, source_framework):
         """
         :param task:
@@ -247,12 +242,12 @@ class Model:
         else:
             raise ValueError('Precision is required parameter.')
 
-
-class Dataset:
     @staticmethod
     def _parameter_not_is_none(parameter):
         return True if parameter is not None else False
 
+
+class Dataset:
     def __init__(self, name, path):
         self.name = None
         self.path = None
@@ -264,6 +259,10 @@ class Dataset:
             self.path = path
         else:
             raise ValueError('Path to dataset is required parameter.')
+
+    @staticmethod
+    def _parameter_not_is_none(parameter):
+        return True if parameter is not None else False
 
 
 class ParametersMethods:
@@ -286,13 +285,6 @@ class ParametersMethods:
 
 
 class FrameworkIndependentParameters(ParametersMethods):
-    @staticmethod
-    def _device_is_correct(device):
-        const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA']
-        if device.upper() in const_correct_devices:
-            return True
-        return False
-
     def __init__(self, inference_framework, batch_size, device, iterarion_count, test_time_limit):
         self.inference_framework = None
         self.batch_size = None
@@ -324,20 +316,15 @@ class FrameworkIndependentParameters(ParametersMethods):
             raise ValueError('Test time limit is required parameter. '
                              'Test time limit can only `take values: float greater than zero.')
 
+    @staticmethod
+    def _device_is_correct(device):
+        const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA']
+        if device.upper() in const_correct_devices:
+            return True
+        return False
+
 
 class OpenVINOParameters(ParametersMethods):
-    @staticmethod
-    def _mode_is_correct(mode):
-        const_correct_mode = ['sync', 'async']
-        if mode.lower() in const_correct_mode:
-            return True
-        return False
-
-    def _extension_path_is_correct(self, extension):
-        if not self._parameter_not_is_none(extension) or os.path.exists(extension):
-            return True
-        return False
-
     def __init__(self, mode, extension, async_request_count, thread_count, stream_count):
         self.mode = None
         self.extension = None
@@ -348,8 +335,7 @@ class OpenVINOParameters(ParametersMethods):
         if self._mode_is_correct(mode):
             self.mode = mode.title()
         else:
-            raise ValueError('Mode is required parameter. \
-                Mode can only take values: Sync, Async.')
+            raise ValueError('Mode is required parameter. Mode can only take values: Sync, Async.')
         if self._extension_path_is_correct(extension):
             self.extension = extension
         else:
@@ -372,23 +358,20 @@ class OpenVINOParameters(ParametersMethods):
                 else:
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
+    @staticmethod
+    def _mode_is_correct(mode):
+        const_correct_mode = ['sync', 'async']
+        if mode.lower() in const_correct_mode:
+            return True
+        return False
+
+    def _extension_path_is_correct(self, extension):
+        if not self._parameter_not_is_none(extension) or os.path.exists(extension):
+            return True
+        return False
+
 
 class IntelCaffeParameters(ParametersMethods):
-    @staticmethod
-    def _channel_swap_is_correct(channel_swap):
-        set_check = {'0', '1', '2'}
-        set_in = set(channel_swap.split())
-        return set_in == set_check
-
-    def _mean_is_correct(self, mean):
-        mean_check = mean.split()
-        if len(mean_check) != 3:
-            return False
-        for i in mean_check:
-            if not self._float_value_is_correct(i):
-                return False
-        return True
-
     def __init__(self, channel_swap, mean, input_scale, thread_count, kmp_affinity):
         self.channel_swap = None
         self.mean = None
@@ -419,8 +402,6 @@ class IntelCaffeParameters(ParametersMethods):
         if self._parameter_not_is_none(kmp_affinity):
             self.kmp_affinity = kmp_affinity
 
-
-class TensorFlowParameters(ParametersMethods):
     @staticmethod
     def _channel_swap_is_correct(channel_swap):
         set_check = {'0', '1', '2'}
@@ -436,15 +417,9 @@ class TensorFlowParameters(ParametersMethods):
                 return False
         return True
 
-    def _input_shape_is_correct(self, input_shape):
-        shape_check = input_shape.split()
-        if len(shape_check) != 3:
-            return False
-        for i in shape_check:
-            if not self._int_value_is_correct(i):
-                return False
-        return True
 
+class TensorFlowParameters(ParametersMethods):
+    @staticmethod
     def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count,
                  inter_op_parallelism_threads, intra_op_parallelism_threads, kmp_affinity):
         self.channel_swap = None
@@ -500,6 +475,29 @@ class TensorFlowParameters(ParametersMethods):
         if self._parameter_not_is_none(kmp_affinity):
             self.kmp_affinity = kmp_affinity
 
+    def _channel_swap_is_correct(channel_swap):
+        set_check = {'0', '1', '2'}
+        set_in = set(channel_swap.split())
+        return set_in == set_check
+
+    def _mean_is_correct(self, mean):
+        mean_check = mean.split()
+        if len(mean_check) != 3:
+            return False
+        for i in mean_check:
+            if not self._float_value_is_correct(i):
+                return False
+        return True
+
+    def _input_shape_is_correct(self, input_shape):
+        shape_check = input_shape.split()
+        if len(shape_check) != 3:
+            return False
+        for i in shape_check:
+            if not self._int_value_is_correct(i):
+                return False
+        return True
+
 
 class Test(metaclass=abc.ABCMeta):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
@@ -517,8 +515,7 @@ class Test(metaclass=abc.ABCMeta):
         elif framework == 'TensorFlow':
             return TensorFlowTest(model, dataset, indep_parameters, dep_parameters)
         else:
-            raise ValueError(
-                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
+            raise ValueError('Invalid framework name. Supported values: "OpenVINO DLDT", "Caffe", "TensorFlow"')
 
     @abc.abstractmethod
     def get_report(self):
@@ -555,8 +552,8 @@ class IntelCaffeTest(Test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        report_res = '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, ' \
-                     'Iteration count: {8}, Thread count: {9}, KMP_AFFINITY: {10}'.format(
+        report_res = ('{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, '
+                      'Iteration count: {8}, Thread count: {9}, KMP_AFFINITY: {10}').format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
@@ -571,8 +568,8 @@ class TensorFlowTest(Test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self):
-        report_res = '{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, ' \
-                     'Thread count: {9}, Inter threads: {10}, Intra threads: {11}, KMP_AFFINITY: {12}'.format(
+        report_res = ('{0};{1};{2};{3};{4};input_shape;{5};{6};Sync;Device: {7}, Iteration count: {8}, '
+                      'Thread count: {9}, Inter threads: {10}, Intra threads: {11}, KMP_AFFINITY: {12}').format(
             self.model.task, self.model.name, self.dataset.name, self.model.source_framework,
             self.indep_parameters.inference_framework, self.model.precision,
             self.indep_parameters.batch_size, self.indep_parameters.device,
@@ -598,5 +595,5 @@ def process_config(config, log):
 
             test_list.append(Test.get_test(framework, model, dataset, indep_parameters, dep_parameters))
         except ValueError as valerr:
-            log.warning('Test {} not added to test list: {}'.format(idx + 1, valerr))
+            log.warning(f'Test {idx + 1} not added to test list: {valerr}')
     return test_list

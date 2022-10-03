@@ -2,7 +2,7 @@ import platform
 import subprocess
 from collections import OrderedDict
 
-from openvino.inference_engine import IECore  # pylint: disable=E0401
+from openvino.inference_engine import IECore
 
 
 def get_cpu_name():
@@ -61,4 +61,4 @@ def get_system_characteristics():
 if __name__ == '__main__':
     hardware_dict = get_system_characteristics()
     for key in hardware_dict:
-        print('{}: {}'.format(key, hardware_dict[key]))
+        print('{0}: {1}'.format(key, hardware_dict[key]))

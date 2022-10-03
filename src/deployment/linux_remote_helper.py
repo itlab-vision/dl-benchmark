@@ -1,4 +1,4 @@
-import paramiko  # pylint: disable=E0401
+import paramiko
 
 from remote_helper import RemoteHelper
 
@@ -13,7 +13,7 @@ class LinuxRemoteHelper(RemoteHelper):
         new_connection.connect(
             hostname=machine_ip,
             username=login,
-            password=password
+            password=password,
         )
         return new_connection
 
@@ -29,9 +29,9 @@ class LinuxRemoteHelper(RemoteHelper):
         return channel
 
     def execute_python(self, con, command):
-        return self.execute(con, 'python3 {}'.format(command))
+        return self.execute(con, f'python3 {command}')
 
     def wait(self, process):
         channel_id = process.get_id()
         process.recv_exit_status()
-        self.my_log.info('Ended process on Linux with id {}'.format(channel_id))
+        self.my_log.info(f'Ended process on Linux with id {channel_id}')

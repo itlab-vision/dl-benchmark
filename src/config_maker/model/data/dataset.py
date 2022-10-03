@@ -1,4 +1,4 @@
-from tags import CONFIG_DATASET_TAG, CONFIG_NAME_TAG, CONFIG_DATASET_PATH_TAG  # pylint: disable=E0401
+from tags import CONFIG_DATASET_TAG, CONFIG_NAME_TAG, CONFIG_DATASET_PATH_TAG
 
 
 class Dataset:

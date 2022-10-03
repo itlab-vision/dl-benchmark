@@ -1,7 +1,7 @@
-# pylint: disable-next=E0401
+
 from tags import CONFIG_MODEL_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_DEVICE_TAG, CONFIG_CONFIG_TAG
 
-from .table import Table  # pylint: disable=E0402
+from .table import Table
 
 
 class AccuracyCheckerConfigTable(Table):

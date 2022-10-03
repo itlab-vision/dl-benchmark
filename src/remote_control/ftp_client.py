@@ -10,7 +10,7 @@ import sys
 class Launcher(metaclass=abc.ABCMeta):
     def __init__(self, target, path_to_ftp_client, params_config, executor, os_type, result, logs):
         self.target = target
-        self.path_to_target = os.path.join(path_to_ftp_client, "..", self.target)
+        self.path_to_target = os.path.join(path_to_ftp_client, '..', self.target)
         self.executor = executor
         self.os_type = os_type
         self.result = os.path.join(path_to_ftp_client, result)
@@ -24,7 +24,7 @@ class Launcher(metaclass=abc.ABCMeta):
 
     def load_config(self, ftp_connection):
         with open(self.local_config, 'wb') as config_file:
-            ftp_connection.retrbinary('RETR {}'.format(self.source_config), config_file.write)
+            ftp_connection.retrbinary('RETR {0}'.format(self.source_config), config_file.write)
 
     def download_result(self, ftp_connection):
         result_table = open(self.result, 'rb')
@@ -49,10 +49,10 @@ class Launcher(metaclass=abc.ABCMeta):
         sp.communicate()
 
     @staticmethod
-    def get_launcher(type, *args):
-        if type == "benchmark":
+    def get_launcher(type_, *args):
+        if type_ == 'benchmark':
             return BenchmarkLauncher(*args)
-        elif type == "accuracy_checker":
+        elif type_ == 'accuracy_checker':
             return AccuracyCheckerLauncher(*args)
         else:
             raise ValueError('Unsupported launcher type!')
@@ -60,7 +60,7 @@ class Launcher(metaclass=abc.ABCMeta):
 
 class BenchmarkLauncher(Launcher):
     def __init__(self, path_to_ftp_client, params_config, executor, os_type, result, logs):
-        super().__init__("benchmark", path_to_ftp_client, params_config, executor, os_type, result, logs)
+        super().__init__('benchmark', path_to_ftp_client, params_config, executor, os_type, result, logs)
 
     def _get_command_line(self):
         return 'inference_benchmark.py -c {0} -r {1} --executor_type {2}'.format(self.local_config, self.result,
@@ -69,7 +69,7 @@ class BenchmarkLauncher(Launcher):
 
 class AccuracyCheckerLauncher(Launcher):
     def __init__(self, path_to_ftp_client, params_config, executor, os_type, result, logs, datasets, definitions):
-        super().__init__("accuracy_checker", path_to_ftp_client, params_config, executor, os_type, result, logs)
+        super().__init__('accuracy_checker', path_to_ftp_client, params_config, executor, os_type, result, logs)
         self.datasets = datasets
         self.definitions = definitions
 

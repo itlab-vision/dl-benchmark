@@ -8,7 +8,7 @@ class Table(QTableWidget):
         self._count_row = 0
         self._count_col = 0
         self._selected_rows = []
-        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
+        self.clicked.connect(self.clicked_table)  # noqa: E1120
 
     def _resize_columns(self):
         header = self.horizontalHeader()

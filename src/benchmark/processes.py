@@ -12,21 +12,6 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._my_output = None
         self._my_row_output = None
 
-    def __print_error(self):
-        out = self._my_output
-        is_error = False
-        for line in out:
-            if line.rfind('ERROR! :') != -1:
-                is_error = True
-                self.__my_log.error('    {0}'.format(line[8:]))
-                continue
-            if is_error:
-                self.__my_log.error('    {0}'.format(line))
-
-    @abc.abstractmethod
-    def _fill_command_line(self):
-        pass
-
     @staticmethod
     def _get_cmd_python_version():
         cmd_python_version = ''
@@ -37,6 +22,17 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             cmd_python_version = 'python'
 
         return cmd_python_version
+
+    @staticmethod
+    def get_process(test, executor, log):
+        if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
+            return OpenVINOProcess.create_process(test, executor, log)
+        elif test.indep_parameters.inference_framework == 'Caffe':
+            return IntelCaffeProcess.create_process(test, executor, log)
+        elif test.indep_parameters.inference_framework == 'TensorFlow':
+            return TensorFlowProcess.create_process(test, executor, log)
+        else:
+            raise ValueError('Invalid framework name. Supported values: "OpenVINO DLDT", "Caffe", "TensorFlow"')
 
     def get_model_shape(self):
         input_shape = []
@@ -50,39 +46,42 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         command_line = self._fill_command_line()
         if command_line == '':
             self.__my_log.error('Command line is empty')
-        self.__my_log.info('Start inference test on model : {}'.format(self._my_test.model.name))
+        self.__my_log.info(f'Start inference test on model : {self._my_test.model.name}')
         self._my_executor.set_target_framework(self._my_test.indep_parameters.inference_framework)
         self._my_row_output = self._my_executor.execute_process(command_line)
         self._my_output = self._my_row_output[1]
 
         if type(self._my_output) is not list:
-            self._my_output = self._my_output.decode("utf-8").split('\n')[:-1]
+            self._my_output = self._my_output.decode('utf-8').split('\n')[:-1]
 
         if self._my_row_output[0] == 0:
-            self.__my_log.info('End inference test on model : {}'.format(self._my_test.model.name))
+            self.__my_log.info(f'End inference test on model : {self._my_test.model.name}')
         else:
-            self.__my_log.warning('Inference test on model: {} was ended with error. '
-                                  'Process logs:'.format(self._my_test.model.name))
+            self.__my_log.warning(f'Inference test on model: {self._my_test.model.name} was ended with error. '
+                                  'Process logs:')
             self.__print_error()
 
     def get_status(self):
         return self._my_row_output[0]
 
-    @staticmethod
-    def get_process(test, executor, log):
-        if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
-            return OpenVINOProcess.create_process(test, executor, log)
-        elif test.indep_parameters.inference_framework == 'Caffe':
-            return IntelCaffeProcess.create_process(test, executor, log)
-        elif test.indep_parameters.inference_framework == 'TensorFlow':
-            return TensorFlowProcess.create_process(test, executor, log)
-        else:
-            raise ValueError(
-                'Invalid framework name. Supported values: \'OpenVINO DLDT\', \'Caffe\', \'TensorFlow\'')
-
     @abc.abstractmethod
     def get_performance_metrics(self):
         pass
+
+    @abc.abstractmethod
+    def _fill_command_line(self):
+        pass
+
+    def __print_error(self):
+        out = self._my_output
+        is_error = False
+        for line in out:
+            if line.rfind('ERROR! :') != -1:
+                is_error = True
+                self.__my_log.error('    {0}'.format(line[8:]))
+                continue
+            if is_error:
+                self.__my_log.error('    {0}'.format(line))
 
 
 class OpenVINOProcess(ProcessHandler, ABC):
@@ -100,6 +99,14 @@ class OpenVINOProcess(ProcessHandler, ABC):
     @staticmethod
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
+
+    @staticmethod
+    def create_process(test, executor, log):
+        mode = test.dep_parameters.mode.lower()
+        if mode == 'sync':
+            return SyncOpenVINOProcess(test, executor, log)
+        elif mode == 'async':
+            return SyncOpenVINOProcess(test, executor, log)
 
     def _fill_command_line(self):
         model_xml = self._my_test.model.model
@@ -122,29 +129,10 @@ class OpenVINOProcess(ProcessHandler, ABC):
 
         return command_line
 
-    @staticmethod
-    def create_process(test, executor, log):
-        mode = test.dep_parameters.mode.lower()
-        if mode == 'sync':
-            return SyncOpenVINOProcess(test, executor, log)
-        elif mode == 'async':
-            return SyncOpenVINOProcess(test, executor, log)
-
 
 class SyncOpenVINOProcess(OpenVINOProcess):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
-
-    def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.normpath(os.path.join(
-            self._my_executor.get_path_to_inference_folder(),
-            'inference_sync_mode.py')
-        )
-        python = ProcessHandler._get_cmd_python_version()
-        common_params = super()._fill_command_line()
-        command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
-
-        return command_line
 
     def get_performance_metrics(self):
         if self._my_row_output[0] != 0 or len(self._my_output) == 0:
@@ -156,6 +144,15 @@ class SyncOpenVINOProcess(OpenVINOProcess):
         latency = float(result[2])
 
         return average_time, fps, latency
+
+    def _fill_command_line(self):
+        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+                                                            'inference_sync_mode.py'))
+        python = ProcessHandler._get_cmd_python_version()
+        common_params = super()._fill_command_line()
+        command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
+
+        return command_line
 
 
 class AsyncOpenVINOProcess(OpenVINOProcess):
@@ -170,11 +167,19 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
     def __add_requests_for_cmd_line(command_line, requests):
         return '{0} --requests {1}'.format(command_line, requests)
 
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+
+        return average_time, fps, 0
+
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.normpath(os.path.join(
-            self._my_executor.get_path_to_inference_folder(),
-            'inference_async_mode.py')
-        )
+        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+                                                             'inference_async_mode.py'))
         python = ProcessHandler._get_cmd_python_version()
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, common_params)
@@ -186,16 +191,6 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
             command_line = AsyncOpenVINOProcess.__add_requests_for_cmd_line(command_line, requests)
 
         return command_line
-
-    def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
-            return None, None, None
-
-        result = self._my_output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-
-        return average_time, fps, 0
 
 
 class IntelCaffeProcess(ProcessHandler):
@@ -226,11 +221,24 @@ class IntelCaffeProcess(ProcessHandler):
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
+    @staticmethod
+    def create_process(test, executor, log):
+        return IntelCaffeProcess(test, executor, log)
+
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+
+        return average_time, fps, latency
+
     def _fill_command_line(self):
-        path_to_intelcaffe_scrypt = os.path.normpath(os.path.join(
-            self._my_executor.get_path_to_inference_folder(),
-            'inference_caffe.py')
-        )
+        path_to_intelcaffe_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+                                                                  'inference_caffe.py'))
         python = ProcessHandler._get_cmd_python_version()
 
         model_prototxt = self._my_test.model.model
@@ -263,21 +271,6 @@ class IntelCaffeProcess(ProcessHandler):
             command_line = IntelCaffeProcess.__add_kmp_affinity_for_cmd_line(command_line, kmp_affinity)
 
         return command_line
-
-    def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
-            return None, None, None
-
-        result = self._my_output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
-
-    @staticmethod
-    def create_process(test, executor, log):
-        return IntelCaffeProcess(test, executor, log)
 
 
 class TensorFlowProcess(ProcessHandler):
@@ -328,11 +321,24 @@ class TensorFlowProcess(ProcessHandler):
     def __add_raw_output_time_for_cmd_line(command_line, raw_output):
         return '{0} {1}'.format(command_line, raw_output)
 
+    @staticmethod
+    def create_process(test, executor, log):
+        return TensorFlowProcess(test, executor, log)
+
+    def get_performance_metrics(self):
+        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+            return None, None, None
+
+        result = self._my_output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+
+        return average_time, fps, latency
+
     def _fill_command_line(self):
-        path_to_tensorflow_scrypt = os.path.normpath(os.path.join(
-            self._my_executor.get_path_to_inference_folder(),
-            'inference_tensorflow.py')
-        )
+        path_to_tensorflow_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
+                                                                  'inference_tensorflow.py'))
         python = ProcessHandler._get_cmd_python_version()
 
         model = self._my_test.model.model
@@ -380,18 +386,3 @@ class TensorFlowProcess(ProcessHandler):
             command_line = TensorFlowProcess.__add_kmp_affinity_for_cmd_line(command_line, kmp_affinity)
 
         return command_line
-
-    def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
-            return None, None, None
-
-        result = self._my_output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
-
-    @staticmethod
-    def create_process(test, executor, log):
-        return TensorFlowProcess(test, executor, log)

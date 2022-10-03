@@ -34,24 +34,24 @@ def cli_argument_parser():
 def quantization(executor_type, quantization_parameters, log):
     process_executor = Executor.get_executor(executor_type, log)
     for i, params in enumerate(quantization_parameters):
-        log.info('Start quantization model #{}!'.format(i + 1))
+        log.info('Start quantization model #{0}!'.format(i + 1))
         quant_process = ProcessHandler(params, process_executor, log)
         quant_process.execute()
-        log.info('End quantization model #{}!'.format(i + 1))
+        log.info('End quantization model #{0}!'.format(i + 1))
 
 
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     try:
         args = cli_argument_parser()
         parser = ConfigParser(args.config_path)
         quantization_parameters = parser.parse()
 
-        log.info('Start quantization on {}!'.format(args.executor_type))
+        log.info('Start quantization on {0}!'.format(args.executor_type))
 
         quantization(args.executor_type, quantization_parameters, log)
 

@@ -55,19 +55,19 @@ class HostExecutor(Executor):
 
     def get_infrastructure(self):
         sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
-        import node_info as info  # noqa: E402 pylint: disable=E0401
+        import node_info as info  # noqa: E402
 
         hardware = info.get_system_characteristics()
         hardware_info = ''
         for key in hardware:
-            hardware_info += '{}: {}, '.format(key, hardware[key])
+            hardware_info += f'{key}: {hardware[key]}, '
         hardware_info = hardware_info[:-2]
 
         return hardware_info
 
     def execute_process(self, command_line):
         if os.path.exists(self.path_to_csv_file):
-            command_line = "rm {0} && {1}".format(self.path_to_csv_file, command_line)
+            command_line = f'rm {self.path_to_csv_file} && {command_line}'
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
         out, _ = process.communicate()
@@ -109,22 +109,13 @@ class DockerExecutor(Executor):
     def prepare_command_line(self, test, command_line):
         return self.__copy_config(test.config, command_line)
 
-    def __copy_config(self, path_to_config, command_line):
-        docker_config = '/tmp/config.yml'
-        cp_command = 'docker cp -L {0} {1}:{2}'.format(path_to_config, self.my_target_framework, docker_config)
-        process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
-                        universal_newlines=True)
-        process.communicate()
-
-        return command_line.replace(path_to_config, docker_config)
-
     def get_csv_file(self):
         return self.path_to_docker_csv_file
 
     def execute_process(self, command_line):
-        self.my_container_dict[self.my_target_framework].exec_run('rm {}'.format(self.get_csv_file()), tty=True,
+        self.my_container_dict[self.my_target_framework].exec_run(f'rm {self.get_csv_file()}', tty=True,
                                                                   privileged=True)
-        command_line = 'bash -c "source /root/.bashrc && {}"'.format(command_line)
+        command_line = f'bash -c "source /root/.bashrc && {command_line}"'
         _, out = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
         self.move_csv_file_with_results()
 
@@ -132,14 +123,14 @@ class DockerExecutor(Executor):
 
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
-        command_line = 'bash -c "source /root/.bashrc && {}"'.format(hardware_command)
+        command_line = f'bash -c "source /root/.bashrc && {hardware_command}"'
         output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
         if output[0] != 0:
             return 'None'
-        hardware = [line.strip().split(': ') for line in output[-1].decode("utf-8").split('\n')[1:-1]]
+        hardware = [line.strip().split(': ') for line in output[-1].decode('utf-8').split('\n')[1:-1]]
         hardware_info = ''
         for line in hardware:
-            hardware_info += '{}: {}, '.format(line[0], line[1])
+            hardware_info += f'{line[0]}: {line[1]}, '
         hardware_info = hardware_info[:-2]
 
         return hardware_info
@@ -151,3 +142,12 @@ class DockerExecutor(Executor):
         process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
         process.communicate()
+
+    def __copy_config(self, path_to_config, command_line):
+        docker_config = '/tmp/config.yml'
+        cp_command = 'docker cp -L {0} {1}:{2}'.format(path_to_config, self.my_target_framework, docker_config)
+        process = Popen(cp_command, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
+                        universal_newlines=True)
+        process.communicate()
+
+        return command_line.replace(path_to_config, docker_config)

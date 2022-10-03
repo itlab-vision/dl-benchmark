@@ -21,7 +21,7 @@ class ModelParameters:
 
         self.__config_parameters = get_param_from_data(
             data,
-            CONFIG_PARAMETERS_TAG
+            CONFIG_PARAMETERS_TAG,
         )
         self.__config_id = get_param_from_data(data, CONFIG_ID_TAG)
 
@@ -74,7 +74,7 @@ class PotParameters:
         self.stream_output = get_param_from_data(data, STREAM_OUTPUT)
         self.keep_uncompressed_weights = get_param_from_data(
             data,
-            KEEP_WEIGHTS
+            KEEP_WEIGHTS,
         )
 
     def rewrite_config_path(self, new_path):

@@ -81,7 +81,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
     try:
@@ -91,12 +91,12 @@ def main():
                                      args.extensions_path)
         test_list = TestResultParser.get_test_list(args.config, test_parameters)
 
-        log.info('Create result table with name: {}'.format(args.result_file))
+        log.info(f'Create result table with name: {args.result_file}')
 
         output_handler = OutputHandler(args.result_file)
         output_handler.create_table()
 
-        log.info('Start {} accuracy tests'.format(len(test_list)))
+        log.info(f'Start {len(test_list)} accuracy tests')
 
         accuracy_check(args.executor_type, test_list, output_handler, log)
 

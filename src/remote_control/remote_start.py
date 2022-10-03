@@ -54,8 +54,12 @@ def cli_argument_parser():
 def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log):
     executor = RemoteExecutor(machine.os_type, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
-    command_line = '{} -ip {} -l {} -p {} -os {} --ftp_dir {}'.format(
-        machine.path_to_ftp_client, server_ip, server_login, server_psw, machine.os_type, ftp_dir)
+    command_line = (f'{machine.path_to_ftp_client} '
+                    f'-ip {server_ip} '
+                    f'-l {server_login} '
+                    f'-p {server_psw} '
+                    f'-os {machine.os_type} '
+                    f'--ftp_dir {ftp_dir}')
     command_line = add_benchmark_arguments(command_line, machine)
     command_line = add_accuracy_checker_arguments(command_line, machine)
     executor.execute_python(command_line)
@@ -74,8 +78,12 @@ def add_benchmark_arguments(command_line, machine):
 
 def add_accuracy_checker_arguments(command_line, machine):
     if machine.accuracy_checker.config:
-        command_line = '{0} -ac {1} --accuracy_checker_executor {2} --accuracy_checker_res_file {3} \
-        --accuracy_checker_log_file {4} --accuracy_checker_definitions {5} --accuracy_checker_source {6}'.format(
+        command_line = ('{0} -ac {1} '
+                        '--accuracy_checker_executor {2} '
+                        '--accuracy_checker_res_file {3} '
+                        '--accuracy_checker_log_file {4} '
+                        '--accuracy_checker_definitions {5} '
+                        '--accuracy_checker_source {6}').format(
             command_line, machine.accuracy_checker.config, machine.accuracy_checker.executor,
             machine.accuracy_checker.res_file, machine.accuracy_checker.log_file, machine.accuracy_checker.definitions,
             machine.accuracy_checker.datasets)
@@ -87,7 +95,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     args = cli_argument_parser()
 
@@ -105,7 +113,7 @@ def main():
             args.server_login,
             args.server_psw,
             args.ftp_dir,
-            log
+            log,
         ))
 
     log.info('Executor script is waiting for all experiments')
@@ -115,11 +123,11 @@ def main():
     ftp_connection = ftplib.FTP(
         args.server_ip,
         args.server_login,
-        args.server_psw
+        args.server_psw,
     )
     ftp_connection.cwd(args.ftp_dir)
-    table_format.join_tables(ftp_connection, "benchmark", args.benchmark_result_table)
-    table_format.join_tables(ftp_connection, "accuracy_checker", args.accuracy_checker_result_table)
+    table_format.join_tables(ftp_connection, 'benchmark', args.benchmark_result_table)
+    table_format.join_tables(ftp_connection, 'accuracy_checker', args.accuracy_checker_result_table)
     ftp_connection.close()
 
 

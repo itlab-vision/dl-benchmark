@@ -1,9 +1,9 @@
-# pylint: disable-next=E0401
-from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG, \
-    CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG, CONFIG_AC_DATASET_PATH_TAG, \
-    CONFIG_DEFINITION_PATH, CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG
+from tags import (CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG,
+                  CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG,
+                  CONFIG_AC_DATASET_PATH_TAG,
+                  CONFIG_DEFINITION_PATH, CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG)
 
-from .table import Table  # pylint: disable=E0402
+from .table import Table
 
 
 class RemoteConfigTable(Table):
@@ -23,7 +23,7 @@ class RemoteConfigTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
+        self.clicked.connect(self.clicked_table)  # noqa: E1120
 
     def update(self, computers):
         self.clear()

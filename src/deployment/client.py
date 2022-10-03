@@ -49,7 +49,7 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, image_path, log)
 
     image_dir = os.path.split(image_path)[0]
     if ftp_connection.pwd() != image_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), image_dir))
+        log.info(f'Current directory {ftp_connection.pwd()} changed to target : {image_dir}')
         ftp_connection.cwd(image_dir)
     return ftp_connection
 
@@ -59,7 +59,7 @@ def upload_container_image(server_ip, server_login, server_psw, image_path, uplo
 
     log.info('Client script is uploading image from server')
     with open(file_path, 'wb') as container_image:
-        ftp_connection.retrbinary('RETR {}'.format(os.path.split(image_path)[1]), container_image.write)
+        ftp_connection.retrbinary(f'RETR {os.path.split(image_path)[1]}', container_image.write)
     log.info('Upload completed')
 
 
@@ -68,7 +68,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
     args = cli_argument_parser()
@@ -84,15 +84,18 @@ def main():
         args.image_path,
         args.upload_dir,
         file_path,
-        log
+        log,
     )
 
     log.info('Docker is loading image from tar')
-    os.system('docker load --input {}'.format(file_path))
+    os.system(f'docker load --input {file_path}')
 
     log.info('Docker run image')
-    os.system('docker run --privileged -d -it --name {} –v /dev:/dev -v {}:/mnt/datasets –network=host {}'.format(
-        args.container_name, args.dataset_path, image_name.split('.')[0]))
+    os.system(f'docker run --privileged -d -it '
+              f'--name {args.container_name} '
+              f'–v /dev:/dev '
+              f'-v {args.dataset_path}:/mnt/datasets '
+              f'–network=host {image_name.split(".")[0]}')
 
 
 if __name__ == '__main__':

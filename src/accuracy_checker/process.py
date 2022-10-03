@@ -10,24 +10,6 @@ class ProcessHandler:
         self.__supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
         self.__csv_name = executor.get_csv_file()
 
-    def __fill_command_line(self):
-        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} \
-            --csv_result {4}'.format(self.__test.config,
-                                     self.__test.model.directory,
-                                     self.__test.parameters.source,
-                                     self.__test.device,
-                                     self.__csv_name)
-        command_line = self.__add_framework_for_cmd_line(command_line,
-                                                         self.__supported_frameworks[self.__test.framework])
-        if self.__test.parameters.annotations:
-            command_line = self.__add_annotations_for_cmd_line(command_line, self.__test.parameters.annotations)
-        if self.__test.parameters.definitions:
-            command_line = self.__add_definitions_for_cmd_line(command_line, self.__test.parameters.definitions)
-        if self.__test.parameters.extensions:
-            command_line = self.__add_extensions_for_cmd_line(command_line, self.__test.parameters.extensions)
-
-        return command_line
-
     @staticmethod
     def __add_annotations_for_cmd_line(command_line, annotations):
         return '{0} -a {1}'.format(command_line, annotations)
@@ -53,10 +35,27 @@ class ProcessHandler:
         command_line = self.__executor.prepare_command_line(self.__test, command_line)
         self.__output = self.__executor.execute_process(command_line)
         if type(self.__output) is not list:
-            self.__output = self.__output.decode("utf-8").split('\n')
+            self.__output = self.__output.decode('utf-8').split('\n')
         print(self.__output)
 
     def get_result_parameters(self):
         result_file = self.__executor.get_path_to_result_file()
 
         return result.parser_test_result(self.__output, self.__test, result_file)
+
+    def __fill_command_line(self):
+        command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} --csv_result {4}'.format(
+            self.__test.config, self.__test.model.directory,
+            self.__test.parameters.source,
+            self.__test.device,
+            self.__csv_name)
+        command_line = self.__add_framework_for_cmd_line(command_line,
+                                                         self.__supported_frameworks[self.__test.framework])
+        if self.__test.parameters.annotations:
+            command_line = self.__add_annotations_for_cmd_line(command_line, self.__test.parameters.annotations)
+        if self.__test.parameters.definitions:
+            command_line = self.__add_definitions_for_cmd_line(command_line, self.__test.parameters.definitions)
+        if self.__test.parameters.extensions:
+            command_line = self.__add_extensions_for_cmd_line(command_line, self.__test.parameters.extensions)
+
+        return command_line

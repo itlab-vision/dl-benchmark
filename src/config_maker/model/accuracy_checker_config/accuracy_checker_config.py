@@ -1,9 +1,9 @@
 import os
 from xml.dom import minidom
 
-from tags import CONFIG_TESTS_TAG, CONFIG_TEST_TAG, CONFIG_MODEL_TAG  # pylint: disable=E0401
+from tags import CONFIG_TESTS_TAG, CONFIG_TEST_TAG, CONFIG_MODEL_TAG
 
-from .test import Test  # pylint: disable=E0402
+from .test import Test
 
 
 class AccuracyCheckerConfig:

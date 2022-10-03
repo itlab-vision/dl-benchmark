@@ -36,7 +36,7 @@ class ConfigParser:
             json.dump(
                 model_params.get_config_parameters(),
                 config_file,
-                indent=4
+                indent=4,
             )
         return os.path.abspath(filename)
 

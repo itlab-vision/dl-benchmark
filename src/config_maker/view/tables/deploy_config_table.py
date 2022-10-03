@@ -1,7 +1,6 @@
-# pylint: disable-next=E0401
 from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_DOWNLOAD_FOLDER_TAG
 
-from .table import Table  # pylint: disable=E0402
+from .table import Table
 
 
 class DeployConfigTable(Table):
@@ -16,7 +15,7 @@ class DeployConfigTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
+        self.clicked.connect(self.clicked_table)  # noqa: E1120
 
     def update(self, computers):
         self.clear()

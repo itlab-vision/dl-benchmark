@@ -109,7 +109,8 @@ def cli_argument_parser():
                             'person-detection-action-recognition-teacher', 'human-pose-estimation',
                             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
                             'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
-                            'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3'
+                            'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco',
+                            'yolo_v3',
                         ],
                         default='feedforward',
                         type=str,
@@ -178,7 +179,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     args = cli_argument_parser()
     try:
@@ -193,7 +194,7 @@ def main():
             None,
             args.dump,
             'sync',
-            log
+            log,
         )
         model = utils.create_model(core, args.model_xml, args.model_bin, log)
         utils.configure_model(core, model, args.device, args.default_device, args.affinity)
@@ -212,7 +213,7 @@ def main():
 
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
-        log.info('Starting inference ({} iterations) on {}'.format(args.number_iter, args.device))
+        log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
 
         result, time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
         average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)

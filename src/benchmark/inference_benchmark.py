@@ -51,7 +51,7 @@ if __name__ == '__main__':
         log.basicConfig(
             format='[ %(levelname)s ] %(message)s',
             level=log.INFO,
-            stream=sys.stdout
+            stream=sys.stdout,
         )
 
         args = cli_argument_parser()
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         output_handler = OutputHandler(args.result_file)
         output_handler.create_table()
 
-        log.info('Start {} inference tests'.format(len(test_list)))
+        log.info(f'Start {len(test_list)} inference tests')
 
         inference_benchmark(args.executor_type, test_list, output_handler, log)
 

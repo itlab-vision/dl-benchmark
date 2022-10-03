@@ -32,7 +32,7 @@ class HostExecutor(Executor):
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
-            universal_newlines=True
+            universal_newlines=True,
         )
         out, _ = process.communicate()
         return out

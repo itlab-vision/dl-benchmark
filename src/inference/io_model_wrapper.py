@@ -18,21 +18,21 @@ class IOModelWrapper:
 class OpenVINOIOModelWrapper(IOModelWrapper):
     def get_input_layer_names(self, model):
         names = []
-        for input in model.inputs:
-            names.append(input.get_any_name())
+        for input_ in model.inputs:
+            names.append(input_.get_any_name())
         return names
 
     def get_input_layer_shape(self, model, node_name):
-        for input in model.inputs:
-            if node_name == input.get_any_name():
-                return input.get_shape()
+        for input_ in model.inputs:
+            if node_name == input_.get_any_name():
+                return input_.get_shape()
         return None
 
     def get_input_layer_dtype(self, model, node_name):
-        from openvino.runtime.utils.types import get_dtype  # pylint: disable=E0401
-        for input in model.inputs:
-            if node_name == input.get_any_name():
-                return get_dtype(input.get_element_type())
+        from openvino.runtime.utils.types import get_dtype
+        for input_ in model.inputs:
+            if node_name == input_.get_any_name():
+                return get_dtype(input_.get_element_type())
 
 
 class IntelCaffeIOModelWrapper(IOModelWrapper):
@@ -58,10 +58,10 @@ class TensorFlowIOModelWrapper(IOModelWrapper):
     def get_input_layer_names(self, graph):
         if self._input_name:
             return self._input_name
-        inputs = [x for x in graph.get_operations() if x.type == "Placeholder"]
+        inputs = [x for x in graph.get_operations() if x.type == 'Placeholder']
         input_names = []
-        for input in inputs:
-            for output in input.outputs:
+        for input_ in inputs:
+            for output in input_.outputs:
                 input_names.append(output.name)
         return input_names
 
@@ -70,14 +70,14 @@ class TensorFlowIOModelWrapper(IOModelWrapper):
             try:
                 shape = graph.get_tensor_by_name(layer_name).shape.as_list()
             except Exception:
-                raise ValueError('Couldn\'t get the correct shape. '
-                                 'Try setting the \'input_shape\' parameter manually.')
+                raise ValueError('Could not get the correct shape. '
+                                 'Try setting the "input_shape" parameter manually.')
         else:
             shape = self._create_list_with_input_shape()
         if shape[0] is None:
             shape[0] = self._batch
         if None in shape[1:]:
-            raise ValueError('Invalid shape {}. Try setting the \'input_shape\' parameter manually.'.format(shape))
+            raise ValueError(f'Invalid shape {shape}. Try setting the "input_shape" parameter manually.')
         return shape
 
     @staticmethod

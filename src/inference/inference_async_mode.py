@@ -4,7 +4,7 @@ import sys
 from time import time
 
 import numpy as np
-from openvino.runtime import AsyncInferQueue  # pylint: disable=E0401
+from openvino.runtime import AsyncInferQueue
 
 import postprocessing_data as pp
 import utils
@@ -127,7 +127,7 @@ def cli_argument_parser():
                                  'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
                                  'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
                                  'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco',
-                                 'yolo_v3'
+                                 'yolo_v3',
                                  ],
                         default='feedforward',
                         type=str,
@@ -198,7 +198,7 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
     args = cli_argument_parser()
     try:
@@ -213,7 +213,7 @@ def main():
             args.nstreams,
             args.dump,
             'async',
-            log
+            log,
         )
         model = utils.create_model(core, args.model_xml, args.model_bin, log)
         utils.configure_model(core, model, args.device, args.default_device, args.affinity)
@@ -231,9 +231,7 @@ def main():
 
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
-        log.info('Starting inference ({} iterations) with {} requests on {}'.format(args.number_iter,
-                                                                                    args.requests,
-                                                                                    args.device))
+        log.info(f'Starting inference ({args.number_iter} iterations) with {args.requests} requests on {args.device}')
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
 

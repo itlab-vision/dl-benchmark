@@ -4,7 +4,7 @@ import sys
 from time import time
 
 import numpy as np
-import tensorflow as tf  # pylint: disable=E0401
+import tensorflow as tf
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -184,7 +184,7 @@ def load_network(tensorflow, model, output_names=None):
     elif suffix == 'meta':
         return load_model_from_checkpoint(tensorflow, model, output_names)
     else:
-        raise ValueError('Unsupported file format of the model: {}'.format(suffix))
+        raise ValueError(f'Unsupported file format of the model: {suffix}')
 
 
 def load_model_from_pb(tensorflow, model):
@@ -217,9 +217,9 @@ def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_sl
     time_infer = []
     slice_input = None
     try:
-        tensors = [graph.get_tensor_by_name('import/{}:0'.format(name)) for name in outputs_names]
+        tensors = [graph.get_tensor_by_name('import/{0}:0'.format(name)) for name in outputs_names]
     except Exception:
-        tensors = [graph.get_tensor_by_name('{}:0'.format(name)) for name in outputs_names]
+        tensors = [graph.get_tensor_by_name('{0}:0'.format(name)) for name in outputs_names]
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
         if number_iter == 1:
             slice_input = get_slice(0)
@@ -293,7 +293,7 @@ def main():
 
         io.prepare_input(graph, args.input)
 
-        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+        log.info('Starting inference ({0} iterations)'.format(args.number_iter))
 
         inputs_names = model_wrapper.get_input_layer_names(graph)
         outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)

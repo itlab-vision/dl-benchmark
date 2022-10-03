@@ -82,7 +82,7 @@ def run_test(command_line, environment):
         env=environment,
         shell=True,
         stdout=PIPE,
-        universal_newlines=True
+        universal_newlines=True,
     )
     return_code = test.wait()
     out, _ = test.communicate()

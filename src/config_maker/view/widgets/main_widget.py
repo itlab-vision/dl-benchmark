@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout
 
-from .config_widgets.config_widget import ConfigWidget  # pylint: disable=E0402
-from .data_widgets.data_widget import DataWidget  # pylint: disable=E0402
+from .config_widgets.config_widget import ConfigWidget
+from .data_widgets.data_widget import DataWidget
 
 
 class MainWidget(QWidget):
