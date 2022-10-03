@@ -15,7 +15,7 @@ def build_parser():
                         help='Full name of the resulting file', required=True)
     parser.add_argument('-k', '--table_kind', type=str, help='Kind of table: ',
                         choices=['benchmark'],  # 'accuracy_checker'
-                        default='benchmark', required=True)
+                        default='benchmark')
     paths_table_csv = parser.parse_args().tables
     path_table_xlsx = parser.parse_args().result_table
     table_kind = parser.parse_args().table_kind
