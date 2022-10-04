@@ -5,8 +5,8 @@ while read file; do
         -j0 \
         --max-line-length=200 \
         --ignore-patterns="__init__" \
-        --extension-pkg-whitelist=cv2,PyQt5,numpy \
-        --generated-members=cv2.*,PyQt5.*,numpy.*;
+        --extension-pkg-whitelist=cv2,PyQt5,numpy,pandas,xlsxwriter,iteration_utilities \
+        --generated-members=cv2.*,PyQt5.*,numpy.*,pandas.*,xlsxwriter.*,iteration_utilities.*;
     if test $? -ne 0; then
         pylint_status=1;
     fi;
