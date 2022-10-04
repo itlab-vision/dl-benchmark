@@ -1,7 +1,9 @@
 import os
 from xml.dom import minidom
-from .deploy_computer import DeployComputer  # pylint: disable=E0402
-from tags import CONFIG_COMPUTERS_TAG  # pylint: disable=E0401
+
+from tags import CONFIG_COMPUTERS_TAG
+
+from .deploy_computer import DeployComputer
 
 
 class DeployConfig:
@@ -45,7 +47,8 @@ class DeployConfig:
         file.appendChild(DOM_ROOT_TAG)
         for model in self.__computers:
             DOM_ROOT_TAG.appendChild(model.create_dom(file))
-        xml_str = file.toprettyxml(indent="\t", encoding="utf-8")
+        xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
+
         return os.path.exists(path_to_config)

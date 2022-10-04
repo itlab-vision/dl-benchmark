@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox
-from .benchmark_config_widget import BenchmarkConfigWidget  # pylint: disable=E0402
-from .accuracy_checker_config_widget import AccuracyCheckerConfigWidget  # pylint: disable=E0402
-from .remote_config_widget import RemoteConfigWidget  # pylint: disable=E0402
-from .deploy_config_widget import DeployConfigWidget  # pylint: disable=E0402
+
+from .accuracy_checker_config_widget import AccuracyCheckerConfigWidget
+from .benchmark_config_widget import BenchmarkConfigWidget
+from .deploy_config_widget import DeployConfigWidget
+from .remote_config_widget import RemoteConfigWidget
 
 
 class ConfigWidget(QWidget):
@@ -24,7 +25,7 @@ class ConfigWidget(QWidget):
     def __create_combobox(self):
         menu = QComboBox()
         menu.addItems(self._widgets.keys())
-        menu.activated[str].connect(self.onActivated)  # pylint: disable=E1136
+        menu.activated[str].connect(self.on_activated)  # noqa: E1136
         return menu
 
     def __create_dict(self):
@@ -38,9 +39,9 @@ class ConfigWidget(QWidget):
                       'Deploy configuration': self.deploy_configs}
         return dictionary
 
-    def onActivated(self, type):
+    def on_activated(self, type_):
         for key in self._widgets:
-            if key == type:
+            if key == type_:
                 self._widgets[key].show()
             else:
                 self._widgets[key].hide()

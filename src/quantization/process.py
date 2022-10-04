@@ -1,4 +1,4 @@
-class process:
+class ProcessHandler:
     def __init__(self, parameters, executor, log):
         self.__my_log = log
         self.__my_executor = executor
@@ -72,42 +72,42 @@ class process:
         if self.__my_parameters.config:
             config_params = self.__add_config_for_cmd_line(
                 config_params,
-                self.__my_parameters.config
+                self.__my_parameters.config,
             )
         if self.__my_parameters.quantization_method:
             config_params = self.__add_quantization_method_for_cmd_line(
                 config_params,
-                self.__my_parameters.quantization_method
+                self.__my_parameters.quantization_method,
             )
             if self.__my_parameters.model:
                 config_params = self.__add_model_for_cmd_line(
                     config_params,
-                    self.__my_parameters.model
+                    self.__my_parameters.model,
                 )
             if self.__my_parameters.weights:
                 config_params = self.__add_weights_for_cmd_line(
                     config_params,
-                    self.__my_parameters.weights
+                    self.__my_parameters.weights,
                 )
             if self.__my_parameters.model_name:
                 config_params = self.__add_model_name_for_cmd_line(
                     config_params,
-                    self.__my_parameters.model_name
+                    self.__my_parameters.model_name,
                 )
             if self.__my_parameters.preset:
                 config_params = self.__add_preset_for_cmd_line(
                     config_params,
-                    self.__my_parameters.preset
+                    self.__my_parameters.preset,
                 )
             if self.__my_parameters.ac_config:
                 config_params = self.__add_ac_config_for_cmd_line(
                     config_params,
-                    self.__my_parameters.ac_config
+                    self.__my_parameters.ac_config,
                 )
             if self.__my_parameters.max_drop:
                 config_params = self.__add_max_drop_for_cmd_line(
                     config_params,
-                    self.__my_parameters.max_drop
+                    self.__my_parameters.max_drop,
                 )
 
         common_params = ''
@@ -116,14 +116,14 @@ class process:
         if self.__my_parameters.output_dir:
             common_params = self.__add_output_dir_for_cmd_line(
                 common_params,
-                self.__my_parameters.output_dir
+                self.__my_parameters.output_dir,
             )
         if self.__my_parameters.direct_dump:
             common_params = self.__add_direct_dump_for_cmd_line(common_params)
         if self.__my_parameters.log_level:
             common_params = self.__add_log_level_for_cmd_line(
                 common_params,
-                self.__my_parameters.log_level
+                self.__my_parameters.log_level,
             )
         if self.__my_parameters.progress_bar:
             common_params = self.__add_progress_bar_for_cmd_line(common_params)
@@ -139,10 +139,7 @@ class process:
         command_line = self._fill_command_line()
         if command_line == '':
             self.__my_log.error('Command line is empty')
-        self.__my_log.info('Start quantization with config: {}'.format(self.__my_parameters.config))
+        self.__my_log.info('Start quantization with config: {0}'.format(self.__my_parameters.config))
         self.__my_output = self.__my_executor.execute_process(command_line)
         if type(self.__my_output) is not list:
             self.__my_log.info(self.__my_output)
-        # else:
-        #     for out in self.__my_output:
-        #         self.__my_log.info(out)

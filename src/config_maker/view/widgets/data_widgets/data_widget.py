@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox
-from .model_settings_widget import ModelSettingsWidget  # pylint: disable=E0402
-from .data_settings_widget import DataSettingsWidget  # pylint: disable=E0402
+from .model_settings_widget import ModelSettingsWidget
+from .data_settings_widget import DataSettingsWidget
 
 
 class DataWidget(QWidget):
@@ -18,7 +18,7 @@ class DataWidget(QWidget):
     def __create_combobox(self):
         menu = QComboBox()
         menu.addItems(self._widgets.keys())
-        menu.activated[str].connect(self.onActivated)  # pylint: disable=E1136
+        menu.activated[str].connect(self.on_activated)  # noqa: E1136
         return menu
 
     def __create_dict(self):
@@ -27,9 +27,9 @@ class DataWidget(QWidget):
         dictionary = {'Models': self.model_settings, 'Data': self.data_settings}
         return dictionary
 
-    def onActivated(self, type):
+    def on_activated(self, type_):
         for key in self._widgets:
-            if key == type:
+            if key == type_:
                 self._widgets[key].show()
             else:
                 self._widgets[key].hide()

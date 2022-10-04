@@ -1,41 +1,106 @@
-import sys
 import argparse
-import caffe  # pylint: disable=E0401
 import logging as log
-import postprocessing_data as pp
+import sys
 from time import time
-from io_adapter import io_adapter
-from transformer import intelcaffe_transformer
-from io_model_wrapper import intelcaffe_io_model_wrapper
+
+import caffe
+
+import postprocessing_data as pp
+from io_adapter import IOAdapter
+from io_model_wrapper import IntelCaffeIOModelWrapper
+from transformer import IntelCaffeTransformer
 
 
-def build_argparser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', help='Path to an .prototxt file with a trained model.', required=True, type=str, dest='model_prototxt')
-    parser.add_argument('-w', '--weights', help='Path to an .caffemodel file with a trained weights.', required=True, type=str, dest='model_caffemodel')
-    parser.add_argument('-i', '--input', help='Path to data', required=True, type=str, nargs='+', dest='input')
-    parser.add_argument('-b', '--batch_size', help='Size of the processed pack', default=1, type=int, dest='batch_size')
-    parser.add_argument('-l', '--labels', help='Labels mapping file', default=None, type=str, dest='labels')
-    parser.add_argument('-nt', '--number_top', help='Number of top results', default=10, type=int, dest='number_top')
-    parser.add_argument(
-        '-t', '--task',
-        help='Output processing method. Default: without postprocess',
-        choices=['classification', 'detection', 'segmentation'],
-        default='feedforward', type=str, dest='task'
-    )
-    parser.add_argument('--color_map', help='Classes color map', type=str, default=None, dest='color_map')
-    parser.add_argument('--prob_threshold', help='Probability threshold for detections filtering', default=0.5, type=float, dest='threshold')
-    parser.add_argument('-ni', '--number_iter', help='Number of inference iterations', default=1, type=int, dest='number_iter')
-    parser.add_argument('--raw_output', help='Raw output without logs', default=False, type=bool, dest='raw_output')
-    parser.add_argument('--channel_swap', help='Parameter channel swap', default=[2, 1, 0], type=int, nargs=3, dest='channel_swap')
-    parser.add_argument('--mean', help='Parameter mean', default=[0, 0, 0], type=float, nargs=3, dest='mean')
-    parser.add_argument('--input_scale', help='Parameter input scale', default=1.0, type=float, dest='input_scale')
-    parser.add_argument('-d', '--device', help='Specify the target device to infer on (CPU by default)', default='CPU', type=str, dest='device')
-    return parser
+
+    parser.add_argument('-m', '--model',
+                        help='Path to an .prototxt file with a trained model.',
+                        required=True,
+                        type=str,
+                        dest='model_prototxt')
+    parser.add_argument('-w', '--weights',
+                        help='Path to an .caffemodel file with a trained weights.',
+                        required=True,
+                        type=str,
+                        dest='model_caffemodel')
+    parser.add_argument('-i', '--input',
+                        help='Path to data',
+                        required=True,
+                        type=str,
+                        nargs='+',
+                        dest='input')
+    parser.add_argument('-b', '--batch_size',
+                        help='Size of the processed pack',
+                        default=1,
+                        type=int,
+                        dest='batch_size')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file',
+                        default=None,
+                        type=str,
+                        dest='labels')
+    parser.add_argument('-nt', '--number_top',
+                        help='Number of top results',
+                        default=10,
+                        type=int,
+                        dest='number_top')
+    parser.add_argument('-t', '--task',
+                        help='Output processing method. Default: without postprocess',
+                        choices=['classification', 'detection', 'segmentation'],
+                        default='feedforward',
+                        type=str,
+                        dest='task')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
+    parser.add_argument('--prob_threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
+    parser.add_argument('-ni', '--number_iter',
+                        help='Number of inference iterations',
+                        default=1,
+                        type=int,
+                        dest='number_iter')
+    parser.add_argument('--raw_output',
+                        help='Raw output without logs',
+                        default=False,
+                        type=bool,
+                        dest='raw_output')
+    parser.add_argument('--channel_swap',
+                        help='Parameter channel swap',
+                        default=[2, 1, 0],
+                        type=int,
+                        nargs=3,
+                        dest='channel_swap')
+    parser.add_argument('--mean',
+                        help='Parameter mean',
+                        default=[0, 0, 0],
+                        type=float,
+                        nargs=3,
+                        dest='mean')
+    parser.add_argument('--input_scale',
+                        help='Parameter input scale',
+                        default=1.0,
+                        type=float,
+                        dest='input_scale')
+    parser.add_argument('-d', '--device',
+                        help='Specify the target device to infer on (CPU by default)',
+                        default='CPU',
+                        type=str,
+                        dest='device')
+
+    args = parser.parse_args()
+
+    return args
 
 
 def get_input_shape(io_model_wrapper, model):
-    layer_shapes = dict()
+    layer_shapes = {}
     layer_names = io_model_wrapper.get_input_layer_names(model)
     for input_layer in layer_names:
         shape = ''
@@ -43,6 +108,7 @@ def get_input_shape(io_model_wrapper, model):
             shape += '{0}x'.format(dem)
         shape = shape[:-1]
         layer_shapes.update({input_layer: shape})
+
     return layer_shapes
 
 
@@ -58,6 +124,7 @@ def network_input_reshape(net, batch_size):
         _, c, h, w = net.blobs[layer_input].data.shape
         net.blobs[layer_input].reshape(batch_size, c, h, w)
     net.reshape()
+
     return net
 
 
@@ -66,9 +133,9 @@ def load_network(prototxt, caffemodel):
     return net
 
 
-def load_images_to_network(net, input):
-    for layer in input:
-        net.blobs[layer].data[...] = input[layer]
+def load_images_to_network(net, input_):
+    for layer in input_:
+        net.blobs[layer].data[...] = input_[layer]
 
 
 def inference_caffe(net, number_iter, get_slice):
@@ -90,6 +157,7 @@ def inference_caffe(net, number_iter, get_slice):
             net.forward()
             t1 = time()
             time_infer.append(t1 - t0)
+
     return result, time_infer
 
 
@@ -115,7 +183,7 @@ def create_dict_for_transformer(args):
     dictionary = {
         'channel_swap': args.channel_swap,
         'mean': args.mean,
-        'input_scale': args.input_scale
+        'input_scale': args.input_scale,
     }
     return dictionary
 
@@ -124,27 +192,36 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
-    args = build_argparser().parse_args()
+    args = cli_argument_parser()
     try:
-        model_wrapper = intelcaffe_io_model_wrapper()
-        data_transformer = intelcaffe_transformer(create_dict_for_transformer(args))
-        io = io_adapter.get_io_adapter(args, model_wrapper, data_transformer)
+        model_wrapper = IntelCaffeIOModelWrapper()
+        data_transformer = IntelCaffeTransformer(create_dict_for_transformer(args))
+        io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
+
         log.info('The assign of the device to infer')
+
         set_device_to_infer(args.device)
+
         log.info('The device has been assigned: {0}'.format(args.device))
         log.info('Loading network files:\n\t {0}\n\t {1}'.format(args.model_prototxt, args.model_caffemodel))
+
         net = load_network(args.model_prototxt, args.model_caffemodel)
         net = network_input_reshape(net, args.batch_size)
         input_shapes = get_input_shape(model_wrapper, net)
+
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
         log.info('Prepare input data')
+
         io.prepare_input(net, args.input)
-        log.info('Starting inference ({} iterations)'.format(args.number_iter))
+
+        log.info(f'Starting inference ({args.number_iter} iterations)')
+
         result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)
         time, latency, fps = process_result(args.batch_size, inference_time)
+
         if not args.raw_output:
             io.process_output(result, log)
             result_output(time, fps, latency, log)

@@ -1,8 +1,10 @@
 import sys
+
 from PyQt5.QtWidgets import QApplication
+
 from model.database import DataBase
-from view.view import View
 from presenter.presenter import Presenter
+from view.view import View
 
 
 def main():

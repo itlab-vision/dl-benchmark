@@ -1,4 +1,5 @@
 import os
+
 import yaml
 
 
@@ -6,6 +7,7 @@ def make_string_of_one_shape_with_new_batch(original_shape, new_batch):
     dims = original_shape[1:]
     dims.insert(0, new_batch)
     res = str(dims).replace(' ', '')
+
     return res
 
 
@@ -16,6 +18,7 @@ def prepare_input_shape_line_with_new_batch(original_shapes, new_batch):
         res += make_string_of_one_shape_with_new_batch(shape_as_list, new_batch)
         res += ','
     res = res[:-1]
+
     return res
 
 
@@ -25,4 +28,5 @@ def get_new_input_shape_by_model_name(root_dir, model_name, new_batch):
         data_loaded = yaml.safe_load(stream)
         result_input_shape = prepare_input_shape_line_with_new_batch(
             data_loaded['input_info'], new_batch)
+
     return result_input_shape
