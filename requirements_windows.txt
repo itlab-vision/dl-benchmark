@@ -3,3 +3,6 @@ PyYAML
 wmi
 opencv-python
 PyQt5
+pandas
+xlsxwriter
+iteration_utilities
