@@ -1,0 +1,69 @@
+FROM ubuntu:18.04
+USER root
+WORKDIR /
+RUN useradd -ms /bin/bash openvino && \
+    chown openvino -R /home/openvino
+ARG DEPENDENCIES="apt-utils \
+                  autoconf \
+                  sudo \
+                  vim \
+                  automake \
+                  build-essential \
+                  cmake \
+                  cpio \
+                  curl \
+                  dialog \
+                  gnupg2 \
+                  libdrm2 \
+                  libglib2.0-0 \
+                  lsb-release \
+                  libgtk-3-0 \
+                  libtool \
+                  python-pip \
+                  python3-pip \
+                  python3-setuptools \
+                  python3-dev \
+                  libpython3.6 \
+                  udev \
+                  unzip \
+                  wget \
+                  git"
+RUN apt-get update && \
+    apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    echo "deb https://apt.repos.intel.com/openvino/2022 bionic main" | sudo tee /etc/apt/sources.list.d/intel-openvino-2022.list
+RUN sudo apt update && sudo apt install -y openvino-2022.1.0 openvino-opencv
+
+#install openvino dependencies
+ENV INSTALL_DIR /opt/intel/openvino_2022
+WORKDIR $INSTALL_DIR/install_dependencies
+RUN echo y | ./install_openvino_dependencies.sh
+RUN echo y | ./install_NEO_OCL_driver.sh
+RUN usermod -a -G video root
+
+RUN pip3 install --upgrade pip && \
+    pip3 install openvino-dev==2022.1 lxml PyYAML protobuf requests numpy networkx defusedxml opencv-python opencv-python-headless pyaml docker
+RUN pip3 install -r $INSTALL_DIR/tools/requirements.txt
+
+# Model Optimizer
+RUN mo -h
+
+# Open Model Zoo
+WORKDIR /tmp/
+RUN git clone -b 2022.1.0 https://github.com/openvinotoolkit/open_model_zoo.git
+
+# Accuracy Checker
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN tar xvf cifar-10-python.tar.gz -C sample
+RUN /bin/bash -c "source $INSTALL_DIR/setupvars.sh && \
+    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
+
+WORKDIR /tmp/
+RUN git clone https://github.com/itlab-vision/dl-benchmark.git
+
+#ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
+#RUN git clone $DATASET_DOWNLOAD_LINK

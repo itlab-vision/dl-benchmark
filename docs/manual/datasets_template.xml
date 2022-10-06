@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Datasets>
+	<Dataset>
+		<Name>ImageNET</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</Path>
+	</Dataset>
+	<Dataset>
+		<Name>PASCAL_VOC</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/PASCAL_VOC</Path>
+	</Dataset>
+	<Dataset>
+		<Name>MS_COCO_VAL17</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/MS_COCO_VAL17</Path>
+	</Dataset>
+	<Dataset>
+		<Name>LFW</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/LFW</Path>
+	</Dataset>
+	<Dataset>
+		<Name>WIDER</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/WIDER_FACE/</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/person-detection-retail-0002</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/person-detection-retail-0013</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/person-detection-action-recognition/</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/person-detection-action-recognition-teacher/</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Cityscapes</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/Cityscapes</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/product-detection/</Path>
+	</Dataset>
+	<Dataset>
+		<Name>GitHub</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/age-gender-recognition</Path>
+	</Dataset>
+	<Dataset>
+		<Name>BKHD</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/BKHD</Path>
+	</Dataset>
+	<Dataset>
+		<Name>GitHub</Name>
+		<Path>data:/tmp/itlab-vision-dl-benchmark-data/Datasets/license-plate-recognition/license-plate-recognition-barrier-1.png seq_ind:/tmp/itlab-vision-dl-benchmark-data/Datasets/license-plate-recognition/seq_ind.csv</Path>
+	</Dataset>
+	<Dataset>
+		<Name>VGGFace2</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/VGGFace2/only_faces</Path>
+	</Dataset>
+	<Dataset>
+		<Name>GitHub</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/facial-landmarks</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Internet</Name>
+		<Path>left_eye_image:/tmp/itlab-vision-dl-benchmark-data/Datasets/gaze-estimation/left_eye_image right_eye_image:/tmp/itlab-vision-dl-benchmark-data/Datasets/gaze-estimation/right_eye_image head_pose_angles:/tmp/itlab-vision-dl-benchmark-data/Datasets/gaze-estimation/head_pose_angles.csv</Path>
+	</Dataset>
+	<Dataset>
+		<Name>LFW</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/LFW</Path>
+	</Dataset>
+	<Dataset>
+		<Name>GitHub</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/road-segmentation-adas</Path>
+	</Dataset>
+	<Dataset>
+		<Name>MS COCO</Name>
+		<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/human-pose-estimation</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Set-14</Name>
+		<Path>0:/tmp/itlab-vision-dl-benchmark-data/Datasets/single-image-super-resolution-1032/input_name_0/img_001_SRF_4_LR.png 1:/tmp/itlab-vision-dl-benchmark-data/Datasets/single-image-super-resolution-1032/input_name_1/img_001_SRF_4_HR.png</Path>
+	</Dataset>
+	<Dataset>
+		<Name>Set-14</Name>
+		<Path>0:/tmp/itlab-vision-dl-benchmark-data/Datasets/single-image-super-resolution-1033/input_name_0/img_001_SRF_3_LR.png 1:/tmp/itlab-vision-dl-benchmark-data/Datasets/single-image-super-resolution-1033/input_name_1/img_001_SRF_3_HR.png</Path>
+	</Dataset>
+</Datasets>
