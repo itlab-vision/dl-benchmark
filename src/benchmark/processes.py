@@ -106,7 +106,7 @@ class OpenVINOProcess(ProcessHandler, ABC):
         if mode == 'sync':
             return SyncOpenVINOProcess(test, executor, log)
         elif mode == 'async':
-            return SyncOpenVINOProcess(test, executor, log)
+            return AsyncOpenVINOProcess(test, executor, log)
 
     def _fill_command_line(self):
         model_xml = self._my_test.model.model
@@ -146,9 +146,10 @@ class SyncOpenVINOProcess(OpenVINOProcess):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-                                                            'inference_sync_mode.py'))
+        path_to_sync_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+                                           'inference_sync_mode.py')
         python = ProcessHandler._get_cmd_python_version()
+
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_sync_scrypt, common_params)
 
@@ -178,9 +179,10 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
         return average_time, fps, 0
 
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-                                                             'inference_async_mode.py'))
+        path_to_async_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+                                            'inference_async_mode.py')
         python = ProcessHandler._get_cmd_python_version()
+
         common_params = super()._fill_command_line()
         command_line = '{0} {1} {2}'.format(python, path_to_async_scrypt, common_params)
         nstreams = self._my_test.dep_parameters.nstreams
@@ -237,8 +239,8 @@ class IntelCaffeProcess(ProcessHandler):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_intelcaffe_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-                                                                  'inference_caffe.py'))
+        path_to_intelcaffe_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+                                                 'inference_caffe.py')
         python = ProcessHandler._get_cmd_python_version()
 
         model_prototxt = self._my_test.model.model
@@ -337,8 +339,8 @@ class TensorFlowProcess(ProcessHandler):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_tensorflow_scrypt = os.path.normpath(os.path.join(self._my_executor.get_path_to_inference_folder(),
-                                                                  'inference_tensorflow.py'))
+        path_to_tensorflow_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+                                                 'inference_tensorflow.py')
         python = ProcessHandler._get_cmd_python_version()
 
         model = self._my_test.model.model
