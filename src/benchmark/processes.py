@@ -106,7 +106,7 @@ class OpenVINOProcess(ProcessHandler, ABC):
         if mode == 'sync':
             return SyncOpenVINOProcess(test, executor, log)
         elif mode == 'async':
-            return SyncOpenVINOProcess(test, executor, log)
+            return AsyncOpenVINOProcess(test, executor, log)
 
     def _fill_command_line(self):
         model_xml = self._my_test.model.model

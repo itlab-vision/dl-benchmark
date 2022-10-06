@@ -1,17 +1,18 @@
 import abc
-import xlsxwriter
-import pandas
-import re
-from collections import defaultdict
-from iteration_utilities import deepflatten
 import logging
+import re
 import tkinter
 import tkinter.font
+from collections import defaultdict
+
+import pandas
+import xlsxwriter
+from iteration_utilities import deepflatten
 
 
 class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
     def __init__(self, paths_table_csv, path_table_xlsx):
-        logging.info('START: __init__(). Input: {}, {}'.format(
+        logging.info('START: __init__(). Input: {0}, {1}'.format(
             paths_table_csv, path_table_xlsx))
 
         self._paths_table_csv = paths_table_csv
@@ -72,7 +73,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._KEY_LATENCY = keys[13]
         self._KEY_FPS = keys[14]
 
-        logging.info('FINISH: _init_table_keys(). {}'.format(keys))
+        logging.info(f'FINISH: _init_table_keys(). {keys}')
 
     def read_csv_table(self):
         logging.info('START: read_csv_table()')
@@ -91,11 +92,9 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
     def _get_infrastructure(self):
         logging.info('START: _get_infrastructure()')
 
-        self._infrastructure = list(
-            set(list(self._data_dictionary[self._KEY_INFRASTRUCTURE].values())))
+        self._infrastructure = list(set(self._data_dictionary[self._KEY_INFRASTRUCTURE].values()))
 
-        logging.info('FINISH: _get_infrastructure(). {}'.format(
-            self._infrastructure))
+        logging.info(f'FINISH: _get_infrastructure(). {self._infrastructure}')
 
     def _get_inference_frameworks(self):
         logging.info('START: _get_inference_frameworks()')
@@ -104,13 +103,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         for machine in self._infrastructure:
             machine_inference_frameworks = []
             for key, value in self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK].items():
-                if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                   value not in machine_inference_frameworks:
+                if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
+                        and value not in machine_inference_frameworks):
                     machine_inference_frameworks.append(value)
             self._inference_frameworks.append(machine_inference_frameworks)
 
-        logging.info('FINISH: _get_inference_frameworks(). {}'.format(
-            self._inference_frameworks))
+        logging.info(f'FINISH: _get_inference_frameworks(). {self._inference_frameworks}')
 
     def _get_devices(self):
         logging.info('START: _get_devices()')
@@ -126,15 +124,14 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
                     matcher = re.match(pattern, value)
                     device_name = matcher.group('device_name')
-                    if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                       self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
-                            inference_framework and \
-                       device_name not in framework_devices:
+                    if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
+                            and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
+                            and device_name not in framework_devices):
                         framework_devices.append(device_name)
                 machine_framework_devices.append(framework_devices)
             self._devices.append(machine_framework_devices)
 
-        logging.info('FINISH: _get_devices(). {}'.format(self._devices))
+        logging.info(f'FINISH: _get_devices(). {self._devices}')
 
     def _get_precisions(self):
         logging.info('START: _get_precisions()')
@@ -154,17 +151,16 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                         pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
                         matcher = re.match(pattern, value)
                         device_name = matcher.group('device_name')
-                        if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                           self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
-                           inference_framework and device_name == device and \
-                           self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions:
-                            device_precisions.append(
-                                self._data_dictionary[self._KEY_PRECISION][key])
+                        if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
+                                and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
+                                and device_name == device
+                                and self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions):
+                            device_precisions.append(self._data_dictionary[self._KEY_PRECISION][key])
                     framework_precisions.append(device_precisions)
                 machine_precisions.append(framework_precisions)
             self._precisions.append(machine_precisions)
 
-        logging.info('FINISH: _get_precisions(). {}'.format(self._precisions))
+        logging.info(f'FINISH: _get_precisions(). {self._precisions}')
 
     def _get_execution_modes(self):
         logging.info('START: _get_execution_modes()')
@@ -188,12 +184,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                             pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
                             matcher = re.match(pattern, value)
                             device_name = matcher.group('device_name')
-                            if self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine and \
-                               self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == \
-                               inference_framework and device_name == device and \
-                               self._data_dictionary[self._KEY_PRECISION][key] == precision and \
-                               self._data_dictionary[self._KEY_EXECUTION_MODE][key] \
-                               not in device_precision_modes:
+                            if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
+                                    and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
+                                    and device_name == device
+                                    and self._data_dictionary[self._KEY_PRECISION][key] == precision
+                                    and self._data_dictionary[self._KEY_EXECUTION_MODE][key]
+                                    not in device_precision_modes):
                                 device_precision_modes.append(
                                     self._data_dictionary[self._KEY_EXECUTION_MODE][key])
                         framework_device_modes.append(device_precision_modes)
@@ -201,8 +197,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 machine_modes.append(framework_modes)
             self._execution_modes.append(machine_modes)
 
-        logging.info('FINISH: _get_execution_modes(). {}'.format(
-            self._execution_modes))
+        logging.info(f'FINISH: _get_execution_modes(). {self._execution_modes}')
 
     def _fill_horizontal_title(self):
         logging.info('START: _fill_horizontal_title()')
@@ -233,12 +228,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                     col_indeces4 = []
                     for idx4 in range(len(framework_device_precisions)):
                         framework_device_precision = framework_device_precisions[idx4]
-                        framework_device_precision_modes = \
-                            self._execution_modes[idx][idx2][idx3][idx4]
+                        framework_device_precision_modes = self._execution_modes[idx][idx2][idx3][idx4]
                         col_indeces5 = []
                         for idx5 in range(len(framework_device_precision_modes)):
-                            framework_device_precision_mode = \
-                                framework_device_precision_modes[idx5]
+                            framework_device_precision_mode = framework_device_precision_modes[idx5]
                             self._sheet.write(row_idx, col_idx + idx5,
                                               framework_device_precision_mode,
                                               self._cell_format_title1)
@@ -307,17 +300,18 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
 
         logging.info('FINISH: _fill_horizontal_title()')
 
-    def _get_column_width(self, values, format):
+    @staticmethod
+    def _get_column_width(values, format_):
         root = tkinter.Tk()
         max_cell_width = 0
-        used_font = tkinter.font.Font(family=format.font_name,
-                                      size=format.font_size,
-                                      weight=('bold' if format.bold else 'normal'),
-                                      slant=('italic' if format.italic else 'roman'),
-                                      underline=format.underline,
-                                      overstrike=format.font_strikeout)
+        used_font = tkinter.font.Font(family=format_.font_name,
+                                      size=format_.font_size,
+                                      weight=('bold' if format_.bold else 'normal'),
+                                      slant=('italic' if format_.italic else 'roman'),
+                                      underline=format_.underline,
+                                      overstrike=format_.font_strikeout)
         reference_font = tkinter.font.Font(family='Calibri', size=11)
-        for key, value in values.items():
+        for _, value in values.items():
             if '\n' in value:
                 pixelwidths = [used_font.measure(part) for part in value.split('\n')]
                 cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
@@ -419,12 +413,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                           processed_records_keys):
         records_group = []
         for key, value in experiments.items():
-            if key not in processed_records_keys and \
-               value[self._KEY_TASK_TYPE] == task_type and \
-               value[self._KEY_TOPOLOGY_NAME] == topology_name and \
-               value[self._KEY_TRAIN_FRAMEWORK] == train_framework and \
-               value[self._KEY_BLOB_SIZE] == blob_size and \
-               value[self._KEY_BATCH_SIZE] == batch_size:
+            if (key not in processed_records_keys
+                    and value[self._KEY_TASK_TYPE] == task_type
+                    and value[self._KEY_TOPOLOGY_NAME] == topology_name
+                    and value[self._KEY_TRAIN_FRAMEWORK] == train_framework
+                    and value[self._KEY_BLOB_SIZE] == blob_size
+                    and value[self._KEY_BATCH_SIZE] == batch_size):
                 records_group.append(value)
                 processed_records_keys.append(key)
         return records_group
@@ -445,8 +439,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
 
     def _remove_unused_metrics(self, data):
         # remove unused keys from DataFrame
-        for key, value in self._data.copy().items():
-            if key == self._KEY_AVGTIME or key == self._KEY_LATENCY:
+        for key, _ in self._data.copy().items():
+            if key in (self._KEY_AVGTIME, self._KEY_LATENCY):
                 del self._data[key]
         return self._data
 
@@ -485,10 +479,10 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         records_group = []
         for idx in range(len(task_records)):
             record = task_records[idx]
-            if idx not in processed_records_idxs and \
-               record[self._KEY_TOPOLOGY_NAME] == topology_name and \
-               record[self._KEY_TRAIN_FRAMEWORK] == train_framework and \
-               record[self._KEY_BLOB_SIZE] == blob_size:
+            if (idx not in processed_records_idxs
+                    and record[self._KEY_TOPOLOGY_NAME] == topology_name
+                    and record[self._KEY_TRAIN_FRAMEWORK] == train_framework
+                    and record[self._KEY_BLOB_SIZE] == blob_size):
                 processed_records_idxs.append(idx)
                 records_group.append(record)
         return records_group
@@ -500,7 +494,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         for task_type, task_records in self._table_records.items():  # loop by tasks
             if len(task_records) <= 0:
                 continue
-            elif len(task_records) > 1:  # print task type
+            if len(task_records) > 1:  # print task type
                 self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0,
                                         task_type, self._cell_format_task_type)
             else:
@@ -519,7 +513,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                 topology_num_records = len(records_group)
                 if topology_num_records == 0:
                     continue
-                elif topology_num_records > 1:
+                if topology_num_records > 1:
                     self._sheet.merge_range(row_idx, 1,
                                             row_idx + topology_num_records - 1,
                                             1, topology_name,
@@ -550,7 +544,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                             try:
                                 value = float(value)
                             except ValueError as error:
-                                logging.error('{}'.format(error))
+                                logging.error(f'{error}')
                                 value = 'Incorrect'
                                 formatting = self._cell_format_nan_fps
                         self._sheet.write(row_idx, key, value, formatting)
