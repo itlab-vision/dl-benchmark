@@ -23,10 +23,6 @@ class Executor(metaclass=abc.ABCMeta):
         self.my_target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
-    def get_path_to_inference_folder(self):
-        pass
-
-    @abc.abstractmethod
     def get_infrastructure(self):
         pass
 
@@ -39,9 +35,6 @@ class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         self.my_environment = os.environ.copy()
-
-    def get_path_to_inference_folder(self):
-        return '../inference'
 
     def get_infrastructure(self):
         sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
@@ -69,9 +62,6 @@ class DockerExecutor(Executor):
         super().__init__(log)
         client = docker.from_env()
         self.my_container_dict = {cont.name: cont for cont in client.containers.list()}
-
-    def get_path_to_inference_folder(self):
-        return '/tmp/dl-benchmark/src/inference'
 
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'

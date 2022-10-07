@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>resnet-50-pytorch</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath>Path to xml</ModelPath>
+            <WeightsPath>Path to bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>Path to data</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1000</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>Async</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>resnet-50-tf</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TensorFlow</SourceFramework>
+            <ModelPath>Path to xml</ModelPath>
+            <WeightsPath>Path to bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>Path to data</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1000</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>Async</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+</Tests>
