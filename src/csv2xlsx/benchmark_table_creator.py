@@ -1,23 +1,22 @@
-import abc
 import logging
 import re
 import tkinter
 import tkinter.font
 from collections import defaultdict
 
+from table_creator import XlsxTable
+
 import pandas
 import xlsxwriter
 from iteration_utilities import deepflatten
 
 
-class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
+class XlsxBenchmarkTable(XlsxTable):
     def __init__(self, paths_table_csv, path_table_xlsx):
         logging.info('START: __init__(). Input: {0}, {1}'.format(
             paths_table_csv, path_table_xlsx))
 
-        self._paths_table_csv = paths_table_csv
-        self._path_table_xlsx = path_table_xlsx
-        self._sheet_name = 'Performance'
+        super().__init__(paths_table_csv, path_table_xlsx, 'Performance')
 
         logging.info('FINISH: __init__()')
 
