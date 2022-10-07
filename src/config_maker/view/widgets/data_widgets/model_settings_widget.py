@@ -1,8 +1,9 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QFileDialog
-from ...buttons.group_buttons import DataGroupButtons  # pylint: disable=E0402
-from ...dialogs.model_dialog import ModelDialog  # pylint: disable=E0402
-from ...tables.model_table import ModelTable  # pylint: disable=E0402
+
+from ...buttons.group_buttons import DataGroupButtons
+from ...dialogs.model_dialog import ModelDialog
+from ...tables.model_table import ModelTable
 
 
 class ModelSettingsWidget(QWidget):
@@ -42,7 +43,7 @@ class ModelSettingsWidget(QWidget):
 
     def __show_dialog_change_model(self):
         if len(self.__table.get_selected_rows()) != 1:
-            QMessageBox.warning(self, "Warning!", "Choose one row!")
+            QMessageBox.warning(self, 'Warning!', 'Choose one row!')
             return
         dialog = ModelDialog(self)
         row = self.__table.get_selected_rows()[0]
@@ -55,20 +56,20 @@ class ModelSettingsWidget(QWidget):
         self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
-        path_to_config = QFileDialog.getOpenFileName(self, "Open File", "", "XML files (*.xml)")
+        path_to_config = QFileDialog.getOpenFileName(self, 'Open File', '', 'XML files (*.xml)')
         if path_to_config[0]:
             self.loadSignal.emit(path_to_config[0])
 
     def __show_dialog_create_config(self):
-        path_to_config = QFileDialog.getSaveFileName(self, "Save File", "", "XML files (*.xml)")
+        path_to_config = QFileDialog.getSaveFileName(self, 'Save File', '', 'XML files (*.xml)')
         if path_to_config[0]:
             self.saveSignal.emit(path_to_config[0])
 
     def show_message_status_saving(self, status):
         if status:
-            QMessageBox.information(self, "Success", "Model data was created successfully!")
+            QMessageBox.information(self, 'Success', 'Model data was created successfully!')
         else:
-            QMessageBox.warning(self, "Fail", "Model data was not created!")
+            QMessageBox.warning(self, 'Fail', 'Model data was not created!')
 
     def __click_delete_button(self):
         self.deleteModelSignal.emit(self.__table.get_selected_rows())

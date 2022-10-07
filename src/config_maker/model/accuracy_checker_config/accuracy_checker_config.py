@@ -1,7 +1,9 @@
 import os
 from xml.dom import minidom
-from .test import Test  # pylint: disable=E0402
-from tags import CONFIG_TESTS_TAG, CONFIG_TEST_TAG, CONFIG_MODEL_TAG  # pylint: disable=E0401
+
+from tags import CONFIG_TESTS_TAG, CONFIG_TEST_TAG, CONFIG_MODEL_TAG
+
+from .test import Test
 
 
 class AccuracyCheckerConfig:
@@ -43,6 +45,7 @@ class AccuracyCheckerConfig:
             self.__tests.append(test)
             models.append(test.parameters[CONFIG_MODEL_TAG])
         self.__tests_grouping()
+
         return models
 
     def create_config(self, path_to_config):
@@ -58,6 +61,7 @@ class AccuracyCheckerConfig:
         xml_str = file.toprettyxml(indent='\t', encoding='utf-8')
         with open(path_to_config, 'wb') as f:
             f.write(xml_str)
+
         return os.path.exists(path_to_config)
 
     def __prepare_tests(self):
@@ -65,6 +69,7 @@ class AccuracyCheckerConfig:
         for test in self.__tests:
             splitting_tests = test.test_splitting()
             new_tests.extend(splitting_tests)
+
         return new_tests
 
     def __tests_grouping(self):

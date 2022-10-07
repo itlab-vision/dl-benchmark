@@ -20,8 +20,7 @@ def build_parser():
     path_table_xlsx = parser.parse_args().result_table
     table_kind = parser.parse_args().table_kind
 
-    logging.info('FINISH: build_parser(). Output: {}, {}, {}'.format(
-        paths_table_csv, path_table_xlsx, table_kind))
+    logging.info(f'FINISH: build_parser(). Output: {paths_table_csv}, {path_table_xlsx}, {table_kind}')
     return paths_table_csv, path_table_xlsx, table_kind
 
 
@@ -31,9 +30,9 @@ def convert_csv_table_to_xlsx(paths_table_csv, path_table_xlsx, table_type):
     if table_type == 'benchmark':
         table_xlsx = XlsxBenchmarkTable(paths_table_csv, path_table_xlsx)
     elif table_type == 'accuracy_checker':
-        raise ValueError('Table type \'{}\' is not supported'.format(table_type))
+        raise ValueError(f'Table type "{table_type}" is not supported')
     else:
-        raise ValueError('Incorrect value of table type \'{}\''.format(table_type))
+        raise ValueError(f'Incorrect value of table type "{table_type}"')
     table_xlsx.read_csv_table()
     table_xlsx.create_table_header()
     table_xlsx.create_table_rows()

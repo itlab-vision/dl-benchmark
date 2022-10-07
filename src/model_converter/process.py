@@ -1,11 +1,12 @@
 import os
 import shutil
 from subprocess import Popen, PIPE, STDOUT
+
 from shape_parser import get_new_input_shape_by_model_name
 from utils import copy_converted_model_files
 
 
-class process:
+class ProcessHandler:
     def __init__(self, model, batch, parameters, log):
         self.__model = model
         self.__batch = batch
@@ -48,7 +49,7 @@ class process:
             add_mo_params,
             self.__my_parameters.zoo_config_dir,
             self.__model,
-            self.__batch
+            self.__batch,
         )
 
         common_params = ''
@@ -56,7 +57,7 @@ class process:
             common_params = self.__add_output_dir_for_cmd_line(
                 common_params,
                 self.__my_parameters.dir,
-                self.__batch
+                self.__batch,
             )
 
         add_mo_params = f'--add_mo_arg="{add_mo_params}"'
@@ -75,7 +76,7 @@ class process:
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
-            universal_newlines=True
+            universal_newlines=True,
         )
         out, _ = process.communicate()
         self.__my_log.info(f'{out}')

@@ -1,5 +1,6 @@
 from copy import copy
-from openvino.runtime import Core, Tensor, PartialShape  # pylint: disable=E0401
+
+from openvino.runtime import Core, Tensor, PartialShape
 
 
 def create_model(core, model_xml, model_bin, log):
@@ -28,24 +29,24 @@ def configure_model(core, model, device, default_device, affinity_file):
         affinity = parse_affinity(affinity_file)
         for node in nodes:
             if node.get_friendly_name() in affinity.keys():
-                node.get_rt_info()["affinity"] = affinity[node.get_friendly_name()]
+                node.get_rt_info()['affinity'] = affinity[node.get_friendly_name()]
             else:
-                node.get_rt_info()["affinity"] = default_device
+                node.get_rt_info()['affinity'] = default_device
     else:
         supported_ops = core.query_model(model=model, device_name=device)
         for node in nodes:
             affinity = supported_ops[node.get_friendly_name()]
-            node.get_rt_info()["affinity"] = affinity
+            node.get_rt_info()['affinity'] = affinity
 
 
 def add_extension(core, path_to_extension, path_to_intel_gpu_config, device, log):
     if path_to_extension:
         if 'GPU' in device:
             core.set_property('GPU', {'CONFIG_FILE': path_to_intel_gpu_config})
-            log.info('GPU extensions is loaded {}'.format(path_to_extension))
+            log.info('GPU extensions is loaded {0}'.format(path_to_extension))
         if 'CPU' in device or 'MYRIAD' in device:
             core.add_extension(path_to_extension, 'CPU')
-            log.info('CPU extensions is loaded {}'.format(path_to_extension))
+            log.info('CPU extensions is loaded {0}'.format(path_to_extension))
 
 
 def parse_devices(device):
@@ -98,7 +99,7 @@ def set_property(core, devices, nthreads, nstreams, dump, mode):
     if dump:
         if 'HETERO' in devices:
             core.set_property('HETERO', {'OPENVINO_HETERO_VISUALIZE': 'YES'})
-        elif not ('MULTI' in devices):
+        elif 'MULTI' not in devices:
             core.set_property(devices, {'DUMP_EXEC_GRAPH_AS_DOT': 'exec_graph'})
 
 
@@ -120,7 +121,7 @@ def compile_model(core, model, device, multi_priority):
 
 
 def get_input_shape(io_model_wrapper, model):
-    layer_shapes = dict()
+    layer_shapes = {}
     layer_names = io_model_wrapper.get_input_layer_names(model)
     for input_layer in layer_names:
         shape = ''
@@ -133,32 +134,33 @@ def get_input_shape(io_model_wrapper, model):
 
 def reshape_input(model, batch_size):
     new_shapes = {}
-    for input in model.inputs:
-        shape = input.get_partial_shape()
+    for input_ in model.inputs:
+        shape = input_.get_partial_shape()
         shape[0] = batch_size
-        new_shapes.update({input.get_any_name(): shape})
+        new_shapes.update({input_.get_any_name(): shape})
     model.reshape(new_shapes)
 
 
-def set_input_to_blobs(request, input):
+def set_input_to_blobs(request, input_):
     model_inputs = request.model_inputs
-    for layer_name, data in input.items():
+    for layer_name, data in input_.items():
         found_tensor = False
         for model_input in model_inputs:
             if model_input.get_any_name() == layer_name:
                 if PartialShape(data.shape) != model_input.get_partial_shape():
-                    raise ValueError("Input data and input layer with name {0} has different shapes: \
-                                     {1} and {2}".format(layer_name, PartialShape(data.shape), model_input.get_partial_shape()))
+                    raise ValueError('Input data and input layer with name {0} has different shapes: '
+                                     '{1} and {2}'.format(layer_name, PartialShape(data.shape),
+                                                          model_input.get_partial_shape()))
                 new_tensor = Tensor(data)
                 request.set_tensor(model_input.get_any_name(), new_tensor)
                 found_tensor = True
 
         if not found_tensor:
-            raise ValueError("No input layer with name {}".format(layer_name))
+            raise ValueError(f'No input layer with name {layer_name}')
 
 
 def get_request_result(request):
-    result = dict()
+    result = {}
     for output_node, tensor in request.results.items():
         result[output_node.get_any_name()] = copy(tensor)
     return result

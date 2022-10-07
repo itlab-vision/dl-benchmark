@@ -1,7 +1,7 @@
-from model.models.model import Model  # pylint: disable=E0401
-# pylint: disable-next=E0401
-from tags import CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_DEVICE_TAG, CONFIG_CONFIG_TAG, \
-    CONFIG_PARAMETERS_TAG
+from model.models.model import Model
+
+from tags import (CONFIG_TEST_TAG, CONFIG_MODEL_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_DEVICE_TAG, CONFIG_CONFIG_TAG,
+                  CONFIG_PARAMETERS_TAG)
 
 
 class Test:
@@ -10,7 +10,7 @@ class Test:
             CONFIG_MODEL_TAG: Model(*model.split(';')) if isinstance(model, str) else model,
             CONFIG_FRAMEWORK_TAG: framework,
             CONFIG_DEVICE_TAG: device,
-            CONFIG_CONFIG_TAG: config
+            CONFIG_CONFIG_TAG: config,
         }
 
     def get_values_list(self):
@@ -21,7 +21,7 @@ class Test:
 
     def grouping_values_check(self, other):
         count = 0
-        diff_tag = ""
+        diff_tag = ''
         self_values = self.get_values_dict()
         other_values = other.get_values_dict()
         for tag in self_values:
@@ -38,6 +38,7 @@ class Test:
         self_parameters = self.get_values_dict()
         value = other.get_values_dict()[tag]
         self_parameters[tag] = ';'.join([self_parameters[tag], value])
+
         return Test(*self_parameters.values())
 
     @staticmethod
@@ -47,7 +48,7 @@ class Test:
         return Test(model=model,
                     framework=parameters.getElementsByTagName(CONFIG_FRAMEWORK_TAG)[0].firstChild.data,
                     device=parameters.getElementsByTagName(CONFIG_DEVICE_TAG)[0].firstChild.data,
-                    config=parameters.getElementsByTagName(CONFIG_CONFIG_TAG)[0].firstChild.data
+                    config=parameters.getElementsByTagName(CONFIG_CONFIG_TAG)[0].firstChild.data,
                     )
 
     def create_dom(self, file):
@@ -85,4 +86,5 @@ class Test:
         for framework in frameworks:
             for device in devices:
                 new_tests.append(Test(model, framework, device, config))
+
         return new_tests

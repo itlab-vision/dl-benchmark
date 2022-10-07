@@ -1,4 +1,4 @@
-class table_handler:
+class TableHandler:
     def __init__(self):
         self.__my_lines = []
         self.__my_current_line = 0
@@ -24,7 +24,7 @@ def join_tables(ftp_server, target, table_name):
     ftp_server.retrlines('NLST', tables.append)
     for idx in range(len(tables)):
         if target in tables[idx]:
-            result_table = table_handler()
+            result_table = TableHandler()
             ftp_server.retrlines('RETR ' + tables[idx], result_table.set_line)
             result_tables.append(result_table)
 

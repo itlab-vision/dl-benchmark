@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QLabel, QComboBox, QLineEdit, QPushButton, QGridLayout, QMessageBox
-# pylint: disable-next=E0401
+
 from tags import CONFIG_MODEL_TAG, CONFIG_PARAMETERS_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_DEVICE_TAG, CONFIG_CONFIG_TAG
 
 
@@ -23,7 +23,7 @@ class AccuracyCheckerConfigDialog(QDialog):
         self.__labels = dict.fromkeys(self.__tags)
         for key in self.__labels:
             self.__labels[key] = QLabel(key)
-        self.__labels[CONFIG_PARAMETERS_TAG].setStyleSheet("font-weight: bold")
+        self.__labels[CONFIG_PARAMETERS_TAG].setStyleSheet('font-weight: bold')
 
     def __create_edits(self):
         self.__edits = dict.fromkeys(self.__tags)
@@ -47,18 +47,15 @@ class AccuracyCheckerConfigDialog(QDialog):
             idx += 1
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
-        ok_btn.clicked.connect(self.accept)  # pylint: disable=E1120
-        cancel_btn.clicked.connect(self.reject)  # pylint: disable=E1120
+        ok_btn.clicked.connect(self.accept)  # noqa: E1120
+        cancel_btn.clicked.connect(self.reject)  # noqa: E1120
         layout.addWidget(ok_btn, idx, 0)
         layout.addWidget(cancel_btn, idx, 1)
         self.setLayout(layout)
 
     def get_values(self):
-        values = []
-        values.append(self.__edits[CONFIG_MODEL_TAG].currentText())
-        values.append(self.__edits[CONFIG_FRAMEWORK_TAG].currentText())
-        values.append(self.__edits[CONFIG_DEVICE_TAG].currentText())
-        values.append(self.__edits[CONFIG_CONFIG_TAG].text())
+        values = [self.__edits[CONFIG_MODEL_TAG].currentText(), self.__edits[CONFIG_FRAMEWORK_TAG].currentText(),
+                  self.__edits[CONFIG_DEVICE_TAG].currentText(), self.__edits[CONFIG_CONFIG_TAG].text()]
         return values
 
     def load_values_from_table_row(self, table, row):
