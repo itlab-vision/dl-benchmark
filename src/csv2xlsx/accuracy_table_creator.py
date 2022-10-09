@@ -9,7 +9,7 @@ class XlsxAccuracyTable(XlsxTable):
     def __init__(self, paths_table_csv, path_table_xlsx):
         logging.info('START: __init__(). Input: {0}, {1}'.format(
             paths_table_csv, path_table_xlsx))
-        
+
         super().__init__(paths_table_csv, path_table_xlsx, 'Accuracy')
 
         logging.info('FINISH: __init__()')
@@ -55,7 +55,7 @@ class XlsxAccuracyTable(XlsxTable):
         self._KEY_ACCURACY_TYPE = keys[8]
         self._KEY_PRECISION = keys[9]
         self._KEY_ACCURACY = keys[10]
-        
+
         logging.info(f'FINISH: _init_table_keys(). {keys}')
 
     def read_csv_table(self):
@@ -84,8 +84,8 @@ class XlsxAccuracyTable(XlsxTable):
                 framework_devices = []
                 for key, value in self._data_dictionary[self._KEY_DEVICE].items():
                     if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
-                        and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
-                        and value not in framework_devices):
+                            and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
+                            and value not in framework_devices):
                         framework_devices.append(value)
                 machine_framework_devices.append(framework_devices)
             self._devices.append(machine_framework_devices)
@@ -108,9 +108,9 @@ class XlsxAccuracyTable(XlsxTable):
                     device_precisions = []
                     for key, value in self._data_dictionary[self._KEY_DEVICE].items():
                         if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
-                            and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
-                            and value == device
-                            and self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions):
+                                and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
+                                and value == device
+                                and self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions):
                             device_precisions.append(self._data_dictionary[self._KEY_PRECISION][key])
                     framework_precisions.append(device_precisions)
                 machine_precisions.append(framework_precisions)
@@ -197,7 +197,6 @@ class XlsxAccuracyTable(XlsxTable):
             self._col_indeces.append(col_indeces2)
 
         logging.info(f'FINISH: _fill_horizontal_title(). {self._col_indeces}')
-
 
     def create_table_header(self):
         logging.info('START: create_table_header()')
