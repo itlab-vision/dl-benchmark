@@ -1,7 +1,5 @@
 import logging
 import re
-import tkinter
-import tkinter.font
 from collections import defaultdict
 
 from table_creator import XlsxTable
@@ -87,27 +85,6 @@ class XlsxBenchmarkTable(XlsxTable):
         self._init_table_keys()
 
         logging.info('FINISH: read_csv_table()')
-
-    def _get_infrastructure(self):
-        logging.info('START: _get_infrastructure()')
-
-        self._infrastructure = list(set(self._data_dictionary[self._KEY_INFRASTRUCTURE].values()))
-
-        logging.info(f'FINISH: _get_infrastructure(). {self._infrastructure}')
-
-    def _get_inference_frameworks(self):
-        logging.info('START: _get_inference_frameworks()')
-
-        self._inference_frameworks = []
-        for machine in self._infrastructure:
-            machine_inference_frameworks = []
-            for key, value in self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK].items():
-                if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
-                        and value not in machine_inference_frameworks):
-                    machine_inference_frameworks.append(value)
-            self._inference_frameworks.append(machine_inference_frameworks)
-
-        logging.info(f'FINISH: _get_inference_frameworks(). {self._inference_frameworks}')
 
     def _get_devices(self):
         logging.info('START: _get_devices()')
@@ -299,28 +276,6 @@ class XlsxBenchmarkTable(XlsxTable):
 
         logging.info('FINISH: _fill_horizontal_title()')
 
-    @staticmethod
-    def _get_column_width(values, format_):
-        root = tkinter.Tk()
-        max_cell_width = 0
-        used_font = tkinter.font.Font(family=format_.font_name,
-                                      size=format_.font_size,
-                                      weight=('bold' if format_.bold else 'normal'),
-                                      slant=('italic' if format_.italic else 'roman'),
-                                      underline=format_.underline,
-                                      overstrike=format_.font_strikeout)
-        reference_font = tkinter.font.Font(family='Calibri', size=11)
-        for _, value in values.items():
-            if '\n' in value:
-                pixelwidths = [used_font.measure(part) for part in value.split('\n')]
-                cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
-            else:
-                cell_width = used_font.measure(value + ' ') / reference_font.measure('0')
-            max_cell_width = max(max_cell_width, cell_width)
-        root.update_idletasks()
-        root.destroy()
-        return max_cell_width
-
     def _add_new_line(self, values, sep=','):
         for key, value in values.items():
             values[key] = value.replace(sep, ',\n')
@@ -336,18 +291,18 @@ class XlsxBenchmarkTable(XlsxTable):
         # Write horizontal title (first cells before infrastructure)
         self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format_title1)
 
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
         self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
 
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
         self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
 
         self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
         self._sheet.set_column(3, 3, col_width)
         self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format_title1)
@@ -358,6 +313,7 @@ class XlsxBenchmarkTable(XlsxTable):
         self._get_devices()
         self._get_precisions()
         self._get_execution_modes()
+
         # Write horizontal title (cells corresponding infrastructure)
         self._fill_horizontal_title()
 
@@ -621,6 +577,7 @@ class XlsxBenchmarkTable(XlsxTable):
 
     def beautify_table(self):
         logging.info('START: beautify_table()')
+
         rel_col_idx = 5  # task type, topology, framework, blob sizes, batch size
         rel_row_idx = 0
         num_header_rows = 5  # infrastructure, framework, device, precision, mode
@@ -636,9 +593,12 @@ class XlsxBenchmarkTable(XlsxTable):
             self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
                                    self._full_num_rows - num_header_rows + 1, num_cols)
             rel_col_idx += num_cols
+
         logging.info('FINISH: beautify_table()')
 
     def close_table(self):
         logging.info('START: close_table()')
+
         self._book.close()
+
         logging.info('FINISH: close_table()')
