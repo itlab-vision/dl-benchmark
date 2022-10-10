@@ -1,11 +1,11 @@
 import logging
-import pandas
-import xlsxwriter
 from collections import defaultdict
 
-from iteration_utilities import deepflatten
-
 from table_creator import XlsxTable
+
+import pandas
+import xlsxwriter
+from iteration_utilities import deepflatten
 
 
 class XlsxAccuracyTable(XlsxTable):
@@ -258,7 +258,7 @@ class XlsxAccuracyTable(XlsxTable):
         logging.info('START: create_table_rows()')
 
         # transpose 2d dictionary
-        experiments = self._data.to_dict('index')   
+        experiments = self._data.to_dict('index')
 
         processed_records_keys = []
         self._table_records = defaultdict(list)
