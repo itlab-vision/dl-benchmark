@@ -9,8 +9,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self.__my_log = log
         self._my_test = test
         self._my_executor = executor
-        self._my_output = None
-        self._my_row_output = None
+        self._output = None
+        self._status = None
 
     @staticmethod
     def _get_cmd_python_version():
@@ -36,7 +36,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
 
     def get_model_shape(self):
         input_shape = []
-        for line in self._my_output:
+        for line in self._output:
             if 'Shape for input layer' in line:
                 input_shape.append(line.split(':')[-1].strip())
 
@@ -47,22 +47,24 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         if command_line == '':
             self.__my_log.error('Command line is empty')
         self.__my_log.info(f'Start inference test on model : {self._my_test.model.name}')
+        self.__my_log.info(f'Command line is : {command_line}')
         self._my_executor.set_target_framework(self._my_test.indep_parameters.inference_framework)
-        self._my_row_output = self._my_executor.execute_process(command_line)
-        self._my_output = self._my_row_output[1]
+        self._status, self._output = self._my_executor.execute_process(command_line,
+                                                                       self._my_test.indep_parameters.test_time_limit)
 
-        if type(self._my_output) is not list:
-            self._my_output = self._my_output.decode('utf-8').split('\n')[:-1]
+        if type(self._output) is not list:
+            self._output = self._output.decode('utf-8').split('\n')[:-1]
 
-        if self._my_row_output[0] == 0:
+        if self._status == 0:
             self.__my_log.info(f'End inference test on model : {self._my_test.model.name}')
         else:
             self.__my_log.warning(f'Inference test on model: {self._my_test.model.name} was ended with error. '
                                   'Process logs:')
             self.__print_error()
+            self.__save_failed_test_log()
 
     def get_status(self):
-        return self._my_row_output[0]
+        return self._status
 
     @abc.abstractmethod
     def get_performance_metrics(self):
@@ -73,7 +75,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         pass
 
     def __print_error(self):
-        out = self._my_output
+        out = self._output
         is_error = False
         for line in out:
             if line.rfind('ERROR! :') != -1:
@@ -82,6 +84,15 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                 continue
             if is_error:
                 self.__my_log.error('    {0}'.format(line))
+
+    def __save_failed_test_log(self):
+        logname = '{0}_{1}.log'.format(self._my_test.model.name,
+                                       self._my_test.indep_parameters.inference_framework)
+        # TODO(z.maslova@yadro.com): create more complex file name
+        out = self._output
+        with open(logname, 'w') as file:
+            for line in out:
+                file.write(line)
 
 
 class OpenVINOProcess(ProcessHandler, ABC):
@@ -135,10 +146,10 @@ class SyncOpenVINOProcess(OpenVINOProcess):
         super().__init__(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+        if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        result = self._my_output[-1].strip().split(',')
+        result = self._output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
         latency = float(result[2])
@@ -169,10 +180,10 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
         return '{0} --requests {1}'.format(command_line, requests)
 
     def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+        if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        result = self._my_output[-1].strip().split(',')
+        result = self._output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
 
@@ -228,10 +239,10 @@ class IntelCaffeProcess(ProcessHandler):
         return IntelCaffeProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+        if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        result = self._my_output[-1].strip().split(',')
+        result = self._output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
         latency = float(result[2])
@@ -328,10 +339,10 @@ class TensorFlowProcess(ProcessHandler):
         return TensorFlowProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._my_row_output[0] != 0 or len(self._my_output) == 0:
+        if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        result = self._my_output[-1].strip().split(',')
+        result = self._output[-1].strip().split(',')
         average_time = float(result[0])
         fps = float(result[1])
         latency = float(result[2])

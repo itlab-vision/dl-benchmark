@@ -1,0 +1,10 @@
+docker
+PyYAML
+paramiko; sys_platform != 'win32'
+wmi; sys_platform == 'win32'
+opencv-python
+PyQt5
+pandas
+psutil
+xlsxwriter
+iteration_utilities

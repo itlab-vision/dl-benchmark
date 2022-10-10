@@ -42,7 +42,7 @@ def inference_benchmark(executor_type, test_list, output_handler, log):
         test_process = ProcessHandler.get_process(test, process_executor, log)
         test_process.execute()
 
-        log.info('Saving test result in file')
+        log.info('Saving test result in file\n')
         output_handler.add_row_to_table(process_executor, test, test_process)
 
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         output_handler = OutputHandler(args.result_file)
         output_handler.create_table()
 
-        log.info(f'Start {len(test_list)} inference tests')
+        log.info(f'Start {len(test_list)} inference tests\n')
 
         inference_benchmark(args.executor_type, test_list, output_handler, log)
 

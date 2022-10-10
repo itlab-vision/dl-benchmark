@@ -129,9 +129,10 @@ by default in Ubuntu 20.04).
     sudo apt install git
     git clone https://github.com/itlab-vision/dl-benchmark.git
     ```
-1. Install requirements:
-  - `pip install -r ~/dl-benchmark/requirements_linux.txt` for Linux.
-  - `pip install -r ~/dl-benchmark/requirements_windows.txt` for Windows. 
+1. Install requirements.
+    ```bash
+    pip install -r ~/dl-benchmark/requirements.txt
+    ```
 
 ## Model preparing
 

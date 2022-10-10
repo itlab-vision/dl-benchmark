@@ -231,6 +231,16 @@ def main():
 
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
+        log.info('Runtime parameters')
+        keys = core.get_property(args.device, 'SUPPORTED_PROPERTIES')
+        log.info(f'DEVICE: {args.device}')
+        for k in keys:
+            if k not in ('SUPPORTED_METRICS', 'SUPPORTED_CONFIG_KEYS', 'SUPPORTED_PROPERTIES'):
+                try:
+                    log.info(f'  {k}  , {core.get_property(args.device, k)}')
+                except BaseException:
+                    pass
+
         log.info(f'Starting inference ({args.number_iter} iterations) with {args.requests} requests on {args.device}')
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
         average_time, fps = process_result(time, args.batch_size, args.number_iter)
