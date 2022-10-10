@@ -1,6 +1,9 @@
 import logging
 import pandas
 import xlsxwriter
+from collections import defaultdict
+
+from iteration_utilities import deepflatten
 
 from table_creator import XlsxTable
 
@@ -47,7 +50,7 @@ class XlsxAccuracyTable(XlsxTable):
         self._KEY_STATUS = keys[0]
         self._KEY_TASK_TYPE = keys[1]
         self._KEY_TOPOLOGY_NAME = keys[2]
-        self._KEY_FRAMEWORK = keys[3]
+        self._KEY_TRAIN_FRAMEWORK = keys[3]
         self._KEY_INFERENCE_FRAMEWORK = keys[4]
         self._KEY_DEVICE = keys[5]
         self._KEY_INFRASTRUCTURE = keys[6]
@@ -196,7 +199,7 @@ class XlsxAccuracyTable(XlsxTable):
             rel_col_idx += num_cols
             self._col_indeces.append(col_indeces2)
 
-        logging.info(f'FINISH: _fill_horizontal_title(). {self._col_indeces}')
+        logging.info('FINISH: _fill_horizontal_title()')
 
     def create_table_header(self):
         logging.info('START: create_table_header()')
@@ -209,7 +212,7 @@ class XlsxAccuracyTable(XlsxTable):
         # Write horizontal title (first cells before infrastructure)
         self._sheet.merge_range('A1:A4', self._KEY_TASK_TYPE, self._cell_format_title)
         self._sheet.merge_range('B1:B4', self._KEY_TOPOLOGY_NAME, self._cell_format_title)
-        self._sheet.merge_range('C1:C4', self._KEY_FRAMEWORK, self._cell_format_title)
+        self._sheet.merge_range('C1:C4', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title)
         self._sheet.merge_range('D1:D4', self._KEY_DATASET, self._cell_format_title)
         self._sheet.merge_range('E1:E4', self._KEY_ACCURACY_TYPE, self._cell_format_title)
 
@@ -223,14 +226,158 @@ class XlsxAccuracyTable(XlsxTable):
 
         logging.info('FINISH: create_table_header()')
 
+    def _find_row_records(self, task_type, topology_name, train_framework,
+                          dataset, accuracy_type, experiments,
+                          processed_records_keys):
+        records_group = []
+        for key, value in experiments.items():
+            if (key not in processed_records_keys
+                    and value[self._KEY_TASK_TYPE] == task_type
+                    and value[self._KEY_TOPOLOGY_NAME] == topology_name
+                    and value[self._KEY_TRAIN_FRAMEWORK] == train_framework
+                    and value[self._KEY_DATASET] == dataset
+                    and value[self._KEY_ACCURACY_TYPE] == accuracy_type):
+                records_group.append(value)
+                processed_records_keys.append(key)
+        return records_group
+
+    def _create_row_record(self, records_group):
+        return self._create_row_record_by_key(records_group, self._KEY_ACCURACY)
+
+    def _find_column_idx(self, value):
+        idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
+                                             self._infrastructure)
+        idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
+                                                  self._inference_frameworks[idx1])
+        idx3 = self._find_device_idx(value[self._KEY_DEVICE], self._devices[idx1][idx2])
+        idx4 = self._find_precision_idx(value[self._KEY_PRECISION],
+                                        self._precisions[idx1][idx2][idx3])
+        return self._col_indeces[idx1][idx2][idx3][idx4]
+
     def create_table_rows(self):
-        raise ValueError('Method is not implemented')
+        logging.info('START: create_table_rows()')
+
+        # transpose 2d dictionary
+        experiments = self._data.to_dict('index')   
+
+        processed_records_keys = []
+        self._table_records = defaultdict(list)
+        for key, value in experiments.items():
+            if key in processed_records_keys:
+                continue
+            records_group = self._find_row_records(value[self._KEY_TASK_TYPE],
+                                                   value[self._KEY_TOPOLOGY_NAME],
+                                                   value[self._KEY_TRAIN_FRAMEWORK],
+                                                   value[self._KEY_DATASET],
+                                                   value[self._KEY_ACCURACY_TYPE],
+                                                   experiments,
+                                                   processed_records_keys)
+            if (len(records_group) == 0):
+                continue
+            accuracy_record = self._create_row_record(records_group)
+            record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
+                      self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
+                      self._KEY_TRAIN_FRAMEWORK: value[self._KEY_TRAIN_FRAMEWORK],
+                      self._KEY_DATASET: value[self._KEY_DATASET],
+                      self._KEY_ACCURACY_TYPE: value[self._KEY_ACCURACY_TYPE],
+                      self._KEY_ACCURACY: accuracy_record}
+            self._table_records[value[self._KEY_TASK_TYPE]].append(record)
+
+        logging.info('FINISH: create_table_rows()')
+
+    def _get_records_group(self, task_records, topology_name, train_framework,
+                           dataset, processed_records_idxs):
+        records_group = []
+        for idx in range(len(task_records)):
+            record = task_records[idx]
+            if (idx not in processed_records_idxs
+                    and record[self._KEY_TOPOLOGY_NAME] == topology_name
+                    and record[self._KEY_TRAIN_FRAMEWORK] == train_framework
+                    and record[self._KEY_DATASET] == dataset):
+                processed_records_idxs.append(idx)
+                records_group.append(record)
+        return records_group
 
     def write_test_results(self):
-        raise ValueError('Method is not implemented')
+        logging.info('START: write_test_results()')
+
+        row_idx = 4
+        for task_type, task_records in self._table_records.items():  # loop by tasks
+            if len(task_records) <= 0:
+                continue
+            if len(task_records) > 1:  # print task type
+                self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0,
+                                        task_type, self._cell_format_title)
+            else:
+                self._sheet.write(row_idx, 0, task_type, self._cell_format_title)
+
+            processed_records_idxs = []
+            for record in task_records:  # searching for records for the same topologies
+                topology_name = record[self._KEY_TOPOLOGY_NAME]
+                train_framework = record[self._KEY_TRAIN_FRAMEWORK]
+                dataset = record[self._KEY_DATASET]
+                records_group = self._get_records_group(task_records,
+                                                        topology_name,
+                                                        train_framework,
+                                                        dataset,
+                                                        processed_records_idxs)
+                topology_num_records = len(records_group)
+                if topology_num_records == 0:
+                    continue
+                if topology_num_records > 1:
+                    self._sheet.merge_range(row_idx, 1,
+                                            row_idx + topology_num_records - 1,
+                                            1, topology_name,
+                                            self._cell_format_title)
+                    self._sheet.merge_range(row_idx, 2,
+                                            row_idx + topology_num_records - 1,
+                                            2, train_framework,
+                                            self._cell_format_title)
+                    self._sheet.merge_range(row_idx, 3,
+                                            row_idx + topology_num_records - 1,
+                                            3, dataset,
+                                            self._cell_format_title)
+                else:
+                    self._sheet.write(row_idx, 1, topology_name, self._cell_format_title)
+                    self._sheet.write(row_idx, 2, train_framework, self._cell_format_title)
+                    self._sheet.write(row_idx, 3, dataset, self._cell_format_title)
+                for topology_record in records_group:
+                    self._sheet.write(row_idx, 4, topology_record[self._KEY_ACCURACY_TYPE],
+                                      self._cell_format_title)
+                    for key, value in topology_record[self._KEY_ACCURACY].items():
+                        formatting = self._cell_format_acc
+                        if value == 'None':
+                            value = 'NaN'
+                            formatting = self._cell_format_nan_acc
+                        elif value == 'Undefined':
+                            formatting = self._cell_format_undefined_acc
+                        self._sheet.write(row_idx, key, value, formatting)
+                    row_idx += 1
+
+        self._full_num_rows = row_idx
+
+        logging.info('FINISH: write_test_results()')
 
     def beautify_table(self):
-        raise ValueError('Method is not implemented')
+        logging.info('START: beautify_table()')
+
+        rel_col_idx = 5  # task type, topology, framework, dataset, accuracy type
+        rel_row_idx = 0
+        num_header_rows = 4  # infrastructure, framework, device, precision
+        col_depth = 2
+        self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
+        self._draw_bold_bolder(num_header_rows - 1, 0,
+                               self._full_num_rows - num_header_rows + 1,
+                               rel_col_idx)
+        for idx in range(len(self._infrastructure)):
+            precisions = list(deepflatten(self._precisions[idx], depth=col_depth))
+            num_cols = len(precisions)
+            self._draw_bold_bolder(rel_row_idx, rel_col_idx, num_header_rows, num_cols)
+            self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
+                                   self._full_num_rows - num_header_rows + 1, num_cols)
+            rel_col_idx += num_cols
+
+        logging.info('FINISH: beautify_table()')
 
     def close_table(self):
         logging.info('START: close_table()')

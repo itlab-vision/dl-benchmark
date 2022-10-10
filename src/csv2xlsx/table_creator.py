@@ -3,6 +3,8 @@ import logging
 import tkinter
 import tkinter.font
 
+from iteration_utilities import deepflatten
+
 
 class XlsxTable(metaclass=abc.ABCMeta):
     def __init__(self, paths_table_csv, path_table_xlsx, sheet_name):
@@ -69,6 +71,121 @@ class XlsxTable(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def _init_xlsx_parameters(self):
         pass
+
+    def _create_row_record_by_key(self, records_group, key):
+        record = {}
+        # fill existingvalues
+        for value in records_group:
+            col_idx = self._find_column_idx(value)
+            record.update({col_idx: value[key]})
+        # fill undefined values
+        available_col_indeces = list(deepflatten(self._col_indeces))  # flatten
+        keys = list(record.keys())  # existing indeces
+        undefined_col_indeces = [idx for idx in available_col_indeces if idx not in keys]
+        for idx in undefined_col_indeces:
+            record.update({idx: 'Undefined'})
+        return record
+
+    def _find_idx(self, element, available_elements, exception_str):
+        try:
+            return available_elements.index(element)
+        except ValueError:
+            raise ValueError(exception_str)
+
+    def _find_infrastructure_idx(self, infrastructure_name,
+                                 available_infrastructure):
+        return self._find_idx(infrastructure_name, available_infrastructure,
+                              'Unknown infrastructure')
+
+    def _find_inference_framework_idx(self, framework_name,
+                                      available_inference_frameworks):
+        return self._find_idx(framework_name, available_inference_frameworks,
+                              'Unknown inference framework')
+
+    def _find_device_idx(self, device_name, available_devices):
+        return self._find_idx(device_name, available_devices,
+                              'Unknown device name')
+
+    def _find_precision_idx(self, precision, available_precisions):
+        return self._find_idx(precision, available_precisions,
+                              'Unknown precision')
+
+    def _find_execution_mode_idx(self, execution_mode,
+                                 available_execution_modes):
+        return self._find_idx(execution_mode, available_execution_modes,
+                              'Unknown execution mode')
+
+    @abc.abstractmethod
+    def _find_column_idx(self, value):
+        pass
+
+    def _draw_bold_bolder(self, rel_row_idx, rel_col_idx, num_rows, num_cols):
+        # top left corner
+        self._sheet.conditional_format(rel_row_idx, rel_col_idx,
+                                       rel_row_idx, rel_col_idx,
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 5,
+                                                                         'bottom': 1,
+                                                                         'left': 5,
+                                                                         'right': 1})})
+        # bottom left corner
+        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
+                                       rel_row_idx + num_rows - 1, rel_col_idx,
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 5,
+                                                                         'left': 5,
+                                                                         'right': 1})})
+        # top right corner
+        self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
+                                       rel_row_idx, rel_col_idx + num_cols - 1,
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 5,
+                                                                         'bottom': 1,
+                                                                         'left': 1,
+                                                                         'right': 5})})
+        # bottom right corner
+        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                       {'type': 'formula', 'criteria': 'True',
+                                        'format': self._book.add_format({'top': 1,
+                                                                         'bottom': 5,
+                                                                         'left': 1,
+                                                                         'right': 5})})
+        if (num_cols > 1):
+            # top
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
+                                           rel_row_idx, rel_col_idx + num_cols - 2,
+                                           {'type': 'formula', 'criteria': 'True',
+                                            'format': self._book.add_format({'top': 5,
+                                                                             'bottom': 1,
+                                                                             'left': 1,
+                                                                             'right': 1})})
+            # bottom
+            self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
+                                           rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
+                                           {'type': 'formula', 'criteria': 'True',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 5,
+                                                                             'left': 1,
+                                                                             'right': 1})})
+        if (num_rows > 1):
+            # left
+            self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
+                                           rel_row_idx + num_rows - 2, rel_col_idx,
+                                           {'type': 'formula', 'criteria': 'True',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 1,
+                                                                             'left': 5,
+                                                                             'right': 1})})
+            # right
+            self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
+                                           rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
+                                           {'type': 'formula', 'criteria': 'True',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 1,
+                                                                             'left': 1,
+                                                                             'right': 5})})
 
     @abc.abstractmethod
     def read_csv_table(self):

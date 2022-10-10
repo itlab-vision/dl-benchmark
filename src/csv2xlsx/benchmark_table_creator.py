@@ -319,35 +319,6 @@ class XlsxBenchmarkTable(XlsxTable):
 
         logging.info('FINISH: create_table_header()')
 
-    def _find_idx(self, element, available_elements, exception_str):
-        try:
-            return available_elements.index(element)
-        except ValueError:
-            raise ValueError(exception_str)
-
-    def _find_infrastructure_idx(self, infrastructure_name,
-                                 available_infrastructure):
-        return self._find_idx(infrastructure_name, available_infrastructure,
-                              'Unknown infrastructure')
-
-    def _find_inference_framework_idx(self, framework_name,
-                                      available_inference_frameworks):
-        return self._find_idx(framework_name, available_inference_frameworks,
-                              'Unknown inference framework')
-
-    def _find_device_idx(self, device_name, available_devices):
-        return self._find_idx(device_name, available_devices,
-                              'Unknown device name')
-
-    def _find_precision_idx(self, precision, available_precisions):
-        return self._find_idx(precision, available_precisions,
-                              'Unknown precision')
-
-    def _find_execution_mode_idx(self, execution_mode,
-                                 available_execution_modes):
-        return self._find_idx(execution_mode, available_execution_modes,
-                              'Unknown execution mode')
-
     def _find_column_idx(self, value):
         idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
                                              self._infrastructure)
@@ -379,18 +350,7 @@ class XlsxBenchmarkTable(XlsxTable):
         return records_group
 
     def _create_row_record(self, records_group):
-        fps_record = {}
-        # fill existing FPS values
-        for value in records_group:
-            col_idx = self._find_column_idx(value)
-            fps_record.update({col_idx: value[self._KEY_FPS]})
-        # fill underfined FPS values
-        available_col_indeces = list(deepflatten(self._col_indeces))  # flatten
-        fps_keys = list(fps_record.keys())  # existing indeces
-        undefined_col_indeces = [idx for idx in available_col_indeces if idx not in fps_keys]
-        for idx in undefined_col_indeces:
-            fps_record.update({idx: 'Undefined'})
-        return fps_record
+        return self._create_row_record_by_key(records_group, self._KEY_FPS)
 
     def _remove_unused_metrics(self, data):
         # remove unused keys from DataFrame
@@ -418,6 +378,8 @@ class XlsxBenchmarkTable(XlsxTable):
                                                    value[self._KEY_BATCH_SIZE],
                                                    experiments,
                                                    processed_records_keys)
+            if (len(records_group) == 0):
+                continue
             fps_record = self._create_row_record(records_group)
             record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
                       self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
@@ -508,72 +470,6 @@ class XlsxBenchmarkTable(XlsxTable):
         self._full_num_rows = row_idx
 
         logging.info('FINISH: write_test_results()')
-
-    def _draw_bold_bolder(self, rel_row_idx, rel_col_idx, num_rows, num_cols):
-        # top left corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx,
-                                       rel_row_idx, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # bottom left corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
-                                       rel_row_idx + num_rows - 1, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # top right corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
-                                       rel_row_idx, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-        # bottom right corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-        # top
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
-                                       rel_row_idx, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 1})})
-        # bottom
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
-                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 1,
-                                                                         'right': 1})})
-        # left
-        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
-                                       rel_row_idx + num_rows - 2, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 1,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # right
-        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
-                                       rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 5})})
 
     def beautify_table(self):
         logging.info('START: beautify_table()')
