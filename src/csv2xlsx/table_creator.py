@@ -29,6 +29,8 @@ class XlsxTable(metaclass=abc.ABCMeta):
                                       overstrike=format_.font_strikeout)
         reference_font = tkinter.font.Font(family='Calibri', size=11)
         for _, value in values.items():
+            if value != value:
+                continue
             if '\n' in value:
                 pixelwidths = [used_font.measure(part) for part in value.split('\n')]
                 cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
@@ -152,7 +154,7 @@ class XlsxTable(metaclass=abc.ABCMeta):
                                                                          'bottom': 5,
                                                                          'left': 1,
                                                                          'right': 5})})
-        if (num_cols > 1):
+        if (num_cols > 2):
             # top
             self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
                                            rel_row_idx, rel_col_idx + num_cols - 2,
@@ -169,7 +171,7 @@ class XlsxTable(metaclass=abc.ABCMeta):
                                                                              'bottom': 5,
                                                                              'left': 1,
                                                                              'right': 1})})
-        if (num_rows > 1):
+        if (num_rows > 2):
             # left
             self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
                                            rel_row_idx + num_rows - 2, rel_col_idx,

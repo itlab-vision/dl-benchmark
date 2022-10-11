@@ -27,6 +27,13 @@ class XlsxAccuracyTable(XlsxTable):
         self._cell_format_title = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'text_wrap': True, 'font_size': 9})
+        self._cell_format_title_bgcolor = self._book.add_format(
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'text_wrap': True, 'font_size': 9,
+             'bg_color': '#F8F8FF'})
+        self._cell_format_task_type = self._book.add_format(
+            {'align': 'center', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'rotation': 90, 'font_size': 9})  # for task type
         # For cells
         self._cell_format = self._book.add_format(
             {'align': 'left', 'valign': 'vcenter', 'border': 1,
@@ -151,18 +158,18 @@ class XlsxAccuracyTable(XlsxTable):
                         framework_device_precision = framework_device_precisions[idx4]
                         self._sheet.write(row_idx - 1, col_idx1 + idx4,
                                           framework_device_precision,
-                                          self._cell_format_title)
+                                          self._cell_format_title_bgcolor)
                         col_indeces4.append(col_idx1 + idx4)
                     k = len(framework_device_precisions)
                     if k == 1:
                         self._sheet.write(row_idx - 2, col_idx2,
                                           machine_framework_device,
-                                          self._cell_format_title)
+                                          self._cell_format_title_bgcolor)
                     elif k > 1:
                         self._sheet.merge_range(row_idx - 2, col_idx2,
                                                 row_idx - 2, col_idx2 + k - 1,
                                                 machine_framework_device,
-                                                self._cell_format_title)
+                                                self._cell_format_title_bgcolor)
                     else:
                         msg = 'Incorrect number of device precision modes'
                         logging.error(msg)
@@ -175,10 +182,12 @@ class XlsxAccuracyTable(XlsxTable):
                 if num_cols2 > 1:
                     self._sheet.merge_range(row_idx - 3, col_idx3,
                                             row_idx - 3, col_idx3 + num_cols2 - 1,
-                                            machine_framework, self._cell_format_title)
+                                            machine_framework,
+                                            self._cell_format_title_bgcolor)
                 elif num_cols2 == 1:
                     self._sheet.write(row_idx - 3, col_idx3,
-                                      machine_framework, self._cell_format_title)
+                                      machine_framework,
+                                      self._cell_format_title_bgcolor)
                 else:
                     msg = 'Incorrect number of frameworks'
                     logging.error(msg)
@@ -188,10 +197,10 @@ class XlsxAccuracyTable(XlsxTable):
             if num_cols > 1:
                 self._sheet.merge_range(row_idx - 4, rel_col_idx,
                                         row_idx - 4, rel_col_idx + num_cols - 1,
-                                        machine, self._cell_format_title)
+                                        machine, self._cell_format_title_bgcolor)
             elif num_cols == 1:
                 self._sheet.write(row_idx - 4, rel_col_idx,
-                                  machine, self._cell_format_title)
+                                  machine, self._cell_format_title_bgcolor)
             else:
                 msg = 'Incorrect number of machines'
                 logging.error(msg)
@@ -210,11 +219,32 @@ class XlsxAccuracyTable(XlsxTable):
         self._sheet.freeze_panes(4, 5)
 
         # Write horizontal title (first cells before infrastructure)
-        self._sheet.merge_range('A1:A4', self._KEY_TASK_TYPE, self._cell_format_title)
-        self._sheet.merge_range('B1:B4', self._KEY_TOPOLOGY_NAME, self._cell_format_title)
-        self._sheet.merge_range('C1:C4', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title)
-        self._sheet.merge_range('D1:D4', self._KEY_DATASET, self._cell_format_title)
-        self._sheet.merge_range('E1:E4', self._KEY_ACCURACY_TYPE, self._cell_format_title)
+        self._sheet.merge_range('A1:A4', self._KEY_TASK_TYPE,
+                                self._cell_format_title_bgcolor)
+
+        col_width = XlsxTable._get_column_width(
+            self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
+        self._sheet.set_column(1, 1, col_width)
+        self._sheet.merge_range('B1:B4', self._KEY_TOPOLOGY_NAME,
+                                self._cell_format_title_bgcolor)
+
+        col_width = XlsxTable._get_column_width(
+            self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
+        self._sheet.set_column(2, 2, col_width)
+        self._sheet.merge_range('C1:C4', self._KEY_TRAIN_FRAMEWORK,
+                                self._cell_format_title_bgcolor)
+
+        col_width = XlsxTable._get_column_width(
+            self._data_dictionary[self._KEY_DATASET], self._cell_format)
+        self._sheet.set_column(3, 3, col_width)
+        self._sheet.merge_range('D1:D4', self._KEY_DATASET,
+                                self._cell_format_title_bgcolor)
+
+        col_width = XlsxTable._get_column_width(
+            self._data_dictionary[self._KEY_ACCURACY_TYPE], self._cell_format)
+        self._sheet.set_column(4, 4, col_width)
+        self._sheet.merge_range('E1:E4', self._KEY_ACCURACY_TYPE,
+                                self._cell_format_title_bgcolor)
 
         self._get_infrastructure()
         self._get_inference_frameworks()
@@ -307,9 +337,10 @@ class XlsxAccuracyTable(XlsxTable):
                 continue
             if len(task_records) > 1:  # print task type
                 self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0,
-                                        task_type, self._cell_format_title)
+                                        task_type, self._cell_format_task_type)
             else:
-                self._sheet.write(row_idx, 0, task_type, self._cell_format_title)
+                self._sheet.write(row_idx, 0, task_type,
+                                  self._cell_format_task_type)
 
             processed_records_idxs = []
             for record in task_records:  # searching for records for the same topologies
