@@ -29,7 +29,7 @@ class XlsxTable(metaclass=abc.ABCMeta):
                                       overstrike=format_.font_strikeout)
         reference_font = tkinter.font.Font(family='Calibri', size=11)
         for _, value in values.items():
-            if value != value:
+            if str(value).lower() == 'nan':
                 continue
             if '\n' in value:
                 pixelwidths = [used_font.measure(part) for part in value.split('\n')]
