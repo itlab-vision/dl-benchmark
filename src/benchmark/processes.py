@@ -146,8 +146,7 @@ class SyncOpenVINOProcess(OpenVINOProcess):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_sync_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
-                                           'inference_sync_mode.py')
+        path_to_sync_scrypt = os.path.join(self._my_executor.get_path_to_inference_folder(), 'inference_sync_mode.py')
         python = ProcessHandler._get_cmd_python_version()
 
         common_params = super()._fill_command_line()
@@ -179,7 +178,7 @@ class AsyncOpenVINOProcess(OpenVINOProcess):
         return average_time, fps, 0
 
     def _fill_command_line(self):
-        path_to_async_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+        path_to_async_scrypt = os.path.join(self._my_executor.get_path_to_inference_folder(),
                                             'inference_async_mode.py')
         python = ProcessHandler._get_cmd_python_version()
 
@@ -239,7 +238,7 @@ class IntelCaffeProcess(ProcessHandler):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_intelcaffe_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+        path_to_intelcaffe_scrypt = os.path.join(self._my_executor.get_path_to_inference_folder(),
                                                  'inference_caffe.py')
         python = ProcessHandler._get_cmd_python_version()
 
@@ -339,7 +338,7 @@ class TensorFlowProcess(ProcessHandler):
         return average_time, fps, latency
 
     def _fill_command_line(self):
-        path_to_tensorflow_scrypt = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference',
+        path_to_tensorflow_scrypt = os.path.join(self._my_executor.get_path_to_inference_folder(),
                                                  'inference_tensorflow.py')
         python = ProcessHandler._get_cmd_python_version()
 
