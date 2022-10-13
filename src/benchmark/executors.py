@@ -41,7 +41,7 @@ class HostExecutor(Executor):
         self.my_environment = os.environ.copy()
 
     def get_path_to_inference_folder(self):
-        return '../inference'
+        return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference')
 
     def get_infrastructure(self):
         sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
