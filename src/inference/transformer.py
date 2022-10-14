@@ -1,11 +1,13 @@
 import numpy as np
 
 
-class transformer:
-    def _transform(self, image):
+class Transformer:
+    @staticmethod
+    def _transform(image):
         return image
 
-    def get_shape_in_chw_order(self, shape):
+    @staticmethod
+    def get_shape_in_chw_order(shape):
         return shape[1:]
 
     def transform_images(self, images, shape, element_type):
@@ -16,7 +18,7 @@ class transformer:
         return transformed_images
 
 
-class openvino_transformer(transformer):
+class OpenVINOTransformer(Transformer):
     def _transform(self, image, shape):
         if self.__is_nhwc(shape):
             return image
@@ -38,7 +40,7 @@ class openvino_transformer(transformer):
         return transformed_images
 
 
-class intelcaffe_transformer(transformer):
+class IntelCaffeTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
 
@@ -67,7 +69,7 @@ class intelcaffe_transformer(transformer):
         return transformed_image
 
 
-class tensorflow_transformer(transformer):
+class TensorFlowTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
 

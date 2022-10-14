@@ -1,8 +1,9 @@
 import abc
-# pylint: disable-next=E0401
-from tags import CONFIG_COMPUTER_TAG, CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, \
-    CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG, CONFIG_FTP_CLIENT_PATH_TAG, CONFIG_CONFIG_TAG, \
-    CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG, CONFIG_AC_DATASET_PATH_TAG, CONFIG_DEFINITION_PATH
+
+from tags import (CONFIG_COMPUTER_TAG, CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG,
+                  CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG, CONFIG_FTP_CLIENT_PATH_TAG, CONFIG_CONFIG_TAG,
+                  CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG, CONFIG_AC_DATASET_PATH_TAG,
+                  CONFIG_DEFINITION_PATH)
 
 
 class RemoteComputer:
@@ -12,8 +13,9 @@ class RemoteComputer:
         self.password = password
         self.os = os
         self.path_to_ftp_client = path_to_ftp_client
-        self.benchmark = BenchmarkComponent(*args[0:4]) if len(args) > 2 else args[0]  # pylint: disable=E1120
-        self.accuracy_checker = AccuracyCheckerComponent(*args[4:-1]) if len(args) > 2 else args[1]  # pylint: disable=E1120
+        self.benchmark = BenchmarkComponent(*args[0:4]) if len(args) > 2 else args[0]  # noqa: E1120
+        self.accuracy_checker = AccuracyCheckerComponent(
+            *args[4:-1]) if len(args) > 2 else args[1]  # noqa: E1120
 
     def create_dom(self, file):
         DOM_COMPUTER_TAG = file.createElement(CONFIG_COMPUTER_TAG)
@@ -53,6 +55,7 @@ class RemoteComputer:
             accuracy_checker = AccuracyCheckerComponent.parse(
                 parsed_computer.getElementsByTagName(CONFIG_ACCURACY_CHECKER_TAG)[0])
             computers.append(RemoteComputer(ip, login, password, os, ftp_client_path, benchmark, accuracy_checker))
+
         return computers
 
 
@@ -62,7 +65,7 @@ class Component(metaclass=abc.ABCMeta):
             CONFIG_CONFIG_TAG: config,
             CONFIG_EXECUTOR_TAG: executor,
             CONFIG_LOG_FILE_TAG: log_file,
-            CONFIG_RESULT_FILE_TAG: res_file
+            CONFIG_RESULT_FILE_TAG: res_file,
         }
         self.CONFIG_ROOT_TAG = None
 
@@ -106,6 +109,7 @@ class BenchmarkComponent(Component):
         res_file_node = dom.getElementsByTagName(CONFIG_RESULT_FILE_TAG)[0].firstChild
         if res_file_node:
             res_file = res_file_node.data
+
         return BenchmarkComponent(config, executor, log_file, res_file)
 
 

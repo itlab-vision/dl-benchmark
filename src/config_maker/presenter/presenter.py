@@ -1,10 +1,10 @@
-from .model_presenter import ModelPresenter  # pylint: disable=E0402
-from .data_presenter import DataPresenter  # pylint: disable=E0402
-from .accuracy_checker_config_presenter import AccuracyCheckerConfigPresenter  # pylint: disable=E0402
-from .benchmark_config_presenter import BenchmarkConfigPresenter  # pylint: disable=E0402
-from .remote_config_presenter import RemoteConfigPresenter  # pylint: disable=E0402
-from .deploy_config_presenter import DeployConfigPresenter  # pylint: disable=E0402
-from .quantization_config_presenter import QuantizationConfigPresenter  # pylint: disable=E0402
+from .accuracy_checker_config_presenter import AccuracyCheckerConfigPresenter
+from .benchmark_config_presenter import BenchmarkConfigPresenter
+from .data_presenter import DataPresenter
+from .deploy_config_presenter import DeployConfigPresenter
+from .model_presenter import ModelPresenter
+from .remote_config_presenter import RemoteConfigPresenter
+from .quantization_config_presenter import QuantizationConfigPresenter
 
 
 class Presenter:

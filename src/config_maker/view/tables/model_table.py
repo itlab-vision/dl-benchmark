@@ -1,4 +1,4 @@
-from .table import Table  # pylint: disable=E0402
+from .table import Table
 
 
 class ModelTable(Table):
@@ -12,7 +12,7 @@ class ModelTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
+        self.clicked.connect(self.clicked_table)  # noqa: E1120
 
     def update(self, models):
         self.clear()

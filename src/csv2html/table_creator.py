@@ -42,8 +42,9 @@ class HTMLTable(metaclass=abc.ABCMeta):
     def _added_all_test(self, models_dict):
         pass
 
-    def __format_models_dict(self, models_dict):
-        task_types_dict = dict()
+    @staticmethod
+    def __format_models_dict(models_dict):
+        task_types_dict = {}
         for model in models_dict:
             try:
                 task_types_dict[models_dict[model]['type']][model] = models_dict[model]

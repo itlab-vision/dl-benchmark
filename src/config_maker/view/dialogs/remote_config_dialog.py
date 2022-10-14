@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox
-# pylint: disable-next=E0401
-from tags import CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG, \
-    CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG, CONFIG_AC_DATASET_PATH_TAG, \
-    CONFIG_DEFINITION_PATH, CONFIG_BENCHMARK_TAG, CONFIG_ACCURACY_CHECKER_TAG
+
+from tags import (CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, CONFIG_OS_TAG, CONFIG_FTP_CLIENT_PATH_TAG,
+                  CONFIG_CONFIG_TAG, CONFIG_EXECUTOR_TAG, CONFIG_LOG_FILE_TAG, CONFIG_RESULT_FILE_TAG,
+                  CONFIG_AC_DATASET_PATH_TAG, CONFIG_DEFINITION_PATH, CONFIG_BENCHMARK_TAG,
+                  CONFIG_ACCURACY_CHECKER_TAG)
 
 
 class RemoteConfigDialog(QDialog):
@@ -41,8 +42,8 @@ class RemoteConfigDialog(QDialog):
             idx += 1
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
-        ok_btn.clicked.connect(self.accept)  # pylint: disable=E1120
-        cancel_btn.clicked.connect(self.reject)  # pylint: disable=E1120
+        ok_btn.clicked.connect(self.accept)  # noqa: E1120
+        cancel_btn.clicked.connect(self.reject)  # noqa: E1120
         layout.addWidget(ok_btn, idx, 0)
         layout.addWidget(cancel_btn, idx, 1)
         self.setLayout(layout)

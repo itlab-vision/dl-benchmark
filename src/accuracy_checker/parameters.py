@@ -1,4 +1,4 @@
-class parameters:
+class Parameters:
     def __init__(self, source, annotations=None, definitions=None, extensions=None):
         self.source = source
         self.annotations = annotations

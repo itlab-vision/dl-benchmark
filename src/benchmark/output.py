@@ -1,12 +1,14 @@
-class output_handler():
+class OutputHandler:
     def __init__(self, table_name):
         self.__table_name = table_name
 
-    def __create_table_row(self, executor, test, process):
+    @staticmethod
+    def __create_table_row(executor, test, process):
         status = 'Success' if process.get_status() == 0 else 'Failed'
         test_parameters = test.get_report().replace('input_shape', process.get_model_shape())
         average_time, fps, latency = process.get_performance_metrics()
         hardware_info = executor.get_infrastructure()
+
         return '{0};{1};{2};{3};{4};{5}'.format(status, test_parameters, hardware_info, average_time, latency, fps)
 
     def create_table(self):

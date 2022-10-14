@@ -1,24 +1,55 @@
-import ftplib
-import sys
-import os
 import argparse
+import ftplib
 import logging as log
+import os
+import sys
 from xml.dom import minidom
 
-from remote_executor import remote_executor
+from remote_executor import RemoteExecutor
 
 
-def build_parser():
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--server_ip', help='FTP server IP.', required=True, type=str)
-    parser.add_argument('-l', '--server_login', type=str, help='Login to the FTP server.', required=True)
-    parser.add_argument('-p', '--server_psw', type=str, help='Password to the FTP server.', required=True)
-    parser.add_argument('-i', '--image_path', required=True, type=str, help='Path to the container image on the host machine.')
-    parser.add_argument('-d', '--upload_dir', required=True, type=str, help='Path to the directory on the FTP server to copy the container image.')
-    parser.add_argument('-n', '--container_name', required=True, type=str, help='Name of the docker container.')
-    parser.add_argument('--machine_list',  required=True, type=str, help='Path to the config file in .xml format.')
-    parser.add_argument('--project_folder',  required=True, type=str, help='Link to github project.')
-    return parser.parse_args()
+
+    parser.add_argument('-s', '--server_ip',
+                        help='FTP server IP.',
+                        required=True,
+                        type=str)
+    parser.add_argument('-l', '--server_login',
+                        type=str,
+                        help='Login to the FTP server.',
+                        required=True)
+    parser.add_argument('-p', '--server_psw',
+                        type=str,
+                        help='Password to the FTP server.',
+                        required=True)
+    parser.add_argument('-i', '--image_path',
+                        required=True,
+                        type=str,
+                        help='Path to the container image on the host machine.')
+    parser.add_argument('-d', '--upload_dir',
+                        required=True,
+                        type=str,
+                        help='Path to the directory on the FTP server to copy the container image.')
+    parser.add_argument('-n', '--container_name',
+                        required=True,
+                        type=str,
+                        help='Name of the docker container.')
+    parser.add_argument('--machine_list',
+                        required=True,
+                        type=str,
+                        help='Path to the config file in .xml format.')
+    parser.add_argument('--project_folder',
+                        required=True,
+                        type=str,
+                        help='Link to github project.')
+
+    args = parser.parse_args()
+
+    if not os.path.isfile(args.image_path):
+        raise ValueError('Wrong path to container image!')
+
+    return args
 
 
 def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log):
@@ -27,7 +58,7 @@ def prepare_ftp_connection(server_ip, server_login, server_psw, upload_dir, log)
     log.info('FTP connection was created')
 
     if ftp_connection.pwd() != upload_dir:
-        log.info('Current directory {} changed to target : {}'.format(ftp_connection.pwd(), upload_dir))
+        log.info(f'Current directory {ftp_connection.pwd()} changed to target : {upload_dir}')
         ftp_connection.cwd(upload_dir)
     return ftp_connection
 
@@ -38,14 +69,14 @@ def copy_image_to_server(server_ip, server_login, server_psw, upload_dir, image_
         server_login,
         server_psw,
         upload_dir,
-        log
+        log,
     )
 
     target_image = open(image_path, 'rb')
     image_name = os.path.split(image_path)[1]
 
     log.info('Image copying to server')
-    ftp_connection.storbinary('STOR {}'.format(image_name), target_image)
+    ftp_connection.storbinary(f'STOR {image_name}', target_image)
     log.info('Image copied to server')
 
     ftp_connection.close()
@@ -70,26 +101,27 @@ def parse_machine_list(path_to_config):
         machine_list[idx]['login'] = computer.getElementsByTagName(CONFIG_LOGIN_TAG)[0].firstChild.data
         machine_list[idx]['password'] = computer.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data
         machine_list[idx]['os_type'] = computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
-        machine_list[idx]['download_folder'] = computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
-        machine_list[idx]['dataset_folder'] = computer.getElementsByTagName(CONFIG_DATASET_FOLDER_TAG)[0].firstChild.data
+        machine_list[idx]['download_folder'] = computer.getElementsByTagName(
+            CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
+        machine_list[idx]['dataset_folder'] = computer.getElementsByTagName(
+            CONFIG_DATASET_FOLDER_TAG)[0].firstChild.data
     return machine_list
 
 
-def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir, project_folder, container_name, dataset_path, log):
-    executor = remote_executor(machine['os_type'], log)
+def client_execution(machine, server_ip, server_login, server_psw, image_path, download_dir,
+                     project_folder, container_name, dataset_path, log):
+    executor = RemoteExecutor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
     joined_pass = os.path.join(project_folder, 'src/bench_deploy')
     project_folder = os.path.normpath(joined_pass)
-    command = ('python3 {}/client.py -s {} -l {} -p {} -i {} -d {} -n {} -dp {} > log.txt'.format(
-        project_folder,
-        server_ip,
-        server_login,
-        server_psw,
-        image_path,
-        download_dir,
-        container_name,
-        dataset_path
-    ))
+    command = (f'python3 {project_folder}/client.py '
+               f'-s {server_ip} '
+               f'-l {server_login} '
+               f'-p {server_psw} '
+               f'-i {image_path} '
+               f'-d {download_dir} '
+               f'-n {container_name} '
+               f'-dp {dataset_path} > log.txt')
     executor.execute_command(command)
     return executor
 
@@ -99,12 +131,10 @@ def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
-    args = build_parser()
-    if not os.path.isfile(args.image_path):
-        raise ValueError('Wrong path to container image!')
+    args = cli_argument_parser()
 
     # First stage send container to the FTP server
     copy_image_to_server(
@@ -113,7 +143,7 @@ def main():
         args.server_psw,
         args.upload_dir,
         args.image_path,
-        log
+        log,
     )
 
     # Second stage config file and prepare machine list
@@ -134,7 +164,7 @@ def main():
             args.project_folder,
             args.container_name,
             machine['dataset_folder'],
-            log
+            log,
         ))
 
     # Fourth stage wait all clients

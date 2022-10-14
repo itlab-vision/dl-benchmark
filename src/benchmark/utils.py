@@ -6,12 +6,14 @@ from subprocess import Popen, PIPE
 def get_path_to_sync_scripts():
     inference_folder = os.path.abspath('../inference')
     path_to_sync_scrypt = os.path.join(inference_folder, 'inference_sync_mode.py')
+
     return path_to_sync_scrypt
 
 
 def get_path_to_async_scripts():
     inference_folder = os.path.abspath('../inference')
     path_to_async_scrypt = os.path.join(inference_folder, 'inference_async_mode.py')
+
     return path_to_async_scrypt
 
 
@@ -22,6 +24,7 @@ def get_cmd_python_version():
         cmd_python_version = 'python3'
     else:
         cmd_python_version = 'python'
+
     return cmd_python_version
 
 
@@ -45,11 +48,13 @@ def create_cmd_line_for_sync_test(model_xml, model_bin, dataset, batch, device,
                                   extension, iteration, nthreads, min_inference_time):
     scrypt = get_path_to_sync_scripts()
     python = get_cmd_python_version()
-    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} -mi {8} --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset, batch, device, iteration, min_inference_time)
+    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} -mi {8} --raw_output true'.format(
+        python, scrypt, model_xml, model_bin, dataset, batch, device, iteration, min_inference_time)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
         command_line = add_nthreads_for_cmd_line(command_line, nthreads)
+
     return command_line
 
 
@@ -57,7 +62,8 @@ def create_cmd_line_for_async_test(model_xml, model_bin, dataset, batch, device,
                                    extension, iteration, nthreads, nstreams, requests):
     scrypt = get_path_to_async_scripts()
     python = get_cmd_python_version()
-    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} --raw_output true'.format(python, scrypt, model_xml, model_bin, dataset, batch, device, iteration)
+    command_line = '{0} {1} -m {2} -w {3} -i {4} -b {5} -d {6} -ni {7} --raw_output true'.format(
+        python, scrypt, model_xml, model_bin, dataset, batch, device, iteration)
     if extension:
         command_line = add_extension_for_cmd_line(command_line, extension)
     if nthreads:
@@ -66,6 +72,7 @@ def create_cmd_line_for_async_test(model_xml, model_bin, dataset, batch, device,
         command_line = add_nstreams_for_cmd_line(command_line, nstreams)
     if requests:
         command_line = add_requests_for_cmd_line(command_line, requests)
+
     return command_line
 
 
@@ -75,7 +82,7 @@ def run_test(command_line, environment):
         env=environment,
         shell=True,
         stdout=PIPE,
-        universal_newlines=True
+        universal_newlines=True,
     )
     return_code = test.wait()
     out, _ = test.communicate()

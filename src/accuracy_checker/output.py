@@ -1,6 +1,11 @@
-class output_handler:
+class OutputHandler:
     def __init__(self, table_name):
         self.__table_name = table_name
+
+    @staticmethod
+    def __create_table_row(result_dict):
+        return ('{status};{task};{model};{source_framework};{launcher};{device};{hardware};{dataset};{metric};'
+                '{precision};{accuracy};'.format(**result_dict))
 
     def create_table(self):
         HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
@@ -11,7 +16,7 @@ class output_handler:
     def add_results(self, test, process, executor):
         results = process.get_result_parameters()
         hardware_info = executor.get_infrastructure()
-        for idx, result in enumerate(results):
+        for _, result in enumerate(results):
             result_dict = result.get_result_dict()
             result_dict['hardware'] = hardware_info
             self.__add_row_to_table(result_dict)
@@ -21,7 +26,3 @@ class output_handler:
         with open(self.__table_name, 'a') as table:
             table.write(report_row + '\n')
             table.close()
-
-    def __create_table_row(self, result_dict):
-        return '{status};{task};{model};{source_framework};{launcher};{device};{hardware};{dataset};{metric};' \
-               '{precision};{accuracy};'.format(**result_dict)
