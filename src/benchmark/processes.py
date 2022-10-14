@@ -87,13 +87,24 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                 self.__log.error(f'    {line}')
 
     def __save_failed_test_log(self):
-        logname = '{0}_{1}.log'.format(self._test.model.name,
-                                       self._test.indep_parameters.inference_framework)
-        # TODO(z.maslova@yadro.com): create more complex file name
+        log_filename = self.__make_log_filename()
         out = self._output
-        with open(logname, 'w') as file:
+        with open(log_filename, 'w') as file:
             for line in out:
                 file.write(line)
+
+    def __make_log_filename(self):
+        test_settings = [self._test.model.name,
+                         self._test.indep_parameters.inference_framework.replace(' ', '_'),
+                         self._test.indep_parameters.device,
+                         self._test.model.precision,
+                         str(self._test.indep_parameters.batch_size),
+                         ]
+        if hasattr(self._test.dep_parameters, 'mode'):
+            test_settings.append(self._test.dep_parameters.mode)
+        filename = '_'.join(test_settings)
+        filename += '.log'
+        return filename
 
 
 class OpenVINOProcess(ProcessHandler, ABC):
