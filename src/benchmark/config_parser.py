@@ -420,7 +420,6 @@ class IntelCaffeParameters(ParametersMethods):
 
 
 class TensorFlowParameters(ParametersMethods):
-    @staticmethod
     def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count,
                  inter_op_parallelism_threads, intra_op_parallelism_threads, kmp_affinity):
         self.channel_swap = None
