@@ -14,7 +14,6 @@ class ConfigParser:
         self.__config_path = get_correct_path(config_file_path)
         self.__pot_parameters = []
         self.__config_file_paths = []
-        # self.__folder_with_configs = 'quantization_config_files'
         self.__configs_folder = 'quantization_config_files'
         self.__tmp_folder = 'tmp'
         if not os.path.isdir(self.__tmp_folder):
@@ -73,7 +72,7 @@ class ConfigParser:
                 child_name = 'output_dir'
 
             if len(list(child)) > 0:
-                child_of_child = config_parser.parse_xml_to_json(child)
+                child_of_child = ConfigParser.parse_xml_to_json(child)
             else:
                 child_text = child.text
                 child_of_child = get_typed_from_str(child_text)

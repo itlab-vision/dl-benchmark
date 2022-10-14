@@ -147,7 +147,7 @@ class ProcessHandler:
         if not self.__my_parameters.direct_dump:
             curr_dir = os.listdir(dir_src)[0]                        # example: AlexNet_DefaultQuantization
             curr_version = os.listdir(dir_src + '/' + curr_dir)[0]   # example: 2022-05-01_14-48-47
-            dir_src = dir_src + "/" + curr_dir + '/' + curr_version
+            dir_src = dir_src + '/' + curr_dir + '/' + curr_version
         dir_src = dir_src + '/optimized/'
         files_list = os.listdir(dir_src)
         for f in files_list:
