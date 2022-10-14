@@ -7,7 +7,8 @@ class GroupButtons(QGroupBox):
         self.__buttons = self._create_dict_buttons(list_name_buttons)
         self.setLayout(self._create_buttons_vbox())
 
-    def _create_dict_buttons(self, list_name_buttons):
+    @staticmethod
+    def _create_dict_buttons(list_name_buttons):
         buttons = {list_name_buttons[i]: QPushButton(list_name_buttons[i]) for i in range(len(list_name_buttons))}
         return buttons
 

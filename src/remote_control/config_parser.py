@@ -1,7 +1,7 @@
 from xml.dom import minidom
 
 
-class benchmark:
+class Benchmark:
     def __init__(self, config, executor, log_file, res_file):
         self.config = config
         self.executor = executor
@@ -17,7 +17,7 @@ class benchmark:
         CONFIG_RESULT_FILE_TAG = 'ResultFile'
 
         parsed_benchmark = dom.getElementsByTagName(CONFIG_BENCHMARK_TAG)[0]
-        return benchmark(
+        return Benchmark(
             config=parsed_benchmark.getElementsByTagName(CONFIG_CONFIG_TAG)[0].firstChild.data,
             executor=parsed_benchmark.getElementsByTagName(CONFIG_EXECUTOR_TAG)[0].firstChild.data,
             log_file=parsed_benchmark.getElementsByTagName(CONFIG_LOG_FILE_TAG)[0].firstChild.data,
@@ -25,7 +25,7 @@ class benchmark:
         )
 
 
-class accuracy_checker:
+class AccuracyChecker:
     def __init__(self, config, executor, datasets, definitions, log_file, res_file):
         self.config = config
         self.executor = executor
@@ -45,7 +45,7 @@ class accuracy_checker:
         CONFIG_RESULT_FILE_TAG = 'ResultFile'
 
         parsed_accuracy_checker = dom.getElementsByTagName(CONFIG_ACCURACY_CHECKER_TAG)[0]
-        return accuracy_checker(
+        return AccuracyChecker(
             config=parsed_accuracy_checker.getElementsByTagName(CONFIG_CONFIG_TAG)[0].firstChild.data,
             executor=parsed_accuracy_checker.getElementsByTagName(CONFIG_EXECUTOR_TAG)[0].firstChild.data,
             datasets=parsed_accuracy_checker.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data,
@@ -55,7 +55,7 @@ class accuracy_checker:
         )
 
 
-class machine:
+class Machine:
     def __init__(self, ip, login, password, os_type, path_to_ftp_client, benchmark_info, accuracy_checker_info):
         self.ip = ip
         self.login = login
@@ -78,13 +78,13 @@ def parse_config(config):
 
     machine_list = []
     for available_machine in available_maсhines:
-        machine_list.append(machine(
+        machine_list.append(Machine(
             ip=available_machine.getElementsByTagName(CONFIG_IP_TAG)[0].firstChild.data,
             login=available_machine.getElementsByTagName(CONFIG_LOGIN_TAG)[0].firstChild.data,
             password=available_machine.getElementsByTagName(CONFIG_PASSWORD_TAG)[0].firstChild.data,
             os_type=available_machine.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data,
             path_to_ftp_client=available_machine.getElementsByTagName(CONFIG_FTP_CLIENT_PATH_TAG)[0].firstChild.data,
-            benchmark_info=benchmark.parse(available_machine),
-            accuracy_checker_info=accuracy_checker.parse(available_machine)
+            benchmark_info=Benchmark.parse(available_machine),
+            accuracy_checker_info=AccuracyChecker.parse(available_machine),
         ))
     return machine_list

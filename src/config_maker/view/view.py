@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
-from .widgets.main_widget import MainWidget  # pylint: disable=E0402
+
+from .widgets.main_widget import MainWidget
 
 
 class View(QMainWindow):

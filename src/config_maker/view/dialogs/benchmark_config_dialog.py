@@ -1,11 +1,12 @@
 import abc
+
 from PyQt5.QtWidgets import QDialog, QLabel, QComboBox, QLineEdit, QPushButton, QGridLayout, QMessageBox
-# pylint: disable-next=E0401
-from tags import CONFIG_MODEL_TAG, CONFIG_DATASET_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_BATCH_SIZE_TAG, CONFIG_DEVICE_TAG, \
-    CONFIG_ITERATION_COUNT_TAG,  CONFIG_TEST_TIME_LIMIT_TAG, CONFIG_MODE_TAG, CONFIG_EXTENSION_TAG, \
-    CONFIG_ASYNC_REQ_COUNT_TAG, CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG, CONFIG_CHANNEL_SWAP_TAG, \
-    CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG, CONFIG_INPUT_SHAPE_TAG, CONFIG_INPUT_NAME_TAG, CONFIG_OUTPUT_NAMES_TAG, \
-    CONFIG_KMP_AFFINITY_TAG,  CONFIG_INTER_OP_THREADS_TAG,  CONFIG_INTRA_OP_THREADS_TAG
+from tags import (CONFIG_MODEL_TAG, CONFIG_DATASET_TAG, CONFIG_FRAMEWORK_TAG, CONFIG_BATCH_SIZE_TAG, CONFIG_DEVICE_TAG,
+                  CONFIG_ITERATION_COUNT_TAG, CONFIG_TEST_TIME_LIMIT_TAG, CONFIG_MODE_TAG, CONFIG_EXTENSION_TAG,
+                  CONFIG_ASYNC_REQ_COUNT_TAG, CONFIG_THREAD_COUNT_TAG, CONFIG_STREAM_COUNT_TAG, CONFIG_CHANNEL_SWAP_TAG,
+                  CONFIG_MEAN_TAG, CONFIG_INPUT_SCALE_TAG, CONFIG_INPUT_SHAPE_TAG, CONFIG_INPUT_NAME_TAG,
+                  CONFIG_OUTPUT_NAMES_TAG,
+                  CONFIG_KMP_AFFINITY_TAG, CONFIG_INTER_OP_THREADS_TAG, CONFIG_INTRA_OP_THREADS_TAG)
 
 
 class BenchmarkConfigDialog(QDialog):
@@ -33,8 +34,8 @@ class BenchmarkConfigDialog(QDialog):
         self.__framework_dependent_parameters['OpenVINO DLDT'].show()
         ok_btn = QPushButton('Ok')
         cancel_btn = QPushButton('Cancel')
-        ok_btn.clicked.connect(self.accept)  # pylint: disable=E1120
-        cancel_btn.clicked.connect(self.reject)  # pylint: disable=E1120
+        ok_btn.clicked.connect(self.accept)  # noqa: E1120
+        cancel_btn.clicked.connect(self.reject)  # noqa: E1120
         layout.addWidget(ok_btn, max(*dict_framework_idx.values()), 0)
         layout.addWidget(cancel_btn, max(*dict_framework_idx.values()), 1)
         self.setLayout(layout)
@@ -80,7 +81,7 @@ class ParametersDialog(metaclass=abc.ABCMeta):
         self._labels = dict.fromkeys(self._tags)
         for key in self._labels:
             self._labels[key] = QLabel(key, self._parent)
-        self._labels[self._tags[0]].setStyleSheet("font-weight: bold")
+        self._labels[self._tags[0]].setStyleSheet('font-weight: bold')
 
     @abc.abstractmethod
     def _create_edits(self):

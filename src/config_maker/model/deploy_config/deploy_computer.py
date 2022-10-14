@@ -1,6 +1,5 @@
-# pylint: disable-next=E0401
-from tags import CONFIG_COMPUTER_TAG, CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG, \
-    CONFIG_OS_TAG, CONFIG_DOWNLOAD_FOLDER_TAG
+from tags import (CONFIG_COMPUTER_TAG, CONFIG_IP_TAG, CONFIG_LOGIN_TAG, CONFIG_PASSWORD_TAG,
+                  CONFIG_OS_TAG, CONFIG_DOWNLOAD_FOLDER_TAG)
 
 
 class DeployComputer:
@@ -43,4 +42,5 @@ class DeployComputer:
             os = parsed_computer.getElementsByTagName(CONFIG_OS_TAG)[0].firstChild.data
             download_folder = parsed_computer.getElementsByTagName(CONFIG_DOWNLOAD_FOLDER_TAG)[0].firstChild.data
             computers.append(DeployComputer(ip, login, password, os, download_folder))
+
         return computers

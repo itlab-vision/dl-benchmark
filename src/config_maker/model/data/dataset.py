@@ -1,4 +1,4 @@
-from tags import CONFIG_DATASET_TAG, CONFIG_NAME_TAG, CONFIG_DATASET_PATH_TAG  # pylint: disable=E0401
+from tags import CONFIG_DATASET_TAG, CONFIG_NAME_TAG, CONFIG_DATASET_PATH_TAG
 
 
 class Dataset:
@@ -21,6 +21,7 @@ class Dataset:
         DOM_PATH_TAG.appendChild(file.createTextNode(self.path))
         DOM_DATASET_TAG.appendChild(DOM_NAME_TAG)
         DOM_DATASET_TAG.appendChild(DOM_PATH_TAG)
+
         return DOM_DATASET_TAG
 
     @staticmethod
@@ -31,4 +32,5 @@ class Dataset:
             name = parsed_dataset.getElementsByTagName(CONFIG_NAME_TAG)[0].firstChild.data
             path = parsed_dataset.getElementsByTagName(CONFIG_DATASET_PATH_TAG)[0].firstChild.data
             datasets.append(Dataset(name, path))
+
         return datasets

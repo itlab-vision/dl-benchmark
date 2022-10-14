@@ -1,12 +1,13 @@
-import os
-import json
 import copy
+import json
+import os
+
 from xml.etree import ElementTree as ET
-from parameters import all_parameters
+from parameters import AllParameters
 from utils import get_correct_path, camel_to_snake, get_typed_from_str
 
 
-class config_parser:
+class ConfigParser:
     def __init__(self, config_file_path):
         if not os.path.isfile(config_file_path):
             raise ValueError('Wrong path to configuration file!')
@@ -31,7 +32,7 @@ class config_parser:
                 json_config_file = json.load(config_file)
             else:
                 raise ValueError('Wrong path to configuration file!')
-            all_params = all_parameters(json_config_file)
+            all_params = AllParameters(json_config_file)
         for m_params in all_params.models_list:
             config_file_path = self.__create_pot_config_file(m_params)
             self.__config_file_paths.append(config_file_path)
@@ -48,7 +49,7 @@ class config_parser:
             json.dump(
                 model_params.get_config_parameters(),
                 config_file,
-                indent=4
+                indent=4,
             )
         return os.path.abspath(filename)
 
