@@ -1,21 +1,19 @@
 import abc
 
 from tags import (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, CONFIG_WEIGHTS_MAX_TAG,
-    CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG, CONFIG_ACTIVATIONS_PRESET_TAG,
-    CONFIG_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MAX_TAG,
-    CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG, CONFIG_WEIGHTS_TAG, CONFIG_ACTIVATIONS_TAG,
-    CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG,
-    CONFIG_COMPRESSION_PARAMS_TAG, CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG,
-    CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
-    CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG,
-    CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG,
-    CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
-    CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG,
-    CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG,
-    CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG,
-    CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG,
-    CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, CONFIG_COMPRESSION_TAG,
-    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS)
+                  CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, CONFIG_ACTIVATIONS_MIN_TAG,
+                  CONFIG_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG, CONFIG_WEIGHTS_TAG,
+                  CONFIG_ACTIVATIONS_TAG, CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG,
+                  CONFIG_COMPRESSION_PARAMS_TAG, CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG,
+                  CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
+                  CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, CONFIG_WEIGHTS_MAX_TYPE_TAG,
+                  CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
+                  CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG,
+                  CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG,
+                  CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG,
+                  CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG,
+                  CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, CONFIG_COMPRESSION_TAG,
+                  HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS)
 
 
 class CompressionParameters:
@@ -60,46 +58,6 @@ class CompressionParameters:
         parameters_dict[CONFIG_WEIGHTS_TAG] = weights_params_dict
         parameters_dict[CONFIG_ACTIVATIONS_TAG] = activations_params_dict
 
-        """
-        independent_params = [
-            [00]<TargetDevice>,     ([?, default:"ANY"])
-            [01]<Algorithm>,        (["DefaultQuantization", "AccuracyAwareQuantization"])
-            [02]<Preset>,           (["mixed", "performance", "accuracy"])
-            [03]<StatSubsetSize>,   (int, default: 100)
-
-            [04]<Weights::Bits>,            (int, default: 8)
-            [05]<Weights::Mode>,            (["symmetric", "asymmetric"])
-            [06]<Weights::Granularity>,     (["perchannel", "pertensor"])
-            [07]<Weights::LevelLow>,        (int, default: -127)
-            [08]<Weights::LevelHigh>,       (int, default: 127)
-
-            [09]<Weights::RangeEstimator::Max::Type>,            (["quantile", "min", "max",
-                                                                   "abs_max", "abs_quantile"])
-            [10]<Weights::RangeEstimator::Max::OutlierProb>,     (float, default: 0.0001)
-
-            [11]<Activations::Bits>,        (int, default: 8)
-            [12]<Activations::Mode>,        (["symmetric", ""asymmetric"])
-            [13]<Activations::Granularity>, (["perchannel", "pertensor"])
-
-            [14]<Activations::RangeEstimator::Preset>,  ([?, default:"quantile"])
-
-            [15]<Activations::RangeEstimator::Min::ClippingValue>,  (int, default: 0)
-            [16]<Activations::RangeEstimator::Min::Aggregator>,     (["mean", "max", "min", "median",
-                                                                      "mean_no_outliers", "median_no_outliers",
-                                                                      "hl_estimator"])
-            [17]<Activations::RangeEstimator::Min::Type>,           (["quantile", "min", "max",
-                                                                      "abs_max", "abs_quantile"])
-            [18]<Activations::RangeEstimator::Min::OutlierProb>,    (float, default: 0.0001)
-
-            [19]<Activations::RangeEstimator::Max::ClippingValue>,  (int, default: 6)
-            [20]<Activations::RangeEstimator::Max::Aggregator>,     (["mean", "max", "min", "median",
-                                                                      "mean_no_outliers", "median_no_outliers",
-                                                                      "hl_estimator"])
-            [21]<Activations::RangeEstimator::Max::Type>,           (["quantile", "min", "max",
-                                                                      "abs_max", "abs_quantile"])
-            [22]<Activations::RangeEstimator::Max::OutlierProb>     (float, default: 0.0001)
-        ]
-        """
         return parameters_dict
 
     @staticmethod
@@ -318,28 +276,6 @@ class DependentParameters(metaclass=abc.ABCMeta):
 
     def get_parameters_dict(self):
         return self.parameters
-        """
-        for DQ:
-        dependent_params = [
-            [00]<ShuffleData>,  (['false', 'true'])
-            [01]<Seed>,         (int, default: 0)
-        ]
-
-        for AAQ:
-        dependent_params = [
-            [00]<RankingSubsetSize>,        (int, default: 300)
-            [01]<MaxIterNum>,               (int, default: 20)
-            [02]<MaximalDrop>,              (float, default: 0.005)
-            [03]<DropType>,                 (['absolute', 'relative'])
-            [04]<UsePrevIfDropIncrease>,    (['false', 'true'])
-            [05]<BaseAlgorithm>,            (['DefaultQuantization',])
-            [06]<AnnotationFree>,           (['false', 'true'])
-            [07]<AnnotationConfThreshold>,  (float, default: 0.6)
-            [08]<ConvertToMixedPreset>,     (['false', 'true'])
-            [09]<MetricSubsetRatio>,        (float, default: 0.5)
-            [10]<TuneHyperparams>,          (['false', 'true'])
-        ]
-        """
 
     def __check_subtree(self, param_tree_node):
         params = []

@@ -3,6 +3,7 @@ from tags import (CONFIG_INDEPENDENT_PARAMS_TAGS, HEADER_ALL_PARAMS_TAGS,
 
 from .table import Table
 
+
 class QuantizationConfigTable(Table):
     def __init__(self, parent):
         super().__init__(parent)

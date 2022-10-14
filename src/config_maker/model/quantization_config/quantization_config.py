@@ -1,7 +1,8 @@
 import os
+
 from xml.dom import minidom
-from .quantized_model import QModel
 from tags import CONFIG_QUANTIZATION_ALL_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG
+from .quantized_model import QModel
 
 
 class QuantizationConfig:

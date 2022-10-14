@@ -2,18 +2,17 @@ import abc
 import os
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox, QComboBox
 
-from tags import (HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS,
-    HEADER_MODEL_PARAMS_MODEL_TAGS, HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS,
-    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS, HEADER_INDEPENDENT_PARAMS_TAGS,
-    CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHM_NAME_TAG, CONFIG_PRESET_TAG,
-    CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG,
-    CONFIG_WEIGHTS_GRANULARITY_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG,
-    CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_BITS_TAG,
-    CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_PRESET_TAG,
-    CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG,
-    CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG,
-    CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG,
-    CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG)
+from tags import (HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS,
+                  HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS,
+                  HEADER_INDEPENDENT_PARAMS_TAGS, CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHM_NAME_TAG,
+                  CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG,
+                  CONFIG_WEIGHTS_GRANULARITY_TAG, CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG,
+                  CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_BITS_TAG,
+                  CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_PRESET_TAG,
+                  CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG,
+                  CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG,
+                  CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG,
+                  CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG)
 
 
 class QuantizationConfigDialog(QDialog):
@@ -27,9 +26,14 @@ class QuantizationConfigDialog(QDialog):
         self.__q_method_independent_params = IndependentParameters(
             self, models, data, self.__q_method_dependent_params.keys(), self.__q_method_choice)
         self.__selected_q_method = 'DefaultQuantization'
+
         self.__pot_params_tags = HEADER_POT_PARAMS_TAGS
-        self.__model_params_tags = HEADER_MODEL_PARAMS_MODEL_TAGS + \
-            HEADER_MODEL_PARAMS_ENGINE_TAGS + HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS + []
+
+        self.__model_params_tags = []
+        self.__model_params_tags.extend(HEADER_MODEL_PARAMS_MODEL_TAGS)
+        self.__model_params_tags.extend(HEADER_MODEL_PARAMS_ENGINE_TAGS)
+        self.__model_params_tags.extend(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS)
+
         self.tags = [*self.__pot_params_tags, *self.__model_params_tags]
         self.__init_ui()
         self.__q_method_independent_params.switch_engine_type(self.__selected_q_method)
@@ -373,7 +377,7 @@ class IndependentParameters(ParametersDialog):
 
         if self._edits[q_method_idx].currentText() == 'DefaultQuantization':
             if (self._edits[engine_type_idx].currentText() == 'accuracy_checker'
-                and self._edits[ac_config_idx].text() == ''):
+                    and self._edits[ac_config_idx].text() == ''):
                 return False
         if self._edits[q_method_idx].currentText() == 'AccuracyAwareQuantization':
             if (self._edits[ac_config_idx].text() == ''):
