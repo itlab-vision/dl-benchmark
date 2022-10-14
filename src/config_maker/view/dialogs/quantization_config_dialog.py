@@ -1,4 +1,6 @@
 import abc
+import os
+from pyexpat import model
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox, QComboBox
 # pylint: disable-next=E0401
 from tags import HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_ENGINE_TAGS, \
@@ -85,6 +87,9 @@ class QuantizationConfigDialog(QDialog):
         self.__q_method_dependent_params[self.__selected_q_method].load_values_from_table_row(
             table, row, self.__calculate_start_index(self.__selected_q_method))
 
+    def __add_qmodel_to_list(self):
+        self.__q_method_independent_params
+
     def accept(self):
         is_ok = self.__q_method_independent_params.check()
         is_ok = is_ok and self.__q_method_dependent_params[self.__selected_q_method].check()
@@ -94,7 +99,7 @@ class QuantizationConfigDialog(QDialog):
             QMessageBox.warning(
                 self,
                 'Warning!',
-                'Not all needed lines (OutputDir, ModelName, Model, Weights, DataSource or Config) are filled!'
+                'Not all needed lines (OutputDir, ModelName, Model, DataSource or Config) are filled!'
             )
 
 
@@ -157,9 +162,10 @@ class ParametersDialog(metaclass=abc.ABCMeta):
 class IndependentParameters(ParametersDialog):
     def __init__(self, parent, models, data, q_methods, q_method_choice):
         self.__models = models
-        self.__data = data
+        self.__data = [dataset.split(';')[1] for dataset in data]
         self.__q_methods = q_methods
         self.__q_method_choice = q_method_choice
+        self.__qmodel = None
         super().__init__(parent, ['QuantizationMethodIndependent:', *HEADER_INDEPENDENT_PARAMS_TAGS])
 
     def _create_edits(self):
@@ -191,12 +197,34 @@ class IndependentParameters(ParametersDialog):
             ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
-        self._set_qcombobox_edit(model_start_idx + 1, self.__models)
+        self._set_qcombobox_edit(model_start_idx + 1, self.__models, self.__choose_model)
         self._edits[model_start_idx + 1].setFixedWidth(300)
 
         for id in range(model_start_idx, model_len):
             if id not in self._ignored_idx:
                 self._edits[id] = QLineEdit(self._parent)
+
+    def __choose_model(self, model):
+        model_name_idx = len(['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS)
+        output_dir_idx = len(['QuantizationMethodIndependent:']) + 2
+
+        model_data = model.split(';')
+        self._edits[model_name_idx].setText(model_data[1])
+
+        model_dir = os.path.dirname(model_data[-1])
+        prcision = os.path.basename(model_dir)
+        output_dir = model_dir.replace(prcision, 'INT8')
+        self._edits[output_dir_idx].setText(output_dir)
+
+        model_data[-1] = output_dir
+        self.__qmodel = ';'.join(model_data)
+        self.__qmodel.replace(prcision, 'INT8')
+
+    def get_qmodel_str(self):
+        if self.__qmodel is not None:
+            return self.__qmodel
+        else:
+            return ''
 
     def _create_engine_params_edits(self):
         engine_start_idx = len(
@@ -209,6 +237,9 @@ class IndependentParameters(ParametersDialog):
         )
 
         self._set_qcombobox_edit(engine_start_idx + 3, ('simplified', 'accuracy_checker'), self.__choose_engine_type)
+
+        self._set_qcombobox_edit(engine_start_idx + 4, self.__data, self.__choose_engine_type)
+        self._edits[engine_start_idx + 4].setFixedWidth(300)
 
         for id in range(engine_start_idx, engine_len):
             if id not in self._ignored_idx:
@@ -371,19 +402,19 @@ class IndependentParameters(ParametersDialog):
             ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS
         )
-        data_source_idx = 4 + len(
-            ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
-            HEADER_MODEL_PARAMS_MODEL_TAGS
-        )
+        # data_source_idx = 4 + len(
+        #     ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
+        #     HEADER_MODEL_PARAMS_MODEL_TAGS
+        # )
         q_method_idx = 1 + len(
             ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS +
             HEADER_MODEL_PARAMS_MODEL_TAGS + HEADER_MODEL_PARAMS_ENGINE_TAGS
         )
 
         if self._edits[q_method_idx].currentText() == 'DefaultQuantization':
-            if (self._edits[engine_type_idx].currentText() == 'simplified') \
-                    and (self._edits[data_source_idx].text() == ''):
-                return False
+            # if (self._edits[engine_type_idx].currentText() == 'simplified') \
+            #         and (self._edits[data_source_idx].text() == ''):
+            #     return False
             if (self._edits[engine_type_idx].currentText() == 'accuracy_checker') \
                     and (self._edits[ac_config_idx].text() == ''):
                 return False
@@ -426,7 +457,7 @@ class IndependentParameters(ParametersDialog):
             CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG
         ])
 
-        base_tab = '   '
+        base_tab = '    '
 
         layout.addWidget(self._labels[0], 0, 0)
         layout.addWidget(QLabel(0 * base_tab + 'Pot Parameters:', self._parent), self_idx_1, 0)
