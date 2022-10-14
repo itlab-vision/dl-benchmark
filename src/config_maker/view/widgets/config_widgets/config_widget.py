@@ -6,6 +6,7 @@ from .deploy_config_widget import DeployConfigWidget
 from .remote_config_widget import RemoteConfigWidget
 from .quantization_config_widget import QuantizationConfigWidget
 
+
 class ConfigWidget(QWidget):
     def __init__(self, parent):
         super().__init__(parent)

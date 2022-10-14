@@ -1,7 +1,7 @@
 import os
 from xml.dom import minidom
-from .quantized_model import QModel  # pylint: disable=E0402
-from tags import CONFIG_QUANTIZATION_ALL_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG  # pylint: disable=E0401
+from .quantized_model import QModel
+from tags import CONFIG_QUANTIZATION_ALL_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG
 
 
 class QuantizationConfig:

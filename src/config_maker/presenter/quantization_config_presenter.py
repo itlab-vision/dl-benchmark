@@ -5,8 +5,10 @@ class QuantizationConfigPresenter:
         self.__connect_signals()
 
     def __connect_signals(self):
-        self.__view.tabs.config_tab.quantization_configs.showAddQModelDialogSignal.connect(self.__show_add_q_model_dialog)
-        self.__view.tabs.config_tab.quantization_configs.showChangeQModelDialogSignal.connect(self.__show_change_q_model_dialog)
+        self.__view.tabs.config_tab.quantization_configs.showAddQModelDialogSignal.connect(
+            self.__show_add_q_model_dialog)
+        self.__view.tabs.config_tab.quantization_configs.showChangeQModelDialogSignal.connect(
+            self.__show_change_q_model_dialog)
         self.__view.tabs.config_tab.quantization_configs.addQModelSignal.connect(self.__handle_add_button)
         self.__view.tabs.config_tab.quantization_configs.changeQModelSignal.connect(self.__handle_change_button)
         self.__view.tabs.config_tab.quantization_configs.deleteQModelSignal.connect(self.__handle_delete_button)

@@ -1,8 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QFileDialog
-from view.buttons.group_buttons import ConfigGroupButtons  # pylint: disable=E0401
-from view.dialogs.quantization_config_dialog import QuantizationConfigDialog  # pylint: disable=E0401
-from view.tables.quantization_config_table import QuantizationConfigTable  # pylint: disable=E0401
+from view.buttons.group_buttons import ConfigGroupButtons
+from view.dialogs.quantization_config_dialog import QuantizationConfigDialog
+from view.tables.quantization_config_table import QuantizationConfigTable
 
 
 class QuantizationConfigWidget(QWidget):
@@ -45,7 +45,7 @@ class QuantizationConfigWidget(QWidget):
 
     def show_change_q_model_dialog(self, models, data):
         if len(self.__table.get_selected_rows()) != 1:
-            QMessageBox.warning(self, "Warning!", "Choose one row!")
+            QMessageBox.warning(self, 'Warning!', 'Choose one row!')
             return
         row = self.__table.get_selected_rows()[0]
         dialog = QuantizationConfigDialog(self, models, data)
@@ -56,12 +56,12 @@ class QuantizationConfigWidget(QWidget):
             self.__table.remove_selection()
 
     def __show_dialog_parser_config(self):
-        path_to_config = QFileDialog.getOpenFileName(self, "Open File", __file__, "XML files (*.xml)")
+        path_to_config = QFileDialog.getOpenFileName(self, 'Open File', __file__, 'XML files (*.xml)')
         if path_to_config[0]:
             self.loadSignal.emit(path_to_config[0])
 
     def __show_dialog_create_config(self):
-        path_to_config = QFileDialog.getSaveFileName(self, "Save File", __file__, "XML files (*.xml)")
+        path_to_config = QFileDialog.getSaveFileName(self, 'Save File', __file__, 'XML files (*.xml)')
         if path_to_config[0]:
             self.saveSignal.emit(path_to_config[0])
 
@@ -71,9 +71,9 @@ class QuantizationConfigWidget(QWidget):
 
     def show_message_status_saving(self, status):
         if status:
-            QMessageBox.information(self, "Success", "Quantization configuration was created successfully!")
+            QMessageBox.information(self, 'Success', 'Quantization configuration was created successfully!')
         else:
-            QMessageBox.warning(self, "Fail", "Quantization configuration was not created!")
+            QMessageBox.warning(self, 'Fail', 'Quantization configuration was not created!')
 
     def __copy_q_models(self):
         self.copyQModelSignal.emit(self.get_selected_rows())

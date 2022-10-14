@@ -1,12 +1,12 @@
 import re
-from model.quantization_config.compression_parameters import CompressionParameters  # pylint: disable=E0401
-# pylint: disable-next=E0401
-from tags import CONFIG_MODEL_PARAMS_MODEL_TAGS, HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS, \
-    HEADER_MODEL_PARAMS_ENGINE_TAGS, CONFIG_MODEL_TAG, CONFIG_ENGINE_TAG, \
-    CONFIG_COMPRESSION_TAG, CONFIG_POT_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG, \
-    CONFIG_MODEL_PARAMETERS_TAG, CONFIG_MODEL_NAME_TAG, CONFIG_WEIGHTS_TAG, \
-    CONFIG_STAT_REQUESTS_NUMBER_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, CONFIG_CONFIG_TAG, \
-    CONFIG_CONFIG_TYPE_TAG, CONFIG_DATA_SOURCE_TAG, CONFIG_CONFIG_ID_TAG
+from model.quantization_config.compression_parameters import CompressionParameters
+
+from tags import (CONFIG_MODEL_PARAMS_MODEL_TAGS, HEADER_POT_PARAMS_TAGS, HEADER_MODEL_PARAMS_MODEL_TAGS,
+    HEADER_MODEL_PARAMS_ENGINE_TAGS, CONFIG_MODEL_TAG, CONFIG_ENGINE_TAG,
+    CONFIG_COMPRESSION_TAG, CONFIG_POT_PARAMETERS_TAG, CONFIG_Q_CONFIG_TAG,
+    CONFIG_MODEL_PARAMETERS_TAG, CONFIG_MODEL_NAME_TAG, CONFIG_WEIGHTS_TAG,
+    CONFIG_STAT_REQUESTS_NUMBER_TAG, CONFIG_EVAL_REQUESTS_NUMBER_TAG, CONFIG_CONFIG_TAG,
+    CONFIG_CONFIG_TYPE_TAG, CONFIG_DATA_SOURCE_TAG, CONFIG_CONFIG_ID_TAG)
 
 
 class QModel:
@@ -28,7 +28,7 @@ class QModel:
         ]
 
         self.parameters = {}
-        '''
+        """
         self.parameters
                 |
                 |-- pot_params_dict
@@ -49,7 +49,7 @@ class QModel:
                         |
                         |-- compression_params_dict
                                 |-- ... (CompressionParameters.parameters)
-        '''
+        """
         pot_params_dict = {}
         for i, param_name in enumerate(HEADER_POT_PARAMS_TAGS):
             pot_params_dict[param_name] = self.__pot_params[i]
@@ -71,11 +71,8 @@ class QModel:
         self.__model_params = [
             [model_params_dict[tag] for tag in CONFIG_MODEL_PARAMS_MODEL_TAGS],
             model_params_list[1],
-            model_params_list[2]
+            model_params_list[2],
         ]
-
-        # for i, param_name in enumerate(HEADER_MODEL_PARAMS_MODEL_TAGS):
-        #     model_params_dict[param_name] = self.__model_params[0][i]
 
         engine_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_ENGINE_TAGS):
@@ -87,7 +84,7 @@ class QModel:
         config_params_dict = {
             CONFIG_MODEL_TAG: model_params_dict,
             CONFIG_ENGINE_TAG: engine_params_dict,
-            CONFIG_COMPRESSION_TAG: compression_params_dict
+            CONFIG_COMPRESSION_TAG: compression_params_dict,
         }
 
         self.parameters[CONFIG_POT_PARAMETERS_TAG] = pot_params_dict
@@ -101,7 +98,7 @@ class QModel:
             *self.__pot_params,
             *self.__model_params[0],
             *self.__model_params[1],
-            *self.__model_params[2]
+            *self.__model_params[2],
         ]
 
     def get_quantization_method(self):
@@ -199,12 +196,11 @@ class QModel:
         m_params_dom = QModel.parse_model_params(dom_model_params.getElementsByTagName(CONFIG_MODEL_TAG)[0])
         m_params = [
             m_params_dom[0],
-            '-;-;INT8;OpenVINO_DLDT;' + m_params_dom[1] + ';' + m_params_dom[2]
+            '-;-;INT8;OpenVINO_DLDT;' + m_params_dom[1] + ';' + m_params_dom[2],
         ]
         e_params = QModel.parse_engine_params(dom_model_params.getElementsByTagName(CONFIG_ENGINE_TAG)[0])
         dependent_params, common_c_params = QModel.parse_compression_params(
-            dom_model_params.getElementsByTagName(CONFIG_COMPRESSION_TAG)[0]
-        )
+            dom_model_params.getElementsByTagName(CONFIG_COMPRESSION_TAG)[0])
         model_params = m_params + e_params + common_c_params
         return QModel(pot_params, model_params, dependent_params)
 
@@ -229,7 +225,7 @@ class QModel:
             QModel.get_element_by_tag(dom, CONFIG_EVAL_REQUESTS_NUMBER_TAG),
             QModel.get_element_by_tag(dom, CONFIG_CONFIG_TAG),
             QModel.get_element_by_tag(dom, CONFIG_CONFIG_TYPE_TAG),
-            QModel.get_element_by_tag(dom, CONFIG_DATA_SOURCE_TAG)
+            QModel.get_element_by_tag(dom, CONFIG_DATA_SOURCE_TAG),
         ]
         return engine_params
 

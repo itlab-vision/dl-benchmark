@@ -1,21 +1,21 @@
 import abc
-# pylint: disable-next=E0401
-from tags import HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, CONFIG_WEIGHTS_MAX_TAG, \
-    CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, \
-    CONFIG_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MAX_TAG, \
-    CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG, CONFIG_WEIGHTS_TAG, CONFIG_ACTIVATIONS_TAG, \
-    CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG, \
-    CONFIG_COMPRESSION_PARAMS_TAG, CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG, \
-    CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG, \
-    CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG, \
-    CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG, \
-    CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, \
-    CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, \
-    CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG, \
-    CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, \
-    CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG, \
-    CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, CONFIG_COMPRESSION_TAG, \
-    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS
+
+from tags import (HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS, CONFIG_WEIGHTS_MAX_TAG,
+    CONFIG_WEIGHTS_RANGE_ESTIMATOR_TAG, CONFIG_ACTIVATIONS_PRESET_TAG,
+    CONFIG_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MAX_TAG,
+    CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG, CONFIG_WEIGHTS_TAG, CONFIG_ACTIVATIONS_TAG,
+    CONFIG_TARGET_DEVICE_TAG, CONFIG_ALGORITHMS_TAG, CONFIG_ALGORITHM_NAME_TAG,
+    CONFIG_COMPRESSION_PARAMS_TAG, CONFIG_PRESET_TAG, CONFIG_STAT_SUBSET_SIZE_TAG,
+    CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
+    CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG,
+    CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG,
+    CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG,
+    CONFIG_ACTIVATIONS_GRANULARITY_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG,
+    CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MIN_TYPE_TAG,
+    CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG,
+    CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG, CONFIG_ACTIVATIONS_MAX_TYPE_TAG,
+    CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG, CONFIG_COMPRESSION_TAG,
+    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS)
 
 
 class CompressionParameters:
@@ -23,8 +23,7 @@ class CompressionParameters:
         self.__quantization_method = independent_params[1]
         self.__dependent_params = DependentParameters.get_parameters(
             self.__quantization_method,
-            dependent_params
-        )
+            dependent_params)
         dependent_params_dict = self.__dependent_params.get_parameters_dict()
         independent_params_dict = self.__create_independent_parameters_dict(independent_params)
         self.parameters = {**independent_params_dict, **dependent_params_dict}
@@ -36,39 +35,6 @@ class CompressionParameters:
         return self.parameters
 
     def __create_independent_parameters_dict(self, independent_params):
-        '''
-        independent_params = [
-            [00]<TargetDevice>,     ([?, default:"ANY"])
-            [01]<Algorithm>,        (["DefaultQuantization", "AccuracyAwareQuantization"])
-            [02]<Preset>,           (["mixed", "performance", "accuracy"])
-            [03]<StatSubsetSize>,   (int, default: 100)
-
-            [04]<Weights::Bits>,            (int, default: 8)
-            [05]<Weights::Mode>,            (["symmetric", "asymmetric"])
-            [06]<Weights::Granularity>,     (["perchannel", "pertensor"])
-            [07]<Weights::LevelLow>,        (int, default: -127)
-            [08]<Weights::LevelHigh>,       (int, default: 127)
-
-            [09]<Weights::RangeEstimator::Max::Type>,            (["quantile", "min", "max", "abs_max", "abs_quantile"])
-            [10]<Weights::RangeEstimator::Max::OutlierProb>,     (float, default: 0.0001)
-
-            [11]<Activations::Bits>,        (int, default: 8)
-            [12]<Activations::Mode>,        (["symmetric", ""asymmetric"])
-            [13]<Activations::Granularity>, (["perchannel", "pertensor"])
-
-            [14]<Activations::RangeEstimator::Preset>,  ([?, default:"quantile"])
-
-            [15]<Activations::RangeEstimator::Min::ClippingValue>,  (int, default: 0)
-            [16]<Activations::RangeEstimator::Min::Aggregator>,     (["mean", "max", "min", "median", "mean_no_outliers", "median_no_outliers", "hl_estimator"])
-            [17]<Activations::RangeEstimator::Min::Type>,           (["quantile", "min", "max", "abs_max", "abs_quantile"])
-            [18]<Activations::RangeEstimator::Min::OutlierProb>,    (float, default: 0.0001)
-
-            [19]<Activations::RangeEstimator::Max::ClippingValue>,  (int, default: 6)
-            [20]<Activations::RangeEstimator::Max::Aggregator>,     (["mean", "max", "min", "median", "mean_no_outliers", "median_no_outliers", "hl_estimator"])
-            [21]<Activations::RangeEstimator::Max::Type>,           (["quantile", "min", "max", "abs_max", "abs_quantile"])
-            [22]<Activations::RangeEstimator::Max::OutlierProb>     (float, default: 0.0001)
-        ]
-        '''
         weights_params_dict = {}
         for i, param_name in enumerate(HEADER_MODEL_PARAMS_COMPRESSION_COMMON_TAGS[4:9]):
             weights_params_dict[param_name] = independent_params[i]
@@ -94,6 +60,46 @@ class CompressionParameters:
         parameters_dict[CONFIG_WEIGHTS_TAG] = weights_params_dict
         parameters_dict[CONFIG_ACTIVATIONS_TAG] = activations_params_dict
 
+        """
+        independent_params = [
+            [00]<TargetDevice>,     ([?, default:"ANY"])
+            [01]<Algorithm>,        (["DefaultQuantization", "AccuracyAwareQuantization"])
+            [02]<Preset>,           (["mixed", "performance", "accuracy"])
+            [03]<StatSubsetSize>,   (int, default: 100)
+
+            [04]<Weights::Bits>,            (int, default: 8)
+            [05]<Weights::Mode>,            (["symmetric", "asymmetric"])
+            [06]<Weights::Granularity>,     (["perchannel", "pertensor"])
+            [07]<Weights::LevelLow>,        (int, default: -127)
+            [08]<Weights::LevelHigh>,       (int, default: 127)
+
+            [09]<Weights::RangeEstimator::Max::Type>,            (["quantile", "min", "max",
+                                                                   "abs_max", "abs_quantile"])
+            [10]<Weights::RangeEstimator::Max::OutlierProb>,     (float, default: 0.0001)
+
+            [11]<Activations::Bits>,        (int, default: 8)
+            [12]<Activations::Mode>,        (["symmetric", ""asymmetric"])
+            [13]<Activations::Granularity>, (["perchannel", "pertensor"])
+
+            [14]<Activations::RangeEstimator::Preset>,  ([?, default:"quantile"])
+
+            [15]<Activations::RangeEstimator::Min::ClippingValue>,  (int, default: 0)
+            [16]<Activations::RangeEstimator::Min::Aggregator>,     (["mean", "max", "min", "median",
+                                                                      "mean_no_outliers", "median_no_outliers",
+                                                                      "hl_estimator"])
+            [17]<Activations::RangeEstimator::Min::Type>,           (["quantile", "min", "max",
+                                                                      "abs_max", "abs_quantile"])
+            [18]<Activations::RangeEstimator::Min::OutlierProb>,    (float, default: 0.0001)
+
+            [19]<Activations::RangeEstimator::Max::ClippingValue>,  (int, default: 6)
+            [20]<Activations::RangeEstimator::Max::Aggregator>,     (["mean", "max", "min", "median",
+                                                                      "mean_no_outliers", "median_no_outliers",
+                                                                      "hl_estimator"])
+            [21]<Activations::RangeEstimator::Max::Type>,           (["quantile", "min", "max",
+                                                                      "abs_max", "abs_quantile"])
+            [22]<Activations::RangeEstimator::Max::OutlierProb>     (float, default: 0.0001)
+        ]
+        """
         return parameters_dict
 
     @staticmethod
@@ -120,13 +126,13 @@ class CompressionParameters:
     def __parse_independent_params(dom):
         independent_params = [
             CompressionParameters.get_element_by_tag(dom, CONFIG_PRESET_TAG),
-            CompressionParameters.get_element_by_tag(dom, CONFIG_STAT_SUBSET_SIZE_TAG)
+            CompressionParameters.get_element_by_tag(dom, CONFIG_STAT_SUBSET_SIZE_TAG),
         ]
 
         weights_params = dom.getElementsByTagName(CONFIG_WEIGHTS_TAG)
         weights_params_tags = [
             CONFIG_WEIGHTS_BITS_TAG, CONFIG_WEIGHTS_MODE_TAG, CONFIG_WEIGHTS_GRANULARITY_TAG,
-            CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG
+            CONFIG_WEIGHTS_LEVEL_LOW_TAG, CONFIG_WEIGHTS_LEVEL_HIGH_TAG,
         ]
         if weights_params != []:
             weights_params = weights_params[0]
@@ -145,20 +151,20 @@ class CompressionParameters:
                 independent_params.append(CompressionParameters.get_element_by_tag(weights_max_params, param_name))
 
         else:   # weights_params == []
-            for param_name in weights_params_tags + [CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG]:
+            for _ in weights_params_tags + [CONFIG_WEIGHTS_MAX_TYPE_TAG, CONFIG_WEIGHTS_MAX_OUTLIER_PROB_TAG]:
                 independent_params.append(None)
 
         activations_params = dom.getElementsByTagName(CONFIG_ACTIVATIONS_TAG)
         activations_params_tags = [
-            CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG
+            CONFIG_ACTIVATIONS_BITS_TAG, CONFIG_ACTIVATIONS_MODE_TAG, CONFIG_ACTIVATIONS_GRANULARITY_TAG,
         ]
         activations_min_params_tags = [
             CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MIN_AGGREGATOR_TAG,
-            CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG
+            CONFIG_ACTIVATIONS_MIN_TYPE_TAG, CONFIG_ACTIVATIONS_MIN_OUTLIER_PROB_TAG,
         ]
         activations_max_params_tags = [
             CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, CONFIG_ACTIVATIONS_MAX_AGGREGATOR_TAG,
-            CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG
+            CONFIG_ACTIVATIONS_MAX_TYPE_TAG, CONFIG_ACTIVATIONS_MAX_OUTLIER_PROB_TAG,
         ]
 
         if activations_params != []:
@@ -171,36 +177,39 @@ class CompressionParameters:
                 activations_re = activations_re[0]
                 independent_params.append(CompressionParameters.get_element_by_tag(
                     activations_re,
-                    CONFIG_ACTIVATIONS_PRESET_TAG
-                ))
+                    CONFIG_ACTIVATIONS_PRESET_TAG))
 
                 activations_min_params = activations_re.getElementsByTagName(CONFIG_ACTIVATIONS_MIN_TAG)
                 activations_min_params = activations_min_params[0] if activations_min_params != [] else None
                 for param_name in activations_min_params_tags:
-                    independent_params.append(CompressionParameters.get_element_by_tag(activations_min_params, param_name))
+                    independent_params.append(
+                        CompressionParameters.get_element_by_tag(activations_min_params, param_name))
 
                 activations_max_params = activations_re.getElementsByTagName(CONFIG_ACTIVATIONS_MAX_TAG)
                 activations_max_params = activations_max_params[0] if activations_max_params != [] else None
                 for param_name in activations_max_params_tags:
-                    independent_params.append(CompressionParameters.get_element_by_tag(activations_max_params, param_name))
+                    independent_params.append(
+                        CompressionParameters.get_element_by_tag(activations_max_params, param_name))
 
             else:   # activations_re == []
                 independent_params.append(None)  # CONFIG_ACTIVATIONS_PRESET_TAG
-                for param_name in activations_min_params_tags + activations_max_params_tags:
+                for _ in activations_min_params_tags + activations_max_params_tags:
                     independent_params.append(None)
 
         else:   # activations_params == []
-            for param_name in activations_params_tags:
+            for _ in activations_params_tags:
                 independent_params.append(None)
             independent_params.append(None)  # CONFIG_ACTIVATIONS_PRESET_TAG
-            for param_name in activations_min_params_tags + activations_max_params_tags:
+            for _ in activations_min_params_tags + activations_max_params_tags:
                 independent_params.append(None)
 
         return independent_params
 
     def create_dom(self, file, params, parent_node=None):
-        DOM_COMPRESSION_TAG = parent_node if parent_node is not None \
-            else file.createElement(CONFIG_COMPRESSION_TAG)
+        if parent_node is not None:
+            DOM_COMPRESSION_TAG = parent_node
+        else:
+            file.createElement(CONFIG_COMPRESSION_TAG)
         target_device = params[0]
         if target_device is not None and target_device != '':
             self.create_dom_node(file, DOM_COMPRESSION_TAG, CONFIG_TARGET_DEVICE_TAG, target_device)
@@ -215,8 +224,10 @@ class CompressionParameters:
         self.__dependent_params.create_dom(file, parent_node)
 
     def __create_independent_params_dom(self, file, params, parent_node=None):
-        DOM_PARAMS_TAG = parent_node if parent_node is not None \
-            else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
+        if parent_node is not None:
+            DOM_PARAMS_TAG = parent_node
+        else:
+            file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
 
         if params[2] is not None and params[2] != '':
             self.create_dom_node(file, DOM_PARAMS_TAG, CONFIG_PRESET_TAG, params[2])
@@ -247,14 +258,12 @@ class CompressionParameters:
 
             if any(p is not None and p != '' for p in params[14:23]):
                 DOM_ACTIVATIONS_RE_TAG = self.create_dom_node(
-                    file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG
-                )
+                    file, DOM_ACTIVATIONS_TAG, CONFIG_ACTIVATIONS_RANGE_ESTIMATOR_TAG)
                 self.create_dom_node(file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_PRESET_TAG, params[14])
 
                 if any(p is not None and p != '' for p in params[15:19]):
                     DOM_ACTIVATIONS_MIN_TAG = self.create_dom_node(
-                        file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MIN_TAG
-                    )
+                        file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MIN_TAG)
                     self.create_dom_node(
                         file, DOM_ACTIVATIONS_MIN_TAG, CONFIG_ACTIVATIONS_MIN_CLIPPING_VALUE_TAG, params[15])
                     self.create_dom_node(
@@ -266,8 +275,7 @@ class CompressionParameters:
 
                 if any(p is not None and p != '' for p in params[19:23]):
                     DOM_ACTIVATIONS_MAX_TAG = self.create_dom_node(
-                        file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MAX_TAG
-                    )
+                        file, DOM_ACTIVATIONS_RE_TAG, CONFIG_ACTIVATIONS_MAX_TAG)
                     self.create_dom_node(
                         file, DOM_ACTIVATIONS_MAX_TAG, CONFIG_ACTIVATIONS_MAX_CLIPPING_VALUE_TAG, params[19])
                     self.create_dom_node(
@@ -309,7 +317,8 @@ class DependentParameters(metaclass=abc.ABCMeta):
             raise ValueError('Unknown quantization method: {0} !'.format(quantization_method))
 
     def get_parameters_dict(self):
-        '''
+        return self.parameters
+        """
         for DQ:
         dependent_params = [
             [00]<ShuffleData>,  (['false', 'true'])
@@ -330,8 +339,7 @@ class DependentParameters(metaclass=abc.ABCMeta):
             [09]<MetricSubsetRatio>,        (float, default: 0.5)
             [10]<TuneHyperparams>,          (['false', 'true'])
         ]
-        '''
-        return self.parameters
+        """
 
     def __check_subtree(self, param_tree_node):
         params = []
@@ -379,8 +387,10 @@ class DefaultQuantizationParameters(DependentParameters):
         return DefaultQuantizationParameters(params)
 
     def create_dom(self, file, parent_node=None):
-        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
-            else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
+        if parent_node is not None:
+            DOM_COMPRESSION_PARAMS_TAG = parent_node
+        else:
+            file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
             if self.parameters[key] != '' and self.parameters[key] is not None:
                 CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])
@@ -402,8 +412,10 @@ class AccuracyAwareQuantizationParameters(DependentParameters):
         return AccuracyAwareQuantizationParameters(params)
 
     def create_dom(self, file, parent_node=None):
-        DOM_COMPRESSION_PARAMS_TAG = parent_node if parent_node is not None \
-            else file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
+        if parent_node is not None:
+            DOM_COMPRESSION_PARAMS_TAG = parent_node
+        else:
+            file.createElement(CONFIG_COMPRESSION_PARAMS_TAG)
         for key in self.parameters:
             if self.parameters[key] != '' and self.parameters[key] is not None:
                 CompressionParameters.create_dom_node(file, DOM_COMPRESSION_PARAMS_TAG, key, self.parameters[key])

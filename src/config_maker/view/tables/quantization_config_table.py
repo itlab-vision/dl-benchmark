@@ -1,8 +1,7 @@
-from .table import Table  # pylint: disable=E0402
-# pylint: disable-next=E0401
-from tags import CONFIG_INDEPENDENT_PARAMS_TAGS, HEADER_ALL_PARAMS_TAGS, \
-    HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS
+from tags import (CONFIG_INDEPENDENT_PARAMS_TAGS, HEADER_ALL_PARAMS_TAGS,
+                  HEADER_DQ_PARAMS_TAGS, HEADER_AAQ_PARAMS_TAGS)
 
+from .table import Table
 
 class QuantizationConfigTable(Table):
     def __init__(self, parent):
@@ -16,7 +15,7 @@ class QuantizationConfigTable(Table):
         self.setHorizontalHeaderLabels(self.__headers)
         self._resize_columns()
         self.clear()
-        self.clicked.connect(self.clicked_table)  # pylint: disable=E1120
+        self.clicked.connect(self.clicked_table)
 
     def update(self, q_models):
         self.clear()
@@ -37,7 +36,7 @@ class QuantizationConfigTable(Table):
 
         methods = {
             'DefaultQuantization': len(HEADER_DQ_PARAMS_TAGS),
-            'AccuracyAwareQuantization': len(HEADER_AAQ_PARAMS_TAGS)
+            'AccuracyAwareQuantization': len(HEADER_AAQ_PARAMS_TAGS),
         }
 
         for method_name in methods.keys():
