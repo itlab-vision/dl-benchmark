@@ -27,6 +27,12 @@ def cli_argument_parser():
                         choices=['host_machine', 'docker_container'],
                         help='Environment ro execute test: host_machine, docker_container',
                         default='host_machine')
+    parser.add_argument('-b', '--cpp_benchmark_path',
+                        type=str,
+                        dest='cpp_benchmark_path',
+                        help='Path to pre-built C++ Benchmark App',
+                        default=None,
+                        required=False)
 
     args = parser.parse_args()
 
@@ -36,10 +42,10 @@ def cli_argument_parser():
     return args
 
 
-def inference_benchmark(executor_type, test_list, output_handler, log):
+def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmark_path=None):
     process_executor = Executor.get_executor(executor_type, log)
     for test in test_list:
-        test_process = ProcessHandler.get_process(test, process_executor, log)
+        test_process = ProcessHandler.get_process(test, process_executor, log, cpp_benchmark_path)
         test_process.execute()
 
         log.info('Saving test result in file\n')
@@ -64,7 +70,7 @@ if __name__ == '__main__':
 
         log.info(f'Start {len(test_list)} inference tests\n')
 
-        inference_benchmark(args.executor_type, test_list, output_handler, log)
+        inference_benchmark(args.executor_type, test_list, output_handler, log, args.cpp_benchmark_path)
 
         log.info('Inference tests completed')
     except Exception as exp:

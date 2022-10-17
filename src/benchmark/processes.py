@@ -25,9 +25,9 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         return cmd_python_version
 
     @staticmethod
-    def get_process(test, executor, log):
+    def get_process(test, executor, log, cpp_benchmark_path=None):
         if test.indep_parameters.inference_framework == 'OpenVINO DLDT':
-            return OpenVINOProcess.create_process(test, executor, log)
+            return OpenVINOProcess.create_process(test, executor, log, cpp_benchmark_path)
         elif test.indep_parameters.inference_framework == 'Caffe':
             return IntelCaffeProcess.create_process(test, executor, log)
         elif test.indep_parameters.inference_framework == 'TensorFlow':
@@ -116,7 +116,7 @@ class OpenVINOProcess(ProcessHandler, ABC):
         return f'{command_line} -nthreads {nthreads}'
 
     @staticmethod
-    def create_process(test, executor, log):
+    def create_process(test, executor, log, cpp_benchmark_path=None):
         mode = test.dep_parameters.mode.lower()
         if mode == 'sync':
             return SyncOpenVINOProcess(test, executor, log)
@@ -126,31 +126,31 @@ class OpenVINOProcess(ProcessHandler, ABC):
             return OpenVINOBenchmarkPythonProcess(test, executor, log, 'latency')
         elif mode == 'ovbenchmark_python_throughput':
             return OpenVINOBenchmarkPythonProcess(test, executor, log, 'throughput')
+        elif mode == 'ovbenchmark_cpp_latency':
+            return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmark_path, 'latency')
+        elif mode == 'ovbenchmark_cpp_throughput':
+            return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmark_path, 'throughput')
 
 
-class OpenVINOBenchmarkPythonProcess(OpenVINOProcess):
+class OpenVINOBenchmarkProcess(OpenVINOProcess):
     def __init__(self, test, executor, log, perf_hint=''):
         super().__init__(test, executor, log)
         self._perf_hint = perf_hint
 
     @staticmethod
-    def __add_perf_hint_for_cmd_line(command_line, perf_hint):
+    def _add_perf_hint_for_cmd_line(command_line, perf_hint):
         hint = perf_hint.lower()
         if hint in ('latency', 'throughput'):
             return f'{command_line} -hint {hint}'
         return command_line
 
     @staticmethod
-    def __add_extension_for_cmd_line(command_line, extension, device):
+    def _add_extension_for_cmd_line(command_line, extension, device):
         if 'GPU' in device:
             return f'{command_line} -c {extension}'
         elif 'CPU' in device or 'MYRIAD' in device:
             return f'{command_line} -l {extension}'
         return command_line
-
-    @staticmethod
-    def create_process(test, executor, log):
-        return OpenVINOBenchmarkPythonProcess(test, executor, log)
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
@@ -167,28 +167,6 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOProcess):
 
         return average_time_of_single_pass, fps, latency
 
-    def _fill_command_line(self):
-        model_xml = self._test.model.model
-        dataset = self._test.dataset.path
-        batch = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
-        iteration = self._test.indep_parameters.iteration
-
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
-
-        extension = self._test.dep_parameters.extension
-        if extension:
-            arguments = OpenVINOBenchmarkPythonProcess.__add_extension_for_cmd_line(arguments, extension, device)
-
-        nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            arguments = OpenVINOProcess.__add_nthreads_for_cmd_line(arguments, nthreads)
-
-        arguments = OpenVINOBenchmarkPythonProcess.__add_perf_hint_for_cmd_line(arguments, self._perf_hint)
-
-        command_line = f'benchmark_app {arguments}'
-        return command_line
-
     def _get_benchmark_app_metric(self, metric_name):
         """
         gets metric value from benchmark app full output
@@ -203,6 +181,74 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOProcess):
                     return float(res.group('metric'))
                 except ValueError:
                     return None
+
+
+class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
+    def __init__(self, test, executor, log, perf_hint=''):
+        super().__init__(test, executor, log, perf_hint)
+        self._perf_hint = perf_hint
+
+    @staticmethod
+    def create_process(test, executor, log, cpp_benchmark_path=None):
+        return OpenVINOBenchmarkPythonProcess(test, executor, log)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        if nthreads:
+            arguments = self.__add_nthreads_for_cmd_line(arguments, nthreads)
+
+        arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        command_line = f'benchmark_app {arguments}'
+        return command_line
+
+
+class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
+    def __init__(self, test, executor, log, cpp_benchmark_path, perf_hint=''):
+        super().__init__(test, executor, log, perf_hint)
+        self._benchmark_path = cpp_benchmark_path
+        self._perf_hint = perf_hint
+
+        if not cpp_benchmark_path or not os.path.exists(cpp_benchmark_path):
+            raise ValueError('Must provide valid cpp_benchmark_path for OpenVINO C++ benchmark')
+
+    @staticmethod
+    def create_process(test, executor, log, cpp_benchmark_path=None):
+        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmark_path)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -report_type "no_counters"'
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        if nthreads:
+            arguments = self.__add_nthreads_for_cmd_line(arguments, nthreads)
+
+        arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        command_line = f'{self._benchmark_path} {arguments}'
+        return command_line
 
 
 class OpenVINOPythonAPIProcess(OpenVINOProcess):
@@ -232,7 +278,7 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
             command_line = OpenVINOPythonAPIProcess.__add_extension_for_cmd_line(command_line, extension)
         nthreads = self._test.dep_parameters.nthreads
         if nthreads:
-            command_line = OpenVINOProcess.__add_nthreads_for_cmd_line(command_line, nthreads)
+            command_line = OpenVINOPythonAPIProcess.__add_nthreads_for_cmd_line(command_line, nthreads)
         command_line = OpenVINOPythonAPIProcess.__add_raw_output_time_for_cmd_line(command_line, '--raw_output true')
 
         return command_line

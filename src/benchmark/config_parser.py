@@ -334,9 +334,6 @@ class OpenVINOParameters(ParametersMethods):
 
         if self._mode_is_correct(mode):
             self.mode = mode.title()
-        else:
-            raise ValueError('Mode is required parameter. Mode can only take values: '
-                             'Sync, Async, OVBenchmark_Python_Latency, OVBenchmark_Python_Throughput.')
         if self._extension_path_is_correct(extension):
             self.extension = extension
         else:
@@ -361,10 +358,11 @@ class OpenVINOParameters(ParametersMethods):
 
     @staticmethod
     def _mode_is_correct(mode):
-        const_correct_mode = ['sync', 'async', 'ovbenchmark_python_latency', 'ovbenchmark_python_throughput']
+        const_correct_mode = ['sync', 'async', 'ovbenchmark_python_latency', 'ovbenchmark_python_throughput',
+                              'ovbenchmark_cpp_latency', 'ovbenchmark_cpp_throughput']
         if mode.lower() in const_correct_mode:
             return True
-        return False
+        raise ValueError(f'Mode is a required parameter. Mode can only take values: {", ".join(const_correct_mode)}')
 
     def _extension_path_is_correct(self, extension):
         if not self._parameter_not_is_none(extension) or os.path.exists(extension):

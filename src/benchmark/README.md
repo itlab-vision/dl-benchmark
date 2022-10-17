@@ -155,6 +155,66 @@ python3 inference_benchmark.py \
     --executor_type docker_container
 ```
 
+## OpenVINO Benchmark C++ tool
+
+## Построение
+
+1. Клонирование репозитория
+```bash
+git clone https://github.com/openvinotoolkit/openvino.git
+cd openvino
+git submodule update --init --recursive
+```
+2. Установка зависимостей
+```bash
+chmod +x install_build_dependencies.sh
+./install_build_dependencies.sh
+```
+
+3. Создание build-папки
+```bash
+mkdir build && cd build
+```
+
+4. Построение
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make --jobs=$(nproc --all)
+```
+
+5. После завершения вы можете установить OpenVINO Runtime в другое место:
+```bash
+cmake --install <BUILDDIR> --prefix <INSTALLDIR>
+
+pip install --upgrade pip 
+
+pip install openvino==<your version, ex 2022.1.0>
+
+pip install openvino_dev
+
+pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]
+```
+
+6. Запустите setupvars.sh:
+```bash
+source /home/<user>/<openvino_version>/setupvars.sh 
+```
+
+7. В директории openvino/samples/cpp запустите build_samples.sh.
+
+## Использование
+
+1. Найдите собранный benchmark app по адресу:
+```
+/home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+```
+
+2. Используйте его в качестве параметра для inference_benchmark.py:
+```bash
+python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv -b /home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+```
+
+
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
