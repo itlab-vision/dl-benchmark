@@ -18,6 +18,10 @@ More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
 or [here][dli-web-page] (in English).
 
+## License
+
+This project is licensed under the terms of the Apache 2.0 license.
+
 ## Cite
 
 Please consider citing the following papers.
