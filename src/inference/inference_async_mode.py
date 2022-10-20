@@ -38,6 +38,7 @@ def cli_argument_parser():
                         help='A positive integer value of infer requests to be created.'
                              'Number of infer requests may be limited by device capabilities',
                         default=None,
+                        required=True,
                         type=int,
                         dest='requests')
     parser.add_argument('-b', '--batch_size',

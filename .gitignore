@@ -104,3 +104,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# smoke test cache
+test/smoke_test/cache_dir_smoke/
+test/smoke_test/working_dir_smoke/
+test/smoke_test/results.csv
