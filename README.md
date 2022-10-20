@@ -92,7 +92,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `csv2html` is a set of scripts to convert result table
     from csv to html.
   - `csv2xlsx` is a set of scripts to convert result table
-    from csv to html.
+    from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
   - `model_converter` contains scripts to convert models with specific batch 
