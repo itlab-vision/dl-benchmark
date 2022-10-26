@@ -49,13 +49,15 @@ def main():
     try:
         args = cli_argument_parser()
         parser = ConfigParser(args.config_path)
+
+        log.info('Start parsing the configuration on the path: {0}!'.format(args.config_path))
         quantization_parameters = parser.parse()
+        log.info('Parsing done!')
 
         log.info('Start quantization on {0}!'.format(args.executor_type))
-
         quantization(args.executor_type, quantization_parameters, log)
+        log.info('Quantization done!')
 
-        log.info('End quantization!')
         parser.clean()
     except Exception as exp:
         log.error(str(exp))
