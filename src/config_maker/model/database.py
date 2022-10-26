@@ -4,6 +4,7 @@ from .data.data import Data
 from .deploy_config.deploy_config import DeployConfig
 from .models.models import Models
 from .remote_config.remote_config import RemoteConfig
+from .quantization_config.quantization_config import QuantizationConfig
 
 
 class DataBase:
@@ -14,3 +15,4 @@ class DataBase:
         self.accuracy_checker_config = AccuracyCheckerConfig()
         self.remote_config = RemoteConfig()
         self.deploy_config = DeployConfig()
+        self.quantization_config = QuantizationConfig()
