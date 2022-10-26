@@ -1,9 +1,12 @@
-import sys
-import re
 import logging as log
+import re
+import sys
+
 import psutil
 import pytest
+
 from src.benchmark.executors import Executor, HostExecutor, DockerExecutor
+from src.benchmark.frameworks.known_frameworks import KnownFrameworks
 
 log.basicConfig(
     format='[ %(levelname)s ] %(message)s',
@@ -72,7 +75,7 @@ def test_get_wrong_executor(executor_type, mocker):
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])
 def test_target_framework(executor_instance, mocker):
     ex = executor_instance(mocker)
-    ex.set_target_framework('OpenVINO DLDT')
+    ex.set_target_framework(KnownFrameworks.openvino_dldt)
     assert ex.my_target_framework == 'OpenVINO_DLDT'
 
 

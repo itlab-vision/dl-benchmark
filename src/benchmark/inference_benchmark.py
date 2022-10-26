@@ -3,10 +3,10 @@ import logging as log
 import os
 import sys
 
-import config_parser
-from output import OutputHandler
-from processes import ProcessHandler
+from config_processor import process_config
 from executors import Executor
+from frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
+from output import OutputHandler
 
 
 def cli_argument_parser():
@@ -45,7 +45,9 @@ def cli_argument_parser():
 def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmark_path=None):
     process_executor = Executor.get_executor(executor_type, log)
     for test in test_list:
-        test_process = ProcessHandler.get_process(test, process_executor, log, cpp_benchmark_path)
+        framework_name = test.indep_parameters.inference_framework
+        test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
+                                                                                 log, cpp_benchmark_path)
         test_process.execute()
 
         log.info('Saving test result in file\n')
@@ -61,7 +63,7 @@ if __name__ == '__main__':
         )
 
         args = cli_argument_parser()
-        test_list = config_parser.process_config(args.config_path, log)
+        test_list = process_config(args.config_path, log)
 
         log.info(f'Create result table with name: {args.result_file}')
 

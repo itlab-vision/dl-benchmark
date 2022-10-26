@@ -1,9 +1,17 @@
-import sys
 import logging as log
+import sys
+
 import pytest
-from src.benchmark.processes import (ProcessHandler, SyncOpenVINOProcess, AsyncOpenVINOProcess,
-                                     OpenVINOBenchmarkPythonProcess, OpenVINOBenchmarkCppProcess, OpenVINOProcess,
-                                     IntelCaffeProcess, TensorFlowProcess)
+
+from src.benchmark.frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
+from src.benchmark.frameworks.intel_caffe.intel_caffe_process import IntelCaffeProcess
+from src.benchmark.frameworks.known_frameworks import KnownFrameworks
+from src.benchmark.frameworks.openvino.openvino_benchmark_process import (OpenVINOBenchmarkPythonProcess,
+                                                                          OpenVINOBenchmarkCppProcess)
+from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
+from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
+from src.benchmark.frameworks.processes import ProcessHandler
+from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
 from src.benchmark.tests.test_executor import get_host_executor
 
 log.basicConfig(
@@ -39,11 +47,13 @@ TEST_BASIC_LINE = DotDict({'indep_parameters': DotDict({'inference_framework': '
                            'dep_parameters': DotDict({'mode': 'mode'}),
                            'model': DotDict({'model': 'model'})})
 
+WRAPPER_REGISTRY = FrameworkWrapperRegistry()
+
 
 @pytest.mark.parametrize('os', [['Linux', 'python3'], ['Windows', 'python']])
 def test_python_version(os, mocker):
     mocker.patch('platform.system', return_value=os[0])
-    assert ProcessHandler._get_cmd_python_version() == os[1]
+    assert ProcessHandler.get_cmd_python_version() == os[1]
 
 
 @pytest.mark.parametrize('inference_framework', [['OpenVINO DLDT', OpenVINOProcess], ['Caffe', IntelCaffeProcess],
@@ -53,20 +63,25 @@ def test_python_version(os, mocker):
                                   ['ovbenchmark_python_throughput', OpenVINOBenchmarkPythonProcess],
                                   ['ovbenchmark_cpp_latency', OpenVINOBenchmarkCppProcess],
                                   ['ovbenchmark_cpp_throughput', OpenVINOBenchmarkCppProcess]])
-def test_get_process(inference_framework, mode, mocker):
+def test_framework_wrapper(inference_framework, mode, mocker):
     test = TEST_BASIC_LINE
     test.indep_parameters.inference_framework = inference_framework[0]
     test.dep_parameters.mode = mode[0]
+    wrapper = WRAPPER_REGISTRY[inference_framework[0]]
     mocker.patch('os.path.exists', return_value=True)
-    if inference_framework == 'OpenVINO DLDT':
-        assert isinstance(ProcessHandler.get_process(test, None, log, 'valid/benchmark/path'), mode[1])
+    if inference_framework[0] == KnownFrameworks.openvino_dldt:
+        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
+                          mode[1])
     else:
-        assert isinstance(ProcessHandler.get_process(test, None, log, 'valid/benchmark/path'), inference_framework[1])
+        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
+                          inference_framework[1])
 
 
 def test_get_openvino_benchmark_app_metrics(mocker):
-    mocker.patch('src.benchmark.processes.OpenVINOBenchmarkPythonProcess._fill_command_line',
-                 return_value='ls')
+    mocker.patch(
+        'src.benchmark.frameworks.openvino.openvino_benchmark_process.OpenVINOBenchmarkPythonProcess.'
+        '_fill_command_line',
+        return_value='ls')
     mocker.patch('src.benchmark.executors.HostExecutor.execute_process',
                  return_value=(0, OPENVINO_BENCHMARK_RESULT_RAW.encode('utf-8')))
     process = OpenVINOBenchmarkPythonProcess(TEST_BASIC_LINE, get_host_executor(mocker), log)

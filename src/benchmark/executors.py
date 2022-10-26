@@ -1,8 +1,8 @@
 import abc
 import os
-import threading
-import sys
 import subprocess
+import sys
+import threading
 
 import psutil
 import docker
@@ -18,7 +18,7 @@ class Executor(metaclass=abc.ABCMeta):
     def get_executor(executor_type, log):
         if executor_type == 'host_machine':
             return HostExecutor(log)
-        elif executor_type == 'docker_container':
+        if executor_type == 'docker_container':
             return DockerExecutor(log)
 
     def set_target_framework(self, target_framework):
