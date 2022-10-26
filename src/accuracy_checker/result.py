@@ -56,7 +56,7 @@ class Result:
             except Exception as ex:
                 print(f'ERROR! : {str(ex)}')
         else:
-            accuracies = {'N/A': ''}
+            accuracies = {'N/A': 'N/A'}
             dataset = 'N/A'
         if not accuracies:
             raise ValueError('Information about accuracy was not found in test result')
