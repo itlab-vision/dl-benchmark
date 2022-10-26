@@ -195,7 +195,7 @@ class IndependentParameters(ParametersDialog):
         model_len = len(
             ['QuantizationMethodIndependent:'] + HEADER_POT_PARAMS_TAGS
             + HEADER_MODEL_PARAMS_MODEL_TAGS)
-        self._set_qcombobox_edit(model_start_idx + 1, self.__models, self.__choose_model)
+        self._set_qcombobox_edit(model_start_idx + 1, [''] + self.__models, self.__choose_model)
         self._edits[model_start_idx + 1].setFixedWidth(300)
 
         for tag in range(model_start_idx, model_len):
@@ -210,13 +210,13 @@ class IndependentParameters(ParametersDialog):
         self._edits[model_name_idx].setText(model_data[1])
 
         model_dir = os.path.dirname(model_data[-1])
-        prcision = os.path.basename(model_dir)
-        output_dir = model_dir.replace(prcision, 'INT8')
+        precision = os.path.basename(model_dir)
+        output_dir = model_dir.replace(precision, 'INT8')
         self._edits[output_dir_idx].setText(output_dir)
 
         model_data[-1] = output_dir
         self.__qmodel = ';'.join(model_data)
-        self.__qmodel.replace(prcision, 'INT8')
+        self.__qmodel.replace(precision, 'INT8')
 
     def get_qmodel_str(self):
         if self.__qmodel is not None:
@@ -234,7 +234,7 @@ class IndependentParameters(ParametersDialog):
 
         self._set_qcombobox_edit(engine_start_idx + 3, ('simplified', 'accuracy_checker'), self.__choose_engine_type)
 
-        self._set_qcombobox_edit(engine_start_idx + 4, self.__data, self.__choose_engine_type)
+        self._set_qcombobox_edit(engine_start_idx + 4, [''] + self.__data, self.__choose_engine_type)
         self._edits[engine_start_idx + 4].setFixedWidth(300)
 
         for tag in range(engine_start_idx, engine_len):
@@ -343,11 +343,15 @@ class IndependentParameters(ParametersDialog):
         return pot_values, model_values
 
     def load_values_from_table_row(self, table, row, start_idx=0):
+        shift = 0
         for column, tag in enumerate(range(1, len(self._tags))):
+            if (self._tags[tag] == 'Model'):
+                shift += 1
+                continue
             if tag not in self._ignored_idx:
-                self._edits[tag].setText(table.item(row, column).text())
+                self._edits[tag].setText(table.item(row, column + shift).text())
             else:
-                self._edits[tag].setCurrentText(table.item(row, column).text())
+                self._edits[tag].setCurrentText(table.item(row, column + shift).text())
 
     def check(self):
         # check <OutputDir>
