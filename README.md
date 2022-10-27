@@ -97,8 +97,6 @@ Novgorod State University Publishing House, 2021. – 423 p.
     from csv to html.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
-  - `model_converter` contains scripts to convert models with specific batch 
-    sizes.
   - `remote_control` contains scripts to execute benchmark
     remotely.
 
@@ -133,9 +131,10 @@ by default in Ubuntu 20.04).
     sudo apt install git
     git clone https://github.com/itlab-vision/dl-benchmark.git
     ```
-1. Install requirements:
-  - `pip install -r ~/dl-benchmark/requirements_linux.txt` for Linux.
-  - `pip install -r ~/dl-benchmark/requirements_windows.txt` for Windows. 
+1. Install requirements.
+    ```bash
+    pip install -r ~/dl-benchmark/requirements.txt
+    ```
 
 ## Model preparing
 
@@ -145,19 +144,15 @@ To prepare models and data for benchmarking, please, follow instructions.
     ```bash
     mkdir <working_dir>
     ```  
-1. Download models using OpenVINO model donwloader tool to
+1. Download models using OpenVINO model downloader tool to
    the `<working_dir>` directory:
     ```bash
     omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
     ``` 
-1. Convert models to OpenVINO format with specific batch sizes using the script
-   `src/model_converter/model_converter.py` in accordiance with 
-   `src/model_converter/README.md`.
-   ```bash
-    python3 ~/dl-benchmark/src/model_converter/model_converter.py \
-    -d <working_dir> \
-    -z ~/dl-benchmark-env/lib/python3.8/site-packages/openvino/model_zoo/models \
-    -b 1 8
+1. Convert models using OpenVINO model converter tool to
+   the `<working_dir>` directory:
+    ```bash
+    omz_converter --output_dir <working_dir> --download_dir <working_dir>
     ``` 
 
 

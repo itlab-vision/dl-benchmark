@@ -1,8 +1,0 @@
-docker
-PyYAML
-paramiko
-opencv-python
-PyQt5
-pandas
-xlsxwriter
-iteration_utilities
