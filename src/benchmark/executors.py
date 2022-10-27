@@ -1,8 +1,10 @@
 import abc
 import os
+import threading
 import sys
-from subprocess import Popen, PIPE
+import subprocess
 
+import psutil
 import docker
 
 
@@ -31,7 +33,7 @@ class Executor(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, timeout):
         pass
 
 
@@ -39,6 +41,8 @@ class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         self.my_environment = os.environ.copy()
+        self.process = None
+        self.output = []
 
     def get_path_to_inference_folder(self):
         return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference')
@@ -55,13 +59,54 @@ class HostExecutor(Executor):
 
         return hardware_info
 
-    def execute_process(self, command_line):
-        process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, universal_newlines=True)
-        return_code = process.wait()
-        out, _ = process.communicate()
-        out = out.split('\n')[:-1]
+    def execute_process(self, command_line, timeout):
+        def target(cmd, stdout, stderr):
+            self.process = subprocess.Popen(cmd, stdout=stdout, stderr=stderr,
+                                            shell=isinstance(cmd, str))
 
-        return return_code, out
+            if stdout != subprocess.DEVNULL:
+                self.output = []
+                for line in self.process.stdout:
+                    line = line.decode('utf-8')
+                    self.output.append(line)
+
+                    sys.stdout.write(line)
+
+                sys.stdout.flush()
+                self.process.stdout.close()
+
+            self.process.wait()
+
+        thread = threading.Thread(target=target, args=(command_line, subprocess.PIPE, subprocess.STDOUT))
+        thread.start()
+
+        thread.join(timeout)
+        if thread.is_alive():
+            try:
+                self.my_log.error(f'Timeout {timeout} is reached, terminating')
+                self.kill_process(self.process.pid)
+                thread.join()
+            except OSError as e:
+                self.my_log.error(f'Cannot kill task by PID {e.strerror}')
+                raise
+
+        if self.process is None:
+            return_code = 127
+            self.my_log.error('Failed to create process')
+        else:
+            return_code = self.process.wait()
+        self.my_log.info(f'Returncode = {return_code}')
+
+        return return_code, self.output
+
+    def kill_process(self, pid):
+        try:
+            process = psutil.Process(pid)
+            for proc in process.children(recursive=True):
+                proc.kill()
+            process.kill()
+        except OSError as err:
+            print(err)
 
 
 class DockerExecutor(Executor):
@@ -87,7 +132,7 @@ class DockerExecutor(Executor):
 
         return hardware_info
 
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, _):
         command_line = f'bash -c "source /root/.bashrc && {command_line}"'
 
         return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
