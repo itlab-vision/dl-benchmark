@@ -367,7 +367,84 @@
 </Computers>
 ```
 
+## Заполнение файла конфигурации для скрипта квантизации
+
+### Правила заполнения
+
+- Файл конфигурации описывается в формате XML.
+- Шаблонная структура описана в файле `quantization_configuration_file_template.xml`.
+- Кодировка файла - `utf-8`.
+- Корневой тег называется `Parameters`.
+- Каждая конвертируемая модель
+  описывается внутри тега `QuantizationConfig`.
+- Первый параметр представляет собой идентификатор (название) конфигурации модели.
+  Параметр описывается внутри тега `ConfigId`.
+
+- Все теги, пренадлежащие `PotParameters`, представляют собой
+  теги, соответствующие ключам командной строки для [POT CLI](openvino-pot-cli):
+
+  Тег | Ключ
+  ----|------
+  PotQuantizationConfig | `-c`, `--config`
+  Evaluation | `-e`, `--evaluate`
+  OutputDir | `--output-dir`
+  DirectDump | `-d`, `--direct-dump`
+  LogLevel | `--log-level`
+  ProgressBar | `--progress-bar`
+  StreamOutput | `--stream-output`
+  KeepUncompressedWeights | `--keep-uncompressed-weights`
+
+-  Все теги, принадлежащие `ConfigParameters`, представляют собой
+  теги параметров квантизации. Практически все они опциональны
+  и соответствуют аналогичным параметрам для [DefaultQuantization](openvino-pot-dq)
+  и [AccuracyAwareQuantization](openvino-pot-aaq).
+
+### Пример заполнения
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+    <QuantizationConfig>
+        <ConfigId>AlexNet1_DQ_0</ConfigId>
+        <PotParameters>
+            <Evaluation>False</Evaluation>
+            <OutputDir>tmp/alexnet/INT8</OutputDir>
+            <DirectDump>True</DirectDump>
+            <LogLevel>INFO</LogLevel>
+            <ProgressBar>False</ProgressBar>
+            <StreamOutput>False</StreamOutput>
+            <KeepUncompressedWeights>False</KeepUncompressedWeights>
+        </PotParameters>
+        <ConfigParameters>
+            <Model>
+                <ModelName>AlexNet1</ModelName>
+                <Model>tmp/alexnet/alexnet.xml</Model>
+                <Weights>tmp/alexnet/alexnet.bin</Weights>
+            </Model>
+            <Engine>
+                <Type>simplified</Type>
+                <DataSource>tmp/data/ImageNet</DataSource>
+            </Engine>
+            <Compression>
+                <TargetDevice>ANY</TargetDevice>
+                <Algorithms>
+                    <Name>DefaultQuantization</Name>
+                    <Params>
+                        <ShuffleData>False</ShuffleData>
+                        <Seed>0</Seed>
+                        <Preset>mixed</Preset>
+                        <StatSubsetSize>100</StatSubsetSize>
+                    </Params>
+                </Algorithms>
+            </Compression>
+        </ConfigParameters>
+    </QuantizationConfig>
+```
+
 
 <!-- LINKS -->
 [kmp-affinity-docs]: ../../docs/reference_information/kmp_affinity.md
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
+[openvino-pot-cli]: https://docs.openvino.ai/nightly/pot_compression_cli_README.html
+[openvino-pot-dq]: https://docs.openvino.ai/nightly/pot_compression_algorithms_quantization_default_README.html
+[openvino-pot-aaq]: https://docs.openvino.ai/nightly/accuracy_aware_README.html
