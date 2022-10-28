@@ -8,6 +8,9 @@ from executors import Executor
 from frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
 from output import OutputHandler
 
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'utils'))
+from logger_conf import configure_logger, exception_hook  # noqa: E402
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -56,11 +59,8 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
 
 if __name__ == '__main__':
     try:
-        log.basicConfig(
-            format='[ %(levelname)s ] %(message)s',
-            level=log.INFO,
-            stream=sys.stdout,
-        )
+        configure_logger()
+        sys.excepthook = exception_hook
 
         args = cli_argument_parser()
         test_list = process_config(args.config_path, log)

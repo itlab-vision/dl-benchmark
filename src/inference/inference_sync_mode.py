@@ -1,12 +1,13 @@
+import sys
 import argparse
 import logging as log
-import sys
 
-import postprocessing_data as pp
-import utils
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
 from transformer import OpenVINOTransformer
+
+import postprocessing_data as pp
+import utils
 
 
 def cli_argument_parser():
