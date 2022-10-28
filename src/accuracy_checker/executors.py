@@ -1,6 +1,7 @@
 import abc
 import os
 import sys
+from pathlib import Path
 from subprocess import Popen, PIPE, STDOUT
 
 import docker
@@ -11,7 +12,7 @@ class Executor(metaclass=abc.ABCMeta):
         self.my_log = log
         self.my_target_framework = None
         self.my_environment = os.environ.copy()
-        self.path_to_csv_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'result.csv')
+        self.path_to_csv_file = Path(__file__).resolve().parent.joinpath('result.csv')
 
     @staticmethod
     def get_executor(executor_type, log):
@@ -54,7 +55,7 @@ class HostExecutor(Executor):
         super().__init__(log)
 
     def get_infrastructure(self):
-        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('node_info')))
         import node_info as info  # noqa: E402
 
         hardware = info.get_system_characteristics()
@@ -66,7 +67,7 @@ class HostExecutor(Executor):
         return hardware_info
 
     def execute_process(self, command_line):
-        if os.path.exists(self.path_to_csv_file):
+        if self.path_to_csv_file.is_file():
             command_line = f'rm {self.path_to_csv_file} && {command_line}'
         process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, stderr=STDOUT,
                         universal_newlines=True)
@@ -76,7 +77,7 @@ class HostExecutor(Executor):
         return out
 
     def get_csv_file(self):
-        return self.path_to_csv_file
+        return str(self.path_to_csv_file)
 
     def prepare_executor(self, tests):
         pass

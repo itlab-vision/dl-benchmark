@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import threading
+from pathlib import Path
 
 import psutil
 import docker
@@ -45,10 +46,10 @@ class HostExecutor(Executor):
         self.output = []
 
     def get_path_to_inference_folder(self):
-        return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference')
+        return str(Path(__file__).resolve().parents[1].joinpath('inference'))
 
     def get_infrastructure(self):
-        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('node_info')))
         import node_info as info  # noqa: E402
 
         hardware = info.get_system_characteristics()

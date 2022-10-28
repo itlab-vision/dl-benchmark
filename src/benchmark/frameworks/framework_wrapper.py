@@ -6,10 +6,7 @@ class FrameworkWrapper(metaclass=ABCMeta):
     The framework_name attribute should be initialized in a derived class
     with framework name string used in configuration file."""
 
-    @property
-    @abstractmethod
-    def framework_name(self):
-        pass
+    framework_name = ''
 
     def __init_subclass__(cls):
         if not isinstance(cls.framework_name, str) or len(cls.framework_name) == 0:

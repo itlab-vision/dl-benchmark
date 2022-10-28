@@ -1,5 +1,5 @@
-import os.path
 import re
+from pathlib import Path
 
 from .openvino_process import OpenVINOProcess
 
@@ -79,7 +79,7 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
 
         nthreads = self._test.dep_parameters.nthreads
         if nthreads:
-            arguments = self.__add_nthreads_for_cmd_line(arguments, nthreads)
+            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
 
@@ -93,7 +93,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         self._benchmark_path = cpp_benchmark_path
         self._perf_hint = perf_hint
 
-        if not cpp_benchmark_path or not os.path.exists(cpp_benchmark_path):
+        if not cpp_benchmark_path or not Path(cpp_benchmark_path).is_file():
             raise ValueError('Must provide valid cpp_benchmark_path for OpenVINO C++ benchmark')
 
     @staticmethod
@@ -115,7 +115,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
         nthreads = self._test.dep_parameters.nthreads
         if nthreads:
-            arguments = self.__add_nthreads_for_cmd_line(arguments, nthreads)
+            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
 

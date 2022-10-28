@@ -1,7 +1,7 @@
 import argparse
 import logging as log
-import os
 import sys
+from pathlib import Path
 
 from config_parser import TestResultParser
 from executors import Executor
@@ -61,7 +61,7 @@ def cli_argument_parser():
 
     args = parser.parse_args()
 
-    if not os.path.isfile(args.config_path):
+    if not Path(args.config_path).is_file():
         raise ValueError('Wrong path to configuration file!')
 
     return args
@@ -89,7 +89,7 @@ def main():
 
         test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
                                      args.extensions_path)
-        test_list = TestResultParser.get_test_list(args.config, test_parameters)
+        test_list = TestResultParser.get_test_list(args.config_path, test_parameters)
 
         log.info(f'Create result table with name: {args.result_file}')
 

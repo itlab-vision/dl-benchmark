@@ -9,12 +9,26 @@ class OutputHandler:
         average_time, fps, latency = process.get_performance_metrics()
         hardware_info = executor.get_infrastructure()
 
-        return '{0};{1};{2};{3};{4};{5}'.format(status, test_parameters, hardware_info, average_time, latency, fps)
+        return ';'.join([status, test_parameters, hardware_info, str(average_time), str(latency), str(fps)])
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Dataset;Framework;Inference Framework;Input blob sizes;Precision;Batch size;Mode;Parameters;Infrastructure;Average time of single pass (s);Latency;FPS'  # noqa: E501
+        headers = ';'.join(['Status',
+                            'Task type',
+                            'Topology name',
+                            'Dataset',
+                            'Framework',
+                            'Inference Framework',
+                            'Input blob sizes',
+                            'Precision',
+                            'Batch size',
+                            'Mode',
+                            'Parameters',
+                            'Infrastructure',
+                            'Average time of single pass (s)',
+                            'Latency',
+                            'FPS'])
         with open(self.__table_name, 'w') as table:
-            table.write(HEADERS + '\n')
+            table.write(headers + '\n')
             table.close()
 
     def add_row_to_table(self, executor, test, process):

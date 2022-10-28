@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>Sphereface</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>caffe</SourceFramework>
+            <Directory>./working_dir_smoke/public/Sphereface/FP32</Directory>
+        </Model>
+        <Parameters>
+            <Device>CPU</Device>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <Config>./smoke_accuracy-check.yml</Config>
+        </Parameters>
+    </Test>
+</Tests>

@@ -1,4 +1,4 @@
-from result import result
+from result import Result
 
 
 class ProcessHandler:
@@ -41,7 +41,7 @@ class ProcessHandler:
     def get_result_parameters(self):
         result_file = self.__executor.get_path_to_result_file()
 
-        return result.parser_test_result(self.__output, self.__test, result_file)
+        return Result.parser_test_result(self.__output, self.__test, result_file)
 
     def __fill_command_line(self):
         command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} --csv_result {4}'.format(

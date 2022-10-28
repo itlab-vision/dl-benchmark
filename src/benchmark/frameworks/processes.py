@@ -63,6 +63,14 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def _fill_command_line(self):
         pass
 
+    @staticmethod
+    def _add_argument_to_cmd_line(command_line, argument, value):
+        return f'{command_line} {argument} {value}'
+
+    @staticmethod
+    def _add_env_to_cmd_line(command_line, name, value):
+        return f'{name}={value} {command_line}'
+
     def __print_error(self):
         out = self._output
         is_error = False
