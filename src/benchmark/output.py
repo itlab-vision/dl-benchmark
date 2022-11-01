@@ -1,38 +1,47 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from csv_wrapper import CsvReport  # noqa: E402
+
+
 class OutputHandler:
-    def __init__(self, table_name):
+    def __init__(self, table_name, csv_delimiter):
         self.__table_name = table_name
+
+        self._column_names = {
+            'status': 'Status',
+            'task': 'Task type',
+            'model': 'Topology name',
+            'dataset': 'Dataset',
+            'source_framework': 'Framework',
+            'inference_framework': 'Inference Framework',
+            'input_shape': 'Input blob sizes',
+            'precision': 'Precision',
+            'batch_size': 'Batch size',
+            'mode': 'Mode',
+            'framework_params': 'Parameters',
+            'hardware': 'Infrastructure',
+            'average_time': 'Average time of single pass (s)',
+            'latency': 'Latency',
+            'fps': 'FPS',
+        }
+
+        self._report = CsvReport(self.__table_name, self._column_names.values(), output_delimiter=csv_delimiter)
 
     @staticmethod
     def __create_table_row(executor, test, process):
-        status = 'Success' if process.get_status() == 0 else 'Failed'
-        test_parameters = test.get_report().replace('input_shape', process.get_model_shape())
-        average_time, fps, latency = process.get_performance_metrics()
-        hardware_info = executor.get_infrastructure()
-
-        return ';'.join([status, test_parameters, hardware_info, str(average_time), str(latency), str(fps)])
+        report = test.get_report()
+        report['input_shape'] = process.get_model_shape()
+        report['status'] = 'Success' if process.get_status() == 0 else 'Failed'
+        report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
+        report['hardware'] = executor.get_infrastructure()
+        return report
 
     def create_table(self):
-        headers = ';'.join(['Status',
-                            'Task type',
-                            'Topology name',
-                            'Dataset',
-                            'Framework',
-                            'Inference Framework',
-                            'Input blob sizes',
-                            'Precision',
-                            'Batch size',
-                            'Mode',
-                            'Parameters',
-                            'Infrastructure',
-                            'Average time of single pass (s)',
-                            'Latency',
-                            'FPS'])
-        with open(self.__table_name, 'w') as table:
-            table.write(headers + '\n')
-            table.close()
+        self._report.write_headers()
 
     def add_row_to_table(self, executor, test, process):
         report_row = self.__create_table_row(executor, test, process)
-        with open(self.__table_name, 'a') as table:
-            table.write(report_row + '\n')
-            table.close()
+        row_dict = {column_name: report_row[key] for key, column_name in self._column_names.items()}
+        self._report.append_row(row_dict)

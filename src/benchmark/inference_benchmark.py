@@ -25,6 +25,11 @@ def cli_argument_parser():
                         dest='result_file',
                         help='Full name of the resulting file',
                         required=True)
+    parser.add_argument('--csv_delimiter',
+                        metavar='CHARACTER',
+                        type=str,
+                        help='Delimiter to use in the resulting file',
+                        default=';')
     parser.add_argument('--executor_type',
                         type=str,
                         choices=['host_machine', 'docker_container'],
@@ -67,7 +72,7 @@ if __name__ == '__main__':
 
         log.info(f'Create result table with name: {args.result_file}')
 
-        output_handler = OutputHandler(args.result_file)
+        output_handler = OutputHandler(args.result_file, args.csv_delimiter)
         output_handler.create_table()
 
         log.info(f'Start {len(test_list)} inference tests\n')

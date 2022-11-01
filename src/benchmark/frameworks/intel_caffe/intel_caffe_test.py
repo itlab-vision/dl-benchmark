@@ -11,15 +11,16 @@ class IntelCaffeTest(Test):
                                  f'Thread count: {self.dep_parameters.nthreads}',
                                  f'KMP_AFFINITY: {self.dep_parameters.kmp_affinity}'])
 
-        report_res = ';'.join([self.model.task,
-                               self.model.name,
-                               self.dataset.name,
-                               self.model.source_framework,
-                               self.indep_parameters.inference_framework,
-                               'input_shape',
-                               self.model.precision,
-                               str(self.indep_parameters.batch_size),
-                               'Sync',
-                               other_param])
+        report_res = {
+            'task': self.model.task,
+            'model': self.model.name,
+            'dataset': self.dataset.name,
+            'source_framework': self.model.source_framework,
+            'inference_framework': self.indep_parameters.inference_framework,
+            'precision': self.model.precision,
+            'batch_size': self.indep_parameters.batch_size,
+            'mode': 'Sync',
+            'framework_params': other_param,
+        }
 
         return report_res

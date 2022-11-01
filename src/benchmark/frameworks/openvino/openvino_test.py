@@ -20,15 +20,16 @@ class OpenVINOTest(Test):
                 other_param.append(f'{key}: {parameters[key]}')
         other_param = ', '.join(other_param)
 
-        report_res = ';'.join([self.model.task,
-                               self.model.name,
-                               self.dataset.name,
-                               self.model.source_framework,
-                               self.indep_parameters.inference_framework,
-                               'input_shape',
-                               self.model.precision,
-                               str(self.indep_parameters.batch_size),
-                               self.dep_parameters.mode,
-                               other_param])
+        report_res = {
+            'task': self.model.task,
+            'model': self.model.name,
+            'dataset': self.dataset.name,
+            'source_framework': self.model.source_framework,
+            'inference_framework': self.indep_parameters.inference_framework,
+            'precision': self.model.precision,
+            'batch_size': self.indep_parameters.batch_size,
+            'mode': self.dep_parameters.mode,
+            'framework_params': other_param,
+        }
 
         return report_res
