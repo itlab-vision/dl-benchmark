@@ -8,7 +8,7 @@ from executors import Executor
 from frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
 from output import OutputHandler
 
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'utils'))
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
 
 
