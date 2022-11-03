@@ -1,17 +1,32 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from csv_wrapper import CsvReport  # noqa: E402
+
+
 class OutputHandler:
-    def __init__(self, table_name):
+    def __init__(self, table_name, csv_delimiter):
         self.__table_name = table_name
 
-    @staticmethod
-    def __create_table_row(result_dict):
-        return ('{status};{task};{model};{source_framework};{launcher};{device};{hardware};{dataset};{metric};'
-                '{precision};{accuracy};'.format(**result_dict))
+        self._column_names = {
+            'status': 'Status',
+            'task': 'Task type',
+            'model': 'Topology name',
+            'source_framework': 'Framework',
+            'launcher': 'Inference Framework',
+            'device': 'Device',
+            'hardware': 'Infrastructure',
+            'dataset': 'Dataset',
+            'metric': 'Accuracy type',
+            'precision': 'Precision',
+            'accuracy': 'Accuracy',
+        }
+
+        self._report = CsvReport(self.__table_name, self._column_names.values(), output_delimiter=csv_delimiter)
 
     def create_table(self):
-        HEADERS = 'Status;Task type;Topology name;Framework;Inference Framework;Device;Infrastructure;Dataset;Accuracy type;Precision;Accuracy;'  # noqa: E501
-        with open(self.__table_name, 'w') as table:
-            table.write(HEADERS + '\n')
-            table.close()
+        self._report.write_headers()
 
     def add_results(self, test, process, executor):
         results = process.get_result_parameters()
@@ -19,10 +34,6 @@ class OutputHandler:
         for _, result in enumerate(results):
             result_dict = result.get_result_dict()
             result_dict['hardware'] = hardware_info
-            self.__add_row_to_table(result_dict)
 
-    def __add_row_to_table(self, result):
-        report_row = self.__create_table_row(result)
-        with open(self.__table_name, 'a') as table:
-            table.write(report_row + '\n')
-            table.close()
+            row_dict = {column_name: result_dict[key] for key, column_name in self._column_names.items()}
+            self._report.append_row(row_dict)

@@ -1,8 +1,9 @@
 import abc
 import os
-import threading
-import sys
 import subprocess
+import sys
+import threading
+from pathlib import Path
 
 import psutil
 import docker
@@ -18,7 +19,7 @@ class Executor(metaclass=abc.ABCMeta):
     def get_executor(executor_type, log):
         if executor_type == 'host_machine':
             return HostExecutor(log)
-        elif executor_type == 'docker_container':
+        if executor_type == 'docker_container':
             return DockerExecutor(log)
 
     def set_target_framework(self, target_framework):
@@ -45,10 +46,10 @@ class HostExecutor(Executor):
         self.output = []
 
     def get_path_to_inference_folder(self):
-        return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference')
+        return str(Path(__file__).resolve().parents[1].joinpath('inference'))
 
     def get_infrastructure(self):
-        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('node_info')))
         import node_info as info  # noqa: E402
 
         hardware = info.get_system_characteristics()

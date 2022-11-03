@@ -1,7 +1,7 @@
 import argparse
 import logging as log
-import os
 import sys
+from pathlib import Path
 
 from config_parser import ConfigParser
 from executors import Executor
@@ -25,7 +25,7 @@ def cli_argument_parser():
 
     args = parser.parse_args()
 
-    if not os.path.isfile(args.config_path):
+    if not Path(args.config_path).is_file():
         raise ValueError('Wrong path to configuration file!')
 
     return args
