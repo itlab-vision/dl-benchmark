@@ -34,8 +34,12 @@ class HTMLAccuracyCheckerTable(HTMLTable):
 
     def _get_nested_parameters(self, model_dict):
         for row_index in range(1, len(self._table_csv)):
-            model_dict[self._table_csv[row_index][MODEL_POSITION_IN_TABLE]]['accuracy_type'].add(
-                self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE])
+            type = self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE]
+            model_dict[self._table_csv[row_index][MODEL_POSITION_IN_TABLE]]['accuracy_type'].add(type)
+        for model in model_dict:
+            types = model_dict[model]['accuracy_type']
+            if len(types) > 1:
+                types.discard('N/A')
 
         for model in model_dict:
             model_dict[model]['accuracy_type'] = \
@@ -47,18 +51,24 @@ class HTMLAccuracyCheckerTable(HTMLTable):
                 return True
         return False
 
+    def __find_weights_in_tests(self, weights):
+        for row_index in range(1, len(self._table_csv)):
+            if (weights in self._table_csv[row_index][PRECISION_POSITION_IN_TABLE]):
+                return True
+        return False
+
     def _get_column_dict(self):
         frameworks_dict = {}
-        for row_index in range(1, len(self._table_csv)):
-            for framework in self._frameworks_list:
-                if self.__find_framework_in_tests(framework['name']):
-                    if framework['name'] not in frameworks_dict:
-                        frameworks_dict[framework['name']] = {}
-                    for plugin in framework:
-                        if plugin == 'name':
-                            continue
-                        if plugin == self._table_csv[row_index][DEVICE_POSITION_IN_TABLE]:
-                            frameworks_dict[framework['name']][plugin] = framework[plugin].replace(' ', '').split(',')
+        test_count = len(self._table_csv)
+        for framework in self._frameworks_list:
+            if self.__find_framework_in_tests(framework['name']):
+                if framework['name'] not in frameworks_dict:
+                    frameworks_dict[framework['name']] = {}
+                for plugin in framework:
+                    if plugin in [self._table_csv[idx][DEVICE_POSITION_IN_TABLE] for idx in range(1, test_count)]:
+                        precisions = framework[plugin].replace(' ', '').split(',')
+                        frameworks_dict[framework['name']][plugin] = \
+                            [precision for precision in precisions if self.__find_weights_in_tests(precision)]
         return frameworks_dict
 
     def _added_all_test(self, models_dict):
@@ -78,11 +88,11 @@ class HTMLAccuracyCheckerTable(HTMLTable):
             if (self._table_csv[row_index][MODEL_POSITION_IN_TABLE] == model
                     and self._table_csv[row_index][INFERENCE_FRAMEWORK_POSITION_IN_TABLE] == framework
                     and self._table_csv[row_index][DEVICE_POSITION_IN_TABLE] == plugin
-                    and self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE] == accuracy_type
-                    and (self._table_csv[row_index][PRECISION_POSITION_IN_TABLE] == precision
-                         or self._table_csv[row_index][PRECISION_POSITION_IN_TABLE] == '')):
+                    and (self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE] == accuracy_type
+                         or self._table_csv[row_index][ACCURACY_TYPE_POSITION_IN_TABLE] == 'N/A')
+                    and self._table_csv[row_index][PRECISION_POSITION_IN_TABLE] == precision):
                 if self._table_csv[row_index][STATUS_POSITION_IN_TABLE] == 'FAILED':
-                    return '-'
+                    return 'Undefined'
                 else:
                     return self._table_csv[row_index][ACCURACY_POSITION_IN_TABLE]
         return 'N/A'
