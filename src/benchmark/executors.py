@@ -1,19 +1,18 @@
 import abc
 import os
-import subprocess
 import sys
-import threading
 from pathlib import Path
 
-import psutil
 import docker
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from cmd_handler import CMDHandler  # noqa: E402, PLC0411
 
 
 class Executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
-        self.my_log = log
+        self.log = log
         self.target_framework = None
-        self.my_target_framework = None
 
     @staticmethod
     def get_executor(executor_type, log):
@@ -23,7 +22,7 @@ class Executor(metaclass=abc.ABCMeta):
             return DockerExecutor(log)
 
     def set_target_framework(self, target_framework):
-        self.my_target_framework = target_framework.replace(' ', '_')
+        self.target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
     def get_path_to_inference_folder(self):
@@ -41,9 +40,7 @@ class Executor(metaclass=abc.ABCMeta):
 class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
-        self.my_environment = os.environ.copy()
-        self.process = None
-        self.output = []
+        self.environment = os.environ.copy()
 
     def get_path_to_inference_folder(self):
         return str(Path(__file__).resolve().parents[1].joinpath('inference'))
@@ -61,60 +58,16 @@ class HostExecutor(Executor):
         return hardware_info
 
     def execute_process(self, command_line, timeout):
-        def target(cmd, stdout, stderr):
-            self.process = subprocess.Popen(cmd, stdout=stdout, stderr=stderr,
-                                            shell=isinstance(cmd, str))
-
-            if stdout != subprocess.DEVNULL:
-                self.output = []
-                for line in self.process.stdout:
-                    line = line.decode('utf-8')
-                    self.output.append(line)
-
-                    sys.stdout.write(line)
-
-                sys.stdout.flush()
-                self.process.stdout.close()
-
-            self.process.wait()
-
-        thread = threading.Thread(target=target, args=(command_line, subprocess.PIPE, subprocess.STDOUT))
-        thread.start()
-
-        thread.join(timeout)
-        if thread.is_alive():
-            try:
-                self.my_log.error(f'Timeout {timeout} is reached, terminating')
-                self.kill_process(self.process.pid)
-                thread.join()
-            except OSError as e:
-                self.my_log.error(f'Cannot kill task by PID {e.strerror}')
-                raise
-
-        if self.process is None:
-            return_code = 127
-            self.my_log.error('Failed to create process')
-        else:
-            return_code = self.process.wait()
-        self.my_log.info(f'Returncode = {return_code}')
-
-        return return_code, self.output
-
-    def kill_process(self, pid):
-        try:
-            process = psutil.Process(pid)
-            for proc in process.children(recursive=True):
-                proc.kill()
-            process.kill()
-        except OSError as err:
-            print(err)
+        cmd_handler = CMDHandler(command_line, self.log, self.environment)
+        cmd_handler.run(timeout)
+        return cmd_handler.return_code, cmd_handler.output
 
 
 class DockerExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         client = docker.from_env()
-        self.my_container_dict = {cont.name: cont for cont in client.containers.list()}
+        self.container_dict = {cont.name: cont for cont in client.containers.list()}
 
     def get_path_to_inference_folder(self):
         return '/tmp/dl-benchmark/src/inference'
@@ -122,7 +75,7 @@ class DockerExecutor(Executor):
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
         command_line = f'bash -c "source /root/.bashrc && {hardware_command}"'
-        output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        output = self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
         if output[0] != 0:
             return 'None'
         hardware = [line.strip().split(': ') for line in output[-1].decode('utf-8').split('\n')[1:-1]]
@@ -136,4 +89,4 @@ class DockerExecutor(Executor):
     def execute_process(self, command_line, _):
         command_line = f'bash -c "source /root/.bashrc && {command_line}"'
 
-        return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        return self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)

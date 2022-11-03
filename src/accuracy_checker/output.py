@@ -31,7 +31,7 @@ class OutputHandler:
     def add_results(self, test, process, executor):
         results = process.get_result_parameters()
         hardware_info = executor.get_infrastructure()
-        for _, result in enumerate(results):
+        for result in results:
             result_dict = result.get_result_dict()
             result_dict['hardware'] = hardware_info
 

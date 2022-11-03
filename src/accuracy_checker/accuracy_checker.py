@@ -9,6 +9,9 @@ from output import OutputHandler
 from parameters import Parameters
 from process import ProcessHandler
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger, exception_hook  # noqa: E402
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -79,20 +82,16 @@ def accuracy_check(executor_type, test_list, output_handler, log):
     for idx, test in enumerate(test_list):
         test_process = ProcessHandler(log, process_executor, test)
         test_process.execute(idx)
-        log.info('Saving test result in file')
+        log.info('Saving test result in file\n')
         output_handler.add_results(test, test_process, process_executor)
 
 
-def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
-
+if __name__ == '__main__':
     try:
-        args = cli_argument_parser()
+        configure_logger()
+        sys.excepthook = exception_hook
 
+        args = cli_argument_parser()
         test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
                                      args.extensions_path)
         test_list = TestResultParser.get_test_list(args.config_path, test_parameters)
@@ -102,15 +101,11 @@ def main():
         output_handler = OutputHandler(args.result_file, args.csv_delimiter)
         output_handler.create_table()
 
-        log.info(f'Start {len(test_list)} accuracy tests')
+        log.info(f'Start {len(test_list)} accuracy tests\n')
 
         accuracy_check(args.executor_type, test_list, output_handler, log)
 
-        log.info('Inference tests completed')
-    except Exception as ex:
-        print('ERROR! : {0}'.format(str(ex)))
+        log.info('Accuracy tests completed')
+    except Exception as exp:
+        log.error(str(exp))
         sys.exit(1)
-
-
-if __name__ == '__main__':
-    sys.exit(main() or 0)

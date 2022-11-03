@@ -2,7 +2,6 @@ import logging as log
 import re
 import sys
 
-import psutil
 import pytest
 
 from src.benchmark.executors import Executor, HostExecutor, DockerExecutor
@@ -56,7 +55,7 @@ def get_host_executor(mocker):
 def get_docker_executor(mocker):
     mocker.patch('docker.from_env', return_value=MockDockerApi(['test_target_framework']))
     executor = DockerExecutor(log)
-    executor.my_target_framework = 'test_target_framework'
+    executor.target_framework = 'test_target_framework'
     return executor
 
 
@@ -76,7 +75,7 @@ def test_get_wrong_executor(executor_type, mocker):
 def test_target_framework(executor_instance, mocker):
     ex = executor_instance(mocker)
     ex.set_target_framework(KnownFrameworks.openvino_dldt)
-    assert ex.my_target_framework == 'OpenVINO_DLDT'
+    assert ex.target_framework == 'OpenVINO_DLDT'
 
 
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])
@@ -105,9 +104,3 @@ def test_execute_process_timeout(executor_instance, mocker, caplog):
     if isinstance(ex, HostExecutor):
         ex.execute_process(command_line='sleep 5', timeout=0.01)
         assert re.match(r'.*Timeout .* is reached, terminating.*', caplog.text)
-
-
-def test_process_kill_fail(mocker):
-    ex = get_host_executor(mocker)
-    with pytest.raises(psutil.NoSuchProcess):
-        ex.kill_process(99999)
