@@ -69,7 +69,7 @@ def main():
     except ValueError as ex:
         logging.error(f'{ex}')
         return 1
-    
+
     return 0
 
 
