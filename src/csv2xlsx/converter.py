@@ -66,7 +66,7 @@ def main():
 
     try:
         convert_csv_table_to_xlsx(paths_table_csv, path_table_xlsx, table_type)
-    except ValueError as ex: 
+    except ValueError as ex:
         logging.error(f'{ex}')
         return 1
     
