@@ -37,6 +37,7 @@ jobs:
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: results
           path: test/smoke_test/results*.csv
