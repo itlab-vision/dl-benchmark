@@ -7,5 +7,6 @@
         <OS></OS>
         <DownloadFolder></DownloadFolder>
         <DatasetFolder></DatasetFolder>
+        <ModelFolder></ModelFolder>
     </Computer>
 </Computers>

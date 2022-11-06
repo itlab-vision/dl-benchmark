@@ -348,8 +348,9 @@
   на котором планируется запуск бенчмаркинга.
 - Путь до директории, куда будет сохранен Docker-образ, описывается
   внутри тега `DownloadFolder`.
-- Путь до директории с наборами данных для проверки качества моделей, описывается
-  внутри тега `DatasetFolder`.
+- Путь до расшаренной директории с наборами данных для проверки
+  качества моделей, описывается внутри тега `DatasetFolder`.
+- Путь до расшаренной директории с моделями, описывается внутри тега `ModelFolder`.
 
 ### Пример заполнения
 
@@ -363,6 +364,7 @@
         <OS>Linux</OS>
         <DownloadFolder>/tmp/docker_folder</DownloadFolder>
         <DatasetFolder>/mnt/datasets</DatasetFolder>
+        <ModelFolder>/mnt/models</ModelFolder>
     </Computer>
 </Computers>
 ```
