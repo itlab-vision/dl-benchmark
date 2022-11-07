@@ -155,6 +155,74 @@ python3 inference_benchmark.py \
     --executor_type docker_container
 ```
 
+## Использование OpenVINO Benchmark C++ tool в качестве инструмента для замеров
+
+### Сборка (linux)
+
+1. Клонирование репозитория. Рекомендуется использовать стабильную версию из списка https://github.com/openvinotoolkit/openvino/releases
+```bash
+git clone https://github.com/openvinotoolkit/openvino.git
+git checkout <release_tag>
+cd openvino
+git submodule update --init --recursive
+```
+2. Построить openvino, следуя официальной инструкции https://github.com/openvinotoolkit/openvino/wiki/BuildingForLinux
+
+3.  В случае использования стабильной версии, установить python wheels из pypi хранилища.
+```bash
+
+pip install --upgrade pip 
+
+pip install openvino==<your version, ex 2022.1.0>
+
+pip install openvino_dev
+
+pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
+```
+
+4.  Запустите setupvars.sh:
+```bash
+source INSTALL_DIR/setupvars.sh 
+```
+
+5. В директории INSTALL_DIR/samples/cpp запустите ./build_samples.sh.
+
+### Использование
+1. В конфигурационном файле (секция `FrameworkDependent`) укажите `Mode`: `ovbenchmark_cpp_latency` или `ovbenchmark_cpp_throughput`
+
+
+2. Найдите исполняемый файл benchmark_app по адресу:
+```
+/home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+```
+3. Используйте его в качестве параметра для inference_benchmark.py:
+```bash
+python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv -b /home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+```
+
+## Использование OpenVINO Benchmark Python tool в качестве инструмента для замеров
+
+### Установка
+1. В случае использования стабильной версии, установить python wheels из pypi хранилища.
+```bash
+
+pip install --upgrade pip 
+
+pip install openvino==<your version, ex 2022.1.0>
+
+pip install openvino_dev
+
+pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
+```
+
+### Использование
+
+1. В конфигурационном файле (секция `FrameworkDependent`) укажите `Mode`: `ovbenchmark_python_latency` или `ovbenchmark_python_throughput`
+
+2. Запустите скрипт
+```bash
+python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv
+```
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit

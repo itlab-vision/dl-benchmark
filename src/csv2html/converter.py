@@ -1,6 +1,6 @@
 import argparse
-import os
 import sys
+from pathlib import Path
 
 from accuracy_checker_table_creator import HTMLAccuracyCheckerTable
 from benchmark_table_creator import HTMLBenchmarkTable
@@ -33,7 +33,7 @@ def cli_argument_parser():
 def open_csv_table(path_table_csv):
     table_csv = []
     for table in path_table_csv:
-        if not os.path.isfile(table):
+        if not Path(table).is_file():
             raise ValueError('Wrong path the table!')
         with open(table) as file:
             lines = file.readlines()
@@ -58,8 +58,7 @@ def convert_csv_table_to_html(table_csv, table_type):
     elif table_type == 'accuracy_checker':
         table_html = HTMLAccuracyCheckerTable(table_csv, framework_config)
 
-    script_dir = os.path.split(os.path.abspath(__file__))[0]
-    path_to_styles = os.path.join(script_dir, 'styles.html')
+    path_to_styles = Path(__file__).resolve().parent.joinpath('styles.html')
     table_html.add_styles_to_table(path_to_styles)
     table_html.sort_all_tests()
     table_html.create_table_header()

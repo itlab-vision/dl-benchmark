@@ -1,61 +1,53 @@
-from result import result
+import abc
+from result import Result
 
 
-class ProcessHandler:
+class ProcessHandler(metaclass=abc.ABCMeta):
     def __init__(self, log, executor, test):
         self.__log = log
-        self.__executor = executor
-        self.__test = test
-        self.__output = None
-        self.__supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
-        self.__csv_name = executor.get_csv_file()
+        self._executor = executor
+        self._test = test
+        self._output = None
+        self._status = None
+        self.supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
+        self.csv_name = executor.get_csv_file()
 
     @staticmethod
-    def __add_annotations_for_cmd_line(command_line, annotations):
-        return '{0} -a {1}'.format(command_line, annotations)
-
-    @staticmethod
-    def __add_definitions_for_cmd_line(command_line, definitions):
-        return '{0} -d {1}'.format(command_line, definitions)
-
-    @staticmethod
-    def __add_extensions_for_cmd_line(command_line, extensions):
-        return '{0} -e {1}'.format(command_line, extensions)
-
-    @staticmethod
-    def __add_framework_for_cmd_line(command_line, framework):
-        return '{0} -tf {1}'.format(command_line, framework)
+    def _add_argument_to_cmd_line(command_line, argument, value):
+        return f'{command_line} {argument} {value}'
 
     def execute(self, idx):
         command_line = self.__fill_command_line()
         if command_line == '':
             self.__log.error('Command line is empty')
-        self.__log.info('Start accuracy check for {0} test: {1}'.format(idx, self.__test.model.name))
-        self.__executor.set_target_framework(self.__test.framework)
-        command_line = self.__executor.prepare_command_line(self.__test, command_line)
-        self.__output = self.__executor.execute_process(command_line)
-        if type(self.__output) is not list:
-            self.__output = self.__output.decode('utf-8').split('\n')
-        print(self.__output)
+        self.__log.info(f'Start accuracy check for {idx+1} test: {self._test.model.name}')
+        self.__log.info(f'Command line is : {command_line}')
+        self._executor.set_target_framework(self._test.framework)
+        command_line = self._executor.prepare_command_line(self._test, command_line)
+        self._status, self._output = self._executor.execute_process(command_line)
+        if type(self._output) is not list:
+            self._output = self._output.decode('utf-8').split('\n')
+
+    def get_status(self):
+        return self._status
 
     def get_result_parameters(self):
-        result_file = self.__executor.get_path_to_result_file()
-
-        return result.parser_test_result(self.__output, self.__test, result_file)
+        result_file = self._executor.get_path_to_result_file()
+        return Result.parser_test_result(self.get_status() == 0, self._test, result_file)
 
     def __fill_command_line(self):
         command_line = 'accuracy_check -c {0} -m {1} -s {2} -td {3} --csv_result {4}'.format(
-            self.__test.config, self.__test.model.directory,
-            self.__test.parameters.source,
-            self.__test.device,
-            self.__csv_name)
-        command_line = self.__add_framework_for_cmd_line(command_line,
-                                                         self.__supported_frameworks[self.__test.framework])
-        if self.__test.parameters.annotations:
-            command_line = self.__add_annotations_for_cmd_line(command_line, self.__test.parameters.annotations)
-        if self.__test.parameters.definitions:
-            command_line = self.__add_definitions_for_cmd_line(command_line, self.__test.parameters.definitions)
-        if self.__test.parameters.extensions:
-            command_line = self.__add_extensions_for_cmd_line(command_line, self.__test.parameters.extensions)
+            self._test.config, self._test.model.directory,
+            self._test.parameters.source,
+            self._test.device,
+            self.csv_name)
+        test_framework = self.supported_frameworks[self._test.framework]
+        command_line = self._add_argument_to_cmd_line(command_line, '-tf', test_framework)
+        if self._test.parameters.annotations:
+            command_line = self._add_argument_to_cmd_line(command_line, '-a', self._test.parameters.annotations)
+        if self._test.parameters.definitions:
+            command_line = self._add_argument_to_cmd_line(command_line, '-d', self._test.parameters.definitions)
+        if self._test.parameters.extensions:
+            command_line = self._add_argument_to_cmd_line(command_line, '-e', self._test.parameters.extensions)
 
         return command_line
