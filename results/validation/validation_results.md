@@ -88,6 +88,7 @@ resnet-34-pytorch | - | - | 17.9026833 Granny Smith<br>9.6216583 banana<br>9.062
 resnet-50-pytorch | - | - | 14.6118231 Granny Smith<br>8.5581894 fig<br>7.5287142 acorn<br>6.9782834 orange<br>6.8520727 custard apple<br>| 14.6118231 Granny Smith<br>8.5581894 fig<br>7.5287142 acorn<br>6.9782834 orange<br>6.8520727 custard apple<br> |
 dla-34 | - | - | 11.2761745 Granny Smith<br>6.9377508 fig<br>6.4480505 tennis ball<br>5.9033756 lemon<br>5.6257339 dumbbell<br>| 11.2761745 Granny Smith<br>6.9377508 fig<br>6.4480505 tennis ball<br>5.9033756 lemon<br>5.6257339 dumbbell<br> |
 hbonet-0.25 | - | - | 17.2663193 Granny Smith<br>14.2053604 tennis ball<br>12.7874298 green snake, grass snake<br>12.4134007 bell pepper<br>12.2039165 fig<br>| 17.2663193 Granny Smith<br>14.2053604 tennis ball<br>12.7874298 green snake, grass snake<br>12.4134007 bell pepper<br>12.2039165 fig<br> |
+shufflenet-v2-x0.5 | - | - | 14.8072624 Granny Smith<br>13.4187317 bell pepper<br>12.5896816 lemon<br>12.3368931 cucumber, cuke<br>11.8330803 fig<br>| 14.8072624 Granny Smith<br>13.4187317 bell pepper<br>12.5896816 lemon<br>12.3368931 cucumber, cuke<br>11.8330803 fig<br> |
 
 ### Тестовое изображение 2
 
@@ -170,6 +171,7 @@ resnet-34-pytorch |-|-| 18.9669666 junco, snowbird<br>12.0508604 chickadee<br>10
 resnet-50-pytorch |-|-| 18.4067078 junco, snowbird<br>10.4681435 chickadee<br>9.9149218 goldfinch, Carduelis carduelis<br>9.8933010 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla<br>| 18.4067078 junco, snowbird<br>10.4681435 chickadee<br>9.9149218 goldfinch, Carduelis carduelis<br>9.8933010 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla<br> |
 dla-34 |-|-| 18.2753410 junco, snowbird<br>9.4783363 brambling, Fringilla montifringilla<br>8.8363371 chickadee<br>7.9899206 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>7.9558935 water ouzel, dipper<br> | 18.2753410 junco, snowbird<br>9.4783363 brambling, Fringilla montifringilla<br>8.8363371 chickadee<br>7.9899206 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>7.9558935 water ouzel, dipper<br> |
 hbonet-0.25 | - | - | 20.5088100 junco, snowbird<br>17.8573532 chickadee<br>16.4232159 brambling, Fringilla montifringilla<br>13.0919476 jay<br>12.8791962 goldfinch, Carduelis carduelis<br>| 20.5088100 junco, snowbird<br>17.8573532 chickadee<br>16.4232159 brambling, Fringilla montifringilla<br>13.0919476 jay<br>12.8791962 goldfinch, Carduelis carduelis<br> |
+shufflenet-v2-x0.5 | - | - | 27.7634544 junco, snowbird<br>20.2297573 chickadee<br>19.7337132 jay<br>18.1307297 brambling, Fringilla montifringilla<br>16.9049988 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>| 27.7634544 junco, snowbird<br>20.2297573 chickadee<br>19.7337132 jay<br>18.1307297 brambling, Fringilla montifringilla<br>16.9049988 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |
 
 ### Тестовое изображение 3
 
@@ -252,6 +254,7 @@ resnet-34-pytorch |-|-| 15.2665386 lifeboat<br>8.6636257 pirate, pirate ship<br>
 resnet-50-pytorch |-|-| 15.0844412 lifeboat<br>9.2421913 container ship, containership, container vessel<br>9.0593348 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165691 pirate, pirate ship<br>| 15.0844412 lifeboat<br>9.2421913 container ship, containership, container vessel<br>9.0593348 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165691 pirate, pirate ship<br> |
 dla-34 |-|-| 12.3063545 lifeboat<br>8.2191248 pirate, pirate ship<br>8.1342831 liner, ocean liner<br>7.8728166 wreck<br>7.7409639 container ship, containership, container vessel<br> | 12.3063545 lifeboat<br>8.2191248 pirate, pirate ship<br>8.1342831 liner, ocean liner<br>7.8728166 wreck<br>7.7409639 container ship, containership, container vessel<br> |
 hbonet-0.25 | - | - | 14.6844530 liner, ocean liner<br>14.2568932 lifeboat<br>13.5083389 pirate, pirate ship<br>13.3783092 drilling platform, offshore rig<br>13.0703135 wreck<br>| 14.6844530 liner, ocean liner<br>14.2568932 lifeboat<br>13.5083389 pirate, pirate ship<br>13.3783092 drilling platform, offshore rig<br>13.0703135 wreck<br> |
+shufflenet-v2-x0.5 | - | - | 16.4951305 lifeboat<br>13.4137926 drilling platform, offshore rig<br>12.9157162 pirate, pirate ship<br>11.6706381 fireboat<br>11.2358427 aircraft carrier, carrier, flattop, attack aircraft carrier<br>| 16.4951305 lifeboat<br>13.4137926 drilling platform, offshore rig<br>12.9157162 pirate, pirate ship<br>11.6706381 fireboat<br>11.2358427 aircraft carrier, carrier, flattop, attack aircraft carrier<br> |
 
 ### Классификация, нестандартные модели
 
