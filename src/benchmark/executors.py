@@ -20,6 +20,7 @@ class Executor(metaclass=abc.ABCMeta):
             return HostExecutor(log)
         if executor_type == 'docker_container':
             return DockerExecutor(log)
+        raise ValueError('Executor type must be from list: host_machine, docker_container')
 
     def set_target_framework(self, target_framework):
         self.target_framework = target_framework.replace(' ', '_')
