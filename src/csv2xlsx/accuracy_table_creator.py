@@ -1,5 +1,4 @@
 import logging
-import re
 from collections import defaultdict
 
 from table_creator import XlsxTable
@@ -9,12 +8,12 @@ import xlsxwriter
 from iteration_utilities import deepflatten
 
 
-class XlsxBenchmarkTable(XlsxTable):
+class XlsxAccuracyTable(XlsxTable):
     def __init__(self, paths_table_csv, path_table_xlsx):
         logging.info('START: __init__(). Input: {0}, {1}'.format(
             paths_table_csv, path_table_xlsx))
 
-        super().__init__(paths_table_csv, path_table_xlsx, 'Performance')
+        super().__init__(paths_table_csv, path_table_xlsx, 'Accuracy')
 
         logging.info('FINISH: __init__()')
 
@@ -25,26 +24,27 @@ class XlsxBenchmarkTable(XlsxTable):
         self._sheet = self._book.add_worksheet(self._sheet_name)
 
         # For the title
-        self._cell_format = self._book.add_format(
+        self._cell_format_title = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'text_wrap': True, 'font_size': 9})
-        self._cell_format_title1 = self._book.add_format(
+        self._cell_format_title_bgcolor = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'text_wrap': True, 'font_size': 9,
              'bg_color': '#F8F8FF'})
-        self._cell_format_title2 = self._book.add_format(
-            {'align': 'center', 'valign': 'vcenter', 'border': 1,
-             'bold': True, 'font_size': 9})  # without text wrapping
         self._cell_format_task_type = self._book.add_format(
             {'align': 'center', 'valign': 'vcenter', 'border': 1,
              'bold': True, 'rotation': 90, 'font_size': 9})  # for task type
-        # For metric values
-        self._cell_format_fps = self._book.add_format(
-            {'valign': 'vcenter', 'border': 1, 'font_size': 9})  # float
-        self._cell_format_nan_fps = self._book.add_format(
+        # For cells
+        self._cell_format = self._book.add_format(
+            {'align': 'left', 'valign': 'vcenter', 'border': 1,
+             'bold': True, 'text_wrap': False, 'font_size': 9})
+        # For accuracy values
+        self._cell_format_acc = self._book.add_format(
+            {'valign': 'right', 'border': 1, 'font_size': 9})  # float
+        self._cell_format_nan_acc = self._book.add_format(
             {'align': 'right', 'valign': 'vcenter', 'border': 1,
              'font_size': 9, 'bg_color': '#F08080'})  # Nan
-        self._cell_format_undefined_fps = self._book.add_format(
+        self._cell_format_undefined_acc = self._book.add_format(
             {'align': 'right', 'valign': 'vcenter', 'border': 1,
              'font_size': 9, 'bg_color': '#FFFF00'})  # Undefined
 
@@ -57,18 +57,14 @@ class XlsxBenchmarkTable(XlsxTable):
         self._KEY_STATUS = keys[0]
         self._KEY_TASK_TYPE = keys[1]
         self._KEY_TOPOLOGY_NAME = keys[2]
-        self._KEY_DATASET = keys[3]
-        self._KEY_TRAIN_FRAMEWORK = keys[4]
-        self._KEY_INFERENCE_FRAMEWORK = keys[5]
-        self._KEY_BLOB_SIZE = keys[6]
-        self._KEY_PRECISION = keys[7]
-        self._KEY_BATCH_SIZE = keys[8]
-        self._KEY_EXECUTION_MODE = keys[9]
-        self._KEY_PARAMETERS = keys[10]
-        self._KEY_INFRASTRUCTURE = keys[11]
-        self._KEY_AVGTIME = keys[12]
-        self._KEY_LATENCY = keys[13]
-        self._KEY_FPS = keys[14]
+        self._KEY_TRAIN_FRAMEWORK = keys[3]
+        self._KEY_INFERENCE_FRAMEWORK = keys[4]
+        self._KEY_DEVICE = keys[5]
+        self._KEY_INFRASTRUCTURE = keys[6]
+        self._KEY_DATASET = keys[7]
+        self._KEY_ACCURACY_TYPE = keys[8]
+        self._KEY_PRECISION = keys[9]
+        self._KEY_ACCURACY = keys[10]
 
         logging.info(f'FINISH: _init_table_keys(). {keys}')
 
@@ -96,14 +92,11 @@ class XlsxBenchmarkTable(XlsxTable):
             machine_framework_devices = []
             for inference_framework in machine_inference_frameworks:
                 framework_devices = []
-                for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
-                    matcher = re.match(pattern, value)
-                    device_name = matcher.group('device_name')
+                for key, value in self._data_dictionary[self._KEY_DEVICE].items():
                     if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
                             and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
-                            and device_name not in framework_devices):
-                        framework_devices.append(device_name)
+                            and value not in framework_devices):
+                        framework_devices.append(value)
                 machine_framework_devices.append(framework_devices)
             self._devices.append(machine_framework_devices)
 
@@ -123,13 +116,10 @@ class XlsxBenchmarkTable(XlsxTable):
                 framework_precisions = []
                 for device in framework_devices:
                     device_precisions = []
-                    for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
-                        matcher = re.match(pattern, value)
-                        device_name = matcher.group('device_name')
+                    for key, value in self._data_dictionary[self._KEY_DEVICE].items():
                         if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
                                 and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
-                                and device_name == device
+                                and value == device
                                 and self._data_dictionary[self._KEY_PRECISION][key] not in device_precisions):
                             device_precisions.append(self._data_dictionary[self._KEY_PRECISION][key])
                     framework_precisions.append(device_precisions)
@@ -137,43 +127,6 @@ class XlsxBenchmarkTable(XlsxTable):
             self._precisions.append(machine_precisions)
 
         logging.info(f'FINISH: _get_precisions(). {self._precisions}')
-
-    def _get_execution_modes(self):
-        logging.info('START: _get_execution_modes()')
-
-        self._execution_modes = []
-        for idx in range(len(self._infrastructure)):
-            machine = self._infrastructure[idx]
-            machine_inference_frameworks = self._inference_frameworks[idx]
-            machine_modes = []
-            for idx2 in range(len(machine_inference_frameworks)):
-                inference_framework = machine_inference_frameworks[idx2]
-                framework_devices = self._devices[idx][idx2]
-                framework_modes = []
-                for idx3 in range(len(framework_devices)):
-                    device = framework_devices[idx3]
-                    device_precisions = self._precisions[idx][idx2][idx3]
-                    framework_device_modes = []
-                    for precision in device_precisions:
-                        device_precision_modes = []
-                        for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
-                            matcher = re.match(pattern, value)
-                            device_name = matcher.group('device_name')
-                            if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
-                                    and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
-                                    and device_name == device
-                                    and self._data_dictionary[self._KEY_PRECISION][key] == precision
-                                    and self._data_dictionary[self._KEY_EXECUTION_MODE][key]
-                                    not in device_precision_modes):
-                                device_precision_modes.append(
-                                    self._data_dictionary[self._KEY_EXECUTION_MODE][key])
-                        framework_device_modes.append(device_precision_modes)
-                    framework_modes.append(framework_device_modes)
-                machine_modes.append(framework_modes)
-            self._execution_modes.append(machine_modes)
-
-        logging.info(f'FINISH: _get_execution_modes(). {self._execution_modes}')
 
     def _fill_horizontal_title(self):
         logging.info('START: _fill_horizontal_title()')
@@ -200,60 +153,41 @@ class XlsxBenchmarkTable(XlsxTable):
                     machine_framework_device = machine_framework_devices[idx3]
                     framework_device_precisions = self._precisions[idx][idx2][idx3]
                     col_idx1 = col_idx
-                    num_cols1 = 0
                     col_indeces4 = []
                     for idx4 in range(len(framework_device_precisions)):
                         framework_device_precision = framework_device_precisions[idx4]
-                        framework_device_precision_modes = self._execution_modes[idx][idx2][idx3][idx4]
-                        col_indeces5 = []
-                        for idx5 in range(len(framework_device_precision_modes)):
-                            framework_device_precision_mode = framework_device_precision_modes[idx5]
-                            self._sheet.write(row_idx, col_idx + idx5,
-                                              framework_device_precision_mode,
-                                              self._cell_format_title1)
-                            col_indeces5.append(col_idx + idx5)
-                        k = len(framework_device_precision_modes)
-                        if k > 1:
-                            self._sheet.merge_range(row_idx - 1, col_idx1,
-                                                    row_idx - 1, col_idx1 + k - 1,
-                                                    framework_device_precision,
-                                                    self._cell_format_title1)
-                        elif k == 1:
-                            self._sheet.write(row_idx - 1, col_idx1,
-                                              framework_device_precision,
-                                              self._cell_format_title1)
-                        else:
-                            msg = 'Incorrect number of device precision modes'
-                            logging.error(msg)
-                            raise ValueError(msg)
-                        col_idx += k
-                        col_idx1 += k
-                        num_cols1 += k
-                        num_cols2 += k
-                        num_cols += k
-                        col_indeces4.append(col_indeces5)
-                    if num_cols1 > 1:
-                        self._sheet.merge_range(row_idx - 2, col_idx2,
-                                                row_idx - 2, col_idx2 + num_cols1 - 1,
-                                                machine_framework_device,
-                                                self._cell_format_title1)
-                    elif num_cols1 == 1:
+                        self._sheet.write(row_idx - 1, col_idx1 + idx4,
+                                          framework_device_precision,
+                                          self._cell_format_title_bgcolor)
+                        col_indeces4.append(col_idx1 + idx4)
+                    k = len(framework_device_precisions)
+                    if k == 1:
                         self._sheet.write(row_idx - 2, col_idx2,
                                           machine_framework_device,
-                                          self._cell_format_title1)
+                                          self._cell_format_title_bgcolor)
+                    elif k > 1:
+                        self._sheet.merge_range(row_idx - 2, col_idx2,
+                                                row_idx - 2, col_idx2 + k - 1,
+                                                machine_framework_device,
+                                                self._cell_format_title_bgcolor)
                     else:
-                        msg = 'Incorrect number of devices'
+                        msg = 'Incorrect number of device precision modes'
                         logging.error(msg)
                         raise ValueError(msg)
-                    col_idx2 += num_cols1
+                    num_cols2 += k
+                    num_cols += k
+                    col_idx += k
+                    col_idx2 += k
                     col_indeces3.append(col_indeces4)
                 if num_cols2 > 1:
                     self._sheet.merge_range(row_idx - 3, col_idx3,
                                             row_idx - 3, col_idx3 + num_cols2 - 1,
-                                            machine_framework, self._cell_format_title1)
+                                            machine_framework,
+                                            self._cell_format_title_bgcolor)
                 elif num_cols2 == 1:
                     self._sheet.write(row_idx - 3, col_idx3,
-                                      machine_framework, self._cell_format_title1)
+                                      machine_framework,
+                                      self._cell_format_title_bgcolor)
                 else:
                     msg = 'Incorrect number of frameworks'
                     logging.error(msg)
@@ -263,10 +197,10 @@ class XlsxBenchmarkTable(XlsxTable):
             if num_cols > 1:
                 self._sheet.merge_range(row_idx - 4, rel_col_idx,
                                         row_idx - 4, rel_col_idx + num_cols - 1,
-                                        machine, self._cell_format_title1)
+                                        machine, self._cell_format_title_bgcolor)
             elif num_cols == 1:
                 self._sheet.write(row_idx - 4, rel_col_idx,
-                                  machine, self._cell_format_title1)
+                                  machine, self._cell_format_title_bgcolor)
             else:
                 msg = 'Incorrect number of machines'
                 logging.error(msg)
@@ -276,66 +210,54 @@ class XlsxBenchmarkTable(XlsxTable):
 
         logging.info('FINISH: _fill_horizontal_title()')
 
-    def _add_new_line(self, values, sep=','):
-        for key, value in values.items():
-            values[key] = value.replace(sep, ',\n')
-
     def create_table_header(self):
         logging.info('START: create_table_header()')
 
         self._init_xlsx_parameters()
 
         # Freeze title panes
-        self._sheet.freeze_panes(5, 5)
+        self._sheet.freeze_panes(4, 5)
 
         # Write horizontal title (first cells before infrastructure)
-        self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format_title1)
+        self._sheet.merge_range('A1:A4', self._KEY_TASK_TYPE,
+                                self._cell_format_title_bgcolor)
 
         col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
-        self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
+        self._sheet.merge_range('B1:B4', self._KEY_TOPOLOGY_NAME,
+                                self._cell_format_title_bgcolor)
 
         col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
-        self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
+        self._sheet.merge_range('C1:C4', self._KEY_TRAIN_FRAMEWORK,
+                                self._cell_format_title_bgcolor)
 
-        self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
         col_width = XlsxTable._get_column_width(
-            self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
+            self._data_dictionary[self._KEY_DATASET], self._cell_format)
         self._sheet.set_column(3, 3, col_width)
-        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format_title1)
-        self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format_title1)
+        self._sheet.merge_range('D1:D4', self._KEY_DATASET,
+                                self._cell_format_title_bgcolor)
+
+        col_width = XlsxTable._get_column_width(
+            self._data_dictionary[self._KEY_ACCURACY_TYPE], self._cell_format)
+        self._sheet.set_column(4, 4, col_width)
+        self._sheet.merge_range('E1:E4', self._KEY_ACCURACY_TYPE,
+                                self._cell_format_title_bgcolor)
 
         self._get_infrastructure()
         self._get_inference_frameworks()
         self._get_devices()
         self._get_precisions()
-        self._get_execution_modes()
 
         # Write horizontal title (cells corresponding infrastructure)
         self._fill_horizontal_title()
 
         logging.info('FINISH: create_table_header()')
 
-    def _find_column_idx(self, value):
-        idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
-                                             self._infrastructure)
-        idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
-                                                  self._inference_frameworks[idx1])
-        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
-        matcher = re.match(pattern, value[self._KEY_PARAMETERS])
-        device_name = matcher.group('device_name')
-        idx3 = self._find_device_idx(device_name, self._devices[idx1][idx2])
-        idx4 = self._find_precision_idx(value[self._KEY_PRECISION],
-                                        self._precisions[idx1][idx2][idx3])
-        idx5 = self._find_execution_mode_idx(value[self._KEY_EXECUTION_MODE],
-                                             self._execution_modes[idx1][idx2][idx3][idx4])
-        return self._col_indeces[idx1][idx2][idx3][idx4][idx5]
-
     def _find_row_records(self, task_type, topology_name, train_framework,
-                          blob_size, batch_size, experiments,
+                          dataset, accuracy_type, experiments,
                           processed_records_keys):
         records_group = []
         for key, value in experiments.items():
@@ -343,26 +265,28 @@ class XlsxBenchmarkTable(XlsxTable):
                     and value[self._KEY_TASK_TYPE] == task_type
                     and value[self._KEY_TOPOLOGY_NAME] == topology_name
                     and value[self._KEY_TRAIN_FRAMEWORK] == train_framework
-                    and value[self._KEY_BLOB_SIZE] == blob_size
-                    and value[self._KEY_BATCH_SIZE] == batch_size):
+                    and value[self._KEY_DATASET] == dataset
+                    and value[self._KEY_ACCURACY_TYPE] == accuracy_type):
                 records_group.append(value)
                 processed_records_keys.append(key)
         return records_group
 
     def _create_row_record(self, records_group):
-        return self._create_row_record_by_key(records_group, self._KEY_FPS)
+        return self._create_row_record_by_key(records_group, self._KEY_ACCURACY)
 
-    def _remove_unused_metrics(self, data):
-        # remove unused keys from DataFrame
-        for key, _ in self._data.copy().items():
-            if key in (self._KEY_AVGTIME, self._KEY_LATENCY):
-                del self._data[key]
-        return self._data
+    def _find_column_idx(self, value):
+        idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
+                                             self._infrastructure)
+        idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
+                                                  self._inference_frameworks[idx1])
+        idx3 = self._find_device_idx(value[self._KEY_DEVICE], self._devices[idx1][idx2])
+        idx4 = self._find_precision_idx(value[self._KEY_PRECISION],
+                                        self._precisions[idx1][idx2][idx3])
+        return self._col_indeces[idx1][idx2][idx3][idx4]
 
     def create_table_rows(self):
         logging.info('START: create_table_rows()')
 
-        self._data = self._remove_unused_metrics(self._data)
         # transpose 2d dictionary
         experiments = self._data.to_dict('index')
 
@@ -374,32 +298,32 @@ class XlsxBenchmarkTable(XlsxTable):
             records_group = self._find_row_records(value[self._KEY_TASK_TYPE],
                                                    value[self._KEY_TOPOLOGY_NAME],
                                                    value[self._KEY_TRAIN_FRAMEWORK],
-                                                   value[self._KEY_BLOB_SIZE],
-                                                   value[self._KEY_BATCH_SIZE],
+                                                   value[self._KEY_DATASET],
+                                                   value[self._KEY_ACCURACY_TYPE],
                                                    experiments,
                                                    processed_records_keys)
             if (len(records_group) == 0):
                 continue
-            fps_record = self._create_row_record(records_group)
+            accuracy_record = self._create_row_record(records_group)
             record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
                       self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
                       self._KEY_TRAIN_FRAMEWORK: value[self._KEY_TRAIN_FRAMEWORK],
-                      self._KEY_BLOB_SIZE: value[self._KEY_BLOB_SIZE],
-                      self._KEY_BATCH_SIZE: value[self._KEY_BATCH_SIZE],
-                      self._KEY_FPS: fps_record}
+                      self._KEY_DATASET: value[self._KEY_DATASET],
+                      self._KEY_ACCURACY_TYPE: value[self._KEY_ACCURACY_TYPE],
+                      self._KEY_ACCURACY: accuracy_record}
             self._table_records[value[self._KEY_TASK_TYPE]].append(record)
 
         logging.info('FINISH: create_table_rows()')
 
     def _get_records_group(self, task_records, topology_name, train_framework,
-                           blob_size, processed_records_idxs):
+                           dataset, processed_records_idxs):
         records_group = []
         for idx in range(len(task_records)):
             record = task_records[idx]
             if (idx not in processed_records_idxs
                     and record[self._KEY_TOPOLOGY_NAME] == topology_name
                     and record[self._KEY_TRAIN_FRAMEWORK] == train_framework
-                    and record[self._KEY_BLOB_SIZE] == blob_size):
+                    and record[self._KEY_DATASET] == dataset):
                 processed_records_idxs.append(idx)
                 records_group.append(record)
         return records_group
@@ -407,7 +331,7 @@ class XlsxBenchmarkTable(XlsxTable):
     def write_test_results(self):
         logging.info('START: write_test_results()')
 
-        row_idx = 5
+        row_idx = 4
         for task_type, task_records in self._table_records.items():  # loop by tasks
             if len(task_records) <= 0:
                 continue
@@ -415,17 +339,18 @@ class XlsxBenchmarkTable(XlsxTable):
                 self._sheet.merge_range(row_idx, 0, row_idx + len(task_records) - 1, 0,
                                         task_type, self._cell_format_task_type)
             else:
-                self._sheet.write(row_idx, 0, task_type, self._cell_format_task_type)
+                self._sheet.write(row_idx, 0, task_type,
+                                  self._cell_format_task_type)
 
             processed_records_idxs = []
             for record in task_records:  # searching for records for the same topologies
                 topology_name = record[self._KEY_TOPOLOGY_NAME]
                 train_framework = record[self._KEY_TRAIN_FRAMEWORK]
-                blob_size = record[self._KEY_BLOB_SIZE]
+                dataset = record[self._KEY_DATASET]
                 records_group = self._get_records_group(task_records,
                                                         topology_name,
                                                         train_framework,
-                                                        blob_size,
+                                                        dataset,
                                                         processed_records_idxs)
                 topology_num_records = len(records_group)
                 if topology_num_records == 0:
@@ -434,36 +359,29 @@ class XlsxBenchmarkTable(XlsxTable):
                     self._sheet.merge_range(row_idx, 1,
                                             row_idx + topology_num_records - 1,
                                             1, topology_name,
-                                            self._cell_format_title2)
+                                            self._cell_format_title)
                     self._sheet.merge_range(row_idx, 2,
                                             row_idx + topology_num_records - 1,
                                             2, train_framework,
-                                            self._cell_format_title2)
+                                            self._cell_format_title)
                     self._sheet.merge_range(row_idx, 3,
                                             row_idx + topology_num_records - 1,
-                                            3, blob_size,
-                                            self._cell_format)
+                                            3, dataset,
+                                            self._cell_format_title)
                 else:
-                    self._sheet.write(row_idx, 1, topology_name, self._cell_format_title2)
-                    self._sheet.write(row_idx, 2, train_framework, self._cell_format_title2)
-                    self._sheet.write(row_idx, 3, blob_size, self._cell_format)
+                    self._sheet.write(row_idx, 1, topology_name, self._cell_format_title)
+                    self._sheet.write(row_idx, 2, train_framework, self._cell_format_title)
+                    self._sheet.write(row_idx, 3, dataset, self._cell_format_title)
                 for topology_record in records_group:
-                    self._sheet.write(row_idx, 4, topology_record[self._KEY_BATCH_SIZE],
-                                      self._cell_format_title2)
-                    for key, value in topology_record[self._KEY_FPS].items():
-                        formatting = self._cell_format_fps
+                    self._sheet.write(row_idx, 4, topology_record[self._KEY_ACCURACY_TYPE],
+                                      self._cell_format_title)
+                    for key, value in topology_record[self._KEY_ACCURACY].items():
+                        formatting = self._cell_format_acc
                         if value == 'None':
                             value = 'NaN'
-                            formatting = self._cell_format_nan_fps
+                            formatting = self._cell_format_nan_acc
                         elif value == 'Undefined':
-                            formatting = self._cell_format_undefined_fps
-                        else:
-                            try:
-                                value = float(value)
-                            except ValueError as error:
-                                logging.error(f'{error}')
-                                value = 'Incorrect'
-                                formatting = self._cell_format_nan_fps
+                            formatting = self._cell_format_undefined_acc
                         self._sheet.write(row_idx, key, value, formatting)
                     row_idx += 1
 
@@ -474,17 +392,17 @@ class XlsxBenchmarkTable(XlsxTable):
     def beautify_table(self):
         logging.info('START: beautify_table()')
 
-        rel_col_idx = 5  # task type, topology, framework, blob sizes, batch size
+        rel_col_idx = 5  # task type, topology, framework, dataset, accuracy type
         rel_row_idx = 0
-        num_header_rows = 5  # infrastructure, framework, device, precision, mode
-        col_depth = 3
+        num_header_rows = 4  # infrastructure, framework, device, precision
+        col_depth = 2
         self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
         self._draw_bold_bolder(num_header_rows - 1, 0,
                                self._full_num_rows - num_header_rows + 1,
                                rel_col_idx)
         for idx in range(len(self._infrastructure)):
-            execution_modes = list(deepflatten(self._execution_modes[idx], depth=col_depth))
-            num_cols = len(execution_modes)
+            precisions = list(deepflatten(self._precisions[idx], depth=col_depth))
+            num_cols = len(precisions)
             self._draw_bold_bolder(rel_row_idx, rel_col_idx, num_header_rows, num_cols)
             self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
                                    self._full_num_rows - num_header_rows + 1, num_cols)
