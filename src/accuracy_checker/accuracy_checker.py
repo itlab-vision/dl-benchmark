@@ -12,6 +12,9 @@ from process import ProcessHandler
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
 
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -77,35 +80,45 @@ def cli_argument_parser():
 
 
 def accuracy_check(executor_type, test_list, output_handler, log):
-    process_executor = Executor.get_executor(executor_type, log)
+    status = EXIT_SUCCESS
+
+    try:
+        process_executor = Executor.get_executor(executor_type, log)
+    except ValueError as ex:
+        log.error(ex, exc_info=True)
+        return EXIT_FAILURE
     process_executor.prepare_executor(test_list)
+
     for idx, test in enumerate(test_list):
         test_process = ProcessHandler(log, process_executor, test)
         test_process.execute(idx)
+
         log.info('Saving test result in file\n')
         output_handler.add_results(test, test_process, process_executor)
 
+        current_status = test_process.get_status()
+        if current_status != EXIT_SUCCESS:
+            status = current_status
+            log.error(f'Test finished with non-zero code: {current_status}')
+    return status
+
 
 if __name__ == '__main__':
-    try:
-        configure_logger()
-        sys.excepthook = exception_hook
+    configure_logger()
+    sys.excepthook = exception_hook
 
-        args = cli_argument_parser()
-        test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
-                                     args.extensions_path)
-        test_list = TestResultParser.get_test_list(args.config_path, test_parameters)
+    args = cli_argument_parser()
+    test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
+                                 args.extensions_path)
+    test_list = TestResultParser.get_test_list(args.config_path, test_parameters)
 
-        log.info(f'Create result table with name: {args.result_file}')
+    log.info(f'Create result table with name: {args.result_file}')
 
-        output_handler = OutputHandler(args.result_file, args.csv_delimiter)
-        output_handler.create_table()
+    output_handler = OutputHandler(args.result_file, args.csv_delimiter)
+    output_handler.create_table()
 
-        log.info(f'Start {len(test_list)} accuracy tests\n')
+    log.info(f'Start {len(test_list)} accuracy tests\n')
 
-        accuracy_check(args.executor_type, test_list, output_handler, log)
-
-        log.info('Accuracy tests completed')
-    except Exception as exp:
-        log.error(str(exp))
-        sys.exit(1)
+    return_code = accuracy_check(args.executor_type, test_list, output_handler, log)
+    log.info('Accuracy tests completed' if not return_code else 'Accuracy tests failed')
+    sys.exit(return_code)

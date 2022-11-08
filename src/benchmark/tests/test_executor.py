@@ -65,10 +65,9 @@ def test_get_executor(executor_type, mocker):
     assert isinstance(Executor.get_executor(executor_type[0], log), executor_type[1])
 
 
-@pytest.mark.parametrize('executor_type', ['test_str_1', 'test_str_2'])
-def test_get_wrong_executor(executor_type, mocker):
-    mocker.patch('docker.from_env', return_value=MockDockerApi())
-    assert Executor.get_executor(executor_type, log) is None
+def test_get_wrong_executor():
+    with pytest.raises(ValueError):
+        Executor.get_executor('test_str_1', log)
 
 
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])
