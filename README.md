@@ -95,6 +95,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert result table
     from csv to html.
+  - `csv2xlsx` is a set of scripts to convert result table
+    from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
   - `remote_control` contains scripts to execute benchmark
@@ -254,6 +256,8 @@ follow instructions.
        <Password>user</Password>
        <OS>Linux</OS>
        <DownloadFolder>/tmp/docker_folder</DownloadFolder>
+       <DatasetFolder>/mnt/datasets</DatasetFolder>
+       <ModelFolder>/mnt/models</ModelFolder>
      </Computer>
    </Computers>
    ```
@@ -293,7 +297,7 @@ follow instructions.
            <Name>densenet-121</Name>
            <Precision>FP32</Precision>
            <SourceFramework>Caffe</SourceFramework>
-           <Path>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Path>
+           <Path>/mnt/models/public/densenet-121/FP32</Path>
        </Model>
        <Dataset>
            <Name>ImageNet</Name>
@@ -359,11 +363,16 @@ follow instructions.
    scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/
    ```
 
-1. Convert csv to html using the following command:
+1. Convert csv to html or xlsx using the following commands:
 
    ```bash
    cd /tmp/dl-benchmark/csv2html
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html
+   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html -k benchmark
+   ```
+
+   ```bash
+   cd /tmp/dl-benchmark/csv2xlsx
+   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.xlsx -k benchmark
    ```
 
 
