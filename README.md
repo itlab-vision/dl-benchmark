@@ -255,6 +255,8 @@ follow instructions.
        <Password>user</Password>
        <OS>Linux</OS>
        <DownloadFolder>/tmp/docker_folder</DownloadFolder>
+       <DatasetFolder>/mnt/datasets</DatasetFolder>
+       <ModelFolder>/mnt/models</ModelFolder>
      </Computer>
    </Computers>
    ```
@@ -294,7 +296,7 @@ follow instructions.
            <Name>densenet-121</Name>
            <Precision>FP32</Precision>
            <SourceFramework>Caffe</SourceFramework>
-           <Path>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Path>
+           <Path>/mnt/models/public/densenet-121/FP32</Path>
        </Model>
        <Dataset>
            <Name>ImageNet</Name>
