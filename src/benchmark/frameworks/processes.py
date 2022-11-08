@@ -71,6 +71,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def _add_env_to_cmd_line(command_line, name, value):
         return f'{name}={value} {command_line}'
 
+    @staticmethod
+    def _add_optional_argument_to_cmd_line(command_line, argument, value):
+        if value:
+            return ProcessHandler._add_argument_to_cmd_line(command_line, argument, value)
+        return command_line
+
     def __print_error(self):
         out = self._output
         is_error = False

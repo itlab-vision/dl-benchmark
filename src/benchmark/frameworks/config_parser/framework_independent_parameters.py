@@ -12,11 +12,11 @@ class FrameworkIndependentParameters(FrameworkParameters):
             self.inference_framework = inference_framework
         else:
             raise ValueError('Inference framework is required parameter.')
-        if self._parameter_not_is_none(batch_size) and self._int_value_is_correct(batch_size):
-            self.batch_size = int(batch_size)
-        else:
-            raise ValueError('Batch size is required parameter. '
-                             'Batch size can only take values: integer greater than zero.')
+        if batch_size is not None:
+            if self._int_value_is_correct(batch_size):
+                self.batch_size = int(batch_size)
+            else:
+                raise ValueError('Batch size can only take values: integer greater than zero.')
         if self._device_is_correct(device):
             self.device = device.upper()
         else:
