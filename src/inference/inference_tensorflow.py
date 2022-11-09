@@ -1,15 +1,15 @@
+import sys
 import argparse
 import logging as log
-import sys
 from time import time
 
 import numpy as np
 import tensorflow as tf
-
-import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowIOModelWrapper
 from transformer import TensorFlowTransformer
+
+import postprocessing_data as pp
 
 
 def cli_argument_parser():

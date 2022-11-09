@@ -1,16 +1,16 @@
+import sys
 import argparse
 import logging as log
-import sys
 from time import time
 
 import numpy as np
 from openvino.runtime import AsyncInferQueue
-
-import postprocessing_data as pp
-import utils
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
 from transformer import OpenVINOTransformer
+
+import postprocessing_data as pp
+import utils
 
 
 def cli_argument_parser():
@@ -37,7 +37,7 @@ def cli_argument_parser():
     parser.add_argument('-r', '--requests',
                         help='A positive integer value of infer requests to be created.'
                              'Number of infer requests may be limited by device capabilities',
-                        default=None,
+                        default=0,
                         type=int,
                         dest='requests')
     parser.add_argument('-b', '--batch_size',
@@ -230,6 +230,16 @@ def main():
         log.info('Create executable network')
 
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
+
+        log.info('Runtime parameters')
+        keys = core.get_property(args.device, 'SUPPORTED_PROPERTIES')
+        log.info(f'DEVICE: {args.device}')
+        for k in keys:
+            if k not in ('SUPPORTED_METRICS', 'SUPPORTED_CONFIG_KEYS', 'SUPPORTED_PROPERTIES'):
+                try:
+                    log.info(f'  {k}  , {core.get_property(args.device, k)}')
+                except BaseException:
+                    pass
 
         log.info(f'Starting inference ({args.number_iter} iterations) with {args.requests} requests on {args.device}')
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)

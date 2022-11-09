@@ -1,26 +1,29 @@
 import abc
 import os
 import sys
-from subprocess import Popen, PIPE
+from pathlib import Path
 
 import docker
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from cmd_handler import CMDHandler  # noqa: E402, PLC0411
 
 
 class Executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
-        self.my_log = log
+        self.log = log
         self.target_framework = None
-        self.my_target_framework = None
 
     @staticmethod
     def get_executor(executor_type, log):
         if executor_type == 'host_machine':
             return HostExecutor(log)
-        elif executor_type == 'docker_container':
+        if executor_type == 'docker_container':
             return DockerExecutor(log)
+        raise ValueError('Executor type must be from list: host_machine, docker_container')
 
     def set_target_framework(self, target_framework):
-        self.my_target_framework = target_framework.replace(' ', '_')
+        self.target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod
     def get_path_to_inference_folder(self):
@@ -31,20 +34,20 @@ class Executor(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, timeout):
         pass
 
 
 class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
-        self.my_environment = os.environ.copy()
+        self.environment = os.environ.copy()
 
     def get_path_to_inference_folder(self):
-        return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference')
+        return str(Path(__file__).resolve().parents[1].joinpath('inference'))
 
     def get_infrastructure(self):
-        sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'node_info'))
+        sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('node_info')))
         import node_info as info  # noqa: E402
 
         hardware = info.get_system_characteristics()
@@ -55,20 +58,17 @@ class HostExecutor(Executor):
 
         return hardware_info
 
-    def execute_process(self, command_line):
-        process = Popen(command_line, env=self.my_environment, shell=True, stdout=PIPE, universal_newlines=True)
-        return_code = process.wait()
-        out, _ = process.communicate()
-        out = out.split('\n')[:-1]
-
-        return return_code, out
+    def execute_process(self, command_line, timeout):
+        cmd_handler = CMDHandler(command_line, self.log, self.environment)
+        cmd_handler.run(timeout)
+        return cmd_handler.return_code, cmd_handler.output
 
 
 class DockerExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         client = docker.from_env()
-        self.my_container_dict = {cont.name: cont for cont in client.containers.list()}
+        self.container_dict = {cont.name: cont for cont in client.containers.list()}
 
     def get_path_to_inference_folder(self):
         return '/tmp/dl-benchmark/src/inference'
@@ -76,7 +76,7 @@ class DockerExecutor(Executor):
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
         command_line = f'bash -c "source /root/.bashrc && {hardware_command}"'
-        output = self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        output = self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
         if output[0] != 0:
             return 'None'
         hardware = [line.strip().split(': ') for line in output[-1].decode('utf-8').split('\n')[1:-1]]
@@ -87,7 +87,7 @@ class DockerExecutor(Executor):
 
         return hardware_info
 
-    def execute_process(self, command_line):
+    def execute_process(self, command_line, _):
         command_line = f'bash -c "source /root/.bashrc && {command_line}"'
 
-        return self.my_container_dict[self.my_target_framework].exec_run(command_line, tty=True, privileged=True)
+        return self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)

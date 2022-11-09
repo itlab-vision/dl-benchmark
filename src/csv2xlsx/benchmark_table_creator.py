@@ -1,23 +1,20 @@
-import abc
 import logging
 import re
-import tkinter
-import tkinter.font
 from collections import defaultdict
+
+from table_creator import XlsxTable
 
 import pandas
 import xlsxwriter
 from iteration_utilities import deepflatten
 
 
-class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
+class XlsxBenchmarkTable(XlsxTable):
     def __init__(self, paths_table_csv, path_table_xlsx):
         logging.info('START: __init__(). Input: {0}, {1}'.format(
             paths_table_csv, path_table_xlsx))
 
-        self._paths_table_csv = paths_table_csv
-        self._path_table_xlsx = path_table_xlsx
-        self._sheet_name = 'Performance'
+        super().__init__(paths_table_csv, path_table_xlsx, 'Performance')
 
         logging.info('FINISH: __init__()')
 
@@ -88,27 +85,6 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._init_table_keys()
 
         logging.info('FINISH: read_csv_table()')
-
-    def _get_infrastructure(self):
-        logging.info('START: _get_infrastructure()')
-
-        self._infrastructure = list(set(self._data_dictionary[self._KEY_INFRASTRUCTURE].values()))
-
-        logging.info(f'FINISH: _get_infrastructure(). {self._infrastructure}')
-
-    def _get_inference_frameworks(self):
-        logging.info('START: _get_inference_frameworks()')
-
-        self._inference_frameworks = []
-        for machine in self._infrastructure:
-            machine_inference_frameworks = []
-            for key, value in self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK].items():
-                if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
-                        and value not in machine_inference_frameworks):
-                    machine_inference_frameworks.append(value)
-            self._inference_frameworks.append(machine_inference_frameworks)
-
-        logging.info(f'FINISH: _get_inference_frameworks(). {self._inference_frameworks}')
 
     def _get_devices(self):
         logging.info('START: _get_devices()')
@@ -300,28 +276,6 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
 
         logging.info('FINISH: _fill_horizontal_title()')
 
-    @staticmethod
-    def _get_column_width(values, format_):
-        root = tkinter.Tk()
-        max_cell_width = 0
-        used_font = tkinter.font.Font(family=format_.font_name,
-                                      size=format_.font_size,
-                                      weight=('bold' if format_.bold else 'normal'),
-                                      slant=('italic' if format_.italic else 'roman'),
-                                      underline=format_.underline,
-                                      overstrike=format_.font_strikeout)
-        reference_font = tkinter.font.Font(family='Calibri', size=11)
-        for _, value in values.items():
-            if '\n' in value:
-                pixelwidths = [used_font.measure(part) for part in value.split('\n')]
-                cell_width = (max(pixelwidths) + used_font.measure(' ')) / reference_font.measure('0')
-            else:
-                cell_width = used_font.measure(value + ' ') / reference_font.measure('0')
-            max_cell_width = max(max_cell_width, cell_width)
-        root.update_idletasks()
-        root.destroy()
-        return max_cell_width
-
     def _add_new_line(self, values, sep=','):
         for key, value in values.items():
             values[key] = value.replace(sep, ',\n')
@@ -337,18 +291,18 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         # Write horizontal title (first cells before infrastructure)
         self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format_title1)
 
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
         self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
 
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
         self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
 
         self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
-        col_width = self._get_column_width(
+        col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
         self._sheet.set_column(3, 3, col_width)
         self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format_title1)
@@ -359,39 +313,11 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         self._get_devices()
         self._get_precisions()
         self._get_execution_modes()
+
         # Write horizontal title (cells corresponding infrastructure)
         self._fill_horizontal_title()
 
         logging.info('FINISH: create_table_header()')
-
-    def _find_idx(self, element, available_elements, exception_str):
-        try:
-            return available_elements.index(element)
-        except ValueError:
-            raise ValueError(exception_str)
-
-    def _find_infrastructure_idx(self, infrastructure_name,
-                                 available_infrastructure):
-        return self._find_idx(infrastructure_name, available_infrastructure,
-                              'Unknown infrastructure')
-
-    def _find_inference_framework_idx(self, framework_name,
-                                      available_inference_frameworks):
-        return self._find_idx(framework_name, available_inference_frameworks,
-                              'Unknown inference framework')
-
-    def _find_device_idx(self, device_name, available_devices):
-        return self._find_idx(device_name, available_devices,
-                              'Unknown device name')
-
-    def _find_precision_idx(self, precision, available_precisions):
-        return self._find_idx(precision, available_precisions,
-                              'Unknown precision')
-
-    def _find_execution_mode_idx(self, execution_mode,
-                                 available_execution_modes):
-        return self._find_idx(execution_mode, available_execution_modes,
-                              'Unknown execution mode')
 
     def _find_column_idx(self, value):
         idx1 = self._find_infrastructure_idx(value[self._KEY_INFRASTRUCTURE],
@@ -424,18 +350,7 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
         return records_group
 
     def _create_row_record(self, records_group):
-        fps_record = {}
-        # fill existing FPS values
-        for value in records_group:
-            col_idx = self._find_column_idx(value)
-            fps_record.update({col_idx: value[self._KEY_FPS]})
-        # fill underfined FPS values
-        available_col_indeces = list(deepflatten(self._col_indeces))  # flatten
-        fps_keys = list(fps_record.keys())  # existing indeces
-        undefined_col_indeces = [idx for idx in available_col_indeces if idx not in fps_keys]
-        for idx in undefined_col_indeces:
-            fps_record.update({idx: 'Undefined'})
-        return fps_record
+        return self._create_row_record_by_key(records_group, self._KEY_FPS)
 
     def _remove_unused_metrics(self, data):
         # remove unused keys from DataFrame
@@ -463,6 +378,8 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
                                                    value[self._KEY_BATCH_SIZE],
                                                    experiments,
                                                    processed_records_keys)
+            if (len(records_group) == 0):
+                continue
             fps_record = self._create_row_record(records_group)
             record = {self._KEY_TASK_TYPE: value[self._KEY_TASK_TYPE],
                       self._KEY_TOPOLOGY_NAME: value[self._KEY_TOPOLOGY_NAME],
@@ -554,74 +471,9 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
 
         logging.info('FINISH: write_test_results()')
 
-    def _draw_bold_bolder(self, rel_row_idx, rel_col_idx, num_rows, num_cols):
-        # top left corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx,
-                                       rel_row_idx, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # bottom left corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
-                                       rel_row_idx + num_rows - 1, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # top right corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
-                                       rel_row_idx, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-        # bottom right corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-        # top
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
-                                       rel_row_idx, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 1})})
-        # bottom
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
-                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 1,
-                                                                         'right': 1})})
-        # left
-        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
-                                       rel_row_idx + num_rows - 2, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 1,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # right
-        self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
-                                       rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-
     def beautify_table(self):
         logging.info('START: beautify_table()')
+
         rel_col_idx = 5  # task type, topology, framework, blob sizes, batch size
         rel_row_idx = 0
         num_header_rows = 5  # infrastructure, framework, device, precision, mode
@@ -637,9 +489,12 @@ class XlsxBenchmarkTable(metaclass=abc.ABCMeta):
             self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
                                    self._full_num_rows - num_header_rows + 1, num_cols)
             rel_col_idx += num_cols
+
         logging.info('FINISH: beautify_table()')
 
     def close_table(self):
         logging.info('START: close_table()')
+
         self._book.close()
+
         logging.info('FINISH: close_table()')

@@ -1,13 +1,19 @@
 import argparse
 import logging as log
-import os
 import sys
+from pathlib import Path
 
 from config_parser import TestResultParser
 from executors import Executor
 from output import OutputHandler
 from parameters import Parameters
 from process import ProcessHandler
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger, exception_hook  # noqa: E402
+
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
 
 
 def cli_argument_parser():
@@ -31,6 +37,12 @@ def cli_argument_parser():
         type=str,
         dest='result_file',
         required=True)
+    parser.add_argument(
+        '--csv_delimiter',
+        metavar='CHARACTER',
+        type=str,
+        help='Delimiter to use in the resulting file',
+        default=';')
     parser.add_argument(
         '-d', '--definitions',
         help='Path to the global datasets configuration file',
@@ -61,50 +73,52 @@ def cli_argument_parser():
 
     args = parser.parse_args()
 
-    if not os.path.isfile(args.config_path):
+    if not Path(args.config_path).is_file():
         raise ValueError('Wrong path to configuration file!')
 
     return args
 
 
 def accuracy_check(executor_type, test_list, output_handler, log):
-    process_executor = Executor.get_executor(executor_type, log)
+    status = EXIT_SUCCESS
+
+    try:
+        process_executor = Executor.get_executor(executor_type, log)
+    except ValueError as ex:
+        log.error(ex, exc_info=True)
+        return EXIT_FAILURE
     process_executor.prepare_executor(test_list)
+
     for idx, test in enumerate(test_list):
         test_process = ProcessHandler(log, process_executor, test)
         test_process.execute(idx)
-        log.info('Saving test result in file')
+
+        log.info('Saving test result in file\n')
         output_handler.add_results(test, test_process, process_executor)
 
-
-def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
-
-    try:
-        args = cli_argument_parser()
-
-        test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
-                                     args.extensions_path)
-        test_list = TestResultParser.get_test_list(args.config, test_parameters)
-
-        log.info(f'Create result table with name: {args.result_file}')
-
-        output_handler = OutputHandler(args.result_file)
-        output_handler.create_table()
-
-        log.info(f'Start {len(test_list)} accuracy tests')
-
-        accuracy_check(args.executor_type, test_list, output_handler, log)
-
-        log.info('Inference tests completed')
-    except Exception as ex:
-        print('ERROR! : {0}'.format(str(ex)))
-        sys.exit(1)
+        current_status = test_process.get_status()
+        if current_status != EXIT_SUCCESS:
+            status = current_status
+            log.error(f'Test finished with non-zero code: {current_status}')
+    return status
 
 
 if __name__ == '__main__':
-    sys.exit(main() or 0)
+    configure_logger()
+    sys.excepthook = exception_hook
+
+    args = cli_argument_parser()
+    test_parameters = Parameters(args.source_path, args.annotations_path, args.definitions_path,
+                                 args.extensions_path)
+    test_list = TestResultParser.get_test_list(args.config_path, test_parameters)
+
+    log.info(f'Create result table with name: {args.result_file}')
+
+    output_handler = OutputHandler(args.result_file, args.csv_delimiter)
+    output_handler.create_table()
+
+    log.info(f'Start {len(test_list)} accuracy tests\n')
+
+    return_code = accuracy_check(args.executor_type, test_list, output_handler, log)
+    log.info('Accuracy tests completed' if not return_code else 'Accuracy tests failed')
+    sys.exit(return_code)

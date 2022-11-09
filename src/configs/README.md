@@ -348,8 +348,9 @@
   на котором планируется запуск бенчмаркинга.
 - Путь до директории, куда будет сохранен Docker-образ, описывается
   внутри тега `DownloadFolder`.
-- Путь до директории с наборами данных для проверки качества моделей, описывается
-  внутри тега `DatasetFolder`.
+- Путь до расшаренной директории с наборами данных для проверки
+  качества моделей, описывается внутри тега `DatasetFolder`.
+- Путь до расшаренной директории с моделями, описывается внутри тега `ModelFolder`.
 
 ### Пример заполнения
 
@@ -363,6 +364,7 @@
         <OS>Linux</OS>
         <DownloadFolder>/tmp/docker_folder</DownloadFolder>
         <DatasetFolder>/mnt/datasets</DatasetFolder>
+        <ModelFolder>/mnt/models</ModelFolder>
     </Computer>
 </Computers>
 ```
@@ -380,7 +382,7 @@
 - Первый параметр представляет собой идентификатор (название) конфигурации модели.
   Параметр описывается внутри тега `ConfigId`.
 
-- Все теги, пренадлежащие `PotParameters`, представляют собой
+- Все теги, принадлежащие `PotParameters`, представляют собой
   теги, соответствующие ключам командной строки для [POT CLI](openvino-pot-cli):
 
   Тег | Ключ
@@ -394,7 +396,7 @@
   StreamOutput | `--stream-output`
   KeepUncompressedWeights | `--keep-uncompressed-weights`
 
--  Все теги, принадлежащие `ConfigParameters`, представляют собой
+- Все теги, принадлежащие `ConfigParameters`, представляют собой
   теги параметров квантизации. Практически все они опциональны
   и соответствуют аналогичным параметрам для [DefaultQuantization](openvino-pot-dq)
   и [AccuracyAwareQuantization](openvino-pot-aaq).

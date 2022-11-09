@@ -35,8 +35,11 @@ class OpenVINOTransformer(Transformer):
     def transform_images(self, images, shape, element_type):
         b = shape[0]
         transformed_images = np.zeros(shape=shape, dtype=element_type)
+        image_index = 0
         for i in range(b):
-            transformed_images[i] = self._transform(images[i], shape)
+            image_index %= images.shape[0]
+            transformed_images[i] = self._transform(images[image_index], shape)
+            image_index += 1
         return transformed_images
 
 

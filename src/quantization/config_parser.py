@@ -1,6 +1,6 @@
 import copy
 import json
-import os
+from pathlib import Path
 
 from xml.etree import ElementTree as ET
 from parameters import AllParameters
@@ -9,18 +9,14 @@ from utils import get_correct_path, camel_to_snake, get_typed_from_str
 
 class ConfigParser:
     def __init__(self, config_file_path):
-        if not os.path.isfile(config_file_path):
+        if not Path(config_file_path).is_file():
             raise ValueError('Wrong path to configuration file!')
         self.__config_path = get_correct_path(config_file_path)
         self.__pot_parameters = []
         self.__config_file_paths = []
-        self.__configs_folder = 'quantization_config_files'
-        self.__tmp_folder = 'tmp'
-        if not os.path.isdir(self.__tmp_folder):
-            os.mkdir(self.__tmp_folder)
-        self.__folder_with_configs = os.path.join(self.__tmp_folder, self.__configs_folder)
-        if not os.path.isdir(self.__folder_with_configs):
-            os.mkdir(self.__folder_with_configs)
+        self.__folder_with_configs = Path('quantization_config_files')
+        if not self.__folder_with_configs.is_dir():
+            self.__folder_with_configs.mkdir()
 
     def parse(self):
         with open(self.__config_path, 'r') as config_file:
@@ -35,7 +31,7 @@ class ConfigParser:
         for m_params in all_params.models_list:
             config_file_path = self.__create_pot_config_file(m_params)
             self.__config_file_paths.append(config_file_path)
-            config_path = get_correct_path(config_file_path)
+            config_path = get_correct_path(str(config_file_path))
             pot_params = m_params.get_pot_parameters()
             pot_params.rewrite_config_path(config_path)
             self.__pot_parameters.append(copy.copy(pot_params))
@@ -43,25 +39,23 @@ class ConfigParser:
 
     def __create_pot_config_file(self, model_params):
         filename = model_params.get_config_json_filename()
-        filename = os.path.join(self.__folder_with_configs, filename)
+        filename = self.__folder_with_configs.joinpath(filename)
         with open(filename, 'w') as config_file:
             json.dump(
                 model_params.get_config_parameters(),
                 config_file,
                 indent=4,
             )
-        return os.path.abspath(filename)
+        return filename.resolve()
 
     def clean(self):
         for config_file_path in self.__config_file_paths:
-            if os.path.isfile(config_file_path):
-                os.remove(config_file_path)
+            if config_file_path.is_file():
+                config_file_path.unlink()
             else:
                 raise ValueError('Wrong path to configuration file!')
-        if os.path.isdir(self.__folder_with_configs):
-            os.rmdir(self.__folder_with_configs)
-        if os.path.isdir(self.__tmp_folder):
-            os.rmdir(self.__tmp_folder)
+        if self.__folder_with_configs.is_dir():
+            self.__folder_with_configs.rmdir()
 
     @staticmethod
     def parse_xml_to_json(xml_config):

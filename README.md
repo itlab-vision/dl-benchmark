@@ -95,10 +95,10 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert result table
     from csv to html.
+  - `csv2xlsx` is a set of scripts to convert result table
+    from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
-  - `model_converter` contains scripts to convert models with specific batch 
-    sizes.
   - `quantization` contains scripts to quantize model to INT8-precision
     using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
@@ -135,9 +135,10 @@ by default in Ubuntu 20.04).
     sudo apt install git
     git clone https://github.com/itlab-vision/dl-benchmark.git
     ```
-1. Install requirements:
-  - `pip install -r ~/dl-benchmark/requirements_linux.txt` for Linux.
-  - `pip install -r ~/dl-benchmark/requirements_windows.txt` for Windows. 
+1. Install requirements.
+    ```bash
+    pip install -r ~/dl-benchmark/requirements.txt
+    ```
 
 ## Model preparing
 
@@ -147,10 +148,15 @@ To prepare models and data for benchmarking, please, follow instructions.
     ```bash
     mkdir <working_dir>
     ```  
-1. Download models using OpenVINO model donwloader tool to
+1. Download models using OpenVINO model downloader tool to
    the `<working_dir>` directory:
     ```bash
     omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
+    ``` 
+1. Convert models using OpenVINO model converter tool to
+   the `<working_dir>` directory:
+    ```bash
+    omz_converter --output_dir <working_dir> --download_dir <working_dir>
     ``` 
 1. (Optional) Convert models to INT8-precision:
    1. Prepare configuration files in accordance with
@@ -162,15 +168,6 @@ To prepare models and data for benchmarking, please, follow instructions.
       ```bash
       python3 ~/dl-benchmark/src/quantization/quantization.py -c <config_path>
       ``` 
-1. Convert models to OpenVINO format with specific batch sizes using the script
-   `src/model_converter/model_converter.py` in accordiance with 
-   `src/model_converter/README.md`.
-   ```bash
-    python3 ~/dl-benchmark/src/model_converter/model_converter.py \
-    -d <working_dir> \
-    -z ~/dl-benchmark-env/lib/python3.8/site-packages/openvino/model_zoo/models \
-    -b 1 8
-    ``` 
 
 
 ## Deployment
@@ -270,6 +267,8 @@ follow instructions.
        <Password>user</Password>
        <OS>Linux</OS>
        <DownloadFolder>/tmp/docker_folder</DownloadFolder>
+       <DatasetFolder>/mnt/datasets</DatasetFolder>
+       <ModelFolder>/mnt/models</ModelFolder>
      </Computer>
    </Computers>
    ```
@@ -309,7 +308,7 @@ follow instructions.
            <Name>densenet-121</Name>
            <Precision>FP32</Precision>
            <SourceFramework>Caffe</SourceFramework>
-           <Path>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Path>
+           <Path>/mnt/models/public/densenet-121/FP32</Path>
        </Model>
        <Dataset>
            <Name>ImageNet</Name>
@@ -375,11 +374,16 @@ follow instructions.
    scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/
    ```
 
-1. Convert csv to html using the following command:
+1. Convert csv to html or xlsx using the following commands:
 
    ```bash
    cd /tmp/dl-benchmark/csv2html
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html
+   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html -k benchmark
+   ```
+
+   ```bash
+   cd /tmp/dl-benchmark/csv2xlsx
+   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.xlsx -k benchmark
    ```
 
 

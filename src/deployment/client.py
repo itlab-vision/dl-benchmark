@@ -32,10 +32,14 @@ def cli_argument_parser():
                         required=True,
                         type=str,
                         help='Name of the docker container.')
+    parser.add_argument('-mp', '--model_path',
+                        required=True,
+                        type=str,
+                        help='Path to share directory with models to mount into docker container.')
     parser.add_argument('-dp', '--dataset_path',
                         required=True,
                         type=str,
-                        help='Path to directory with datasets to mount into docker container.')
+                        help='Path to share directory with datasets to mount into docker container.')
 
     args = parser.parse_args()
 
@@ -94,7 +98,8 @@ def main():
     os.system(f'docker run --privileged -d -it '
               f'--name {args.container_name} '
               f'–v /dev:/dev '
-              f'-v {args.dataset_path}:/mnt/datasets '
+              f'-v {args.model_path}:{args.model_path} '
+              f'-v {args.dataset_path}:{args.dataset_path} '
               f'–network=host {image_name.split(".")[0]}')
 
 
