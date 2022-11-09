@@ -43,10 +43,13 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             if not Path(self._parameters.output_dir).is_dir():
                 Path(self._parameters.output_dir).mkdir()
         common_params = self._add_argument_to_cmd_line(common_params, '--output-dir', self._parameters.output_dir)
-        common_params = self._add_flag_to_cmd_line(common_params, '--direct-dump', self._parameters.direct_dump is not None)
+        common_params = self._add_flag_to_cmd_line(common_params, '--direct-dump',
+                                                   self._parameters.direct_dump is not None)
         common_params = self._add_argument_to_cmd_line(common_params, '--log-level', self._parameters.log_level)
-        common_params = self._add_flag_to_cmd_line(common_params, '--progress-bar', self._parameters.progress_bar is not None)
-        common_params = self._add_flag_to_cmd_line(common_params, '--stream-output', self._parameters.stream_output is not None)
+        common_params = self._add_flag_to_cmd_line(common_params, '--progress-bar',
+                                                   self._parameters.progress_bar is not None)
+        common_params = self._add_flag_to_cmd_line(common_params, '--stream-output',
+                                                   self._parameters.stream_output is not None)
         common_params = self._add_flag_to_cmd_line(common_params, '--keep-uncompressed-weights',
                                                    self._parameters.keep_uncompressed_weights is not None)
 

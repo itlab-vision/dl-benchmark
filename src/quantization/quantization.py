@@ -65,7 +65,7 @@ if __name__ == '__main__':
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()
-    
+
     parser = ConfigParser(args.config_path)
 
     log.info('Start parsing the configuration on the path: {0}!'.format(args.config_path))
