@@ -32,9 +32,14 @@ class OutputHandler:
     @staticmethod
     def __create_table_row(executor, test, process):
         report = test.get_report()
-        report['input_shape'] = process.get_model_shape()
-        report['status'] = 'Success' if process.get_status() == 0 else 'Failed'
-        report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
+        if process is not None:
+            report['input_shape'] = process.get_model_shape()
+            report['status'] = 'Success' if process.get_status() == 0 else 'Failed'
+            report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
+        else:
+            report['input_shape'] = 'Undefined'
+            report['status'] = 'Failed'
+            report['average_time'], report['fps'], report['latency'] = None, None, None
         report['hardware'] = executor.get_infrastructure()
         return report
 

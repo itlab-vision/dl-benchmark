@@ -74,17 +74,23 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
         if 'openvino' in framework_name.lower():
             benchmarks_path = openvino_cpp_benchmark_dir
 
-        test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
-                                                                                 log, benchmarks_path)
-        test_process.execute()
+        try:
+            test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
+                                                                                     log, benchmarks_path)
+            test_process.execute()
+
+            test_status = test_process.get_status()
+            if test_status != EXIT_SUCCESS:
+                status = test_status
+                log.error(f'Test finished with non-zero code: {test_status}')
+        except Exception as ex:
+            log.error(f'Inference failed with exception: {ex}', exc_info=True)
+            status = EXIT_FAILURE
+            test_process = None
 
         log.info('Saving test result in file\n')
         output_handler.add_row_to_table(process_executor, test, test_process)
 
-        current_status = test_process.get_status()
-        if current_status != EXIT_SUCCESS:
-            status = current_status
-            log.error(f'Test finished with non-zero code: {current_status}')
     return status
 
 
