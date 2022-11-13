@@ -391,7 +391,7 @@ follow instructions.
    --ftp_dir table_folder
    ```
 
-1. Wait for completing the benchmark and accuracu checker. After completion,
+1. Wait for completing the benchmark and accuracy checker. After completion,
    the `table_folder` directory will contain tables with the benchmarking combined results
    named `bench_all_results.csv` and with the accuracy checker combined results named
    `ac_all_results.csv`.
@@ -413,7 +413,8 @@ follow instructions.
 
    ```bash
    cd /tmp/dl-benchmark/csv2xlsx
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.xlsx -k benchmark
+   python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.xlsx
+   python3 converter.py -k accuracy-checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.xlsx
    ```
 
 
