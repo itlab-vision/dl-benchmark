@@ -97,10 +97,10 @@ def main():
     log.info('Docker run image')
     os.system(f'docker run --privileged -d -it '
               f'--name {args.container_name} '
-              f'–v /dev:/dev '
+              f'-v /dev:/dev '
               f'-v {args.model_path}:{args.model_path} '
               f'-v {args.dataset_path}:{args.dataset_path} '
-              f'–network=host {image_name.split(".")[0]}')
+              f'--network=host {image_name.split(".")[0]}')
 
 
 if __name__ == '__main__':
