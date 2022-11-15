@@ -4,6 +4,7 @@ from .accuracy_checker_config_widget import AccuracyCheckerConfigWidget
 from .benchmark_config_widget import BenchmarkConfigWidget
 from .deploy_config_widget import DeployConfigWidget
 from .remote_config_widget import RemoteConfigWidget
+from .quantization_config_widget import QuantizationConfigWidget
 
 
 class ConfigWidget(QWidget):
@@ -20,6 +21,8 @@ class ConfigWidget(QWidget):
         self._widgets['Remote configuration'].hide()
         grid.addWidget(self._widgets['Deploy configuration'], 1, 0)
         self._widgets['Deploy configuration'].hide()
+        grid.addWidget(self._widgets['Quantization configuration'], 1, 0)
+        self._widgets['Quantization configuration'].hide()
         self.setLayout(grid)
 
     def __create_combobox(self):
@@ -33,10 +36,12 @@ class ConfigWidget(QWidget):
         self.accuracy_checker_configs = AccuracyCheckerConfigWidget(self)
         self.remote_configs = RemoteConfigWidget(self)
         self.deploy_configs = DeployConfigWidget(self)
+        self.quantization_configs = QuantizationConfigWidget(self)
         dictionary = {'Benchmark configuration': self.benchmark_configs,
                       'AccuracyChecker configuration': self.accuracy_checker_configs,
                       'Remote configuration': self.remote_configs,
-                      'Deploy configuration': self.deploy_configs}
+                      'Deploy configuration': self.deploy_configs,
+                      'Quantization configuration': self.quantization_configs}
         return dictionary
 
     def on_activated(self, type_):
@@ -51,3 +56,4 @@ class ConfigWidget(QWidget):
         self.accuracy_checker_configs.update(model.accuracy_checker_config)
         self.remote_configs.update(model.remote_config)
         self.deploy_configs.update(model.deploy_config)
+        self.quantization_configs.update(model.quantization_config)

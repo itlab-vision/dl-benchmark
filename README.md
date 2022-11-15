@@ -99,6 +99,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
     from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
+  - `quantization` contains scripts to quantize model to INT8-precision
+    using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
 
@@ -156,6 +158,16 @@ To prepare models and data for benchmarking, please, follow instructions.
     ```bash
     omz_converter --output_dir <working_dir> --download_dir <working_dir>
     ``` 
+1. (Optional) Convert models to INT8-precision:
+   1. Prepare configuration files in accordance with
+    `src/configs/quantization_configuration_file_template.xml`. Please, use 
+    GUI application (`src/config_maker`).
+   1. Quantize models to INT8-precision using the script
+    `src/quantization/quantization.py` in accordiance with 
+    `src/quantization/README.md`.
+      ```bash
+      python3 ~/dl-benchmark/src/quantization/quantization.py -c <config_path>
+      ``` 
 
 
 ## Deployment

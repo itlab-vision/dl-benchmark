@@ -1,12 +1,16 @@
 import abc
-
 import os
-from subprocess import Popen, PIPE, STDOUT
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from cmd_handler import CMDHandler  # noqa: E402, PLC0411
 
 
 class Executor(metaclass=abc.ABCMeta):
     def __init__(self, log):
-        self.my_log = log
+        self.log = log
+        self.environment = os.environ.copy()
 
     @staticmethod
     def get_executor(executor_type, log):
@@ -23,16 +27,9 @@ class Executor(metaclass=abc.ABCMeta):
 class HostExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
-        self.my_environment = os.environ.copy()
 
     def execute_process(self, command_line):
-        process = Popen(
-            command_line,
-            env=self.my_environment,
-            shell=True,
-            stdout=PIPE,
-            stderr=STDOUT,
-            universal_newlines=True,
-        )
-        out, _ = process.communicate()
-        return out
+        cmd_handler = CMDHandler(command_line, self.log, self.environment)
+        cmd_handler.run(None)
+
+        return cmd_handler.return_code, cmd_handler.output
