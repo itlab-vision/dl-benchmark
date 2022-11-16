@@ -58,7 +58,7 @@ Ort::Value create_random_tensor(const inputs::InputDescr &input_descr,
                                            tensor_descr.data_shape.data(),
                                            tensor_descr.data_shape.size(),
                                            tensor_descr.type);
-    auto* tensor_data = tensor.GetTensorMutableData<T>();
+    auto *tensor_data = tensor.GetTensorMutableData<T>();
     size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
 
     std::mt19937 gen(0);
@@ -79,7 +79,7 @@ Ort::Value create_tensor_from_image(const inputs::InputDescr &input_descr, int b
                                            tensor_descr.data_shape.data(),
                                            tensor_descr.data_shape.size(),
                                            tensor_descr.type);
-    auto* tensor_data = tensor.GetTensorMutableData<T>();
+    auto *tensor_data = tensor.GetTensorMutableData<T>();
 
     size_t channels = tensor_descr.channels();
     size_t width = tensor_descr.width();
@@ -112,7 +112,7 @@ Ort::Value create_image_info_tensor(const inputs::InputDescr &input_descr, const
                                            tensor_descr.type);
 
     size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
-    auto* tensor_data = tensor.GetTensorMutableData<T>();
+    auto *tensor_data = tensor.GetTensorMutableData<T>();
     logger::info << "\t\t" << image_size.width << "x" << image_size.height << logger::endl;
     for (int b = 0; b < batch_size; ++b) {
         int image_info_size = tensor_size / batch_size;
@@ -143,7 +143,7 @@ Ort::Value create_tensor_from_binary(const inputs::InputDescr &input_descr, int 
                                            tensor_descr.type);
 
     size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
-    auto* tensor_data = tensor.GetTensorMutableData<char>();
+    auto *tensor_data = tensor.GetTensorMutableData<char>();
     for (int b = 0; b < batch_size; ++b) {
         size_t input_id = (start_index + b) % files.size();
         const auto &file_path = files[input_id];
@@ -347,7 +347,7 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
         throw std::logic_error("Shapes must be specified explicitly for models with dynamic input shapes.");
     }
 
-    inputs::InputsInfo input_info;
+    inputs::InputsInfo inputs_info;
     for (const auto &input : model_inputs) {
         inputs::InputDescr input_descr;
         input_descr.tensor_descr = input;
@@ -394,43 +394,61 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
                                             " not found in the names provided with -layout argument.");
             }
         }
+        else {
+            logger::warn << "Layout for input \"" << name
+                         << "\" will be detected automatically, as it wasn't provided explicitly." << logger::endl;
+            input_descr.tensor_descr.layout = utils::guess_layout_from_shape(input_descr.tensor_descr.data_shape);
+        }
 
         if (!means.empty()) {
+            std::vector<float> mean;
             if (means.count(name) > 0) {
-                input_descr.mean = means.at(name);
+                mean = means.at(name);
             }
             else if (means.count("") > 0 && means.size() == 1) {
-                input_descr.mean = means.at("");
+                mean = means.at("");
             }
             else if (means.size() > 1) {
                 throw std::invalid_argument("Input name " + name +
                                             " not found in the names provided with -mean argument.");
             }
+            if (!mean.empty()) {
+                if (mean.size() != static_cast<size_t>(tensor_descr.channels())) {
+                    throw std::logic_error("Number of mean values (" + std::to_string(mean.size()) +
+                                           ") must be equal to the number of model's input channels (" +
+                                           std::to_string(tensor_descr.channels()) + ")");
+                }
+                input_descr.mean = mean;
+            }
         }
 
         if (!scales.empty()) {
+            std::vector<float> scale;
             if (scales.count(name) > 0) {
-                input_descr.scale = scales.at(name);
+                scale = scales.at(name);
             }
             else if (scales.count("") > 0 && scales.size() == 1) {
-                input_descr.scale = scales.at("");
+                scale = scales.at("");
             }
             else if (scales.size() > 1) {
                 throw std::invalid_argument("Input name " + name +
                                             " not found in the names provided with -scales argument.");
             }
+
+            if (!scale.empty()) {
+                if (scale.size() != static_cast<size_t>(tensor_descr.channels())) {
+                    throw std::logic_error("Number of scale values (" + std::to_string(scale.size()) +
+                                           ") must be equal to the number of model's input channels (" +
+                                           std::to_string(tensor_descr.channels()) + ")");
+                }
+                input_descr.scale = scale;
+            }
         }
 
-        input_info.emplace(name, input_descr);
+        inputs_info.emplace(name, input_descr);
     }
 
-    if (input_layouts.empty()) {
-        logger::warn << "Layout will be detected automatically, as it wasn't provided explicitly." << logger::endl;
-        for (auto &[name, input_descr] : input_info) {
-            input_descr.tensor_descr.layout = utils::guess_layout_from_shape(input_descr.tensor_descr.data_shape);
-        }
-    }
-    return input_info;
+    return inputs_info;
 }
 
 void inputs::set_batch_size(inputs::InputsInfo &inputs_info, int batch_size) {

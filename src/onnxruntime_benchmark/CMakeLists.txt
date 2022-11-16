@@ -4,17 +4,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 find_package(OpenCV REQUIRED core imgproc imgcodecs)
 
-set(ORT_INSTALL_DIR $ENV{ORT_INSTALL_DIR})
-if (ORT_INSTALL_DIR)
-    find_library(ORT_LIBRARIES onnxruntime
-        ${ORT_INSTALL_DIR}/lib
-        CMAKE_FIND_ROOT_PATH_BOTH)
-    find_path(ORT_INCLUDE onnxruntime_cxx_api.h
+# search for ORT_INSTALL_DIR in env variables
+if (NOT DEFINED ORT_INSTALL_DIR)
+    if (DEFINED ENV{ORT_INSTALL_DIR})
+        set(ORT_INSTALL_DIR $ENV{ORT_INSTALL_DIR})
+    else()
+        message(FATAL_ERROR "Could not find ONNX Runtime install directory")
+    endif()
+endif()
+
+find_library(ORT_LIBRARIES onnxruntime
+            ${ORT_INSTALL_DIR}/lib
+            CMAKE_FIND_ROOT_PATH_BOTH)
+find_path(ORT_INCLUDE onnxruntime_cxx_api.h
         ${ORT_INSTALL_DIR}/include/onnxruntime/core/session
         CMAKE_FIND_ROOT_PATH_BOTH)
-else()
-    message(FATAL_ERROR "Could not find ONNX Runtime install directory")
-endif()
 
 add_subdirectory(thirdparty/gflags)
 add_subdirectory(thirdparty/nlohmann_json)

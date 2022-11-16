@@ -127,7 +127,8 @@ std::map<std::string, std::vector<std::string>> args::parse_input_files_argument
     }
     for (auto &[input_name, files] : mapped_files) {
         if (input_name != "") {
-            logger::info << "For input " << input_name << " " << files.size() << " files were added:" << logger::endl;
+            logger::info << "For input \"" << input_name << "\" " << files.size()
+                         << " files were added:" << logger::endl;
         }
         if (files.size() > max_files) {
             logger::warn << "Too many files to process. The number of files is limited to " << max_files << ""
