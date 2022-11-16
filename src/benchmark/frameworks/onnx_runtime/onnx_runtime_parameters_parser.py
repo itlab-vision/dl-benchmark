@@ -6,10 +6,10 @@ class OnnxRuntimeParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         dep_parameters_tag = curr_test.getElementsByTagName('FrameworkDependent')[0]
 
-        _shape = dep_parameters_tag.getElementsByTagName('Shape')[0].firstChild
+        _shape = dep_parameters_tag.getElementsByTagName('InputShape')[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName('Layout')[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName('Mean')[0].firstChild
-        _scale = dep_parameters_tag.getElementsByTagName('Scale')[0].firstChild
+        _scale = dep_parameters_tag.getElementsByTagName('InputScale')[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName('ThreadCount')[0].firstChild
         _inference_requests_count = dep_parameters_tag.getElementsByTagName('InferenceRequestsCount')[0].firstChild
 
