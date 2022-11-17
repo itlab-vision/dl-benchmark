@@ -134,6 +134,7 @@ by default in Ubuntu 20.04).
     ```bash
     sudo apt install git
     git clone https://github.com/itlab-vision/dl-benchmark.git
+    git submodule update --init --recursive
     ```
 1. Install requirements.
     ```bash

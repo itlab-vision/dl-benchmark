@@ -14,7 +14,7 @@ class FrameworkWrapper(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def create_process(test, executor, log, cpp_benchmark_path=None):
+    def create_process(test, executor, log, cpp_benchmarks_dir=None):
         raise NotImplementedError()
 
     @staticmethod

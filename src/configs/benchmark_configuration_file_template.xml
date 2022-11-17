@@ -89,4 +89,33 @@
             <KmpAffinity></KmpAffinity>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath> <!-- Не нужен для ONNX Runtime. Но проверка обяз-х пар-ов не пройдет, если оставить пустым -->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>ONNX Runtime</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device>CPU</Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Shape></Shape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <Scale></Scale>
+            <ThreadCount></ThreadCount>
+            <InferenceRequestsCount></InferenceRequestsCount>
+        </FrameworkDependent>
+    </Test>
 </Tests>

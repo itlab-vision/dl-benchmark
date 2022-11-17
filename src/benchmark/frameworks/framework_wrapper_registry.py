@@ -4,12 +4,13 @@ from .intel_caffe.intel_caffe_wrapper import IntelCaffeWrapper
 from .openvino.openvino_wrapper import OpenVINOWrapper
 from .singleton import Singleton
 from .tensorflow.tensorflow_wrapper import TensorFlowWrapper
+from .onnx_runtime.onnx_runtime_wrapper import OnnxRuntimeWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
     """Storage for all found framework wrappers.
     Framework wrapper is represented by a FrameworkWrapper subclass located in
-    a separate module (openvino.py, tensorflow.py etc) inside frameworks package.
+    a separate package (openvino, tensorflow etc) inside frameworks package.
     """
 
     def __init__(self):
@@ -28,3 +29,4 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[IntelCaffeWrapper.framework_name] = IntelCaffeWrapper()
         self._framework_wrappers[TensorFlowWrapper.framework_name] = TensorFlowWrapper()
         self._framework_wrappers[OpenVINOWrapper.framework_name] = OpenVINOWrapper()
+        self._framework_wrappers[OnnxRuntimeWrapper.framework_name] = OnnxRuntimeWrapper()
