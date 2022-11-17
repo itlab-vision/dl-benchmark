@@ -364,20 +364,20 @@ follow instructions.
       <Password>user</Password>
       <OS>Linux</OS>
       <FTPClientPath>/tmp/dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-		  <Benchmark>
-		  	<Config>configs/bench_config.xml</Config>
-		  	<Executor>docker_container</Executor>
-		  	<LogFile>/tmp/dl-benchmark/src/remote_start/bench_log.txt</LogFile>
-		  	<ResultFile>/tmp/dl-benchmark/src/remote_start/bench_result.csv</ResultFile>
-		  </Benchmark>
-		  <AccuracyChecker>
-		  	<Config>configs/ac_config.xml</Config>
-		  	<Executor>docker_container</Executor>
-		  	<DatasetPath></DatasetPath>
-		  	<DefinitionPath>/opt/intel/open_model_zoo/tools/accuracy_checker/definitions.yml</DefinitionPath>
-		  	<LogFile>/tmp/dl-benchmark/src/remote_start/ac_log.txt</LogFile>
-		  	<ResultFile>/tmp/dl-benchmark/src/remote_start/ac_result.csv</ResultFile>
-		  </AccuracyChecker>
+      <Benchmark>
+        <Config>configs/bench_config.xml</Config>
+        <Executor>docker_container</Executor>
+        <LogFile>/tmp/dl-benchmark/src/remote_start/bench_log.txt</LogFile>
+        <ResultFile>/tmp/dl-benchmark/src/remote_start/bench_result.csv</ResultFile>
+      </Benchmark>
+      <AccuracyChecker>
+        <Config>configs/ac_config.xml</Config>
+        <Executor>docker_container</Executor>
+        <DatasetPath></DatasetPath>
+        <DefinitionPath>/opt/intel/open_model_zoo/tools/accuracy_checker/definitions.yml</DefinitionPath>
+        <LogFile>/tmp/dl-benchmark/src/remote_start/ac_log.txt</LogFile>
+        <ResultFile>/tmp/dl-benchmark/src/remote_start/ac_result.csv</ResultFile>
+      </AccuracyChecker>
     </Computer>
   </Computers>
    ```
