@@ -115,7 +115,7 @@ def client_execution(machine, server_ip, server_login, server_psw, image_path, d
                      project_folder, container_name, model_path, dataset_path, log):
     executor = RemoteExecutor(machine['os_type'], log)
     executor.create_connection(machine['ip'], machine['login'], machine['password'])
-    joined_pass = os.path.join(project_folder, 'src/bench_deploy')
+    joined_pass = os.path.join(project_folder, 'src/deployment')
     project_folder = os.path.normpath(joined_pass)
     command = (f'python3 {project_folder}/client.py '
                f'-s {server_ip} '

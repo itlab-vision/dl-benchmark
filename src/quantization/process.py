@@ -1,145 +1,82 @@
-class ProcessHandler:
+import os
+import abc
+import shutil
+from pathlib import Path
+
+
+class ProcessHandler(metaclass=abc.ABCMeta):
     def __init__(self, parameters, executor, log):
-        self.__my_log = log
-        self.__my_executor = executor
-        self.__my_parameters = parameters
-        self.__my_output = None
+        self.__log = log
+        self._executor = executor
+        self._parameters = parameters
+        self._output = None
+        self._status = None
+
+    def get_status(self):
+        return self._status
 
     @staticmethod
-    def __add_config_for_cmd_line(command_line, config):
-        return '{0} -c {1}'.format(command_line, config)
+    def _add_argument_to_cmd_line(command_line, argument, value):
+        return f'{command_line} {argument} {value}' if value is not None else command_line
 
     @staticmethod
-    def __add_quantization_method_for_cmd_line(command_line, q_method):
-        return '{0} -q {1}'.format(command_line, q_method)
+    def _add_flag_to_cmd_line(command_line, flag, cond):
+        return f'{command_line} {flag}' if cond else command_line
 
-    @staticmethod
-    def __add_model_for_cmd_line(command_line, model):
-        return '{0} -m {1}'.format(command_line, model)
-
-    @staticmethod
-    def __add_weights_for_cmd_line(command_line, weights):
-        return '{0} -w {1}'.format(command_line, weights)
-
-    @staticmethod
-    def __add_model_name_for_cmd_line(command_line, name):
-        return '{0} -n {1}'.format(command_line, name)
-
-    @staticmethod
-    def __add_preset_for_cmd_line(command_line, preset):
-        return '{0} --preset {1}'.format(command_line, preset)
-
-    @staticmethod
-    def __add_ac_config_for_cmd_line(command_line, ac_config):
-        return '{0} --ac-config {1}'.format(command_line, ac_config)
-
-    @staticmethod
-    def __add_max_drop_for_cmd_line(command_line, max_drop):
-        return '{0} --max-drop {1}'.format(command_line, max_drop)
-
-    @staticmethod
-    def __add_eval_for_cmd_line(command_line):
-        return command_line + ' -e'
-
-    @staticmethod
-    def __add_output_dir_for_cmd_line(command_line, output_dir):
-        return '{0} --output-dir "{1}"'.format(command_line, output_dir)
-
-    @staticmethod
-    def __add_direct_dump_for_cmd_line(command_line):
-        return command_line + ' --direct-dump'
-
-    @staticmethod
-    def __add_log_level_for_cmd_line(command_line, log_level):
-        return '{0} --log-level {1}'.format(command_line, log_level)
-
-    @staticmethod
-    def __add_progress_bar_for_cmd_line(command_line):
-        return command_line + ' --progress-bar'
-
-    @staticmethod
-    def __add_stream_output_for_cmd_line(command_line):
-        return command_line + ' --stream-output'
-
-    @staticmethod
-    def __add_keep_weights_for_cmd_line(command_line):
-        return command_line + ' --keep-uncompressed-weights'
-
-    def _fill_command_line(self):
+    def __fill_command_line(self):
         cmd_line_base = 'pot'
 
         config_params = ''
-        if self.__my_parameters.config:
-            config_params = self.__add_config_for_cmd_line(
-                config_params,
-                self.__my_parameters.config,
-            )
-        if self.__my_parameters.quantization_method:
-            config_params = self.__add_quantization_method_for_cmd_line(
-                config_params,
-                self.__my_parameters.quantization_method,
-            )
-            if self.__my_parameters.model:
-                config_params = self.__add_model_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.model,
-                )
-            if self.__my_parameters.weights:
-                config_params = self.__add_weights_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.weights,
-                )
-            if self.__my_parameters.model_name:
-                config_params = self.__add_model_name_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.model_name,
-                )
-            if self.__my_parameters.preset:
-                config_params = self.__add_preset_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.preset,
-                )
-            if self.__my_parameters.ac_config:
-                config_params = self.__add_ac_config_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.ac_config,
-                )
-            if self.__my_parameters.max_drop:
-                config_params = self.__add_max_drop_for_cmd_line(
-                    config_params,
-                    self.__my_parameters.max_drop,
-                )
+        config_params = self._add_argument_to_cmd_line(config_params, '-c', self._parameters.config)
+        if self._parameters.quantization_method:
+            config_params = self._add_argument_to_cmd_line(config_params, '-q', self._parameters.quantization_method)
+            config_params = self._add_argument_to_cmd_line(config_params, '-m', self._parameters.model)
+            config_params = self._add_argument_to_cmd_line(config_params, '-w', self._parameters.weights)
+            config_params = self._add_argument_to_cmd_line(config_params, '-n', self._parameters.model_name)
+            config_params = self._add_argument_to_cmd_line(config_params, '--preset', self._parameters.preset)
+            config_params = self._add_argument_to_cmd_line(config_params, '--ac-config', self._parameters.ac_config)
+            config_params = self._add_argument_to_cmd_line(config_params, '--max-drop', self._parameters.max_drop)
 
         common_params = ''
-        if self.__my_parameters.evaluation:
-            common_params = self.__add_eval_for_cmd_line(common_params)
-        if self.__my_parameters.output_dir:
-            common_params = self.__add_output_dir_for_cmd_line(
-                common_params,
-                self.__my_parameters.output_dir,
-            )
-        if self.__my_parameters.direct_dump:
-            common_params = self.__add_direct_dump_for_cmd_line(common_params)
-        if self.__my_parameters.log_level:
-            common_params = self.__add_log_level_for_cmd_line(
-                common_params,
-                self.__my_parameters.log_level,
-            )
-        if self.__my_parameters.progress_bar:
-            common_params = self.__add_progress_bar_for_cmd_line(common_params)
-        if self.__my_parameters.stream_output:
-            common_params = self.__add_stream_output_for_cmd_line(common_params)
-        if self.__my_parameters.keep_uncompressed_weights:
-            common_params = self.__add_keep_weights_for_cmd_line(common_params)
+        common_params = self._add_flag_to_cmd_line(common_params, '-e', self._parameters.evaluation is not None)
+        if self._parameters.output_dir:
+            if not Path(self._parameters.output_dir).is_dir():
+                Path(self._parameters.output_dir).mkdir()
+        common_params = self._add_argument_to_cmd_line(common_params, '--output-dir', self._parameters.output_dir)
+        common_params = self._add_flag_to_cmd_line(common_params, '--direct-dump',
+                                                   self._parameters.direct_dump is not None)
+        common_params = self._add_argument_to_cmd_line(common_params, '--log-level', self._parameters.log_level)
+        common_params = self._add_flag_to_cmd_line(common_params, '--progress-bar',
+                                                   self._parameters.progress_bar is not None)
+        common_params = self._add_flag_to_cmd_line(common_params, '--stream-output',
+                                                   self._parameters.stream_output is not None)
+        common_params = self._add_flag_to_cmd_line(common_params, '--keep-uncompressed-weights',
+                                                   self._parameters.keep_uncompressed_weights is not None)
 
-        command_line = '{0} {1} {2}'.format(cmd_line_base, config_params, common_params)
-        return command_line
+        return f'{cmd_line_base}{config_params}{common_params}'
 
-    def execute(self):
-        command_line = self._fill_command_line()
+    def __fix_output_dir(self):
+        dir_dst = self._parameters.output_dir
+        if not Path(dir_dst).is_dir():
+            Path(dir_dst).mkdir()
+        dir_src = dir_dst
+        if not self._parameters.direct_dump:
+            curr_dir = os.listdir(dir_src)[0]                        # example: AlexNet_DefaultQuantization
+            versions = os.listdir(dir_src + '/' + curr_dir)
+            curr_version = sorted(versions, reverse=True)[0]   # example: 2022-05-01_14-48-47
+            dir_src = dir_src + '/' + curr_dir + '/' + curr_version
+        dir_src = dir_src + '/optimized/'
+        files_list = os.listdir(dir_src)
+        for f in files_list:
+            shutil.move(dir_src + f, dir_dst)
+
+    def execute(self, idx):
+        command_line = self.__fill_command_line()
         if command_line == '':
-            self.__my_log.error('Command line is empty')
-        self.__my_log.info('Start quantization with config: {0}'.format(self.__my_parameters.config))
-        self.__my_output = self.__my_executor.execute_process(command_line)
-        if type(self.__my_output) is not list:
-            self.__my_log.info(self.__my_output)
+            self.__log.error('Command line is empty')
+        self.__log.info(f'Start quantization model #{idx+1}!')
+        self.__log.info(f'Command line is : {command_line}')
+        self._status, self._output = self._executor.execute_process(command_line)
+        if type(self._output) is not list:
+            self._output = self._output.decode('utf-8').split('\n')
+        self.__fix_output_dir()
