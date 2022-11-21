@@ -83,6 +83,9 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
 
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
 
@@ -114,6 +117,8 @@ class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
 
         nthreads = self._test.dep_parameters.nthreads
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
@@ -164,6 +169,8 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
 
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
 
@@ -214,6 +221,9 @@ class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
 
         nthreads = self._test.dep_parameters.nthreads
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
