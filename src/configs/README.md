@@ -69,6 +69,12 @@
     физическому количеству ядер в системе.
   - `StreamCount` - опциональный тег. Может быть заполнен для асинхронного интерфейса.
     Описывает максимальное количество одновременно выполняющихся запросов на вывод.
+  - `InputShape` - тег, необязательный для заполнения; может отсуствовать. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `Layout`- тег, необязательный для заполнения; может отсуствовать. Определяет формат входного тензора. По умолчанию не установлен.
+  - `Mean` - тег, необязательный для заполнения; может отсуствовать. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale`- тег, необязательный для заполнения; может отсуствовать. Определяет коэффициент масштабирования входного
+    изображения.
 
 - Набор тегов для тестирования вывода средствами Intel Optimization for Caffe:
 
@@ -110,6 +116,21 @@
   - `KmpAffinity` - опциональный тег. Позволяет установить значение переменной
     окружения KMP_AFFINITY. По умолчанию не задан. Подробнее про атрибуты, принимаемые
     переменной окружения, [здесь][kmp-affinity-docs].
+
+- Набор тегов для тестирования вывода средствами ONNX Runtime:
+
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного тензора. По умолчанию не установлен и 
+    выбирается ONNX Runtime автоматически.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale`- тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `ThreadCount` -тег, необязательный для заполнения.  Описывает максимальное количество физических
+    потоков для выполнения вывода. По умолчанию будет выставлено число потоков, равное
+    физическому количеству ядер в системе.
+  - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
+    не установлен и выбирается ONNX Runtime автоматически.
 
 
 ### Примеры заполнения
@@ -252,6 +273,43 @@
             <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами ONNX Runtime
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>resnet-50-pytorch</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>pytorch</SourceFramework>
+      <ModelPath>public/resnet-50-pytorch/resnet-v1-50.onnx</ModelPath>
+      <WeightsPath>None</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>ONNX Runtime</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>100</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <Shape></Shape>
+      <Layout></Layout>
+      <Mean>[123.675,116.28,103.53]</Mean>
+      <InputScale>[58.395,57.12,57.375]</InputScale>
+      <ThreadCount></ThreadCount>
+      <InferenceRequestsCount></InferenceRequestsCount>
+    </FrameworkDependent>
+  </Test>
 </Tests>
 ```
 

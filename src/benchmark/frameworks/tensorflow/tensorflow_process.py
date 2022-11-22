@@ -35,29 +35,21 @@ class TensorFlowProcess(ProcessHandler):
         common_params = f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration}'
 
         channel_swap = self._test.dep_parameters.channel_swap
-        if channel_swap:
-            common_params = self._add_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)
         mean = self._test.dep_parameters.mean
-        if mean:
-            common_params = self._add_argument_to_cmd_line(common_params, '--mean', mean)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
         input_scale = self._test.dep_parameters.input_scale
-        if input_scale:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_scale', input_scale)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_scale', input_scale)
         input_shape = self._test.dep_parameters.input_shape
-        if input_shape:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_shape', input_shape)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_shape', input_shape)
         input_name = self._test.dep_parameters.input_name
-        if input_name:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_name', input_name)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_name', input_name)
         output_names = self._test.dep_parameters.output_names
-        if output_names:
-            common_params = self._add_argument_to_cmd_line(common_params, '--output_names', output_names)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--output_names', output_names)
         num_inter_threads = self._test.dep_parameters.num_inter_threads
-        if num_inter_threads:
-            common_params = self._add_argument_to_cmd_line(common_params, '--num_inter_threads', num_inter_threads)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--num_inter_threads', num_inter_threads)
         num_intra_threads = self._test.dep_parameters.num_intra_threads
-        if num_intra_threads:
-            common_params = self._add_argument_to_cmd_line(common_params, '--num_intra_threads', num_intra_threads)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--num_intra_threads', num_intra_threads)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 

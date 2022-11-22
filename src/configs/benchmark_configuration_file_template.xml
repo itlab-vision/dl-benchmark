@@ -26,6 +26,11 @@
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
+            <!-- Следующие параметры могут отсутствовать -->
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -110,10 +115,10 @@
             <TestTimeLimit></TestTimeLimit> 
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Shape></Shape>
+            <InputShape></InputShape>
             <Layout></Layout>
             <Mean></Mean>
-            <Scale></Scale>
+            <InputScale></InputScale>
             <ThreadCount></ThreadCount>
             <InferenceRequestsCount></InferenceRequestsCount>
         </FrameworkDependent>

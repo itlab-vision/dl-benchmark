@@ -79,10 +79,52 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
             arguments = self._add_extension_for_cmd_line(arguments, extension, device)
 
         nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        command_line = f'benchmark_app {arguments}'
+        return command_line
+
+
+class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log, 'none')
+
+    @staticmethod
+    def create_process(test, executor, log):
+        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+                     f'-hint none -api sync ')
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
 
         command_line = f'benchmark_app {arguments}'
         return command_line
@@ -123,10 +165,14 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
             arguments = self._add_extension_for_cmd_line(arguments, extension, device)
 
         nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line
@@ -148,3 +194,42 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
 
         return average_time_of_single_pass, fps, latency
+
+
+class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
+    def __init__(self, test, executor, log, cpp_benchmarks_dir):
+        super().__init__(test, executor, log, cpp_benchmarks_dir, 'none')
+
+    @staticmethod
+    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+                     f'-hint none -api sync -report_type "no_counters" '
+                     f'-json_stats -report_folder {self._report_path.parent.absolute()}')
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
+
+        command_line = f'{self._benchmark_path} {arguments}'
+        return command_line
