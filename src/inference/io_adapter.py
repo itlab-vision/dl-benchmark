@@ -1698,7 +1698,7 @@ class yolo(IOAdapter):
                 cells = data.reshape(data_shape)
                 for cx in range(dy):
                     for cy in range(dx):
-                        for anchor_box_number, detection in enumerate(cells[cy, cx]):
+                        for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
                             if detection[4] >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         frameHeight, frameWidth, anchors_boxes)
