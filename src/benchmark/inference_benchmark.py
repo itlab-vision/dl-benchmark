@@ -39,10 +39,14 @@ def cli_argument_parser():
                         choices=['host_machine', 'docker_container'],
                         help='Environment ro execute test: host_machine, docker_container',
                         default='host_machine')
-    parser.add_argument('-b', '--cpp_benchmark_path',
+    parser.add_argument('-b', '--cpp_benchmarks_dir',
                         type=str,
-                        dest='cpp_benchmark_path',
-                        help='Path to pre-built C++ Benchmark App',
+                        help='Path to the folder with pre-built C++ benchmark apps',
+                        default=None,
+                        required=False)
+    parser.add_argument('--openvino_cpp_benchmark_dir',
+                        type=str,
+                        help='Path to the folder with pre-built OpenVINO C++ Benchmark App',
                         default=None,
                         required=False)
 
@@ -54,7 +58,8 @@ def cli_argument_parser():
     return args
 
 
-def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmark_path=None):
+def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmarks_dir=None,
+                        openvino_cpp_benchmark_dir=None):
     status = EXIT_SUCCESS
 
     try:
@@ -65,17 +70,27 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
 
     for test in test_list:
         framework_name = test.indep_parameters.inference_framework
-        test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
-                                                                                 log, cpp_benchmark_path)
-        test_process.execute()
+        benchmarks_path = cpp_benchmarks_dir
+        if 'openvino' in framework_name.lower():
+            benchmarks_path = openvino_cpp_benchmark_dir
+
+        try:
+            test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
+                                                                                     log, benchmarks_path)
+            test_process.execute()
+
+            test_status = test_process.get_status()
+            if test_status != EXIT_SUCCESS:
+                status = test_status
+                log.error(f'Test finished with non-zero code: {test_status}')
+        except Exception as ex:
+            log.error(f'Inference failed with exception: {ex}', exc_info=True)
+            status = EXIT_FAILURE
+            test_process = None
 
         log.info('Saving test result in file\n')
         output_handler.add_row_to_table(process_executor, test, test_process)
 
-        current_status = test_process.get_status()
-        if current_status != EXIT_SUCCESS:
-            status = current_status
-            log.error(f'Test finished with non-zero code: {current_status}')
     return status
 
 
@@ -93,6 +108,7 @@ if __name__ == '__main__':
 
     log.info(f'Start {len(test_list)} inference tests\n')
 
-    return_code = inference_benchmark(args.executor_type, test_list, output_handler, log, args.cpp_benchmark_path)
+    return_code = inference_benchmark(args.executor_type, test_list, output_handler, log,
+                                      args.cpp_benchmarks_dir, args.openvino_cpp_benchmark_dir)
     log.info('Inference tests completed' if not return_code else 'Inference tests failed')
     sys.exit(return_code)

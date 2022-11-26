@@ -35,14 +35,13 @@ class IntelCaffeProcess(ProcessHandler):
 
         common_params = f'-m {model_prototxt} -w {model_caffemodel} -i {dataset} -b {batch} -d {device} -ni {iteration}'
         channel_swap = self._test.dep_parameters.channel_swap
-        if channel_swap:
-            common_params = IntelCaffeProcess._add_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)
+        common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--channel_swap',
+                                                                             channel_swap)
         mean = self._test.dep_parameters.mean
-        if mean:
-            common_params = IntelCaffeProcess._add_argument_to_cmd_line(common_params, '--mean', mean)
+        common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
         input_scale = self._test.dep_parameters.input_scale
-        if input_scale:
-            common_params = IntelCaffeProcess._add_argument_to_cmd_line(common_params, '--input_scale', input_scale)
+        common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--input_scale',
+                                                                             input_scale)
 
         common_params = IntelCaffeProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
         command_line = f'{python} {path_to_intelcaffe_script} {common_params}'

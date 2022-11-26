@@ -11,14 +11,14 @@ class OpenVINOTest(Test):
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Async request count': self.dep_parameters.async_request})
+        parameters.update({'Infer request count': self.dep_parameters.infer_request})
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Thread count': self.dep_parameters.nthreads})
         parameters.update({'Stream count': self.dep_parameters.nstreams})
-        other_param = []
-        for key in parameters:
-            if parameters[key] is not None:
-                other_param.append(f'{key}: {parameters[key]}')
-        other_param = ', '.join(other_param)
+        parameters.update({'Mean': self.dep_parameters.mean})
+        parameters.update({'Scale': self.dep_parameters.input_scale})
+        parameters.update({'Shape': self.dep_parameters.shape})
+        other_param = self._get_optional_parameters_string(parameters)
 
         report_res = {
             'task': self.model.task,

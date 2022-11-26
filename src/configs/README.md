@@ -69,6 +69,12 @@
     физическому количеству ядер в системе.
   - `StreamCount` - опциональный тег. Может быть заполнен для асинхронного интерфейса.
     Описывает максимальное количество одновременно выполняющихся запросов на вывод.
+  - `InputShape` - тег, необязательный для заполнения; может отсуствовать. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `Layout`- тег, необязательный для заполнения; может отсуствовать. Определяет формат входного тензора. По умолчанию не установлен.
+  - `Mean` - тег, необязательный для заполнения; может отсуствовать. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale`- тег, необязательный для заполнения; может отсуствовать. Определяет коэффициент масштабирования входного
+    изображения.
 
 - Набор тегов для тестирования вывода средствами Intel Optimization for Caffe:
 
@@ -110,6 +116,21 @@
   - `KmpAffinity` - опциональный тег. Позволяет установить значение переменной
     окружения KMP_AFFINITY. По умолчанию не задан. Подробнее про атрибуты, принимаемые
     переменной окружения, [здесь][kmp-affinity-docs].
+
+- Набор тегов для тестирования вывода средствами ONNX Runtime:
+
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного тензора. По умолчанию не установлен и 
+    выбирается ONNX Runtime автоматически.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale`- тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `ThreadCount` -тег, необязательный для заполнения.  Описывает максимальное количество физических
+    потоков для выполнения вывода. По умолчанию будет выставлено число потоков, равное
+    физическому количеству ядер в системе.
+  - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
+    не установлен и выбирается ONNX Runtime автоматически.
 
 
 ### Примеры заполнения
@@ -252,6 +273,43 @@
             <KmpAffinity>balanced,verbose,granularity=core</KmpAffinity>
         </FrameworkDependent>
     </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами ONNX Runtime
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>resnet-50-pytorch</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>pytorch</SourceFramework>
+      <ModelPath>public/resnet-50-pytorch/resnet-v1-50.onnx</ModelPath>
+      <WeightsPath>None</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>ONNX Runtime</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>100</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <Shape></Shape>
+      <Layout></Layout>
+      <Mean>[123.675,116.28,103.53]</Mean>
+      <InputScale>[58.395,57.12,57.375]</InputScale>
+      <ThreadCount></ThreadCount>
+      <InferenceRequestsCount></InferenceRequestsCount>
+    </FrameworkDependent>
+  </Test>
 </Tests>
 ```
 
@@ -440,7 +498,84 @@
 </Computers>
 ```
 
+## Заполнение файла конфигурации для скрипта квантизации
+
+### Правила заполнения
+
+- Файл конфигурации описывается в формате XML.
+- Шаблонная структура описана в файле `quantization_configuration_file_template.xml`.
+- Кодировка файла - `utf-8`.
+- Корневой тег называется `Parameters`.
+- Каждая конвертируемая модель
+  описывается внутри тега `QuantizationConfig`.
+- Первый параметр представляет собой идентификатор (название) конфигурации модели.
+  Параметр описывается внутри тега `ConfigId`.
+
+- Все теги, принадлежащие `PotParameters`, представляют собой
+  теги, соответствующие ключам командной строки для [POT CLI](openvino-pot-cli):
+
+  Тег | Ключ
+  ----|------
+  PotQuantizationConfig | `-c`, `--config`
+  Evaluation | `-e`, `--evaluate`
+  OutputDir | `--output-dir`
+  DirectDump | `-d`, `--direct-dump`
+  LogLevel | `--log-level`
+  ProgressBar | `--progress-bar`
+  StreamOutput | `--stream-output`
+  KeepUncompressedWeights | `--keep-uncompressed-weights`
+
+- Все теги, принадлежащие `ConfigParameters`, представляют собой
+  теги параметров квантизации. Практически все они опциональны
+  и соответствуют аналогичным параметрам для [DefaultQuantization](openvino-pot-dq)
+  и [AccuracyAwareQuantization](openvino-pot-aaq).
+
+### Пример заполнения
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+    <QuantizationConfig>
+        <ConfigId>AlexNet1_DQ_0</ConfigId>
+        <PotParameters>
+            <Evaluation>False</Evaluation>
+            <OutputDir>tmp/alexnet/INT8</OutputDir>
+            <DirectDump>True</DirectDump>
+            <LogLevel>INFO</LogLevel>
+            <ProgressBar>False</ProgressBar>
+            <StreamOutput>False</StreamOutput>
+            <KeepUncompressedWeights>False</KeepUncompressedWeights>
+        </PotParameters>
+        <ConfigParameters>
+            <Model>
+                <ModelName>AlexNet1</ModelName>
+                <Model>tmp/alexnet/alexnet.xml</Model>
+                <Weights>tmp/alexnet/alexnet.bin</Weights>
+            </Model>
+            <Engine>
+                <Type>simplified</Type>
+                <DataSource>tmp/data/ImageNet</DataSource>
+            </Engine>
+            <Compression>
+                <TargetDevice>ANY</TargetDevice>
+                <Algorithms>
+                    <Name>DefaultQuantization</Name>
+                    <Params>
+                        <ShuffleData>False</ShuffleData>
+                        <Seed>0</Seed>
+                        <Preset>mixed</Preset>
+                        <StatSubsetSize>100</StatSubsetSize>
+                    </Params>
+                </Algorithms>
+            </Compression>
+        </ConfigParameters>
+    </QuantizationConfig>
+```
+
 
 <!-- LINKS -->
 [kmp-affinity-docs]: ../../docs/reference_information/kmp_affinity.md
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
+[openvino-pot-cli]: https://docs.openvino.ai/nightly/pot_compression_cli_README.html
+[openvino-pot-dq]: https://docs.openvino.ai/nightly/pot_compression_algorithms_quantization_default_README.html
+[openvino-pot-aaq]: https://docs.openvino.ai/nightly/accuracy_aware_README.html

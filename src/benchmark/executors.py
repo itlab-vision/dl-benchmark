@@ -37,6 +37,14 @@ class Executor(metaclass=abc.ABCMeta):
     def execute_process(self, command_line, timeout):
         pass
 
+    @abc.abstractmethod
+    def get_path_to_logs_folder(self):
+        pass
+
+    @abc.abstractmethod
+    def get_file_content(self, path):
+        pass
+
 
 class HostExecutor(Executor):
     def __init__(self, log):
@@ -62,6 +70,15 @@ class HostExecutor(Executor):
         cmd_handler = CMDHandler(command_line, self.log, self.environment)
         cmd_handler.run(timeout)
         return cmd_handler.return_code, cmd_handler.output
+
+    def get_path_to_logs_folder(self):
+        logs_folder = Path().resolve().joinpath('logs')
+        logs_folder.mkdir(exist_ok=True)
+        return logs_folder
+
+    def get_file_content(self, path):
+        with open(path) as file:
+            return file.read()
 
 
 class DockerExecutor(Executor):
@@ -89,5 +106,10 @@ class DockerExecutor(Executor):
 
     def execute_process(self, command_line, _):
         command_line = f'bash -c "source /root/.bashrc && {command_line}"'
-
         return self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
+
+    def get_path_to_logs_folder(self):
+        raise NotImplementedError()
+
+    def get_file_content(self, path):
+        raise NotImplementedError()

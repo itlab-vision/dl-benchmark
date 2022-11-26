@@ -21,9 +21,11 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
         extension = self._test.dep_parameters.extension
         if extension:
             command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-l', extension)
+
         nthreads = self._test.dep_parameters.nthreads
         if nthreads:
             command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-nthreads', nthreads)
+
         command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '--raw_output', 'true')
 
         return command_line
@@ -49,9 +51,11 @@ class AsyncOpenVINOProcess(OpenVINOPythonAPIProcess):
 
         common_params = super()._fill_command_line()
         command_line = f'{python} {path_to_async_script} {common_params}'
+
         nstreams = self._test.dep_parameters.nstreams
         if nstreams:
             command_line = AsyncOpenVINOProcess._add_argument_to_cmd_line(command_line, '-nstreams', nstreams)
+
         requests = self._test.dep_parameters.async_request
         if requests:
             command_line = AsyncOpenVINOProcess._add_argument_to_cmd_line(command_line, '--requests', requests)

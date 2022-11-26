@@ -8,7 +8,7 @@ class IntelCaffeWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.caffe
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmark_path=None):
+    def create_process(test, executor, log, cpp_benchmarks_dir=None):
         return IntelCaffeProcess.create_process(test, executor, log)
 
     @staticmethod

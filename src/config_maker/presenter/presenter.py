@@ -4,6 +4,7 @@ from .data_presenter import DataPresenter
 from .deploy_config_presenter import DeployConfigPresenter
 from .model_presenter import ModelPresenter
 from .remote_config_presenter import RemoteConfigPresenter
+from .quantization_config_presenter import QuantizationConfigPresenter
 
 
 class Presenter:
@@ -18,3 +19,4 @@ class Presenter:
                                                                self.__view.tabs.config_tab.remote_configs)
         self.__deploy_config_presenter = DeployConfigPresenter(self.__model.deploy_config,
                                                                self.__view.tabs.config_tab.deploy_configs)
+        self.__quantization_config_presenter = QuantizationConfigPresenter(self.__model, self.__view)

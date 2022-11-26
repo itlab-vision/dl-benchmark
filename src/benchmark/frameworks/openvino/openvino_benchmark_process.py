@@ -1,4 +1,5 @@
 import re
+import json
 from pathlib import Path
 
 from .openvino_process import OpenVINOProcess
@@ -78,27 +79,27 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
             arguments = self._add_extension_for_cmd_line(arguments, extension, device)
 
         nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
 
         command_line = f'benchmark_app {arguments}'
         return command_line
 
 
-class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
-    def __init__(self, test, executor, log, cpp_benchmark_path, perf_hint=''):
-        super().__init__(test, executor, log, perf_hint)
-        self._benchmark_path = cpp_benchmark_path
-        self._perf_hint = perf_hint
-
-        if not cpp_benchmark_path or not Path(cpp_benchmark_path).is_file():
-            raise ValueError('Must provide valid cpp_benchmark_path for OpenVINO C++ benchmark')
+class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log, 'none')
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmark_path=None):
-        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmark_path)
+    def create_process(test, executor, log):
+        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log)
 
     def _fill_command_line(self):
         model_xml = self._test.model.model
@@ -107,17 +108,128 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -report_type "no_counters"'
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+                     f'-hint none -api sync ')
 
         extension = self._test.dep_parameters.extension
         if extension:
             arguments = self._add_extension_for_cmd_line(arguments, extension, device)
 
         nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            arguments = self._add_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
+
+        command_line = f'benchmark_app {arguments}'
+        return command_line
+
+
+class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
+    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint=''):
+        super().__init__(test, executor, log, perf_hint)
+        self._perf_hint = perf_hint
+
+        invalid_path_exception = ValueError('Must provide valid path to the folder '
+                                            'with OpenVINO C++ benchmark_app (--openvino_cpp_benchmark_dir)')
+        if not cpp_benchmarks_dir:
+            raise invalid_path_exception
+
+        self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('benchmark_app')
+        if not self._benchmark_path.is_file():
+            raise invalid_path_exception
+
+        self._report_path = executor.get_path_to_logs_folder().joinpath('benchmark_report.json')
+
+    @staticmethod
+    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+                     f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        command_line = f'{self._benchmark_path} {arguments}'
+        return command_line
+
+    def get_performance_metrics(self):
+        if self._status != 0 or len(self._output) == 0:
+            return None, None, None
+
+        report = json.loads(self._executor.get_file_content(self._report_path))
+
+        # calculate average time of single pass metric to align output with custom launchers
+        MILLISECONDS_IN_SECOND = 1000
+        duration = float(report['execution_results']['execution_time'])
+        iter_count = float(report['execution_results']['iterations_num'])
+        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 3)
+                                       if None not in (duration, iter_count) else None)
+
+        fps = round(float(report['execution_results']['throughput']), 3)
+        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
+
+        return average_time_of_single_pass, fps, latency
+
+
+class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
+    def __init__(self, test, executor, log, cpp_benchmarks_dir):
+        super().__init__(test, executor, log, cpp_benchmarks_dir, 'none')
+
+    @staticmethod
+    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir)
+
+    def _fill_command_line(self):
+        model_xml = self._test.model.model
+        dataset = self._test.dataset.path
+        batch = self._test.indep_parameters.batch_size
+        device = self._test.indep_parameters.device
+        iteration = self._test.indep_parameters.iteration
+
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+                     f'-hint none -api sync -report_type "no_counters" '
+                     f'-json_stats -report_folder {self._report_path.parent.absolute()}')
+
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        nthreads = self._test.dep_parameters.nthreads
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
+                                                            self._test.dep_parameters.infer_request)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line

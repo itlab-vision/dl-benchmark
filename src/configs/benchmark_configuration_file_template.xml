@@ -26,6 +26,11 @@
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
+            <!-- Следующие параметры могут отсутствовать -->
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -87,6 +92,35 @@
             <InterOpParallelismThreads></InterOpParallelismThreads>
             <IntraOpParallelismThreads></IntraOpParallelismThreads>
             <KmpAffinity></KmpAffinity>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath> <!-- Не нужен для ONNX Runtime. Но проверка обяз-х пар-ов не пройдет, если оставить пустым -->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>ONNX Runtime</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device>CPU</Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <ThreadCount></ThreadCount>
+            <InferenceRequestsCount></InferenceRequestsCount>
         </FrameworkDependent>
     </Test>
 </Tests>
