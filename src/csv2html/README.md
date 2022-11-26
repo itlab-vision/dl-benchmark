@@ -3,14 +3,15 @@
 Общий вид командной строки:
 
 ```bash
-python3 converter.py -t <inf_table.csv> -r <result_file.html>
+python3 converter.py -t <inf_table.csv> -r <result_file.html> -k <table_kind>
 ```
 
 Аргументы командной строки:
 
-- `-t / --table <inf_table.csv>` - путь до таблицы с результатами 
+- `-t / --tables <inf_table.csv>` - путь до таблиц с результатами 
   вывода глубоких моделей в формате csv.
 - `-r / --result_table <result_file.html>` - полное имя выходного html-файла.
+- `-k / --table_kind <table_kind>` - тип таблицы с результатами: `benchmark` или `accuracy_checker`.
 
 
 **Примечания:**
