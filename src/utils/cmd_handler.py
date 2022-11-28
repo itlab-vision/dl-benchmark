@@ -1,8 +1,8 @@
 import abc
+import os
 import subprocess
 import threading
 import sys
-import psutil
 
 
 class CMDHandler(metaclass=abc.ABCMeta):
@@ -55,9 +55,9 @@ class CMDHandler(metaclass=abc.ABCMeta):
 
     def kill_process_by_pid(self, pid):
         try:
-            process = psutil.Process(pid)
-            for proc in process.children(recursive=True):
-                proc.kill()
-            process.kill()
+            if sys.platform == 'win32':
+                subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
+            else:
+                os.system(f'pkill -TERM -P {pid}')
         except OSError as err:
             print(err)
