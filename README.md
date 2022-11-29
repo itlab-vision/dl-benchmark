@@ -63,7 +63,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
 - `results` directory contains benchmarking and validation results.
 
   - [`benchmarking`](results/benchmarking) contains benchmarking 
-    results in html format.
+    results in html and xslx formats.
+  - [`accuracy`](results/accuracy) contains accuracy
+    results in html and xslx formats.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implemenration.
 
@@ -196,15 +198,17 @@ and the second one for the file of bencmarking results. Further, please,
 follow instructions.
 
 1. Prepare configuration files in accordance with
-   `src/configs/benchmark_configuration_file_template.xml` and
+   `src/configs/benchmark_configuration_file_template.xml`,
+   `src/configs/accuracy_checker_configuration_file_template.xml` and
    `src/configs/remote_configuration_file_template.xml`. Please, use 
    GUI application (`src/config_maker`).
-1. Copy the benchmark configuration files to the corresponding directory
-   on the FTP-server.
+1. Copy the benchmark and the accuracy checker configuration files to
+   the corresponding directory on the FTP-server.
 1. Execute the `src/remote_control/remote_start.py` script. Please, follow
    `src/remote_control/README.md`.
 1. Wait for completing the benchmark.
-1. Copy benchmarking results from the FTP-server to the local machine
+1. Wait for completing the accuracy checker.
+1. Copy benchmarking and accuracy checker results from the FTP-server to the local machine
    for the further analysis.
 
 ## Deployment example
@@ -221,7 +225,7 @@ follow instructions.
    For definiteness, we will use the following names:
 
    - `docker_image_folder` is a directory for storing docker image.
-   - `benchmark_config` is a directory for storing configurationn files.
+   - `configs` is a directory for storing configurationn files.
    - `table_folder` is a directory for storing performance results.
 
    Use these parameters to connect to FTP-server:
@@ -298,7 +302,7 @@ follow instructions.
 1. Fill out the configuration file for the benchmarking script. It is required
    to describe tests to be performed, you can find the template in the
    `src/config/benchmark_configuration_file_template.xml`.
-   Fill the configuration file and save it to the `benchmark_config/bench_config.xml`
+   Fill the configuration file and save it to the `configs/bench_config.xml`
    on the FTP-server. Please, use the developed GUI application (config maker).
 
    ```xml
@@ -333,6 +337,31 @@ follow instructions.
    </Tests>
    ```
 
+1. Fill out the configuration file for the accuracy checker script. It is required
+   to describe tests to be performed, you can find the template in the
+   `src/config/accuracy_checker_configuration_file_template.xml`.
+   Fill the configuration file and save it to the `configs/ac_config.xml`
+   on the FTP-server. Please, use the developed GUI application (config maker).
+
+   ```xml
+   <Tests>
+     <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>densenet-121</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <Directory>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Directory>
+        </Model>
+        <Parameters>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <Device>CPU</Device>
+            <Config>/opt/intel/open_model_zoo/tools/accuracy_checker/configs/densenet-121.yml</Config>
+        </Parameters>
+    </Test>
+   </Tests>
+   ```
+
 1. Fill out the configuration file for the
    remote start script, you can find the template in the
    `src/config/remote_configuration_file_template.xml`.
@@ -342,18 +371,28 @@ follow instructions.
 
    ```xml
    <Computers>
-     <Computer>
-       <IP>4.4.4.4</IP>
-       <Login>user</Login>
-       <Password>user</Password>
-       <OS>Linux</OS>
-       <FTPClientPath>/tmp/dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-       <BenchmarkConfig>/benchmark_config/bench_config.xml</BenchmarkConfig>
-       <BenchmarkExecutor>docker_container</BenchmarkExecutor>
-       <LogFile>/tmp/dl-benchmark/src/remote_start/log.txt</LogFile>
-       <ResultFile>/tmp/dl-benchmark/src/remote_start/result.csv</ResultFile>
-     </Computer>
-   </Computers>
+    <Computer>
+      <IP>4.4.4.4</IP>
+      <Login>user</Login>
+      <Password>user</Password>
+      <OS>Linux</OS>
+      <FTPClientPath>/tmp/dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
+      <Benchmark>
+        <Config>configs/bench_config.xml</Config>
+        <Executor>docker_container</Executor>
+        <LogFile>/tmp/dl-benchmark/src/remote_start/bench_log.txt</LogFile>
+        <ResultFile>/tmp/dl-benchmark/src/remote_start/bench_result.csv</ResultFile>
+      </Benchmark>
+      <AccuracyChecker>
+        <Config>configs/ac_config.xml</Config>
+        <Executor>docker_container</Executor>
+        <DatasetPath></DatasetPath>
+        <DefinitionPath>/opt/intel/open_model_zoo/tools/accuracy_checker/definitions.yml</DefinitionPath>
+        <LogFile>/tmp/dl-benchmark/src/remote_start/ac_log.txt</LogFile>
+        <ResultFile>/tmp/dl-benchmark/src/remote_start/ac_result.csv</ResultFile>
+      </AccuracyChecker>
+    </Computer>
+  </Computers>
    ```
 
 1. Execute the remote start script using the following command:
@@ -361,30 +400,34 @@ follow instructions.
    ```bash
    python3 remote_start.py \
    -c /tmp/dl-benchmark/src/remote_start/remote_config.xml \
-   -s 2.2.2.2 -l admin -p admin -r all_results.csv \
+   -s 2.2.2.2 -l admin -p admin -br bench_all_results.csv -acr ac_all_results.csv \
    --ftp_dir table_folder
    ```
 
-1. Wait for completing the benchmark. After completion,
-   the `table_folder` directory will contain a table with the combined results
-   named `all_results.csv`.
+1. Wait for completing the benchmark and accuracy checker. After completion,
+   the `table_folder` directory will contain tables with the benchmarking combined results
+   named `bench_all_results.csv` and with the accuracy checker combined results named
+   `ac_all_results.csv`.
 
-1. Copy benchmarking results from the FTP-server to the local machine.
+1. Copy the results from the FTP-server to the local machine.
 
    ```bash
-   scp admin@2.2.2.2:/table_folder/all_results.csv /tmp/
+   scp admin@2.2.2.2:/table_folder/bench_all_results.csv /tmp/
+   scp admin@2.2.2.2:/table_folder/ac_all_results.csv /tmp/
    ```
 
 1. Convert csv to html or xlsx using the following commands:
 
    ```bash
    cd /tmp/dl-benchmark/csv2html
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.html -k benchmark
+   python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.html
+   python3 converter.py -k accuracy-checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.html
    ```
 
    ```bash
    cd /tmp/dl-benchmark/csv2xlsx
-   python3 converter.py -t /tmp/all_results.csv -r /tmp/formatted_results.xlsx -k benchmark
+   python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.xlsx
+   python3 converter.py -k accuracy-checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.xlsx
    ```
 
 

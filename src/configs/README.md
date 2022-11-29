@@ -22,7 +22,7 @@
 
 Заполнение информации о модели:
 
-- Все теги, пренадлежащие тегу `Model`, являются обязательными для заполнения.
+- Все теги, принадлежащие тегу `Model`, являются обязательными для заполнения.
 - Название задачи, которую решает модель, описывается внутри тега `Task`.
 - Имя модели описывается внутри тега `Name`.
 - Тип данных весов описывается внутри тега `Precision`.
@@ -33,14 +33,14 @@
 
 Заполнение информации о выборке:
 
-- Все теги, пренадлежащие тегу `Dataset`, являются обязательными для заполнения.
+- Все теги, принадлежащие тегу `Dataset`, являются обязательными для заполнения.
 - Название набора данных описывается внутри тега `Name`.
 - Абсолютный путь до директории, где лежат данные, описывается внутри тега `Path`.
 
 Заполнение информации о параметрах теста, не зависящих от используемого
 для вывода фреймворка:
 
-- Все теги, пренадлежащие тегу `FrameworkIndependent`, являются обязательными
+- Все теги, принадлежащие тегу `FrameworkIndependent`, являются обязательными
   для заполнения.
 - Название фреймворка, используемого для вывода, описывается внутри
   тега `InferenceFramework`.
@@ -310,6 +310,77 @@
       <InferenceRequestsCount></InferenceRequestsCount>
     </FrameworkDependent>
   </Test>
+</Tests>
+```
+
+## Заполнение файла конфигурации для скрипта оценки точности
+
+### Правила заполнения
+
+Общая информация:
+
+- Файл конфигурации описывается в формате XML.
+- Шаблонная структура приведена в файле `accuracy_checker_configuration_file_template.xml`.
+- Порядок тегов важен и при изменении порядка тегов поведение скрипта не определено.
+- Кодировка файла - `utf-8`.
+- Корневой тег называется `Tests`.
+- Каждый тест анализа качества для конкретной модели с определенным набором
+  параметров запуска описывается внутри тега `Test` (внутри тега `Tests`).
+- Информация о модели описывается внутри тега `Model` (внутри тега `Test`).
+- Информация о параметрах теста описывается внутри тега `Parameters` (внутри тега `Test`).
+
+Заполнение информации о модели:
+
+- Все теги, принадлежащие тегу `Model`, являются обязательными для заполнения.
+- Название задачи, которую решает модель, описывается внутри тега `Task`.
+- Имя модели описывается внутри тега `Name`.
+- Тип данных весов описывается внутри тега `Precision`.
+- Фреймворк, с использованием которого обучена модель, описывается внутри
+  тега `SourceFramework` (используется для формирования финальной таблицы результатов).
+- Абсолютный путь до директории с файлами, которые содержат описание модели и ее весов, описывается внутри тега `Directory`.
+
+Заполнение информации о параметрах теста:
+
+- Все теги, принадлежащие тегу `Parameters`, являются обязательными
+  для заполнения.
+- Название фреймворка, используемого для вывода, описывается внутри
+  тега `InferenceFramework`.
+- Устройство, на котором будет запущен вывод, описывается внутри тега `Device`.
+- Путь до конфигурационного файла для работы AccuracyChecker описывается внутри тега `Config`.
+
+### Примеры заполнения
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>alexnet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <Directory>/opt/intel/open_model_zoo/tools/downloader/public/alexnet/FP32/dldt</Directory>
+        </Model>
+        <Parameters>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <Device>CPU</Device>
+            <Config>/opt/intel/open_model_zoo/tools/accuracy_checker/configs/alexnet.yml</Config>
+        </Parameters>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>alexnet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <Directory>/opt/intel/open_model_zoo/tools/downloader/public/alexnet/FP32/caffe</Directory>
+        </Model>
+        <Parameters>
+            <InferenceFramework>Caffe</InferenceFramework>
+            <Device>CPU</Device>
+            <Config>/opt/intel/open_model_zoo/tools/accuracy_checker/configs/alexnet.yml</Config>
+        </Parameters>
+    </Test>
 </Tests>
 ```
 
