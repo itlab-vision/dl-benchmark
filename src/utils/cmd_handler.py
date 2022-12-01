@@ -4,6 +4,8 @@ import subprocess
 import threading
 import sys
 
+from constants import Status
+
 
 class CMDHandler(metaclass=abc.ABCMeta):
     def __init__(self, command_line, log, env=None):
@@ -38,16 +40,16 @@ class CMDHandler(metaclass=abc.ABCMeta):
 
         thread.join(timeout)
         if thread.is_alive():
+            self.return_code = Status.PROCESS_TIMEOUT.value
             try:
                 self.log.error(f'Timeout {timeout} is reached, terminating')
                 self.kill_process_by_pid(self.process.pid)
                 thread.join()
             except OSError as e:
                 self.log.error(f'Cannot kill task by PID {e.strerror}')
-                raise
 
         if self.process is None:
-            self.return_code = 127
+            self.return_code = Status.PROCESS_CREATE_ERROR.value
             self.log.error(f'Failed to create process for {self.command_line}')
         else:
             self.return_code = self.process.wait()

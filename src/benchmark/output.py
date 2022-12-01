@@ -3,6 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from csv_wrapper import CsvReport  # noqa: E402
+from constants import Status  # noqa: E402
 
 
 class OutputHandler:
@@ -25,6 +26,7 @@ class OutputHandler:
             'average_time': 'Average time of single pass (s)',
             'latency': 'Latency',
             'fps': 'FPS',
+            'error_type': 'Error type',
         }
 
         self._report = CsvReport(self.__table_name, self._column_names.values(), output_delimiter=csv_delimiter)
@@ -33,13 +35,16 @@ class OutputHandler:
     def __create_table_row(executor, test, process):
         report = test.get_report()
         if process is not None:
+            process_status = process.get_status()
             report['input_shape'] = process.get_model_shape()
-            report['status'] = 'Success' if process.get_status() == 0 else 'Failed'
+            report['status'] = 'Success' if process_status == 0 else 'Failed'
             report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
+            report['error_type'] = Status(process_status).name if process_status else 'NO_ERROR'
         else:
             report['input_shape'] = 'Undefined'
             report['status'] = 'Failed'
             report['average_time'], report['fps'], report['latency'] = None, None, None
+            report['error_type'] = Status.PROCESS_CMD_ERROR.name
         report['hardware'] = executor.get_infrastructure()
         return report
 
