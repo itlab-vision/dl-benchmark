@@ -52,13 +52,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
     for TensorFlow.
 
-- `docs` directory contains project documentation.
-
-  - [`concept.md`](docs/concept.md) is a concept description
-    (goals and tasks).
-  - [`technologies.md`](docs/technologies.md) is a list of technologies.
-  - [`architecture.md`](docs/architecture.md) is a benchmarking
-    system architecture.
+- `docs` directory contains auxiliary documentation. Please, find documentation
+  at the [Wiki page][dli-wiki].
 
 - `results` directory contains benchmarking and validation results.
 
@@ -84,7 +79,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
       based on Intel® Optimization for TensorFlow for several public models.
 
   - [`models_checklist.md`](results/models_checklist.md) contains a list
-    of supported deep models (in accordance with Open Model Zoo).
+    of supported deep models (in accordance with the Open Model Zoo).
 
 - `src` directory contains benchmark sources.
 
@@ -101,11 +96,19 @@ Novgorod State University Publishing House, 2021. – 423 p.
     from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
+  - `node_info` contains a set of functions to get information about
+    computational node.
+  - `onnxruntime_benchmark` is the tool that allows to measure
+    deep learning models inference performance with
+    [ONNX Runtime](https://github.com/microsoft/onnxruntime).
+    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
+    as a reference and stick to its measurement methodology,
+    thus provide consistent performance results.
   - `quantization` contains scripts to quantize model to INT8-precision
     using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
-
+  - `utils` is a package of auxiliary utilities.
 
 ## Software installation
 
@@ -439,3 +442,4 @@ follow instructions.
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
+[dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
