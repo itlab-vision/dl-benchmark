@@ -110,9 +110,36 @@ Novgorod State University Publishing House, 2021. – 423 p.
     remotely.
   - `utils` is a package of auxiliary utilities.
 
-# Documentation
+## Documentation
 
-Please, follow project [wiki][dli-wiki].
+The latest documentation for the Deep Learning Inference
+Benchmark (DLI) is available [here][dli-wiki]. This documentation
+contains detailed information about DLI components and provides
+step-by-step guides to build and run the DLI benchmark on your own
+test infrastructure.
+
+### How to build
+
+See the [DLI Wiki][dli-wiki-build] to get more information.
+
+### How to deploy
+
+See the [DLI Wiki][dli-wiki-deploy] to get more information.
+
+### How to contribute
+
+See the [DLI Wiki][dli-wiki-contribute] to get more information.
+
+### Available benchmarking results
+
+See the [DLI Wiki][dli-wiki-bench-results] to get more information
+about benchmaring results on available hardware.
+
+### Get a support
+
+Report questions, issues and suggestions, using:
+
+- [GitHub Issues][dli-github-issues]
 
 
 <!-- LINKS -->
@@ -124,3 +151,8 @@ Please, follow project [wiki][dli-wiki].
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
+[dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
+[dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
+[dli-wiki-deploy]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-deploy-and-run
+[dli-wiki-bench-results]: https://github.com/itlab-vision/dl-benchmark/wiki#benchmarking-results
+[dli-github-issues]: https://github.com/itlab-vision/dl-benchmark/issues
