@@ -58,8 +58,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
     for TensorFlow.
 
-- `docs` directory contains auxiliary documentation. Please, find documentation
-  at the [Wiki page][dli-wiki].
+- `docs` directory contains auxiliary documentation. Please, find
+  complete documentation at the [Wiki page][dli-wiki].
 
 - `results` directory contains benchmarking and validation results.
 
@@ -96,10 +96,10 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `config_maker`contains GUI application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
-  - `csv2html` is a set of scripts to convert result table
-    from csv to html.
-  - `csv2xlsx` is a set of scripts to convert result table
-    from csv to xlsx.
+  - `csv2html` is a set of scripts to convert performance and accuracy
+     tables from csv to html.
+  - `csv2xlsx` is a set of scripts to convert performance and accuracy
+     tables from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains inference implementation.
   - `node_info` contains a set of functions to get information about
@@ -111,16 +111,19 @@ Novgorod State University Publishing House, 2021. – 423 p.
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
   - `quantization` contains scripts to quantize model to INT8-precision
-    using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
+    using Post-Training Optimization Tool (POT)
+	of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
   - `utils` is a package of auxiliary utilities.
+
+- `test` contains tests.
 
 ## Documentation
 
 The latest documentation for the Deep Learning Inference
 Benchmark (DLI) is available [here][dli-wiki]. This documentation
-contains detailed information about DLI components and provides
+contains detailed information about the DLI components and provides
 step-by-step guides to build and run the DLI benchmark on your own
 test infrastructure.
 
