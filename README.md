@@ -4,12 +4,18 @@
 
 This is a repo of deep learning inference benchmark, called DLI.
 DLI is a benchmark for deep learning inference on various hardware.
+The goal of the project is to develop a software for measuring
+the performance of a wide range of deep learning models
+inferring on various popular frameworks and various hardware,
+as well as regularly publishing the obtained data.
+
 The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
 of deep models inferred on Intel platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
 
-DLI supports: 
+DLI supports inference using the following frameworks:
+
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
