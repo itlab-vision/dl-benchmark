@@ -1,18 +1,18 @@
-# Результаты проверки корректности вывода для инференса на базе Intel® Optimization for Caffe
+# Validation results for the models inferring using Intel® Optimization for Caffe
 
-## Результаты классификации
+## Image classification
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 709 x 510
+Image resolution: 709 x 510
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Название модели   |    Python (реализация)        |
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 alexnet              |0.9521238 Granny Smith<br>0.0069122 piggy bank, penny bank<br>0.0054333 candle, taper, wax light<br>0.0037157 saltshaker, salt shaker<br>0.0034601 tennis ball|
 caffenet              |0.8039698 Granny Smith<br>0.0632433 candle, taper, wax light<br>0.0330907 teapot<br>0.0097625 tennis ball<br>0.0090626 saltshaker, salt shaker|
@@ -27,17 +27,17 @@ squeezenet-1.1       |0.9995996 Granny Smith<br>0.0002680 tennis ball<br>0.00006
 vgg-16               |0.9256526 Granny Smith<br>0.0305293 bell pepper<br>0.0080413 saltshaker, salt shaker<br>0.0060264 necklace<br>0.0033264 vase<br>|
 vgg-19               |0.7781622 Granny Smith<br>0.0757968 necklace<br>0.0475143 acorn<br>0.0159689 fig<br>0.0130410 lemon<br>|
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 500 x 500
+Image resolution: 500 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Название модели   |   Python (реализация)|
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 alexnet              |0.8866407 junco, snowbird<br>0.1086869 chickadee<br>0.0019401 brambling, Fringilla montifringilla<br>0.0013517 water ouzel, dipper<br>0.0002660 bulbul|
 caffenet              |0.9883578 junco, snowbird<br>0.0000186 chickadee<br>0.0000017 brambling, Fringilla montifringilla<br>0.0000014 water ouzel, dipper<br>0.0000013 house finch, linnet, Carpodacus mexicanus|
@@ -52,17 +52,17 @@ squeezenet-1.1       |0.9902450 junco, snowbird<br>0.0087430 chickadee<br>0.0005
 vgg-16               |0.9999917 junco, snowbird<br>0.0000070 chickadee<br>0.0000013 brambling, Fringilla montifringilla<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 vgg-19               |0.9999951 junco, snowbird<br>0.0000039 brambling, Fringilla montifringilla<br>0.0000009 chickadee<br>0.0000000 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 333 x 500
+Image resolution: 333 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Название модели   |   Python (реализация)|
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 alexnet              |0.9570842 lifeboat<br>0.0145343 container ship, containership, container vessel<br>0.0057027 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0050276 beacon, lighthouse, beacon light, pharos<br>0.0043956 liner, ocean liner|
 caffenet              |0.5774223 lifeboat<br>0.2691385 container ship, containership, container vessel<br>0.0526851 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0484550 liner, ocean liner<br>0.0084702 beacon, lighthouse, beacon light, pharos|
@@ -77,68 +77,68 @@ squeezenet-1.1       |0.6992837 lifeboat<br>0.1367231 drilling platform, offshor
 vgg-16               |0.5846901 lifeboat<br>0.3716984 container ship, containership, container vessel<br>0.0152381 liner, ocean liner<br>0.0134273 drilling platform, offshore rig<br>0.0037419 dock, dockage, docking facility<br>|
 vgg-19               |0.9302235 lifeboat<br>0.0434868 container ship, containership, container vessel<br>0.0111730 liner, ocean liner<br>0.0040760 fireboat<br>0.0028543 drilling platform, offshore rig<br>|
 
-## Результаты детектирования
+## Object detection
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 709 x 510
+Image resolution: 709 x 510
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
+Bounding boxes (upper left and bottom right corners):<br>
 (55,155), (236,375)<br>
 (190,190), (380,400)<br>
 (374,209), (588,422)<br>
 (289,111), (440,255)<br>
 (435,160), (615,310)<br>
 
-   Название модели   |   Python (реализация)        |
+   Model              |  Python (implementation)         |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Окаймляющий прямоугольник : (46, 133), (657, 445)  |
-ssd300                | Окаймляющий прямоугольник : (66, 163), (235, 356) |
-ssd512                | Окаймляющие прямоугольники : (65, 168), (256, 343); (378, 167), (592, 424)  |
+mobilenet-ssd         | Bounding box: (46, 133), (657, 445)  |
+ssd300                | Bounding box: (66, 163), (235, 356) |
+ssd512                | Bounding box: (65, 168), (256, 343); (378, 167), (592, 424)  |
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 500 x 500
+Image resolution: 500 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left and bottom right corners):<br>
 (117,86), (365,465)
 
-   Название модели   |   Python (реализация)|
+   Model              |      Python (implementation)     |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Окаймляющий прямоугольник : (94, 93), (360, 481)  |
-ssd300                | Окаймляющий прямоугольник : (68, 100), (334,451) |
-ssd512                | Окаймляющий прямоугольник : (67, 95), (356, 480) |
+mobilenet-ssd         | Bounding box: (94, 93), (360, 481)  |
+ssd300                | Bounding box: (68, 100), (334,451) |
+ssd512                | Bounding box: (67, 95), (356, 480) |
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 333 x 500
+Image resolution: 333 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left and bottom right corners):<br>
 (82,262), (269,376)
 
-   Название модели   |   Python (реализация)|
+   Model              |     Python (implementation)      |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Окаймляющий прямоугольник :  (79, 140), (270, 375)  |
-ssd300                | Окаймляющий прямоугольник :  (79, 150), (270, 373)  |
-ssd512                | Окаймляющий прямоугольник :  (79, 175), (274, 372)  |
+mobilenet-ssd         | Bounding box:  (79, 140), (270, 375)  |
+ssd300                | Bounding box:  (79, 150), (270, 373)  |
+ssd512                | Bounding box:  (79, 175), (274, 372)  |
 
 
 <!-- LINKS -->
