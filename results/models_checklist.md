@@ -195,22 +195,26 @@ Model | Availability in OMZ (2021.10.19)| Availability in the validation table |
 ***i3d-rgb-tf***|+|-|-|-|
 
 ### Sound classification
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***aclnet***|+|-|-|-|
 ***aclnet-int8***|+|-|-|-|
 
 ### Named entity recognition
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***bert-base-ner***|+|-|-|-|
 
 ### Image translation
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***cocosnet***|+|-|-|-|
 
 ### Colorization
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***colorization-siggraph***|+|-|-|-|
@@ -222,6 +226,7 @@ Model | Availability in OMZ (2021.10.19)| Availability in the validation table |
 ***deblurgan-v2***|+|-|-|-|
 
 ### Salient object detection
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***f3net***|+|-|-|-|
@@ -232,6 +237,7 @@ Model | Availability in OMZ (2021.10.19)| Availability in the validation table |
 ***fast-neural-style-mosaic-onnx***|+|-|-|-|
 
 ### Speech synthesis
+
 Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***forward-tacotron-duration-prediction model specification***|+|-|-|-|
