@@ -3,7 +3,6 @@ import os
 import sys
 from pathlib import Path
 
-import docker
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from cmd_handler import CMDHandler  # noqa: E402, PLC0411
@@ -84,6 +83,7 @@ class HostExecutor(Executor):
 class DockerExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
+        import docker
         client = docker.from_env()
         self.container_dict = {cont.name: cont for cont in client.containers.list()}
 
