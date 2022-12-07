@@ -1844,18 +1844,19 @@ class YoloV3TFIO(YoloV3IO):
     
     def _get_shapes(self):
         shapes = [
-            (3, 85, 76, 76),
             (3, 85, 38, 38),
-            (3, 85, 19, 19)
+            (3, 85, 19, 19),
+            (3, 85, 76, 76),
         ]
         return shapes
     
     def _get_anchors(self):
         anchors = [
-            ((12, 16),(19, 36),(40, 28)),
-            ((36, 75),(76, 55),(72, 146)),
-            ((142, 110),(192, 243),(459, 401))
+            ((36, 75), (76, 55), (72, 146)),
+            ((142, 110), (192, 243), (459, 401)),
+            ((12, 16), (19, 36), (40, 28)),
         ]
+        return anchors
 
 class YoloV3TinyCOCOIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
@@ -1864,15 +1865,13 @@ class YoloV3TinyCOCOIO(YoloV3IO):
     def _get_shapes(self):
         shapes = [
             (3, 85, 26, 26),
-            (3, 85, 13, 13)
+            (3, 85, 13, 13),
         ]
         return shapes
 
     def _get_anchors(self):
         anchors = [
             ((23, 27), (37, 58), (81, 82)),
-            ((81, 82), (135, 169), (344, 319))
+            ((81, 82), (135, 169), (344, 319)),
         ]
         return anchors
-
-
