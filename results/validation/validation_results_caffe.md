@@ -122,9 +122,9 @@ Bounding box (upper left and bottom right corners):<br>
 
    Model              |      Python (implementation)     |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Bounding box: (94, 93), (360, 481)  |
-ssd300                | Bounding box: (68, 100), (334,451) |
-ssd512                | Bounding box: (67, 95), (356, 480) |
+mobilenet-ssd         | Bounding box:<br>(94, 93), (360, 481)  |
+ssd300                | Bounding box:<br>(68, 100), (334,451) |
+ssd512                | Bounding box:<br>(67, 95), (356, 480) |
 
 ### Test image #3
 
@@ -142,9 +142,9 @@ Bounding box (upper left and bottom right corners):<br>
 
    Model              |     Python (implementation)      |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Bounding box:  (79, 140), (270, 375)  |
-ssd300                | Bounding box:  (79, 150), (270, 373)  |
-ssd512                | Bounding box:  (79, 175), (274, 372)  |
+mobilenet-ssd         | Bounding box:<br>(79, 140), (270, 375)  |
+ssd300                | Bounding box:<br>(79, 150), (270, 373)  |
+ssd512                | Bounding box:<br>(79, 175), (274, 372)  |
 
 
 <!-- LINKS -->
