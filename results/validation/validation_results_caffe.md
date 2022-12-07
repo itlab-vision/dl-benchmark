@@ -93,18 +93,19 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
+
 Bounding boxes (upper left and bottom right corners):<br>
-(55,155), (236,375)<br>
-(190,190), (380,400)<br>
-(374,209), (588,422)<br>
-(289,111), (440,255)<br>
-(435,160), (615,310)<br>
+(55, 155), (236, 375)<br>
+(190, 190), (380, 400)<br>
+(374, 209), (588, 422)<br>
+(289, 111), (440, 255)<br>
+(435, 160), (615, 310)<br>
 
    Model              |  Python (implementation)         |
 ----------------------|----------------------------------|
 mobilenet-ssd         | Bounding box: (46, 133), (657, 445)  |
 ssd300                | Bounding box: (66, 163), (235, 356) |
-ssd512                | Bounding box: (65, 168), (256, 343); (378, 167), (592, 424)  |
+ssd512                | Bounding boxes: (65, 168), (256, 343); (378, 167), (592, 424)  |
 
 ### Test image #2
 
@@ -118,7 +119,7 @@ Image resolution: 500 x 500
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
 Bounding box (upper left and bottom right corners):<br>
-(117,86), (365,465)
+(117, 86), (365, 465)
 
    Model              |      Python (implementation)     |
 ----------------------|----------------------------------|
@@ -138,7 +139,7 @@ Image resolution: 333 x 500
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
 Bounding box (upper left and bottom right corners):<br>
-(82,262), (269,376)
+(82, 262), (269, 376)
 
    Model              |     Python (implementation)      |
 ----------------------|----------------------------------|

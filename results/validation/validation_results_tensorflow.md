@@ -108,18 +108,19 @@ Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
+
 Bounding boxes (upper left and bottom right corners):<br>
-(55,155), (236,375)<br>
-(190,190), (380,400)<br>
-(374,209), (588,422)<br>
-(289,111), (440,255)<br>
-(435,160), (615,310)<br>
+(55, 155), (236, 375)<br>
+(190, 190), (380, 400)<br>
+(374, 209), (588, 422)<br>
+(289, 111), (440, 255)<br>
+(435, 160), (615, 310)<br>
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Bounding box: (385, 211), (597, 420)  |
-ssd_mobilenet_v2_coco     | Bounding box: (378, 212), (607, 428)  |
-ssd_mobilenet_v1_fpn_coco     | Bounding boxes: (294, 132), (439, 288); (375, 217), (580, 425); (437, 150), (610, 299)  |
+----------------------|---------------------------|
+ssd_mobilenet_v1_coco | Bounding box: (385, 211), (597, 420) |
+ssd_mobilenet_v2_coco | Bounding box: (378, 212), (607, 428) |
+ssd_mobilenet_v1_fpn_coco | Bounding boxes: (294, 132), (439, 288); (375, 217), (580, 425); (437, 150), (610, 299) |
 
 ### Test image #2
 
@@ -135,14 +136,15 @@ Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-Bounding box (upper left and bottom right corners):<br>
-(117,86), (365,465)
 
-Название модели   |   Python (реализация)        |
-----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Bounding box: (83, 114), (362, 424)  |
-ssd_mobilenet_v2_coco     | Bounding box: (89, 98), (359, 446)  |
-ssd_mobilenet_v1_fpn_coco     | Bounding box: (92, 101), (350, 419)  |
+Bounding box (upper left and bottom right corners):<br>
+(117, 86), (365, 465)
+
+    Model             |  Python (implementation)  |
+----------------------|---------------------------|
+ssd_mobilenet_v1_coco | Bounding box: (83, 114), (362, 424) |
+ssd_mobilenet_v2_coco | Bounding box: (89, 98), (359, 446) |
+ssd_mobilenet_v1_fpn_coco | Bounding box: (92, 101), (350, 419) |
 
 ### Test image #3
 
@@ -158,14 +160,15 @@ Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
+
 Bounding box (upper left and bottom right corners):<br>
-(82,262), (269,376)
+(82, 262), (269, 376)
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Bounding box: (87, 143), (263, 372)  |
-ssd_mobilenet_v2_coco     | Bounding box: (83, 147), (265, 377)  |
-ssd_mobilenet_v1_fpn_coco     | Bounding box: (92, 136), (261, 371)  |
+----------------------|---------------------------|
+ssd_mobilenet_v1_coco | Bounding box: (87, 143), (263, 372) |
+ssd_mobilenet_v2_coco | Bounding box: (83, 147), (265, 377) |
+ssd_mobilenet_v1_fpn_coco | Bounding box: (92, 136), (261, 371) |
 
 ### Test image #4
 
@@ -181,14 +184,18 @@ Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
-Bounding box (upper left and bottom right corners):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
+
+Bounding boxes (upper left and bottom right corners):<br>
+TV (110, 41), (397, 304)<br>
+MOUSE (508, 337), (559, 374)<br>
+KEYBOARD (241, 342), (496, 461)<br>
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-faster_rcnn_inception_resnet_v2_atrous_coco     | Bounding boxes: TV (104, 38), (396, 307); MOUSE (508, 337), (559, 373); KEYBOARD (239, 343), (495, 462); DINING TABLE (22, 230), (621, 477) |
-faster_rcnn_inception_v2_coco     | Bounding boxes: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
-faster_rcnn_resnet50_coco     | Bounding boxes: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
-faster_rcnn_resnet101_coco     | Bounding boxes: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
+----------------------|---------------------------|
+faster_rcnn_inception_resnet_v2_atrous_coco | Bounding boxes: TV (104, 38), (396, 307); MOUSE (508, 337), (559, 373); KEYBOARD (239, 343), (495, 462); DINING TABLE (22, 230), (621, 477) |
+faster_rcnn_inception_v2_coco | Bounding boxes: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
+faster_rcnn_resnet50_coco | Bounding boxes: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
+faster_rcnn_resnet101_coco | Bounding boxes: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
 
 ### Test image #5
 
@@ -204,11 +211,13 @@ Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
 </div>
-Bounding box (upper left and bottom right corners):<br>AEROPLANE (131, 21), (248, 414)<br>
+
+Bounding box (upper left and bottom right corners):<br>
+AEROPLANE (131, 21), (248, 414)<br>
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-yolo-v1-tiny-tf     | Bounding box : AEROPLANE (113, 20), (252, 488)  |
+----------------------|---------------------------|
+yolo-v1-tiny-tf       | Bounding box: AEROPLANE (113, 20), (252, 488) |
 
 ### Test image #6
 
@@ -224,13 +233,16 @@ Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\python_yolo_coco_000000367818.bmp">
 </div>
-Bounding box (upper left and bottom right corners):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
+
+Bounding boxes (upper left and bottom right corners):<br>
+PERSON (86, 84), (394, 188)<br>
+HORSE (44, 108), (397, 565)<br>
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-yolo-v2-tf     | Bounding boxes: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
-yolo-v2-tiny-tf     | Bounding box: HORSE (75, 59), (405, 586) |
-yolo-v3-tf     | Bounding boxes: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
+----------------------|---------------------------|
+yolo-v2-tf | Bounding boxes: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
+yolo-v2-tiny-tf | Bounding box: HORSE (75, 59), (405, 586) |
+yolo-v3-tf | Bounding boxes: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
 
 ## Instance segmentation
 
@@ -248,11 +260,12 @@ Image:
 Segmented images are identical.
 
     Model             |  Python (implementation)  |
-----------------------|----------------------------------|
-mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
-mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
-mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
-mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
+----------------------|---------------------------|
+mask_rcnn_inception_resnet_v2_atrous_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div> |
+mask_rcnn_inception_v2_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div> |
+mask_rcnn_resnet50_atrous_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div> |
+mask_rcnn_resnet101_atrous_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div> |
+
 
 Color map:
 
