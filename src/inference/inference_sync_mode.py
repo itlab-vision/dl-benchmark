@@ -111,7 +111,7 @@ def cli_argument_parser():
                             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
                             'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
                             'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco',
-                            'yolo_v3',
+                            'yolo_v3', 'yolo_v3_tf', 'yolo_v3_tiny',  
                         ],
                         default='feedforward',
                         type=str,
@@ -152,7 +152,7 @@ def infer_sync(compiled_model, number_iter, get_slice):
         time_infer.append(request.latency / 1000)
     if number_iter == 1:
         result = utils.get_request_result(request)
-
+    #print(f"{result},{result['conv2d_22/BiasAdd/YoloRegion'].shape}, 155, infer_sync")
     return result, time_infer
 
 

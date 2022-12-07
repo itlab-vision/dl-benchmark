@@ -161,6 +161,7 @@ def set_input_to_blobs(request, input_):
 
 def get_request_result(request):
     result = {}
+    #print(f"<<{request.results.items()}, [{request}], 164, utils.py>>")
     for output_node, tensor in request.results.items():
         result[output_node.get_any_name()] = copy(tensor)
     return result
