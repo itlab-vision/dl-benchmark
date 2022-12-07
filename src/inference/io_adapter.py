@@ -1841,7 +1841,7 @@ class YoloV3TFIO(YoloV3IO):
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
         return predictions
-    
+
     def _get_shapes(self):
         shapes = [
             (3, 85, 38, 38),
@@ -1849,7 +1849,7 @@ class YoloV3TFIO(YoloV3IO):
             (3, 85, 76, 76),
         ]
         return shapes
-    
+
     def _get_anchors(self):
         anchors = [
             ((36, 75), (76, 55), (72, 146)),
@@ -1857,6 +1857,7 @@ class YoloV3TFIO(YoloV3IO):
             ((12, 16), (19, 36), (40, 28)),
         ]
         return anchors
+
 
 class YoloV3TinyCOCOIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
