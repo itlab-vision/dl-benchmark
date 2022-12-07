@@ -102,9 +102,9 @@ Bounding boxes (upper left and bottom right corners):<br>
 
    Model              |  Python (implementation)         |
 ----------------------|----------------------------------|
-mobilenet-ssd         | Bounding box: (46, 133), (657, 445)  |
-ssd300                | Bounding box: (66, 163), (235, 356) |
-ssd512                | Bounding boxes: (65, 168), (256, 343); (378, 167), (592, 424)  |
+mobilenet-ssd         | Bounding box:<br>(46, 133), (657, 445)<br>  |
+ssd300                | Bounding box:<br>(66, 163), (235, 356)<br> |
+ssd512                | Bounding boxes:<br>(65, 168), (256, 343);<br>(378, 167), (592, 424)<br>|
 
 ### Test image #2
 
