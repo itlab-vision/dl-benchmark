@@ -1649,14 +1649,11 @@ class yolo(IOAdapter):
         tx, ty, tw, th, to = detection[0:5]
         bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(w) / dx)
         bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(h) / dy)
-        print("1650!!")
         prior_width, prior_height = anchors[anchor_box_number]
-        print("1652!!")
         bbox_width = (np.exp(tw) * prior_width) * (float(w) / dx)
         bbox_height = (np.exp(th) * prior_height) * (float(h) / dy)
         confidence = self._sigmoid(to)
         scores = detection[5:]
-        #print(f"1655!! scores = {scores}, detection = {detection}")
         class_id = np.argmax(self._softmax(scores))
         best_class_score = scores[class_id]
         confidence_in_class = confidence * best_class_score
@@ -1681,21 +1678,12 @@ class yolo(IOAdapter):
             labels_map = [line.strip() for line in f]
         anchors = self._get_anchors()
         shapes = self._get_shapes()
-        # print(f"1682!! shapes = {shapes}, self._input = {self._input['input_1'].shape}")
         input_layer_name = next(iter(self._input))
         input_ = self._input[input_layer_name]
-        #frameHeight, frameWidth = input_.shape[-2:]
-        #frameHeight, frameWidth = (416, 416) yolo v3 tf
-        print(f"1685!! input_.shape[-2:] = {input_.shape[-2:]}, input_layer_name = {input_layer_name}")
         result = list(result.values())
-        print("1691!!!")
         ib, h, w, c = input_.shape
         b = result[0].shape[0]
-        #print(f"{result}, ib = {ib}, enumerate = {enumerate(result)} 1686")
-        #print(f"shapes = {shapes}")
-        #print(f"result = {len(result)}")
         images = np.ndarray(shape=(b, h, w, c))
-        print("1698!!!")
         for i in range(b):
             images[i] = input_[i % ib]
         for batch in range(ib):
@@ -1704,27 +1692,20 @@ class yolo(IOAdapter):
             orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch]
             scales = {'W': orig_w / w, 'H': orig_h / h}
             for i, array_of_detections in enumerate(result):
-                #print(f"i = {i}, array_of_detections = {array_of_detections}, 1695")
                 anchors_boxes = anchors[i]
                 data = array_of_detections[batch]
                 data_shape = shapes[i]
                 dx, dy = data_shape[-2:]
-                print(f"1707!! data_shape = {data_shape}")
                 cells = data.reshape(data_shape)
-                print(f"1710!! i = {i},cells = {cells.shape} ,array_of_detections = {array_of_detections.shape}, data_shape = {data_shape},dx dy = {dx, dy},cells = {cells.shape}")
                 for cx in range(dy):
                     for cy in range(dx):
-                        #print(f"!!1707, cells[cy, cx] = {cells[:,:,cy, cx].shape}")
                         for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
-                            #print(f"1706!!detection = {detection.shape}")
                             if detection[4] >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
-            print("1711")
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
-            print("1712")
             image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image),
                                             scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
@@ -1808,7 +1789,6 @@ class YoloV3IO(yolo):
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
             confidence = detection[5 + class_id]
-            #print(f"1801!!! confidience = {confidence}, self._threshold = {self._threshold}")
             if confidence >= self._threshold:
                 bbox = [
                     float(bbox_center_x - bbox_width / 2),
@@ -1842,20 +1822,15 @@ class YoloV3TFIO(YoloV3IO):
         super().__init__(args, io_model_wrapper, transformer)
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
-        #print(f"1835!! frameHeight = {frameHeight}, frameWidth = {frameWidth}")
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        print(f"1846!! anchors_box_number = {anchor_box_number}")
         bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(h) / dx)
         bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(w) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
-        #print(f"1841!! tx, ty, tw, th = {tx, ty, tw, th}, bbox_center_x = {bbox_center_x},bbox_center_y = {bbox_center_y} ,bbox_width = {bbox_width}, bbox_height = {bbox_height}")
-        print(f"1850!! detection = {detection.shape}")
         for class_id in range(80):
             confidence = self._sigmoid(detection[5 + class_id])
-            #print(f"1844!!! confidience = {confidence}, self._threshold = {self._threshold}")
             if confidence >= self._threshold:
                 bbox = [
                     float(bbox_center_x - bbox_width / 2),
@@ -1865,7 +1840,6 @@ class YoloV3TFIO(YoloV3IO):
                 ]
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
-        print(f"1865!! predictions = {predictions}")
         return predictions
     
     def _get_shapes(self):

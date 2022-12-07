@@ -152,7 +152,6 @@ def infer_sync(compiled_model, number_iter, get_slice):
         time_infer.append(request.latency / 1000)
     if number_iter == 1:
         result = utils.get_request_result(request)
-    #print(f"{result},{result['conv2d_22/BiasAdd/YoloRegion'].shape}, 155, infer_sync")
     return result, time_infer
 
 
