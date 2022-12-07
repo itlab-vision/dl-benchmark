@@ -8,6 +8,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 709 x 510
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
@@ -33,6 +34,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 500 x 500
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
@@ -58,6 +60,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 333 x 500
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
@@ -85,6 +88,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 709 x 510
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
@@ -108,6 +112,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 500 x 500
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
@@ -127,6 +132,7 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 333 x 500
 ﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">

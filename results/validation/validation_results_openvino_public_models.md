@@ -1,21 +1,19 @@
-# Проверка корректности вывода для публичных моделей с использованием разных режимов
+# Validation results for the models inferring using Intel® Distribution of OpenVINO™ Toolkit
 
-## Результаты классификации
+## Image classification
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 709 x 510
+Image resolution: 709 x 510
 ﻿
-
-Изображение:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 alexnet              |0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig| 0.9896095 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig| 0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig|
 caffenet             |-|-|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper|0.8602297 Granny Smith<br>0.0503849 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper
@@ -104,21 +102,19 @@ vgg16               |0.7317343 Granny Smith<br>0.0350750 bell pepper<br>0.020923
 vgg19-caffe2 |-|-| 0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br> |0.7076496 Granny Smith<br>0.0804374 acorn<br>0.0471763 fig<br>0.0367173 necklace<br>0.0180223 lemon<br> |
 vgg19               |0.7072727 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon| 0.7072732 Granny Smith<br>0.0805917 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon|0.7072731 Granny Smith<br>0.0805916 acorn<br>0.0473262 fig<br>0.0367724 necklace<br>0.0180316 lemon| 0.7072726 Granny Smith<br>0.0805918 acorn<br>0.0473263 fig<br>0.0367725 necklace<br>0.0180316 lemon|
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 500 x 500
+Image resolution: 500 x 500
 ﻿
-
-Изображение:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
----------------------|---------------------------|---------------------------|------------------------------|----------------------------|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 alexnet              |0.9979284 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul| 0.9979284 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul| 0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul|
 caffenet             |-|-|0.9997593 junco, snowbird<br>0.0002351 chickadee<br>0.0000033 brambling, Fringilla montifringilla<br>0.0000010 bulbul<br>0.0000007 jay|0.9997593 junco, snowbird<br>0.0002351 chickadee<br>0.0000033 brambling, Fringilla montifringilla<br>0.0000010 bulbul<br>0.0000007 jay
 densenet-121         |17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br>8.2504864 magpie| 17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br>8.2504864 magpie|17.8269768 junco, snowbird<br>11.4734764 brambling, Fringilla montifringilla<br>11.3202286 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598928 chickadee<br> 8.2504864 magpie| 17.8269730 junco, snowbird<br>11.4734774 brambling, Fringilla montifringilla<br>11.3202305 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>10.3598871 chickadee<br>8.2504835 magpie|
@@ -199,21 +195,19 @@ vgg16               |0.9999772 junco, snowbird<br>0.0000132 brambling, Fringilla
 vgg19-caffe2 |-|-| 0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |0.9999392 junco, snowbird<br>0.0000582 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br> |
 vgg19               |0.9999394 junco, snowbird<br>0.0000580 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea| 0.9999394 junco, snowbird<br>0.0000580 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea|0.9999394 junco, snowbird<br>0.0000580 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea| 0.9999394 junco, snowbird<br>0.0000580 brambling, Fringilla montifringilla<br>0.0000023 chickadee<br>0.0000002 water ouzel, dipper<br>0.0000000 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 333 x 500
+Image resolution: 333 x 500
 ﻿
-
-Изображение:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
----------------------|---------------------------|---------------------------|------------------------------|----------------------------|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 alexnet              |0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck| 0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck| 0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck|
 caffenet             |-|-|0.9839840 lifeboat<br>0.0109296 container ship, containership, container vessel<br>0.0018576 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0007185 wreck<br>0.0007133 pirate, pirate ship|0.9839840 lifeboat<br>0.0109296 container ship, containership, container vessel<br>0.0018576 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0007185 wreck<br>0.0007133 pirate, pirate ship|
 densenet-121         |13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship| 13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship|13.9662323 lifeboat<br>7.8177419 drilling platform, offshore rig<br>7.7323365 liner, ocean liner<br>7.5702801 wreck<br>7.5621624 pirate, pirate ship| 13.9662342 lifeboat<br>7.8177428 drilling platform, offshore rig<br>7.7323399 liner, ocean liner<br>7.5702839 wreck<br>7.5621653 pirate, pirate ship|
@@ -294,305 +288,281 @@ vgg16               |0.9821943 lifeboat<br>0.0082832 container ship, containersh
 vgg19               |0.9965242 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat| 0.9965242 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|0.9965212 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat| 0.9965214 lifeboat<br>0.0008823 container ship, containership, container vessel<br>0.0004778 drilling platform, offshore rig<br>0.0003970 dock, dockage, docking facility<br>0.0003622 fireboat|
 vgg19-caffe2 |-|-| 0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br> |0.9965143 lifeboat<br>0.0008843 container ship, containership, container vessel<br>0.0004789 drilling platform, offshore rig<br>0.0003978 dock, dockage, docking facility<br>0.0003630 fireboat<br> |
 
-### Классификация, нестандартные модели
+### Image classification (non-standard models)
 
-Источник: набор данных [MRL Eye Dataset][mrl_eye_dataset]
+Data source: [MRL Eye Dataset][mrl_eye_dataset]
 
 
-
-   Название модели   | Изображение |Особенности  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
----------------------|---------------------------|---------------------------|------------------------------|----------------------------|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 open-closed-eye-0001 | <img width="150" src="images\1-closed-eye.png"> |Only batch = 1 works correctly  | 0.9999934 closed <br> 0.0000066 open <br> | 0.9999934 closed <br> 0.0000066 open <br> |
 open-closed-eye-0001 | <img width="150" src="images\2-opened-eye.png"> |Only batch = 1 works correctly  | 0.9999905 open <br> 0.0000094 closed <br> | 0.9999905 open <br> 0.0000094 closed <br> |
 open-closed-eye-0001 | <img width="150" src="images\3-opened-eye.png"> |Only batch = 1 works correctly  | 1.0000000 open <br> 0.0000000 closed <br> | 1.0000000 open <br> 0.0000000 closed <br> |
 
-## Результаты детектирования
+## Object detection
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 709 x 510
+Image resolution: 709 x 510
 ﻿
-
-Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
+Bounding boxes (upper left and bottom right corners):<br>
 (55,155), (236,375)<br>
 (190,190), (380,400)<br>
 (374,209), (588,422)<br>
 (289,111), (440,255)<br>
 (435,160), (615,310)<br>
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
-----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (76,168), (231,344)| Окаймляющие прямоугольники: (75,165), (232,344),<br> (380,315), (610,410) |
-mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (380,315), (630,415) | Окаймляющий прямоугольник: (377,314), (632,415) |
-ssd300                    | - | - | Окаймляющий прямоугольник: (380,165), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
-ssd512                    | - | - | Окаймляющий прямоугольник: (377,163), (595,425) | Окаймляющий прямоугольник: (380,165), (595,425) |
-ssd_mobilenet_v1_fpn_coco | - | - | Окаймляющие прямоугольники: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Окаймляющие прямоугольники: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+ssd_mobilenet_v2_coco     | - | - | Bounding box: (76,168), (231,344)| Bounding boxes: (75,165), (232,344),<br> (380,315), (610,410) |
+mobilenet-ssd             | - | - | Bounding box: (380,315), (630,415) | Bounding box: (377,314), (632,415) |
+ssd300                    | - | - | Bounding box: (380,165), (595,425) | Bounding box: (380,165), (595,425) |
+ssd512                    | - | - | Bounding box: (377,163), (595,425) | Bounding box: (380,165), (595,425) |
+ssd_mobilenet_v1_fpn_coco | - | - | Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 500 x 500
+Image resolution: 500 x 500
 ﻿
-
-Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left and bottom right corners):<br>
 (117,86), (365,465)
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
-----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (90,100), (356,448) | Окаймляющий прямоугольник: (90,100), (350,450)|
-mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (92,95), (361,483)  | Окаймляющий прямоугольник: (94,94), (361,480) |
-ssd300                    | - | - | Окаймляющий прямоугольник: (68,100), (336,452) | Окаймляющий прямоугольник: (66,98), (340,455) |
-ssd512                    | - | - | Окаймляющий прямоугольник: (75,100), (355,445) | Окаймляющий прямоугольник: (75,100), (355,445)|
-ssd_mobilenet_v1_fpn_coco | - | - |Окаймляющий прямоугольник: (89, 98), (345, 440) |Окаймляющий прямоугольник: (89, 98), (345, 440)|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+ssd_mobilenet_v2_coco     | - | - | Bounding box: (90,100), (356,448) | Bounding box: (90,100), (350,450)|
+mobilenet-ssd             | - | - | Bounding box: (92,95), (361,483)  | Bounding box: (94,94), (361,480) |
+ssd300                    | - | - | Bounding box: (68,100), (336,452) | Bounding box: (66,98), (340,455) |
+ssd512                    | - | - | Bounding box: (75,100), (355,445) | Bounding box: (75,100), (355,445)|
+ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (89, 98), (345, 440)| Bounding box: (89, 98), (345, 440)|
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 333 x 500
+Image resolution: 333 x 500
 ﻿
-
-Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left anf bottom right corners):<br>
 (82,262), (269,376)
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
-----------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-ssd_mobilenet_v2_coco     | - | - | Окаймляющий прямоугольник: (81,244), (267,376)  | Окаймляющий прямоугольник: (80,244), (267,376)  |
-mobilenet-ssd             | - | - | Окаймляющий прямоугольник: (80,140), (270,375)  | Окаймляющий прямоугольник: (80,140), (270,375)  |
-ssd300                    | - | - | Окаймляющий прямоугольник: (80,155), (270,375)  | Окаймляющий прямоугольник: (80,157), (274,375)  |
-ssd512                    | - | - | Окаймляющий прямоугольник: (75,170), (172,370)  | Окаймляющий прямоугольник: (73,170), (173,371)  |
-ssd_mobilenet_v1_fpn_coco | - | - | Окаймляющий прямоугольник: (90, 135), (260, 375)| Окаймляющий прямоугольник: (90, 135), (260, 375)|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+ssd_mobilenet_v2_coco     | - | - | Bounding box: (81,244), (267,376)  | Bounding box: (80,244), (267,376)  |
+mobilenet-ssd             | - | - | Bounding box: (80,140), (270,375)  | Bounding box: (80,140), (270,375)  |
+ssd300                    | - | - | Bounding box: (80,155), (270,375)  | Bounding box: (80,157), (274,375)  |
+ssd512                    | - | - | Bounding box: (75,170), (172,370)  | Bounding box: (73,170), (173,371)  |
+ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (90, 135), (260, 375)| Bounding box: (90, 135), (260, 375)|
 
-### Тестовое изображение 4
-Источник: [MS COCO][ms_coco]
+### Test image #4
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 480
+Image resolution: 640 x 480
 
-
-Входное изображение:
 
 <div style='float: center'>
 <img width="300" src="images\9.jpg">
 <div style='float: center'>
-Входной тензор: 600; 1024; 1
-
-Результат детектирования:
+Input tensor: 600; 1024; 1
 </div>
+
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
+Bounding box (upper left anf bottom right corners):<br>
+TV (110, 41), (397, 304)<br>
+MOUSE (508, 337), (559, 374)<br>
+KEYBOARD (241, 342), (496, 461)<br>
 
-   Название модели                          |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
---------------------------------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-faster_rcnn_inception_resnet_v2_atrous_coco |-|-| Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461) | Окаймляющий прямоугольник:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>|
-faster_rcnn_inception_v2_coco               |-|-| Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Окаймляющий прямоугольник:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
-faster_rcnn_resnet50_coco                   |-|-| Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Окаймляющий прямоугольник:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
-faster_rcnn_resnet101_coco                  |-|-| Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Окаймляющий прямоугольник:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
-pelee-coco |-|-| Окаймляющий прямоугольник:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) | Окаймляющий прямоугольник:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) <br>|
-retinanet-tf |-|-| Окаймляющий прямоугольник:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Окаймляющий прямоугольник:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
-ssd_resnet50_v1_fpn_coco |-|-| Окаймляющий прямоугольник:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Окаймляющий прямоугольник:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+faster_rcnn_inception_resnet_v2_atrous_coco |-|-| Bounding box:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461) | Bounding box:<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>|
+faster_rcnn_inception_v2_coco               |-|-| Bounding box:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462) | Bounding box:<br>DINING TABLE (8, 201), (640, 480)<br>TV (106, 31), (397, 284)<br>MOUSE (509, 336), (560, 377)<br>KEYBOARD (231, 339), (495, 462)<br>|
+faster_rcnn_resnet50_coco                   |-|-| Bounding box:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463) | Bounding box:<br>TV (104, 34), (400, 282)<br>MOUSE (510, 336), (563, 373)<br>KEYBOARD (239, 339), (496, 463)<br>|
+faster_rcnn_resnet101_coco                  |-|-| Bounding box:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466) | Bounding box:<br>TV (105, 37), (400, 305)<br>MOUSE (505, 337), (559, 375)<br>KEYBOARD (231, 341), (499, 466)<br>|
+pelee-coco |-|-| Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) | Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) <br>|
+retinanet-tf |-|-| Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
+ssd_resnet50_v1_fpn_coco |-|-| Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
 
-### Тестовое изображение 5
-Источник: [MS COCO][ms_coco]
+### Test image #5
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 427
+Image resolution: 640 x 427
 
-
-Входное изображение и результат детектирования:
 
 <div style='float: center'>
 <img width="300" src="images\000000367818.jpg">
 <img width="300" src="detection\python_yolo_coco_000000367818.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
+Bounding box (upper left anf bottom right corners):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
 
-   Название модели                          |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
---------------------------------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-yolo-v3-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565) | Окаймляющий прямоугольник:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>|
-yolo-v2-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590) | Окаймляющий прямоугольник:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590)<br>|
-yolo-v2-tiny-tf                   |-|-| Окаймляющий прямоугольник:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562) | Окаймляющий прямоугольник:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562)<br>|
-pelee-coco                    |-|-| Окаймляющий прямоугольник:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381) | Окаймляющий прямоугольник:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381)<br>|
-retinanet-tf                  |-|-| Окаймляющий прямоугольник:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Окаймляющий прямоугольник:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
-ssd_resnet50_v1_fpn_coco                   |-|-| Окаймляющий прямоугольник:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Окаймляющий прямоугольник:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
-
-
-### Тестовое изображение 6
-Источник: [Pascal VOC][PASCAL_VOC_2012]
-
-Исходное разрешение: 500 x 375
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+yolo-v3-tf                   |-|-| Bounding box:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565) | Bounding box:<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>|
+yolo-v2-tf                   |-|-| Bounding box:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590) | Bounding box:<br>PERSON (96, 74), (379, 173)<br>HORSE (48, 122), (385, 590)<br>|
+yolo-v2-tiny-tf                   |-|-| Bounding box:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562) | Bounding box:<br>PERSON (84, 70), (413, 195)<br>HORSE (100, 92), (398, 562)<br>|
+pelee-coco                    |-|-| Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381) | Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381)<br>|
+retinanet-tf                  |-|-| Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
+ssd_resnet50_v1_fpn_coco                   |-|-| Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
 
 
-Входное изображение и результат детектирования:
+### Test image #6
+Data source: [Pascal VOC][PASCAL_VOC_2012]
+
+Image resolution: 500 x 375
+
 
 <div style='float: center'>
 <img width="300" src="images\2011_002352.jpg">
 <img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>AEROPLANE (131, 21), (248, 414)<br>
+Bounding box (upper left anf bottom right corners):<br>AEROPLANE (131, 21), (248, 414)<br>
 
-   Название модели                          |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)|
---------------------------------------------|----------------------------------|----------------------------------|--------------------------------|------------------------------------|
-yolo-v1-tiny-tf                   |-|-| Окаймляющий прямоугольник:<br>AEROPLANE (131, 21), (248, 414)<br>| Окаймляющий прямоугольник:<br>AEROPLANE (131, 21), (248, 414)<br>|
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+yolo-v1-tiny-tf                   |-|-| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>|
 
-## Результаты распознавания лиц
+## Face recognition
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [VGGFace2][vgg_face2]  
+Data source: [VGGFace2][vgg_face2]  
 
-Исходное разрешение: 96 x 112
+Image resolution: 96 x 112
 
-
-Изображение:
 
 <div style='float: center'>
 <img src="images\sphereface.jpg">
 </div>
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
-Sphereface           |-|-| 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Полный тензор][sphereface_async] |
+Sphereface           |-|-| 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Full tensor][sphereface_sync] | 0.77 0.70 0.77 -1.79 1.00<br> -0.02 0.82 -0.44 -0.96 0.37<br> ...<br> -0.74 0.25 -0.35 2.06 1.16<br> 0.56 -1.14 0.50 0.46 -0.91<br> [Full tensor][sphereface_async] |
 
-## Результаты сегментации
+## Semantic segmentation
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [Cityscapes][cityscapes]
+Data source: [Cityscapes][cityscapes]
 
-Исходное разрешение: 2048 x 1024
+Image resolution: 2048 x 1024
 ﻿
-
-Исходное изображение:
 
 <div style='float: center'>
 <img width="300" src="images\berlin_000000_000019_leftImg8bit.png"></img>
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000000_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000000_000019_leftImg8bit.bmp"></img></div>|
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [Cityscapes][cityscapes]
+Data source: [Cityscapes][cityscapes]
 
-Исходное разрешение: 2048 x 1024
+Image resolution: 2048 x 1024
 ﻿
-
-Исходное изображение:
 
 <div style='float: center'>
 <img width="300" src="images\berlin_000488_000019_leftImg8bit.png">
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000488_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000488_000019_leftImg8bit.bmp"></img></div>|
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [Cityscapes][cityscapes]
+Data source: [Cityscapes][cityscapes]
 
-Исходное разрешение: 2048 x 1024
+Image resolution: 2048 x 1024
 ﻿
-
-Исходное изображение:
 
 <div style='float: center'>
 <img width="300" src="images\berlin_000533_000019_leftImg8bit.png">
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 dilation             |<div style='float: center'><img width="150" src="semantic_segmentation\cpp_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\cpp_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_berlin_000533_000019_leftImg8bit.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_async_berlin_000533_000019_leftImg8bit.bmp"></img></div>|
 
-Карта цветов:
+Color map:
 
 <div style='float: center'>
 <img width="300" src="semantic_segmentation\cityscapes_colormap.jpg">
 </div>
 
-### Тестовое изображение 4
+### Test image #4
 
-Источник: набор данных [PASCAL VOC 2012][PASCAL_VOC_2012]
+Data source: [PASCAL VOC 2012][PASCAL_VOC_2012]
 
-Исходное разрешение: 500 x 375
+Image resolution: 500 x 375
 ﻿
-
-Исходное изображение:
 
 <div style='float: center'>
 <img width="300" src="images\Sheep.jpg">
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-   Название модели   |   C++ (latency mode, пример из OpenVINO)  |  C++ (throughput mode, пример из OpenVINO)  |  Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 deeplabv3             |-|-|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_sheep.bmp"></img></div>|<div style='float: center'><img width="150" src="semantic_segmentation\python_sync_sheep.bmp"></img></div>|
 
-Карта цветов:
+Color map:
 
 <div style='float: center'>
 <img width="300" src="semantic_segmentation\pascal_colormap.jpg">
 </div>
 
-## Результаты экземплярной сегментации
+## Instance segmentation
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [MS COCO][ms_coco]
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 480
+Image resolution: 640 x 480
 
-
-Изображение:
 
 <div style='float: center'>
 <img width="300" src="images\22.jpg"></img>
 </div>
 <div style='float: center'>
-Входной тензор: 800; 1365; 1
+Input tensor: 800; 1365; 1
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-   Название модели   |   Python (latency mode, реализация)  |  Python (throughput mode, реализация)        |
+        Model        | Python (latency mode, implementation)  |  Python (throughput mode, implementation)|
 ---------------------|-----------------------------|------------------------------------|
 mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
 mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
 mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
 mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
 
-
-Карта цветов:
+Color map:
 
 <div style='float: center'>
 <img width="300" src="instance_segmentation\mscoco90_colormap.jpg">

@@ -1,18 +1,18 @@
-# Результаты проверки корректности вывода для инференса на базе Intel® Optimization for TensorFlow
+# Validation results for the models inferring using Intel® Optimization for TensorFlow
 
-## Результаты классификации
+## Image classification
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 709 x 510
+Image resolution: 709 x 510
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Название модели   |    Python (реализация)        |
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 densenet-121-tf              |0.9885473 Granny Smith<br>0.0030248 lemon<br>0.0019818 orange<br>0.0019432 water jug<br>0.0009727 piggy bank, penny bank|
 densenet-161-tf              |0.9881073 Granny Smith<br>0.0024773 dumbbell<br>0.0022064 pitcher, ewer<br>0.0009395 piggy bank, penny bank<br>0.0007298 lemon|
@@ -32,17 +32,17 @@ mobilenet-v2-1.0-224         |0.8931143 Granny Smith<br>0.0335342 piggy bank, pe
 mobilenet-v2-1.4-224         |0.7240415 Granny Smith<br>0.0312107 vase<br>0.0237108 fig<br>0.0122461 piggy bank, penny bank<br>0.0118887 saltshaker, salt shaker|
 resnet-50-tf                 |0.9553046 Granny Smith<br>0.0052122 lemon<br>0.0047184 piggy bank, penny bank<br>0.0045874 orange<br>0.0044232 necklace|
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 500 x 500
+Image resolution: 500 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Название модели   |    Python (реализация)        |
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 densenet-121-tf              |0.9993927 junco, snowbird<br>0.0003457 brambling, Fringilla montifringilla<br>0.0000980 chickadee<br>0.0000902 water ouzel, dipper<br>0.0000305 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 densenet-161-tf              |0.9974313 junco, snowbird<br>0.0012504 chickadee<br>0.0005084 brambling, Fringilla montifringilla<br>0.0004443 water ouzel, dipper<br>0.0001865 goldfinch, Carduelis carduelis|
@@ -62,17 +62,17 @@ mobilenet-v2-1.0-224         |0.8770279 junco, snowbird<br>0.0143870 water ouzel
 mobilenet-v2-1.4-224         |0.6637309 junco, snowbird<br>0.0811652 chickadee<br>0.0119593 water ouzel, dipper<br>0.0038528 brambling, Fringilla montifringilla<br>0.0022499 goldfinch, Carduelis carduelis|
 resnet-50-tf                 |0.9983401 junco, snowbird<br>0.0004680 brambling, Fringilla montifringilla<br>0.0003848 chickadee<br>0.0003656 water ouzel, dipper<br>0.0003383 goldfinch, Carduelis carduelis|
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Разрешение: 333 x 500
+Image resolution: 333 x 500
 ﻿
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Название модели   |    Python (реализация)        |
+   Model             |  Python (implementation)  |
 ---------------------|---------------------------|
 densenet-121-tf              |0.3662359 liner, ocean liner<br>0.1080203 dock, dockage, docking facility<br>0.0820107 container ship, containership, container vessel<br>0.0713347 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0661764 fireboat|
 densenet-161-tf              |0.3889844 lifeboat<br>0.3597548 liner, ocean liner<br>0.0605916 fireboat<br>0.0416730 dock, dockage, docking facility<br>0.0313890 container ship, containership, container vessel|
@@ -92,169 +92,169 @@ mobilenet-v2-1.0-224         |0.1885899 beacon, lighthouse, beacon light, pharos
 mobilenet-v2-1.4-224         |0.1300138 container ship, containership, container vessel<br>0.0765785 lifeboat<br>0.0406071 dock, dockage, docking facility<br>0.0393022 drilling platform, offshore rig<br>0.0381023 liner, ocean liner|
 resnet-50-tf                 |0.2357707 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1480755 liner, ocean liner<br>0.1104696 container ship, containership, container vessel<br>0.1095414 drilling platform, offshore rig<br>0.0915570 beacon, lighthouse, beacon light, pharos|
 
-## Результаты детектирования
+## Object detection
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 709 x 510
+Image resolution: 709 x 510
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-Окаймляющие прямоугольники (координаты левого верхнего и правого нижнего углов):<br>
+Bounding boxes (upper left and bottom right corners):<br>
 (55,155), (236,375)<br>
 (190,190), (380,400)<br>
 (374,209), (588,422)<br>
 (289,111), (440,255)<br>
 (435,160), (615,310)<br>
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Окаймляющий прямоугольник: (385, 211), (597, 420)  |
-ssd_mobilenet_v2_coco     | Окаймляющий прямоугольник: (378, 212), (607, 428)  |
-ssd_mobilenet_v1_fpn_coco     | Окаймляющие прямоугольники: (294, 132), (439, 288); (375, 217), (580, 425); (437, 150), (610, 299)  |
+ssd_mobilenet_v1_coco     | Bounding box: (385, 211), (597, 420)  |
+ssd_mobilenet_v2_coco     | Bounding box: (378, 212), (607, 428)  |
+ssd_mobilenet_v1_fpn_coco     | Bounding boxes: (294, 132), (439, 288); (375, 217), (580, 425); (437, 150), (610, 299)  |
 
-### Тестовое изображение 2
+### Test image #2
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 500 x 500
+Image resolution: 500 x 500
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left and bottom right corners):<br>
 (117,86), (365,465)
 
 Название модели   |   Python (реализация)        |
 ----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Окаймляющий прямоугольник: (83, 114), (362, 424)  |
-ssd_mobilenet_v2_coco     | Окаймляющий прямоугольник: (89, 98), (359, 446)  |
-ssd_mobilenet_v1_fpn_coco     | Окаймляющий прямоугольник: (92, 101), (350, 419)  |
+ssd_mobilenet_v1_coco     | Bounding box: (83, 114), (362, 424)  |
+ssd_mobilenet_v2_coco     | Bounding box: (89, 98), (359, 446)  |
+ssd_mobilenet_v1_fpn_coco     | Bounding box: (92, 101), (350, 419)  |
 
-### Тестовое изображение 3
+### Test image #3
 
-Источник: набор данных [ImageNet][imagenet]
+Data source: [ImageNet][imagenet]
 
-Исходное разрешение: 333 x 500
+Image resolution: 333 x 500
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>
+Bounding box (upper left and bottom right corners):<br>
 (82,262), (269,376)
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
-ssd_mobilenet_v1_coco     | Окаймляющий прямоугольник: (87, 143), (263, 372)  |
-ssd_mobilenet_v2_coco     | Окаймляющий прямоугольник: (83, 147), (265, 377)  |
-ssd_mobilenet_v1_fpn_coco     | Окаймляющий прямоугольник: (92, 136), (261, 371)  |
+ssd_mobilenet_v1_coco     | Bounding box: (87, 143), (263, 372)  |
+ssd_mobilenet_v2_coco     | Bounding box: (83, 147), (265, 377)  |
+ssd_mobilenet_v1_fpn_coco     | Bounding box: (92, 136), (261, 371)  |
 
-### Тестовое изображение 4
+### Test image #4
 
-Источник: набор данных [MS COCO][ms_coco]
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 480
+Image resolution: 640 x 480
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="300" src="images\9.jpg">
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
+Bounding box (upper left and bottom right corners):<br>TV (110, 41), (397, 304)<br>MOUSE (508, 337), (559, 374)<br>KEYBOARD (241, 342), (496, 461)<br>
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
-faster_rcnn_inception_resnet_v2_atrous_coco     | Окаймляющие прямоугольники: TV (104, 38), (396, 307); MOUSE (508, 337), (559, 373); KEYBOARD (239, 343), (495, 462); DINING TABLE (22, 230), (621, 477) |
-faster_rcnn_inception_v2_coco     | Окаймляющие прямоугольники: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
-faster_rcnn_resnet50_coco     | Окаймляющие прямоугольники: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
-faster_rcnn_resnet101_coco     | Окаймляющие прямоугольники: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
+faster_rcnn_inception_resnet_v2_atrous_coco     | Bounding boxes: TV (104, 38), (396, 307); MOUSE (508, 337), (559, 373); KEYBOARD (239, 343), (495, 462); DINING TABLE (22, 230), (621, 477) |
+faster_rcnn_inception_v2_coco     | Bounding boxes: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
+faster_rcnn_resnet50_coco     | Bounding boxes: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
+faster_rcnn_resnet101_coco     | Bounding boxes: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
 
-### Тестовое изображение 5
+### Test image #5
 
-Источник: набор данных [Pascal VOC][PASCAL_VOC_2012]
+Data source: [Pascal VOC][PASCAL_VOC_2012]
 
-Исходное разрешение: 500 x 375
+Image resolution: 500 x 375
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="300" src="images\2011_002352.jpg">
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>AEROPLANE (131, 21), (248, 414)<br>
+Bounding box (upper left and bottom right corners):<br>AEROPLANE (131, 21), (248, 414)<br>
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
-yolo-v1-tiny-tf     | Окаймляющий прямоугольник : AEROPLANE (113, 20), (252, 488)  |
+yolo-v1-tiny-tf     | Bounding box : AEROPLANE (113, 20), (252, 488)  |
 
-### Тестовое изображение 6
+### Test image #6
 
-Источник: набор данных [MS COCO][ms_coco]
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 427
+Image resolution: 640 x 427
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="300" src="images\000000367818.jpg">
 </div>
-Результат детектирования:
+Detected objects:
 <div style='float: center'>
 <img width="300" src="detection\python_yolo_coco_000000367818.bmp">
 </div>
-Окаймляющий прямоугольник (координаты левого верхнего и правого нижнего углов):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
+Bounding box (upper left and bottom right corners):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
-yolo-v2-tf     | Окаймляющие прямоугольники: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
-yolo-v2-tiny-tf     | Окаймляющий прямоугольник: HORSE (75, 59), (405, 586) |
-yolo-v3-tf     | Окаймляющие прямоугольники: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
+yolo-v2-tf     | Bounding boxes: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
+yolo-v2-tiny-tf     | Bounding box: HORSE (75, 59), (405, 586) |
+yolo-v3-tf     | Bounding boxes: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
 
-## Результаты экземплярной сегментации
+## Instance segmentation
 
-### Тестовое изображение 1
+### Test image #1
 
-Источник: набор данных [MS COCO][ms_coco]
+Data source: [MS COCO][ms_coco]
 
-Исходное разрешение: 640 x 480
+Image resolution: 640 x 480
 
-Входное изображение:
+Image:
 <div style='float: center'>
 <img width="300" src="images\22.jpg"></img>
 </div>
 
-Полученные изображения идентичны и совпадают по пикселям.
+Segmented images are identical.
 
-Название модели   |   Python (реализация)        |
+    Model             |  Python (implementation)  |
 ----------------------|----------------------------------|
 mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
 mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
 mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
 mask_rcnn_resnet101_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet101_atrous_coco.bmp"></img></div>|
 
-Карта цветов:
+Color map:
 
 <div style='float: center'>
 <img width="300" src="instance_segmentation\mscoco90_colormap.jpg">
