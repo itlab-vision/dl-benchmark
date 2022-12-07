@@ -93,7 +93,6 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
-
 Bounding boxes (upper left and bottom right corners):<br>
 (55, 155), (236, 375)<br>
 (190, 190), (380, 400)<br>
