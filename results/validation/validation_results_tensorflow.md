@@ -111,10 +111,10 @@ Bounding boxes (upper left and bottom right corners):<br>
 (289, 111), (440, 255)<br>
 (435, 160), (615, 310)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
-ssd_mobilenet_v1_coco | Bounding box:<br>(385, 211), (597, 420) |
-ssd_mobilenet_v2_coco | Bounding box:<br>(378, 212), (607, 428) |
+    Model                 |  Python (implementation)                |
+--------------------------|-----------------------------------------|
+ssd_mobilenet_v1_coco     | Bounding box:<br>(385, 211), (597, 420) |
+ssd_mobilenet_v2_coco     | Bounding box:<br>(378, 212), (607, 428) |
 ssd_mobilenet_v1_fpn_coco | Bounding boxes:<br>(294, 132), (439, 288);<br>(375, 217), (580, 425);<br>(437, 150), (610, 299)<br>|
 
 ### Test image #2
