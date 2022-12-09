@@ -100,12 +100,8 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 709 x 510
 
-Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 Bounding boxes (upper left and bottom right corners):<br>
