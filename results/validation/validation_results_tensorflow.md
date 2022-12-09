@@ -123,23 +123,18 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 500 x 500
 
-Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00000247.JPEG">
 </div>
-
 Bounding box (upper left and bottom right corners):<br>
-(117, 86), (365, 465)
+(117, 86), (365, 465)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
-ssd_mobilenet_v1_coco | Bounding box: (83, 114), (362, 424) |
-ssd_mobilenet_v2_coco | Bounding box: (89, 98), (359, 446) |
-ssd_mobilenet_v1_fpn_coco | Bounding box: (92, 101), (350, 419) |
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
+ssd_mobilenet_v1_coco | Bounding box:<br>(83, 114), (362, 424)<br> |
+ssd_mobilenet_v2_coco | Bounding box:<br>(89, 98), (359, 446)<br> |
+ssd_mobilenet_v1_fpn_coco | Bounding box:<br> (92, 101), (350, 419)<br> |
 
 ### Test image #3
 
