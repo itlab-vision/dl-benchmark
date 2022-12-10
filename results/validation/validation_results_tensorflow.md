@@ -142,20 +142,15 @@ Data source: [ImageNet][imagenet]
 
 Image resolution: 333 x 500
 
-Image:
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-
 Bounding box (upper left and bottom right corners):<br>
-(82, 262), (269, 376)
+(82, 262), (269, 376)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
 ssd_mobilenet_v1_coco | Bounding box: (87, 143), (263, 372) |
 ssd_mobilenet_v2_coco | Bounding box: (83, 147), (265, 377) |
 ssd_mobilenet_v1_fpn_coco | Bounding box: (92, 136), (261, 371) |
@@ -166,26 +161,21 @@ Data source: [MS COCO][ms_coco]
 
 Image resolution: 640 x 480
 
-Image:
 <div style='float: center'>
 <img width="300" src="images\9.jpg">
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
-
 Bounding boxes (upper left and bottom right corners):<br>
 TV (110, 41), (397, 304)<br>
 MOUSE (508, 337), (559, 374)<br>
 KEYBOARD (241, 342), (496, 461)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
-faster_rcnn_inception_resnet_v2_atrous_coco | Bounding boxes: TV (104, 38), (396, 307); MOUSE (508, 337), (559, 373); KEYBOARD (239, 343), (495, 462); DINING TABLE (22, 230), (621, 477) |
-faster_rcnn_inception_v2_coco | Bounding boxes: TV (101, 25), (401, 306); FRISBEE (508, 338), (561, 378); KEYBOARD (228, 347),(498, 463) |
-faster_rcnn_resnet50_coco | Bounding boxes: TV (94, 15), (413, 290); MOUSE (510, 337), (564, 375); KEYBOARD (240, 339), (514, 468); MICROWAVE (51, 0), (415, 299) |
-faster_rcnn_resnet101_coco | Bounding boxes: TV (98, 39), (401, 301); MOUSE (507, 336), (562, 374); KEYBOARD (233, 340), (502, 467) |
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
+faster_rcnn_inception_resnet_v2_atrous_coco | Bounding boxes:<br>TV (104, 38), (396, 307);<br>MOUSE (508, 337), (559, 373);<br>KEYBOARD (239, 343), (495, 462);<br>DINING TABLE (22, 230), (621, 477)<br> |
+faster_rcnn_inception_v2_coco | Bounding boxes:<br>TV (101, 25), (401, 306);<br>FRISBEE (508, 338), (561, 378);<br>KEYBOARD (228, 347),(498, 463)<br> |
+faster_rcnn_resnet50_coco | Bounding boxes:<br>TV (94, 15), (413, 290);<br>MOUSE (510, 337), (564, 375);<br> KEYBOARD (240, 339), (514, 468);<br>MICROWAVE (51, 0), (415, 299)<br> |
+faster_rcnn_resnet101_coco | Bounding boxes:<br>TV (98, 39), (401, 301);<br>MOUSE (507, 336), (562, 374);<br>KEYBOARD (233, 340), (502, 467)<br> |
 
 ### Test image #5
 
@@ -193,21 +183,16 @@ Data source: [Pascal VOC][PASCAL_VOC_2012]
 
 Image resolution: 500 x 375
 
-Image:
 <div style='float: center'>
 <img width="300" src="images\2011_002352.jpg">
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
 </div>
-
 Bounding box (upper left and bottom right corners):<br>
 AEROPLANE (131, 21), (248, 414)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
-yolo-v1-tiny-tf       | Bounding box: AEROPLANE (113, 20), (252, 488) |
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
+yolo-v1-tiny-tf       | Bounding box:<br>AEROPLANE (113, 20), (252, 488)<br> |
 
 ### Test image #6
 
@@ -215,12 +200,8 @@ Data source: [MS COCO][ms_coco]
 
 Image resolution: 640 x 427
 
-Image:
 <div style='float: center'>
 <img width="300" src="images\000000367818.jpg">
-</div>
-Detected objects:
-<div style='float: center'>
 <img width="300" src="detection\python_yolo_coco_000000367818.bmp">
 </div>
 
@@ -228,11 +209,11 @@ Bounding boxes (upper left and bottom right corners):<br>
 PERSON (86, 84), (394, 188)<br>
 HORSE (44, 108), (397, 565)<br>
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
-yolo-v2-tf | Bounding boxes: PERSON (51, 117), (381, 535); HORSE (53, 90), (413, 201)|
-yolo-v2-tiny-tf | Bounding box: HORSE (75, 59), (405, 586) |
-yolo-v3-tf | Bounding boxes: PERSON (66, 87), (413, 195); HORSE (54, 131), (386, 534) |
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
+yolo-v2-tf | Bounding boxes:<br>PERSON (51, 117), (381, 535);<br>HORSE (53, 90), (413, 201)<br> |
+yolo-v2-tiny-tf | Bounding box:<br>HORSE (75, 59), (405, 586)<br> |
+yolo-v3-tf | Bounding boxes:<br>PERSON (66, 87), (413, 195);<br>HORSE (54, 131), (386, 534)<br> |
 
 ## Instance segmentation
 
@@ -249,8 +230,8 @@ Image:
 
 Segmented images are identical.
 
-    Model             |  Python (implementation)  |
-----------------------|---------------------------|
+   Model              |  Python (implementation)         |
+----------------------|----------------------------------|
 mask_rcnn_inception_resnet_v2_atrous_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div> |
 mask_rcnn_inception_v2_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div> |
 mask_rcnn_resnet50_atrous_coco | <div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div> |
