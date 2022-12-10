@@ -26,8 +26,8 @@ CAR (1092, 413), (1196, 509)<br>
 PERSON (1455, 419), (1482, 491)<br>
 PERSON (1476, 416), (1503, 481)<br>
 
-         Model        |  Python (latency mode, implementation)  | Python (throughput mode, implementation)|
-----------------------|-----------------------------------------|-----------------------------------------|
+Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+------|---------------------------------------|------------------------------------------|
 pedestrian-and-vehicle-detector-adas-0001 | Bounding box:<br>CAR (720, 439), (821, 505),<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>PERSON (1474, 416), (1499, 481)<br>| Bounding box:<br>CAR (720, 439), (821, 505),<br>CAR (824, 424), (967, 525),<br>CAR (945, 420), (1023, 486),<br>CAR (1092, 422), (1188, 501),<br>PERSON (1474, 416), (1499, 481)<br>|
 
 ### Test image #2
