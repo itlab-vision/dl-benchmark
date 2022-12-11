@@ -223,13 +223,14 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 ### Sound classification
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+-|-|-|-|-|
 ***aclnet***|+|-|-|-|
 ***aclnet-int8***|+|-|-|-|
 
 ### Speech recognition
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***mozilla-deepspeech-0.6.1***|+|-|-|-|
 ***mozilla-deepspeech-0.8.2***|+|-|-|-|
@@ -244,68 +245,68 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 ### Object recognition
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***license-plate-recognition-barrier-0007***|+|-|-|-|
 
 ### Place recognition
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***netvlad-tf***|+|-|-|-|
 
 ### Debluring models
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***deblurgan-v2***|+|-|-|-|
 
 ### JPEG artifacts removal models
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***deblurgan-v2***|+|-|-|-|
 
 ### Salient object detection
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***f3net***|+|-|-|-|
 
 ### Text prediction models
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***gpt-2***|+|-|-|-|
 
 ### Text recognition models
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***text-recognition-resnet-fc***|+|-|-|-|
 ***vitstr-small-patch16-224***|+|-|-|-|
 
 ### Text to speech models
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***forward-tacotron***|+|-|-|-|
 ***wavernn***|+|-|-|-|
 
 ### Named entity recognition
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***bert-base-ner***|+|-|-|-|
 
 ### Face Localization
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***retinaface-resnet50-pytorch***|+|-|-|-|
 
 ### Vehicle reidentification
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***vehicle-reid-0001***|+|-|-|-|
 
@@ -313,12 +314,13 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 ### Weld recognition model
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+-|-|-|-|-|
 ***weld-porosity-detection-0001***|+|-|-|-|
 
 ### Object detection
 
-Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |-|-|-|-|-|
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***faster-rcnn-resnet101-coco-sparse-60-0001***|+|-|-|-|
 face-detection-0100|-|+|-|-|
