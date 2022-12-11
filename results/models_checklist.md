@@ -127,7 +127,7 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 ### Object detection
 
-Model | Availability in OMZ (2021.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***ctpn***|+|отсутствуют данные|-|-|
 ctdet_coco_dlav0_384|-|-|-|-|
@@ -380,7 +380,7 @@ yolo-v2-tiny-ava-sparse-60-0001|+|+|-|+|
 
 ### Object recognition
 
-Model | Availability in OMZ (2021.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 age-gender-recognition-retail-0013|+|+|+|+|
 emotions-recognition-retail-0003|+|there is no data|-|-|
@@ -397,13 +397,12 @@ facial-landmarks-35-adas-0002|+|+|+|+|
 person-attributes-recognition-crossroad-0230|+|+|+|+|
 ***person-attributes-recognition-crossroad-0234***|+|-|-|-|
 ***person-attributes-recognition-crossroad-0238***|+|-|-|-|
-<<<<<<< HEAD
 ***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|
 ***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|
 
 ### Reidentification
 
-Model | Availability in OMZ (2021.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 gaze-estimation-adas-0002|+|+|-|+|
 face-reidentification-retail-0095|+|+|-|+|
@@ -414,7 +413,7 @@ face-reidentification-retail-0095|+|+|-|+|
 
 ### Semantic segmentation
 
-Model | Availability in OMZ (2021.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 road-segmentation-adas-0001|+|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|+|
