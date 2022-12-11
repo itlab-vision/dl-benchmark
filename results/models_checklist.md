@@ -297,9 +297,6 @@ Sphereface|+|+|-|-*|
 
 ## Модели Intel
 
-
-***weld-porosity-detection-0001***|+|-|-|-|
-
 ### Детектирование объектов (Object Detection)
 
 Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
@@ -477,6 +474,7 @@ action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|
 action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|
 ***asl-recognition-0004***|+|-|-|-|
 ***common-sign-language-0002***|+|-|-|-|
+***weld-porosity-detection-0001***|+|-|-|-|
 
 ### Восстановление изображений (Image Retrieval)
 
