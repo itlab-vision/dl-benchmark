@@ -129,7 +129,7 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***ctpn***|+|отсутствуют данные|-|-|
+***ctpn***|+|there is no data|-|-|
 ctdet_coco_dlav0_384|-|-|-|-|
 ***ctdet_coco_dlav0_512***|+|-|-|-|
 ***detr-resnet50***|+|-|-|-|
@@ -390,9 +390,9 @@ facial-landmarks-35-adas-0002|+|+|+|+|
 gaze-estimation-adas-0002|+|+|-|+|
 head-pose-estimation-adas-0001|+|+|+|+|
 license-plate-recognition-barrier-0001|+|+|-|+|
-***vehicle-attributes-recognition-barrier-0039***|+|отсутствуют данные|-|-|
+***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|
 ***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|
-emotions-recognition-retail-0003|+|нет доступа к набору данных AffectNet|-|-|
+emotions-recognition-retail-0003|+|there is no data (AffectNet)|-|-|
 landmarks-regression-retail-0009|+|+|+|+|
 ***facial-landmarks-98-detection-0001***|+|-|-|-|
 facial-landmarks-35-adas-0002|+|+|+|+|
