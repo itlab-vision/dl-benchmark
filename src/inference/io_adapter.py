@@ -190,8 +190,6 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
             return YoloV3TFIO(args, io_model_wrapper, transformer)
-        elif task == 'yolo_v3_tiny':
-            return YoloV3TinyCOCOIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -1645,13 +1643,13 @@ class yolo(IOAdapter):
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
         tx, ty, tw, th, to = detection[0:5]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(w) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(h) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameWidth) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameHeight) / dy)
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_width = (np.exp(tw) * prior_width) * (float(w) / dx)
-        bbox_height = (np.exp(th) * prior_height) * (float(h) / dy)
+        bbox_width = (np.exp(tw) * prior_width) * (float(frameWidth) / dx)
+        bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / dy)
         confidence = self._sigmoid(to)
         scores = detection[5:]
         class_id = np.argmax(self._softmax(scores))
@@ -1680,6 +1678,7 @@ class yolo(IOAdapter):
         shapes = self._get_shapes()
         input_layer_name = next(iter(self._input))
         input_ = self._input[input_layer_name]
+        frameHeight, frameWidth = input_.shape[-2:]
         result = list(result.values())
         ib, h, w, c = input_.shape
         b = result[0].shape[0]
@@ -1690,7 +1689,7 @@ class yolo(IOAdapter):
             image = images[batch]
             predictions = []
             orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch]
-            scales = {'W': orig_w / w, 'H': orig_h / h}
+            scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
             for i, array_of_detections in enumerate(result):
                 anchors_boxes = anchors[i]
                 data = array_of_detections[batch]
@@ -1699,10 +1698,10 @@ class yolo(IOAdapter):
                 cells = data.reshape(data_shape)
                 for cx in range(dy):
                     for cy in range(dx):
-                        for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
+                        for anchor_box_number, detection in enumerate(cells[cy, cx]):
                             if detection[4] >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
-                                                                        h, w, anchors_boxes)
+                                                                        frameHeight, frameWidth, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
@@ -1779,12 +1778,12 @@ class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + tx) * (float(h) / dx)
-        bbox_center_y = (float(cy) + ty) * (float(w) / dy)
+        bbox_center_x = (float(cx) + tx) * (float(frameHeight) / dx)
+        bbox_center_y = (float(cy) + ty) * (float(frameWidth) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
@@ -1821,12 +1820,12 @@ class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(h) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(w) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameHeight) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameWidth) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
@@ -1841,38 +1840,3 @@ class YoloV3TFIO(YoloV3IO):
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
         return predictions
-
-    def _get_shapes(self):
-        shapes = [
-            (3, 85, 38, 38),
-            (3, 85, 19, 19),
-            (3, 85, 76, 76),
-        ]
-        return shapes
-
-    def _get_anchors(self):
-        anchors = [
-            ((36, 75), (76, 55), (72, 146)),
-            ((142, 110), (192, 243), (459, 401)),
-            ((12, 16), (19, 36), (40, 28)),
-        ]
-        return anchors
-
-
-class YoloV3TinyCOCOIO(YoloV3IO):
-    def __init__(self, args, io_model_wrapper, transformer):
-        super().__init__(args, io_model_wrapper, transformer)
-
-    def _get_shapes(self):
-        shapes = [
-            (3, 85, 26, 26),
-            (3, 85, 13, 13),
-        ]
-        return shapes
-
-    def _get_anchors(self):
-        anchors = [
-            ((23, 27), (37, 58), (81, 82)),
-            ((81, 82), (135, 169), (344, 319)),
-        ]
-        return anchors
