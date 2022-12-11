@@ -1590,6 +1590,7 @@ class yolo(IOAdapter):
 
     def __non_max_supression(self, predictions, score_threshold, nms_threshold):
         predictions.sort(key=lambda prediction: prediction[0], reverse=True)
+        predictions = predictions
         valid_detections = []
         while len(predictions) > 0:
             max_detection = predictions[0]
@@ -1700,7 +1701,8 @@ class yolo(IOAdapter):
                 for cx in range(dy):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
-                            if detection[4] >= 0.5:
+                            #print(f"1703!! Detection = {detection[4]}")
+                            if self._sigmoid(detection[4]) >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
