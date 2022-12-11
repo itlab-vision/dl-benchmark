@@ -1590,7 +1590,6 @@ class yolo(IOAdapter):
 
     def __non_max_supression(self, predictions, score_threshold, nms_threshold):
         predictions.sort(key=lambda prediction: prediction[0], reverse=True)
-        predictions = predictions
         valid_detections = []
         while len(predictions) > 0:
             max_detection = predictions[0]
