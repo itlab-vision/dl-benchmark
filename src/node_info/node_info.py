@@ -20,7 +20,7 @@ def get_gpu_name():
     if 'GPU' in ie.available_devices:
         gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
     else:
-        gpuname = 'Underfined'
+        gpuname = 'Undefined'
     del ie
     return gpuname
 

@@ -10,10 +10,7 @@ from output import OutputHandler
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
-
-
-EXIT_SUCCESS = 0
-EXIT_FAILURE = 1
+from constants import Status  # noqa: E402
 
 
 def cli_argument_parser():
@@ -60,13 +57,13 @@ def cli_argument_parser():
 
 def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmarks_dir=None,
                         openvino_cpp_benchmark_dir=None):
-    status = EXIT_SUCCESS
+    status = Status.EXIT_SUCCESS
 
     try:
         process_executor = Executor.get_executor(executor_type, log)
     except ValueError as ex:
         log.error(ex, exc_info=True)
-        return EXIT_FAILURE
+        return Status.EXECUTOR_NOT_FOUND
 
     for test in test_list:
         framework_name = test.indep_parameters.inference_framework
@@ -80,12 +77,12 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
             test_process.execute()
 
             test_status = test_process.get_status()
-            if test_status != EXIT_SUCCESS:
-                status = test_status
+            if test_status != Status.EXIT_SUCCESS.value:
+                status = Status(test_status)
                 log.error(f'Test finished with non-zero code: {test_status}')
         except Exception as ex:
             log.error(f'Inference failed with exception: {ex}', exc_info=True)
-            status = EXIT_FAILURE
+            status = Status.INFERENCE_FAILURE
             test_process = None
 
         log.info('Saving test result in file\n')
@@ -108,7 +105,7 @@ if __name__ == '__main__':
 
     log.info(f'Start {len(test_list)} inference tests\n')
 
-    return_code = inference_benchmark(args.executor_type, test_list, output_handler, log,
-                                      args.cpp_benchmarks_dir, args.openvino_cpp_benchmark_dir)
-    log.info('Inference tests completed' if not return_code else 'Inference tests failed')
-    sys.exit(return_code)
+    inference_status = inference_benchmark(args.executor_type, test_list, output_handler, log,
+                                           args.cpp_benchmarks_dir, args.openvino_cpp_benchmark_dir)
+    log.info('Inference tests completed' if not inference_status.value else 'Inference tests failed')
+    sys.exit(inference_status.value)
