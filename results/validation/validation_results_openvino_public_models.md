@@ -555,8 +555,8 @@ Input tensor: 800; 1365; 1
 
 Segmented images are identical.
 
-        Model        | Python (latency mode, implementation)  |  Python (throughput mode, implementation)|
----------------------|-----------------------------|------------------------------------|
+Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+------|---------------------------------------|------------------------------------------|
 mask_rcnn_inception_resnet_v2_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_resnet_v2_atrous_coco.bmp"></img></div>|
 mask_rcnn_inception_v2_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_inception_v2_coco.bmp"></img></div>|
 mask_rcnn_resnet50_atrous_coco             |<div style='float: center'><img width="300" src="instance_segmentation\python_sync_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|<div style='float: center'><img width="300" src="instance_segmentation\python_async_22_mask_rcnn_resnet50_atrous_coco.bmp"></img></div>|
