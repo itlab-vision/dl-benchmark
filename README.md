@@ -419,15 +419,15 @@ follow instructions.
 1. Convert csv to html or xlsx using the following commands:
 
    ```bash
-   cd /tmp/dl-benchmark/csv2html
+   cd /tmp/dl-benchmark/src/csv2html
    python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.html
-   python3 converter.py -k accuracy-checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.html
+   python3 converter.py -k accuracy_checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.html
    ```
 
    ```bash
-   cd /tmp/dl-benchmark/csv2xlsx
+   cd /tmp/dl-benchmark/src/csv2xlsx
    python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.xlsx
-   python3 converter.py -k accuracy-checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.xlsx
+   python3 converter.py -k accuracy_checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.xlsx
    ```
 
 
