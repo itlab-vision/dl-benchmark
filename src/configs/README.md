@@ -361,7 +361,6 @@
     </FrameworkIndependent>
     <FrameworkDependent>
       <ChannelSwap></ChannelSwap>
-      <Layout></Layout>
       <Mean>[123.675,116.28,103.53]</Mean>
       <InputScale>[58.395,57.12,57.375]</InputScale>
       <Layout>NCHW</Layout>
