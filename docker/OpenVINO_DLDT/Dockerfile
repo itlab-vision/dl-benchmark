@@ -23,7 +23,9 @@ ARG DEPENDENCIES="apt-utils \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
-                  libpython3.6 \
+                  python3-venv \
+                  pciutils \
+                  libpython3.7 \
                   udev \
                   unzip \
                   wget \
@@ -32,64 +34,40 @@ RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install lxml PyYAML requests numpy networkx==2.3 defusedxml
-
-ARG DOWNLOAD_LINK=<Link to download OpenVINO>
-WORKDIR /tmp
-ENV INSTALL_DIR /opt/intel/openvino
-RUN curl -LOJ "${DOWNLOAD_LINK}" && \
-    tar -xzf ./*.tgz && \
-    cd l_openvino_toolkit* && \
-    sed -i 's/decline/accept/g' silent.cfg && \
-    ./install.sh -s silent.cfg && \
-    rm -rf /tmp/*
+#install openvino
+RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+RUN echo "deb https://apt.repos.intel.com/openvino/2022 bionic main" | sudo tee /etc/apt/sources.list.d/intel-openvino-2022.list && \
+    sudo apt update && echo y | sudo apt install openvino-2022.1.0 openvino-opencv
 
 #install openvino dependencies
+ENV INSTALL_DIR /opt/intel/openvino_2022
 WORKDIR $INSTALL_DIR/install_dependencies
 RUN echo y | ./install_openvino_dependencies.sh
+RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
+
+#configurations for GPU, MYRIAD
 RUN echo y | ./install_NEO_OCL_driver.sh
-RUN usermod -a -G video root
+RUN usermod -a -G video,users root
 
-#install additional openvino dependencies
-WORKDIR $INSTALL_DIR/deployment_tools/demo
-RUN echo y | ./demo_security_barrier_camera.sh || exit 0
-RUN echo y | ./demo_security_barrier_camera -d GPU || exit 0
-
-#install model_optimizer dependencies
-WORKDIR $INSTALL_DIR/deployment_tools/model_optimizer/install_prerequisites
-RUN echo y | ./install_prerequisites.sh
-
-WORKDIR $INSTALL_DIR/deployment_tools/tools/model_downloader/
-RUN python3 downloader.py --all
-RUN python3 converter.py --all --mo $INSTALL_DIR/deployment_tools/model_optimizer/mo.py || exit 0
-
+#openvino-dev
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark.git
+RUN pip3 install --upgrade pip && \
+    pip3 install openvino-dev==2022.1
 
-ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
-RUN git clone $DATASET_DOWNLOAD_LINK
-
-#create python environment for accuracy checker
-WORKDIR /opt/intel
-RUN mkdir accuracy_checker_env && \
-    python3 -m virtualenv -p /usr/bin/python3 ./accuracy_checker_env
-RUN echo 'source ./accuracy_checker_env/bin/activate' && \
-    pip install opencv-python pyaml docker
-
-#install accuracy_checker
-WORKDIR $INSTALL_DIR/deployment_tools/open_model_zoo/tools/accuracy_checker
-RUN python3 setup.py install_core
+#accuracy-check
+RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch 2022.1.0 --single-branch
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN /bin/bash -c "source $INSTALL_DIR//bin/setupvars.sh && \
-    export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer && \
-    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
+RUN pip3 uninstall opencv-python -y && pip3 install opencv-python-headless
+RUN /bin/bash -c "accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
 
-#install pot
-WORKDIR $INSTALL_DIR/deployment_tools/tools/post_training_optimization_toolkit
-RUN python3 setup.py install --install-extras
-
+#DLB
 WORKDIR /tmp/
-RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/bin/setupvars.sh' > /root/.bashrc && \
-    echo 'export MO_DIR=$INSTALL_DIR/deployment_tools/model_optimizer' >> /root/.bashrc && \
-    cat tmp >> /root/.bashrc && rm tmp
+RUN git clone https://github.com/itlab-vision/dl-benchmark.git && \
+    pip3 install docker PyYAML
+
+#DLB dataset
+ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
+RUN git clone $DATASET_DOWNLOAD_LINK
