@@ -1,6 +1,14 @@
 import numpy as np
 
 
+LAYER_LAYOUT_TO_IMAGE = {
+    'NCHW': [0, 3, 1, 2],
+    'NHWC': [0, 1, 2, 3],
+    'NCWH': [0, 3, 2, 1],
+    'NWHC': [0, 2, 1, 3],
+}
+
+
 class Transformer:
     @staticmethod
     def _transform(image):
@@ -10,7 +18,7 @@ class Transformer:
     def get_shape_in_chw_order(shape):
         return shape[1:]
 
-    def transform_images(self, images, shape, element_type):
+    def transform_images(self, images, shape, element_type, *args):
         b = shape[0]
         transformed_images = np.zeros(shape=shape, dtype=element_type)
         for i in range(b):
@@ -32,7 +40,7 @@ class OpenVINOTransformer(Transformer):
             return shape[3], shape[1], shape[2]
         return shape[1], shape[2], shape[3]
 
-    def transform_images(self, images, shape, element_type):
+    def transform_images(self, images, shape, element_type, *args):
         b = shape[0]
         transformed_images = np.zeros(shape=shape, dtype=element_type)
         image_index = 0
@@ -103,9 +111,56 @@ class TensorFlowTransformer(Transformer):
         self.__set_input_scale(transformed_image)
         return transformed_image
 
-    def transform_images(self, images, shape, element_type):
+    def transform_images(self, images, shape, element_type, *args):
         b = shape[0]
         transformed_images = np.zeros(shape=shape, dtype=element_type)
         for i in range(b):
             transformed_images[i] = self._transform(images[i])
+        return transformed_images
+
+
+class TensorFlowLiteTransformer(TensorFlowTransformer):
+    def __init__(self, converting):
+        self._converting = converting
+
+    def __is_nhwc(self, shape):
+        return (len(shape) in [3, 4]) and (shape[len(shape) - 1] in [1, 3])
+
+    def get_shape_in_chw_order(self, shape):
+        if self.__is_nhwc(shape):
+            return shape[3], shape[1], shape[2]
+        return shape[1:]
+
+    def __set_channel_swap(self, image, input_name):
+        if 'channel_swap' in self._converting[input_name]:
+            image = image[:, :, :, self._converting[input_name]['channel_swap']]
+
+    def __set_mean(self, image, input_name):
+        mean = self._converting[input_name]['mean']
+        if mean is not None:
+            image -= mean
+
+    def __set_input_scale(self, image, input_name):
+        input_scale = self._converting[input_name]['input_scale']
+        if input_scale is not None:
+            image /= input_scale
+
+    def __set_layout_order(self, image, input_name):
+        layout = self._converting[input_name]['layout']
+        if layout is not None:
+            layout = LAYER_LAYOUT_TO_IMAGE[layout]
+            image = image.transpose(layout)
+        return image
+
+    def _transform(self, image, input_name):
+        transformed_image = np.copy(image).astype(np.float64)
+        self.__set_channel_swap(transformed_image, input_name)
+        self.__set_mean(transformed_image, input_name)
+        self.__set_input_scale(transformed_image, input_name)
+        transformed_image = self.__set_layout_order(transformed_image, input_name)
+        return transformed_image
+
+    def transform_images(self, images, shape, element_type, input_name):
+        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        transformed_images = self._transform(images, input_name)
         return transformed_images

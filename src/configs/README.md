@@ -132,6 +132,27 @@
   - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
     не установлен и выбирается ONNX Runtime автоматически.
 
+- Набор тегов для тестирования вывода средствами TensorFlow Lite:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении. По умолчанию будет установлен порядок (2, 0, 1), что соответствует BGR.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения. По умолчанию (0, 0, 0).
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения. По умолчению равен 1.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного изображения. По умолчанию будет установлен NHWC.
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора в формате HWC
+    (высота, ширина, число каналов). По умолчанию не установлен.
+  - `InputName` - тег, необязательный для заполнения. Определяет название входного узла модели. 
+    По умолчанию не установлен.
+  - `OutputNames` - тег, необязательный для заполнения. Определяет имена выходных узлов модели. 
+    По умолчанию не установлен.
+  - `ThreadCount` - опциональный тег. Описывает максимальное количество физических
+    потоков для выполнения вывода. По умолчанию будет выставлено число потоков, равное
+    физическому количеству ядер в системе.
+  - `Delegate` - опциональный тег. Устанавливает путь до библиотеки-делегата, больше информации [здесь][https://www.tensorflow.org/lite/performance/delegates]. По умолчанию не установлен.
+  - `DelegateOptions` - опциональный тег. Устанавливает параметры для бибилиотеки-делегата в формате `option1: value1; option2: value2`.
+
 
 ### Примеры заполнения
 
@@ -308,6 +329,48 @@
       <InputScale>[58.395,57.12,57.375]</InputScale>
       <ThreadCount></ThreadCount>
       <InferenceRequestsCount></InferenceRequestsCount>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами TensorFlow Lite
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>resnet-50-pytorch</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>pytorch</SourceFramework>
+      <ModelPath>public/resnet-50-pytorch/resnet-50-pytorch.tflite</ModelPath>
+      <WeightsPath>None</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>TensorFlowLite</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>100</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <ChannelSwap></ChannelSwap>
+      <Layout></Layout>
+      <Mean>[123.675,116.28,103.53]</Mean>
+      <InputScale>[58.395,57.12,57.375]</InputScale>
+      <Layout>NCHW</Layout>
+      <InputShape></InputShape>
+      <InputName></InputName>
+      <OutputNames></OutputNames>
+      <ThreadCount></ThreadCount>
+      <Delegate></Delegate>
+      <DelegateOptions></DelegateOptions>
     </FrameworkDependent>
   </Test>
 </Tests>
