@@ -256,7 +256,7 @@ Sphereface|+|+|-|-*|
 ### Устранение артефактов JPEG (JPEG Artifacts Removal Models)
 Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
-***deblurgan-v2***|+|-|-|-|
+***fbcnn***|+|-|-|-|
 
 ### Детектирование выделяющихся объектов (Salient object detection)
 Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
@@ -637,6 +637,7 @@ resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
 1. erfnet
+1. fbcnn
 1. f3net
 1. faceboxes-pytorch
 1. face-detection-retail-0044
