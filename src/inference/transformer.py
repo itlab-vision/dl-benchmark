@@ -132,8 +132,9 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         return shape[1:]
 
     def __set_channel_swap(self, image, input_name):
-        if 'channel_swap' in self._converting[input_name]:
-            image = image[:, :, :, self._converting[input_name]['channel_swap']]
+        channel_swap = self._converting[input_name]['channel_swap']
+        if channel_swap is not None:
+            image = image[:, :, :, channel_swap]
 
     def __set_mean(self, image, input_name):
         mean = self._converting[input_name]['mean']

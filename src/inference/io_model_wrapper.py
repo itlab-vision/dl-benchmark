@@ -107,10 +107,9 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
         self._batch = args.batch_size
         self._input_name = args.input_name
         self._input_info = None
-        args_count = sum([self._shape is not None, self._input_name is not None])
-        if args_count == 2:
+        if self._shape is not None and self._input_name is not None:
             self._input_info = dict(zip(self._input_name, self._shape))
-        elif args_count == 1:
+        elif self._shape is not None and self._input_name is None:
             raise ValueError('Please set both input_names and input_shapes arguments')
 
     def _create_list_with_input_shape(self, layer_name):

@@ -1,6 +1,7 @@
 import sys
 import ast
 import argparse
+import re
 import logging as log
 from time import time
 
@@ -27,16 +28,6 @@ def sequence_arg(values):
         if not is_sequence(arg):
             raise argparse.ArgumentTypeError(f'{arg}: must be a sequence')
     return args
-
-
-def mean_scale_arg(values):
-    means = sequence_arg(values)
-
-    for mean in means:
-        for value in mean:
-            if not isinstance(value, (int, float)):
-                raise argparse.ArgumentTypeError(f'Argument {value} must be an integer or float value')
-    return means
 
 
 def shape_arg(values):
@@ -92,13 +83,13 @@ def cli_argument_parser():
                         dest='channel_swap')
     parser.add_argument('--mean',
                         help='Parameter mean',
-                        default='[0, 0, 0]',
-                        type=mean_scale_arg,
+                        default=None,
+                        type=str,
                         dest='mean')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
                         default='[1.0]',
-                        type=sequence_arg,
+                        type=str,
                         dest='input_scale')
     parser.add_argument('--layout',
                         help='Parameter input layout',
@@ -242,14 +233,31 @@ def raw_result_output(average_time, fps, latency):
 def create_dict_for_transformer(args):
     dictionary = {}
     for i, name in enumerate(args.input_name):
-        channel_swap = args.channel_swap[i] if i < len(args.channel_swap) else None
-        mean = args.mean[i] if i < len(args.mean) else None
-        input_scale = args.input_scale[i] if i < len(args.input_scale) else None
-        layout = args.layout[i] if i < len(args.layout) else None
+        channel_swap = args.channel_swap[i] if i < len(args.channel_swap) else [2, 1, 0]
+        mean = args.mean.get(name, None)
+        input_scale = args.input_scale.get(name, None)
+        layout = args.layout[i] if i < len(args.layout) else 'NHWC'
         dictionary[name] = {'channel_swap': channel_swap, 'mean': mean,
                             'input_scale': input_scale, 'layout': layout}
 
     return dictionary
+
+
+def parse_mean_scale_arg(values, input_names):
+    return_values = {}
+    if values is not None:
+        matches = re.findall(r'(.*?)\[(.*?)\],?', values)
+        if matches:
+            for i, match in enumerate(matches):
+                name, value = match
+                value = ast.literal_eval(value)
+                if name != '':
+                    return_values[name] = value
+                else:
+                    return_values[input_names[i]] = value
+        else:
+            raise ValueError(f'Unable to parse input parameter: {values}')
+    return return_values
 
 
 def main():
@@ -268,6 +276,9 @@ def main():
         interpreter = load_network(tf.lite, args.model_path, args.number_threads, delegate)
 
         args.input_name = model_wrapper.get_input_layer_names(interpreter)
+        args.mean = parse_mean_scale_arg(args.mean, args.input_name)
+        args.input_scale = parse_mean_scale_arg(args.input_scale, args.input_name)
+
         data_transformer = TensorFlowLiteTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
