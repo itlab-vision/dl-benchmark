@@ -40,7 +40,7 @@ googlenet-v4-tf|+|+|-|+|
 hbonet-0.25|+|+|-|-*|
 hbonet-0.5|-|-|-|-|
 hbonet-1.0|+|+|-|-|
-inception-resnet-v2|+|+|+|-*|
+inception-resnet-v2|-|+|+|-*|
 inception-resnet-v2-tf|+|+|-|+|
 mixnet-l|+|+|-|-*|
 mobilenet-v1-0.25-128|+|+|+|+|
@@ -285,7 +285,7 @@ Sphereface|+|+|-|-*|
 -|-|-|-|-|
 ***bert-base-ner***|+|-|-|-|
 
-### Face Localization
+### Детектирование лиц и их ключевых точек (Face Localization)
 Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
 -|-|-|-|-|
 ***retinaface-resnet50-pytorch***|+|-|-|-|
