@@ -34,7 +34,7 @@ def cli_argument_parser():
     parser.add_argument('--executor_type',
                         type=str,
                         choices=['host_machine', 'docker_container'],
-                        help='Environment ro execute test: host_machine, docker_container',
+                        help='Environment to execute test: host_machine, docker_container',
                         default='host_machine')
     parser.add_argument('-b', '--cpp_benchmarks_dir',
                         type=str,
@@ -78,11 +78,11 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
 
             test_status = test_process.get_status()
             if test_status != Status.EXIT_SUCCESS.value:
-                status = Status(test_status)
+                status = Status.INFERENCE_FAILURE
                 log.error(f'Test finished with non-zero code: {test_status}')
         except Exception as ex:
+            status = Status.INFERENCE_EXCEPTION
             log.error(f'Inference failed with exception: {ex}', exc_info=True)
-            status = Status.INFERENCE_FAILURE
             test_process = None
 
         log.info('Saving test result in file\n')
