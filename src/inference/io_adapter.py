@@ -190,8 +190,6 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
             return YoloV3TFIO(args, io_model_wrapper, transformer)
-        elif task == 'yolo_v3_tiny':
-            return YoloV3TinyCOCOIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
