@@ -1645,13 +1645,13 @@ class yolo(IOAdapter):
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         tx, ty, tw, th, to = detection[0:5]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(w) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(h) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(image_weight) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(image_height) / dy)
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_width = (np.exp(tw) * prior_width) * (float(w) / dx)
-        bbox_height = (np.exp(th) * prior_height) * (float(h) / dy)
+        bbox_width = (np.exp(tw) * prior_width) * (float(image_weight) / dx)
+        bbox_height = (np.exp(th) * prior_height) * (float(image_height) / dy)
         confidence = self._sigmoid(to)
         scores = detection[5:]
         class_id = np.argmax(self._softmax(scores))
@@ -1779,12 +1779,12 @@ class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + tx) * (float(h) / dx)
-        bbox_center_y = (float(cy) + ty) * (float(w) / dy)
+        bbox_center_x = (float(cx) + tx) * (float(image_height) / dx)
+        bbox_center_y = (float(cy) + ty) * (float(image_weight) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
@@ -1821,12 +1821,12 @@ class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, h, w, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(h) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(w) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(image_height) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(image_weight) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
@@ -1841,38 +1841,3 @@ class YoloV3TFIO(YoloV3IO):
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
         return predictions
-
-    def _get_shapes(self):
-        shapes = [
-            (3, 85, 38, 38),
-            (3, 85, 19, 19),
-            (3, 85, 76, 76),
-        ]
-        return shapes
-
-    def _get_anchors(self):
-        anchors = [
-            ((36, 75), (76, 55), (72, 146)),
-            ((142, 110), (192, 243), (459, 401)),
-            ((12, 16), (19, 36), (40, 28)),
-        ]
-        return anchors
-
-
-class YoloV3TinyCOCOIO(YoloV3IO):
-    def __init__(self, args, io_model_wrapper, transformer):
-        super().__init__(args, io_model_wrapper, transformer)
-
-    def _get_shapes(self):
-        shapes = [
-            (3, 85, 26, 26),
-            (3, 85, 13, 13),
-        ]
-        return shapes
-
-    def _get_anchors(self):
-        anchors = [
-            ((23, 27), (37, 58), (81, 82)),
-            ((81, 82), (135, 169), (344, 319)),
-        ]
-        return anchors
