@@ -40,7 +40,7 @@ googlenet-v4-tf|+|+|-|+|
 hbonet-0.25|+|+|-|-*|
 hbonet-0.5|-|-|-|-|
 hbonet-1.0|+|+|-|-|
-inception-resnet-v2|+|+|+|-*|
+inception-resnet-v2|-|+|+|-*|
 inception-resnet-v2-tf|+|+|-|+|
 mixnet-l|+|+|-|-*|
 mobilenet-v1-0.25-128|+|+|+|+|
@@ -265,7 +265,7 @@ Model | Availability in OMZ (2022.12.01)| Availability in the validation table |
 
 Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***deblurgan-v2***|+|-|-|-|
+***fbcnn***|+|-|-|-|
 
 ### Salient object detection
 
@@ -498,6 +498,7 @@ action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|
 action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|
 ***asl-recognition-0004***|+|-|-|-|
 ***common-sign-language-0002***|+|-|-|-|
+***weld-porosity-detection-0001***|+|-|-|-|
 
 ### Image retrieval
 
@@ -671,6 +672,7 @@ the performance table.
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
 1. erfnet
+1. fbcnn
 1. f3net
 1. faceboxes-pytorch
 1. face-detection-retail-0044
