@@ -47,7 +47,7 @@ def open_csv_table(path_table_csv):
 
 def split_table(table_csv):
     for row_index in range(len(table_csv)):
-        table_csv[row_index] = table_csv[row_index].split(';')
+        table_csv[row_index] = [field.strip('"') for field in table_csv[row_index].split(';')]
 
 
 def convert_csv_table_to_html(table_csv, table_type):

@@ -98,8 +98,8 @@ def main():
     os.system(f'docker run --privileged -d -it '
               f'--name {args.container_name} '
               f'-v /dev:/dev '
-              f'-v {args.model_path}:{args.model_path} '
-              f'-v {args.dataset_path}:{args.dataset_path} '
+              f'-v {args.model_path}:/media/models '
+              f'-v {args.dataset_path}:/media/datasets '
               f'--network=host {image_name.split(".")[0]}')
 
 
