@@ -120,7 +120,7 @@ def cli_argument_parser():
                         nargs='+',
                         dest='output_names')
     parser.add_argument('-nthreads', '--number_threads',
-                        help='Name of the output tensor',
+                        help='Number of threads to use for inference on the CPU. (Max by default)',
                         default=None,
                         type=int,
                         nargs=1,

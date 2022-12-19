@@ -13,6 +13,8 @@ DLI supports:
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
+- [TensorFlow Lite][tensorflow-lite].
+- [ONNX Runtime][onnx-runtime].
 
 More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
@@ -100,11 +102,14 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `csv2xlsx` is a set of scripts to convert result table
     from csv to xlsx.
   - `deployment` is a set of deployment tools.
-  - `inference` contains inference implementation.
+  - `inference` contains python inference implementation.
+  - `node_info` contains script to get hardware information.
+  - `onnxruntime_benchmark` contains c++ ONNXRuntime inference tool.
   - `quantization` contains scripts to quantize model to INT8-precision
     using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
+  - `utils` contains common python scripts utilities.
 
 
 ## Software installation
@@ -435,6 +440,8 @@ follow instructions.
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
+[tensorflow-lite]: https://www.tensorflow.org/lite/
+[onnx-runtime]: https://onnxruntime.ai/
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
