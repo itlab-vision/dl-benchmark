@@ -32,7 +32,7 @@ echo "[ INFO ] Creation server has been started"
 server_folder="${demo_folder}/server"
 [ -d $server_folder ] && rm -rf $server_folder
 mkdir $server_folder && cd $server_folder
-echo "[ INFO ] Cloning of DLB repository"
+echo "[ INFO ] Cloning of DLI Benchmark repository"
 dlb_server="${server_folder}/dl-benchmark"
 git clone https://github.com/itlab-vision/dl-benchmark.git
 dlb_results="${server_folder}/results"
@@ -46,7 +46,7 @@ client_folder="${demo_folder}/client"
 [ -d $client_folder ] && rm -rf $client_folder
 mkdir $client_folder
 cd $client_folder
-echo "[ INFO ] Cloning of DLB repository"
+echo "[ INFO ] Cloning of DLI Benchmark repository"
 dlb_client="${client_folder}/dl-benchmark"
 [ -d $dlb_client ] && rm -rf $dlb_client
 git clone https://github.com/itlab-vision/dl-benchmark.git
@@ -75,7 +75,7 @@ echo "[ INFO ] Archive ${archive_path} has been created"
 echo "[ INFO ] Creation of Docker image has been completed"
 
 
-echo "[ INFO ] Deployment of DLB system has been started"
+echo "[ INFO ] Deployment of DLI Benchmark system has been started"
 cd $demo_folder
 ip_address=$(ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
 echo "[ INFO ] IP-address of the host: ${ip_address}"
@@ -104,7 +104,7 @@ $PYTHON deploy.py -s $ip_address -l $login -p itmm \
                      -n OpenVINO_DLDT \
                      --machine_list $deployment_config \
                      --project_folder $dlb_client
-echo "[ INFO ] Deployment of DLB system has been completed"
+echo "[ INFO ] Deployment of DLI Benchmark system has been completed"
 
 
 echo "[ INFO ] Preparing configuration for benchmarking"
