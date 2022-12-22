@@ -1,10 +1,10 @@
-# Статус валидации и анализа производительности моделей
+# Model validation and performance analysis status for Intel® Distribution of OpenVINO™ Toolkit
 
-## Публичные модели
+## Public models
 
-### Классификация изображений (Image Classification)
+### Image classification
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 alexnet|+|+|+|+|
 ***anti-spoof-mn3***|+|-|-|-|
@@ -40,7 +40,7 @@ googlenet-v4-tf|+|+|-|+|
 hbonet-0.25|+|+|-|-*|
 hbonet-0.5|-|-|-|-|
 hbonet-1.0|+|+|-|-|
-inception-resnet-v2|+|+|+|-*|
+inception-resnet-v2|-|+|+|-*|
 inception-resnet-v2-tf|+|+|-|+|
 mixnet-l|+|+|-|-*|
 mobilenet-v1-0.25-128|+|+|+|+|
@@ -70,11 +70,11 @@ repvgg-a0|+|+|-|-|
 repvgg-b1|+|+|-|-|
 repvgg-b3|+|+|-|-|
 ***resnest-50-pytorch***|+|-|-|-|
-resnet-101|-|resnet-v1-101|+|-|
-resnet-152|-|resnet-v1-152|+|-|
+resnet-101|-|called resnet-v1-101|+|-|
+resnet-152|-|called resnet-v1-152|+|-|
 resnet-18-pytorch|+|+|-|+|
 resnet-34-pytorch|+|+|-|-*|
-resnet-50|-|resnet-v1-50|+|-|
+resnet-50|-|called resnet-v1-50|+|-|
 resnet-50-caffe2|-|+|-|+|
 resnet-50-pytorch|+|+|-|+|
 resnet-50-tf|+|+|-|+|
@@ -95,9 +95,9 @@ vgg16|+|+|+|+|
 vgg19|+|+|+|+|
 vgg19-caffe2|+|+|-|+|
 
-### Семантическая сегментация (Semantic Segmentation)
+### Semantic segmentation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 deeplabv3|+|+|+|+|
 ***drn-d-38***|+|-|-|-|
@@ -108,9 +108,9 @@ deeplabv3|+|+|+|+|
 ***pspnet-pytorch***|+|-|-|-|
 ***ocrnet-hrnet-w48-paddle***|+|-|-|-|
 
-### Сегментация объектов (Instance Segmentation)
+### Instance segmentation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|
 mask_rcnn_inception_v2_coco|-|+|-|-*|
@@ -118,18 +118,18 @@ mask_rcnn_resnet101_atrous_coco|-|+|-|-|
 mask_rcnn_resnet50_atrous_coco|+|+|-|-*|
 ***yolact-resnet50-fpn-pytorch***|+|-|-|-|
 
-### 3D сегментация (3D Segmentation)
+### 3D segmentation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***brain-tumor-segmentation-0001***|+|отсутствуют данные|-|-|
-***brain-tumor-segmentation-0002***|+|отсутствуют данные|-|-|
+***brain-tumor-segmentation-0001***|+|there is no data|-|-|
+***brain-tumor-segmentation-0002***|+|there is no data|-|-|
 
-### Детектирование объектов (Object Detection)
+### Object detection
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***ctpn***|+|отсутствуют данные|-|-|
+***ctpn***|+|there is no data|-|-|
 ctdet_coco_dlav0_384|-|-|-|-|
 ***ctdet_coco_dlav0_512***|+|-|-|-|
 ***detr-resnet50***|+|-|-|-|
@@ -144,7 +144,7 @@ faster_rcnn_resnet50_coco|+|+|-|-*|
 ***mobilefacedet-v1-mxnet***|+|-|-|-|
 mobilenet-ssd (ssd_mobilenet_v1_coco)|+|+|+|+|+|
 ***mobilenet-yolo-v4-syg***|+|-|-|-|
-***mtcnn***|+|пайплайн из трех моделей|-|-|
+***mtcnn***|+|pipeline|-|-|
 ***nanodet-m-1.5x-416***|+|-|-|-|
 ***nanodet-plus-m-1.5x-416***|+|-|-|-|
 pelee-coco|+|+|+|-*|
@@ -171,138 +171,156 @@ yolo-v3-tf|+|+|-|-*|
 ***yolof***|+|-|-|-|
 ***yolox-tiny***|+|-|-|-|
 
-### Распознавание лиц (Face Recognition)
+### Face recognition
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***facenet-20180408-102900***|+|не известен тренировочный набор данных|-|-|
+***facenet-20180408-102900***|+|there is no data|-|-|
 ***face-recognition-resnet100-arcface-onnx***|+|-|-|-|
 Sphereface|+|+|-|-*|
 
-### Оценка позы человека (Human Pose Estimation)
+### Human pose estimation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***higher-hrnet-w32-human-pose-estimation***|+|-|-|-|
 ***human-pose-estimation-3d-0001***|+|-|-|-|
 ***single-human-pose-estimation-0001***|+|-|-|-|
 
-### Оценка глубины (Monodepth)
+### Monodepth
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***fcrn-dp-nyu-depth-v2-tf***|+|-|-|-|
 ***midasnet***|+|-|-|-|
 
-### Восстановление изображений (Image Inpainting)
+### Image inpainting
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***gmcnn-places2-tf***|+|-|-|-|
 ***hybrid-cs-model-mri***|+|-|-|-|
 
-### Перенос стиля (Style Transfer)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Style transfer
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***fast-neural-style-mosaic-onnx***|+|-|-|-|
 
-### Распознавание движений (Action Recognition)
+### Action recognition
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***common-sign-language-0001***|+|-|-|-|
 ***i3d-rgb-tf***|+|-|-|-|
 
-### Раскрашивание изображений (Colorization)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Colorization
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***colorization-siggraph***|+|-|-|-|
 ***colorization-v2***|+|-|-|-|
 
-### Классификация звуков (Sound Classification)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Sound classification
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***aclnet***|+|-|-|-|
 ***aclnet-int8***|+|-|-|-|
 
-### Распознавание речи (Speech Recognition)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Speech recognition
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***mozilla-deepspeech-0.6.1***|+|-|-|-|
 ***mozilla-deepspeech-0.8.2***|+|-|-|-|
 ***quartznet-15x5-en***|+|-|-|-|
 ***wav2vec2-base***|+|-|-|-|
 
-### Генерация изображений (Image Translation)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Image translation
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***cocosnet***|+|-|-|-|
 
-### Распознавание объектов (Object Recognition)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Object recognition
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***license-plate-recognition-barrier-0007***|+|-|-|-|
 
-### Распознавание места съемки (Place Recognition)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Place recognition
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***netvlad-tf***|+|-|-|-|
 
-### Устранение размытия изображений (Debluring models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Debluring models
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***deblurgan-v2***|+|-|-|-|
 
-### Устранение артефактов JPEG (JPEG Artifacts Removal Models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
--|-|-|-|-|
-***deblurgan-v2***|+|-|-|-|
+### JPEG artifacts removal models
 
-### Детектирование выделяющихся объектов (Salient object detection)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+-|-|-|-|-|
+***fbcnn***|+|-|-|-|
+
+### Salient object detection
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***f3net***|+|-|-|-|
 
-### Предсказание слов в текте (Text Prediction Models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Text prediction models
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***gpt-2***|+|-|-|-|
 
-### Распознание текста на изображениях (Text Recognition Models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Text recognition models
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***text-recognition-resnet-fc***|+|-|-|-|
 ***vitstr-small-patch16-224***|+|-|-|-|
 
-### Синтезирование речи (Text to Speech Models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Text to speech models
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***forward-tacotron***|+|-|-|-|
 ***wavernn***|+|-|-|-|
 
-### Распознавание именованных сущностей (Named Entity Recognition)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Named entity recognition
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***bert-base-ner***|+|-|-|-|
 
 ### Face Localization
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***retinaface-resnet50-pytorch***|+|-|-|-|
 
-### Распознавание транспорта (vehicle reidentification)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Vehicle reidentification
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***vehicle-reid-0001***|+|-|-|-|
 
-## Модели Intel
+## Intel models
 
+### Weld recognition model
 
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+-|-|-|-|-|
 ***weld-porosity-detection-0001***|+|-|-|-|
 
-### Детектирование объектов (Object Detection)
+### Object detection
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***faster-rcnn-resnet101-coco-sparse-60-0001***|+|-|-|-|
 face-detection-0100|-|+|-|-|
@@ -362,37 +380,42 @@ yolo-v2-tiny-ava-sparse-60-0001|+|+|-|+|
 ***smartlab-object-detection-0003***|+|-|-|-|
 ***smartlab-object-detection-0004***|+|-|-|-|
 
-### Распознавание объектов (Object Recognition)
+### Object recognition
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 age-gender-recognition-retail-0013|+|+|+|+|
+emotions-recognition-retail-0003|+|there is no data|-|-|
+facial-landmarks-35-adas-0002|+|+|+|+|
+gaze-estimation-adas-0002|+|+|-|+|
 head-pose-estimation-adas-0001|+|+|+|+|
 license-plate-recognition-barrier-0001|+|+|-|+|
-***vehicle-attributes-recognition-barrier-0039***|+|отсутствуют данные|-|-|
+***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|
 ***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|
-emotions-recognition-retail-0003|+|нет доступа к набору данных AffectNet|-|-|
+emotions-recognition-retail-0003|+|there is no data (AffectNet)|-|-|
 landmarks-regression-retail-0009|+|+|+|+|
 ***facial-landmarks-98-detection-0001***|+|-|-|-|
 facial-landmarks-35-adas-0002|+|+|+|+|
 person-attributes-recognition-crossroad-0230|+|+|+|+|
 ***person-attributes-recognition-crossroad-0234***|+|-|-|-|
 ***person-attributes-recognition-crossroad-0238***|+|-|-|-|
-gaze-estimation-adas-0002|+|+|-|+|
+***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|
+***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|
 
-### Идентификация объектов (Reidentification)
+### Reidentification
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
+gaze-estimation-adas-0002|+|+|-|+|
 face-reidentification-retail-0095|+|+|-|+|
 ***person-reidentification-retail-0277***|+|-|-|-|
 ***person-reidentification-retail-0286***|+|-|-|-|
 ***person-reidentification-retail-0287***|+|-|-|-|
 ***person-reidentification-retail-0288***|+|-|-|-|
 
-### Семантическая сегментация (Semantic Segmentation)
+### Semantic segmentation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 road-segmentation-adas-0001|+|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|+|
@@ -401,9 +424,9 @@ icnet-camvid-ava-0001|+|+|-|-*|
 icnet-camvid-ava-sparse-30-0001|+|+|-|-*|
 icnet-camvid-ava-sparse-60-0001|+|+|-|-*|
 
-### Сегментация объектов (Instance Segmentation)
+### Instance segmentation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***instance-segmentation-security-0002***|+|-|-|-|
 instance-segmentation-security-0010|-|+|-|-|
@@ -416,60 +439,58 @@ instance-segmentation-security-1025|-|+|-|-|
 ***instance-segmentation-security-1040***|+|-|-|-|
 ***instance-segmentation-person-0007***|+|-|-|-|
 
-### Оценка позы человека (Human Pose Estimation)
+### Human pose estimation
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 human-pose-estimation-0001|+|+|-|+|
 ***human-pose-estimation-0005***|+|-|-|-|
 ***human-pose-estimation-0006***|+|-|-|-|
 ***human-pose-estimation-0007***|+|-|-|-|
 
-### Обработка изображений (Image Processing)
+### Image processing
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 single-image-super-resolution-1032|+|+|-|+|
 single-image-super-resolution-1033|+|+|-|+|
-***text-image-super-resolution-0001***|+|нет доступа к набору данных ICDAR|-|-|
+***text-image-super-resolution-0001***|+|there is no data|-|-|
 
-### Детектирование текста (text detection)
+### Text detection
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***text-detection-0003***|+|нет доступа к набору данных ICDAR|-|-|
-***text-detection-0004***|+|нет доступа к набору данных ICDAR|-|-|
+***text-detection-0003***|+|there is no data (ICDAR)|-|-|
+***text-detection-0004***|+|there is no data (ICDAR)|-|-|
 ***horizontal-text-detection-0001***|+|-|-|-|
 
-### Распознавание текста (Text Recognition)
+### Text recognition
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***text-recognition-0012***|+|нет доступа к набору данных ICDAR|-|-|
+***text-recognition-0012***|+|there is no data (ICDAR)|-|-|
 ***text-recognition-0014***|+|-|-|-|
 ***text-recognition-0015***|+|-|-|-|
 ***text-recognition-0016***|+|-|-|-|
-***handwritten-score-recognition-0003***|+|отсутствуют данные|-|-|
-***handwritten-japanese-recognition-0001***|+|нет доступа к набору данных HANDS-nakayosi_t-98-09 и HANDS-kondate-14-09-01|-|-|
+***handwritten-score-recognition-0003***|+|there is no data|-|-|
+***handwritten-japanese-recognition-0001***|+|there is no data (HANDS-nakayosi_t-98-09, HANDS-kondate-14-09-01)|-|-|
 ***handwritten-simplified-chinese-recognition-0001***|+|-|-|-|
 ***handwritten-english-recognition-0001***|+|-|-|-|
 ***formula-recognition-medium-scan-0001***|+|-|-|-|
 ***formula-recognition-polynomials-handwritten-0001***|+|-|-|-|
 
+### Text spotting
 
-### Детектирование и распознавание текста (Text Spotting)
-
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
-***text-spotting-0005***|+|пайплайн из трех моделей|-|-|
-text-spotting-0005-detector|-|пайплайн из трех моделей|-|-|
+***text-spotting-0005***|+|pipeline|-|-|
+text-spotting-0005-detector|-|pipeline|-|-|
 text-spotting-0005-recognizer-decoder|-|-|-|-|
 text-spotting-0005-recognizer-encoder|-|-|-|-|
 
+### Action recognition
 
-### Распознавание движений (Action Recognition)
-
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-*|
 driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-*|
@@ -477,21 +498,24 @@ action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|
 action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|
 ***asl-recognition-0004***|+|-|-|-|
 ***common-sign-language-0002***|+|-|-|-|
+***weld-porosity-detection-0001***|+|-|-|-|
 
-### Восстановление изображений (Image Retrieval)
+### Image retrieval
 
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 image-retrieval-0001|+|+|-|-*|
 
-### Модели с использованием уменьшения весов (Compressed models)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Compressed models
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 ***resnet50-binary-0001***|+|-|-|-|
 
-### Ответ на вопрос (Question Answering)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Question answering
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***bert-large-uncased-whole-word-masking-squad-0001***|+|-|-|-|
 ***bert-large-uncased-whole-word-masking-squad-int8-0001***|+|-|-|-|
@@ -501,45 +525,53 @@ resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 ***bert-small-uncased-whole-word-masking-squad-int8-0002***|+|-|-|-|
 ***bert-small-uncased-whole-word-masking-squad-emb-int8-0001***|+|-|-|-|
 
-### Перевод текстов с одного языка на другой (Machine Translation)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Machine translation
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***machine-translation-nar-en-ru-0001***|+|-|-|-|
 ***machine-translation-nar-ru-en-0001***|+|-|-|-|
 ***machine-translation-nar-de-en-0002***|+|-|-|-|
 ***machine-translation-nar-en-de-0002***|+|-|-|-|
 
-### Синтезирование речи (Text To Speech)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Text to speech
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***text-to-speech-en-0001***|+|-|-|-|
 ***text-to-speech-en-multi-0001***|+|-|-|-|
 
-### Подавление шума в речи (Speech Noise Suppression)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Speech noise suppression
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***noise-suppression-poconetlike-0001***|+|-|-|-|
 ***noise-suppression-denseunet-ll-0001***|+|-|-|-|
 
-### Прогнозирование временного ряда (Time Series Forecasting)
-Модель | Наличие в OMZ (2022.12.01)| Наличие в таблице валидации | Наличие в html-таблице (для R3) | Наличие в html-таблице (для 2021.4) |
+### Time series forecasting
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
 -|-|-|-|-|
 ***time-series-forecasting-electricity-0001***|+|-|-|-|
 
-### Распознавание последовательности действий (Action Sequence Modeling)
+### Action sequence modeling
+
+Model | Availability in OMZ (2022.12.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) |
+-|-|-|-|-|
 ***smartlab-sequence-modelling-0001***|+|-|-|-|
 ***smartlab-sequence-modelling-0002***|+|-|-|-|
 ***smartlab-action-recognition-0001-encoder-side***|+|-|-|-|
 ***smartlab-action-recognition-0001-encoder-top***|+|-|-|-|
 ***smartlab-action-recognition-0001-decoder***|+|-|-|-|
 
-\* Указание "-\*" в столбце "Наличие в html-таблице..."
-обозначает, что модель провалидирована, но по какой-то
-причине она отсутствует в таблице с результатами бенчмаркинга.
+\* "-\*" in the column "Availability in the html table..."
+means that the model was checked but there is no in
+the performance table.
 
-## Модели для следующего этапа расширения
+## Models for the further checking
 
-### Модели Intel
+### Intel models
+
 1. asl-recognition-0004
 1. bert-small-uncased-whole-word-masking-squad-0001
 1. bert-small-uncased-whole-word-masking-squad-0002
@@ -622,7 +654,8 @@ resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 1. text-spotting-0005
 1. yolo-v2-tiny-vehicle-detection-0001
 
-### Открытые модели
+### Public models
+
 1. aclnet
 1. aclnet-int8
 1. anti-spoof-mn3
@@ -639,6 +672,7 @@ resnet18-xnor-binary-onnx-0001|+|+|-|-*|
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
 1. erfnet
+1. fbcnn
 1. f3net
 1. faceboxes-pytorch
 1. face-detection-retail-0044

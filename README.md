@@ -4,12 +4,18 @@
 
 This is a repo of deep learning inference benchmark, called DLI.
 DLI is a benchmark for deep learning inference on various hardware.
+The goal of the project is to develop a software for measuring
+the performance of a wide range of deep learning models
+inferring on various popular frameworks and various hardware,
+as well as regularly publishing the obtained data.
+
 The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
 of deep models inferred on Intel platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
 
-DLI supports: 
+DLI supports inference using the following frameworks:
+
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
@@ -54,13 +60,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
     for TensorFlow.
 
-- `docs` directory contains project documentation.
-
-  - [`concept.md`](docs/concept.md) is a concept description
-    (goals and tasks).
-  - [`technologies.md`](docs/technologies.md) is a list of technologies.
-  - [`architecture.md`](docs/architecture.md) is a benchmarking
-    system architecture.
+- `docs` directory contains auxiliary documentation. Please, find
+  complete documentation at the [Wiki page][dli-wiki].
 
 - `results` directory contains benchmarking and validation results.
 
@@ -86,7 +87,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
       based on Intel® Optimization for TensorFlow for several public models.
 
   - [`models_checklist.md`](results/models_checklist.md) contains a list
-    of supported deep models (in accordance with Open Model Zoo).
+    of supported deep models (in accordance with the Open Model Zoo).
 
 - `src` directory contains benchmark sources.
 
@@ -97,343 +98,59 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `config_maker`contains GUI application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
-  - `csv2html` is a set of scripts to convert result table
-    from csv to html.
-  - `csv2xlsx` is a set of scripts to convert result table
-    from csv to xlsx.
+  - `csv2html` is a set of scripts to convert performance and accuracy
+     tables from csv to html.
+  - `csv2xlsx` is a set of scripts to convert performance and accuracy
+     tables from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains python inference implementation.
-  - `node_info` contains script to get hardware information.
-  - `onnxruntime_benchmark` contains c++ ONNXRuntime inference tool.
+  - `node_info` contains a set of functions to get information about
+    computational node.
+  - `onnxruntime_benchmark` is the tool that allows to measure
+    deep learning models inference performance with
+    [ONNX Runtime](https://github.com/microsoft/onnxruntime).
+    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
+    as a reference and stick to its measurement methodology,
+    thus provide consistent performance results.
   - `quantization` contains scripts to quantize model to INT8-precision
-    using Post-Training Optimization Tool (POT) of Intel® Distribution of OpenVINO™ toolkit.
+    using Post-Training Optimization Tool (POT)
+	of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
-  - `utils` contains common python scripts utilities.
+  - `utils` is a package of auxiliary utilities.
 
+- `test` contains smoke tests.
 
-## Software installation
+## Documentation
 
-To install software requirements, please follow instructions.
-This manual is for Ubuntu 20.04, for other OS it may be different.
+The latest documentation for the Deep Learning Inference
+Benchmark (DLI) is available [here][dli-wiki]. This documentation
+contains detailed information about the DLI components and provides
+step-by-step guides to build and run the DLI benchmark on your own
+test infrastructure.
 
-1. Install Python tools (Python 3.8 is already installed
-by default in Ubuntu 20.04).
-    ```bash
-    sudo apt install python3-pip python3-venv python3-tk
-    ```
-1. Create and activate virtual environment.
-    ```bash
-    cd ~/
-    python3 -m venv dl-benchmark-env
-    source ~/dl-benchmark-env/bin/activate
-    python3 -m pip install --upgrade pip
-    ```
-1. Install `openvino-dev` package using pip.
-    ```bash
-    pip install openvino-dev[caffe,mxnet,onnx,pytorch,tensorflow]==2022.1.0
-    ```
-     - Note: there is no way to install `tensorflow` and `tensorflow2` packages to the single virtual environment, so to convert `tensorflow2` models, please, create another virtual environment and install `openvino-dev` package with the support of `tensorflow2`:
-    ```bash
-    pip install openvino-dev[tensorflow2]==2022.1.0`
-    ```
-1. Clone this repository.
-    ```bash
-    sudo apt install git
-    git clone https://github.com/itlab-vision/dl-benchmark.git
-    git submodule update --init --recursive
-    ```
-1. Install requirements.
-    ```bash
-    pip install -r ~/dl-benchmark/requirements.txt
-    ```
+### How to build
 
-## Model preparing
+See the [DLI Wiki][dli-wiki-build] to get more information.
 
-To prepare models and data for benchmarking, please, follow instructions.
+### How to deploy
 
-1. Create `<working_dir>` directory which will contain models and datasets.
-    ```bash
-    mkdir <working_dir>
-    ```  
-1. Download models using OpenVINO model downloader tool to
-   the `<working_dir>` directory:
-    ```bash
-    omz_downloader --all --output_dir <working_dir> --cache_dir <cache_dir>
-    ``` 
-1. Convert models using OpenVINO model converter tool to
-   the `<working_dir>` directory:
-    ```bash
-    omz_converter --output_dir <working_dir> --download_dir <working_dir>
-    ``` 
-1. (Optional) Convert models to INT8-precision:
-   1. Prepare configuration files in accordance with
-    `src/configs/quantization_configuration_file_template.xml`. Please, use 
-    GUI application (`src/config_maker`).
-   1. Quantize models to INT8-precision using the script
-    `src/quantization/quantization.py` in accordiance with 
-    `src/quantization/README.md`.
-      ```bash
-      python3 ~/dl-benchmark/src/quantization/quantization.py -c <config_path>
-      ``` 
+See the [DLI Wiki][dli-wiki-deploy] to get more information.
 
+### How to contribute
 
-## Deployment
+See the [DLI Wiki][dli-wiki-contribute] to get more information.
 
-To deploy DLI, please, follow instructions.
+### Available benchmarking results
 
-1. Select the required Dockerfile from the `docker` folder.
-1. Update all the variables in the file, the necessary
-   variables are marked as `ARG`.
-1. The following step is to build the image in accordance with
-   `docker/README.md`
-1. It is required to deploy FTP-server in advance,
-   and create a directory for storing docker images.
-1. Create deployment configuration file according to
-   the `src/configs/deploy_configuration_file_template.xml`.
-1. Execute `src/deployment/deploy.py` in accordance with `src/deployment/README.md`.
-1. Copy the test datasets to the docker image, using the following
-   command line: `docker cp <PathToData> <ContainerName>:/tmp/data`.
+See the [DLI Wiki][dli-wiki-bench-results] to get more information
+about benchmaring results on available hardware.
 
-## Startup
+### Get a support
 
-To start benchmarking, it is required to create two new directories
-on the FTP-server, the first one for the benchmark configuration files,
-and the second one for the file of bencmarking results. Further, please,
-follow instructions.
+Report questions, issues and suggestions, using:
 
-1. Prepare configuration files in accordance with
-   `src/configs/benchmark_configuration_file_template.xml`,
-   `src/configs/accuracy_checker_configuration_file_template.xml` and
-   `src/configs/remote_configuration_file_template.xml`. Please, use 
-   GUI application (`src/config_maker`).
-1. Copy the benchmark and the accuracy checker configuration files to
-   the corresponding directory on the FTP-server.
-1. Execute the `src/remote_control/remote_start.py` script. Please, follow
-   `src/remote_control/README.md`.
-1. Wait for completing the benchmark.
-1. Wait for completing the accuracy checker.
-1. Copy benchmarking and accuracy checker results from the FTP-server to the local machine
-   for the further analysis.
-
-## Deployment example
-
-1. Download deep learning inference benchmark. Clone repo to the `/tmp`
-   directory using the following commands:
-
-   ```bash
-   cd tmp
-   git clone https://github.com/itlab-vision/dl-benchmark.git
-   ```
-
-1. It is required to deploy FTP-server and create directories.
-   For definiteness, we will use the following names:
-
-   - `docker_image_folder` is a directory for storing docker image.
-   - `configs` is a directory for storing configurationn files.
-   - `table_folder` is a directory for storing performance results.
-
-   Use these parameters to connect to FTP-server:
-   
-   ```xml
-   <IP>2.2.2.2</IP>
-   <Login>admin</Login>
-   <Password>admin</Password>
-   ```
-
-1. For definiteness, we select the OpenVINO Docker container. The Dockerfile
-   to build this image can be found in the
-   `/tmp/dl-benchmark/docker/OpenVINO_DLDT` folder.
-   Before building, you should put the current link to download
-   the OpenVINO toolkit and link to dataset, it should be a git
-   repository. Please, insert correct path in the following line:
-
-   `ARG DOWNLOAD_LINK=<Link to download Intel Distribution of OpenVINO Toolkit>`
-   `ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>`
-
-1. To build docker image, please, use the following command:
-
-   `docker build -t OpenVINO_Image . `
-
-   The `build` option searches for the Dockerfile in the current directory
-   and builds the image `OpenVINO_Image`.
-
-1. The following step is to add docker-image to the archive by the command:
-
-   `docker save OpenVINO_Image > OpenVINO_Image.tar`
-
-1. After building the image, you need to fill out the configuration file for
-   the system deployment script. The configuration file template is located
-   in the `/tmp/dl-benchmark/src/config/deploy_configuration_file_template.xml`.
-   Fill the configuration file (information to access to the remote computer)
-   and save it to the `/tmp/dl-benchmark/src/deployment/deploy_config.xml`.
-   Please, use the developed GUI application (config maker).
-
-   ```xml
-   <Computers>
-     <Computer>
-       <IP>4.4.4.4</IP>
-       <Login>user</Login>
-       <Password>user</Password>
-       <OS>Linux</OS>
-       <DownloadFolder>/tmp/docker_folder</DownloadFolder>
-       <DatasetFolder>/mnt/datasets</DatasetFolder>
-       <ModelFolder>/mnt/models</ModelFolder>
-     </Computer>
-   </Computers>
-   ```
-
-1. To run the deployment script, use the following command: 
-
-   ```bash
-   python3 deploy.py -s 2.2.2.2 -l admin -p admin \
-       -i /tmp/dl-benchmark/docker/OpenVINO_Image.tar \
-       -d docker_image_folder -n OpenVINO_DLDT \
-       --machine_list /tmp/dl-benchmark/src/deployment/deploy_config.xml \
-       --project_folder /tmp/dl-benchmark/
-    ```
-
-   The first three parameters `-s, -l, -p` are responsible for access
-   to the FTP-server, `-i` is a path to the archived Docker image,
-   `-d` is a directory on the FTP-server where the Docker image will be uploaded,
-   `-n` is an executable name of the Docker container,
-   `--machine_list` is a configuration file which contains a list of machines
-   on which we plan to deploy our infrastructure.
-
-   After this stage, there is a docker container at each computer.
-
-## Startup example
-
-1. Fill out the configuration file for the benchmarking script. It is required
-   to describe tests to be performed, you can find the template in the
-   `src/config/benchmark_configuration_file_template.xml`.
-   Fill the configuration file and save it to the `configs/bench_config.xml`
-   on the FTP-server. Please, use the developed GUI application (config maker).
-
-   ```xml
-   <Tests>
-     <Test>
-       <Model>
-           <Task>Classification</Task>
-           <Name>densenet-121</Name>
-           <Precision>FP32</Precision>
-           <SourceFramework>Caffe</SourceFramework>
-           <Path>/mnt/models/public/densenet-121/FP32</Path>
-       </Model>
-       <Dataset>
-           <Name>ImageNet</Name>
-           <Path>/tmp/data/</Path>
-       </Dataset>
-       <FrameworkIndependent>
-           <InferenceFramework>OpenVINO_DLDT</InferenceFramework>
-           <BatchSize>2</BatchSize>
-           <Device>CPU</Device>
-           <IterationCount>10</IterationCount>
-           <TestTimeLimit>1000</TestTimeLimit>
-       </FrameworkIndependent>
-       <FrameworkDependent>
-           <Mode>Sync</Mode>
-           <Extension></Extension>
-           <AsyncRequestCount></AsyncRequestCount>
-           <ThreadCount></ThreadCount>
-           <StreamCount></StreamCount>
-       </FrameworkDependent>
-     </Test>
-   </Tests>
-   ```
-
-1. Fill out the configuration file for the accuracy checker script. It is required
-   to describe tests to be performed, you can find the template in the
-   `src/config/accuracy_checker_configuration_file_template.xml`.
-   Fill the configuration file and save it to the `configs/ac_config.xml`
-   on the FTP-server. Please, use the developed GUI application (config maker).
-
-   ```xml
-   <Tests>
-     <Test>
-        <Model>
-            <Task>classification</Task>
-            <Name>densenet-121</Name>
-            <Precision>FP32</Precision>
-            <SourceFramework>Caffe</SourceFramework>
-            <Directory>/opt/intel/openvino/deployment_tools/tools/model_downloader/public/densenet-121/FP32</Directory>
-        </Model>
-        <Parameters>
-            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
-            <Device>CPU</Device>
-            <Config>/opt/intel/open_model_zoo/tools/accuracy_checker/configs/densenet-121.yml</Config>
-        </Parameters>
-    </Test>
-   </Tests>
-   ```
-
-1. Fill out the configuration file for the
-   remote start script, you can find the template in the
-   `src/config/remote_configuration_file_template.xml`.
-   Fill it and save to the
-   `/tmp/dl-benchmark/src/remote_start/remote_config.xml`.
-   Please, use the developed GUI application (config maker).
-
-   ```xml
-   <Computers>
-    <Computer>
-      <IP>4.4.4.4</IP>
-      <Login>user</Login>
-      <Password>user</Password>
-      <OS>Linux</OS>
-      <FTPClientPath>/tmp/dl-benchmark/src/remote_start/ftp_client.py</FTPClientPath>
-      <Benchmark>
-        <Config>configs/bench_config.xml</Config>
-        <Executor>docker_container</Executor>
-        <LogFile>/tmp/dl-benchmark/src/remote_start/bench_log.txt</LogFile>
-        <ResultFile>/tmp/dl-benchmark/src/remote_start/bench_result.csv</ResultFile>
-      </Benchmark>
-      <AccuracyChecker>
-        <Config>configs/ac_config.xml</Config>
-        <Executor>docker_container</Executor>
-        <DatasetPath></DatasetPath>
-        <DefinitionPath>/opt/intel/open_model_zoo/tools/accuracy_checker/definitions.yml</DefinitionPath>
-        <LogFile>/tmp/dl-benchmark/src/remote_start/ac_log.txt</LogFile>
-        <ResultFile>/tmp/dl-benchmark/src/remote_start/ac_result.csv</ResultFile>
-      </AccuracyChecker>
-    </Computer>
-  </Computers>
-   ```
-
-1. Execute the remote start script using the following command:
-
-   ```bash
-   python3 remote_start.py \
-   -c /tmp/dl-benchmark/src/remote_start/remote_config.xml \
-   -s 2.2.2.2 -l admin -p admin -br bench_all_results.csv -acr ac_all_results.csv \
-   --ftp_dir table_folder
-   ```
-
-1. Wait for completing the benchmark and accuracy checker. After completion,
-   the `table_folder` directory will contain tables with the benchmarking combined results
-   named `bench_all_results.csv` and with the accuracy checker combined results named
-   `ac_all_results.csv`.
-
-1. Copy the results from the FTP-server to the local machine.
-
-   ```bash
-   scp admin@2.2.2.2:/table_folder/bench_all_results.csv /tmp/
-   scp admin@2.2.2.2:/table_folder/ac_all_results.csv /tmp/
-   ```
-
-1. Convert csv to html or xlsx using the following commands:
-
-   ```bash
-   cd /tmp/dl-benchmark/src/csv2html
-   python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.html
-   python3 converter.py -k accuracy_checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.html
-   ```
-
-   ```bash
-   cd /tmp/dl-benchmark/src/csv2xlsx
-   python3 converter.py -k benchmark -t /tmp/bench_all_results.csv -r /tmp/bench_formatted_results.xlsx
-   python3 converter.py -k accuracy_checker -t /tmp/ac_all_results.csv -r /tmp/ac_formatted_results.xlsx
-   ```
+- [GitHub Issues][dli-github-issues]
 
 
 <!-- LINKS -->
@@ -446,3 +163,9 @@ follow instructions.
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
+[dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
+[dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
+[dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
+[dli-wiki-deploy]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-deploy-and-run
+[dli-wiki-bench-results]: https://github.com/itlab-vision/dl-benchmark/wiki#benchmarking-results
+[dli-github-issues]: https://github.com/itlab-vision/dl-benchmark/issues
