@@ -5,6 +5,7 @@ from .openvino.openvino_wrapper import OpenVINOWrapper
 from .singleton import Singleton
 from .tensorflow.tensorflow_wrapper import TensorFlowWrapper
 from .onnx_runtime.onnx_runtime_wrapper import OnnxRuntimeWrapper
+from .tensorflow_lite.tensorflow_lite_wrapper import TensorFlowLiteWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
@@ -30,3 +31,4 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[TensorFlowWrapper.framework_name] = TensorFlowWrapper()
         self._framework_wrappers[OpenVINOWrapper.framework_name] = OpenVINOWrapper()
         self._framework_wrappers[OnnxRuntimeWrapper.framework_name] = OnnxRuntimeWrapper()
+        self._framework_wrappers[TensorFlowLiteWrapper.framework_name] = TensorFlowLiteWrapper()

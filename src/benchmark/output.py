@@ -35,16 +35,18 @@ class OutputHandler:
     def __create_table_row(executor, test, process):
         report = test.get_report()
         if process is not None:
-            process_status = process.get_status()
+            status_code = process.get_status()
+            process_status = (Status(status_code) if (Status.has_value(status_code) and status_code != 1)
+                              else Status.INFERENCE_FAILURE)
             report['input_shape'] = process.get_model_shape()
-            report['status'] = 'Success' if process_status == 0 else 'Failed'
+            report['status'] = 'Success' if status_code == 0 else 'Failed'
             report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
-            report['error_type'] = Status(process_status).name if process_status else 'NO_ERROR'
+            report['error_type'] = process_status.name if status_code else 'NO_ERROR'
         else:
             report['input_shape'] = 'Undefined'
             report['status'] = 'Failed'
             report['average_time'], report['fps'], report['latency'] = None, None, None
-            report['error_type'] = Status.PROCESS_CMD_ERROR.name
+            report['error_type'] = Status.INFERENCE_EXCEPTION.name
         report['hardware'] = executor.get_infrastructure()
         return report
 

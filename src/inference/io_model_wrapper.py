@@ -99,3 +99,66 @@ class TensorFlowIOModelWrapper(IOModelWrapper):
 
     def get_input_layer_dtype(self, graph, layer_name):
         return graph.get_tensor_by_name(layer_name).dtype.as_numpy_dtype
+
+
+class TensorFlowLiteIOModelWrapper(IOModelWrapper):
+    def __init__(self, args):
+        self._shape = args.input_shape
+        self._batch = args.batch_size
+        self._input_name = args.input_name
+        self._input_info = None
+        if self._shape is not None and self._input_name is not None:
+            self._input_info = dict(zip(self._input_name, self._shape))
+        elif self._shape is not None and self._input_name is None:
+            raise ValueError('Please set both input_names and input_shapes arguments')
+
+    def _create_list_with_input_shape(self, layer_name):
+        if self._input_info is not None:
+            shape = self._input_info[layer_name]
+            return [self._batch, *shape]
+        else:
+            return [self._batch, *self._shape]
+
+    def get_input_layer_names(self, interpreter):
+        if self._input_name:
+            return self._input_name
+        inputs = interpreter.get_input_details()
+        input_names = []
+        for input_ in inputs:
+            input_names.append(input_['name'])
+        return input_names
+
+    def get_input_layer_shape(self, interpreter, layer_name):
+        if self._shape is None:
+            try:
+                inputs = interpreter.get_input_details()
+                for input_ in inputs:
+                    if layer_name == input_['name']:
+                        shape = input_['shape']
+            except Exception:
+                raise ValueError('Could not get the correct shape. '
+                                 'Try setting the "input_shape" parameter manually.')
+        else:
+            shape = self._create_list_with_input_shape(layer_name)
+        shape[0] = self._batch
+        if None in shape[1:]:
+            raise ValueError(f'Invalid shape {shape}. Try setting the "input_shape" parameter manually.')
+        return shape
+
+    @staticmethod
+    def get_outputs_layer_names(interpreter, outputs_names=None):
+        if outputs_names:
+            return outputs_names
+        outputs = interpreter.get_output_details()
+        output_names = []
+        for output_ in outputs:
+            output_names.append(output_['name'])
+        if not output_names:
+            raise ValueError('Output blobs in the graph cannot be found')
+        return output_names
+
+    def get_input_layer_dtype(self, interpreter, layer_name):
+        inputs = interpreter.get_input_details()
+        for input_ in inputs:
+            if layer_name == input_['name']:
+                return input_['dtype']

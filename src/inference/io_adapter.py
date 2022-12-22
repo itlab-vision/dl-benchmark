@@ -11,10 +11,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._transformed_input = None
         self._original_shapes = None
         self._batch_size = args.batch_size
-        self._labels = args.labels
-        self._number_top = args.number_top
-        self._threshold = args.threshold
-        self._color_map = args.color_map
+        self._labels = getattr(args, 'labels', None)
+        self._number_top = getattr(args, 'number_top', None)
+        self._threshold = getattr(args, 'threshold', None)
+        self._color_map = getattr(args, 'color_map', None)
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
@@ -70,7 +70,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._original_shapes = {}
         if ':' in input_[0]:
             for str_ in input_:
-                key, value = str_.split(':')
+                value = str_.split(':')[-1]
+                key = str_.split(f':{value}')[0]
                 file_format = value.split('.')[-1]
                 if 'csv' == file_format:
                     value = self.__parse_tensors(value)
@@ -82,7 +83,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                     shape = self._io_model_wrapper.get_input_layer_shape(model, key)
                     element_type = self._io_model_wrapper.get_input_layer_dtype(model, key)
                     value, shapes = self.__convert_images(shape, value)
-                    transformed_value = self._transformer.transform_images(value, shape, element_type)
+                    transformed_value = self._transformer.transform_images(value, shape, element_type, key)
                 self._input.update({key: value})
                 self._original_shapes.update({key: shapes})
                 self._transformed_input.update({key: transformed_value})
@@ -98,7 +99,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                 shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
                 element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
                 value, shapes = self.__convert_images(shape, value)
-                transformed_value = self._transformer.transform_images(value, shape, element_type)
+                transformed_value = self._transformer.transform_images(value, shape, element_type, input_blob)
             self._input.update({input_blob: value})
             self._original_shapes.update({input_blob: shapes})
             self._transformed_input.update({input_blob: transformed_value})
@@ -217,7 +218,7 @@ class ClassificationIO(IOAdapter):
             labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
-            top_ind = np.argsort(probs)[-self._number_top:][::-1]
+            top_ind = np.argsort(probs)[-self._number_top:][::-1]  # noqa: PLE1130
             log.info('Result for image {0}'.format(batch + 1))
             for id_ in top_ind:
                 det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
@@ -1451,7 +1452,7 @@ class ActionRecognitionDecoderIO(IOAdapter):
         result = result[result_layer_name]
         for _, _ in enumerate(result):
             probs = np.squeeze(result)
-            top_ind = np.argsort(probs)[-self._number_top:][::-1]
+            top_ind = np.argsort(probs)[-self._number_top:][::-1]  # noqa: PLE1130
             log.info('\nResult:')
             for id_ in top_ind:
                 det_label = labels_map[id_] if labels_map else f'#{id_}'

@@ -3,3 +3,4 @@ class KnownFrameworks:
     tensorflow = 'TensorFlow'
     caffe = 'Caffe'
     onnx_runtime = 'ONNX Runtime'
+    tensorflow_lite = 'TensorFlowLite'

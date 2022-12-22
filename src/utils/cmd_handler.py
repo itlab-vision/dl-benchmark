@@ -14,7 +14,7 @@ class CMDHandler(metaclass=abc.ABCMeta):
         self.env = env
         self.output = []
         self.process = None
-        self.return_code = 0
+        self.return_code = Status.EXIT_SUCCESS.value
 
     def run(self, timeout):
 
@@ -40,9 +40,9 @@ class CMDHandler(metaclass=abc.ABCMeta):
 
         thread.join(timeout)
         if thread.is_alive():
-            self.return_code = Status.PROCESS_TIMEOUT.value
             try:
                 self.log.error(f'Timeout {timeout} is reached, terminating')
+                self.return_code = Status.PROCESS_TIMEOUT.value
                 self.kill_process_by_pid(self.process.pid)
                 thread.join()
             except OSError as e:
@@ -52,8 +52,11 @@ class CMDHandler(metaclass=abc.ABCMeta):
             self.return_code = Status.PROCESS_CREATE_ERROR.value
             self.log.error(f'Failed to create process for {self.command_line}')
         else:
-            self.return_code = self.process.wait()
-        self.log.info(f'Returncode = {self.return_code}')
+            process_return_code = self.process.wait()
+            if not self.return_code and process_return_code:
+                self.return_code = (process_return_code if Status.has_value(process_return_code)
+                                    else Status.PROCESS_CMD_ERROR.value)
+        self.log.info(f'Process returncode = {process_return_code}')
 
     def kill_process_by_pid(self, pid):
         try:
