@@ -1643,13 +1643,13 @@ class yolo(IOAdapter):
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 1)
         return image
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         tx, ty, tw, th, to = detection[0:5]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameWidth) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameHeight) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(image_weight) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(image_height) / dy)
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_width = (np.exp(tw) * prior_width) * (float(frameWidth) / dx)
-        bbox_height = (np.exp(th) * prior_height) * (float(frameHeight) / dy)
+        bbox_width = (np.exp(tw) * prior_width) * (float(image_weight) / dx)
+        bbox_height = (np.exp(th) * prior_height) * (float(image_height) / dy)
         confidence = self._sigmoid(to)
         scores = detection[5:]
         class_id = np.argmax(self._softmax(scores))
@@ -1678,7 +1678,6 @@ class yolo(IOAdapter):
         shapes = self._get_shapes()
         input_layer_name = next(iter(self._input))
         input_ = self._input[input_layer_name]
-        frameHeight, frameWidth = input_.shape[-2:]
         result = list(result.values())
         ib, h, w, c = input_.shape
         b = result[0].shape[0]
@@ -1689,7 +1688,7 @@ class yolo(IOAdapter):
             image = images[batch]
             predictions = []
             orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch]
-            scales = {'W': orig_w / frameWidth, 'H': orig_h / frameHeight}
+            scales = {'W': orig_w / w, 'H': orig_h / h}
             for i, array_of_detections in enumerate(result):
                 anchors_boxes = anchors[i]
                 data = array_of_detections[batch]
@@ -1698,10 +1697,10 @@ class yolo(IOAdapter):
                 cells = data.reshape(data_shape)
                 for cx in range(dy):
                     for cy in range(dx):
-                        for anchor_box_number, detection in enumerate(cells[cy, cx]):
+                        for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
                             if detection[4] >= 0.5:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
-                                                                        frameHeight, frameWidth, anchors_boxes)
+                                                                        h, w, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
@@ -1778,12 +1777,12 @@ class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + tx) * (float(frameHeight) / dx)
-        bbox_center_y = (float(cy) + ty) * (float(frameWidth) / dy)
+        bbox_center_x = (float(cx) + tx) * (float(image_height) / dx)
+        bbox_center_y = (float(cy) + ty) * (float(image_weight) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
@@ -1820,12 +1819,12 @@ class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, frameHeight, frameWidth, anchors):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
         tx, ty, tw, th = detection[0:4]
         prior_width, prior_height = anchors[anchor_box_number]
-        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(frameHeight) / dx)
-        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(frameWidth) / dy)
+        bbox_center_x = (float(cx) + self._sigmoid(tx)) * (float(image_height) / dx)
+        bbox_center_y = (float(cy) + self._sigmoid(ty)) * (float(image_weight) / dy)
         bbox_width = np.exp(tw) * prior_width
         bbox_height = np.exp(th) * prior_height
         for class_id in range(80):
