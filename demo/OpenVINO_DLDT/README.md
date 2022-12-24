@@ -6,7 +6,7 @@
 
 Скрипт позволяет запускать полный цикл работы системы DLI Benchmark, демонстрируя работоспособность всей системы целиком,
 начиная от развертывания системы и заканчивая конвертацией таблиц с результатами.
-На данный момент реализована версия для Linux систем.
+На данный момент реализована версия для Linux систем с развертыванием системы DLI Benchmark с помощью Docker-контейнеров.
 
 ### Алгоритм работы приложения
 
@@ -25,7 +25,7 @@
 
 ```bash
 chmod a+x linux.sh
-./demo.sh -l <login> -p <password> -d <benchmark_datasets>
+./linux.sh -l <login> -p <password> -d <benchmark_datasets>
 ```
 
 Аргументы командной строки:
@@ -39,7 +39,7 @@ chmod a+x linux.sh
 
 ```bash
 chmod a+x linux.sh
-./demo.sh -l admin -p admin -d "https://github.com/account/repo.git"
+./linux.sh -l admin -p admin -d "https://github.com/account/repo.git"
 ```
 
 

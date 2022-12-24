@@ -12,7 +12,7 @@ done
 
 echo "[ INFO ] Demo application has been started"
 demo_folder="$PWD"
-root_folder="${demo_folder}/.."
+root_folder="${demo_folder}/../.."
 openvino_version="2022.1.0"
 
 
