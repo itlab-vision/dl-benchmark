@@ -135,6 +135,7 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
                 for input_ in inputs:
                     if layer_name == input_['name']:
                         shape = input_['shape']
+                        break
             except Exception:
                 raise ValueError('Could not get the correct shape. '
                                  'Try setting the "input_shape" parameter manually.')

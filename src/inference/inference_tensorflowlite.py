@@ -78,7 +78,7 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('--channel_swap',
                         help='Parameter channel swap',
-                        default='[2, 1, 0]',
+                        default=[],
                         type=sequence_arg,
                         dest='channel_swap')
     parser.add_argument('--mean',
@@ -233,7 +233,7 @@ def raw_result_output(average_time, fps, latency):
 def create_dict_for_transformer(args):
     dictionary = {}
     for i, name in enumerate(args.input_name):
-        channel_swap = args.channel_swap[i] if i < len(args.channel_swap) else [2, 1, 0]
+        channel_swap = args.channel_swap[i] if i < len(args.channel_swap) else None
         mean = args.mean.get(name, None)
         input_scale = args.input_scale.get(name, None)
         layout = args.layout[i] if i < len(args.layout) else 'NHWC'
