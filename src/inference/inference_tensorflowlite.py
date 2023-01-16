@@ -206,7 +206,7 @@ def reshape_model_input(io_model_wrapper, model, log):
     model_inputs = model.get_input_details()
     for model_input in model_inputs:
         shape = io_model_wrapper.get_input_layer_shape(model, model_input['name'])
-        if (shape != model_input['shape']).any():
+        if len(model_input['shape']) == 0 or (shape != model_input['shape']).any():
             log.info(f'Reshaping model input from {model_input["shape"]} to {shape}')
             model.resize_tensor_input(model_input['index'], shape)
 
