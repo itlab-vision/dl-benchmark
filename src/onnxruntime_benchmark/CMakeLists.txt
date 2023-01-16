@@ -3,6 +3,7 @@ project(onnxruntime_benchmark)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 find_package(OpenCV REQUIRED core imgproc imgcodecs)
+find_package(nlohmann_json REQUIRED HINTS /usr/lib/cmake)
 
 # search for ORT_INSTALL_DIR in env variables
 if (NOT DEFINED ORT_INSTALL_DIR)
@@ -21,7 +22,6 @@ find_path(ORT_INCLUDE onnxruntime_cxx_api.h
         CMAKE_FIND_ROOT_PATH_BOTH)
 
 add_subdirectory(thirdparty/gflags)
-add_subdirectory(thirdparty/nlohmann_json)
 
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*")
