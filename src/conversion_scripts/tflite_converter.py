@@ -92,10 +92,12 @@ def load_saved_model(saved_model_dir):
 
 def load_tf_model(file):
     model_type = file.suffix
-    if model_type == '.pb':
+    if model_type in ['.pb', '.frozen']:
         model = load_pb_file(file)
     elif model_type == '.meta':
         model = load_meta_file(file)
+    else:
+        raise ValueError(f'Unsupported file type: {model_type}')
 
     return model
 
@@ -276,12 +278,11 @@ def fix_onnx_resize_nodes(model):
 
 
 def load_model(model_path, input_names, output_names, const_inputs, log):
-    model_type = model_path.suffix
-    if model_type:
+    if not model_path.is_dir():
         model_graph = load_tf_model(model_path)
         output_names = get_tf_output_names(model_graph, output_names)
 
-        if model_type == '.meta':
+        if model_path.suffix == '.meta':
             checkpoint_path = model_path.parent
             model_graph = freeze_metagraph(model_graph, checkpoint_path, output_names)
 
@@ -308,22 +309,24 @@ def main():
     if args.source_framework not in ['onnx', 'tf']:
         raise ValueError(f'Unsupported value {args.source_framework} for source-framework parameter')
 
-    output_file = args.model_path.with_suffix('.tflite')
+    model_path = args.model_path.resolve(strict=True)
+
+    output_file = model_path.with_suffix('.tflite')
 
     if args.source_framework == 'onnx':
-        onnx_model = onnx.load(args.model_path)
-        args.model_path = args.model_path.parent / 'saved_model'
+        onnx_model = onnx.load(model_path)
+        model_path = model_path.parent / 'saved_model'
         log.info('Exporting onnx model to TF saved model')
         try:
             tf_model = prepare(onnx_model)
-            tf_model.export_graph(args.model_path)
+            tf_model.export_graph(model_path)
         except RuntimeError:
             half_pixel_model = fix_onnx_resize_nodes(onnx_model)
             tf_model = prepare(half_pixel_model)
-            tf_model.export_graph(args.model_path)
+            tf_model.export_graph(model_path)
 
     log.info('Loading TF model')
-    model = load_model(args.model_path, args.input_names, args.output_names, args.freeze_constant_input, log)
+    model = load_model(model_path, args.input_names, args.output_names, args.freeze_constant_input, log)
 
     if args.input_shapes:
         log.info(f'Setting input shapes to {args.input_shapes}')
