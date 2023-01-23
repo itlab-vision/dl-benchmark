@@ -13,31 +13,11 @@ from transformer import TensorFlowLiteTransformer
 import postprocessing_data as pp
 
 
-def is_sequence(element):
-    return isinstance(element, (list, tuple))
+def names_arg(values):
+    if values is not None:
+        values = values.split(',')
 
-
-def sequence_arg(values):
-    """Checks that the argument represents a list or a sequence of lists"""
-    args = ast.literal_eval(values)
-    if not is_sequence(args):
-        raise argparse.ArgumentTypeError(f'{args}: must be a sequence')
-    if not all(is_sequence(arg) for arg in args):
-        args = (args, )
-    for arg in args:
-        if not is_sequence(arg):
-            raise argparse.ArgumentTypeError(f'{arg}: must be a sequence')
-    return args
-
-
-def shape_arg(values):
-    shapes = sequence_arg(values)
-
-    for shape in shapes:
-        for value in shape:
-            if not isinstance(value, int) or value < 0:
-                raise argparse.ArgumentTypeError(f'Argument {value} must be a positive integer')
-    return shapes
+    return values
 
 
 def cli_argument_parser():
@@ -78,8 +58,8 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('--channel_swap',
                         help='Parameter channel swap',
-                        default=[],
-                        type=sequence_arg,
+                        default=None,
+                        type=str,
                         dest='channel_swap')
     parser.add_argument('--mean',
                         help='Parameter mean',
@@ -88,14 +68,13 @@ def cli_argument_parser():
                         dest='mean')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
-                        default='[1.0]',
+                        default=None,
                         type=str,
                         dest='input_scale')
     parser.add_argument('--layout',
                         help='Parameter input layout',
-                        default=['NHWC'],
+                        default=None,
                         type=str,
-                        nargs='+',
                         dest='layout')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
@@ -103,22 +82,15 @@ def cli_argument_parser():
                         type=str,
                         dest='device')
     parser.add_argument('--input_shapes',
-                        help='Input tensor shape in "height width channels" order',
+                        help='Input tensor shapes',
                         default=None,
-                        type=shape_arg,
-                        dest='input_shape')
+                        type=str,
+                        dest='input_shapes')
     parser.add_argument('--input_names',
-                        help='Name of the input tensor',
+                        help='Names of the input tensors',
                         default=None,
-                        type=str,
-                        nargs='+',
-                        dest='input_name')
-    parser.add_argument('--output_names',
-                        help='Name of the output tensor',
-                        default=None,
-                        type=str,
-                        nargs='+',
-                        dest='output_names')
+                        type=names_arg,
+                        dest='input_names')
     parser.add_argument('-nthreads', '--number_threads',
                         help='Number of threads to use for inference on the CPU. (Max by default)',
                         default=None,
@@ -232,18 +204,18 @@ def raw_result_output(average_time, fps, latency):
 
 def create_dict_for_transformer(args):
     dictionary = {}
-    for i, name in enumerate(args.input_name):
-        channel_swap = args.channel_swap[i] if i < len(args.channel_swap) else None
+    for name in args.input_names:
+        channel_swap = args.channel_swap.get(name, None)
         mean = args.mean.get(name, None)
         input_scale = args.input_scale.get(name, None)
-        layout = args.layout[i] if i < len(args.layout) else 'NHWC'
+        layout = args.layout.get(name, 'NHWC')
         dictionary[name] = {'channel_swap': channel_swap, 'mean': mean,
                             'input_scale': input_scale, 'layout': layout}
 
     return dictionary
 
 
-def parse_mean_scale_arg(values, input_names):
+def parse_input_arg(values, input_names):
     return_values = {}
     if values is not None:
         matches = re.findall(r'(.*?)\[(.*?)\],?', values)
@@ -252,11 +224,34 @@ def parse_mean_scale_arg(values, input_names):
                 name, value = match
                 value = ast.literal_eval(value)
                 if name != '':
-                    return_values[name] = value
+                    return_values[name] = list(value)
                 else:
-                    return_values[input_names[i]] = value
+                    if input_names is None:
+                        raise ValueError('Please set --input-names parameter'
+                                         ' or use input0[value0],input1[value1] format')
+                    return_values[input_names[i]] = list(value)
         else:
             raise ValueError(f'Unable to parse input parameter: {values}')
+    return return_values
+
+
+def parse_layout_arg(values, input_names):
+    return_values = {}
+    if values is not None:
+        matches = re.findall(r'(.*?)\((.*?)\),?', values)
+        if matches:
+            for i, match in enumerate(matches):
+                name, value = match
+                if name != '':
+                    return_values[name] = value
+                else:
+                    if input_names is None:
+                        raise ValueError('Please set --input-names parameter'
+                                         ' or use input0(value0),input1(value1) format')
+                    return_values[input_names[i]] = value
+        else:
+            values = values.split(',')
+            return_values = dict(zip(input_names, values))
     return return_values
 
 
@@ -265,7 +260,8 @@ def main():
                     level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
     try:
-        model_wrapper = TensorFlowLiteIOModelWrapper(args)
+        args.input_shapes = parse_input_arg(args.input_shapes, args.input_names)
+        model_wrapper = TensorFlowLiteIOModelWrapper(args.input_shapes, args.batch_size)
 
         delegate = None
         if args.delegate_ext:
@@ -275,9 +271,12 @@ def main():
         log.info(f'Loading network files:\n\t {args.model_path}')
         interpreter = load_network(tf.lite, args.model_path, args.number_threads, delegate)
 
-        args.input_name = model_wrapper.get_input_layer_names(interpreter)
-        args.mean = parse_mean_scale_arg(args.mean, args.input_name)
-        args.input_scale = parse_mean_scale_arg(args.input_scale, args.input_name)
+        args.input_names = model_wrapper.get_input_layer_names(interpreter)
+
+        args.mean = parse_input_arg(args.mean, args.input_names)
+        args.input_scale = parse_input_arg(args.input_scale, args.input_names)
+        args.channel_swap = parse_input_arg(args.channel_swap, args.input_names)
+        args.layout = parse_layout_arg(args.layout, args.input_names)
 
         data_transformer = TensorFlowLiteTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)

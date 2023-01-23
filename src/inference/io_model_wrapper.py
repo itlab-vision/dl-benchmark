@@ -102,26 +102,14 @@ class TensorFlowIOModelWrapper(IOModelWrapper):
 
 
 class TensorFlowLiteIOModelWrapper(IOModelWrapper):
-    def __init__(self, args):
-        self._shape = args.input_shape
-        self._batch = args.batch_size
-        self._input_name = args.input_name
-        self._input_info = None
-        if self._shape is not None and self._input_name is not None:
-            self._input_info = dict(zip(self._input_name, self._shape))
-        elif self._shape is not None and self._input_name is None:
-            raise ValueError('Please set both input_names and input_shapes arguments')
-
-    def _create_list_with_input_shape(self, layer_name):
-        if self._input_info is not None:
-            shape = self._input_info[layer_name]
-            return [self._batch, *shape]
-        else:
-            return [self._batch, *self._shape]
+    def __init__(self, input_shapes, batch_size):
+        self._shapes = input_shapes
+        self._batch = batch_size
+        self._input_names = input_shapes.keys()
 
     def get_input_layer_names(self, interpreter):
-        if self._input_name:
-            return self._input_name
+        if self._input_names:
+            return list(self._input_names)
         inputs = interpreter.get_input_details()
         input_names = []
         for input_ in inputs:
@@ -129,7 +117,7 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
         return input_names
 
     def get_input_layer_shape(self, interpreter, layer_name):
-        if self._shape is None:
+        if not self._shapes:
             try:
                 inputs = interpreter.get_input_details()
                 for input_ in inputs:
@@ -140,7 +128,7 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
                 raise ValueError('Could not get the correct shape. '
                                  'Try setting the "input_shape" parameter manually.')
         else:
-            shape = self._create_list_with_input_shape(layer_name)
+            shape = self._shapes[layer_name]
         shape[0] = self._batch
         if None in shape[1:]:
             raise ValueError(f'Invalid shape {shape}. Try setting the "input_shape" parameter manually.')
