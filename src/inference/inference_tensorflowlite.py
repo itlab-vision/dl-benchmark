@@ -224,7 +224,7 @@ def parse_input_arg(values, input_names):
                 name, value = match
                 value = ast.literal_eval(value)
                 if name != '':
-                    return_values[name] = list(value)
+                    return_values[name] = value
                 else:
                     if input_names is None:
                         raise ValueError('Please set --input-names parameter'

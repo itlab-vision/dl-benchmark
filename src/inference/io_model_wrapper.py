@@ -128,7 +128,7 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
                 raise ValueError('Could not get the correct shape. '
                                  'Try setting the "input_shape" parameter manually.')
         else:
-            shape = self._shapes[layer_name]
+            shape = list(self._shapes[layer_name])
         shape[0] = self._batch
         if None in shape[1:]:
             raise ValueError(f'Invalid shape {shape}. Try setting the "input_shape" parameter manually.')
