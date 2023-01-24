@@ -45,16 +45,13 @@ class TensorFlowLiteProcess(ProcessHandler):
             common_params = self._add_argument_to_cmd_line(common_params, '--input_scale', input_scale)
         input_shape = self._test.dep_parameters.input_shape
         if input_shape:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_shape', input_shape)
+            common_params = self._add_argument_to_cmd_line(common_params, '--input_shapes', input_shape)
         input_name = self._test.dep_parameters.input_name
         if input_name:
             common_params = self._add_argument_to_cmd_line(common_params, '--input_name', input_name)
         layout = self._test.dep_parameters.layout
         if layout:
             common_params = self._add_argument_to_cmd_line(common_params, '--layout', layout)
-        output_names = self._test.dep_parameters.output_names
-        if output_names:
-            common_params = self._add_argument_to_cmd_line(common_params, '--output_names', output_names)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
