@@ -317,8 +317,8 @@ def main():
         onnx_model = onnx.load(model_path)
         model_path = model_path.parent / 'saved_model'
         log.info('Exporting onnx model to TF saved model')
+        tf_model = prepare(onnx_model)
         try:
-            tf_model = prepare(onnx_model)
             tf_model.export_graph(model_path)
         except RuntimeError:
             half_pixel_model = fix_onnx_resize_nodes(onnx_model)
