@@ -14,9 +14,18 @@ This will convert model from `<source_framework>` to TFLite format.
 
 ### TFLite converter parameters
 
-- `--model-path` - Path to model in TensorFlow or ONNX format.
-- `--input-names` - Comma-separated names of the input layers.
-- `--input-shapes` - Comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
-- `--output-names` - Comma-separated names of the output layers.
-- `--freeze-constant-input` - Pair "name"="value", replaces input layer with constant with provided value.
-- `--source-framework` - Source framework for convertion to TensorFlow Lite format.
+- `--model-path` absolute path to model in TensorFlow or ONNX format.
+- `--input-names` comma-separated names of the input layers.
+- `--input-shapes` comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
+- `--output-names` comma-separated names of the output layers.
+- `--freeze-constant-input` pair "name"="value", replaces input layer with constant with provided value.
+- `--source-framework` source framework for convertion to TensorFlow Lite format.
+
+### Examples of usage
+```sh
+tflite_converter.py --model-path /home/sys_aici/workspace/benchmark_zoo/dl_benchmark/manual/standalone/benchmark_zoo/suites/dl/_models_dir/public/ssd_mobilenet_v1_coco/ssd_mobilenet_v1_coco_2018_01_28/saved_model --source-framework tf --input-names image_tensor --input-shapes [1, 300, 300, 3]
+```
+
+```sh
+tflite_converter.py --model-path /home/sys_aici/workspace/benchmark_zoo/dl_benchmark/manual/standalone/benchmark_zoo/suites/dl/_models_dir/public/yolo-v1-tiny-tf/yolo-v1-tiny.pb --source-framework tf --input-names input_1 --input-shapes [1, 416, 416, 3] --output-names conv2d_9/BiasAdd
+```
