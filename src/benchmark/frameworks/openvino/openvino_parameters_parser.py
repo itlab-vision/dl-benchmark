@@ -83,7 +83,7 @@ class OpenVINOParameters(FrameworkParameters):
         if self._parameter_not_is_none(infer_request_count):
             if self._int_value_is_correct(infer_request_count):
                 self.infer_request = infer_request_count
-        if self.mode == 'Sync':
+        if self.mode == 'Sync' or 'ovbenchmark' in self.mode.lower():
             if self._parameter_not_is_none(thread_count):
                 if self._int_value_is_correct(thread_count):
                     self.nthreads = int(thread_count)
@@ -95,6 +95,7 @@ class OpenVINOParameters(FrameworkParameters):
                     self.async_request = async_request_count
                 else:
                     raise ValueError('Async requiest count can only take values: integer greater than zero.')
+        if self.mode == 'Async' or 'ovbenchmark' in self.mode.lower():
             if self._parameter_not_is_none(stream_count):
                 if self._int_value_is_correct(stream_count):
                     self.nstreams = stream_count
