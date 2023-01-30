@@ -1,0 +1,5 @@
+onnx
+onnx-tf
+tensorflow>=2.8.0
+tensorflow-addons
+tensorflow-probability
