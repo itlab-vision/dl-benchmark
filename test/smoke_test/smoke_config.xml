@@ -116,7 +116,6 @@
             <InputScale>[127.5,127.5,127.5]</InputScale>
             <InputShape></InputShape>
             <InputName></InputName>
-            <OutputNames></OutputNames>
             <ThreadCount></ThreadCount>
             <Delegate></Delegate>
             <DelegateOptions></DelegateOptions>

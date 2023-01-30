@@ -5,6 +5,7 @@ The tool allows to measure deep learning models inference performance with [ONNX
 The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
 1. CMake 3.13 or higher
 2. GCC 9.4 or higher
+3. nlohmann-json library
 
 ## Build ONNX Runtime
 1. Clone repository, checkout to the latest stable release and update submodules:
