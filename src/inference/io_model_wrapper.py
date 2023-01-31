@@ -162,3 +162,20 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
         for input_ in inputs:
             if layer_name == input_['name']:
                 return input_['dtype']
+
+class MXNetIOModelWrapper(IOModelWrapper):
+    def __init__(self, args):
+        self._input_names = [args['input_name']]
+        self._input_shapes = [args['input_shape']]
+
+    def get_input_layer_names(self, model):
+        #raise ValueError('Method is not implemented')
+        return self._input_names
+
+    def get_input_layer_shape(self, model, layer_name):
+        #raise ValueError('Method is not implemented')
+        return self._input_shapes[0]
+
+    def get_input_layer_dtype(self, model, layer_name):
+        import numpy as np
+        return np.float32
