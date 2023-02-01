@@ -79,7 +79,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-l', '--labels',
                         help='Labels mapping file',
-                        default=None,
+                        default='image_net_labels.json',
                         type=str,
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
@@ -134,11 +134,11 @@ def load_network(model_json, model_params, context):
 def load_network_gluon(model_name, context, input_name, input_shape):
     log.info(f'Loading network \"{model_name}\"')
     net = model_zoo.get_model(model_name, pretrained=True, ctx=context)
+
     log.info(f'Info about the network:\n{net}')
     
     log.info('Hybridize model to accelerate inference')
     net.hybridize()
-
     return net
 
 def create_dict_for_transformer(args):
@@ -159,16 +159,18 @@ def create_dict_for_modelwrapper(args):
     }
     return dictionary
 
-def print_topk_predictions(predictions, k):
-    mxnet.test_utils.download('https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/onnx/image_net_labels.json')
-    categories = np.array(json.load(open('image_net_labels.json', 'r')))
+def print_topk_predictions(predictions, k, file_labels):
+    categories = np.array(json.load(open(file_labels, 'r')))
     top_pred = predictions.topk(k=k)[0].asnumpy()
+    log.info(f'Top-{k} predictions:')
     for index in top_pred:
-        probability = predictions[0][int(index)]
-        category = categories[int(index)]
-        print("{}: {:.2f}%".format(category, probability.asscalar()*100))
+        idx = int(index)
+        probability = predictions[0][idx]
+        category = categories[idx]
+        log.info('\t{}: {:.2f}%'.format(category, probability.asscalar()*100))
 
-def inference_mxnet(net, num_iterations, get_slice, input_name):
+def inference_mxnet(net, num_iterations, get_slice, input_name,
+                    k=5, file_labels='image_net_labels.json'):
     predictions = None
     time_infer = []
     slice_input = None
@@ -177,7 +179,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
         t0 = time()
         predictions = net(slice_input[input_name]).softmax()
         t1 = time()
-        print_topk_predictions(predictions, 5)
+        print_topk_predictions(predictions, k, file_labels)
         time_infer.append(t1 - t0)
     else:
         for i in range(num_iterations):
@@ -229,7 +231,11 @@ def main():
         
         log.info('Compute performance metrics')
         time, latency, fps = process_result(args.batch_size, inference_time)
-        log.info(f'Performance metrics:\n\tAverage time = {time} s\n\tLatency={latency}\n\tFPS={fps} fps')
+
+        log.info('Performance metrics:')
+        log.info('\tAverage time = {:.4f} s'.format(time))
+        log.info('\tLatency={:.4f}'. format(latency))
+        log.info('\tFPS={:.4f} fps'.format(fps))
     except Exception as ex:
         log.error(str(ex))
         sys.exit(1)
