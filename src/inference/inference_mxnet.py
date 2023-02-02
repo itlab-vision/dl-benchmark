@@ -2,8 +2,8 @@ import argparse
 import logging as log
 import sys
 from time import time
-import numpy as np
 import json
+import numpy as np
 
 import mxnet
 import mxnet.gluon.model_zoo.vision as model_zoo
@@ -137,10 +137,11 @@ def load_network_gluon(model_name, context, input_name, input_shape):
     net = model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
     log.info(f'Info about the network:\n{net}')
-    
+
     log.info('Hybridizing model to accelerate inference')
     net.hybridize()
     return net
+
 
 def create_dict_for_transformer(args):
     dictionary = {
@@ -153,12 +154,14 @@ def create_dict_for_transformer(args):
     }
     return dictionary
 
+
 def create_dict_for_modelwrapper(args):
     dictionary = {
         'input_name': args.input_name,
         'input_shape': args.input_shape,
     }
     return dictionary
+
 
 def print_topk_predictions(predictions, k, file_labels):
     categories = np.array(json.load(open(file_labels, 'r')))
@@ -171,6 +174,7 @@ def print_topk_predictions(predictions, k, file_labels):
             probability = predictions[prediction_idx][idx]
             category = categories[idx]
             log.info('\t{:.7f} {}'.format(probability.asscalar(), category))
+
 
 def inference_mxnet(net, num_iterations, get_slice, input_name,
                     k=5, file_labels='image_net_labels.json'):
@@ -193,6 +197,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name,
 
     return predictions, time_infer
 
+
 def process_result(batch_size, inference_time):
     inference_time = pp.three_sigma_rule(inference_time)
     average_time = pp.calculate_average_time(inference_time)
@@ -200,10 +205,12 @@ def process_result(batch_size, inference_time):
     fps = pp.calculate_fps(batch_size, latency)
     return average_time, latency, fps
 
+
 def result_output(average_time, fps, latency):
     log.info('Average time of single pass : {0:.3f}'.format(average_time))
     log.info('FPS : {0:.3f}'.format(fps))
     log.info('Latency : {0:.3f}'.format(latency))
+
 
 def raw_result_output(average_time, fps, latency):
     print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
@@ -249,7 +256,6 @@ def main():
             result_output(average_time, fps, latency)
         else:
             raw_result_output(average_time, fps, latency)
-
     except Exception as ex:
         log.error(str(ex))
         sys.exit(1)
@@ -257,4 +263,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
-

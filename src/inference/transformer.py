@@ -182,7 +182,7 @@ class MXNetTransformer(Transformer):
                                   self._converting['std'][1],
                                   self._converting['std'][2]])
             normalized_image = mxnet.image.color_normalize(
-                mxnet.nd.array(image).astype(np.float32)/255, mean=mean, std=std)
+                mxnet.nd.array(image).astype(np.float32) / 255, mean=mean, std=std)
             return normalized_image
         return image
 
@@ -208,4 +208,3 @@ class MXNetTransformer(Transformer):
         for i in range(batch_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
-
