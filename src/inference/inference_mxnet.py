@@ -42,9 +42,10 @@ def cli_argument_parser():
                         type=str,
                         dest='input_name')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape WxHxC, W is an input tensor width, \
-                              H is an input tensor height, C is an input tensor \
-                              number of channnels',
+                        help='Input shape BxWxHxC, B is a batch size,\
+                              W is an input tensor width, \
+                              H is an input tensor height, \
+                              C is an input tensor number of channels',
                         default=None,
                         type=int,
                         nargs=4,
@@ -67,7 +68,7 @@ def cli_argument_parser():
                         type=bool,
                         dest='norm')
     parser.add_argument('--channel_swap',
-                        help='Parameter channel swap',
+                        help='Parameter channel swap (WxHxC to CxWxH by default)',
                         default=[2, 0, 1],
                         type=int,
                         nargs=3,
@@ -84,7 +85,7 @@ def cli_argument_parser():
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
                         help='Number of top results',
-                        default=10,
+                        default=5,
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
@@ -137,7 +138,7 @@ def load_network_gluon(model_name, context, input_name, input_shape):
 
     log.info(f'Info about the network:\n{net}')
     
-    log.info('Hybridize model to accelerate inference')
+    log.info('Hybridizing model to accelerate inference')
     net.hybridize()
     return net
 
@@ -161,13 +162,15 @@ def create_dict_for_modelwrapper(args):
 
 def print_topk_predictions(predictions, k, file_labels):
     categories = np.array(json.load(open(file_labels, 'r')))
-    top_pred = predictions.topk(k=k)[0].asnumpy()
-    log.info(f'Top-{k} predictions:')
-    for index in top_pred:
-        idx = int(index)
-        probability = predictions[0][idx]
-        category = categories[idx]
-        log.info('\t{}: {:.2f}%'.format(category, probability.asscalar()*100))
+    log.info(f'Top-{k} results:')
+    for prediction_idx in range(len(predictions)):
+        log.info(f'Result for image {prediction_idx}')
+        top_pred = predictions.topk(k=k)[prediction_idx].asnumpy()
+        for index in top_pred:
+            idx = int(index)
+            probability = predictions[prediction_idx][idx]
+            category = categories[idx]
+            log.info('\t{:.7f} {}'.format(probability.asscalar(), category))
 
 def inference_mxnet(net, num_iterations, get_slice, input_name,
                     k=5, file_labels='image_net_labels.json'):
@@ -179,7 +182,6 @@ def inference_mxnet(net, num_iterations, get_slice, input_name,
         t0 = time()
         predictions = net(slice_input[input_name]).softmax()
         t1 = time()
-        print_topk_predictions(predictions, k, file_labels)
         time_infer.append(t1 - t0)
     else:
         for i in range(num_iterations):
@@ -197,6 +199,15 @@ def process_result(batch_size, inference_time):
     latency = pp.calculate_latency(inference_time)
     fps = pp.calculate_fps(batch_size, latency)
     return average_time, latency, fps
+
+def result_output(average_time, fps, latency):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
+    log.info('Latency : {0:.3f}'.format(latency))
+
+def raw_result_output(average_time, fps, latency):
+    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
+
 
 def main():
     log.basicConfig(
@@ -222,20 +233,23 @@ def main():
         else:
             raise ValueError('Incorrect arguments.')
 
-        log.info('Prepare input data')
+        log.info('Preparing input data')
         io.prepare_input(net, args.input)
 
-        log.info('Start inference')
+        log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,
                                                  io.get_slice_input, args.input_name)
-        
-        log.info('Compute performance metrics')
-        time, latency, fps = process_result(args.batch_size, inference_time)
 
-        log.info('Performance metrics:')
-        log.info('\tAverage time = {:.4f} s'.format(time))
-        log.info('\tLatency={:.4f}'. format(latency))
-        log.info('\tFPS={:.4f} fps'.format(fps))
+        log.info('Computing performance metrics')
+        average_time, latency, fps = process_result(args.batch_size, inference_time)
+
+        if not args.raw_output:
+            # print_topk_predictions should be implemented as io.process_output(result, log)
+            print_topk_predictions(result, args.number_top, args.labels)
+            result_output(average_time, fps, latency)
+        else:
+            raw_result_output(average_time, fps, latency)
+
     except Exception as ex:
         log.error(str(ex))
         sys.exit(1)

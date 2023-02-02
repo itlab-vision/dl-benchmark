@@ -166,6 +166,7 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         transformed_images = self._transform(images, input_name)
         return transformed_images
 
+
 class MXNetTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
@@ -190,9 +191,8 @@ class MXNetTransformer(Transformer):
             transposing_form = (self._converting['channel_swap'][0],
                                 self._converting['channel_swap'][1],
                                 self._converting['channel_swap'][2])
-            transposed_image = image.transpose(transposing_form) # WxHxC -> CxWXH
+            transposed_image = image.transpose(transposing_form)
             return transposed_image
-
         return image
 
     def _transform(self, image):
@@ -203,9 +203,9 @@ class MXNetTransformer(Transformer):
     def transform_images(self, images, shape, element_type, *args):
         import mxnet
 
-        b = shape[0]
+        batch_size = shape[0]
         transformed_images = mxnet.nd.zeros(shape=shape, dtype=element_type)
-        for i in range(b):
+        for i in range(batch_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
