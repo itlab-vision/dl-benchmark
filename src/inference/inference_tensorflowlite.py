@@ -301,7 +301,7 @@ def main():
         else:
             raw_result_output(time, fps, latency)
     except Exception as ex:
-        print(f'ERROR! : {str(ex)}')
+        print(f'ERROR! : {" ".join(ex)}')
         sys.exit(1)
 
 
