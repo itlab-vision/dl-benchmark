@@ -7,6 +7,7 @@ import numpy as np
 
 import mxnet
 import mxnet.gluon.model_zoo.vision as model_zoo
+import warnings
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -28,7 +29,6 @@ def cli_argument_parser():
     parser.add_argument('-n', '--model_name',
                         help='Model name to download using Gluon package.',
                         type=str,
-                        required=True,
                         dest='model_name')
     parser.add_argument('-i', '--input',
                         help='Path to data',
@@ -128,11 +128,16 @@ def get_device_to_infer(device):
         raise ValueError('The device is not supported')
 
 
-def load_network(model_json, model_params, context):
-    raise ValueError('Function is not implemented')
+def load_network_gluon(model_json, model_params, context, input_name):
+    log.info(f'Deserializing network from file ({model_json}, {model_params})')
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
+            model_json, [input_name], model_params, ctx=context)
+    return deserialized_net
 
 
-def load_network_gluon(model_name, context, input_name, input_shape):
+def load_network_gluon_model_zoo(model_name, context, input_name, input_shape):
     log.info(f'Loading network \"{model_name}\"')
     net = model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
@@ -233,10 +238,11 @@ def main():
         if (args.model_name is not None) and \
                (args.model_json is None) and \
                (args.model_params is None):
-            net = load_network_gluon(args.model_name, context, args.input_name,
-                                     args.input_shape)
+            net = load_network_gluon_model_zoo(args.model_name, context, args.input_name,
+                                               args.input_shape)
         elif (args.model_json is not None) and (args.model_params is not None):
-            net = load_network(args.model_json, args.model_params, context)
+            net = load_network_gluon(args.model_json, args.model_params, context,
+                                     args.input_name)
         else:
             raise ValueError('Incorrect arguments.')
 
