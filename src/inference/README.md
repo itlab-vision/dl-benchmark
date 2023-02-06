@@ -8,6 +8,7 @@
 1. Intel® Optimization for Caffe.
 1. Intel® Optimization for TensorFlow.
 1. TensorFlow Lite.
+1. MXNet.
 
 ## Вывод глубоких моделей с использованием Inference Engine
 
@@ -432,4 +433,43 @@ inference_tensorflowlite.py
 python3 inference_tensorflowlite.py \
     -m <path_to_model>/<model_name>.tflite \
     -i <path_to_image>/<image_name>
+```
+
+## Вывод глубоких моделей с использованием MXNet (Gluon API)
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_mxnet.py
+```
+
+Обязательные аргументы:
+
+- `-m / --model`
+- `-w / --weights`
+- `-mn / --model_name`
+- `-i / --input`
+
+Опциональные аргументы:
+
+- - `-in / --input_name`
+- `-is / --input_shape`
+- `--mean`
+- `--std`
+- `--norm`
+- `--channel_swap`
+- `-ni / --number_iter`
+- `--raw_output`
+- `-d / --device`
+
+#### Примеры запуска
+
+```bash
+python inference_mxnet.py --model_name <model_name> --input <path_to_data> --input_name <input_name> --input_shape <input_shape> --mean <mean> --std <std> --batch_size <batch_size>
+```
+
+```bash
+python inference_mxnet.py --model <file_name>.json --weights <file_name>.params --input_name <input_name> --input_shape <input_shape> --input <path_to_data> --labels <label_file>.json --batch_size <batch_size>
 ```
