@@ -12,6 +12,7 @@ Data source: [ImageNet][imagenet]
 Image resolution: 709 x 510
 
 Mean: [0.485, 0.456, 0.406]
+
 Standard deviation: [0.229, 0.224, 0.225]
 ﻿
 
