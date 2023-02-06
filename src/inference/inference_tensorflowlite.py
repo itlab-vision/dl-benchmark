@@ -121,7 +121,7 @@ def get_input_shape(io_model_wrapper, model):
     for input_layer in layer_names:
         shape = ''
         for dem in io_model_wrapper.get_input_layer_shape(model, input_layer):
-            shape += f'{dem}x'
+            shape += f'{dem}x'  # noqa: PLR1713
         shape = shape[:-1]
         layer_shapes.update({input_layer: shape})
 
@@ -301,7 +301,7 @@ def main():
         else:
             raw_result_output(time, fps, latency)
     except Exception as ex:
-        print(f'ERROR! : {str(ex)}')
+        print(f'ERROR! : {" ".join(ex)}')
         sys.exit(1)
 
 
