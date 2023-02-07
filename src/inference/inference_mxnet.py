@@ -26,7 +26,7 @@ def cli_argument_parser():
                         help='Path to an .params file with a trained weights.',
                         type=str,
                         dest='model_params')
-    parser.add_argument('-n', '--model_name',
+    parser.add_argument('-mn', '--model_name',
                         help='Model name to download using Gluon package.',
                         type=str,
                         dest='model_name')
@@ -46,7 +46,7 @@ def cli_argument_parser():
                               W is an input tensor width, \
                               H is an input tensor height, \
                               C is an input tensor number of channels',
-                        default=None,
+                        required=True,
                         type=int,
                         nargs=4,
                         dest='input_shape')
