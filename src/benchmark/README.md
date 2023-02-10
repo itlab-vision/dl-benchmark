@@ -9,9 +9,12 @@
 вывод с использованием следующих фреймворков:
 
 - Inference Engine в составе
-  [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit];
+  [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
+- [TensorFlow Lite][tensorflow-lite].
+- [ONNX Runtime][onnx-runtime].
+- [MXNet][mxnet].
 
 ### Алгоритм работы скрипта
 
@@ -102,14 +105,14 @@ Inference Engine предоставляет 2 программных интер�
 
 **Примечание:** в публикуемой html-таблице содержатся только показатели FPS.
 
-### Показатели производительности вывода для Intel® Optimization for Caffe и Intel® Optimization for TensorFlow
+### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite и MXNet
 
-При оценке производительности вывода для Intel® Optimization for Caffe
-и Intel® Optimization for TensorFlow осуществляется последовательный 
-и независимый запуск запросов. Запуск очередного запроса выполняется
-после завершения предыдущего. Для каждого запроса осуществляется замер
-времени его выполнения. Для множества полученных времен определяется 
-стандартное среднеквадратичное отклонение, и отбрасываются времена, 
+При оценке производительности вывода для Intel® Optimization for Caffe,
+Intel® Optimization for TensorFlow, TensorFlow Lite и MXNet осуществляется
+последовательный и независимый запуск запросов. Запуск очередного запроса
+выполняется после завершения предыдущего. Для каждого запроса осуществляется
+замервремени его выполнения. Для множества полученных времен определяется
+стандартное среднеквадратичное отклонение, и отбрасываются времена,
 выходящие за пределы трех стандартных отклонений от среднего времени вывода.
 Результирующий набор времен используется для вычисления показателя латентности.
 Остальные показатели вычисляются для всего множества времен.
@@ -120,6 +123,13 @@ Inference Engine предоставляет 2 программных интер�
 - **Количество кадров, обрабатываемых за секунду (frames per second, FPS)** -
   отношение размера обрабатываемой “пачки” изображений к среднему времени
   одного прохода.
+
+### Показатели производительности вывода при использовании benchmark_app
+
+На данный момент для измерения производительности вывода библиотек
+можно использовать инструмент `benchmark_app`, входящий в состав
+[Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
+Алгоритм вычисления показателей производительности доступен в документации.
 
 ## Использование скрипта
 
@@ -159,72 +169,83 @@ python3 inference_benchmark.py \
 
 ### Сборка (linux)
 
-1. Клонирование репозитория. Рекомендуется использовать стабильную версию из списка https://github.com/openvinotoolkit/openvino/releases
-```bash
-git clone https://github.com/openvinotoolkit/openvino.git
-git checkout <release_tag>
-cd openvino
-git submodule update --init --recursive
-```
-2. Построить openvino, следуя официальной инструкции https://github.com/openvinotoolkit/openvino/wiki/BuildingForLinux
+1. Клонирование репозитория. Рекомендуется использовать стабильную версию из списка 
+   https://github.com/openvinotoolkit/openvino/releases.
 
-3.  В случае использования стабильной версии, установить python wheels из pypi хранилища.
-```bash
+   ```bash
+   git clone https://github.com/openvinotoolkit/openvino.git
+   git checkout <release_tag>
+   cd openvino
+   git submodule update --init --recursive
+   ```
 
-pip install --upgrade pip 
+1. Построить openvino, следуя официальной инструкции 
+   https://github.com/openvinotoolkit/openvino/wiki/BuildingForLinux.
 
-pip install openvino==<your version, ex 2022.1.0>
+1. В случае использования стабильной версии установить python wheels
+   из PyPI-хранилища.
 
-pip install openvino_dev
+   ```bash
+   pip install --upgrade pip 
+   pip install openvino==<your version, ex 2022.1.0>
+   pip install openvino_dev
+   pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
+   ```
 
-pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
-```
+1. Запустите setupvars.sh:
 
-4.  Запустите setupvars.sh:
-```bash
-source INSTALL_DIR/setupvars.sh 
-```
+   ```bash
+   source INSTALL_DIR/setupvars.sh 
+   ```
 
-5. В директории INSTALL_DIR/samples/cpp запустите ./build_samples.sh.
+1. В директории `INSTALL_DIR/samples/cpp` запустите `./build_samples.sh`.
 
 ### Использование
-1. В конфигурационном файле (секция `FrameworkDependent`) укажите `Mode`: `ovbenchmark_cpp_latency` или `ovbenchmark_cpp_throughput`
 
+1. В конфигурационном файле (секция `FrameworkDependent`)
+   укажите `Mode`: `ovbenchmark_cpp_latency` или `ovbenchmark_cpp_throughput`.
 
-2. Найдите исполняемый файл benchmark_app по адресу:
-```
-/home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
-```
-3. Используйте его в качестве параметра для inference_benchmark.py:
-```bash
-python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv -b /home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
-```
+1. Найдите исполняемый файл `benchmark_app` по адресу, приведенному ниже.
+
+   ```
+   /home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+   ```
+
+1. Используйте его в качестве параметра для `inference_benchmark.py`:
+
+   ```bash
+   python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv -b /home/<user>/inference_engine_cpp_samples_build/intel64/Release/benchmark_app
+   ```
 
 ## Использование OpenVINO Benchmark Python tool в качестве инструмента для замеров
 
 ### Установка
-1. В случае использования стабильной версии, установить python wheels из pypi хранилища.
+
+В случае использования стабильной версии, установить python wheels из PyPI-хранилища.
+
 ```bash
-
 pip install --upgrade pip 
-
 pip install openvino==<your version, ex 2022.1.0>
-
 pip install openvino_dev
-
 pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
 ```
 
 ### Использование
 
-1. В конфигурационном файле (секция `FrameworkDependent`) укажите `Mode`: `ovbenchmark_python_latency` или `ovbenchmark_python_throughput`
+1. В конфигурационном файле (секция `FrameworkDependent`)
+   укажите `Mode`: `ovbenchmark_python_latency` или `ovbenchmark_python_throughput`.
 
-2. Запустите скрипт
-```bash
-python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv
-```
+1. Запустите скрипт `nference_benchmark.py`.
+
+   ```bash
+   python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv
+   ```
+
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
+[tensorflow-lite]: https://www.tensorflow.org/lite
+[onnx-runtime]: https://onnxruntime.ai
+[mxnet]: https://mxnet.apache.org
