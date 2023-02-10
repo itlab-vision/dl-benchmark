@@ -169,7 +169,7 @@ python3 inference_benchmark.py \
 
 ### Сборка (linux)
 
-1. Клонирование репозитория. Рекомендуется использовать стабильную версию из списка 
+1. Клонировать репозиторий. Рекомендуется использовать стабильную версию из списка 
    https://github.com/openvinotoolkit/openvino/releases.
 
    ```bash
@@ -179,7 +179,7 @@ python3 inference_benchmark.py \
    git submodule update --init --recursive
    ```
 
-1. Построить openvino, следуя официальной инструкции 
+1. Собрать OpenVINO, следуя официальной инструкции 
    https://github.com/openvinotoolkit/openvino/wiki/BuildingForLinux.
 
 1. В случае использования стабильной версии установить python wheels
@@ -192,13 +192,13 @@ python3 inference_benchmark.py \
    pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your version, ex 2022.1.0>
    ```
 
-1. Запустите setupvars.sh:
+1. Запустить `setupvars.sh`:
 
    ```bash
    source INSTALL_DIR/setupvars.sh 
    ```
 
-1. В директории `INSTALL_DIR/samples/cpp` запустите `./build_samples.sh`.
+1. В директории `INSTALL_DIR/samples/cpp` запустить `./build_samples.sh`.
 
 ### Использование
 
