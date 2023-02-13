@@ -348,6 +348,7 @@ mobilenet-ssd             | - | - | Bounding box: (92,95), (361,483)  | Bounding
 ssd300                    | - | - | Bounding box: (68,100), (336,452) | Bounding box: (66,98), (340,455) |
 ssd512                    | - | - | Bounding box: (75,100), (355,445) | Bounding box: (75,100), (355,445)|
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (89, 98), (345, 440)| Bounding box: (89, 98), (345, 440)|
+ssdlite_mobilenet_v2      | - | - | Bounding box: (47, 59), (206, 272)| Bounding box: (47, 59), (206, 272)|
 
 ### Test image #3
 
@@ -399,6 +400,7 @@ faster_rcnn_resnet101_coco                  |-|-| Bounding box:<br>TV (105, 37),
 pelee-coco |-|-| Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) | Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) <br>|
 retinanet-tf |-|-| Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
 ssd_resnet50_v1_fpn_coco |-|-| Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
+ssdlite_mobilenet_v2 |-|-| Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287) | Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287)<br>|
 
 ### Test image #5
 Data source: [MS COCO][ms_coco]
@@ -420,6 +422,7 @@ yolo-v2-tiny-tf                   |-|-| Bounding box:<br>PERSON (84, 70), (413, 
 pelee-coco                    |-|-| Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381) | Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381)<br>|
 retinanet-tf                  |-|-| Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
 ssd_resnet50_v1_fpn_coco                   |-|-| Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
+ssdlite_mobilenet_v2          |-|-| Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271) | Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271)<br>|
 
 
 ### Test image #6
