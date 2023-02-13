@@ -124,6 +124,7 @@ Model | Python (latency mode, implementation) | Python (throughput mode, impleme
 ------|---------------------------------------|------------------------------------------|
 person-detection-asl-0001 | Bounding box:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>| Bounding box:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>|
 person-detection-asl-0200 | Bounding box:<br>PERSON (28, 12), (66, 155),<br>PERSON (63, 8), (97, 158),<br>PERSON (169, 65), (215, 223)<br>| Bounding box:<br>PERSON (28, 12), (66, 155),<br>PERSON (63, 8), (97, 158),<br>PERSON (169, 65), (215, 223)<br>|
+person-detection-asl-0201 | Bounding box:<br>PERSON (41, 19), (97, 235),<br>PERSON (254, 96), (320, 335),<br>PERSON (93, 15), (147, 236)<br>| Bounding box:<br>PERSON (41, 19), (97, 235),<br>PERSON (254, 96), (320, 335),<br>PERSON (93, 15), (147, 236)<br>|
 
 ### Test image #6
 
