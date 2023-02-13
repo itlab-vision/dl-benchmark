@@ -326,6 +326,7 @@ mobilenet-ssd             | - | - | Bounding box: (380,315), (630,415) | Boundin
 ssd300                    | - | - | Bounding box: (380,165), (595,425) | Bounding box: (380,165), (595,425) |
 ssd512                    | - | - | Bounding box: (377,163), (595,425) | Bounding box: (380,165), (595,425) |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
+ssdlite_mobilenet_v2      | - | - | - | - |
 
 ### Test image #2
 
@@ -371,6 +372,7 @@ mobilenet-ssd             | - | - | Bounding box: (80,140), (270,375)  | Boundin
 ssd300                    | - | - | Bounding box: (80,155), (270,375)  | Bounding box: (80,157), (274,375)  |
 ssd512                    | - | - | Bounding box: (75,170), (172,370)  | Bounding box: (73,170), (173,371)  |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (90, 135), (260, 375)| Bounding box: (90, 135), (260, 375)|
+ssdlite_mobilenet_v2      | - | - | Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)| Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)|
 
 ### Test image #4
 Data source: [MS COCO][ms_coco]
