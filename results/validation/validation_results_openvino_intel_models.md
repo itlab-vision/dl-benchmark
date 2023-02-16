@@ -641,6 +641,24 @@ Model | Python (latency mode, implementation) | Python (throughput mode, impleme
 ------|---------------------------------------|------------------------------------------|
 image-retrieval-0001 | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Full tensor][ImgRetr_sync] | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Full tensor][ImgRetr_async] |
 
+### Test image #5
+
+Data source: [Internet][internet_pinterest]
+
+Image resolution: 128 x 256
+
+
+<div style='float: center'>
+<img width="300" src="images\person-reidentification-retail_1.png"></img>
+</div>
+
+Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+------|---------------------------------------|------------------------------------------|
+person-reidentification-retail-0277 | -0.5144883 -0.4489283<br> 0.1324019 0.2539501<br> ...<br> 0.4898967 0.1124130<br> -0.1284953 0.0117971<br> [Full tensor][PersReidRetail-0277_sync] | Errors in output |
+person-reidentification-retail-0286 | 0.2997471 -0.2456339<br> -0.1295844 -0.2274195<br> ...<br> 0.2052885 0.1565714<br> 0.2504670 0.2383912<br> [Full tensor][PersReidRetail-0286_sync] | Errors in output |
+person-reidentification-retail-0287 | -0.2050491 -0.4432146<br> 0.6389340 0.2023722<br> ...<br> -0.6498539 -0.0128914<br> -0.5972998 -0.3941978<br> [Full tensor][PersReidRetail-0287_sync] | Errors in output |
+person-reidentification-retail-0288 | 0.2380135 0.3185425<br> -0.3636540 0.3864555<br> ...<br> -0.3466439 -0.3920009<br> -0.0821614 0.1705070<br> [Full tensor][PersReidRetail-0288_sync] | Errors in output |
+
 ## Action recognition
 
 ### Tensor #1
@@ -808,10 +826,18 @@ resnet18-xnor-binary-onnx-0001 |4.7719054 lifeboat<br>1.7933186 drilling platfor
 [DARE_async]: encoding/python_async_action-recognition-kelly.csv
 [ImgRetr_sync]: encoding/image-retrieval-0001_s.csv
 [ImgRetr_async]: encoding/image-retrieval-0001_a.csv
+[PersReidRetail-0277_sync]: encoding/person-reidentification-retail-0277_sync.csv
+[PersReidRetail-0286_sync]: encoding/person-reidentification-retail-0286_sync.csv
+[PersReidRetail-0287_sync]: encoding/person-reidentification-retail-0287_sync.csv
+[PersReidRetail-0288_sync]: encoding/person-reidentification-retail-0288_sync.csv
 [face_reidentification_sync]: encoding/python_sync_Aaron_Peirsol_0002.csv
 [face_reidentification_async]: encoding/python_async_Aaron_Peirsol_0002.csv
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
+[github_PRR_0277]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0277
+[github_PRR_0286]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0286
+[github_PRR_0287]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0287
+[github_PRR_0288]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0288
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
 [github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
 [LFW]: http://vis-www.cs.umass.edu/lfw/index.html
