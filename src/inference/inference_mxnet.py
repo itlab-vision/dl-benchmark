@@ -137,7 +137,7 @@ def load_network_gluon(model_json, model_params, context, input_name):
     return deserialized_net
 
 
-def load_network_gluon_model_zoo(model_name, context, input_name, input_shape):
+def load_network_gluon_model_zoo(model_name, context):
     log.info(f'Loading network \"{model_name}\"')
     net = model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
@@ -238,15 +238,16 @@ def main():
         if (args.model_name is not None) and \
                (args.model_json is None) and \
                (args.model_params is None):
-            net = load_network_gluon_model_zoo(args.model_name, context, args.input_name,
-                                               args.input_shape)
+            net = load_network_gluon_model_zoo(args.model_name, context)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
                                      args.input_name)
         else:
             raise ValueError('Incorrect arguments.')
 
-        log.info('Preparing input data')
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
+
+        log.info(f'Preparing input data {args.input}')
         io.prepare_input(net, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
