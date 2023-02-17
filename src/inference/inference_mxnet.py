@@ -3,11 +3,11 @@ import logging as log
 import sys
 from time import time
 import json
+import warnings
 import numpy as np
 
 import mxnet
 import mxnet.gluon.model_zoo.vision as model_zoo
-import warnings
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -42,10 +42,10 @@ def cli_argument_parser():
                         type=str,
                         dest='input_name')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,\
-                              W is an input tensor width, \
-                              H is an input tensor height, \
-                              C is an input tensor number of channels',
+                        help='Input shape BxWxHxC, B is a batch size,'
+                             'W is an input tensor width,'
+                             'H is an input tensor height,'
+                             'C is an input tensor number of channels',
                         required=True,
                         type=int,
                         nargs=4,
@@ -131,7 +131,7 @@ def get_device_to_infer(device):
 def load_network_gluon(model_json, model_params, context, input_name):
     log.info(f'Deserializing network from file ({model_json}, {model_params})')
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+        warnings.simplefilter('ignore')
         deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
             model_json, [input_name], model_params, ctx=context)
     return deserialized_net

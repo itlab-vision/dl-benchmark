@@ -42,12 +42,12 @@ class TestConfigParser:
         precision = model_tag.getElementsByTagName('Precision')[0].firstChild.data
         source_framework = model_tag.getElementsByTagName('SourceFramework')[0].firstChild.data
 
-        model_path = ""
+        model_path = ''
         try:
             model_path = model_tag.getElementsByTagName('ModelPath')[0].firstChild.data
         except Exception as ex:
             self._log.warning(f'Parsing model path failed. Exception was generated: {str(ex)}.')
-        weights_path = ""
+        weights_path = ''
         try:
             weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data
         except Exception as ex:

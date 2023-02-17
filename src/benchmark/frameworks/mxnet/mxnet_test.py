@@ -18,7 +18,7 @@ class MXNetTest(Test):
         parameters.update({'Standard deviation': self.dep_parameters.std})
         parameters.update({'Channel swap': self.dep_parameters.channel_swap})
         other_param = self._get_optional_parameters_string(parameters)
-        
+
         report_res = {
             'task': self.model.task,
             'model': self.model.name,
