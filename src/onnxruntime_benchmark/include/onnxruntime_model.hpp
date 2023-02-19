@@ -1,4 +1,10 @@
+// Copyright (C) 2023 KNS Group LLC (YADRO)
+// SPDX-License-Identifier: Apache-2.0
+//
+
 #pragma once
+#include "buffer.hpp"
+#include "model.hpp"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -15,28 +21,27 @@
 
 using HighresClock = std::chrono::high_resolution_clock;
 
-struct ONNXTensorDescr {
-    std::string name;
-    std::vector<int64_t> shape;
-    std::vector<int64_t> data_shape;
-    std::string layout;
-    ONNXTensorElementDataType type;
-
-    bool is_image() const;
-    bool is_image_info() const;
-    bool is_dynamic() const;
-    bool has_batch() const;
-    bool is_dynamic_batch() const;
-    int64_t get_dimension_by_layout(char ch) const;
-    int64_t channels() const;
-    int64_t width() const;
-    int64_t height() const;
-    void set_batch(int batch_size);
+static const std::map<ONNXTensorElementDataType, utils::DataPrecision> onnx_dtype_to_precision_map = {
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT, utils::DataPrecision::FP32},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16, utils::DataPrecision::FP16},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8, utils::DataPrecision::U8},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_INT8, utils::DataPrecision::I8},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_INT32, utils::DataPrecision::I32},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64, utils::DataPrecision::I64},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL, utils::DataPrecision::BOOL},
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED, utils::DataPrecision::UNKNOWN}
 };
 
-using IOTensorsInfo = std::pair<std::vector<ONNXTensorDescr>, std::vector<ONNXTensorDescr>>;
+static utils::DataPrecision get_data_precision(ONNXTensorElementDataType type) {
+    if (onnx_dtype_to_precision_map.count(type) > 0) {
+        return onnx_dtype_to_precision_map.at(type);
+    }
+    else {
+        throw std::invalid_argument("Does not support element data type " + std::to_string(type));
+    }
+}
 
-class ONNXModel {
+class ONNXModel : public Model {
 private:
     struct IOInfo {
         std::vector<const char *> input_names;
@@ -50,9 +55,11 @@ private:
         std::vector<std::vector<int64_t>> output_shapes;
     } io;
 
-    int nthreads;
     std::shared_ptr<Ort::Env> env;
     std::shared_ptr<Ort::Session> session;
+
+    std::vector<std::vector<Ort::Value>> tensors;
+    std::vector<std::vector<Buffer>> tensor_buffers;
 
     // time stamps for total time measurments;
     HighresClock::time_point total_start_time;
@@ -63,12 +70,22 @@ private:
     std::vector<double> latencies;
 
 public:
-    ONNXModel(int nthreads);
-    void fill_inputs_outputs_info();
-    IOTensorsInfo get_io_tensors_info() const;
-    std::vector<double> get_latencies() const;
-    double get_total_time_ms() const;
-    void read_model(const std::string &model);
-    void reset_timers();
+    ONNXModel(int nthreads_) : Model(nthreads_) {};
+    virtual ~ONNXModel() {};
+
+    void configure_framework(const std::vector<std::string> &args) override;
+    void log_framework_version() const override;
+
+    void read(const std::string &model) override;
+    void load() override {};
+
+    void fill_inputs_outputs_info() override;
+    IOTensorsInfo get_io_tensors_info() const override;
+
+    // void set_batch_size(int batch_size) override {}; // TODO
+    void prepare_input_tensors(std::vector<std::vector<Buffer>> tensor_buffers) override;
+
+    void warmup_inference() override;
     void run(const std::vector<Ort::Value> &input_tensors);
+    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
 };

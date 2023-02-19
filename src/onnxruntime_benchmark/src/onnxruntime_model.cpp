@@ -1,6 +1,11 @@
+// Copyright (C) 2023 KNS Group LLC (YADRO)
+// SPDX-License-Identifier: Apache-2.0
+//
+
 #include "onnxruntime_model.hpp"
 
 #include "args_handler.hpp"
+#include "inputs_preparation.hpp"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -15,59 +20,65 @@
 #include <string>
 #include <vector>
 
-bool ONNXTensorDescr::is_image() const {
-    return (layout == "NCHW" || layout == "NHWC" || layout == "CHW" || layout == "HWC") && channels() == 3;
+// bool ONNXTensorDescr::is_image() const {
+//     return (layout == "NCHW" || layout == "NHWC" || layout == "CHW" || layout == "HWC") && channels() == 3;
+// }
+
+// bool ONNXTensorDescr::is_image_info() const {
+//     return (layout.size() == 2 && layout.back() == 'C') && channels() >= 2;
+// }
+
+// bool ONNXTensorDescr::is_dynamic() const {
+//     return std::find(shape.begin(), shape.end(), -1) != shape.end();
+// }
+
+// bool ONNXTensorDescr::has_batch() const {
+//     return layout.find("N") != std::string::npos;
+// }
+
+// bool ONNXTensorDescr::is_dynamic_batch() const {
+//     if (has_batch()) {
+//         return shape[layout.find("N")] == -1;
+//     }
+//     return false;
+// }
+
+// void ONNXTensorDescr::set_batch(int batch_size) {
+//     std::size_t batch_index = layout.find("N");
+//     if (batch_index != std::string::npos) {
+//         data_shape[batch_index] = batch_size;
+//     }
+// }
+
+// int64_t ONNXTensorDescr::get_dimension_by_layout(char ch) const {
+//     size_t pos = layout.find(ch);
+//     if (pos == std::string::npos) {
+//         throw std::invalid_argument("Can't get " + std::string(ch, 1) + " from layout " + layout);
+//     }
+//     return data_shape.at(pos);
+// }
+
+// int64_t ONNXTensorDescr::channels() const {
+//     return get_dimension_by_layout('C');
+// }
+
+// int64_t ONNXTensorDescr::width() const {
+//     return get_dimension_by_layout('W');
+// }
+
+// int64_t ONNXTensorDescr::height() const {
+//     return get_dimension_by_layout('H');
+// }
+
+void ONNXModel::configure_framework(const std::vector<std::string> &args) {
+
 }
 
-bool ONNXTensorDescr::is_image_info() const {
-    return (layout.size() == 2 && layout.back() == 'C') && channels() >= 2;
+void ONNXModel::log_framework_version() const {
+     logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
 }
 
-bool ONNXTensorDescr::is_dynamic() const {
-    return std::find(shape.begin(), shape.end(), -1) != shape.end();
-}
-
-bool ONNXTensorDescr::has_batch() const {
-    return layout.find("N") != std::string::npos;
-}
-
-bool ONNXTensorDescr::is_dynamic_batch() const {
-    if (has_batch()) {
-        return shape[layout.find("N")] == -1;
-    }
-    return false;
-}
-
-void ONNXTensorDescr::set_batch(int batch_size) {
-    std::size_t batch_index = layout.find("N");
-    if (batch_index != std::string::npos) {
-        data_shape[batch_index] = batch_size;
-    }
-}
-
-int64_t ONNXTensorDescr::get_dimension_by_layout(char ch) const {
-    size_t pos = layout.find(ch);
-    if (pos == std::string::npos) {
-        throw std::invalid_argument("Can't get " + std::string(ch, 1) + " from layout " + layout);
-    }
-    return data_shape.at(pos);
-}
-
-int64_t ONNXTensorDescr::channels() const {
-    return get_dimension_by_layout('C');
-}
-
-int64_t ONNXTensorDescr::width() const {
-    return get_dimension_by_layout('W');
-}
-
-int64_t ONNXTensorDescr::height() const {
-    return get_dimension_by_layout('H');
-}
-
-ONNXModel::ONNXModel(int nthreads) : nthreads(nthreads) {}
-
-void ONNXModel::read_model(const std::string &model_path) {
+void ONNXModel::read(const std::string &model_path) {
     env = std::make_shared<Ort::Env>(ORT_LOGGING_LEVEL_ERROR, "ORT Benchmark");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -128,31 +139,93 @@ void ONNXModel::fill_inputs_outputs_info() {
 }
 
 IOTensorsInfo ONNXModel::get_io_tensors_info() const {
-    std::vector<ONNXTensorDescr> input_tensors_info;
+    std::vector<TensorDescr> input_tensors_info;
     for (size_t i = 0; i < io.input_names.size(); ++i) {
         input_tensors_info.push_back(
-            {std::string(io.input_names[i]), io.input_shapes[i], io.input_shapes[i], "", io.input_data_types[i]});
+            {std::string(io.input_names[i]), io.input_shapes[i], io.input_shapes[i], "", get_data_precision(io.input_data_types[i])});
     }
-    std::vector<ONNXTensorDescr> output_tensors_info;
+    std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < io.output_names.size(); ++i) {
         output_tensors_info.push_back(
-            {std::string(io.output_names[i]), io.output_shapes[i], {}, "", io.output_data_types[i]});
+            {std::string(io.output_names[i]), io.output_shapes[i], {}, "", get_data_precision(io.output_data_types[i])});
     }
     return {input_tensors_info, output_tensors_info};
 }
 
-void ONNXModel::reset_timers() {
-    total_start_time = HighresClock::time_point::max();
-    total_end_time = HighresClock::time_point::min();
-    latencies.clear();
+
+void ONNXModel::prepare_input_tensors(std::vector<std::vector<Buffer>> tbuffers) {
+    tensor_buffers = std::move(tbuffers);
+    auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        tensor_descr.type);
+    auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+    // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    // auto *tensor_data = tensor.GetTensorMutableData<char>();
+
+    tensors.reserve(tensor_buffers.size());
+    for (int i = 0; i < tensor_buffers.size(); ++i) {
+        for (int j = 0; j < tensor_buffers[j].size(); ++j) {
+            auto& buffer = tensor_buffers[i][j];
+            if (buffer.precision == utils::DataPrecision::FP32) {
+                tensors[i].push_back(Ort::Value::CreateTensor<float>(memory_info,
+                                                                     buffer.get<float>(),
+                                                                     buffer.size,
+                                                                     buffer.data_shape.data(),
+                                                                     buffer.data_shape.size()));
+            }
+            else if (buffer.precision == utils::DataPrecision::FP16) {
+                tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
+                                    buffer.data,
+                                    buffer.size,
+                                    buffer.data_shape.data(),
+                                    buffer.data_shape.size(),
+                                    ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16));
+            }
+            else if (buffer.precision == utils::DataPrecision::I32) {
+                tensors[i].push_back(Ort::Value::CreateTensor<int32_t>(memory_info,
+                                    buffer.get<int32_t>(),
+                                    buffer.size,
+                                    buffer.data_shape.data(),
+                                    buffer.data_shape.size()));
+            }
+            else if (buffer.precision == utils::DataPrecision::I8) {
+                tensors[i].push_back(Ort::Value::CreateTensor<int8_t>(memory_info,
+                                    buffer.get<int8_t>(),
+                                    buffer.size,
+                                    buffer.data_shape.data(),
+                                    buffer.data_shape.size()));
+            }
+            else if (buffer.precision == utils::DataPrecision::U8) {
+                tensors[i].push_back(Ort::Value::CreateTensor<uint8_t>(memory_info,
+                    buffer.get<uint8_t>(),
+                    buffer.size,
+                    buffer.data_shape.data(),
+                    buffer.data_shape.size()));
+            }
+            else if (buffer.precision == utils::DataPrecision::BOOL) {
+                tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
+                    buffer.data,
+                    buffer.size,
+                    buffer.data_shape.data(),
+                    buffer.data_shape.size(),
+                    ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL));
+            }
+            else if (buffer.precision == utils::DataPrecision::I64) {
+                tensors[i].push_back(Ort::Value::CreateTensor<int64_t>(memory_info,
+                    buffer.get<int64_t>(),
+                    buffer.size,
+                    buffer.data_shape.data(),
+                    buffer.data_shape.size()));
+            }
+            throw std::runtime_error("Unsupported precision!");
+        }
+    }
 }
 
-std::vector<double> ONNXModel::get_latencies() const {
-    return latencies;
-}
-
-double ONNXModel::get_total_time_ms() const {
-    return utils::ns_to_ms(total_end_time - total_start_time);
+void ONNXModel::warmup_inference() {
+    run(tensors[0]);
 }
 
 void ONNXModel::run(const std::vector<Ort::Value> &input_tensors) {
@@ -168,4 +241,18 @@ void ONNXModel::run(const std::vector<Ort::Value> &input_tensors) {
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
     total_end_time = std::max(HighresClock::now(), total_end_time);
+}
+
+int ONNXModel::evaluate(int iterations_num, uint64_t time_limit_ns) {
+    int iteration = 0;
+    auto start_time = HighresClock::now();
+    auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
+    while ((iterations_num != 0 && iteration < iterations_num) ||
+            (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
+        run(tensors[iteration % tensors.size()]);
+        ++iteration;
+        uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
+    }
+
+    return iteration;
 }

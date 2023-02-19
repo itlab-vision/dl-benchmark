@@ -1,6 +1,11 @@
+// Copyright (C) 2023 KNS Group LLC (YADRO
+// SPDX-License-Identifier: Apache-2.0
+//
+
 #include "inputs_preparation.hpp"
 
 #include "args_handler.hpp"
+#include "buffer.hpp"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -47,39 +52,55 @@ const T get_mat_value(const cv::Mat &mat, size_t h, size_t w, size_t c) {
 };
 
 template <class T, class T2>
-Ort::Value create_random_tensor(const inputs::InputDescr &input_descr,
+Buffer create_random_tensor(const inputs::InputDescr &input_descr,
                                 T rand_min = std::numeric_limits<uint8_t>::min(),
                                 T rand_max = std::numeric_limits<uint8_t>::max()) {
     logger::info << "\t\tRandomly generated data" << logger::endl;
     auto tensor_descr = input_descr.tensor_descr;
 
-    auto allocator = Ort::AllocatorWithDefaultOptions();
-    auto tensor = Ort::Value::CreateTensor(allocator,
-                                           tensor_descr.data_shape.data(),
-                                           tensor_descr.data_shape.size(),
-                                           tensor_descr.type);
-    auto *tensor_data = tensor.GetTensorMutableData<T>();
-    size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    // auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        tensor_descr.type);
+    // auto *tensor_data = tensor.GetTensorMutableData<T>();
+    // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+
+    int64_t tensor_size =
+            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+    Buffer buff;
+    buff.data_shape = tensor_descr.data_shape;
+
+    buff.allocate(tensor_size, tensor_descr.data_type);
+    auto *tensor_data = buff.get<T>();
 
     std::mt19937 gen(0);
     UniformDistribution<T2> distribution(rand_min, rand_max);
     for (size_t i = 0; i < tensor_size; ++i) {
         tensor_data[i] = static_cast<T>(distribution(gen));
     }
-    return tensor;
+    return buff;
 }
 
 template <class T>
-Ort::Value create_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto &files = input_descr.files;
 
-    auto allocator = Ort::AllocatorWithDefaultOptions();
-    auto tensor = Ort::Value::CreateTensor(allocator,
-                                           tensor_descr.data_shape.data(),
-                                           tensor_descr.data_shape.size(),
-                                           tensor_descr.type);
-    auto *tensor_data = tensor.GetTensorMutableData<T>();
+    // auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        tensor_descr.type);
+    // auto *tensor_data = tensor.GetTensorMutableData<T>();
+
+    int64_t tensor_size =
+            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+    Buffer buff;
+    buff.data_shape = tensor_descr.data_shape;
+
+    buff.allocate(tensor_size, tensor_descr.data_type);
+    auto *tensor_data = buff.get<T>();
 
     size_t channels = tensor_descr.channels();
     size_t width = tensor_descr.width();
@@ -99,20 +120,27 @@ Ort::Value create_tensor_from_image(const inputs::InputDescr &input_descr, int b
             }
         }
     }
-    return tensor;
+    return buff;
 }
 
 template <class T>
-Ort::Value create_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+Buffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
     auto tensor_descr = input_descr.tensor_descr;
-    auto allocator = Ort::AllocatorWithDefaultOptions();
-    auto tensor = Ort::Value::CreateTensor(allocator,
-                                           tensor_descr.data_shape.data(),
-                                           tensor_descr.data_shape.size(),
-                                           tensor_descr.type);
+    // auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        tensor_descr.type);
 
-    size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
-    auto *tensor_data = tensor.GetTensorMutableData<T>();
+    // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    // auto *tensor_data = tensor.GetTensorMutableData<T>();
+    int64_t tensor_size =
+            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+    Buffer buff;
+    buff.allocate(tensor_size, tensor_descr.data_type);
+    buff.data_shape = tensor_descr.data_shape;
+    auto *tensor_data = buff.get<T>();
+
     logger::info << "\t\t" << image_size.width << "x" << image_size.height << logger::endl;
     for (int b = 0; b < batch_size; ++b) {
         int image_info_size = tensor_size / batch_size;
@@ -129,21 +157,29 @@ Ort::Value create_image_info_tensor(const inputs::InputDescr &input_descr, const
             }
         }
     }
-    return tensor;
+    return buff;
 }
 
 template <class T>
-Ort::Value create_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+Buffer create_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto &files = input_descr.files;
-    auto allocator = Ort::AllocatorWithDefaultOptions();
-    auto tensor = Ort::Value::CreateTensor(allocator,
-                                           tensor_descr.data_shape.data(),
-                                           tensor_descr.data_shape.size(),
-                                           tensor_descr.type);
 
-    size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
-    auto *tensor_data = tensor.GetTensorMutableData<char>();
+    int64_t tensor_size =
+            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+    Buffer buff;
+
+    buff.allocate(tensor_size, tensor_descr.data_type);
+    auto *tensor_data = buff.get<char>();
+
+    // auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        tensor_descr.type);
+
+    // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    // auto *tensor_data = tensor.GetTensorMutableData<char>();
     for (int b = 0; b < batch_size; ++b) {
         size_t input_id = (start_index + b) % files.size();
         const auto &file_path = files[input_id];
@@ -176,11 +212,11 @@ Ort::Value create_tensor_from_binary(const inputs::InputDescr &input_descr, int 
         }
     }
 
-    return tensor;
+    return buff;
 }
 
-Ort::Value get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
-    auto precision = utils::get_data_precision(input_descr.tensor_descr.type);
+Buffer get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+    auto precision = input_descr.tensor_descr.data_type;
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
     }
@@ -194,8 +230,8 @@ Ort::Value get_tensor_from_image(const inputs::InputDescr &input_descr, int batc
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Ort::Value get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
-    auto precision = utils::get_data_precision(input_descr.tensor_descr.type);
+Buffer get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+    auto precision = input_descr.tensor_descr.data_type;
     if (precision == utils::DataPrecision::FP16) {
         return create_image_info_tensor<short>(input_descr, image_size, batch_size);
     }
@@ -212,8 +248,8 @@ Ort::Value get_image_info_tensor(const inputs::InputDescr &input_descr, const cv
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Ort::Value get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
-    auto precision = utils::get_data_precision(input_descr.tensor_descr.type);
+Buffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+    auto precision = input_descr.tensor_descr.data_type;
     if (precision == utils::DataPrecision::FP16) {
         return create_tensor_from_binary<short>(input_descr, batch_size, start_index);
     }
@@ -233,8 +269,8 @@ Ort::Value get_tensor_from_binary(const inputs::InputDescr &input_descr, int bat
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Ort::Value get_random_tensor(const inputs::InputDescr &input_descr) {
-    auto precision = utils::get_data_precision(input_descr.tensor_descr.type);
+Buffer get_random_tensor(const inputs::InputDescr &input_descr) {
+    auto precision = input_descr.tensor_descr.data_type;
     if (precision == utils::DataPrecision::FP16) {
         return create_random_tensor<short, short>(input_descr);
     }
@@ -259,7 +295,7 @@ Ort::Value get_random_tensor(const inputs::InputDescr &input_descr) {
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-std::vector<std::vector<Ort::Value>> inputs::get_input_tensors(const inputs::InputsInfo &inputs_info,
+std::vector<std::vector<Buffer>> inputs::get_input_tensors(const inputs::InputsInfo &inputs_info,
                                                                int batch_size,
                                                                int tensors_num) {
     std::vector<cv::Size> img_input_sizes;
@@ -271,14 +307,14 @@ std::vector<std::vector<Ort::Value>> inputs::get_input_tensors(const inputs::Inp
         }
     }
 
-    std::vector<std::vector<Ort::Value>> tensors(tensors_num);
+    std::vector<std::vector<Buffer>> tensors(tensors_num);
     int start_file_index = 0;
     for (int i = 0; i < tensors_num; ++i) {
         logger::info << "Input config " << i << logger::endl;
         for (const auto &[name, input_descr] : inputs_info) {
             const auto &tensor_descr = input_descr.tensor_descr;
             logger::info << " \t" << name << " (" << tensor_descr.layout << " "
-                         << utils::get_precision_str(utils::get_data_precision(tensor_descr.type)) << " "
+                         << utils::get_precision_str(tensor_descr.data_type) << " "
                          << args::shape_string(tensor_descr.data_shape) << ")" << logger::endl;
 
             if (!input_descr.files.empty() && static_cast<int>(input_descr.files.size()) < batch_size) {
@@ -308,7 +344,7 @@ std::vector<std::vector<Ort::Value>> inputs::get_input_tensors(const inputs::Inp
 }
 
 inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vector<std::string>> &input_files,
-                                           const std::vector<ONNXTensorDescr> &model_inputs,
+                                           const std::vector<TensorDescr> &model_inputs,
                                            const std::string &layout_string,
                                            const std::string &shape_string,
                                            const std::string &mean_string,

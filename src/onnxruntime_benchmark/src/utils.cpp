@@ -1,3 +1,7 @@
+// Copyright (C) 2023 KNS Group LLC (YADRO)
+// SPDX-License-Identifier: Apache-2.0
+//
+
 #include "utils.hpp"
 
 #include "inputs_preparation.hpp"
@@ -14,15 +18,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-utils::DataPrecision utils::get_data_precision(ONNXTensorElementDataType type) {
-    if (onnx_dtype_to_precision_map.count(type) > 0) {
-        return onnx_dtype_to_precision_map.at(type);
-    }
-    else {
-        throw std::invalid_argument("Does not support element data type " + std::to_string(type));
-    }
-}
 
 std::string utils::get_precision_str(DataPrecision p) {
     if (precision_to_str_map.count(p) > 0) {
