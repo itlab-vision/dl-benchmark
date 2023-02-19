@@ -160,6 +160,9 @@ Bounding boxes (upper left and bottom right corners):<br>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
+face-detection-0200 | Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>| Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>|
+face-detection-0202 | Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| 
+face-detection-0204 | Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>| Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>|
 face-detection-adas-0001 | Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>| Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>|
 face-detection-adas-binary-0001 | Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>| Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>|
 face-detection-retail-0004 | Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>| Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>|
