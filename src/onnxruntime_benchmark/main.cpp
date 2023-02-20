@@ -26,7 +26,7 @@ constexpr char model_msg[] = "path to an .onnx file with a trained model";
 DEFINE_string(m, "", model_msg);
 
 constexpr char framework_msg[] =
-    "Required. Framework: onnxruntime, opencv ";
+    "Required. Framework to inference on: onnxruntime, opencv ";
 DEFINE_string(framework, "", framework_msg);
 
 constexpr char input_msg[] =
@@ -85,23 +85,26 @@ void parse(int argc, char *argv[]) {
     if (FLAGS_h || 1 == argc) {
         std::cout << "onnxruntime_benchmark"
                   << "\nOptions:"
-                  << "\n\t[-h]                                         " << help_msg
-                  << "\n\t[-help]                                      print help on all arguments"
-                  << "\n\t-framework                                   " << framework_msg
-                  << "\n\t -m <MODEL FILE>                             " << model_msg
-                  << "\n\t[-i <INPUT>]                                 " << input_msg
-                  << "\n\t[-b <NUMBER>]                                " << batch_size_msg
-                  << "\n\t[-shape <[N,C,H,W]>]                         " << shape_msg
-                  << "\n\t[-layout <[NCHW]>]                           " << layout_msg
-                  << "\n\t[-mean <R G B>]                              " << input_mean_msg
-                  << "\n\t[-scale <R G B>]                             " << input_scale_msg
-                  << "\n\t[-nthreads <NUMBER>]                         " << threads_num_msg
-                  << "\n\t[-nireq <NUMBER>]                            " << requests_num_msg
-                  << "\n\t[-niter <NUMBER>]                            " << iterations_num_msg
-                  << "\n\t[-t <NUMBER>]                                " << time_msg
-                  << "\n\t[-save_report]                               " << save_report_msg
-                  << "\n\t[-report_path <PATH>]                        " << report_path_msg << "\n";
+                  << "\n\t[-h]                                          " << help_msg
+                  << "\n\t[-help]                                       print help on all arguments"
+                  << "\n\t--framework <FRAMEWORK NAME>                  " << framework_msg
+                  << "\n\t -m <MODEL FILE>                              " << model_msg
+                  << "\n\t[-i <INPUT>]                                  " << input_msg
+                  << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
+                  << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
+                  << "\n\t[--layout <[NCHW]>]                           " << layout_msg
+                  << "\n\t[--mean <R G B>]                              " << input_mean_msg
+                  << "\n\t[--scale <R G B>]                             " << input_scale_msg
+                  << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
+                  << "\n\t[--nireq <NUMBER>]                            " << requests_num_msg
+                  << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
+                  << "\n\t[-t <NUMBER>]                                 " << time_msg
+                  << "\n\t[--save_report]                               " << save_report_msg
+                  << "\n\t[--report_path <PATH>]                        " << report_path_msg << "\n";
         exit(0);
+    }
+    if (FLAGS_framework.empty()) {
+        throw std::invalid_argument{"--framework <FRAMEWORK NAME> can't be empty"};
     }
     if (FLAGS_m.empty()) {
         throw std::invalid_argument{"-m <MODEL FILE> can't be empty"};
@@ -149,17 +152,20 @@ void log_step(const std::string optional_info = "") {
 int main(int argc, char *argv[]) {
     std::shared_ptr<Report> report;
     try {
-        std::unique_ptr<Model> model;
+        log_step(); // Parsing and validating input arguments
+        logger::info << "Parsing input arguments" << logger::endl;
+        parse(argc, argv);
 
+        std::unique_ptr<Model> model;
         if (FLAGS_framework == "onnxruntime") {
             model.reset(new ONNXModel(FLAGS_nthreads));
         }
         else if (FLAGS_framework == "opencv") {
         }
+        else {
+            throw std::invalid_argument("Usupported framwework " + FLAGS_framework);
+        }
 
-        log_step(); // Parsing and validating input arguments
-        logger::info << "Parsing input arguments" << logger::endl;
-        parse(argc, argv);
         logger::info << "Checking input files" << logger::endl;
         std::vector<gflags::CommandLineFlagInfo> flags;
         gflags::GetAllFlags(&flags);

@@ -61,14 +61,6 @@ private:
     std::vector<std::vector<Ort::Value>> tensors;
     std::vector<std::vector<Buffer>> tensor_buffers;
 
-    // time stamps for total time measurments;
-    HighresClock::time_point total_start_time;
-    HighresClock::time_point total_end_time;
-
-    // time stamps for individual inference
-    HighresClock::time_point infer_start_time;
-    std::vector<double> latencies;
-
 public:
     ONNXModel(int nthreads_) : Model(nthreads_) {};
     virtual ~ONNXModel() {};

@@ -39,6 +39,8 @@ class Buffer {
         user_data = buf.user_data;
         refcount = buf.refcount;
         total_size = buf.total_size;
+        size = buf.size;
+        data_shape = buf.data_shape;
 
         if (refcount)
             (*refcount)++;

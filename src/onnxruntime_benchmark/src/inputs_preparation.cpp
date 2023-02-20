@@ -94,6 +94,14 @@ Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch
     //                                        tensor_descr.type);
     // auto *tensor_data = tensor.GetTensorMutableData<T>();
 
+    auto allocator = Ort::AllocatorWithDefaultOptions();
+    auto tensor = Ort::Value::CreateTensor(allocator,
+                                           tensor_descr.data_shape.data(),
+                                           tensor_descr.data_shape.size(),
+                                           ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT);
+
+    size_t tensor_size_ = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
     Buffer buff;
@@ -120,6 +128,12 @@ Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch
             }
         }
     }
+    auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+    auto t = Ort::Value::CreateTensor<float>(memory_info,
+                                                        buff.get<float>(),
+                                                        buff.size,
+                                                        buff.data_shape.data(),
+                                                        buff.data_shape.size());
     return buff;
 }
 
@@ -130,10 +144,13 @@ Buffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv:
     // auto tensor = Ort::Value::CreateTensor(allocator,
     //                                        tensor_descr.data_shape.data(),
     //                                        tensor_descr.data_shape.size(),
-    //                                        tensor_descr.type);
+    //                                        ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT);
+
+    // size_t tensor_size_ = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
 
     // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
     // auto *tensor_data = tensor.GetTensorMutableData<T>();
+
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
     Buffer buff;

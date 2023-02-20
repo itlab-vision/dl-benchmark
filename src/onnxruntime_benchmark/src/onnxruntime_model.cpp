@@ -163,17 +163,18 @@ void ONNXModel::prepare_input_tensors(std::vector<std::vector<Buffer>> tbuffers)
     auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
     // size_t tensor_size = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
     // auto *tensor_data = tensor.GetTensorMutableData<char>();
-
-    tensors.reserve(tensor_buffers.size());
+    // std::vector<std::vector<Ort::Value>> tensors(tensor_buffers.size());
+    tensors.resize(tensor_buffers.size());
     for (int i = 0; i < tensor_buffers.size(); ++i) {
-        for (int j = 0; j < tensor_buffers[j].size(); ++j) {
+        for (int j = 0; j < tensor_buffers[i].size(); ++j) {
             auto& buffer = tensor_buffers[i][j];
             if (buffer.precision == utils::DataPrecision::FP32) {
-                tensors[i].push_back(Ort::Value::CreateTensor<float>(memory_info,
-                                                                     buffer.get<float>(),
-                                                                     buffer.size,
-                                                                     buffer.data_shape.data(),
-                                                                     buffer.data_shape.size()));
+                auto t = Ort::Value::CreateTensor<float>(memory_info,
+                                                        buffer.get<float>(),
+                                                        buffer.size,
+                                                        buffer.data_shape.data(),
+                                                        buffer.data_shape.size());
+                tensors[i].push_back(std::move(t));
             }
             else if (buffer.precision == utils::DataPrecision::FP16) {
                 tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
@@ -218,8 +219,9 @@ void ONNXModel::prepare_input_tensors(std::vector<std::vector<Buffer>> tbuffers)
                     buffer.size,
                     buffer.data_shape.data(),
                     buffer.data_shape.size()));
+            } else {
+                throw std::runtime_error("Unsupported precision!");
             }
-            throw std::runtime_error("Unsupported precision!");
         }
     }
 }
