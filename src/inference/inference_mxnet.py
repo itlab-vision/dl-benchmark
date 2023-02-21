@@ -235,9 +235,9 @@ def main():
 
         context = get_device_to_infer(args.device)
 
-        if ((args.model_name is not None) and
-            (args.model_json is None) and
-            (args.model_params is None)):
+        if ((args.model_name is not None)
+                and (args.model_json is None)
+                and (args.model_params is None)):
             net = load_network_gluon_model_zoo(args.model_name, context)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
