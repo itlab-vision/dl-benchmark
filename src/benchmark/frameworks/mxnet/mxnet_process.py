@@ -33,9 +33,9 @@ class MXNetProcess(ProcessHandler):
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
-        if (name is not None) and \
-             (model_json is None or model_json == '') and \
-             (model_params is None or model_params == ''):
+        if ((name is not None) and
+            (model_json is None or model_json == '') and
+            (model_params is None or model_params == '')):
             common_params = f'-mn {name} -i {dataset} -is {input_shape} -b {batch_size} -ni {iteration}'
         elif (name is None) and (model_json is not None) and (model_params is not None):
             common_params = f'-m {model_json} -w {model_params} -i {dataset} -is {input_shape} -b {batch_size} -ni {iteration}'

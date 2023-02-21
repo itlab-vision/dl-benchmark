@@ -178,7 +178,7 @@ def print_topk_predictions(predictions, k, file_labels):
             idx = int(index)
             probability = predictions[prediction_idx][idx]
             category = categories[idx]
-            log.info('\t{:.7f} {}'.format(probability.asscalar(), category))
+            log.info('\t{0:.7f} {1}'.format(probability.asscalar(), category))
 
 
 def inference_mxnet(net, num_iterations, get_slice, input_name,
@@ -235,9 +235,9 @@ def main():
 
         context = get_device_to_infer(args.device)
 
-        if (args.model_name is not None) and \
-               (args.model_json is None) and \
-               (args.model_params is None):
+        if ((args.model_name is not None) and
+            (args.model_json is None) and
+            (args.model_params is None)):
             net = load_network_gluon_model_zoo(args.model_name, context)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
