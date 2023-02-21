@@ -27,7 +27,7 @@ densenet121  |0.9523346 Granny Smith<br>0.0132273 orange<br>0.0125171 lemon<br>0
 densenet161  |0.9372969 Granny Smith<br>0.0082274 dumbbell<br>0.0056475 piggy bank, penny bank<br>0.0055374 ping-pong ball<br>0.0041915 pitcher, ewer|
 densenet169  |0.9811633 Granny Smith<br>0.0033828 piggy bank, penny bank<br>0.0021365 orange<br>0.0019196 lemon<br>0.0017232 pomegranate|
 densenet201  |0.9119796 Granny Smith<br>0.0533456 piggy bank, penny bank<br>0.0056831 lemon<br>0.0017810 pool table, billiard table, snooker table<br>0.0015689 tennis ball|
-inceptionv3  ||
+inceptionv3  |0.9884678 Granny Smith<br>0.0006726 bikini, two-piece<br>0.0005334 piggy bank, penny bank<br>0.0003360 pomegranate<br>0.0001373 pool table, billiard table, snooker table|
 mobilenet0.25|0.3314433 piggy bank, penny bank<br>0.1333785 maraca<br>0.1262991 croquet ball<br>0.0684097 dumbbell<br>0.0539143 hair slide|
 mobilenet0.5 |0.7425038 piggy bank, penny bank<br>0.0554336 saltshaker, salt shaker<br>0.0353432 Granny Smith<br>0.0217170 pencil sharpener<br>0.0169298 rubber eraser, rubber, pencil eraser|
 mobilenet0.75|0.2680034 piggy bank, penny bank<br>0.2459760 Granny Smith<br>0.0562553 dumbbell<br>0.0306232 necklace<br>0.0305400 pitcher, ewer|
@@ -75,7 +75,7 @@ densenet121  |0.9841659 junco, snowbird<br>0.0072199 chickadee<br>0.0034963 bram
 densenet161  |0.9932107 junco, snowbird<br>0.0015922 chickadee<br>0.0012295 brambling, Fringilla montifringilla<br>0.0011838 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0008891 goldfinch, Carduelis carduelis|
 densenet169  |0.9640683 junco, snowbird<br>0.0201314 brambling, Fringilla montifringilla<br>0.0044098 chickadee<br>0.0032345 goldfinch, Carduelis carduelis<br>0.0026739 water ouzel, dipper|
 densenet201  |0.9515268 junco, snowbird<br>0.0178252 water ouzel, dipper<br>0.0109119 brambling, Fringilla montifringilla<br>0.0077980 house finch, linnet, Carpodacus mexicanus<br>0.0044695 chickadee|
-inceptionv3  ||
+inceptionv3  |0.9401748 junco, snowbird<br>0.0005783 water ouzel, dipper<br>0.0005624 iron, smoothing iron<br>0.0003841 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003383 cleaver, meat cleaver, chopper|
 mobilenet0.25|0.9301481 junco, snowbird<br>0.0466449 chickadee<br>0.0146190 brambling, Fringilla montifringilla<br>0.0027491 bulbul<br>0.0024721 jay|
 mobilenet0.5 |0.9290579 junco, snowbird<br>0.0325394 chickadee<br>0.0142417 water ouzel, dipper<br>0.0070296 brambling, Fringilla montifringilla<br>0.0054897 house finch, linnet, Carpodacus mexicanus|
 mobilenet0.75|0.9554648 junco, snowbird<br>0.0176056 house finch, linnet, Carpodacus mexicanus<br>0.0163125 brambling, Fringilla montifringilla<br>0.0040996 chickadee<br>0.0029940 goldfinch, Carduelis carduelis|
@@ -123,7 +123,7 @@ densenet121  |0.3022416 liner, ocean liner<br>0.1322481 breakwater, groin, groyn
 densenet161  |0.4418390 lifeboat<br>0.1824288 liner, ocean liner<br>0.0596465 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0325273 submarine, pigboat, sub, U-boat<br>0.0298845 dock, dockage, docking facility|
 densenet169  |0.2955862 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.2342375 drilling platform, offshore rig<br>0.0940931 liner, ocean liner<br>0.0876006 container ship, containership, container vessel<br>0.0717741 dock, dockage, docking facility|
 densenet201  |0.5008167 fireboat<br>0.0950200 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0701643 lifeboat<br>0.0622607 liner, ocean liner<br>0.0582344 container ship, containership, container vessel|
-inceptionv3  ||
+inceptionv3  |0.3135454 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.2686124 beacon, lighthouse, beacon light, pharos<br>0.1458646 submarine, pigboat, sub, U-boat<br>0.0374827 lifeboat<br>0.0280400 liner, ocean liner|
 mobilenet0.25|0.2958905 container ship, containership, container vessel<br>0.2101003 drilling platform, offshore rig<br>0.1384616 submarine, pigboat, sub, U-boat<br>0.0863535 liner, ocean liner<br>0.0732720 beacon, lighthouse, beacon light, pharos|
 mobilenet0.5 |0.6135703 liner, ocean liner<br>0.1116956 container ship, containership, container vessel<br>0.0976279 submarine, pigboat, sub, U-boat<br>0.0407747 drilling platform, offshore rig<br>0.0312130 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 mobilenet0.75|0.1367185 pirate, pirate ship<br>0.1318326 container ship, containership, container vessel<br>0.1117856 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0865669 lifeboat<br>0.0837456 liner, ocean liner|
