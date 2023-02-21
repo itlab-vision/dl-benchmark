@@ -175,3 +175,14 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         transformed_images = np.zeros(shape=shape, dtype=element_type)
         transformed_images = self._transform(images, input_name)
         return transformed_images
+
+
+class OpenCVTransformer(Transformer):
+    def __init__(self, converting):
+        self._converting = converting
+
+    def _transform(self, image):
+        return cv2.dnn.blobFromImage(image, **self._converting)
+
+    def transform_images(self, images, shape, element_type, *args):
+        return cv2.dnn.blobFromImages(images, **self._converting)
