@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "buffer.hpp"
-#include "model.hpp"
+#include "tensor_buffer.hpp"
+#include "launcher.hpp"
 #include "utils.hpp"
 
 #include <onnxruntime_cxx_api.h>
@@ -35,7 +35,7 @@ InputsInfo get_inputs_info(const std::map<std::string, std::vector<std::string>>
                            const std::string &mean_string,
                            const std::string &scale_string);
 
-std::vector<std::vector<Buffer>> get_input_tensors(const InputsInfo &inputs_info,
+std::vector<std::vector<TensorBuffer>> get_input_tensors(const InputsInfo &inputs_info,
                                                        int batch_size,
                                                        int tensors_num = 1);
 } // namespace inputs

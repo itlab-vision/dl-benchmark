@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.13)
 project(onnxruntime_benchmark)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-find_package(OpenCV REQUIRED core imgproc imgcodecs)
+find_package(OpenCV REQUIRED core imgproc imgcodecs dnn)
 find_package(nlohmann_json REQUIRED HINTS /usr/lib/cmake)
 
 # search for ORT_INSTALL_DIR in env variables

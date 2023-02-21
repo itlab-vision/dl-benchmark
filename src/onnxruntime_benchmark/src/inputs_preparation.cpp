@@ -5,7 +5,7 @@
 #include "inputs_preparation.hpp"
 
 #include "args_handler.hpp"
-#include "buffer.hpp"
+#include "tensor_buffer.hpp"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -52,7 +52,7 @@ const T get_mat_value(const cv::Mat &mat, size_t h, size_t w, size_t c) {
 };
 
 template <class T, class T2>
-Buffer create_random_tensor(const inputs::InputDescr &input_descr,
+TensorBuffer create_random_tensor(const inputs::InputDescr &input_descr,
                                 T rand_min = std::numeric_limits<uint8_t>::min(),
                                 T rand_max = std::numeric_limits<uint8_t>::max()) {
     logger::info << "\t\tRandomly generated data" << logger::endl;
@@ -68,10 +68,10 @@ Buffer create_random_tensor(const inputs::InputDescr &input_descr,
 
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
-    Buffer buff;
-    buff.data_shape = tensor_descr.data_shape;
+    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
+    // buff.data_shape = tensor_descr.data_shape;
 
-    buff.allocate(tensor_size, tensor_descr.data_type);
+    // buff.allocate(tensor_size, tensor_descr.data_precision);
     auto *tensor_data = buff.get<T>();
 
     std::mt19937 gen(0);
@@ -83,7 +83,7 @@ Buffer create_random_tensor(const inputs::InputDescr &input_descr,
 }
 
 template <class T>
-Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto &files = input_descr.files;
 
@@ -94,20 +94,22 @@ Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch
     //                                        tensor_descr.type);
     // auto *tensor_data = tensor.GetTensorMutableData<T>();
 
-    auto allocator = Ort::AllocatorWithDefaultOptions();
-    auto tensor = Ort::Value::CreateTensor(allocator,
-                                           tensor_descr.data_shape.data(),
-                                           tensor_descr.data_shape.size(),
-                                           ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT);
+    // auto allocator = Ort::AllocatorWithDefaultOptions();
+    // auto tensor = Ort::Value::CreateTensor(allocator,
+    //                                        tensor_descr.data_shape.data(),
+    //                                        tensor_descr.data_shape.size(),
+    //                                        ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT);
 
-    size_t tensor_size_ = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    // size_t tensor_size_ = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
 
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
-    Buffer buff;
-    buff.data_shape = tensor_descr.data_shape;
+    // TensorBuffer buff;
+    // buff.data_shape = tensor_descr.data_shape;
 
-    buff.allocate(tensor_size, tensor_descr.data_type);
+    // buff.allocate(tensor_size, tensor_descr.data_precision);
+    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
+
     auto *tensor_data = buff.get<T>();
 
     size_t channels = tensor_descr.channels();
@@ -128,17 +130,17 @@ Buffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch
             }
         }
     }
-    auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
-    auto t = Ort::Value::CreateTensor<float>(memory_info,
-                                                        buff.get<float>(),
-                                                        buff.size,
-                                                        buff.data_shape.data(),
-                                                        buff.data_shape.size());
+    // auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+    // auto t = Ort::Value::CreateTensor<float>(memory_info,
+    //                                                     buff.get<float>(),
+    //                                                     buff.size(),
+    //                                                     buff.shape.data(),
+    //                                                     buff.data_shape.size());
     return buff;
 }
 
 template <class T>
-Buffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+TensorBuffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
     auto tensor_descr = input_descr.tensor_descr;
     // auto allocator = Ort::AllocatorWithDefaultOptions();
     // auto tensor = Ort::Value::CreateTensor(allocator,
@@ -153,9 +155,12 @@ Buffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv:
 
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
-    Buffer buff;
-    buff.allocate(tensor_size, tensor_descr.data_type);
-    buff.data_shape = tensor_descr.data_shape;
+
+    // TensorBuffer buff;
+    // buff.allocate(tensor_size, tensor_descr.data_precision);
+    // buff.data_shape = tensor_descr.data_shape;
+
+    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
     auto *tensor_data = buff.get<T>();
 
     logger::info << "\t\t" << image_size.width << "x" << image_size.height << logger::endl;
@@ -178,15 +183,17 @@ Buffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv:
 }
 
 template <class T>
-Buffer create_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto &files = input_descr.files;
 
     int64_t tensor_size =
             std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
-    Buffer buff;
+    // TensorBuffer buff;
 
-    buff.allocate(tensor_size, tensor_descr.data_type);
+    // buff.allocate(tensor_size, tensor_descr.data_precision);
+
+    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
     auto *tensor_data = buff.get<char>();
 
     // auto allocator = Ort::AllocatorWithDefaultOptions();
@@ -232,8 +239,8 @@ Buffer create_tensor_from_binary(const inputs::InputDescr &input_descr, int batc
     return buff;
 }
 
-Buffer get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
-    auto precision = input_descr.tensor_descr.data_type;
+TensorBuffer get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+    auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
     }
@@ -247,8 +254,8 @@ Buffer get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_si
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Buffer get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
-    auto precision = input_descr.tensor_descr.data_type;
+TensorBuffer get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+    auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_image_info_tensor<short>(input_descr, image_size, batch_size);
     }
@@ -265,8 +272,8 @@ Buffer get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Si
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Buffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
-    auto precision = input_descr.tensor_descr.data_type;
+TensorBuffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+    auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_tensor_from_binary<short>(input_descr, batch_size, start_index);
     }
@@ -286,8 +293,8 @@ Buffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_s
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-Buffer get_random_tensor(const inputs::InputDescr &input_descr) {
-    auto precision = input_descr.tensor_descr.data_type;
+TensorBuffer get_random_tensor(const inputs::InputDescr &input_descr) {
+    auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_random_tensor<short, short>(input_descr);
     }
@@ -312,7 +319,7 @@ Buffer get_random_tensor(const inputs::InputDescr &input_descr) {
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-std::vector<std::vector<Buffer>> inputs::get_input_tensors(const inputs::InputsInfo &inputs_info,
+std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::InputsInfo &inputs_info,
                                                                int batch_size,
                                                                int tensors_num) {
     std::vector<cv::Size> img_input_sizes;
@@ -324,14 +331,14 @@ std::vector<std::vector<Buffer>> inputs::get_input_tensors(const inputs::InputsI
         }
     }
 
-    std::vector<std::vector<Buffer>> tensors(tensors_num);
+    std::vector<std::vector<TensorBuffer>> tensors(tensors_num);
     int start_file_index = 0;
     for (int i = 0; i < tensors_num; ++i) {
         logger::info << "Input config " << i << logger::endl;
         for (const auto &[name, input_descr] : inputs_info) {
             const auto &tensor_descr = input_descr.tensor_descr;
             logger::info << " \t" << name << " (" << tensor_descr.layout << " "
-                         << utils::get_precision_str(tensor_descr.data_type) << " "
+                         << utils::get_precision_str(tensor_descr.data_precision) << " "
                          << args::shape_string(tensor_descr.data_shape) << ")" << logger::endl;
 
             if (!input_descr.files.empty() && static_cast<int>(input_descr.files.size()) < batch_size) {

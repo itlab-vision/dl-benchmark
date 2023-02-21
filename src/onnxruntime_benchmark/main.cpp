@@ -5,7 +5,8 @@
 #include "args_handler.hpp"
 #include "inputs_preparation.hpp"
 
-#include "onnxruntime_model.hpp"
+#include "onnxruntime_launcher.hpp"
+#include "opencv_launcher.hpp"
 
 #include "report.hpp"
 #include "statistics.hpp"
@@ -116,12 +117,12 @@ void log_model_inputs_outputs(const IOTensorsInfo &tensors_info) {
 
     logger::info << "Model inputs:" << logger::endl;
     for (const auto &input : model_inputs) {
-        logger::info << "\t" << input.name << ": " << utils::get_precision_str(input.data_type)
+        logger::info << "\t" << input.name << ": " << utils::get_precision_str(input.data_precision)
                      << " " << args::shape_string(input.shape) << logger::endl;
     }
     logger::info << "Model outputs:" << logger::endl;
     for (const auto &output : model_outputs) {
-        logger::info << "\t" << output.name << ": " << utils::get_precision_str(output.data_type)
+        logger::info << "\t" << output.name << ": " << utils::get_precision_str(output.data_precision)
                      << " " << args::shape_string(output.shape) << logger::endl;
     }
 }
@@ -129,7 +130,7 @@ void log_model_inputs_outputs(const IOTensorsInfo &tensors_info) {
 void log_step(const std::string optional_info = "") {
     static size_t step_id = 0;
     static const std::map<size_t, std::string> steps = {{1, "Parsing and validating input arguments"},
-                                                        {2, "Loading ONNX Runtime"},
+                                                        {2, "Loading"},
                                                         {3, "Reading model files"},
                                                         {4, "Configuring input of the model"},
                                                         {5, "Setting execution parameters"},
@@ -156,11 +157,12 @@ int main(int argc, char *argv[]) {
         logger::info << "Parsing input arguments" << logger::endl;
         parse(argc, argv);
 
-        std::unique_ptr<Model> model;
+        std::unique_ptr<Launcher> launcher;
         if (FLAGS_framework == "onnxruntime") {
-            model.reset(new ONNXModel(FLAGS_nthreads));
+            launcher.reset(new ONNXLauncher(FLAGS_nthreads));
         }
         else if (FLAGS_framework == "opencv") {
+             launcher.reset(new OCVLauncher(FLAGS_nthreads));
         }
         else {
             throw std::invalid_argument("Usupported framwework " + FLAGS_framework);
@@ -179,20 +181,21 @@ int main(int argc, char *argv[]) {
         }
         auto input_files = args::parse_input_files_arguments(gflags::GetArgvs());
 
-        log_step(); // Loading ONNX Runtime
-        model->log_framework_version();
-        // logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
+        log_step(FLAGS_framework); // Loading ONNX Runtime
+        launcher->log_framework_version();
 
         log_step(); // Reading model files
         logger::info << "Reading model " << FLAGS_m << logger::endl;
-        model->read(FLAGS_m);
         auto start_time = HighresClock::now();
+        launcher->read(FLAGS_m);
         auto read_model_time = utils::ns_to_ms(HighresClock::now() - start_time);
         logger::info << "Read model took " << utils::format_double(read_model_time) << " ms" << logger::endl;
+
         logger::info << "Model inputs/outputs info:" << logger::endl;
-        model->fill_inputs_outputs_info();
-        auto io_tensors_info = model->get_io_tensors_info();
+        launcher->fill_inputs_outputs_info();
+        auto io_tensors_info = launcher->get_io_tensors_info();
         log_model_inputs_outputs(io_tensors_info);
+
         std::string target_device = "CPU"; // can be changed when ov provider will be added
         logger::info << "Device: " << target_device << logger::endl;
         logger::info << "\tThreads number: " << (FLAGS_nthreads ? std::to_string(FLAGS_nthreads) : "DEFAULT")
@@ -264,12 +267,12 @@ int main(int argc, char *argv[]) {
                  {"tensors_num", std::to_string(num_requests)},
                  {"provider", "ORTDefault"},
                  {"target_device", "CPU"},
-                 {"precision", utils::get_precision_str(io_tensors_info.first[0].data_type)}});
+                 {"precision", utils::get_precision_str(io_tensors_info.first[0].data_precision)}});
         }
 
         log_step(); // Creating input tensors
         auto tensors_buffers = inputs::get_input_tensors(inputs_info, batch_size, num_requests);
-        model->prepare_input_tensors(tensors_buffers);
+        launcher->prepare_input_tensors(std::move(tensors_buffers));
 
         log_step(std::to_string(num_requests) + " inference requests, limits: " +
                  (num_iterations > 0
@@ -277,29 +280,29 @@ int main(int argc, char *argv[]) {
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms")); // Measuring model performance
 
         // warm up before benhcmarking
-        // model->run(tensors[0]);
+        // launcher->run(tensors[0]);
 
-        model->warmup_inference();
-        auto first_inference_time = model->get_latencies()[0];
+        launcher->warmup_inference();
+        auto first_inference_time = launcher->get_latencies()[0];
         logger::info << "Warming up inference took " << utils::format_double(first_inference_time) << " ms"
                      << logger::endl;
-        model->reset_timers();
+        launcher->reset_timers();
 
-        int iterations_num = model->evaluate(num_iterations, time_limit_ns);
+        int iterations_num = launcher->evaluate(num_iterations, time_limit_ns);
 
         // int64_t iteration = 0;
         // start_time = HighresClock::now();
         // auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
         // while ((num_iterations != 0 && iteration < num_iterations) ||
         //        (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        //     model->run(tensors[iteration % tensors.size()]);
+        //     launcher->run(tensors[iteration % tensors.size()]);
         //     ++iteration;
         //     uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
         // }
 
         log_step();
-        Metrics metrics(model->get_latencies(), batch_size);
-        double total_time = model->get_total_time_ms();
+        Metrics metrics(launcher->get_latencies(), batch_size);
+        double total_time = launcher->get_total_time_ms();
         // Performance metrics report
         logger::info << "Count: " << iterations_num << " iterations" << logger::endl;
         logger::info << "Duration: " << utils::format_double(total_time) << " ms" << logger::endl;

@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 #include "inputs_preparation.hpp"
-#include "onnxruntime_model.hpp"
+#include "onnxruntime_launcher.hpp"
 
 #include <onnxruntime_cxx_api.h>
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "buffer.hpp"
+#include "tensor_buffer.hpp"
 #include "utils.hpp"
 
 #include <chrono>
@@ -21,7 +21,7 @@ struct TensorDescr {
     std::vector<int64_t> shape;
     std::vector<int64_t> data_shape;
     std::string layout;
-    utils::DataPrecision data_type;
+    utils::DataPrecision data_precision;
 
     bool is_image() const;
     bool is_image_info() const;
@@ -37,9 +37,11 @@ struct TensorDescr {
 
 using IOTensorsInfo = std::pair<std::vector<TensorDescr>, std::vector<TensorDescr>>;
 
-class Model {
+class Launcher {
 protected:
     int nthreads;
+
+    std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
     // time stamps for total time measurments;
     HighresClock::time_point total_start_time;
@@ -50,8 +52,8 @@ protected:
     std::vector<double> latencies;
 
 public:
-    Model(int nthreads) : nthreads(nthreads) {};
-    virtual ~Model() {}
+    Launcher(int nthreads) : nthreads(nthreads) {};
+    virtual ~Launcher() {}
 
     virtual void configure_framework(const std::vector<std::string> &args) = 0;
     virtual void log_framework_version() const = 0;
@@ -64,7 +66,7 @@ public:
 
     // virtual void set_batch_size(int batch_size) = 0;
     // int get_batch_size() const;
-    virtual void prepare_input_tensors(std::vector<std::vector<Buffer>> tensor_buffers) = 0;
+    virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tensor_buffers) = 0;
 
     virtual void warmup_inference() = 0;
     virtual int evaluate(int iterations_num, uint64_t time_limit_ns) = 0;

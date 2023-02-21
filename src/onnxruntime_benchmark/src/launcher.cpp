@@ -1,5 +1,8 @@
+// Copyright (C) 2023 KNS Group LLC (YADRO)
+// SPDX-License-Identifier: Apache-2.0
+//
 
-#include "model.hpp"
+#include "launcher.hpp"
 #include "utils.hpp"
 
 #include <algorithm>
@@ -55,19 +58,19 @@ int64_t TensorDescr::height() const {
     return get_dimension_by_layout('H');
 }
 
-// int Model::get_batch_size() const {
+// int Launcher::get_batch_size() const {
 //     return batch
 // }
 
-std::vector<double> Model::get_latencies() const {
+std::vector<double> Launcher::get_latencies() const {
     return latencies;
 }
 
-double Model::get_total_time_ms() const {
+double Launcher::get_total_time_ms() const {
     return utils::ns_to_ms(total_end_time - total_start_time);
 }
 
-void Model::reset_timers() {
+void Launcher::reset_timers() {
     total_start_time = HighresClock::time_point::max();
     total_end_time = HighresClock::time_point::min();
     latencies.clear();
