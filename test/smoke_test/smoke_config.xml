@@ -144,7 +144,7 @@
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName>data</InputName>
-            <InputShape>3 3 224 224</InputShape>
+            <InputShape>1 3 224 224</InputShape>
             <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>            
