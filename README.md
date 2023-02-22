@@ -21,6 +21,7 @@ DLI supports inference using the following frameworks:
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
+- [MXNet][mxnet].
 
 More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
@@ -85,6 +86,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
     - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel® Optimization for TensorFlow for several public models.
+    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
+      is a table that confirms correctness of inference implementation 
+      based on MXNet.
 
   - [`models_checklist.md`](results/models_checklist.md) contains a list
     of supported deep models (in accordance with the Open Model Zoo).
@@ -114,7 +118,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
     thus provide consistent performance results.
   - `quantization` contains scripts to quantize model to INT8-precision
     using Post-Training Optimization Tool (POT)
-	of Intel® Distribution of OpenVINO™ toolkit.
+    of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
   - `utils` is a package of auxiliary utilities.
@@ -157,8 +161,9 @@ Report questions, issues and suggestions, using:
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
-[tensorflow-lite]: https://www.tensorflow.org/lite/
-[onnx-runtime]: https://onnxruntime.ai/
+[tensorflow-lite]: https://www.tensorflow.org/lite
+[onnx-runtime]: https://onnxruntime.ai
+[mxnet]: https://mxnet.apache.org
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
