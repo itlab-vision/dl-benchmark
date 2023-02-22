@@ -123,4 +123,33 @@
             <InferenceRequestsCount></InferenceRequestsCount>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenCV</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Backend></Backend>
+            <Scalefactor></Scalefactor>
+            <Size></Size>
+            <Mean></Mean>
+            <SwapRB></SwapRB>
+            <Crop></Crop>
+        </FrameworkDependent>
+    </Test>
 </Tests>
