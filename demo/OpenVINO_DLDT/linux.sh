@@ -23,8 +23,20 @@ python3 -m venv .venv
 PYTHON="${venv_path}/bin/python3"
 $PYTHON -m pip install -r $root_folder/requirements.txt
 echo "[ INFO ] Python environment ${python3} has been created"
-sudo apt-get install -y python3-tk docker.io
-echo "[ INFO ] Packages python3-tk, docker.io have been installed"
+declare -A packages
+packages=( ["python3-tk"]="1" ["docker.io"]="1" ["containerd"]="1")
+for pkg in "${!packages[@]}";
+do
+    pkg_ok=$(dpkg-query -W -f='${Status}' $pkg 2>/dev/null | grep -c "ok installed")
+    packages[$pkg]=$pkg_ok
+    if [ $pkg_ok -eq 0 ];
+    then
+      sudo apt-get install -y $pkg
+	  echo "[ INFO ] Package $pkg has been installed"
+	else
+		echo "[ INFO ] Package $pkg has been already installed"
+    fi
+done
 echo "[ INFO ] System environment creation has been completed"
 
 
@@ -34,7 +46,7 @@ server_folder="${demo_folder}/server"
 mkdir $server_folder && cd $server_folder
 echo "[ INFO ] Cloning of DLI Benchmark repository"
 dlb_server="${server_folder}/dl-benchmark"
-git clone https://github.com/itlab-vision/dl-benchmark.git
+git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1
 dlb_results="${server_folder}/results"
 [ -d $dlb_results ] && rm -rf $dlb_results
 mkdir $dlb_results && cd $dlb_results
@@ -49,11 +61,11 @@ cd $client_folder
 echo "[ INFO ] Cloning of DLI Benchmark repository"
 dlb_client="${client_folder}/dl-benchmark"
 [ -d $dlb_client ] && rm -rf $dlb_client
-git clone https://github.com/itlab-vision/dl-benchmark.git
+git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1
 echo "[ INFO ] Cloning of OMZ repository"
 omz_client="${client_folder}/open_model_zoo"
 [ -d $omz_client ] && rm -rf $omz_client
-git clone https://github.com/openvinotoolkit/open_model_zoo.git --recursive --branch $openvino_version --single-branch
+git clone https://github.com/openvinotoolkit/open_model_zoo.git --recursive --branch $openvino_version --single-branch --depth 1
 models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
 echo "[ INFO ] Downloading of dataset 'cifar-10-python'"
 wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
@@ -66,6 +78,9 @@ echo "[ INFO ] Creation of client has been been completed"
 echo "[ INFO ] Creation of Docker image has been started"
 cd $root_folder/docker/OpenVINO_DLDT
 image_name="openvino_${openvino_version}"
+dli_dataset_repo_name=${path##*/}
+dli_dataset_repo_name=${dli_dataset_repo_name%.git}
+echo "[ INFO ] The name of repository with datasets is $dli_dataset_repo_name"
 docker build -t $image_name --build-arg DATASET_DOWNLOAD_LINK=$benchmark_datasets .
 echo "[ INFO ] Creation of archive with Docker image"
 archive_name="openvino_${openvino_version}.tar"
@@ -132,7 +147,7 @@ echo \
 		</Model>
 		<Dataset>
 			<Name>ImageNET</Name>
-			<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</Path>
+			<Path>/tmp/${dli_dataset_repo_name}/Datasets/ImageNET/</Path>
 		</Dataset>
 		<FrameworkIndependent>
 			<InferenceFramework>${framework}</InferenceFramework>
@@ -306,7 +321,15 @@ echo "[ INFO ] HTML table with accuracy checker results has been saved in ${accu
 
 
 echo "[ INFO ] System cleaning has been started"
-sudo apt-get remove -y python3-tk docker.io
+for pkg in "${!packages[@]}";
+do
+    echo "$pkg - ${packages[$pkg]}"
+    if [ $pkg_ok -eq 0 ];
+    then
+      sudo apt-get remove -y $pkg
+	  echo "[ INFO ] The package $pkg has been removed"
+    fi
+done
 cd $demo_folder
 echo "[ INFO ] System cleaning has been ended"
 
