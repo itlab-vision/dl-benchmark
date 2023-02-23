@@ -7,7 +7,7 @@ import warnings
 import numpy as np
 
 import mxnet
-import mxnet.gluon.model_zoo.vision as model_zoo
+import gluoncv
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -139,7 +139,7 @@ def load_network_gluon(model_json, model_params, context, input_name):
 
 def load_network_gluon_model_zoo(model_name, context):
     log.info(f'Loading network \"{model_name}\"')
-    net = model_zoo.get_model(model_name, pretrained=True, ctx=context)
+    net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
     log.info(f'Info about the network:\n{net}')
 
