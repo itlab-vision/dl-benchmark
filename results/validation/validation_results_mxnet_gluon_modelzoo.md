@@ -48,7 +48,6 @@ resnet34_v1b |0.8592082 Granny Smith<br>0.0595315 piggy bank, penny bank<br>0.02
 resnet50_v1 |0.7377543 Granny Smith<br>0.0241721 piggy bank, penny bank<br>0.0123405 lemon<br>0.0061283 candle, taper, wax light<br>0.0051573 orange|
 resnet50_v2 |0.9931253 Granny Smith<br>0.0017001 piggy bank, penny bank<br>0.0007180 saltshaker, salt shaker<br>0.0006648 dumbbell<br>0.0002998 tennis ball|
 resnet50_v1b |0.5989549 Granny Smith<br>0.1451391 piggy bank, penny bank<br>0.0253168 pitcher, ewer<br>0.0129785 candle, taper, wax light<br>0.0104263 saltshaker, salt shaker|
-resnet50_v1b_gn ||
 resnet50_v1c |0.8618550 Granny Smith<br>0.0188060 candle, taper, wax light<br>0.0055579 orange<br>0.0039412 pitcher, ewer<br>0.0034311 lemon|
 resnet50_v1d |0.7543250 Granny Smith<br>0.0171997 dumbbell<br>0.0116827 candle, taper, wax light<br>0.0074653 spindle<br>0.0059659 piggy bank, penny bank|
 resnet101_v1 |0.8556004 Granny Smith<br>0.0572233 piggy bank, penny bank<br>0.0485183 saltshaker, salt shaker<br>0.0053788 hair slide<br>0.0048319 dumbbell|
@@ -124,7 +123,6 @@ resnet34_v1b |0.9445685 junco, snowbird<br>0.0109547 water ouzel, dipper<br>0.01
 resnet50_v1 |0.8778600 junco, snowbird<br>0.0045333 water ouzel, dipper<br>0.0018932 brambling, Fringilla montifringilla<br>0.0016121 chickadee<br>0.0005472 magpie|
 resnet50_v2 |0.9820374 junco, snowbird<br>0.0070083 water ouzel, dipper<br>0.0032555 chickadee<br>0.0021856 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0017496 brambling, Fringilla montifringilla|
 resnet50_v1b |0.9325832 junco, snowbird<br>0.0022530 water ouzel, dipper<br>0.0019862 chickadee<br>0.0011287 brambling, Fringilla montifringilla<br>0.0005958 goldfinch, Carduelis carduelis|
-resnet50_v1b_gn ||
 resnet50_v1c |0.9273983 junco, snowbird<br>0.0029364 chickadee<br>0.0021531 water ouzel, dipper<br>0.0007963 brambling, Fringilla montifringilla<br>0.0007281 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 resnet50_v1d |0.8592040 junco, snowbird<br>0.0012552 trilobite<br>0.0008265 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0007142 brambling, Fringilla montifringilla<br>0.0006234 chickadee|
 resnet101_v1 |0.9215414 junco, snowbird<br>0.0161461 brambling, Fringilla montifringilla<br>0.0113413 water ouzel, dipper<br>0.0096166 chickadee<br>0.0087583 house finch, linnet, Carpodacus mexicanus|
@@ -200,7 +198,6 @@ resnet34_v1b |0.3476998 breakwater, groin, groyne, mole, bulwark, seawall, jetty
 resnet50_v1 |0.4411839 liner, ocean liner<br>0.0861827 container ship, containership, container vessel<br>0.0609572 speedboat<br>0.0587049 dock, dockage, docking facility<br>0.0369093 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 resnet50_v2 |0.4814195 container ship, containership, container vessel<br>0.1134715 liner, ocean liner<br>0.0718216 drilling platform, offshore rig<br>0.0571725 dock, dockage, docking facility<br>0.0450075 lifeboat|
 resnet50_v1b |0.3147515 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1076186 beacon, lighthouse, beacon light, pharos<br>0.0938480 liner, ocean liner<br>0.0601708 container ship, containership, container vessel<br>0.0513268 catamaran|
-resnet50_v1b_gn ||
 resnet50_v1c |0.1537983 liner, ocean liner<br>0.1531646 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1442180 catamaran<br>0.0900431 container ship, containership, container vessel<br>0.0479482 dock, dockage, docking facility|
 resnet50_v1d |0.2062457 lifeboat<br>0.0950574 beacon, lighthouse, beacon light, pharos<br>0.0893152 liner, ocean liner<br>0.0759133 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0445664 submarine, pigboat, sub, U-boat|
 resnet101_v1 |0.2196445 beacon, lighthouse, beacon light, pharos<br>0.1348773 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0985300 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0834722 fireboat<br>0.0616940 drilling platform, offshore rig|
