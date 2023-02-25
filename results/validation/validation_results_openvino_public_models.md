@@ -445,7 +445,7 @@ Image resolution: 1024 x 768
 
 <div style='float: center'>
 <img width="300" src="images\Meeting_294.jpg">
-<img height="225" src="images\Meeting_294_bounding.bmp">
+<img width="300" src="images\Meeting_294_bounding.bmp">
 </div>
 
 Bounding box (upper left and bottom right corners):<br>FACE (170, 124), (235, 208)<br>FACE (775, 133), (841, 226)<br>
