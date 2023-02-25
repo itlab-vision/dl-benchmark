@@ -2,7 +2,3 @@
     path = src/onnxruntime_benchmark/thirdparty/gflags
     url = https://github.com/gflags/gflags.git
     branch = master
-[submodule "json"]
-    path = src/onnxruntime_benchmark/thirdparty/nlohmann_json
-    url = https://github.com/nlohmann/json.git
-    branch = master

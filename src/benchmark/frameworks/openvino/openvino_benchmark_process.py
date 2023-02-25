@@ -55,6 +55,23 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
                 except ValueError:
                     return None
 
+    def _add_common_arguments(self, arguments, device):
+        extension = self._test.dep_parameters.extension
+        if extension:
+            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+
+        nireq = self._test.dep_parameters.infer_request
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq', nireq)
+
+        nstreams = self._test.dep_parameters.nstreams
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nstreams', nstreams)
+        nthreads = self._test.dep_parameters.nthreads
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        return arguments
+
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
     def __init__(self, test, executor, log, perf_hint=''):
@@ -73,22 +90,8 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         iteration = self._test.indep_parameters.iteration
 
         arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
-
-        extension = self._test.dep_parameters.extension
-        if extension:
-            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
-
-        nthreads = self._test.dep_parameters.nthreads
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
-
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
-                                                            self._test.dep_parameters.infer_request)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
-
+        arguments = self._add_common_arguments(arguments, device)
         command_line = f'benchmark_app {arguments}'
         return command_line
 
@@ -111,18 +114,7 @@ class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
         arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
                      f'-hint none -api sync ')
 
-        extension = self._test.dep_parameters.extension
-        if extension:
-            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
-
-        nthreads = self._test.dep_parameters.nthreads
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
-                                                            self._test.dep_parameters.infer_request)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
-
+        arguments = self._add_common_arguments(arguments, device)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
 
@@ -160,19 +152,8 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
                      f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
 
-        extension = self._test.dep_parameters.extension
-        if extension:
-            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
-
-        nthreads = self._test.dep_parameters.nthreads
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
-
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
-                                                            self._test.dep_parameters.infer_request)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
+        arguments = self._add_common_arguments(arguments, device)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line
@@ -215,19 +196,7 @@ class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
                      f'-hint none -api sync -report_type "no_counters" '
                      f'-json_stats -report_folder {self._report_path.parent.absolute()}')
 
-        extension = self._test.dep_parameters.extension
-        if extension:
-            arguments = self._add_extension_for_cmd_line(arguments, extension, device)
-
-        nthreads = self._test.dep_parameters.nthreads
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
-                                                            self._test.dep_parameters.infer_request)
-
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
-
+        arguments = self._add_common_arguments(arguments, device)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
 

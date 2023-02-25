@@ -60,7 +60,7 @@ RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git 
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN pip3 uninstall opencv-python -y && pip3 install opencv-python-headless
+RUN pip3 uninstall opencv-python -y && pip3 install "opencv-python-headless<4.7"
 RUN /bin/bash -c "accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
 
 #DLB

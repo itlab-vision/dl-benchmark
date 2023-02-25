@@ -11,7 +11,6 @@ class TensorFlowLiteParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG = 'Layout'
-        CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG = 'OutputNames'
         CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
         CONFIG_FRAMEWORK_DEPENDENT_DELEGATE = 'Delegate'
         CONFIG_FRAMEWORK_DEPENDENT_DELEGATE_OPTIONS = 'DelegateOptions'
@@ -30,8 +29,6 @@ class TensorFlowLiteParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG)[0].firstChild
-        _output_names = dep_parameters_tag.getElementsByTagName(
-            CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
         _delegate = dep_parameters_tag.getElementsByTagName(
@@ -46,7 +43,6 @@ class TensorFlowLiteParametersParser(DependentParametersParser):
             input_shape=_input_shape.data if _input_shape else None,
             input_name=_input_name.data if _input_name else None,
             layout=_layout.data if _layout else None,
-            output_names=_output_names.data if _output_names else None,
             thread_count=_thread_count.data if _thread_count else None,
             delegate=_delegate.data if _delegate else None,
             delegate_options=_delegate_options.data if _delegate_options else None,
@@ -55,14 +51,13 @@ class TensorFlowLiteParametersParser(DependentParametersParser):
 
 class TensorFlowLiteParameters(FrameworkParameters):
     def __init__(self, channel_swap, mean, input_scale, input_shape, layout, input_name,
-                 output_names, thread_count, delegate, delegate_options):
+                 thread_count, delegate, delegate_options):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
         self.input_shape = None
         self.input_name = None
         self.layout = None
-        self.output_names = None
         self.nthreads = None
         self.delegate = None
         self.delegate_options = None
@@ -79,8 +74,6 @@ class TensorFlowLiteParameters(FrameworkParameters):
             self.input_name = input_name
         if self._parameter_not_is_none(layout):
             self.layout = layout
-        if self._parameter_not_is_none(output_names):
-            self.output_names = output_names
         if self._parameter_not_is_none(thread_count):
             if self._int_value_is_correct(thread_count):
                 self.nthreads = thread_count

@@ -44,7 +44,7 @@ def convert_csv_table_to_xlsx(paths_table_csv, path_table_xlsx, table_type):
     elif table_type == 'accuracy_checker':
         table_xlsx = XlsxAccuracyTable(paths_table_csv, path_table_xlsx)
     else:
-        raise ValueError(f'Incorrect value of the table type "{table_type}"')
+        raise ValueError(f'Incorrect value of the table type {table_type}')
 
     table_xlsx.read_csv_table()
     table_xlsx.create_table_header()

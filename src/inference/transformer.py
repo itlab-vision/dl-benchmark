@@ -6,6 +6,15 @@ LAYER_LAYOUT_TO_IMAGE = {
     'NHWC': [0, 1, 2, 3],
     'NCWH': [0, 3, 2, 1],
     'NWHC': [0, 2, 1, 3],
+    'NCDHW': [0, 4, 1, 2, 3],
+    'NDCHW': [0, 1, 4, 2, 3],
+    'NDHWC': [0, 1, 2, 3, 4],
+    'NDCWH': [0, 1, 4, 3, 2],
+    'NCHWD': [0, 2, 3, 4, 1],
+    'NHWDC': [0, 2, 3, 1, 4],
+    'NHWCD': [0, 2, 3, 4, 1],
+    'NC': [0, 1],
+    'NCH': [0, 1, 2],
 }
 
 
@@ -15,7 +24,7 @@ class Transformer:
         return image
 
     @staticmethod
-    def get_shape_in_chw_order(shape):
+    def get_shape_in_chw_order(shape, *args):
         return shape[1:]
 
     def transform_images(self, images, shape, element_type, *args):
@@ -35,7 +44,7 @@ class OpenVINOTransformer(Transformer):
     def __is_nhwc(self, shape):
         return (len(shape) in [3, 4]) and (shape[len(shape) - 1] in [1, 3])
 
-    def get_shape_in_chw_order(self, shape):
+    def get_shape_in_chw_order(self, shape, *args):
         if self.__is_nhwc(shape):
             return shape[3], shape[1], shape[2]
         return shape[1], shape[2], shape[3]
@@ -84,7 +93,7 @@ class TensorFlowTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
 
-    def get_shape_in_chw_order(self, shape):
+    def get_shape_in_chw_order(self, shape, *args):
         h, w, c = shape[1:]
         return c, h, w
 
@@ -123,13 +132,14 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
     def __init__(self, converting):
         self._converting = converting
 
-    def __is_nhwc(self, shape):
-        return (len(shape) in [3, 4]) and (shape[len(shape) - 1] in [1, 3])
-
-    def get_shape_in_chw_order(self, shape):
-        if self.__is_nhwc(shape):
-            return shape[3], shape[1], shape[2]
-        return shape[1:]
+    def get_shape_in_chw_order(self, shape, input_name):
+        layout = self._converting[input_name]['layout']
+        sort = np.argsort(LAYER_LAYOUT_TO_IMAGE[layout])
+        shape = np.array(shape)[sort]
+        chw = shape[1:]
+        if len(shape) in [4, 5]:
+            chw = shape[-1], shape[-3], shape[-2]
+        return chw
 
     def __set_channel_swap(self, image, input_name):
         channel_swap = self._converting[input_name]['channel_swap']
