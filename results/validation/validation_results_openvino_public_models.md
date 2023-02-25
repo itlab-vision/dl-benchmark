@@ -444,7 +444,7 @@ Data source: [WIDER FACE Dataset][wider_face_dataset]
 Image resolution: 1024 x 768
 
 <div style='float: center'>
-<img src="images\Meeting_294.jpg">
+<img width="300" src="images\Meeting_294.jpg">
 </div>
 
 Bounding box (upper left and bottom right corners):<br>FACE (170, 124), (235, 208)<br>FACE (775, 133), (841, 226)<br>
