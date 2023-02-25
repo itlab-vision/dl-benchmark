@@ -121,7 +121,7 @@ vgg19_bn|+|+|
 xception|+|+|
 xception71|-|-|
 
-# Object detection
+### Object detection
 
 Model | Availability in OMZ (2023.02.24)| Availability in the validation table |
 -|-|-|
