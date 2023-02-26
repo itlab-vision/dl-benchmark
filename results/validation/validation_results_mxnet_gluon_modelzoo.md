@@ -43,6 +43,7 @@ mobilenet0.25|0.1413059 Granny Smith<br>0.0491460 necklace<br>0.0399561 bell pep
 mobilenet0.5 |0.0988460 teapot<br>0.0556895 piggy bank, penny bank<br>0.0552285 saltshaker, salt shaker<br>0.0383402 pitcher, ewer<br>0.0319066 necklace|
 mobilenet0.75|0.1711094 Granny Smith<br>0.1602635 piggy bank, penny bank<br>0.0857521 teapot<br>0.0533995 pitcher, ewer<br>0.0354786 soap dispenser|
 mobilenet1.0 |0.4475225 Granny Smith<br>0.0954533 piggy bank, penny bank<br>0.0523449 saltshaker, salt shaker<br>0.0358669 pencil sharpener<br>0.0232730 dumbbell|
+mobilenet1.0_int8 |0.4552936 Granny Smith<br>0.0632280 piggy bank, penny bank<br>0.0523604 saltshaker, salt shaker<br>0.0327314 pencil sharpener<br>0.0265849 dumbbell|
 mobilenetv2_0.25|0.1189503 saltshaker, salt shaker<br>0.0919519 bell pepper<br>0.0862974 Granny Smith<br>0.0828691 piggy bank, penny bank<br>0.0527703 hair slide|
 mobilenetv2_0.5 |0.1700138 hair slide<br>0.0890763 dumbbell<br>0.0777359 piggy bank, penny bank<br>0.0521625 saltshaker, salt shaker<br>0.0489330 necklace|
 mobilenetv2_0.75|0.3621189 saltshaker, salt shaker<br>0.2135993 Granny Smith<br>0.1286786 piggy bank, penny bank<br>0.0391913 lemon<br>0.0134064 ocarina, sweet potato|
@@ -57,6 +58,7 @@ resnet34_v1 |0.5898067 piggy bank, penny bank<br>0.3150526 Granny Smith<br>0.012
 resnet34_v2 |0.5082690 Granny Smith<br>0.3873709 piggy bank, penny bank<br>0.0163602 pencil sharpener<br>0.0137501 saltshaker, salt shaker<br>0.0071418 dumbbell|
 resnet34_v1b |0.8592082 Granny Smith<br>0.0595315 piggy bank, penny bank<br>0.0257422 pitcher, ewer<br>0.0107621 saltshaker, salt shaker<br>0.0081604 water jug|
 resnet50_v1 |0.7377543 Granny Smith<br>0.0241721 piggy bank, penny bank<br>0.0123405 lemon<br>0.0061283 candle, taper, wax light<br>0.0051573 orange|
+resnet50_v1_int8|0.6387886 Granny Smith<br>0.0295431 piggy bank, penny bank<br>0.0144967 lemon<br>0.0125546 candle, taper, wax light<br>0.0110684 saltshaker, salt shaker|
 resnet50_v2 |0.9931253 Granny Smith<br>0.0017001 piggy bank, penny bank<br>0.0007180 saltshaker, salt shaker<br>0.0006648 dumbbell<br>0.0002998 tennis ball|
 resnet50_v1b |0.5989549 Granny Smith<br>0.1451391 piggy bank, penny bank<br>0.0253168 pitcher, ewer<br>0.0129785 candle, taper, wax light<br>0.0104263 saltshaker, salt shaker|
 resnet50_v1c |0.8618550 Granny Smith<br>0.0188060 candle, taper, wax light<br>0.0055579 orange<br>0.0039412 pitcher, ewer<br>0.0034311 lemon|
@@ -139,6 +141,7 @@ mobilenet0.25|0.7976559 junco, snowbird<br>0.0642661 brambling, Fringilla montif
 mobilenet0.5 |0.6876235 junco, snowbird<br>0.0567821 chickadee<br>0.0440355 house finch, linnet, Carpodacus mexicanus<br>0.0327330 brambling, Fringilla montifringilla<br>0.0170564 hummingbird|
 mobilenet0.75|0.7232150 junco, snowbird<br>0.0267700 brambling, Fringilla montifringilla<br>0.0224716 chickadee<br>0.0173853 water ouzel, dipper<br>0.0107710 house finch, linnet, Carpodacus mexicanus|
 mobilenet1.0 |0.3200681 junco, snowbird<br>0.0977401 chickadee<br>0.0255691 brambling, Fringilla montifringilla<br>0.0200887 water ouzel, dipper<br>0.0052986 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
+mobilenet1.0_int8 | 0.4458332 junco, snowbird<br>0.0757087 chickadee<br>0.0233120 water ouzel, dipper<br>0.0213673 brambling, Fringilla montifringilla<br>0.0034389 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 mobilenetv2_0.25|0.5445739 junco, snowbird<br>0.1674697 chickadee<br>0.0738745 brambling, Fringilla montifringilla<br>0.0237202 house finch, linnet, Carpodacus mexicanus<br>0.0177469 coucal|
 mobilenetv2_0.5 |0.9121019 junco, snowbird<br>0.0402663 chickadee<br>0.0144705 brambling, Fringilla montifringilla<br>0.0111383 house finch, linnet, Carpodacus mexicanus<br>0.0019353 bulbul|
 mobilenetv2_0.75|0.4884860 junco, snowbird<br>0.0884391 chickadee<br>0.0189599 brambling, Fringilla montifringilla<br>0.0151568 water ouzel, dipper<br>0.0111601 hummingbird|
@@ -153,6 +156,7 @@ resnet34_v1 |0.9352032 junco, snowbird<br>0.0226504 water ouzel, dipper<br>0.012
 resnet34_v2 |0.6477929 junco, snowbird<br>0.0750227 water ouzel, dipper<br>0.0672589 brambling, Fringilla montifringilla<br>0.0443260 chickadee<br>0.0321975 goldfinch, Carduelis carduelis|
 resnet34_v1b |0.9445685 junco, snowbird<br>0.0109547 water ouzel, dipper<br>0.0106829 goldfinch, Carduelis carduelis<br>0.0075599 brambling, Fringilla montifringilla<br>0.0043267 chickadee|
 resnet50_v1 |0.8778600 junco, snowbird<br>0.0045333 water ouzel, dipper<br>0.0018932 brambling, Fringilla montifringilla<br>0.0016121 chickadee<br>0.0005472 magpie|
+resnet50_v1_int8 |0.8986668 junco, snowbird<br>0.0042505 water ouzel, dipper<br>0.0019016 brambling, Fringilla montifringilla<br>0.0012305 chickadee<br>0.0005350 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 resnet50_v2 |0.9820374 junco, snowbird<br>0.0070083 water ouzel, dipper<br>0.0032555 chickadee<br>0.0021856 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0017496 brambling, Fringilla montifringilla|
 resnet50_v1b |0.9325832 junco, snowbird<br>0.0022530 water ouzel, dipper<br>0.0019862 chickadee<br>0.0011287 brambling, Fringilla montifringilla<br>0.0005958 goldfinch, Carduelis carduelis|
 resnet50_v1c |0.9273983 junco, snowbird<br>0.0029364 chickadee<br>0.0021531 water ouzel, dipper<br>0.0007963 brambling, Fringilla montifringilla<br>0.0007281 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
@@ -235,6 +239,7 @@ mobilenet0.25|0.1772091 water bottle<br>0.1686604 liner, ocean liner<br>0.095527
 mobilenet0.5 |0.1413260 submarine, pigboat, sub, U-boat<br>0.1064001 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0897172 container ship, containership, container vessel<br>0.0690325 liner, ocean liner<br>0.0603464 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 mobilenet0.75|0.1406201 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0317071 liner, ocean liner<br>0.0312595 beacon, lighthouse, beacon light, pharos<br>0.0274736 container ship, containership, container vessel<br>0.0195056 fireboat|
 mobilenet1.0 |0.0580719 liner, ocean liner<br>0.0576046 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0517998 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0483820 lifeboat<br>0.0473302 water bottle|
+mobilenet1.0_int8 | 0.0885448 liner, ocean liner<br>0.0556101 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0483991 water bottle<br>0.0429513 lifeboat<br>0.0388312 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 mobilenetv2_0.25|0.2591519 liner, ocean liner<br>0.0933797 drilling platform, offshore rig<br>0.0799795 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0531668 fireboat<br>0.0529574 container ship, containership, container vessel|
 mobilenetv2_0.5 |0.1369159 container ship, containership, container vessel<br>0.1195146 liner, ocean liner<br>0.0921707 drilling platform, offshore rig<br>0.0855153 submarine, pigboat, sub, U-boat<br>0.0492694 beacon, lighthouse, beacon light, pharos|
 mobilenetv2_0.75|0.1567852 liner, ocean liner<br>0.0603636 lifeboat<br>0.0488465 pirate, pirate ship<br>0.0427859 container ship, containership, container vessel<br>0.0276454 drilling platform, offshore rig|
@@ -249,6 +254,7 @@ resnet34_v1 |0.5147043 liner, ocean liner<br>0.0504066 submarine, pigboat, sub, 
 resnet34_v2 |0.4267518 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.2477035 container ship, containership, container vessel<br>0.0763714 liner, ocean liner<br>0.0696334 dock, dockage, docking facility<br>0.0447001 beacon, lighthouse, beacon light, pharos|
 resnet34_v1b |0.3476998 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1918807 liner, ocean liner<br>0.1346360 drilling platform, offshore rig<br>0.1013912 container ship, containership, container vessel<br>0.0379062 aircraft carrier, carrier, flattop, attack aircraft carrier|
 resnet50_v1 |0.4411839 liner, ocean liner<br>0.0861827 container ship, containership, container vessel<br>0.0609572 speedboat<br>0.0587049 dock, dockage, docking facility<br>0.0369093 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
+resnet50_v1_int8 |0.3967755 liner, ocean liner<br>0.0905244 container ship, containership, container vessel<br>0.0735052 dock, dockage, docking facility<br>0.0657126 speedboat<br>0.0458605 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 resnet50_v2 |0.4814195 container ship, containership, container vessel<br>0.1134715 liner, ocean liner<br>0.0718216 drilling platform, offshore rig<br>0.0571725 dock, dockage, docking facility<br>0.0450075 lifeboat|
 resnet50_v1b |0.3147515 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1076186 beacon, lighthouse, beacon light, pharos<br>0.0938480 liner, ocean liner<br>0.0601708 container ship, containership, container vessel<br>0.0513268 catamaran|
 resnet50_v1c |0.1537983 liner, ocean liner<br>0.1531646 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1442180 catamaran<br>0.0900431 container ship, containership, container vessel<br>0.0479482 dock, dockage, docking facility|

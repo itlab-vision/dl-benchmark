@@ -27,7 +27,7 @@ mobilenet0.25|+|+|
 mobilenet0.5|+|+|
 mobilenet0.75|+|+|
 mobilenet1.0|+|+|
-mobilenet1.0_int8|+|-|
+mobilenet1.0_int8|+|+|
 mobilenetv2_0.25|+|+|
 mobilenetv2_0.5|+|+|
 mobilenetv2_0.75|+|+|
@@ -73,7 +73,7 @@ resnet34_v1|+|+|
 resnet34_v1b|+|+|
 resnet34_v2|+|+|
 resnet50_v1|+|+|
-resnet50_v1_int8|+|-|
+resnet50_v1_int8|+|+|
 resnet50_v1b|+|+|
 resnet50_v1b_custom|+|-|
 resnet50_v1b_gn|+|-|
