@@ -184,7 +184,7 @@ yolo3_mobilenet1.0_coco|+|-|
 yolo3_mobilenet1.0_custom|+|-|
 yolo3_mobilenet1.0_voc|+|-|
 
-# Semantic segmentation
+### Semantic segmentation
 
 Model | Availability in OMZ (2023.02.24)| Availability in the validation table |
 -|-|-|
