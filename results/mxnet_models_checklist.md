@@ -34,13 +34,13 @@ mobilenetv2_0.75|+|+|
 mobilenetv2_1.0|+|+|
 mobilenetv3_large|+|+|
 mobilenetv3_small|+|+|
-residualattentionnet128|+|-|
-residualattentionnet164|+|-|
-residualattentionnet200|+|-|
-residualattentionnet236|+|-|
-residualattentionnet452|+|-|
-residualattentionnet56|+|-|
-residualattentionnet92|+|-|
+residualattentionnet128|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet164|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet200|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet236|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet452|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet56|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet92|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
 resnest101|+|+|
 resnest14|+|+|
 resnest200|+|+|
@@ -49,25 +49,24 @@ resnest269|+|+|
 resnest50|+|+|
 resnet101_v1|+|+|
 resnet101_v1b|+|+|
-resnet101_v1b_gn|+|-|
 resnet101_v1c|+|+|
 resnet101_v1d|+|+|
 resnet101_v1d_0.73|+|+|
 resnet101_v1d_0.76|+|+|
-resnet101_v1e|+|-|
+resnet101_v1e|+|Error (Failed loading Parameter 'resnetv1e_batchnorm2_gamma' from saved params: shape incompatible expected (128,) vs saved (64,))|
 resnet101_v1s|+|+|
 resnet101_v2|+|+|
 resnet152_v1|+|+|
 resnet152_v1b|+|+|
 resnet152_v1c|+|+|
 resnet152_v1d|+|+|
-resnet152_v1e|+|-|
+resnet152_v1e|+|Error (Failed loading Parameter 'resnetv1e_batchnorm2_gamma' from saved params: shape incompatible expected (128,) vs saved (64,))|
 resnet152_v1s|+|+|
 resnet152_v2|+|+|
 resnet18_v1|+|+|
 resnet18_v1b|+|+|
 resnet18_v1b_0.89|+|+|
-resnet18_v1b_custom|+|-|
+resnet18_v1b_custom|+|+|
 resnet18_v2|+|+|
 resnet34_v1|+|+|
 resnet34_v1b|+|+|
@@ -75,15 +74,15 @@ resnet34_v2|+|+|
 resnet50_v1|+|+|
 resnet50_v1_int8|+|+|
 resnet50_v1b|+|+|
-resnet50_v1b_custom|+|-|
-resnet50_v1b_gn|+|-|
+resnet50_v1b_custom|+|+|
+resnet50_v1b_gn|+|+|
 resnet50_v1c|+|+|
 resnet50_v1d|+|+|
 resnet50_v1d_0.11|+|+|
 resnet50_v1d_0.37|+|+|
 resnet50_v1d_0.48|+|+|
 resnet50_v1d_0.86|+|+|
-resnet50_v1e|+|-|
+resnet50_v1e|+|Error (Failed loading Parameter 'resnetv1e_batchnorm0_gamma' from saved params: shape incompatible expected (64,) vs saved (32,))|
 resnet50_v1s|+|+|
 resnet50_v2|+|+|
 resnext101_32x4d|+|+|
@@ -93,11 +92,11 @@ se_resnext101_32x4d|+|+|
 se_resnext101_64x4d|+|+|
 se_resnext50_32x4d|+|+|
 senet_154|+|+|
-senet_154e|+|-|
+senet_154e|+|Error (Parameter 'features.11.0.downsample.1.weight' is missing...)|
 squeezenet1.0|+|+|
 squeezenet1.1|+|+|
-shufflenet_v1|+|-|
-shufflenet_v2|+|-|
+shufflenet_v1|+|Error (Parameter 'shufflenetv10_conv0_weight' has not been initialized)|
+shufflenet_v2|+|Error (Parameter 'shufflenetv20_conv0_weight' has not been initialized)|
 vgg11|+|+|
 vgg11_bn|+|+|
 vgg13|+|+|
