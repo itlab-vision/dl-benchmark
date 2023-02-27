@@ -123,13 +123,17 @@ void ONNXLauncher::fill_inputs_outputs_info() {
 IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
     std::vector<TensorDescr> input_tensors_info;
     for (size_t i = 0; i < io.input_names.size(); ++i) {
+        std::vector<int> shape(io.input_shapes[i].size());
+        std::transform(io.input_shapes[i].begin(), io.input_shapes[i].end(), shape.begin(), [](int64_t x) { return static_cast<int>(x);});
         input_tensors_info.push_back(
-            {std::string(io.input_names[i]), io.input_shapes[i], io.input_shapes[i], "", get_data_precision(io.input_data_precisions[i])});
+            {std::string(io.input_names[i]), shape, shape, "", get_data_precision(io.input_data_precisions[i])});
     }
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < io.output_names.size(); ++i) {
+        std::vector<int> shape(io.output_shapes[i].size());
+        std::transform(io.output_shapes[i].begin(), io.output_shapes[i].end(), shape.begin(), [](int64_t x) { return static_cast<int>(x);});
         output_tensors_info.push_back(
-            {std::string(io.output_names[i]), io.output_shapes[i], {}, "", get_data_precision(io.output_data_precisions[i])});
+            {std::string(io.output_names[i]), shape, {}, "", get_data_precision(io.output_data_precisions[i])});
     }
     return {input_tensors_info, output_tensors_info};
 }
@@ -141,11 +145,12 @@ void ONNXLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> 
     for (int i = 0; i < tensor_buffers.size(); ++i) {
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
             const auto& buffer = tensor_buffers[i][j];
+            std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
                                     buffer.get<void>(),
                                     buffer.size(),
-                                    buffer.shape().data(),
-                                    buffer.shape().size(),
+                                    shape.data(),
+                                    shape.size(),
                                     get_onnx_data_type(buffer.precision())));
         }
     }
@@ -159,12 +164,14 @@ void ONNXLauncher::run(const std::vector<Ort::Value> &input_tensors) {
     total_start_time = std::min(HighresClock::now(), total_start_time);
 
     infer_start_time = HighresClock::now();
-    session->Run(Ort::RunOptions{nullptr},
+    auto output = session->Run(Ort::RunOptions{nullptr},
                  io.input_names.data(),
                  input_tensors.data(),
                  io.input_names.size(),
                  io.output_names.data(),
                  io.output_names.size());
+    // float* floatarr = output.front().GetTensorMutableData<float>();
+    // std::vector<float> a(floatarr, floatarr + 1000);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
     total_end_time = std::max(HighresClock::now(), total_end_time);

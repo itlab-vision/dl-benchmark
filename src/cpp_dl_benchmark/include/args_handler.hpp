@@ -30,7 +30,10 @@ std::string shape_string(std::vector<T> shape) {
     std::ostringstream s;
     s << "[";
     std::copy(shape.begin(), shape.end() - 1, std::ostream_iterator<T>(s, ","));
-    s << shape.back() << "]";
+    if (!shape.empty()) {
+        s << shape.back();
+    }
+    s << "]";
     return s.str();
 }
 

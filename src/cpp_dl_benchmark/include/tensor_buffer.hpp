@@ -15,7 +15,7 @@ class TensorBuffer {
         data_precision(utils::DataPrecision::UNKNOWN)
     {}
 
-    TensorBuffer(size_t elements_count, const std::vector<int64_t> shape, const utils::DataPrecision dp) :
+    TensorBuffer(size_t elements_count, const std::vector<int> shape, const utils::DataPrecision dp) :
         data(new char[elements_count * elem_size(dp)]),
         bytes_count(elements_count * elem_size(dp)),
         elements_count(elements_count),
@@ -114,7 +114,7 @@ class TensorBuffer {
         return elements_count;
     }
 
-    std::vector<int64_t> shape() const {
+    const std::vector<int>& shape() const {
         return data_shape;
     }
 
@@ -153,6 +153,6 @@ class TensorBuffer {
     char* data;
     int64_t bytes_count;
     int64_t elements_count;
-    std::vector<int64_t> data_shape;
+    std::vector<int> data_shape;
     utils::DataPrecision data_precision;
 };

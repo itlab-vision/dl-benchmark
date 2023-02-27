@@ -59,13 +59,16 @@ public:
 
     void warmup_inference() override;
     int evaluate(int iterations_num, uint64_t time_limit_ns) override;
-private:
 
+private:
     cv::dnn::Net net;
     std::vector<std::string> input_names;
-    std::vector<std::vector<int64_t>> input_shapes;
+    std::vector<std::string> output_names;
+
     std::vector<cv::Mat> blobs;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
+
+    std::vector<cv::Mat> output_blobs;
 
     void run(const cv::Mat &input_blob);
 };

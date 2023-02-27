@@ -375,9 +375,9 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
                                            const std::string &scale_string) {
     // parse input layouts and input shapes
     std::map<std::string, std::string> input_layouts = args::parse_shape_layout_string(layout_string);
-    std::map<std::string, std::vector<int64_t>> input_shapes;
+    std::map<std::string, std::vector<int>> input_shapes;
     for (const auto &[input_name, shape] : args::parse_shape_layout_string(shape_string)) {
-        input_shapes.emplace(input_name, args::string_to_vec<long>(shape, ','));
+        input_shapes.emplace(input_name, args::string_to_vec<int>(shape, ','));
     }
 
     // parse mean and check

@@ -18,8 +18,8 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 struct TensorDescr {
     std::string name;
-    std::vector<int64_t> shape;
-    std::vector<int64_t> data_shape;
+    std::vector<int> shape;
+    std::vector<int> data_shape;
     std::string layout;
     utils::DataPrecision data_precision;
 
@@ -28,10 +28,10 @@ struct TensorDescr {
     bool is_dynamic() const;
     bool has_batch() const;
     bool is_dynamic_batch() const;
-    int64_t get_dimension_by_layout(char ch) const;
-    int64_t channels() const;
-    int64_t width() const;
-    int64_t height() const;
+    int get_dimension_by_layout(char ch) const;
+    int channels() const;
+    int width() const;
+    int height() const;
     void set_batch(int batch_size);
 };
 

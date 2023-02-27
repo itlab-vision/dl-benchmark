@@ -38,7 +38,7 @@ void TensorDescr::set_batch(int batch_size) {
     }
 }
 
-int64_t TensorDescr::get_dimension_by_layout(char ch) const {
+int TensorDescr::get_dimension_by_layout(char ch) const {
     size_t pos = layout.find(ch);
     if (pos == std::string::npos) {
         throw std::invalid_argument("Can't get " + std::string(ch, 1) + " from layout " + layout);
@@ -46,15 +46,15 @@ int64_t TensorDescr::get_dimension_by_layout(char ch) const {
     return data_shape.at(pos);
 }
 
-int64_t TensorDescr::channels() const {
+int TensorDescr::channels() const {
     return get_dimension_by_layout('C');
 }
 
-int64_t TensorDescr::width() const {
+int TensorDescr::width() const {
     return get_dimension_by_layout('W');
 }
 
-int64_t TensorDescr::height() const {
+int TensorDescr::height() const {
     return get_dimension_by_layout('H');
 }
 

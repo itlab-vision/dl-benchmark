@@ -44,7 +44,7 @@ static const std::map<DataPrecision, std::string> precision_to_str_map = {
 
 std::string get_precision_str(DataPrecision p);
 
-std::string guess_layout_from_shape(const std::vector<int64_t> &shape);
+std::string guess_layout_from_shape(const std::vector<int> &shape);
 
 std::string format_double(const double number);
 

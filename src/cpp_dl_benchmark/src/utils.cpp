@@ -26,7 +26,7 @@ std::string utils::get_precision_str(DataPrecision p) {
     return "UNKNOWN";
 }
 
-std::string utils::guess_layout_from_shape(const std::vector<int64> &shape) {
+std::string utils::guess_layout_from_shape(const std::vector<int> &shape) {
     if (shape.size() == 2) {
         return "NC";
     }
