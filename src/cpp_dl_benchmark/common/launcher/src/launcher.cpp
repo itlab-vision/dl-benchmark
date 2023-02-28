@@ -58,10 +58,6 @@ int TensorDescr::height() const {
     return get_dimension_by_layout('H');
 }
 
-// int Launcher::get_batch_size() const {
-//     return batch
-// }
-
 std::vector<double> Launcher::get_latencies() const {
     return latencies;
 }

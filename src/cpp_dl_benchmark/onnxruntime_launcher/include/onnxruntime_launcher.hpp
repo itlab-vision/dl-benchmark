@@ -26,7 +26,6 @@ public:
     ONNXLauncher(int nthreads_) : Launcher(nthreads_) {};
     virtual ~ONNXLauncher() {};
 
-    void configure_framework(const std::vector<std::string> &args) override;
     void log_framework_version() const override;
 
     void read(const std::string &model) override;
@@ -35,7 +34,6 @@ public:
     void fill_inputs_outputs_info() override;
     IOTensorsInfo get_io_tensors_info() const override;
 
-    // void set_batch_size(int batch_size) override {}; // TODO
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tensor_buffers) override;
 
     void warmup_inference() override;
@@ -56,7 +54,7 @@ private:
 
     std::shared_ptr<Ort::Env> env;
     std::shared_ptr<Ort::Session> session;
-
+    Ort::SessionOptions session_options;
     std::vector<std::vector<Ort::Value>> tensors;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 

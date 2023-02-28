@@ -19,16 +19,13 @@
 #include <string>
 #include <vector>
 
-void OCVLauncher::configure_framework(const std::vector<std::string> &args) {
-    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-}
-
 void OCVLauncher::log_framework_version() const {
      logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
 
 void OCVLauncher::read(const std::string &model_path) {
     net = cv::dnn::readNet(model_path);
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
     int inputs_count = net.getLayersCount("__NetInputLayer__");
     if (inputs_count != 1) {
         throw std::runtime_error("Only models with 1 input supported.");
@@ -41,7 +38,11 @@ void OCVLauncher::fill_inputs_outputs_info() {
 }
 
 IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
-    std::vector<TensorDescr> input_tensors_info{{input_names[0], {-1,-1,-1,-1}, {}, "", utils::DataPrecision::FP32}};
+    std::vector<TensorDescr> input_tensors_info{{input_names[0],
+                                                {-1,-1,-1,-1}, // input shape must be provided from cmd
+                                                {},
+                                                "",
+                                                utils::DataPrecision::FP32}};  // only CV_32F type for IO supported
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < output_names.size(); ++i) {
         output_tensors_info.push_back(
@@ -52,7 +53,6 @@ IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
 
 void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tbuffers) {
     tensor_buffers = std::move(tbuffers);
-    // blobs.resize(tensor_buffers.size());
     for (int i = 0; i < tensor_buffers.size(); ++i) {
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
             blobs.push_back(cv::Mat(tensor_buffers[i][j].shape(), CV_32F, tensor_buffers[i][j].get<void>()));
@@ -70,7 +70,6 @@ void OCVLauncher::run(const cv::Mat &input_blob) {
 
     infer_start_time = HighresClock::now();
     net.forward(output_blobs, output_names);
-    // std::vector<float> a((float*)output_blobs[0].data, (float*)output_blobs[0].data + 1000);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
     total_end_time = std::max(HighresClock::now(), total_end_time);

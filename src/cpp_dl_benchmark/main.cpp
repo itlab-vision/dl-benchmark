@@ -178,6 +178,13 @@ int main(int argc, char *argv[]) {
                     report->add_record(Report::Category::CMD_OPTIONS, {{flag.name, flag.current_value}});
                 }
             }
+            report->add_record(Report::Category::CMD_OPTIONS, {{"inference_framework",
+                                                                #ifdef OPENCV_LAUNCHER
+                                                                "opencv"
+                                                                #elif ONNXRUNTIME_LAUNCHER
+                                                                "onnxruntime"
+                                                                #endif
+                                                                }});
         }
         auto input_files = args::parse_input_files_arguments(gflags::GetArgvs());
 
@@ -280,8 +287,6 @@ int main(int argc, char *argv[]) {
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms")); // Measuring model performance
 
         // warm up before benhcmarking
-        // launcher->run(tensors[0]);
-
         launcher->warmup_inference();
         auto first_inference_time = launcher->get_latencies()[0];
         logger::info << "Warming up inference took " << utils::format_double(first_inference_time) << " ms"
@@ -290,17 +295,7 @@ int main(int argc, char *argv[]) {
 
         int iterations_num = launcher->evaluate(num_iterations, time_limit_ns);
 
-        // int64_t iteration = 0;
-        // start_time = HighresClock::now();
-        // auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-        // while ((num_iterations != 0 && iteration < num_iterations) ||
-        //        (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        //     launcher->run(tensors[iteration % tensors.size()]);
-        //     ++iteration;
-        //     uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-        // }
-
-        log_step();
+        log_step();  // Saving statistics report
         Metrics metrics(launcher->get_latencies(), batch_size);
         double total_time = launcher->get_total_time_ms();
         // Performance metrics report

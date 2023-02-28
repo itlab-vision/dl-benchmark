@@ -55,7 +55,6 @@ public:
     Launcher(int nthreads) : nthreads(nthreads) {};
     virtual ~Launcher() {}
 
-    virtual void configure_framework(const std::vector<std::string> &args) = 0;
     virtual void log_framework_version() const = 0;
 
     virtual void read(const std::string &model) = 0;
@@ -64,8 +63,6 @@ public:
     virtual void fill_inputs_outputs_info() = 0;
     virtual IOTensorsInfo get_io_tensors_info() const = 0;
 
-    // virtual void set_batch_size(int batch_size) = 0;
-    // int get_batch_size() const;
     virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tensor_buffers) = 0;
 
     virtual void warmup_inference() = 0;

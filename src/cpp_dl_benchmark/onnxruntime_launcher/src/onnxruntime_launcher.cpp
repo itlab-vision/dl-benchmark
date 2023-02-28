@@ -50,11 +50,7 @@ ONNXTensorElementDataType get_onnx_data_type(utils::DataPrecision precision) {
     }
     throw std::invalid_argument("Does not support element data type " + utils::get_precision_str(precision));
 }
-}
-
-void ONNXLauncher::configure_framework(const std::vector<std::string> &args) {
-
-}
+}  // namespace
 
 void ONNXLauncher::log_framework_version() const {
      logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
@@ -170,8 +166,6 @@ void ONNXLauncher::run(const std::vector<Ort::Value> &input_tensors) {
                  io.input_names.size(),
                  io.output_names.data(),
                  io.output_names.size());
-    // float* floatarr = output.front().GetTensorMutableData<float>();
-    // std::vector<float> a(floatarr, floatarr + 1000);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
     total_end_time = std::max(HighresClock::now(), total_end_time);

@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# clang-format configuration file
+# Required version: clang-format-16
+
 IndentWidth: 4
 UseTab: Never
 ColumnLimit: 120
