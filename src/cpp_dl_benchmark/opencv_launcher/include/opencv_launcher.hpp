@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "inputs_preparation/tensor_utils.hpp"
 #include "common_launcher/launcher.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
@@ -22,13 +22,13 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class OCVLauncher : public Launcher {
 public:
-    OCVLauncher(int nthreads_) : Launcher(nthreads_) {};
-    virtual ~OCVLauncher() {};
+    OCVLauncher(int nthreads_) : Launcher(nthreads_){};
+    virtual ~OCVLauncher(){};
 
     void log_framework_version() const override;
 
-    void read(const std::string &model) override;
-    void load() override {};
+    void read(const std::string& model) override;
+    void load() override{};
 
     void fill_inputs_outputs_info() override;
     IOTensorsInfo get_io_tensors_info() const override;
@@ -48,5 +48,5 @@ private:
 
     std::vector<cv::Mat> output_blobs;
 
-    void run(const cv::Mat &input_blob);
+    void run(const cv::Mat& input_blob);
 };

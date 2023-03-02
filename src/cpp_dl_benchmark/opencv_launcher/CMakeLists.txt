@@ -1,7 +1,6 @@
 # Copyright (C) 2023 KNS Group LLC (YADRO)
 # SPDX-License-Identifier: Apache-2.0
 #
-add_definitions(-DOCV_DNN)
 
 find_package(OpenCV REQUIRED dnn)
 

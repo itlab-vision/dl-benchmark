@@ -4,8 +4,8 @@
 
 #include "opencv_launcher.hpp"
 
-#include "utils/args_handler.hpp"
 #include "inputs_preparation/inputs_preparation.hpp"
+#include "utils/args_handler.hpp"
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
@@ -20,10 +20,10 @@
 #include <vector>
 
 void OCVLauncher::log_framework_version() const {
-     logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
+    logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
 
-void OCVLauncher::read(const std::string &model_path) {
+void OCVLauncher::read(const std::string& model_path) {
     net = cv::dnn::readNet(model_path);
     net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
     int inputs_count = net.getLayersCount("__NetInputLayer__");
@@ -39,14 +39,13 @@ void OCVLauncher::fill_inputs_outputs_info() {
 
 IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
     std::vector<TensorDescr> input_tensors_info{{input_names[0],
-                                                {-1,-1,-1,-1}, // input shape must be provided from cmd
-                                                {},
-                                                "",
-                                                utils::DataPrecision::FP32}};  // only CV_32F type for IO supported
+                                                 {-1, -1, -1, -1},  // input shape must be provided from cmd
+                                                 {},
+                                                 "",
+                                                 utils::DataPrecision::FP32}};  // only CV_32F type for IO supported
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < output_names.size(); ++i) {
-        output_tensors_info.push_back(
-            {std::string(output_names[i]), {}, {}, "", utils::DataPrecision::FP32});
+        output_tensors_info.push_back({std::string(output_names[i]), {}, {}, "", utils::DataPrecision::FP32});
     }
     return {input_tensors_info, output_tensors_info};
 }
@@ -64,7 +63,7 @@ void OCVLauncher::warmup_inference() {
     run(blobs[0]);
 }
 
-void OCVLauncher::run(const cv::Mat &input_blob) {
+void OCVLauncher::run(const cv::Mat& input_blob) {
     net.setInput(input_blob);
     total_start_time = std::min(HighresClock::now(), total_start_time);
 
@@ -80,7 +79,7 @@ int OCVLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     auto start_time = HighresClock::now();
     auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
     while ((iterations_num != 0 && iteration < iterations_num) ||
-            (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
+           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
         run(blobs[iteration % blobs.size()]);
         ++iteration;
         uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
