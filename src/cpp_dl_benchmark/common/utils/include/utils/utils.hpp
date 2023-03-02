@@ -5,8 +5,6 @@
 #pragma once
 #include "logger.hpp"
 
-#include <onnxruntime_cxx_api.h>
-
 #include <chrono>
 #include <cstdint>
 #include <exception>
@@ -32,24 +30,22 @@ enum class DataPrecision : unsigned int {
     UNKNOWN
 };
 
-static const std::map<DataPrecision, std::string> precision_to_str_map = {
-    {DataPrecision::FP32, "FP32"},
-    {DataPrecision::FP16, "FP16"},
-    {DataPrecision::U8, "U8"},
-    {DataPrecision::I8, "INT8"},
-    {DataPrecision::I32, "INT32"},
-    {DataPrecision::I64, "INT64"},
-    {DataPrecision::BOOL, "BOOL"}
-};
+static const std::map<DataPrecision, std::string> precision_to_str_map = {{DataPrecision::FP32, "FP32"},
+                                                                          {DataPrecision::FP16, "FP16"},
+                                                                          {DataPrecision::U8, "U8"},
+                                                                          {DataPrecision::I8, "INT8"},
+                                                                          {DataPrecision::I32, "INT32"},
+                                                                          {DataPrecision::I64, "INT64"},
+                                                                          {DataPrecision::BOOL, "BOOL"}};
 
 std::string get_precision_str(DataPrecision p);
 
-std::string guess_layout_from_shape(const std::vector<int> &shape);
+std::string guess_layout_from_shape(const std::vector<int>& shape);
 
 std::string format_double(const double number);
 
-template <typename T>
-std::vector<T> reorder(const std::vector<T> &vec, const std::vector<int> &indexes) {
+template<typename T>
+std::vector<T> reorder(const std::vector<T>& vec, const std::vector<int>& indexes) {
     if (vec.size() != indexes.size()) {
         throw std::invalid_argument("Sizes of two vectors must be equal.");
     }
@@ -73,4 +69,4 @@ static inline uint64_t sec_to_ms(uint32_t duration) {
 static inline uint64_t sec_to_ns(uint32_t duration) {
     return duration * 1000000000LL;
 }
-} // namespace utils
+}  // namespace utils

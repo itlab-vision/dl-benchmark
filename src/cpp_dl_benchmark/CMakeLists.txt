@@ -3,37 +3,75 @@
 #
 
 cmake_minimum_required(VERSION 3.13)
-project(onnxruntime_benchmark)
+
+project(cpp_dl_benchmark CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-find_package(OpenCV REQUIRED core imgproc imgcodecs dnn)
-find_package(nlohmann_json REQUIRED HINTS /usr/lib/cmake)
+option(ENABLE_CLANG_FORMAT "Enable clang-format during the build" ON)
+option(BUILD_ONNXRUNTIME_LAUNCHER "Build OpenCV launcher" ON)
+option(BUILD_OPENCV_LAUNCHER "Build OpenCV launcher" ON)
 
-# search for ORT_INSTALL_DIR in env variables
-if (NOT DEFINED ORT_INSTALL_DIR)
-    if (DEFINED ENV{ORT_INSTALL_DIR})
-        set(ORT_INSTALL_DIR $ENV{ORT_INSTALL_DIR})
-    else()
-        message(FATAL_ERROR "Could not find ONNX Runtime install directory")
+include(CMakeParseArguments)
+
+# check_code_style(NAME <target name>
+#     CLANG_FORMAT <ON/OFF>)
+macro(check_code_style)
+    set(oneValueArgs NAME CLANG_FORMAT)
+    cmake_parse_arguments(CHECK "${options}" "${oneValueArgs}"
+        "${multiValueArgs}" ${ARGN})
+    if(CHECK_CLANG_FORMAT)
+        add_clang_format_target(${CHECK_NAME}_clang_format FOR_TARGETS ${CHECK_NAME})
     endif()
-endif()
+endmacro()
 
-find_library(ORT_LIBRARIES onnxruntime
-            ${ORT_INSTALL_DIR}/lib
-            CMAKE_FIND_ROOT_PATH_BOTH)
-find_path(ORT_INCLUDE onnxruntime_cxx_api.h
-        ${ORT_INSTALL_DIR}/include/onnxruntime/core/session
-        CMAKE_FIND_ROOT_PATH_BOTH)
+# add_launcher(NAME <target name>
+#     SOURCES <source files>
+#     [HEADERS <header files>]
+#     [INCLUDE_DIRECTORIES <include dir>]
+#     [DEPENDENCIES <dependencies>]
+#     [DEFINITIONS <DEFINITIONS>])
+macro(add_launcher)
+    set(oneValueArgs NAME)
+    set(multiValueArgs SOURCES HEADERS DEPENDENCIES INCLUDE_DIRECTORIES DEFINITIONS)
+    cmake_parse_arguments(LAUNCHER "${options}" "${oneValueArgs}"
+                          "${multiValueArgs}" ${ARGN})
+    # Create executable file from sources
+    add_executable(${LAUNCHER_NAME} "${LAUNCHER_SOURCES};${CMAKE_SOURCE_DIR}/main.cpp" ${LAUNCHER_HEADERS})
 
+    check_code_style(NAME ${LAUNCHER_NAME}
+        CLANG_FORMAT ${ENABLE_CLANG_FORMAT})
+
+    if(LAUNCHER_INCLUDE_DIRECTORIES)
+        target_include_directories(${LAUNCHER_NAME} PRIVATE ${LAUNCHER_INCLUDE_DIRECTORIES})
+    endif()
+
+    target_link_libraries(${LAUNCHER_NAME} PRIVATE
+        opencv_core opencv_imgproc opencv_imgcodecs
+        common_launcher inputs_preparation utils
+        ${LAUNCHER_DEPENDENCIES}
+        gflags
+    )
+
+    target_compile_definitions(${LAUNCHER_NAME} PRIVATE ${LAUNCHER_DEFINITIONS})
+endmacro()
+
+find_package(CMakeScripts REQUIRED
+             PATHS "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+             NO_CMAKE_FIND_ROOT_PATH
+             NO_DEFAULT_PATH)
+find_package(OpenCV REQUIRED core imgproc imgcodecs)
+
+add_subdirectory(common)
 add_subdirectory(thirdparty/gflags)
 
-file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*")
+if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_IE_LAUNCHER)
+    add_subdirectory(opencv_launcher)
+endif()
 
-add_executable(${PROJECT_NAME} ${sources} ${headers})
-
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include" ${ORT_INCLUDE})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE gflags nlohmann_json::nlohmann_json ${OpenCV_LIBRARIES} ${ORT_LIBRARIES})
-
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 LINKER_LANGUAGE CXX)
+if (BUILD_ONNXRUNTIME_LAUNCHER)
+    add_subdirectory(onnxruntime_launcher)
+endif()

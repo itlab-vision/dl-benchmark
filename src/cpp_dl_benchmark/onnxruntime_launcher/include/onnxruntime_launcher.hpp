@@ -3,12 +3,10 @@
 //
 
 #pragma once
-#include "tensor_buffer.hpp"
-#include "launcher.hpp"
-#include "logger.hpp"
-#include "utils.hpp"
-
-#include <opencv2/core/mat.hpp>
+#include "common_launcher/launcher.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
+#include "utils/logger.hpp"
+#include "utils/utils.hpp"
 
 #include <onnxruntime_cxx_api.h>
 
@@ -23,13 +21,13 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class ONNXLauncher : public Launcher {
 public:
-    ONNXLauncher(int nthreads_) : Launcher(nthreads_) {};
-    virtual ~ONNXLauncher() {};
+    ONNXLauncher(int nthreads_) : Launcher(nthreads_){};
+    virtual ~ONNXLauncher(){};
 
     void log_framework_version() const override;
 
-    void read(const std::string &model) override;
-    void load() override {};
+    void read(const std::string& model) override;
+    void load() override{};
 
     void fill_inputs_outputs_info() override;
     IOTensorsInfo get_io_tensors_info() const override;
@@ -41,12 +39,12 @@ public:
 
 private:
     struct IOInfo {
-        std::vector<const char *> input_names;
+        std::vector<const char*> input_names;
         std::vector<Ort::AllocatedStringPtr> input_names_ptr;
         std::vector<ONNXTensorElementDataType> input_data_precisions;
         std::vector<std::vector<int64_t>> input_shapes;
 
-        std::vector<const char *> output_names;
+        std::vector<const char*> output_names;
         std::vector<Ort::AllocatedStringPtr> output_names_ptr;
         std::vector<ONNXTensorElementDataType> output_data_precisions;
         std::vector<std::vector<int64_t>> output_shapes;
@@ -58,5 +56,5 @@ private:
     std::vector<std::vector<Ort::Value>> tensors;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    void run(const std::vector<Ort::Value> &input_tensors);
+    void run(const std::vector<Ort::Value>& input_tensors);
 };

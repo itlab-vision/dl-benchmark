@@ -2,19 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#include "inputs_preparation.hpp"
+#include "inputs_preparation/inputs_preparation.hpp"
 
-#include "args_handler.hpp"
-#include "tensor_buffer.hpp"
-#include "logger.hpp"
-#include "utils.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
+#include "utils/args_handler.hpp"
+#include "utils/logger.hpp"
+#include "utils/utils.hpp"
 
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
-#include <onnxruntime_cxx_api.h>
 
 #include <fstream>
 #include <limits>
@@ -24,20 +22,20 @@
 #include <string>
 #include <vector>
 
-template <typename T>
+template<typename T>
 using UniformDistribution = typename std::conditional<
     std::is_floating_point<T>::value,
     std::uniform_real_distribution<T>,
     typename std::conditional<std::is_integral<T>::value, std::uniform_int_distribution<T>, void>::type>::type;
 
-cv::Mat read_image(const std::string &img_path, size_t height, size_t width) {
+cv::Mat read_image(const std::string& img_path, size_t height, size_t width) {
     auto img = cv::imread(img_path);
     cv::resize(img, img, cv::Size(width, height));
     return img;
 }
 
-template <typename T>
-const T get_mat_value(const cv::Mat &mat, size_t h, size_t w, size_t c) {
+template<typename T>
+const T get_mat_value(const cv::Mat& mat, size_t h, size_t w, size_t c) {
     switch (mat.type()) {
         case CV_8UC1:
             return static_cast<T>(mat.at<uchar>(h, w));
@@ -51,17 +49,18 @@ const T get_mat_value(const cv::Mat &mat, size_t h, size_t w, size_t c) {
     throw std::runtime_error("cv::Mat type is not recognized");
 };
 
-template <class T, class T2>
-TensorBuffer create_random_tensor(const inputs::InputDescr &input_descr,
-                                T rand_min = std::numeric_limits<uint8_t>::min(),
-                                T rand_max = std::numeric_limits<uint8_t>::max()) {
+template<class T, class T2>
+TensorBuffer create_random_tensor(const inputs::InputDescr& input_descr,
+                                  T rand_min = std::numeric_limits<uint8_t>::min(),
+                                  T rand_max = std::numeric_limits<uint8_t>::max()) {
     logger::info << "\t\tRandomly generated data" << logger::endl;
     auto tensor_descr = input_descr.tensor_descr;
 
     int64_t tensor_size =
-            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
-    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);;
-    auto *tensor_data = buff.get<T>();
+        std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+    TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
+    ;
+    auto* tensor_data = buff.get<T>();
 
     std::mt19937 gen(0);
     UniformDistribution<T2> distribution(rand_min, rand_max);
@@ -71,22 +70,22 @@ TensorBuffer create_random_tensor(const inputs::InputDescr &input_descr,
     return buff;
 }
 
-template <class T>
-TensorBuffer create_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+template<class T>
+TensorBuffer create_tensor_from_image(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
-    const auto &files = input_descr.files;
+    const auto& files = input_descr.files;
 
     int64_t tensor_size =
-            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+        std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
     TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
-    auto *tensor_data = buff.get<T>();
+    auto* tensor_data = buff.get<T>();
 
     size_t channels = tensor_descr.channels();
     size_t width = tensor_descr.width();
     size_t height = tensor_descr.height();
 
     for (int b = 0; b < batch_size; ++b) {
-        const auto &file_path = files[(start_index + b) % files.size()];
+        const auto& file_path = files[(start_index + b) % files.size()];
         logger::info << "\t\t" << file_path << logger::endl;
         cv::Mat img = read_image(file_path, height, width);
         for (size_t w = 0; w < width; ++w) {
@@ -103,14 +102,16 @@ TensorBuffer create_tensor_from_image(const inputs::InputDescr &input_descr, int
     return buff;
 }
 
-template <class T>
-TensorBuffer create_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+template<class T>
+TensorBuffer create_image_info_tensor(const inputs::InputDescr& input_descr,
+                                      const cv::Size& image_size,
+                                      int batch_size) {
     auto tensor_descr = input_descr.tensor_descr;
 
     int64_t tensor_size =
-            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+        std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
     TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
-    auto *tensor_data = buff.get<T>();
+    auto* tensor_data = buff.get<T>();
 
     logger::info << "\t\t" << image_size.width << "x" << image_size.height << logger::endl;
     for (int b = 0; b < batch_size; ++b) {
@@ -131,19 +132,19 @@ TensorBuffer create_image_info_tensor(const inputs::InputDescr &input_descr, con
     return buff;
 }
 
-template <class T>
-TensorBuffer create_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+template<class T>
+TensorBuffer create_tensor_from_binary(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
-    const auto &files = input_descr.files;
+    const auto& files = input_descr.files;
 
     int64_t tensor_size =
-            std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
+        std::accumulate(tensor_descr.data_shape.begin(), tensor_descr.data_shape.end(), 1, std::multiplies<int64_t>());
     TensorBuffer buff(tensor_size, tensor_descr.data_shape, tensor_descr.data_precision);
-    auto *tensor_data = buff.get<char>();
+    auto* tensor_data = buff.get<char>();
 
     for (int b = 0; b < batch_size; ++b) {
         size_t input_id = (start_index + b) % files.size();
-        const auto &file_path = files[input_id];
+        const auto& file_path = files[input_id];
         logger::info << "\t\t" << file_path << logger::endl;
 
         std::ifstream binary_file(file_path, std::ios_base::binary | std::ios_base::ate);
@@ -176,7 +177,7 @@ TensorBuffer create_tensor_from_binary(const inputs::InputDescr &input_descr, in
     return buff;
 }
 
-TensorBuffer get_tensor_from_image(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_image(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
@@ -191,7 +192,7 @@ TensorBuffer get_tensor_from_image(const inputs::InputDescr &input_descr, int ba
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-TensorBuffer get_image_info_tensor(const inputs::InputDescr &input_descr, const cv::Size &image_size, int batch_size) {
+TensorBuffer get_image_info_tensor(const inputs::InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_image_info_tensor<short>(input_descr, image_size, batch_size);
@@ -209,7 +210,7 @@ TensorBuffer get_image_info_tensor(const inputs::InputDescr &input_descr, const 
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-TensorBuffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_binary(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_tensor_from_binary<short>(input_descr, batch_size, start_index);
@@ -230,7 +231,7 @@ TensorBuffer get_tensor_from_binary(const inputs::InputDescr &input_descr, int b
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-TensorBuffer get_random_tensor(const inputs::InputDescr &input_descr) {
+TensorBuffer get_random_tensor(const inputs::InputDescr& input_descr) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_random_tensor<short, short>(input_descr);
@@ -256,12 +257,12 @@ TensorBuffer get_random_tensor(const inputs::InputDescr &input_descr) {
     throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
 }
 
-std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::InputsInfo &inputs_info,
-                                                               int batch_size,
-                                                               int tensors_num) {
+std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::InputsInfo& inputs_info,
+                                                                 int batch_size,
+                                                                 int tensors_num) {
     std::vector<cv::Size> img_input_sizes;
-    for (const auto &[name, input_descr] : inputs_info) {
-        const auto &tensor_descr = input_descr.tensor_descr;
+    for (const auto& [name, input_descr] : inputs_info) {
+        const auto& tensor_descr = input_descr.tensor_descr;
         if (tensor_descr.is_image()) {
             img_input_sizes.emplace_back(static_cast<int>(tensor_descr.width()),
                                          static_cast<int>(tensor_descr.height()));
@@ -272,8 +273,8 @@ std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::I
     int start_file_index = 0;
     for (int i = 0; i < tensors_num; ++i) {
         logger::info << "Input config " << i << logger::endl;
-        for (const auto &[name, input_descr] : inputs_info) {
-            const auto &tensor_descr = input_descr.tensor_descr;
+        for (const auto& [name, input_descr] : inputs_info) {
+            const auto& tensor_descr = input_descr.tensor_descr;
             logger::info << " \t" << name << " (" << tensor_descr.layout << " "
                          << utils::get_precision_str(tensor_descr.data_precision) << " "
                          << args::shape_string(tensor_descr.data_shape) << ")" << logger::endl;
@@ -304,22 +305,22 @@ std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::I
     return tensors;
 }
 
-inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vector<std::string>> &input_files,
-                                           const std::vector<TensorDescr> &model_inputs,
-                                           const std::string &layout_string,
-                                           const std::string &shape_string,
-                                           const std::string &mean_string,
-                                           const std::string &scale_string) {
+inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vector<std::string>>& input_files,
+                                           const std::vector<TensorDescr>& model_inputs,
+                                           const std::string& layout_string,
+                                           const std::string& shape_string,
+                                           const std::string& mean_string,
+                                           const std::string& scale_string) {
     // parse input layouts and input shapes
     std::map<std::string, std::string> input_layouts = args::parse_shape_layout_string(layout_string);
     std::map<std::string, std::vector<int>> input_shapes;
-    for (const auto &[input_name, shape] : args::parse_shape_layout_string(shape_string)) {
+    for (const auto& [input_name, shape] : args::parse_shape_layout_string(shape_string)) {
         input_shapes.emplace(input_name, args::string_to_vec<int>(shape, ','));
     }
 
     // parse mean and check
     std::map<std::string, std::vector<float>> means = args::parse_mean_scale_string(mean_string);
-    for (const auto &[input_name, input_mean] : means) {
+    for (const auto& [input_name, input_mean] : means) {
         if (input_mean.size() > 4) {
             throw std::logic_error("Mean must have one value per channel (up to 4 channels supposed), but given: " +
                                    mean_string);
@@ -328,7 +329,7 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
 
     // parse scale and check
     std::map<std::string, std::vector<float>> scales = args::parse_mean_scale_string(scale_string);
-    for (const auto &[input_name, input_scale] : scales) {
+    for (const auto& [input_name, input_scale] : scales) {
         if (input_scale.size() > 4) {
             throw std::logic_error("Scale must have one value per channel (up to 4 channels supposed), but given: " +
                                    mean_string);
@@ -336,7 +337,7 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
     }
 
     // Check dynamic inputs
-    bool is_dynamic_input = std::any_of(model_inputs.begin(), model_inputs.end(), [](const auto &tensor_descr) {
+    bool is_dynamic_input = std::any_of(model_inputs.begin(), model_inputs.end(), [](const auto& tensor_descr) {
         return tensor_descr.is_dynamic();
     });
 
@@ -345,28 +346,28 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
     }
 
     inputs::InputsInfo inputs_info;
-    for (const auto &input : model_inputs) {
+    for (const auto& input : model_inputs) {
         inputs::InputDescr input_descr;
         input_descr.tensor_descr = input;
-        auto &tensor_descr = input_descr.tensor_descr;
+        auto& tensor_descr = input_descr.tensor_descr;
 
         std::string name = input.name;
         if (input_files.count(name) > 0) {
             input_descr.files = input_files.at(name);
         }
-        else if (input_files.count("") > 0 && input_files.size() == 1) { // case with 1 input without specifying name
+        else if (input_files.count("") > 0 && input_files.size() == 1) {  // case with 1 input without specifying name
             input_descr.files = input_files.at("");
         }
         else if (input_files.size() > 1) {
             throw std::invalid_argument("Input name " + name + " not found in the names provided with -i argument.");
         }
 
-        auto &data_shape = tensor_descr.data_shape;
+        auto& data_shape = tensor_descr.data_shape;
         if (!input_shapes.empty() && is_dynamic_input) {
             if (input_shapes.count(name) > 0) {
                 data_shape = input_shapes.at(name);
             }
-            else if (input_shapes.count("") > 0 && input_shapes.size() == 1) { // handle case without specifying name
+            else if (input_shapes.count("") > 0 && input_shapes.size() == 1) {  // handle case without specifying name
                 data_shape = input_shapes.at("");
             }
             else if (input_shapes.size() > 1) {
@@ -378,7 +379,7 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
             logger::warn << "Model inputs are static, -shape option will be ignored!" << logger::endl;
         }
 
-        auto &layout = tensor_descr.layout;
+        auto& layout = tensor_descr.layout;
         if (!input_layouts.empty()) {
             if (input_layouts.count(name) > 0) {
                 layout = input_layouts.at(name);
@@ -448,16 +449,16 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
     return inputs_info;
 }
 
-void inputs::set_batch_size(inputs::InputsInfo &inputs_info, int batch_size) {
-    for (auto &[_, input_descr] : inputs_info) {
+void inputs::set_batch_size(inputs::InputsInfo& inputs_info, int batch_size) {
+    for (auto& [_, input_descr] : inputs_info) {
         input_descr.tensor_descr.set_batch(batch_size);
     }
 }
 
-int inputs::get_batch_size(const inputs::InputsInfo &inputs_info) {
+int inputs::get_batch_size(const inputs::InputsInfo& inputs_info) {
     int batch_size = 0;
-    for (auto &[name, info] : inputs_info) {
-        auto &tensor_descr = info.tensor_descr;
+    for (auto& [name, info] : inputs_info) {
+        auto& tensor_descr = info.tensor_descr;
         std::size_t batch_index = tensor_descr.layout.find("N");
         if (batch_index != std::string::npos) {
             if (batch_size == 0) {

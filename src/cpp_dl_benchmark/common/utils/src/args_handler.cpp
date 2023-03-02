@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#include "args_handler.hpp"
+#include "utils/args_handler.hpp"
 
-#include "logger.hpp"
+#include "utils/logger.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> args::split(const std::string &s, char delim) {
+std::vector<std::string> args::split(const std::string& s, char delim) {
     std::vector<std::string> result;
     std::stringstream ss(s);
     std::string item;
@@ -26,17 +26,17 @@ std::vector<std::string> args::split(const std::string &s, char delim) {
     return result;
 }
 
-std::vector<std::string> get_files_from_dir(const std::string &path) {
+std::vector<std::string> get_files_from_dir(const std::string& path) {
     // use set to get files in order
     std::set<std::string> res;
-    for (const auto &entry : std::filesystem::directory_iterator(path)) {
+    for (const auto& entry : std::filesystem::directory_iterator(path)) {
         res.insert(entry.path());
     }
 
     return std::vector<std::string>{res.begin(), res.end()};
 }
 
-std::vector<std::string> check_read_files(const std::string &path) {
+std::vector<std::string> check_read_files(const std::string& path) {
     if (std::filesystem::is_regular_file(path)) {
         return {path};
     }
@@ -46,7 +46,7 @@ std::vector<std::string> check_read_files(const std::string &path) {
     throw std::invalid_argument("Input path " + path + " neither an existing file nor a directory");
 }
 
-std::pair<std::string, std::vector<std::string>> parse_input_files_per_input(const std::string &file_paths_string) {
+std::pair<std::string, std::vector<std::string>> parse_input_files_per_input(const std::string& file_paths_string) {
     auto search_string = file_paths_string;
     std::string input_name = "";
     std::vector<std::string> file_paths;
@@ -88,14 +88,14 @@ std::pair<std::string, std::vector<std::string>> parse_input_files_per_input(con
     return {input_name, file_paths};
 }
 
-std::map<std::string, std::vector<std::string>> args::parse_input_files_arguments(const std::vector<std::string> &args,
+std::map<std::string, std::vector<std::string>> args::parse_input_files_arguments(const std::vector<std::string>& args,
                                                                                   size_t max_files) {
     std::map<std::string, std::vector<std::string>> mapped_files = {};
     auto args_it = begin(args);
-    const auto is_image_arg = [](const std::string &s) {
+    const auto is_image_arg = [](const std::string& s) {
         return s == "-i";
     };
-    const auto is_arg = [](const std::string &s) {
+    const auto is_arg = [](const std::string& s) {
         return s.front() == '-';
     };
     while (args_it != args.end()) {
@@ -106,12 +106,12 @@ std::map<std::string, std::vector<std::string>> args::parse_input_files_argument
         const auto files_begin = std::next(files_start);
         const auto files_end = std::find_if(files_begin, end(args), is_arg);
         for (auto f = files_begin; f != files_end; ++f) {
-            const auto &[input_name, files] = parse_input_files_per_input(*f);
+            const auto& [input_name, files] = parse_input_files_per_input(*f);
             if (mapped_files.count(input_name) == 0) {
                 mapped_files[input_name] = {};
             }
 
-            for (const auto &file : files) {
+            for (const auto& file : files) {
                 if (file == "image_info" || file == "random") {
                     mapped_files[input_name].push_back(file);
                 }
@@ -129,7 +129,7 @@ std::map<std::string, std::vector<std::string>> args::parse_input_files_argument
     if (mapped_files.size() == 0) {
         logger::info << "No files were added. Random data will be used." << logger::endl;
     }
-    for (auto &[input_name, files] : mapped_files) {
+    for (auto& [input_name, files] : mapped_files) {
         if (input_name != "") {
             logger::info << "For input \"" << input_name << "\" " << files.size()
                          << " files were added:" << logger::endl;
@@ -139,7 +139,7 @@ std::map<std::string, std::vector<std::string>> args::parse_input_files_argument
                          << logger::endl;
             files.resize(max_files);
         }
-        for (const auto &f : files) {
+        for (const auto& f : files) {
             logger::info << "\t" << f << logger::endl;
         }
     }
@@ -148,7 +148,7 @@ std::map<std::string, std::vector<std::string>> args::parse_input_files_argument
 }
 
 // Parse parameter string like "input0[value0],input1[value1]" or "[value]" into map
-std::map<std::string, std::string> args::parse_shape_layout_string(const std::string &parameter_string) {
+std::map<std::string, std::string> args::parse_shape_layout_string(const std::string& parameter_string) {
     std::map<std::string, std::string> return_value;
     std::string search_string = parameter_string;
     auto start_pos = search_string.find_first_of('[');
@@ -188,7 +188,7 @@ std::map<std::string, std::string> args::parse_shape_layout_string(const std::st
 }
 
 // Parse parameter string like "input0[255,255,255],input1[255,255,255]" or "[255,255,255]" into map
-std::map<std::string, std::vector<float>> args::parse_mean_scale_string(const std::string &parameter_string) {
+std::map<std::string, std::vector<float>> args::parse_mean_scale_string(const std::string& parameter_string) {
     std::map<std::string, std::vector<float>> return_value;
     std::string search_string = parameter_string;
 

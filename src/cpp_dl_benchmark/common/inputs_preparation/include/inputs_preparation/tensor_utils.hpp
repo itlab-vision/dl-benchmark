@@ -1,26 +1,40 @@
 #pragma once
 
-#include "utils.hpp"
+#include "utils/utils.hpp"
 
+#include <cstring>
 #include <memory>
+#include <string>
 #include <vector>
 
-class TensorBuffer {
-  public:
-    TensorBuffer() :
-        data(nullptr),
-        bytes_count(-1),
-        elements_count(-1),
-        data_shape{},
-        data_precision(utils::DataPrecision::UNKNOWN)
-    {}
+struct TensorDescr {
+    std::string name;
+    std::vector<int> shape;
+    std::vector<int> data_shape;
+    std::string layout;
+    utils::DataPrecision data_precision;
 
-    TensorBuffer(size_t elements_count, const std::vector<int> shape, const utils::DataPrecision dp) :
-        data(new char[elements_count * elem_size(dp)]),
-        bytes_count(elements_count * elem_size(dp)),
-        elements_count(elements_count),
-        data_shape(shape),
-        data_precision(dp) {}
+    bool is_image() const;
+    bool is_image_info() const;
+    bool is_dynamic() const;
+    bool has_batch() const;
+    bool is_dynamic_batch() const;
+    int get_dimension_by_layout(char ch) const;
+    int channels() const;
+    int width() const;
+    int height() const;
+    void set_batch(int batch_size);
+};
+
+class TensorBuffer {
+public:
+    TensorBuffer()
+        : data(nullptr), bytes_count(-1), elements_count(-1), data_shape{},
+          data_precision(utils::DataPrecision::UNKNOWN) {}
+
+    TensorBuffer(size_t elements_count, const std::vector<int> shape, const utils::DataPrecision dp)
+        : data(new char[elements_count * elem_size(dp)]), bytes_count(elements_count * elem_size(dp)),
+          elements_count(elements_count), data_shape(shape), data_precision(dp) {}
 
     void resize(size_t count) {
         allocate(count, data_precision);
@@ -29,12 +43,9 @@ class TensorBuffer {
     TensorBuffer(const TensorBuffer& buf) = delete;
     TensorBuffer& operator=(const TensorBuffer& buf) = delete;
 
-    TensorBuffer(TensorBuffer&& buf) :
-    data(buf.data),
-    bytes_count(buf.bytes_count),
-    elements_count(buf.elements_count),
-    data_shape(buf.data_shape),
-    data_precision(buf.data_precision) {
+    TensorBuffer(TensorBuffer&& buf)
+        : data(buf.data), bytes_count(buf.bytes_count), elements_count(buf.elements_count), data_shape(buf.data_shape),
+          data_precision(buf.data_precision) {
         buf.data = nullptr;
         buf.bytes_count = -1;
         buf.data_shape = {};
@@ -82,7 +93,7 @@ class TensorBuffer {
         bytes_count = elements_count * elem_size();
         data = nullptr;
 
-        if(bytes_count > 0) {
+        if (bytes_count > 0) {
             data = new char[bytes_count];
             if (!data) {
                 throw std::runtime_error("Failed to allocate " + std::to_string(bytes_count) + " bytes");
@@ -96,14 +107,14 @@ class TensorBuffer {
         }
     }
 
-    template <typename T>
+    template<typename T>
     T* get() {
         return reinterpret_cast<T*>(data);
     }
 
-    template <typename T>
+    template<typename T>
     T* get() const {
-        return  reinterpret_cast<T*>(data);
+        return reinterpret_cast<T*>(data);
     }
 
     int64_t size() const {
@@ -135,8 +146,7 @@ class TensorBuffer {
         else if (data_precision == utils::DataPrecision::I8) {
             return sizeof(int8_t);
         }
-        else if ((data_precision == utils::DataPrecision::U8) ||
-                 (data_precision == utils::DataPrecision::BOOL)) {
+        else if ((data_precision == utils::DataPrecision::U8) || (data_precision == utils::DataPrecision::BOOL)) {
             return sizeof(uint8_t);
         }
         else if (data_precision == utils::DataPrecision::I64) {
@@ -149,7 +159,7 @@ class TensorBuffer {
         return elem_size(data_precision);
     }
 
-  private:
+private:
     char* data;
     int64_t bytes_count;
     int64_t elements_count;

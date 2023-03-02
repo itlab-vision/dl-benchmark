@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#include "utils.hpp"
-
-#include "inputs_preparation.hpp"
-#include "onnxruntime_launcher.hpp"
-
-#include <onnxruntime_cxx_api.h>
+#include "utils/utils.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -26,7 +21,7 @@ std::string utils::get_precision_str(DataPrecision p) {
     return "UNKNOWN";
 }
 
-std::string utils::guess_layout_from_shape(const std::vector<int> &shape) {
+std::string utils::guess_layout_from_shape(const std::vector<int>& shape) {
     if (shape.size() == 2) {
         return "NC";
     }

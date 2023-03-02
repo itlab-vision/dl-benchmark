@@ -3,10 +3,10 @@
 //
 
 #pragma once
-#include "tensor_buffer.hpp"
-#include "launcher.hpp"
-#include "logger.hpp"
-#include "utils.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
+#include "common_launcher/launcher.hpp"
+#include "utils/logger.hpp"
+#include "utils/utils.hpp"
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/dnn.hpp>

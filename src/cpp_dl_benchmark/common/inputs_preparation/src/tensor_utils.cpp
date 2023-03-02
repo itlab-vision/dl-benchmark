@@ -1,9 +1,4 @@
-// Copyright (C) 2023 KNS Group LLC (YADRO)
-// SPDX-License-Identifier: Apache-2.0
-//
-
-#include "launcher.hpp"
-#include "utils.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
 
 #include <algorithm>
 #include <string>
@@ -56,18 +51,4 @@ int TensorDescr::width() const {
 
 int TensorDescr::height() const {
     return get_dimension_by_layout('H');
-}
-
-std::vector<double> Launcher::get_latencies() const {
-    return latencies;
-}
-
-double Launcher::get_total_time_ms() const {
-    return utils::ns_to_ms(total_end_time - total_start_time);
-}
-
-void Launcher::reset_timers() {
-    total_start_time = HighresClock::time_point::max();
-    total_end_time = HighresClock::time_point::min();
-    latencies.clear();
 }

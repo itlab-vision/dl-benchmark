@@ -4,10 +4,10 @@
 
 #include "opencv_launcher.hpp"
 
-#include "args_handler.hpp"
-#include "inputs_preparation.hpp"
-#include "logger.hpp"
-#include "utils.hpp"
+#include "utils/args_handler.hpp"
+#include "inputs_preparation/inputs_preparation.hpp"
+#include "utils/logger.hpp"
+#include "utils/utils.hpp"
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/dnn.hpp>

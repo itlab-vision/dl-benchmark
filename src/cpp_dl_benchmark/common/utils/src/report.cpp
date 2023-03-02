@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#include "report.hpp"
+#include "utils/report.hpp"
 
-#include "logger.hpp"
-
-#include <nlohmann/json.hpp>
+#include "utils/logger.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -15,6 +13,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <nlohmann/json.hpp>
 
 void Report::save() {
     nlohmann::json js;
@@ -30,9 +30,9 @@ void Report::save() {
         logger::warn << "File " + file_path.string() + " already exists, it will be overwritten." << logger::endl;
     }
 
-    for (const auto &[cat, records] : records_per_category) {
+    for (const auto& [cat, records] : records_per_category) {
         auto category = record_categories_str.at(cat);
-        for (const auto &r : records) {
+        for (const auto& r : records) {
             js[category][r.name] = r.val;
         }
     }
@@ -41,11 +41,11 @@ void Report::save() {
     logger::info << "Saved report to " << file_path << logger::endl;
 }
 
-void Report::add_record(Category type, const std::vector<Record> &records) {
+void Report::add_record(Category type, const std::vector<Record>& records) {
     if (record_categories_str.count(type) == 0) {
         throw std::invalid_argument("Unsupported record type: " + std::to_string((uint)type));
     }
-    for (const auto &r : records) {
+    for (const auto& r : records) {
         records_per_category[type].push_back(r);
     }
 }

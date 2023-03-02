@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "tensor_buffer.hpp"
-#include "utils.hpp"
+#include "inputs_preparation/tensor_utils.hpp"
+#include "utils/utils.hpp"
 
 #include <chrono>
 #include <cstdint>
@@ -15,25 +15,6 @@
 #include <vector>
 
 using HighresClock = std::chrono::high_resolution_clock;
-
-struct TensorDescr {
-    std::string name;
-    std::vector<int> shape;
-    std::vector<int> data_shape;
-    std::string layout;
-    utils::DataPrecision data_precision;
-
-    bool is_image() const;
-    bool is_image_info() const;
-    bool is_dynamic() const;
-    bool has_batch() const;
-    bool is_dynamic_batch() const;
-    int get_dimension_by_layout(char ch) const;
-    int channels() const;
-    int width() const;
-    int height() const;
-    void set_batch(int batch_size);
-};
 
 using IOTensorsInfo = std::pair<std::vector<TensorDescr>, std::vector<TensorDescr>>;
 
@@ -52,12 +33,12 @@ protected:
     std::vector<double> latencies;
 
 public:
-    Launcher(int nthreads) : nthreads(nthreads) {};
+    Launcher(int nthreads) : nthreads(nthreads){};
     virtual ~Launcher() {}
 
     virtual void log_framework_version() const = 0;
 
-    virtual void read(const std::string &model) = 0;
+    virtual void read(const std::string& model) = 0;
     virtual void load() = 0;
 
     virtual void fill_inputs_outputs_info() = 0;

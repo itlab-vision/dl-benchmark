@@ -4,20 +4,18 @@
 
 #include "onnxruntime_launcher.hpp"
 
-#include "args_handler.hpp"
-#include "inputs_preparation.hpp"
-#include "logger.hpp"
-#include "utils.hpp"
-
-#include <opencv2/core/mat.hpp>
+#include "inputs_preparation/inputs_preparation.hpp"
+#include "utils/args_handler.hpp"
+#include "utils/logger.hpp"
+#include "utils/utils.hpp"
 
 #include <onnxruntime_cxx_api.h>
 
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include <numeric>
 #include <map>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -30,8 +28,7 @@ const std::map<ONNXTensorElementDataType, utils::DataPrecision> onnx_dtype_to_pr
     {ONNX_TENSOR_ELEMENT_DATA_TYPE_INT32, utils::DataPrecision::I32},
     {ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64, utils::DataPrecision::I64},
     {ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL, utils::DataPrecision::BOOL},
-    {ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED, utils::DataPrecision::UNKNOWN}
-};
+    {ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED, utils::DataPrecision::UNKNOWN}};
 
 utils::DataPrecision get_data_precision(ONNXTensorElementDataType type) {
     if (onnx_dtype_to_precision_map.count(type) > 0) {
@@ -43,7 +40,7 @@ utils::DataPrecision get_data_precision(ONNXTensorElementDataType type) {
 }
 
 ONNXTensorElementDataType get_onnx_data_type(utils::DataPrecision precision) {
-    for (const auto [onnx_type, data_prectision]: onnx_dtype_to_precision_map) {
+    for (const auto [onnx_type, data_prectision] : onnx_dtype_to_precision_map) {
         if (precision == data_prectision) {
             return onnx_type;
         }
@@ -53,10 +50,10 @@ ONNXTensorElementDataType get_onnx_data_type(utils::DataPrecision precision) {
 }  // namespace
 
 void ONNXLauncher::log_framework_version() const {
-     logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
+    logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
 }
 
-void ONNXLauncher::read(const std::string &model_path) {
+void ONNXLauncher::read(const std::string& model_path) {
     env = std::make_shared<Ort::Env>(ORT_LOGGING_LEVEL_ERROR, "ORT Benchmark");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -120,14 +117,18 @@ IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
     std::vector<TensorDescr> input_tensors_info;
     for (size_t i = 0; i < io.input_names.size(); ++i) {
         std::vector<int> shape(io.input_shapes[i].size());
-        std::transform(io.input_shapes[i].begin(), io.input_shapes[i].end(), shape.begin(), [](int64_t x) { return static_cast<int>(x);});
+        std::transform(io.input_shapes[i].begin(), io.input_shapes[i].end(), shape.begin(), [](int64_t x) {
+            return static_cast<int>(x);
+        });
         input_tensors_info.push_back(
             {std::string(io.input_names[i]), shape, shape, "", get_data_precision(io.input_data_precisions[i])});
     }
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < io.output_names.size(); ++i) {
         std::vector<int> shape(io.output_shapes[i].size());
-        std::transform(io.output_shapes[i].begin(), io.output_shapes[i].end(), shape.begin(), [](int64_t x) { return static_cast<int>(x);});
+        std::transform(io.output_shapes[i].begin(), io.output_shapes[i].end(), shape.begin(), [](int64_t x) {
+            return static_cast<int>(x);
+        });
         output_tensors_info.push_back(
             {std::string(io.output_names[i]), shape, {}, "", get_data_precision(io.output_data_precisions[i])});
     }
@@ -143,11 +144,11 @@ void ONNXLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> 
             const auto& buffer = tensor_buffers[i][j];
             std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
-                                    buffer.get<void>(),
-                                    buffer.size(),
-                                    shape.data(),
-                                    shape.size(),
-                                    get_onnx_data_type(buffer.precision())));
+                                                          buffer.get<void>(),
+                                                          buffer.size(),
+                                                          shape.data(),
+                                                          shape.size(),
+                                                          get_onnx_data_type(buffer.precision())));
         }
     }
 }
@@ -156,16 +157,16 @@ void ONNXLauncher::warmup_inference() {
     run(tensors[0]);
 }
 
-void ONNXLauncher::run(const std::vector<Ort::Value> &input_tensors) {
+void ONNXLauncher::run(const std::vector<Ort::Value>& input_tensors) {
     total_start_time = std::min(HighresClock::now(), total_start_time);
 
     infer_start_time = HighresClock::now();
     auto output = session->Run(Ort::RunOptions{nullptr},
-                 io.input_names.data(),
-                 input_tensors.data(),
-                 io.input_names.size(),
-                 io.output_names.data(),
-                 io.output_names.size());
+                               io.input_names.data(),
+                               input_tensors.data(),
+                               io.input_names.size(),
+                               io.output_names.data(),
+                               io.output_names.size());
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
     total_end_time = std::max(HighresClock::now(), total_end_time);
@@ -176,7 +177,7 @@ int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     auto start_time = HighresClock::now();
     auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
     while ((iterations_num != 0 && iteration < iterations_num) ||
-            (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
+           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
         run(tensors[iteration % tensors.size()]);
         ++iteration;
         uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();

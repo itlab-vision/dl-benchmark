@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#include "statistics.hpp"
+#include "utils/statistics.hpp"
 
 #include <algorithm>
 #include <numeric>
@@ -24,7 +24,7 @@ void Metrics::calc_fps(double latency, int batch_size) {
     fps = batch_size * 1000.0 / latency;
 }
 
-Metrics::Metrics(const std::vector<double> &latencies, int batch_size, int percentile_boundary) {
+Metrics::Metrics(const std::vector<double>& latencies, int batch_size, int percentile_boundary) {
     if (latencies.empty()) {
         throw std::invalid_argument("Latency metrics class expects non-empty vector of latencies at consturction.");
     }
