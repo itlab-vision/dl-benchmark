@@ -105,7 +105,7 @@ def cli_argument_parser():
                         type=bool,
                         dest='raw_output')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or GPU (CPU by default)',
+                        help='Specify the target device to infer on CPU or NVIDIA GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -120,7 +120,7 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.cpu()
-    elif device == 'GPU':
+    elif device == 'NVIDIA GPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.gpu()
     else:
