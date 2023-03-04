@@ -5,6 +5,15 @@
 Complete information about the supported classification
 models is available [here][gluon_modelzoo_classification].
 
+Notes:
+
+- For all classification models input shape BxCxWxH, where
+  B is a batch size, C is an image number of channels,
+  W is an image width, H is an image height.
+  W=H=224 except inceptionv3, for this model W=H=299.
+- Values of mean and standard deviation parameters used
+  for model validation are represented for each image.
+
 ### Test image #1
 
 Data source: [ImageNet][imagenet]
@@ -14,7 +23,7 @@ Image resolution: 709 x 510
 Mean: [0.485, 0.456, 0.406]
 
 Standard deviation: [0.229, 0.224, 0.225]
-﻿
+
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
@@ -115,7 +124,7 @@ senet_154 |0.6984364 Granny Smith<br>0.0078498 syringe<br>0.0034595 tennis ball<
 Data source: [ImageNet][imagenet]
 
 Image resolution: 500 x 500
-﻿
+
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
@@ -216,7 +225,7 @@ senet_154 |0.8654007 junco, snowbird<br>0.0118391 water ouzel, dipper<br>0.00415
 Data source: [ImageNet][imagenet]
 
 Image resolution: 333 x 500
-﻿
+
 
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
