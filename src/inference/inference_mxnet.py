@@ -258,8 +258,9 @@ def main():
         average_time, latency, fps = process_result(args.batch_size, inference_time)
 
         if not args.raw_output:
-            # print_topk_predictions should be implemented as io.process_output(result, log)
-            print_topk_predictions(result, args.number_top, args.labels)
+            if args.number_iter == 1:
+                # print_topk_predictions should be implemented as io.process_output(result, log)
+                print_topk_predictions(result, args.number_top, args.labels)
             result_output(average_time, fps, latency)
         else:
             raw_result_output(average_time, fps, latency)
