@@ -1,4 +1,4 @@
-# Validation results for the models inferring using Intel® Optimization for TensorFlow
+# Validation results for the models inferring using Intel� Optimizations for TensorFlow
 
 ## Image classification
 
@@ -7,7 +7,7 @@
 Data source: [ImageNet][imagenet]
 
 Image resolution: 709 x 510
-﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>

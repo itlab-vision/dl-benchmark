@@ -8,12 +8,11 @@ Represented deep models are available in [Open Model Zoo][omz].
 
 Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
 -|-|-|
-densenet-121|-|-|
-densenet-169|-|-|
-inceptionv1 (googlenet)|-|-|
-inceptionv2|-|-|
-inceptionv3|-|-|
-inceptionv4|-|-|
+densenet-121-tf|-|-|
+googlenet-v1-tf (inceptionv1)|-|-|
+googlenet-v2-tf (inceptionv2)|-|-|
+googlenet-v3-tf (inceptionv3)|-|-|
+googlenet-v4-tf (inceptionv4)|-|-|
 inception-resnet-v2|-|-|
 mixnet-l|-|-|
 mobilenet-v1-1.0-224|-|-|
