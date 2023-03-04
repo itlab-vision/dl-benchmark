@@ -289,12 +289,10 @@ def main():
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
 
-        log.info('Prepare input data')
-
+        log.info('Preparing input data')
         io.prepare_input(graph, args.input)
 
         log.info('Starting inference ({0} iterations)'.format(args.number_iter))
-
         inputs_names = model_wrapper.get_input_layer_names(graph)
         outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)
         config = create_config_for_inference(args.num_intra_threads, args.num_inter_threads)
@@ -302,16 +300,18 @@ def main():
                                                       args.number_iter, io.get_slice_input,
                                                       config)
 
-        time, latency, fps = process_result(args.batch_size, inference_time)
+        log.info('Computing performance metrics')
+        average_time, latency, fps = process_result(args.batch_size, inference_time)
+
         if not args.raw_output:
             if args.number_iter == 1:
                 result = prepare_output(result, outputs_names, args.task)
-            io.process_output(result, log)
-            result_output(time, fps, latency, log)
+                io.process_output(result, log)
+            result_output(average_time, fps, latency, log)
         else:
-            raw_result_output(time, fps, latency)
+            raw_result_output(average_time, fps, latency)
     except Exception as ex:
-        print('ERROR! : {0}'.format(str(ex)))
+        log.error(str(ex))
         sys.exit(1)
 
 
