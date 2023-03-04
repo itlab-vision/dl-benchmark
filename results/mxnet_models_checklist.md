@@ -34,13 +34,13 @@ mobilenetv2_0.75|+|+|
 mobilenetv2_1.0|+|+|
 mobilenetv3_large|+|+|
 mobilenetv3_small|+|+|
-residualattentionnet128|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet164|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet200|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet236|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet452|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet56|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
-residualattentionnet92|+|Error ( Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet128|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet164|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet200|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet236|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet452|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet56|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
+residualattentionnet92|+|Error (Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' has not been initialized)|
 resnest101|+|+|
 resnest14|+|+|
 resnest200|+|+|
