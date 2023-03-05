@@ -32,9 +32,9 @@ do
     if [ $pkg_ok -eq 0 ];
     then
       sudo apt-get install -y $pkg
-	  echo "[ INFO ] Package $pkg has been installed"
-	else
-		echo "[ INFO ] Package $pkg has been already installed"
+      echo "[ INFO ] Package $pkg has been installed"
+    else
+        echo "[ INFO ] Package $pkg has been already installed"
     fi
 done
 echo "[ INFO ] System environment creation has been completed"
@@ -70,7 +70,7 @@ models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
 echo "[ INFO ] Downloading of dataset 'cifar-10-python'"
 wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 mkdir dataset && tar xvf cifar-10-python.tar.gz -C dataset
-datasets_dir="${client_folder}/datasets"
+datasets_dir="${client_folder}/dataset"
 rm -rf cifar-10-python.tar.gz
 echo "[ INFO ] Creation of client has been been completed"
 
@@ -103,7 +103,7 @@ echo \
     <Computer>
         <IP>${ip_address}</IP>
         <Login>${login}</Login>
-		<Password>${password}</Password>
+        <Password>${password}</Password>
         <OS>Linux</OS>
         <DownloadFolder>${client_folder}</DownloadFolder>
         <DatasetFolder>${datasets_dir}</DatasetFolder>
@@ -136,62 +136,62 @@ device="CPU"
 echo \
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Tests>
-	<Test>
-		<Model>
-			<Task>${task}</Task>
-			<Name>${model_name}</Name>
-			<Precision>FP32</Precision>
-			<SourceFramework>Caffe</SourceFramework>
-			<ModelPath>${model_xml}</ModelPath>
-			<WeightsPath>${model_bin}</WeightsPath>
-		</Model>
-		<Dataset>
-			<Name>ImageNET</Name>
-			<Path>/tmp/${dli_dataset_repo_name}/Datasets/ImageNET/</Path>
-		</Dataset>
-		<FrameworkIndependent>
-			<InferenceFramework>${framework}</InferenceFramework>
-			<BatchSize>1</BatchSize>
-			<Device>${device}</Device>
-			<IterationCount>10</IterationCount>
-			<TestTimeLimit>180</TestTimeLimit>
-		</FrameworkIndependent>
-		<FrameworkDependent>
-			<Mode>sync</Mode>
-			<Extension></Extension>
-			<AsyncRequestCount></AsyncRequestCount>
-			<ThreadCount></ThreadCount>
-			<StreamCount></StreamCount>
-		</FrameworkDependent>
-	</Test>
     <Test>
-		<Model>
-			<Task>${task}</Task>
-			<Name>${model_name}</Name>
-			<Precision>FP32</Precision>
-			<SourceFramework>Caffe</SourceFramework>
-			<ModelPath>${model_xml}</ModelPath>
-			<WeightsPath>${model_bin}</WeightsPath>
-		</Model>
-		<Dataset>
-			<Name>ImageNET</Name>
-			<Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</Path>
-		</Dataset>
-		<FrameworkIndependent>
-			<InferenceFramework>${framework}</InferenceFramework>
-			<BatchSize>1</BatchSize>
-			<Device>${device}</Device>
-			<IterationCount>10</IterationCount>
-			<TestTimeLimit>180</TestTimeLimit>
-		</FrameworkIndependent>
-		<FrameworkDependent>
-			<Mode>async</Mode>
-			<Extension></Extension>
-			<AsyncRequestCount></AsyncRequestCount>
-			<ThreadCount></ThreadCount>
-			<StreamCount></StreamCount>
-		</FrameworkDependent>
-	</Test>
+        <Model>
+            <Task>${task}</Task>
+            <Name>${model_name}</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>${model_xml}</ModelPath>
+            <WeightsPath>${model_bin}</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/${dli_dataset_repo_name}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>${framework}</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>${device}</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>sync</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>${task}</Task>
+            <Name>${model_name}</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>${model_xml}</ModelPath>
+            <WeightsPath>${model_bin}</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>${framework}</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>${device}</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>180</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>async</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
 </Tests>" \
     >> $benchmark_config_path
 echo "[ INFO ] Model: ${model_xml}"
@@ -215,20 +215,20 @@ config_path="${omz_client}/tools/accuracy_checker/sample/sample_config.yml"
 echo \
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Tests>
-	<Test>
-		<Model>
-			<Task>${task}</Task>
-			<Name>${model_name}</Name>
-			<Precision>FP32</Precision>
-			<SourceFramework>Caffe</SourceFramework>
-			<Directory>${model_path}</Directory>
-		</Model>
-		<Parameters>
-			<InferenceFramework>${framework}</InferenceFramework>
-			<Device>${device}</Device>
-			<Config>${config_path}</Config>
-		</Parameters>
-	</Test>
+    <Test>
+        <Model>
+            <Task>${task}</Task>
+            <Name>${model_name}</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <Directory>${model_path}</Directory>
+        </Model>
+        <Parameters>
+            <InferenceFramework>${framework}</InferenceFramework>
+            <Device>${device}</Device>
+            <Config>${config_path}</Config>
+        </Parameters>
+    </Test>
 </Tests>" \
     >> $accuracy_checker_config_path
 echo "[ INFO ] Model: ${model_name}"
@@ -271,7 +271,7 @@ echo \
         </AccuracyChecker>
     </Computer>
 </Computers>" \
-	>> $remote_config_path
+    >> $remote_config_path
 echo "[ INFO ] Copying of remote control configuration ${remote_config_path} file to server"
 # use cp instead of scp because scp asks password
 cp $remote_config_path $server_folder/$remote_config
@@ -327,7 +327,7 @@ do
     if [ $pkg_ok -eq 0 ];
     then
       sudo apt-get remove -y $pkg
-	  echo "[ INFO ] The package $pkg has been removed"
+      echo "[ INFO ] The package $pkg has been removed"
     fi
 done
 cd $demo_folder
