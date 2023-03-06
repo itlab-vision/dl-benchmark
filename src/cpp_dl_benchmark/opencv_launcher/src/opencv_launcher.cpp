@@ -43,8 +43,8 @@ void OCVLauncher::read(const std::string& model_path) {
 
 void OCVLauncher::fill_inputs_outputs_info() {
     input_names.push_back(net.getLayer(0)->name);
-    std::vector<MatShape> input_layer_shapes, output_layer_shapes;
     try {
+        std::vector<MatShape> input_layer_shapes, output_layer_shapes;
         net.getLayerShapes(MatShape(), 0, input_layer_shapes, output_layer_shapes);
         if (!input_layer_shapes.empty() && !input_layer_shapes[0].empty()) {
             input_shapes = input_layer_shapes;
@@ -58,6 +58,7 @@ void OCVLauncher::fill_inputs_outputs_info() {
 
     output_names = net.getUnconnectedOutLayersNames();
     for (const auto& name : output_names) {
+        std::vector<MatShape> input_layer_shapes, output_layer_shapes;
         try {
             net.getLayerShapes(MatShape(), net.getLayerId(name), input_layer_shapes, output_layer_shapes);
         } catch (const cv::Exception& ex) {}
