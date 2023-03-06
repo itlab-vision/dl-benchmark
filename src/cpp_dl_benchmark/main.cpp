@@ -27,7 +27,7 @@ namespace {
 constexpr char help_msg[] = "show the help message and exit";
 DEFINE_bool(h, false, help_msg);
 
-constexpr char model_msg[] = "path to an .onnx file with a trained model";
+constexpr char model_msg[] = "path to a file with a trained model";
 DEFINE_string(m, "", model_msg);
 
 constexpr char input_msg[] =
@@ -84,7 +84,13 @@ DEFINE_string(report_path, "", report_path_msg);
 void parse(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, false);
     if (FLAGS_h || 1 == argc) {
-        std::cout << "onnxruntime_benchmark"
+        std::cout <<
+#ifdef OCV_DNN
+            "opencv_dnn"
+#elif ORT_DEFAULT
+            "onnxruntime"
+#endif
+                  << "_benchmark"
                   << "\nOptions:"
                   << "\n\t[-h]                                          " << help_msg
                   << "\n\t[-help]                                       print help on all arguments"
@@ -161,9 +167,9 @@ int main(int argc, char* argv[]) {
         std::unique_ptr<Launcher> launcher;
 
 #ifdef OCV_DNN
-        launcher.reset(new OCVLauncher(FLAGS_nthreads));
+        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads);
 #elif ORT_DEFAULT
-        launcher.reset(new ONNXLauncher(FLAGS_nthreads));
+        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads);
 #endif
 
         logger::info << "Checking input files" << logger::endl;
@@ -178,9 +184,9 @@ int main(int argc, char* argv[]) {
             }
             report->add_record(Report::Category::CMD_OPTIONS,
                                {{"inference_framework",
-#ifdef OPENCV_LAUNCHER
-                                 "opencv"
-#elif ONNXRUNTIME_LAUNCHER
+#ifdef OCV_DNN
+                                 "opencv_dnn"
+#elif ORT_DEFAULT
                                  "onnxruntime"
 #endif
                                }});
