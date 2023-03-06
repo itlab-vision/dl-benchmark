@@ -19,7 +19,7 @@ cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -Donnxruntime_BU
 ```
 4. Build and install project:
 ```
-cmake --build . --target install --config Release -- -j$(nproc --all)
+make install -j$(nproc --all)
 ```
 
 ## Build ONNX Runtime Benchmark
