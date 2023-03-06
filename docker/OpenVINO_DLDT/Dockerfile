@@ -76,7 +76,7 @@ RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN pip3 uninstall opencv-python -y && pip3 install "opencv-python-headless"
 RUN /bin/bash -c "accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
 
-# Download DLI dource code
+# Download DLI source code
 WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
