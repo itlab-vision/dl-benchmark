@@ -21,4 +21,4 @@ flake8-expression-complexity
 flake8-class-attributes-order
 flake8-variables-names
 flake8-functions
-flake8-pylint
+flake8-pylint==0.1.3
