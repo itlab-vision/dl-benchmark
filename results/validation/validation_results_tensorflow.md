@@ -34,7 +34,7 @@ resnet-50-tf |Channel order is RGB.|-|
 Data source: [ImageNet][imagenet]
 
 Image resolution: 500 x 500
-﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
@@ -61,7 +61,7 @@ resnet-50-tf |Channel order is RGB.|-|
 Data source: [ImageNet][imagenet]
 
 Image resolution: 333 x 500
-﻿
+
 <div style='float: center'>
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
