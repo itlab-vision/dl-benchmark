@@ -81,6 +81,6 @@ WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
 
-# Download dataset (old variant)
+# Download dataset
 ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
 RUN git clone $DATASET_DOWNLOAD_LINK

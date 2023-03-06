@@ -52,12 +52,14 @@
 
    ```bash
    cd docker/OpenVINO_DLDT
+   docker stop OpenVINO_DLDT
+   docker rm OpenVINO_DLDT
    docker build -t dli_openvino:2022.2 .
    docker save dli_openvino:2022.2 > dli_openvino:2022.2.tar
    docker load < dli_openvino:2022.2.tar
    sudo docker run --privileged -it -d -v /dev:/dev \
-      -v /tmp/:/media/models \
-      -v /tmp/:/media/datasets \
+      -v /tmp/models:/media/models \
+      -v /tmp/datasets:/media/datasets \
       --name OpenVINO_DLDT \
       dli_openvino:2022.2
    cd ../../src/benchmark
@@ -68,4 +70,4 @@
 
    Скрипт `inference_benchmark.py` из конфигурации теста получает имя фреймворка \
    (`OpenVINO_DLDT`) и подключается к запущенному образу по данному имени, поэтому задание имени \
-   образа `--name OpenVINO_DLDT` обязательно.
+   образа `--name OpenVINO_DLDT` при его запуске обязательно.
