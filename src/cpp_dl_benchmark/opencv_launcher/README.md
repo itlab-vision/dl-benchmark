@@ -52,4 +52,5 @@ OpenCV DNN launcher supports models in `ONNX`, `Caffe` and `TensorFlow` formats.
 Limitations on the models:
 - One input
 - FP32 input/output types
+
 Note that not all models are supported by OpenCV DNN module. For more information, refer to the [OpenCV documentation](https://docs.opencv.org/4.x/d2/d58/tutorial_table_of_content_dnn.html).
