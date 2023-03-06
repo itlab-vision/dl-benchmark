@@ -2,7 +2,7 @@
 The tool allows to measure deep learning models inference performance with [ONNX Runtime](https://github.com/microsoft/onnxruntime).
 
 ## Build OpenCV
-To get OpenCV you need either download pre-build binaries or build it from sources:
+To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/releases/) or build it from sources:
 1. Clone repository, checkout to the latest stable release and update submodules:
 ```
 git clone https://github.com/opencv/opencv
@@ -23,8 +23,8 @@ make install -j$(nproc --all)
 ```
 
 ## Build OpenCV DNN Benchmark
-To build the tool you need to have an installation of [OpenCV](https://github.com/opencv/opencv). Set the following environment variables so that cmake can find them during configuration step:
-* `OpenCV_DIR` pointing to OpenCV folder with `OpenCVConfig.cmake`.
+Set `OpenCV_DIR` environment variable pointing to OpenCV folder with `OpenCVConfig.cmake`
+so that cmake can find it during configuration step:
 
 1. Clone repository and update submodules:
 ```
