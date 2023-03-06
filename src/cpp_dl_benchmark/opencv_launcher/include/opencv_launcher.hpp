@@ -22,7 +22,7 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class OCVLauncher : public Launcher {
 public:
-    OCVLauncher(int nthreads_) : Launcher(nthreads_){};
+    OCVLauncher(int nthreads);
     virtual ~OCVLauncher(){};
 
     void log_framework_version() const override;
@@ -41,7 +41,10 @@ public:
 private:
     cv::dnn::Net net;
     std::vector<std::string> input_names;
+    std::vector<std::vector<int>> input_shapes;
+
     std::vector<std::string> output_names;
+    std::vector<std::vector<int>> output_shapes;
 
     std::vector<cv::Mat> blobs;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;

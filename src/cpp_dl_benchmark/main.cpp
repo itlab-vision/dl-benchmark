@@ -116,14 +116,14 @@ void parse(int argc, char* argv[]) {
 void log_model_inputs_outputs(const IOTensorsInfo& tensors_info) {
     const auto& [model_inputs, model_outputs] = tensors_info;
 
-    logger::info << "Model inputs:" << logger::endl;
+    logger::info << "\tModel inputs:" << logger::endl;
     for (const auto& input : model_inputs) {
-        logger::info << "\t" << input.name << ": " << utils::get_precision_str(input.data_precision) << " "
+        logger::info << "\t\t" << input.name << ": " << utils::get_precision_str(input.data_precision) << " "
                      << args::shape_string(input.shape) << logger::endl;
     }
-    logger::info << "Model outputs:" << logger::endl;
+    logger::info << "\tModel outputs:" << logger::endl;
     for (const auto& output : model_outputs) {
-        logger::info << "\t" << output.name << ": " << utils::get_precision_str(output.data_precision) << " "
+        logger::info << "\t\t" << output.name << ": " << utils::get_precision_str(output.data_precision) << " "
                      << args::shape_string(output.shape) << logger::endl;
     }
 }

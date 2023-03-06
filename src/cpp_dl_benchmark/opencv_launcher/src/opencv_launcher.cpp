@@ -4,6 +4,7 @@
 
 #include "opencv_launcher.hpp"
 
+#include "common_launcher/launcher.hpp"
 #include "inputs_preparation/inputs_preparation.hpp"
 #include "utils/args_handler.hpp"
 #include "utils/logger.hpp"
@@ -19,6 +20,12 @@
 #include <string>
 #include <vector>
 
+using MatShape = cv::dnn::dnn4_v20220524::MatShape;
+
+OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
+    cv::setNumThreads(nthreads);
+}
+
 void OCVLauncher::log_framework_version() const {
     logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
@@ -26,26 +33,44 @@ void OCVLauncher::log_framework_version() const {
 void OCVLauncher::read(const std::string& model_path) {
     net = cv::dnn::readNet(model_path);
     net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-    int inputs_count = net.getLayersCount("__NetInputLayer__");
-    if (inputs_count != 1) {
+
+    std::vector<MatShape> inputShapes, outputShapes;
+    net.getLayerShapes(MatShape(), 0, inputShapes, outputShapes);
+    if (inputShapes.size() > 1) {
         throw std::runtime_error("Only models with 1 input supported.");
     }
 }
 
 void OCVLauncher::fill_inputs_outputs_info() {
     input_names.push_back(net.getLayer(0)->name);
+    std::vector<MatShape> input_layer_shapes, output_layer_shapes;
+    net.getLayerShapes(MatShape(), 0, input_layer_shapes, output_layer_shapes);
+    if (!input_layer_shapes.empty()) {
+        input_shapes = input_layer_shapes;
+    }
+    else {
+        input_shapes.push_back({-1, -1, -1, -1});  // dummy input shape to enable providing shape from cmd
+    }
+
     output_names = net.getUnconnectedOutLayersNames();
+    for (const auto& name : output_names) {
+        net.getLayerShapes(MatShape(), net.getLayerId(name), input_layer_shapes, output_layer_shapes);
+        if (!output_layer_shapes.empty()) {
+            output_shapes.push_back(output_layer_shapes[0]);
+        }
+    }
 }
 
 IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
     std::vector<TensorDescr> input_tensors_info{{input_names[0],
-                                                 {-1, -1, -1, -1},  // input shape must be provided from cmd
-                                                 {},
+                                                 input_shapes[0],
+                                                 input_shapes[0],
                                                  "",
                                                  utils::DataPrecision::FP32}};  // only CV_32F type for IO supported
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < output_names.size(); ++i) {
-        output_tensors_info.push_back({std::string(output_names[i]), {}, {}, "", utils::DataPrecision::FP32});
+        output_tensors_info.push_back(
+            {std::string(output_names[i]), output_shapes[i], {}, "", utils::DataPrecision::FP32});
     }
     return {input_tensors_info, output_tensors_info};
 }
