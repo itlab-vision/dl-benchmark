@@ -17,6 +17,7 @@ struct TensorDescr {
     std::vector<int> data_shape;
     std::string layout;
     utils::DataPrecision data_precision;
+    bool is_reshapable;
 
     bool is_image() const;
     bool is_image_info() const;

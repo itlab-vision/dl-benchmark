@@ -76,11 +76,12 @@ IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
                                                  input_shapes[0],
                                                  input_shapes[0],
                                                  "",
-                                                 utils::DataPrecision::FP32}};  // only CV_32F type for IO supported
+                                                 utils::DataPrecision::FP32,
+                                                 true}};  // only CV_32F type for IO supported
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < output_names.size(); ++i) {
         output_tensors_info.push_back(
-            {std::string(output_names[i]), output_shapes[i], {}, "", utils::DataPrecision::FP32});
+            {std::string(output_names[i]), output_shapes[i], {}, "", utils::DataPrecision::FP32, true});
     }
     return {input_tensors_info, output_tensors_info};
 }

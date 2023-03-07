@@ -363,7 +363,7 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
         }
 
         auto& data_shape = tensor_descr.data_shape;
-        if (!input_shapes.empty() && is_dynamic_input) {
+        if (!input_shapes.empty() && (is_dynamic_input || tensor_descr.is_reshapable)) {
             if (input_shapes.count(name) > 0) {
                 data_shape = input_shapes.at(name);
             }

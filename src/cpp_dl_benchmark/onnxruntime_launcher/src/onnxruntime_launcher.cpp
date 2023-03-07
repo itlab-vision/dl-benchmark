@@ -61,7 +61,7 @@ void ONNXLauncher::read(const std::string model_file, const std::string weights_
     if (nthreads > 0) {
         session_options.SetIntraOpNumThreads(nthreads);
     }
-    session = std::make_shared<Ort::Session>(*env,  model_file.c_str(), session_options);
+    session = std::make_shared<Ort::Session>(*env, model_file.c_str(), session_options);
 }
 
 void ONNXLauncher::fill_inputs_outputs_info() {
@@ -121,7 +121,7 @@ IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
             return static_cast<int>(x);
         });
         input_tensors_info.push_back(
-            {std::string(io.input_names[i]), shape, shape, "", get_data_precision(io.input_data_precisions[i])});
+            {std::string(io.input_names[i]), shape, shape, "", get_data_precision(io.input_data_precisions[i]), false});
     }
     std::vector<TensorDescr> output_tensors_info;
     for (size_t i = 0; i < io.output_names.size(); ++i) {
@@ -130,7 +130,7 @@ IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
             return static_cast<int>(x);
         });
         output_tensors_info.push_back(
-            {std::string(io.output_names[i]), shape, {}, "", get_data_precision(io.output_data_precisions[i])});
+            {std::string(io.output_names[i]), shape, {}, "", get_data_precision(io.output_data_precisions[i]), false});
     }
     return {input_tensors_info, output_tensors_info};
 }
