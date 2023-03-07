@@ -1,5 +1,5 @@
 # OpenCV DNN Benchmark
-The tool allows to measure deep learning models inference performance with [ONNX Runtime](https://github.com/microsoft/onnxruntime).
+The tool allows to measure deep learning models inference performance with [OpenCV DNN](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).
 
 ## Build OpenCV
 To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/releases/) or build it from sources:
@@ -53,4 +53,4 @@ Limitations on the models:
 - One input
 - FP32 input/output types
 
-Note that not all models are supported by OpenCV DNN module. For more information, refer to the [OpenCV documentation](https://docs.opencv.org/4.x/d2/d58/tutorial_table_of_content_dnn.html).
+Note that not all models are supported by OpenCV DNN module. For more information, refer to the [OpenCV documentation](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).
