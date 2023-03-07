@@ -38,7 +38,7 @@ public:
 
     virtual void log_framework_version() const = 0;
 
-    virtual void read(const std::string& model) = 0;
+    virtual void read(const std::string model_file, const std::string weights_file = "") = 0;
     virtual void load() = 0;
 
     virtual void fill_inputs_outputs_info() = 0;

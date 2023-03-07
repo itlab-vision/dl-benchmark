@@ -27,12 +27,22 @@ namespace {
 constexpr char help_msg[] = "show the help message and exit";
 DEFINE_bool(h, false, help_msg);
 
-constexpr char model_msg[] = "path to a file with a trained model";
+constexpr char model_msg[] =
+    "path to a file with a trained model or a config file.\n"
+    "                                                      available formats\n"
+    "                                                          ONNX Runtime - onnx\n"
+    "                                                          OpenCV DNN - onnx, pb, protoxt.";
 DEFINE_string(m, "", model_msg);
+
+constexpr char weights_msg[] = "path to a model weights file.\n"
+                               "                                                      available formats:\n"
+                               "                                                          OpenCV DNN - caffemodel.";
+DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =
     "path to an input to process. The input must be an image and/or binaries, a folder of images and/or binaries.\n"
-    "                                                     Ex, \"input1:file1 input2:file2 input3:file3\" or just path "
+    "                                                      ex.: \"input1:file1 input2:file2 input3:file3\" or just "
+    "path "
     "to the file or folder if model has one input";
 DEFINE_string(i, "", input_msg);
 
@@ -40,26 +50,26 @@ constexpr char batch_size_msg[] = "batch size value. If not provided, batch size
 DEFINE_uint32(b, 0, batch_size_msg);
 
 constexpr char shape_msg[] = "shape for network input.\n"
-                             "                                                     Ex., "
+                             "                                                      ex., "
                              "\"input1[1,128],input2[1,128],input3[1,128]\" or just \"[1,3,224,224]\"";
 DEFINE_string(shape, "", shape_msg);
 
 constexpr char layout_msg[] =
     "layout for network input.\n"
-    "                                                     Ex., \"input1[NCHW],input2[NC]\" or just \"[NCHW]\"";
+    "                                                      ex.: \"input1[NCHW],input2[NC]\" or just \"[NCHW]\"";
 DEFINE_string(layout, "", layout_msg);
 
 constexpr char input_mean_msg[] =
-    "Mean values per channel for input image.\n"
-    "                                                     Applicable only for models with image input.\n"
-    "                                                     Ex.: [123.675,116.28,103.53] or with specifying inputs "
+    "mean values per channel for input image.\n"
+    "                                                      applicable only for models with image input.\n"
+    "                                                      ex.: [123.675,116.28,103.53] or with specifying inputs "
     "src[255,255,255]";
 DEFINE_string(mean, "", input_mean_msg);
 
 constexpr char input_scale_msg[] =
-    "Scale values per channel for input image.\n"
-    "                                                     Applicable only for models with image inputs.\n"
-    "                                                     Ex.: [58.395,57.12,57.375] or with specifying inputs "
+    "scale values per channel for input image.\n"
+    "                                                      applicable only for models with image inputs.\n"
+    "                                                      ex.: [58.395,57.12,57.375] or with specifying inputs "
     "src[255,255,255]";
 DEFINE_string(scale, "", input_scale_msg);
 
@@ -95,6 +105,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[-h]                                          " << help_msg
                   << "\n\t[-help]                                       print help on all arguments"
                   << "\n\t -m <MODEL FILE>                              " << model_msg
+                  << "\n\t[-w <WEIGHTS FILE>]                           " << weights_msg
                   << "\n\t[-i <INPUT>]                                  " << input_msg
                   << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
                   << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
@@ -199,7 +210,7 @@ int main(int argc, char* argv[]) {
         log_step();  // Reading model files
         logger::info << "Reading model " << FLAGS_m << logger::endl;
         auto start_time = HighresClock::now();
-        launcher->read(FLAGS_m);
+        launcher->read(FLAGS_m, FLAGS_w);
         auto read_model_time = utils::ns_to_ms(HighresClock::now() - start_time);
         logger::info << "Read model took " << utils::format_double(read_model_time) << " ms" << logger::endl;
 

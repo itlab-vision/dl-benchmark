@@ -53,7 +53,7 @@ void ONNXLauncher::log_framework_version() const {
     logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
 }
 
-void ONNXLauncher::read(const std::string& model_path) {
+void ONNXLauncher::read(const std::string model_file, const std::string weights_file) {
     env = std::make_shared<Ort::Env>(ORT_LOGGING_LEVEL_ERROR, "ORT Benchmark");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -61,7 +61,7 @@ void ONNXLauncher::read(const std::string& model_path) {
     if (nthreads > 0) {
         session_options.SetIntraOpNumThreads(nthreads);
     }
-    session = std::make_shared<Ort::Session>(*env, model_path.c_str(), session_options);
+    session = std::make_shared<Ort::Session>(*env,  model_file.c_str(), session_options);
 }
 
 void ONNXLauncher::fill_inputs_outputs_info() {

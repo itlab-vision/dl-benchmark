@@ -30,8 +30,8 @@ void OCVLauncher::log_framework_version() const {
     logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
 
-void OCVLauncher::read(const std::string& model_path) {
-    net = cv::dnn::readNet(model_path);
+void OCVLauncher::read(const std::string model_file, const std::string weights_file) {
+    net = cv::dnn::readNet(model_file, weights_file);
     net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 
     std::vector<MatShape> inputShapes, outputShapes;

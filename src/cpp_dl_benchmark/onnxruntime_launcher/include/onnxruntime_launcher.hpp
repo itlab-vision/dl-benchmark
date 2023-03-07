@@ -26,7 +26,7 @@ public:
 
     void log_framework_version() const override;
 
-    void read(const std::string& model) override;
+    void read(const std::string model_file, const std::string weights_file = "") override;
     void load() override{};
 
     void fill_inputs_outputs_info() override;
