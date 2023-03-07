@@ -7,7 +7,7 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
 ```
 git clone https://github.com/opencv/opencv
 cd opencv
-git checkout v4.7.0
+git checkout 4.7.0
 ```
 2. Create `build` directory:
 ```
