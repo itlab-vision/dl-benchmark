@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-using MatShape = cv::dnn::dnn4_v20220524::MatShape;
+using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
 OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
     cv::setNumThreads(nthreads);
