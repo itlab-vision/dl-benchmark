@@ -649,7 +649,7 @@ Image resolution: 128 x 256
 
 
 <div style='float: center'>
-<img width="300" src="images\person-reidentification-retail_1.png"></img>
+<img width="300" src="images\person-reidentification-retail.jpg"></img>
 </div>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
