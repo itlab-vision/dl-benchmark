@@ -109,6 +109,22 @@ def cli_argument_parser():
                         type=str,
                         nargs=1,
                         dest='delegate_options')
+    parser.add_argument('--output_names',
+                        help='Name of the output tensor',
+                        default=None,
+                        type=str,
+                        nargs='+',
+                        dest='output_names')
+    parser.add_argument('-nt', '--number_top',
+                        help='Number of top results to print',
+                        default=5,
+                        type=int,
+                        dest='number_top')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file',
+                        default=None,
+                        type=str,
+                        dest='labels')
 
     args = parser.parse_args()
 
@@ -255,6 +271,15 @@ def parse_layout_arg(values, input_names):
     return return_values
 
 
+def prepare_output(result, output_names, task):
+    if (output_names is None) or (len(result) != len(output_names)):
+        raise ValueError('The number of output tensors does not match the number of corresponding output names')
+    if task == 'classification':
+        return {output_names[i]: result[i] for i in range(len(result))}
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
+
+
 def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
@@ -285,23 +310,31 @@ def main():
         for layer in input_shapes:
             log.info(f'Shape for input layer {layer}: {input_shapes[layer]}')
 
-        log.info('Prepare input data')
-
+        log.info('Preparing input data')
         io.prepare_input(interpreter, args.input)
         reshape_model_input(model_wrapper, interpreter, log)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
-
         result, inference_time = inference_tflite(interpreter, args.number_iter, io.get_slice_input)
 
         time, latency, fps = process_result(args.batch_size, inference_time)
         if not args.raw_output:
-            io.process_output(result, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Converting output tensor to print results')
+                    result = prepare_output(result, args.output_names, args.task)
+
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
             result_output(time, fps, latency, log)
         else:
             raw_result_output(time, fps, latency)
     except Exception as ex:
-        print(f'ERROR! : {" ".join(ex)}')
+        log.error(str(ex))
         sys.exit(1)
 
 
