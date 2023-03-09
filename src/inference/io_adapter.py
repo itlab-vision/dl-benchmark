@@ -1,10 +1,10 @@
 import abc
 import os
 
-import cv2
-import numpy as np
 import json
 import pathlib
+import cv2
+import numpy as np
 
 
 class IOAdapter(metaclass=abc.ABCMeta):
