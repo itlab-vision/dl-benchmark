@@ -73,6 +73,12 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--output_names',
+                        help='Name of the output tensor',
+                        default=None,
+                        type=str,
+                        nargs='+',
+                        dest='output_names')
     parser.add_argument('-b', '--batch_size',
                         help='Size of the processed pack',
                         default=1,
@@ -168,19 +174,6 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def print_topk_predictions(predictions, k, file_labels):
-    categories = np.array(json.load(open(file_labels, 'r')))
-    log.info(f'Top-{k} results:')
-    for prediction_idx in range(len(predictions)):
-        log.info(f'Result for image {prediction_idx}')
-        top_pred = predictions.topk(k=k)[prediction_idx].asnumpy()
-        for index in top_pred:
-            idx = int(index)
-            probability = predictions[prediction_idx][idx]
-            category = categories[idx]
-            log.info('\t{0:.7f} {1}'.format(probability.asscalar(), category))
-
-
 def inference_mxnet(net, num_iterations, get_slice, input_name,
                     k=5, file_labels='image_net_labels.json'):
     predictions = None
@@ -221,6 +214,14 @@ def raw_result_output(average_time, fps, latency):
     print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
 
 
+def prepare_output(result, output_names, task):
+    if (output_names is None) or len(output_names) == 0:
+        raise ValueError('The number of output tensors does not match the number of corresponding output names')
+    if task == 'classification':
+        return {output_names[0]: result.asnumpy()}
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
+
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -259,8 +260,16 @@ def main():
 
         if not args.raw_output:
             if args.number_iter == 1:
-                # print_topk_predictions should be implemented as io.process_output(result, log)
-                print_topk_predictions(result, args.number_top, args.labels)
+                try:
+                    log.info('Converting output tensor to print results')
+                    result = prepare_output(result, args.output_names, args.task)
+
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
             result_output(average_time, fps, latency)
         else:
             raw_result_output(average_time, fps, latency)

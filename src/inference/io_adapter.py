@@ -3,6 +3,8 @@ import os
 
 import cv2
 import numpy as np
+import json
+import pathlib
 
 
 class IOAdapter(metaclass=abc.ABCMeta):
@@ -237,8 +239,12 @@ class ClassificationIO(IOAdapter):
         log.info('Top {0} results:'.format(self._number_top))
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
-        with open(self._labels, 'r') as f:
-            labels_map = [line.strip() for line in f]
+        file_extension = pathlib.Path(self._labels).suffix
+        if file_extension == '.json':
+            labels_map = np.array(json.load(open(self._labels, 'r'))).tolist()
+        else:
+            with open(self._labels, 'r') as f:
+                labels_map = [line.strip() for line in f]
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]  # noqa: PLE1130
