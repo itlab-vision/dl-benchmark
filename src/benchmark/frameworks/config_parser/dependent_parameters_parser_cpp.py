@@ -1,6 +1,7 @@
 from .dependent_parameters_parser import DependentParametersParser
 from .framework_parameters_cpp import CppParameters
 
+
 class CppParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         dep_parameters_tag = curr_test.getElementsByTagName('FrameworkDependent')[0]
