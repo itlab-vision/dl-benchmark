@@ -82,6 +82,9 @@ PERSON (1874, 288), (1976, 545)<br>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
+person-vehicle-bike-detection-2000 | Bounding box:<br>CAR (121, 391) (318, 477)<br>CAR (551, 374) (647, 456)<br>CAR (634, 385) (722, 437)<br>BIKE (310, 210) (551, 774)<br>PERSON (1790, 284) (1885, 531)<br>PERSON (1892, 301) (1977, 515)<br>| Bounding box:<br>CAR (121, 391) (318, 477)<br>CAR (551, 374) (647, 456)<br>CAR (634, 385) (722, 437)<br>BIKE (310, 210) (551, 774)<br>PERSON (1790, 284) (1885, 531)<br>PERSON (1892, 301) (1977, 515)<br>|
+person-vehicle-bike-detection-2001 | Bounding box:<br>CAR (108, 394) (310, 477)<br>BIKE (321, 185) (545, 742)<br>PERSON (1782, 278) (1889, 538)<br>PERSON (1877, 295) (1971, 530)<br>| Bounding box:<br>CAR (108, 394) (310, 477)<br>BIKE (321, 185) (545, 742)<br>PERSON (1782, 278) (1889, 538)<br>PERSON (1877, 295) (1971, 530)<br>|
+person-vehicle-bike-detection-2002 | Boounding box:<br>CAR (554, 376) (666,455)<br>CAR (0, 401) (86, 517)<br>BIKE (334, 200) (540, 635)<br>PERSON (1783, 269) (1881, 540)<br>PERSON (1878, 298) (1973, 527)<br>PERSON (329, 193) (545, 627)<br>| Boounding box:<br>CAR (554, 376) (666,455)<br>CAR (0, 401) (86, 517)<br>BIKE (334, 200) (540, 635)<br>PERSON (1783, 269) (1881, 540)<br>PERSON (1878, 298) (1973, 527)<br>PERSON (329, 193) (545, 627)<br>|
 person-vehicle-bike-detection-crossroad-0078 | Bounding box:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>BIKE (319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>| Bounding box:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>BIKE(319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>|
 person-vehicle-bike-detection-crossroad-1016 | Bounding box:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>| Bounding box:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>|
 
@@ -160,6 +163,9 @@ Bounding boxes (upper left and bottom right corners):<br>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
+face-detection-0200 | Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>| Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>|
+face-detection-0202 | Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| 
+face-detection-0204 | Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>| Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>|
 face-detection-adas-0001 | Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>| Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>|
 face-detection-adas-binary-0001 | Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>| Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>|
 face-detection-retail-0004 | Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>| Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>|
