@@ -9,7 +9,7 @@ Model | Availability in OMZ (2023.03.10) | Availability in the validation table 
 mobilenet-v1-1.0-224-tf|+|-|
 mobilenet_v2_1.0_224|+|-|
 mobilenet-v2-1.4-224|+|-|
-inception-resnet-v2-tf|+|-|
+inception-resnet-v2-tf|+|+|
 
 ### Other tasks
 
