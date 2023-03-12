@@ -11,6 +11,9 @@ mobilenet_v2_1.0_224|+|-|
 mobilenet-v2-1.4-224|+|-|
 inception-resnet-v2-tf|+|+|
 
+**Note:** inference implementation for MobileNet-models
+supported for batch size that equals 1.
+
 ### Other tasks
 
 [TBD]
@@ -21,15 +24,18 @@ inception-resnet-v2-tf|+|+|
 
 Model | Availability in TF hub (2023.03.10) | Availability in the validation table |
 -|-|-|
-lite-model_mobilenet_v1_100_224_fp32_1.tflite|+ ([link][mobilenet_v1_100_224_fp32_1])|-|
-lite-model_mobilenet_v2_100_224_fp32_1.tflite|+ ([link][mobilenet_v2_100_224_fp32_1])|-|
-lite-model_mobilenet_v3_small_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_small_100_224_fp32_1])|-|
-lite-model_mobilenet_v3_large_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_large_100_224_fp32])|-|
+lite-model_mobilenet_v1_100_224_fp32_1.tflite|+ ([link][mobilenet_v1_100_224_fp32_1])|+|
+lite-model_mobilenet_v2_100_224_fp32_1.tflite|+ ([link][mobilenet_v2_100_224_fp32_1])|+|
+lite-model_mobilenet_v3_small_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_small_100_224_fp32_1])|+|
+lite-model_mobilenet_v3_large_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_large_100_224_fp32])|+|
 efficientnet_lite0_fp32_2.tflite|+ ([link][efficientnet_lite0_fp32_2])|-|
 efficientnet_lite1_fp32_2.tflite|+ ([link][efficientnet_lite1_fp32_2])|-|
 efficientnet_lite2_fp32_2.tflite|+ ([link][efficientnet_lite2_fp32_2])|-|
 efficientnet_lite3_fp32_2.tflite|+ ([link][efficientnet_lite3_fp32_2])|-|
 efficientnet_lite4_fp32_2.tflite|+ ([link][efficientnet_lite4_fp32_2])|-|
+
+**Note:** inference implementation for EfficientNet-models
+supported for batch size that equals 1.
 
 ### Other tasks
 
