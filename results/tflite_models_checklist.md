@@ -1,4 +1,4 @@
-# Model validation and performance analysis status for TF lite
+# Model validation and performance analysis status for TensorFlow Lite
 
 ## Public models (Open Model Zoo)
 
@@ -12,6 +12,8 @@ mobilenet-v2-1.4-224|+|-|
 inception-resnet-v2-tf|+|-|
 
 ### Other tasks
+
+[TBD]
 
 ## Public models (TF hub)
 
