@@ -79,10 +79,10 @@ mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,12
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.6549551 Granny Smith<br>0.1130055 piggy bank, penny bank<br>0.0566443 teapot<br>0.0250644 saltshaker, salt shaker<br>0.0120769 vase|
 mobilenet_v3_small_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.5426094 Granny Smith<br>0.0725947 teapot<br>0.0285967 piggy bank, penny bank<br>0.0269885 pitcher, ewer<br>0.0195926 vase|
 mobilenet_v3_large_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.8494291 Granny Smith<br>0.0085453 piggy bank, penny bank<br>0.0069065 lemon<br>0.0055464 tennis ball<br>0.0027605 pomegranate|
-mobilenet_v1_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v2_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_small_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_large_100_224_uint8_1|Batch size: 1.|-|
+mobilenet_v1_100_224_uint8_1|-|248.0000000 Granny Smith<br>1.0000000 lemon<br>0.0000000 sulphur butterfly, sulfur butterfly<br>0.0000000 guinea pig, Cavia cobaya<br>0.0000000 beaver|
+mobilenet_v2_100_224_uint8_1|-|242.0000000 Granny Smith<br>2.0000000 piggy bank, penny bank<br>1.0000000 lemon<br>1.0000000 teapot<br>1.0000000 saltshaker, salt shaker|
+mobilenet_v3_small_100_224_uint8_1|-|25.0000000 junco, snowbird<br>13.0000000 water ouzel, dipper<br>11.0000000 chickadee<br>8.0000000 brambling, Fringilla montifringilla<br>7.0000000 goldfinch, Carduelis carduelis|
+mobilenet_v3_large_100_224_uint8_1|-|204.0000000 Granny Smith<br>6.0000000 piggy bank, penny bank<br>1.0000000 orange<br>1.0000000 teapot<br>1.0000000 vase|
 efficientnet_lite0_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite1_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite2_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
@@ -115,10 +115,10 @@ mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,12
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.8474838 junco, snowbird<br>0.0402333 chickadee<br>0.0112412 brambling, Fringilla montifringilla<br>0.0056867 water ouzel, dipper<br>0.0020902 goldfinch, Carduelis carduelis|
 mobilenet_v3_small_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].| 0.6117089 junco, snowbird<br>0.0544940 chickadee<br>0.0274826 goldfinch, Carduelis carduelis<br>0.0213195 water ouzel, dipper<br>0.0100568 brambling, Fringilla montifringilla|
 mobilenet_v3_large_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.6303865 junco, snowbird<br>0.0645584 brambling, Fringilla montifringilla<br>0.0283644 goldfinch, Carduelis carduelis<br>0.0097315 chickadee<br>0.0092374 water ouzel, dipper|
-mobilenet_v1_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v2_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_small_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_large_100_224_uint8_1|Batch size: 1.|-|
+mobilenet_v1_100_224_uint8_1|-|181.0000000 junco, snowbird<br>20.0000000 brambling, Fringilla montifringilla<br>12.0000000 goldfinch, Carduelis carduelis<br>3.0000000 chickadee<br>3.0000000 house finch, linnet, Carpodacus mexicanus|
+mobilenet_v2_100_224_uint8_1|-|221.0000000 junco, snowbird<br>6.0000000 chickadee<br>3.0000000 brambling, Fringilla montifringilla<br>1.0000000 water ouzel, dipper<br>0.0000000 toilet tissue, toilet paper, bathroom tissue|
+mobilenet_v3_small_100_224_uint8_1|-| 97.0000000 Granny Smith<br>27.0000000 tennis ball<br>8.0000000 ping-pong ball<br>5.0000000 candle, taper, wax light<br>5.0000000 saltshaker, salt shaker|
+mobilenet_v3_large_100_224_uint8_1|-|144.0000000 junco, snowbird<br>9.0000000 goldfinch, Carduelis carduelis<br>6.0000000 water ouzel, dipper<br>5.0000000 chickadee<br>5.0000000 brambling, Fringilla montifringilla|
 efficientnet_lite0_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite1_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite2_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
@@ -151,10 +151,10 @@ mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,12
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.0606234 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0568781 container ship, containership, container vessel<br>0.0518561 lifeboat<br>0.0431800 beacon, lighthouse, beacon light, pharos<br>0.0337389 drilling platform, offshore rig|
 mobilenet_v3_small_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.0724729 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.0653515 drilling platform, offshore rig<br>0.0644393 liner, ocean liner<br>0.0580560 container ship, containership, container vessel<br>0.0499799 beacon, lighthouse, beacon light, pharos|
 mobilenet_v3_large_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.2661534 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0744180 beacon, lighthouse, beacon light, pharos<br>0.0523450 container ship, containership, container vessel<br>0.0406797 pirate, pirate ship<br>0.0398768 aircraft carrier, carrier, flattop, attack aircraft carrier|
-mobilenet_v1_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v2_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_small_100_224_uint8_1|Batch size: 1.|-|
-mobilenet_v3_large_100_224_uint8_1|Batch size: 1.|-|
+mobilenet_v1_100_224_uint8_1|-|34.0000000 catamaran<br>26.0000000 liner, ocean liner<br>21.0000000 water bottle<br>10.0000000 dock, dockage, docking facility<br>9.0000000 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
+mobilenet_v2_100_224_uint8_1|-|15.0000000 pirate, pirate ship<br>14.0000000 liner, ocean liner<br>7.0000000 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>7.0000000 container ship, containership, container vessel<br>6.0000000 catamaran|
+mobilenet_v3_small_100_224_uint8_1|-|25.0000000 drilling platform, offshore rig<br>17.0000000 beacon, lighthouse, beacon light, pharos<br>15.0000000 aircraft carrier, carrier, flattop, attack aircraft carrier<br>12.0000000 container ship, containership, container vessel<br>12.0000000 sandbar, sand bar|
+mobilenet_v3_large_100_224_uint8_1|-|67.0000000 beacon, lighthouse, beacon light, pharos<br>40.0000000 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>32.0000000 container ship, containership, container vessel<br>10.0000000 fireboat<br>9.0000000 seashore, coast, seacoast, sea-coast|
 efficientnet_lite0_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite1_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|
 efficientnet_lite2_fp32_2|Mean: [127,127,127].<br>Input scale: [128,128,128].|-|

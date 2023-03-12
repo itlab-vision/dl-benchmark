@@ -28,10 +28,10 @@ lite-model_mobilenet_v1_100_224_fp32_1.tflite|+ ([link][mobilenet_v1_100_224_fp3
 lite-model_mobilenet_v2_100_224_fp32_1.tflite|+ ([link][mobilenet_v2_100_224_fp32_1])|+|
 lite-model_mobilenet_v3_small_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_small_100_224_fp32_1])|+|
 lite-model_mobilenet_v3_large_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_large_100_224_fp32_1])|+|
-lite-model_mobilenet_v1_100_224_uint8_1.tflite|+ ([link][mobilenet_v1_100_224_uint8_1])|-|
-lite-model_mobilenet_v2_100_224_uint8_1.tflite|+ ([link][mobilenet_v2_100_224_uint8_1])|-|
-lite-model_mobilenet_v3_small_100_224_uint8_1.tflite|+ ([link][mobilenet_v3_small_100_224_uint8_1])|-|
-lite-model_mobilenet_v3_large_100_224_uint8_1.tflite|+ ([link][mobilenet_v3_large_100_224_uint8_1])|-|
+lite-model_mobilenet_v1_100_224_uint8_1.tflite|+ ([link][mobilenet_v1_100_224_uint8_1])|+|
+lite-model_mobilenet_v2_100_224_uint8_1.tflite|+ ([link][mobilenet_v2_100_224_uint8_1])|+|
+lite-model_mobilenet_v3_small_100_224_uint8_1.tflite|+ ([link][mobilenet_v3_small_100_224_uint8_1])|+|
+lite-model_mobilenet_v3_large_100_224_uint8_1.tflite|+ ([link][mobilenet_v3_large_100_224_uint8_1])|+|
 efficientnet_lite0_fp32_2.tflite|+ ([link][efficientnet_lite0_fp32_2])|-|
 efficientnet_lite1_fp32_2.tflite|+ ([link][efficientnet_lite1_fp32_2])|-|
 efficientnet_lite2_fp32_2.tflite|+ ([link][efficientnet_lite2_fp32_2])|-|
