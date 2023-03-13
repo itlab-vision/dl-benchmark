@@ -65,7 +65,7 @@ std::vector<T> string_to_vec(const std::string& str, const char delim) {
             }
         }
     } catch (const std::invalid_argument&) {
-        throw std::invalid_argument("Can't parse mean or scale argument");
+        throw std::invalid_argument("Can't parse string " + str);
     }
 
     return res;
