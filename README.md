@@ -21,6 +21,7 @@ DLI supports inference using the following frameworks:
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
+- [OpenCV DNN][opencv-dnn].
 
 More information about DLI is available
 [here][dli-ru-web-page] (in Russian)
@@ -98,6 +99,13 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `config_maker`contains GUI application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
+  - `cpp_dl_benchmark` contains tools that allows to measure
+    deep learning models inference performance with
+    [ONNX Runtime](https://github.com/microsoft/onnxruntime)
+    and [OpenCV DNN](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).
+    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
+    as a reference and stick to its measurement methodology,
+    thus provide consistent performance results.
   - `csv2html` is a set of scripts to convert performance and accuracy
      tables from csv to html.
   - `csv2xlsx` is a set of scripts to convert performance and accuracy
@@ -106,15 +114,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `inference` contains python inference implementation.
   - `node_info` contains a set of functions to get information about
     computational node.
-  - `onnxruntime_benchmark` is the tool that allows to measure
-    deep learning models inference performance with
-    [ONNX Runtime](https://github.com/microsoft/onnxruntime).
-    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
-    as a reference and stick to its measurement methodology,
-    thus provide consistent performance results.
   - `quantization` contains scripts to quantize model to INT8-precision
     using Post-Training Optimization Tool (POT)
-	of Intel® Distribution of OpenVINO™ toolkit.
+    of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
   - `utils` is a package of auxiliary utilities.
@@ -159,6 +161,7 @@ Report questions, issues and suggestions, using:
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
 [tensorflow-lite]: https://www.tensorflow.org/lite/
 [onnx-runtime]: https://onnxruntime.ai/
+[opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo

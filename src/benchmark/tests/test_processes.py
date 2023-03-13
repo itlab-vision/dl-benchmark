@@ -14,6 +14,9 @@ from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
 from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
 from src.benchmark.frameworks.processes import ProcessHandler
 from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
+from src.benchmark.frameworks.opencv.opencv_process import OpenCVProcess
+from src.benchmark.frameworks.onnx_runtime.onnx_runtime_process import OnnxRuntimeProcess
+from src.benchmark.frameworks.tensorflow_lite.tensorflow_lite_process import TensorFlowLiteProcess
 from src.benchmark.tests.test_executor import get_host_executor
 
 log.basicConfig(
@@ -59,7 +62,9 @@ def test_python_version(os, mocker):
 
 
 @pytest.mark.parametrize('inference_framework', [['OpenVINO DLDT', OpenVINOProcess], ['Caffe', IntelCaffeProcess],
-                                                 ['TensorFlow', TensorFlowProcess]])
+                                                 ['TensorFlow', TensorFlowProcess], ['OpenCV', OpenCVProcess],
+                                                 ['ONNX Runtime', OnnxRuntimeProcess],
+                                                 ['TensorFlowLite', TensorFlowLiteProcess]])
 @pytest.mark.parametrize('mode', [['sync', SyncOpenVINOProcess], ['async', AsyncOpenVINOProcess],
                                   ['ovbenchmark_python_latency', OpenVINOBenchmarkPythonProcess],
                                   ['ovbenchmark_python_throughput', OpenVINOBenchmarkPythonProcess],

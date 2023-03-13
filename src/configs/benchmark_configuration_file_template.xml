@@ -112,7 +112,36 @@
             <BatchSize></BatchSize>
             <Device>CPU</Device>
             <IterationCount></IterationCount>
-            <TestTimeLimit></TestTimeLimit> 
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <ThreadCount></ThreadCount>
+            <InferenceRequestsCount></InferenceRequestsCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenCV</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device>CPU</Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputShape></InputShape>

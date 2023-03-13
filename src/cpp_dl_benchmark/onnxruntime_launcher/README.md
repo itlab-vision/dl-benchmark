@@ -6,7 +6,7 @@ The tool allows to measure deep learning models inference performance with [ONNX
 ```
 git clone  https://github.com/microsoft/onnxruntime.git
 cd onnxruntime
-git checkout v1.13.1
+git checkout v1.14.0
 git submodule update --init --recursive
 ```
 2. Create `build` directory:
