@@ -2,26 +2,26 @@ import platform
 import subprocess
 from collections import OrderedDict
 
-from openvino.inference_engine import IECore
+from openvino.runtime import Core
 
 
 def get_cpu_name():
-    ie = IECore()
-    if 'CPU' in ie.available_devices:
-        cpuname = ie.get_metric('CPU', 'FULL_DEVICE_NAME')
+    core = Core()
+    if 'CPU' in core.available_devices:
+        cpuname = core.get_property('CPU', 'FULL_DEVICE_NAME')
     else:
         cpuname = 'Undefined'
-    del ie
+    del core
     return cpuname
 
 
 def get_gpu_name():
-    ie = IECore()
-    if 'GPU' in ie.available_devices:
-        gpuname = ie.get_metric('GPU', 'FULL_DEVICE_NAME')
+    core = Core()
+    if 'GPU' in core.available_devices:
+        gpuname = core.get_property('GPU', 'FULL_DEVICE_NAME')
     else:
         gpuname = 'Undefined'
-    del ie
+    del core
     return gpuname
 
 
