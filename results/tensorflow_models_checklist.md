@@ -25,8 +25,10 @@ resnet-50-tf|+|+|
 
 **Notes**:
 
-1. Inference implementation for GoogleNet-models supported for batch size that equals 1.
-1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3 failes.
+1. Inference implementation for GoogleNet-models supported
+   for batch size that equals 1.
+1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3
+   fails.
 
 ### Object detection
 
