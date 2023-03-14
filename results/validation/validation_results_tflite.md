@@ -16,10 +16,16 @@ Image resolution: 709 x 510
 
 Model | Parameters | Python (implementation) |
 -|-|-|
+densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9523314 Granny Smith<br>0.0132282 orange<br>0.0125180 lemon<br>0.0027912 banana<br>0.0020333 piggy bank, penny bank|
+googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9969806 Granny Smith<br>0.0001207 Rhodesian ridgeback<br>0.0000488 hair slide<br>0.0000473 pineapple, ananas<br>0.0000330 banana|
 mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|8.0107708 Granny Smith<br>4.4552484 piggy bank, penny bank<br>4.2636762 bell pepper<br>3.9343853 candle, taper, wax light<br>3.5531902 pomegranate|
+resnet-50-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 
 #### Test image #2
 
@@ -33,10 +39,16 @@ Image resolution: 500 x 500
 
 Model | Parameters | Python (implementation) |
 -|-|-|
+densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9841611 junco, snowbird<br>0.0072198 chickadee<br>0.0034962 brambling, Fringilla montifringilla<br>0.0016226 water ouzel, dipper<br>0.0012858 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
+googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].| 0.9339716 junco, snowbird<br>0.0006892 chickadee<br>0.0005481 brambling, Fringilla montifringilla<br>0.0004948 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0004539 water ouzel, dipper|
 mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|10.0273972 junco, snowbird<br>4.6770372 brambling, Fringilla montifringilla<br>4.2079940 goldfinch, Carduelis carduelis<br>4.1425276 water ouzel, dipper<br>4.0244055 chickadee|
+resnet-50-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 
 #### Test image #3
 
@@ -50,10 +62,16 @@ Image resolution: 333 x 500
 
 Model | Parameters | Python (implementation) |
 -|-|-|
+densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].| 0.3022473 liner, ocean liner<br>0.1322417 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1194588 container ship, containership, container vessel<br>0.0795097 drilling platform, offshore rig<br>0.0723070 dock, dockage, docking facility|
+googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.6737013 lifeboat<br>0.0432948 submarine, pigboat, sub, U-boat<br>0.0322841 fireboat<br>0.0264144 beacon, lighthouse, beacon light, pharos<br>0.0147488 drilling platform, offshore rig|
 mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|6.4228325 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>6.0842223 liner, ocean liner<br>5.8280630 fireboat<br>5.7098336 dock, dockage, docking facility<br>5.6666737 container ship, containership, container vessel|
+resnet-50-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 
 ### Other tasks
 

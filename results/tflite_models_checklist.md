@@ -6,13 +6,25 @@
 
 Model | Availability in OMZ (2023.03.10) | Availability in the validation table |
 -|-|-|
+densenet-121|+-|+|
+googlenet-v1-tf|+-|-|
+googlenet-v2-tf|+-|-|
+googlenet-v3|+-|-|
+googlenet-v4-tf|+-|+|
 mobilenet-v1-1.0-224-tf|+|-|
 mobilenet_v2_1.0_224|+|-|
 mobilenet-v2-1.4-224|+|-|
 inception-resnet-v2-tf|+|+|
+resnet-50-tf|+-|-|
 
-**Note:** inference implementation for MobileNet-models
-supported for batch size that equals 1.
+**Notes:**
+
+1. Inference implementation for MobileNet- and several
+   GoogleNet-models supported for batch size that equals 1.
+2. "+-" in the column of availability in OMZ (2023.03.10)
+   means that model was converted by `omz_converter` from `.ckpt`
+   to `.pb`, and by internal converter `src/model_converters/tflite_converter.py`
+   from `.pb` to `.tflite`.
 
 ### Other tasks
 
