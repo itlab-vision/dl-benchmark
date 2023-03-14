@@ -14,14 +14,19 @@ googlenet-v1-tf (inceptionv1)|+|-|
 googlenet-v2-tf (inceptionv2)|+|-|
 googlenet-v3 (inceptionv3)|+|-|
 googlenet-v4-tf (inceptionv4)|+|-|
-inception-resnet-v2-tf|+|-|
+inception-resnet-v2-tf|+|+|
 mixnet-l|+|-|
-mobilenet-v1-1.0-224-tf|+|-|
-mobilenet-v2-1.0-224|+|-|
-mobilenet-v2-1.4-224|+|-|
+mobilenet-v1-1.0-224-tf|+|+|
+mobilenet-v2-1.0-224|+|+|
+mobilenet-v2-1.4-224|+|+|
 mobilenet-v3-small-1.0-224-tf|+|-|
 mobilenet-v3-large-1.0-224-tf|+|-|
-resnet-50-tf|+|-|
+resnet-50-tf|+|+|
+
+**Notes**:
+
+1. Inference implementation for GoogleNet-models supported for batch size that equals 1.
+1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3 failes.
 
 ### Object detection
 
