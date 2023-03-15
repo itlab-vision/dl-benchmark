@@ -8,27 +8,27 @@ Represented deep models are available in [Open Model Zoo][omz].
 
 Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
 -|-|-|
-densenet-121-tf|+|-|
-efficientnet-b0|+|-|
+densenet-121-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
+efficientnet-b0|+|- ('NoneType' object is not iterable)|
 googlenet-v1-tf (inceptionv1)|+|-|
 googlenet-v2-tf (inceptionv2)|+|-|
 googlenet-v3 (inceptionv3)|+|-|
 googlenet-v4-tf (inceptionv4)|+|-|
 inception-resnet-v2-tf|+|+|
-mixnet-l|+|-|
+mixnet-l|+|- ('NoneType' object is not iterable)|
 mobilenet-v1-1.0-224-tf|+|+|
 mobilenet-v2-1.0-224|+|+|
 mobilenet-v2-1.4-224|+|+|
-mobilenet-v3-small-1.0-224-tf|+|-|
-mobilenet-v3-large-1.0-224-tf|+|-|
+mobilenet-v3-small-1.0-224-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
+mobilenet-v3-large-1.0-224-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
 resnet-50-tf|+|+|
 
 **Notes**:
 
 1. Inference implementation for GoogleNet-models supported
    for batch size that equals 1.
-1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3
-   fails.
+1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3-*,
+   mixnet-l fails.
 
 ### Object detection
 
