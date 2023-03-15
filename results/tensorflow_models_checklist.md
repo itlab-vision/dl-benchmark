@@ -6,10 +6,10 @@ Represented deep models are available in [Open Model Zoo][omz].
 
 ### Image classification
 
-Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
+Model | Availability in OMZ (2023.03.04) | Availability in the validation table |
 -|-|-|
-densenet-121-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
-efficientnet-b0|+|- ('NoneType' object is not iterable)|
+densenet-121-tf|+-|- (Error parsing message with type 'tensorflow.GraphDef')|
+efficientnet-b0|+-|- ('NoneType' object is not iterable)|
 googlenet-v1-tf (inceptionv1)|+|-|
 googlenet-v2-tf (inceptionv2)|+|-|
 googlenet-v3 (inceptionv3)|+|-|
@@ -19,8 +19,8 @@ mixnet-l|+|- ('NoneType' object is not iterable)|
 mobilenet-v1-1.0-224-tf|+|+|
 mobilenet-v2-1.0-224|+|+|
 mobilenet-v2-1.4-224|+|+|
-mobilenet-v3-small-1.0-224-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
-mobilenet-v3-large-1.0-224-tf|+|- (Error parsing message with type 'tensorflow.GraphDef')|
+mobilenet-v3-small-1.0-224-tf|+-|- (Error parsing message with type 'tensorflow.GraphDef')|
+mobilenet-v3-large-1.0-224-tf|+-|- (Error parsing message with type 'tensorflow.GraphDef')|
 resnet-50-tf|+|+|
 
 **Notes**:
@@ -29,8 +29,8 @@ resnet-50-tf|+|+|
    for batch size that equals 1.
 1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3-*,
    mixnet-l fails.
-1. Models stored in ckpt- and h5-formats in OMZ converted into pb-format
-   using `omz_converter`:
+1. "+-" in the column of availability in OMZ (2023.03.04) means that model was converted
+   by `omz_converter` from `.ckpt` or `.h5` into `.pb`.
 
    ```bash
    omz_downloader --name <model_name>
@@ -41,7 +41,7 @@ resnet-50-tf|+|+|
 
 ### Object detection
 
-Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
+Model | Availability in OMZ (2023.03.04) | Availability in the validation table |
 -|-|-|
 ctpn|+|-|
 efficientdet-d0|+|-|
@@ -56,13 +56,13 @@ ssdlite_mobilenet_v2|+|-|
 
 ### Semantic segmentation
 
-Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
+Model | Availability in OMZ (2023.03.04) | Availability in the validation table |
 -|-|-|
 deeplabv3|+|-|
 
 ### Instance segmentation
 
-Model | Availability in OMZ (2023.03.04)| Availability in the validation table |
+Model | Availability in OMZ (2023.03.04) | Availability in the validation table |
 -|-|-|
 mask_rcnn_resnet50_atrous_coco|+|-|
 mask_rcnn_inception_resnet_v2_atrous_coco|+|-|
