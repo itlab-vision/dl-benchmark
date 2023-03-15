@@ -15,16 +15,16 @@ mobilenet-v1-1.0-224-tf|+|-|
 mobilenet_v2_1.0_224|+|-|
 mobilenet-v2-1.4-224|+|-|
 inception-resnet-v2-tf|+|+|
-resnet-50-tf|+-|-|
+resnet-50-tf|+-|+|
 
 **Notes:**
 
 1. Inference implementation for MobileNet- and several
-   GoogleNet-models supported for batch size that equals 1.
+   GoogleNet-models supports batch size that equals 1.
 2. "+-" in the column of availability in OMZ (2023.03.10)
    means that model was converted by `omz_converter` from `.ckpt`
-   to `.pb`, and by internal converter `src/model_converters/tflite_converter.py`
-   from `.pb` to `.tflite`.
+   into `.pb`, and by internal converter `src/model_converters/tflite_converter.py`
+   from `.pb` into `.tflite`.
 
 ### Other tasks
 
