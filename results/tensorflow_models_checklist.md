@@ -29,6 +29,15 @@ resnet-50-tf|+|+|
    for batch size that equals 1.
 1. Inference of densenet-121-tf, efficientnet-b0, mobilenet-v3-*,
    mixnet-l fails.
+1. Models stored in ckpt- and h5-formats in OMZ converted into pb-format
+   using `omz_converter`:
+
+   ```bash
+   omz_downloader --name <model_name>
+   # export is required for GoogleNet-models
+   export PYTHONPATH=`pwd`:`pwd`/public/<model_name>/models/research/slim
+   omz_converter --name <model_name>
+   ```
 
 ### Object detection
 
