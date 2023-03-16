@@ -40,7 +40,7 @@ def open_csv_table(path_table_csv):
             for i, line in enumerate(lines):
                 if i == 0 and len(table_csv) != 0:
                     continue
-                table_csv.append(line)
+                table_csv.append(line.rstrip())
             file.close()
     return table_csv
 
