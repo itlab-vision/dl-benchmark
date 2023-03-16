@@ -1,7 +1,7 @@
 from ..config_parser.test_reporter import Test
 
 
-class OpenCVTest(Test):
+class OpenCVDNNCppTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
