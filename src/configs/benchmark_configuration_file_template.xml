@@ -137,7 +137,7 @@
             <Path></Path>
         </Dataset>
         <FrameworkIndependent>
-            <InferenceFramework>OpenCV</InferenceFramework>
+            <InferenceFramework>OpenCV DNN Cpp</InferenceFramework>
             <BatchSize></BatchSize>
             <Device>CPU</Device>
             <IterationCount></IterationCount>
