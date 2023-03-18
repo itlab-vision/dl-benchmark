@@ -53,7 +53,7 @@ def cli_argument_parser():
                         help='Flag to normalize input images'
                              '(use --mean and --std arguments to set'
                              'required normalization parameters).',
-                        action='store_false',
+                        action='store_true',
                         dest='norm')
     parser.add_argument('--mean',
                         help='Mean values.',

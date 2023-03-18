@@ -49,8 +49,9 @@ class MXNetProcess(ProcessHandler):
             common_params, '--input_name', input_name)
 
         normalize = self._test.dep_parameters.normalize
-        common_params = MXNetProcess._add_optional_argument_to_cmd_line(
-            common_params, '--norm', normalize)
+        if normalize == 'True':
+            common_params = MXNetProcess._add_optional_argument_to_cmd_line(
+                common_params, '--norm', '')
 
         mean = self._test.dep_parameters.mean
         common_params = MXNetProcess._add_optional_argument_to_cmd_line(
