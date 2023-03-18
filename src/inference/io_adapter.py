@@ -2,7 +2,7 @@ import abc
 import os
 
 import json
-import pathlib
+from pathlib import Path
 import cv2
 import numpy as np
 
@@ -239,7 +239,7 @@ class ClassificationIO(IOAdapter):
         log.info('Top {0} results:'.format(self._number_top))
         if not self._labels:
             self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
-        file_extension = pathlib.Path(self._labels).suffix
+        file_extension = Path(self._labels).suffix
         if file_extension == '.json':
             labels_map = np.array(json.load(open(self._labels, 'r'))).tolist()
         else:

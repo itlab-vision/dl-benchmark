@@ -1,5 +1,6 @@
 import argparse
 import logging as log
+import os
 import sys
 from time import time
 import warnings
@@ -25,17 +26,17 @@ def cli_argument_parser():
                         type=str,
                         dest='model_params')
     parser.add_argument('-mn', '--model_name',
-                        help='Model name to download using Gluon package.',
+                        help='Model name to download using GluonCV package.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-i', '--input',
-                        help='Path to data',
+                        help='Path to data.',
                         required=True,
                         type=str,
                         nargs='+',
                         dest='input')
     parser.add_argument('-in', '--input_name',
-                        help='Input name',
+                        help='Input name.',
                         default='data',
                         type=str,
                         dest='input_name')
@@ -43,76 +44,91 @@ def cli_argument_parser():
                         help='Input shape BxWxHxC, B is a batch size,'
                              'W is an input tensor width,'
                              'H is an input tensor height,'
-                             'C is an input tensor number of channels',
+                             'C is an input tensor number of channels.',
                         required=True,
                         type=int,
                         nargs=4,
                         dest='input_shape')
+    parser.add_argument('--norm',
+                        help='Flag to normalize input images'
+                             '(use --mean and --std arguments to set'
+                             'required normalization parameters).',
+                        action='store_false',
+                        dest='norm')
     parser.add_argument('--mean',
-                        help='Parameter mean',
+                        help='Mean values.',
                         default=[0, 0, 0],
                         type=float,
                         nargs=3,
                         dest='mean')
     parser.add_argument('--std',
-                        help='Parameter standard deviation',
+                        help='Standard deviation values.',
                         default=[1., 1., 1.],
                         type=float,
                         nargs=3,
                         dest='std')
-    parser.add_argument('--norm',
-                        help='Flag to normalize input images',
-                        default=True,
-                        type=bool,
-                        dest='norm')
     parser.add_argument('--channel_swap',
-                        help='Parameter channel swap (WxHxC to CxWxH by default)',
+                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
                         default=[2, 0, 1],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
     parser.add_argument('--output_names',
-                        help='Name of the output tensor',
+                        help='Name of the output tensors.',
                         default=None,
                         type=str,
                         nargs='+',
                         dest='output_names')
     parser.add_argument('-b', '--batch_size',
-                        help='Size of the processed pack',
+                        help='Batch size.',
                         default=1,
                         type=int,
                         dest='batch_size')
     parser.add_argument('-l', '--labels',
-                        help='Labels mapping file',
+                        help='Labels mapping file.',
                         default='image_net_labels.json',
                         type=str,
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
-                        help='Number of top results',
+                        help='Number of top results.',
                         default=5,
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
-                        help='Output processing method. Default: without postprocess',
-                        choices=['classification'],
-                        default='classification',
+                        help='Task type determines the type of output processing '
+                             'method. Available values: feedforward - without'
+                             'postprocessing (by default), classification - output'
+                             'is a vector of probabilities.',
+                        choices=['feedforward', 'classification'],
+                        default='feedforward',
                         type=str,
                         dest='task')
     parser.add_argument('-ni', '--number_iter',
-                        help='Number of inference iterations',
+                        help='Number of inference iterations.',
                         default=1,
                         type=int,
                         dest='number_iter')
     parser.add_argument('--raw_output',
-                        help='Raw output without logs',
+                        help='Raw output without logs.',
                         default=False,
                         type=bool,
                         dest='raw_output')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or NVIDIA GPU (CPU by default)',
+                        help='Specify the target device to infer on CPU or '
+                             'NVIDIA GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('-s', '--save_model',
+                        help='Flag to indicate whether the model should be saved'
+                             '(it may be required for GluonCV-models)',
+                        action='store_true',
+                        dest='save_model')
+    parser.add_argument('-p', '--path_save_model',
+                        help='Path to save model',
+                        default=None,
+                        type=str,
+                        dest='path_save_model')
 
     args = parser.parse_args()
 
@@ -141,9 +157,19 @@ def load_network_gluon(model_json, model_params, context, input_name):
     return deserialized_net
 
 
-def load_network_gluon_model_zoo(model_name, context):
-    log.info(f'Loading network \"{model_name}\"')
+def load_network_gluon_model_zoo(model_name, context, save_model, path_save_model):
+    log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
+
+    if save_model == True:
+        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
+        if path_save_model is None:
+            path_save_model = os.getcwd()
+        path_save_model = os.path.join(path_save_model, model_name)
+        if os.path.exists(path_save_model) == False:
+            os.mkdir(path_save_model)
+        gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
+                                   preprocess=None, layout='CHW', ctx=context)
 
     log.info(f'Info about the network:\n{net}')
 
@@ -213,6 +239,8 @@ def raw_result_output(average_time, fps, latency):
 
 
 def prepare_output(result, output_names, task):
+    if task == 'feedforward':
+        return {}
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
@@ -238,14 +266,15 @@ def main():
         if ((args.model_name is not None)
                 and (args.model_json is None)
                 and (args.model_params is None)):
-            net = load_network_gluon_model_zoo(args.model_name, context)
+            net = load_network_gluon_model_zoo(args.model_name, context,
+                                               args.save_model, args.path_save_model)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
                                      args.input_name)
         else:
             raise ValueError('Incorrect arguments.')
 
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
+        log.info(f'Shape of the input layer {args.input_name}: {args.input_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(net, args.input)
