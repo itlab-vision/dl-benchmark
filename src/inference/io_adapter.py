@@ -245,7 +245,7 @@ class ClassificationIO(IOAdapter):
             log.info('Result for image {0}'.format(batch + 1))
             for id_ in top_ind:
                 det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
-                log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
+                log.info('\t{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
 
 
 class DetectionIO(IOAdapter):
