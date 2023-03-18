@@ -526,8 +526,7 @@ python inference_mxnet.py --model_name <model_name> \
                           --input <path_to_data> \
                           --input_name <input_name> \
                           --input_shape <input_shape> \
-                          --mean <mean> \
-                          --std <std> \
+                          --norm --mean <mean> --std <std> \
                           --batch_size <batch_size> \
                           --save_model --path_save_model <path_save_model>
 ```

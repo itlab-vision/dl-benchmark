@@ -161,12 +161,12 @@ def load_network_gluon_model_zoo(model_name, context, save_model, path_save_mode
     log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
-    if save_model == True:
+    if save_model is True:
         log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if path_save_model is None:
             path_save_model = os.getcwd()
         path_save_model = os.path.join(path_save_model, model_name)
-        if os.path.exists(path_save_model) == False:
+        if not os.path.exists(path_save_model):
             os.mkdir(path_save_model)
         gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
                                    preprocess=None, layout='CHW', ctx=context)
