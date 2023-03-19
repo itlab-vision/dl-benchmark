@@ -80,8 +80,8 @@ resnet-v1-50         |0.1277409 banana<br>0.1127750 Granny Smith<br>0.0634985 te
 resnet-v1-101        |0.9928160 Granny Smith<br>0.0040912 fig<br>0.0009257 jackfruit, jak, jack<br>0.0006793 lemon<br>0.0003674 banana| 0.9928160 Granny Smith<br>0.0040912 fig<br>0.0009257 jackfruit, jak, jack<br>0.0006793 lemon<br>0.0003674 banana|0.9928156 Granny Smith<br>0.0040912 fig<br>0.0009257 jackfruit, jak, jack<br>0.0006793 lemon<br>0.0003674 banana| 0.9928156 Granny Smith<br>0.0040912 fig<br>0.0009257 jackfruit, jak, jack<br>0.0006793 lemon<br>0.0003674 banana|
 resnet-v1-152        |0.7078071 Granny Smith<br>0.1253208 gong, tam-tam<br>0.0107065 water jug<br>0.0105488 tennis ball<br>0.0088276 coffeepot| 0.7078074 Granny Smith<br>0.1253207 gong, tam-tam<br>0.0107064 water jug<br>0.0105488 tennis ball<br>0.0088276 coffeepot|0.7078072 Granny Smith<br>0.1253208 gong, tam-tam<br>0.0107065 water jug<br>0.0105488 tennis ball<br>0.0088276 coffeepot| 0.7078060 Granny Smith<br>0.1253216 gong, tam-tam<br>0.0107064 water jug<br>0.0105488 tennis ball<br>0.0088276 coffeepot|
 resnet-18-pytorch |-|-| 11.1563597 Granny Smith<br>7.9655943 piggy bank, penny bank<br>7.2275891 teapot<br>7.1502724 lemon<br>7.0498838 saltshaker, salt shaker | 11.1563597 Granny Smith<br>7.9655943 piggy bank, penny bank<br>7.2275891 teapot<br>7.1502724 lemon<br>7.0498838 saltshaker, salt shaker |
-resnet-50-pytorch |-|-| 14.6118250 Granny Smith<br>8.5581856 fig<br>7.5287142 acorn<br>6.9782810 orange<br>6.8520732 custard apple | 14.6118250 Granny Smith<br>8.5581856 fig<br>7.5287142 acorn<br>6.9782810 orange<br>6.8520732 custard apple |
-resnet-50-tf         |-|-| 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig | 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig |
+resnet-50-pytorch |-|-| 8.5036278 Granny Smith<br>1.7239134 lemon<br>1.5759209 orange<br>1.5090365 pomegranate<br>1.4204142 tennis ball | 8.5036278 Granny Smith<br>1.7239134 lemon<br>1.5759209 orange<br>1.5090365 pomegranate<br>1.4204142 tennis ball |
+resnet-50-tf |-|-| 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig | 0.9986790 Granny Smith<br>0.0001879 banana<br>0.0001561 acorn<br>0.0001348 lemon<br>0.0000943 fig |
 resnet-50-caffe2 |-|-| 0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |
 resnet-50-caffe2 |-|-| 0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |0.9997731 Granny Smith<br>0.0000315 fig<br>0.0000229 piggy bank, penny bank<br>0.0000163 bell pepper<br>0.0000142 banana<br> |
 rexnet-v1-1.0 |-|-| 11.4494057 Granny Smith<br>3.6772883 piggy bank, penny bank<br>3.5388184 lemon<br>3.2992923 orange<br>2.9920731 banana<br> | 11.4494057 Granny Smith<br>3.6772883 piggy bank, penny bank<br>3.5388184 lemon<br>3.2992923 orange<br>2.9920731 banana<br> |
@@ -169,8 +169,8 @@ repvgg-a0 |-|-| 26.3615990 junco, snowbird<br>19.2394276 chickadee<br>17.6558838
 repvgg-b1 |-|-| 19.3077412 junco, snowbird<br>11.3808165 brambling, Fringilla montifringilla<br>10.3980274 chickadee<br>9.7500544 water ouzel, dipper<br>9.3564234 goldfinch, Carduelis carduelis<br> | 19.3077450 junco, snowbird<br>11.3808174 brambling, Fringilla montifringilla<br>10.3980274 chickadee<br>9.7500525 water ouzel, dipper<br>9.3564234 goldfinch, Carduelis carduelis<br> |
 repvgg-b3 |-|-|  14.0971823 junco, snowbird<br>3.1309500 water ouzel, dipper<br>2.6912327 chickadee<br>2.2140567 oystercatcher, oyster catcher<br>1.9939202 quail<br> | 14.0971823 junco, snowbird<br>3.1309488 water ouzel, dipper<br>2.6912310 chickadee<br>2.2140563 oystercatcher, oyster catcher<br>1.9939198 quail<br> |
 resnet-34-pytorch |-|-| 18.9669666 junco, snowbird<br>12.0508604 chickadee<br>10.7637863 brambling, Fringilla montifringilla<br>10.6569023 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.0180721 goldfinch, Carduelis carduelis<br> | 18.9669666 junco, snowbird<br>12.0508604 chickadee<br>10.7637863 brambling, Fringilla montifringilla<br>10.6569023 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.0180721 goldfinch, Carduelis carduelis<br> |
-resnet-50-pytorch |-|-| 18.4067078 junco, snowbird<br>10.4681435 chickadee<br>9.9149218 goldfinch, Carduelis carduelis<br>9.8933010 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla<br>| 18.4067078 junco, snowbird<br>10.4681435 chickadee<br>9.9149218 goldfinch, Carduelis carduelis<br>9.8933010 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>9.5323343 brambling, Fringilla montifringilla<br> |
-resnet-v1-50         |0.9975350 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul| 0.9975350 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul|0.9975340 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul| 0.9975340 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul|
+resnet-50-pytorch |-|-| 8.7988720 junco, snowbird<br>2.3853679 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>2.0435791 water ouzel, dipper<br>1.8438132 koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus<br>1.5064411 wombat | 8.7988720 junco, snowbird<br>2.3853679 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>2.0435791 water ouzel, dipper<br>1.8438132 koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus<br>1.5064411 wombat |
+resnet-v1-50 |0.9975350 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul| 0.9975350 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul|0.9975340 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul| 0.9975340 junco, snowbird<br>0.0012899 chickadee<br>0.0007322 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003813 brambling, Fringilla montifringilla<br>0.0000160 bulbul|
 resnet-v1-101        |0.9994699 junco, snowbird<br>0.0001720 brambling, Fringilla montifringilla<br>0.0001495 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0001213 chickadee<br>0.0000216 water ouzel, dipper| 0.9994699 junco, snowbird<br>0.0001720 brambling, Fringilla montifringilla<br>0.0001495 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0001213 chickadee<br>0.0000216 water ouzel, dipper|0.9994646 junco, snowbird<br>0.0001720 brambling, Fringilla montifringilla<br>0.0001495 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0001213 chickadee<br>0.0000216 water ouzel, dipper| 0.9994646 junco, snowbird<br>0.0001720 brambling, Fringilla montifringilla<br>0.0001495 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0001213 chickadee<br>0.0000216 water ouzel, dipper|
 resnet-v1-152        |0.9961464 junco, snowbird<br>0.0013669 chickadee<br>0.0008338 brambling, Fringilla montifringilla<br>0.0005274 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0002985 water ouzel, dipper| 0.9961464 junco, snowbird<br>0.0013669 chickadee<br>0.0008338 brambling, Fringilla montifringilla<br>0.0005274 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0002985 water ouzel, dipper|0.9961376 junco, snowbird<br>0.0013669 chickadee<br>0.0008338 brambling, Fringilla montifringilla<br>0.0005274 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0002985 water ouzel, dipper| 0.9961376 junco, snowbird<br>0.0013669 chickadee<br>0.0008338 brambling, Fringilla montifringilla<br>0.0005274 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0002985 water ouzel, dipper|
 resnet-50-tf         |-|-| 0.9999458 junco, snowbird<br>0.0000307 chickadee<br>0.0000170 brambling, Fringilla montifringilla<br>0.0000028 goldfinch, Carduelis carduelis<br>0.0000013 water ouzel, dipper | 0.9999458 junco, snowbird<br>0.0000307 chickadee<br>0.0000170 brambling, Fringilla montifringilla<br>0.0000028 goldfinch, Carduelis carduelis<br>0.0000013 water ouzel, dipper |
@@ -270,7 +270,7 @@ resnet-18-pytorch |-|-| 12.5820255 lifeboat<br>8.4857988 submarine, pigboat, sub
 resnet-50-pytorch |-|-| 15.0844460 lifeboat<br>9.2421970 container ship, containership, container vessel<br>9.0593367 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165682 pirate, pirate ship | 15.0844460 lifeboat<br>9.2421970 container ship, containership, container vessel<br>9.0593367 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165682 pirate, pirate ship |
 resnet-50-caffe2 |-|-| 0.9745282 lifeboat<br>0.0084851 drilling platform, offshore rig<br>0.0048212 container ship, containership, container vessel<br>0.0033455 liner, ocean liner<br>0.0024074 wreck<br> |0.9745282 lifeboat<br>0.0084851 drilling platform, offshore rig<br>0.0048212 container ship, containership, container vessel<br>0.0033455 liner, ocean liner<br>0.0024074 wreck<br> |
 resnet-34-pytorch |-|-| 15.2665386 lifeboat<br>8.6636257 pirate, pirate ship<br>7.4200172 container ship, containership, container vessel<br>7.2694774 fireboat<br>7.2361374 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br> | 15.2665386 lifeboat<br>8.6636257 pirate, pirate ship<br>7.4200172 container ship, containership, container vessel<br>7.2694774 fireboat<br>7.2361374 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br> |
-resnet-50-pytorch |-|-| 15.0844412 lifeboat<br>9.2421913 container ship, containership, container vessel<br>9.0593348 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165691 pirate, pirate ship<br>| 15.0844412 lifeboat<br>9.2421913 container ship, containership, container vessel<br>9.0593348 drilling platform, offshore rig<br>8.6655445 liner, ocean liner<br>8.5165691 pirate, pirate ship<br> |
+resnet-50-pytorch |-|-| 9.0618372 lifeboat<br>2.9507570 drilling platform, offshore rig<br>2.5070374 container ship, containership, container vessel<br>2.3743711 pirate, pirate ship<br>2.0219855 breakwater, groin, groyne, mole, bulwark, seawall, jetty | 9.0618372 lifeboat<br>2.9507570 drilling platform, offshore rig<br>2.5070374 container ship, containership, container vessel<br>2.3743711 pirate, pirate ship<br>2.0219855 breakwater, groin, groyne, mole, bulwark, seawall, jetty |
 rexnet-v1-x1.0 |-|-| 8.8482122 lifeboat<br>4.5400019 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>3.5019155 pirate, pirate ship<br>3.4322646 beacon, lighthouse, beacon light, pharos<br>2.9096487 drilling platform, offshore rig<br> | 8.8482122 lifeboat<br>4.5400019 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>3.5019155 pirate, pirate ship<br>3.4322646 beacon, lighthouse, beacon light, pharos<br>2.9096487 drilling platform, offshore rig<br> |
 se-inception         |-|-|0.7523978 miniature pinscher<br>0.0948917 Tibetan mastiff<br>0.0089837 Saint Bernard, St Bernard<br>0.0043663 axolotl, mud puppy, Ambystoma mexicanum<br>0.0035432 pick, plectrum, plectron|0.7523978 miniature pinscher<br>0.0948917 Tibetan mastiff<br>0.0089837 Saint Bernard, St Bernard<br>0.0043663 axolotl, mud puppy, Ambystoma mexicanum<br>0.0035432 pick, plectrum, plectron|
 se-resnet-50         |-|-|0.9203509 miniature pinscher<br>0.0061232 Polaroid camera, Polaroid Land camera<br>0.0030807 Tibetan mastiff<br>0.0027831 pier<br>0.0024065 bull mastiff|0.9203509 miniature pinscher<br>0.0061232 Polaroid camera, Polaroid Land camera<br>0.0030807 Tibetan mastiff<br>0.0027831 pier<br>0.0024065 bull mastiff|
@@ -326,6 +326,7 @@ mobilenet-ssd             | - | - | Bounding box: (380,315), (630,415) | Boundin
 ssd300                    | - | - | Bounding box: (380,165), (595,425) | Bounding box: (380,165), (595,425) |
 ssd512                    | - | - | Bounding box: (377,163), (595,425) | Bounding box: (380,165), (595,425) |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
+ssdlite_mobilenet_v2      | - | - | - | - |
 
 ### Test image #2
 
@@ -348,6 +349,7 @@ mobilenet-ssd             | - | - | Bounding box: (92,95), (361,483)  | Bounding
 ssd300                    | - | - | Bounding box: (68,100), (336,452) | Bounding box: (66,98), (340,455) |
 ssd512                    | - | - | Bounding box: (75,100), (355,445) | Bounding box: (75,100), (355,445)|
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (89, 98), (345, 440)| Bounding box: (89, 98), (345, 440)|
+ssdlite_mobilenet_v2      | - | - | Bounding box: (47, 59), (206, 272)| Bounding box: (47, 59), (206, 272)|
 
 ### Test image #3
 
@@ -370,6 +372,7 @@ mobilenet-ssd             | - | - | Bounding box: (80,140), (270,375)  | Boundin
 ssd300                    | - | - | Bounding box: (80,155), (270,375)  | Bounding box: (80,157), (274,375)  |
 ssd512                    | - | - | Bounding box: (75,170), (172,370)  | Bounding box: (73,170), (173,371)  |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (90, 135), (260, 375)| Bounding box: (90, 135), (260, 375)|
+ssdlite_mobilenet_v2      | - | - | Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)| Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)|
 
 ### Test image #4
 Data source: [MS COCO][ms_coco]
@@ -399,6 +402,7 @@ faster_rcnn_resnet101_coco                  |-|-| Bounding box:<br>TV (105, 37),
 pelee-coco |-|-| Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) | Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detected)<br>KEYBOARD (231, 337), (509, 455) <br>|
 retinanet-tf |-|-| Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
 ssd_resnet50_v1_fpn_coco |-|-| Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
+ssdlite_mobilenet_v2 |-|-| Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287) | Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287)<br>|
 
 ### Test image #5
 Data source: [MS COCO][ms_coco]
@@ -420,6 +424,7 @@ yolo-v2-tiny-tf                   |-|-| Bounding box:<br>PERSON (84, 70), (413, 
 pelee-coco                    |-|-| Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381) | Bounding box:<br>PERSON (95, 72), (207, 397)<br>HORSE (152, 61), (536, 381)<br>|
 retinanet-tf                  |-|-| Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
 ssd_resnet50_v1_fpn_coco                   |-|-| Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
+ssdlite_mobilenet_v2          |-|-| Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271) | Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271)<br>|
 
 
 ### Test image #6
@@ -432,11 +437,27 @@ Image resolution: 500 x 375
 <img width="300" src="images\2011_002352.jpg">
 <img width="300" src="detection\python_yolo_voc_2011_002352.bmp">
 </div>
-Bounding box (upper left anf bottom right corners):<br>AEROPLANE (131, 21), (248, 414)<br>
+Bounding box (upper left and	 bottom right corners):<br>AEROPLANE (131, 21), (248, 414)<br>
 
    Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
 yolo-v1-tiny-tf                   |-|-| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>|
+
+### Test image #7
+Data source: [WIDER FACE Dataset][wider_face_dataset]
+
+Image resolution: 1024 x 768
+
+<div style='float: center'>
+<img width="300" src="images\Meeting_294.jpg">
+<img width="300" height="225" src="images\Meeting_294_bounding.bmp">
+</div>
+
+Bounding box (upper left and bottom right corners):<br>(170, 124), (235, 208)<br>(775, 133), (841, 226)<br>
+
+   Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
+---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|
+face-detection-retail-0044 |-|-| Bounding box: <br>(170, 124) (235, 208)<br> (775, 133) (841, 226)<br>| Bounding box: <br>(170, 124) (235, 208)<br> (775, 133) (841, 226)<br>|
 
 ## Face recognition
 
@@ -578,3 +599,4 @@ Color map:
 [sphereface_async]:recognition/sphereface_out_async.csv
 [cityscapes]: https://www.cityscapes-dataset.com
 [mrl_eye_dataset]: http://mrl.cs.vsb.cz/eyedataset
+[wider_face_dataset]: http://shuoyang1213.me/WIDERFACE/
