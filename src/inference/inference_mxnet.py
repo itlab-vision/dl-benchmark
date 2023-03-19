@@ -2,6 +2,7 @@ import argparse
 import logging as log
 import os
 import sys
+import traceback
 from time import time
 import warnings
 
@@ -301,8 +302,8 @@ def main():
             result_output(average_time, fps, latency)
         else:
             raw_result_output(average_time, fps, latency)
-    except Exception as ex:
-        log.error(str(ex))
+    except Exception:
+        log.error(traceback.format_exc())
         sys.exit(1)
 
 
