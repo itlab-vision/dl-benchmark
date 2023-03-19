@@ -2,7 +2,7 @@
 
 ## Image classification
 
-Model | Intel® Distribution of OpenVINO™ Toolkit | Intel® Optimizations for TensorFlow | TensorFlow Lite | MXNet |
+Model | Intel® Distribution<br>of OpenVINO™ Toolkit | Intel® Optimizations<br>for TensorFlow | TensorFlow<br>Lite | MXNet |
 -|-|-|-|-|
 AlexNet|+|+|-|+|
 DenseNet-121|+|+|+|+|
