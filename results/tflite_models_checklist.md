@@ -11,9 +11,11 @@ googlenet-v1-tf|+-|-|
 googlenet-v2-tf|+-|-|
 googlenet-v3|+-|-|
 googlenet-v4-tf|+-|+|
-mobilenet-v1-1.0-224-tf|+|-|
-mobilenet_v2_1.0_224|+|-|
+mobilenet-v1-1.0-224-tf|+-|+|
+mobilenet-v2-1.0-224|+|-|
 mobilenet-v2-1.4-224|+|-|
+mobilenet-v3-small-1.0-224|+-|-|
+mobilenet-v3-large-1.0-224|+-|-|
 inception-resnet-v2-tf|+|+|
 resnet-50-tf|+-|+|
 
