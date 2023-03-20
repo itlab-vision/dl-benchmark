@@ -22,6 +22,7 @@ This will convert model from `<source_framework>` to TFLite format.
 - `--source-framework` source framework for convertion to TensorFlow Lite format.
 
 ### Examples of usage
+
 ```sh
 tflite_converter.py --model-path /<full_path_to_models_dir>/_models_dir/public/ssd_mobilenet_v1_coco/ssd_mobilenet_v1_coco_2018_01_28/saved_model --source-framework tf --input-names image_tensor --input-shapes [1, 300, 300, 3]
 ```
