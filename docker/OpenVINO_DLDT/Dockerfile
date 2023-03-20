@@ -48,11 +48,6 @@ RUN sudo mkdir /opt/intel && \
     sudo mv l_openvino_toolkit_ubuntu20_2022.2.0.7713.af16ea1d79a_x86_64 /opt/intel/openvino_2022.2.0.7713 && \
     sudo ln -s /opt/intel/openvino_2022.2.0.7713 /opt/intel/openvino_2022
 
-RUN tar -xf openvino_2022.2.0.7713.tgz && \ 
-    ls -laR l_openvino_toolkit_ubuntu20_2022.2.0.7713.af16ea1d79a_x86_64/install_dependencies
-
-RUN ls /opt/intel/openvino_2022/
-
 # Install OpenVINO dependencies
 ENV INSTALL_DIR /opt/intel/openvino_2022/
 WORKDIR $INSTALL_DIR/install_dependencies
