@@ -1,7 +1,3 @@
-// Copyright (C) 2023 KNS Group LLC (YADRO)
-// SPDX-License-Identifier: Apache-2.0
-//
-
 #pragma once
 #include <vector>
 

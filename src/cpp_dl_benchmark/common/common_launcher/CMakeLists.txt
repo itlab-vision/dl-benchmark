@@ -1,7 +1,3 @@
-# Copyright (C) 2023 KNS Group LLC (YADRO)
-# SPDX-License-Identifier: Apache-2.0
-#
-
 set(TARGET_NAME "common_launcher")
 
 file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
