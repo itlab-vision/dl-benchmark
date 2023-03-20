@@ -42,16 +42,19 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO
+ARG OV_SHORT_VERSION=2022.2
+ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.7713.af16ea1d79a_x86_64"
 RUN sudo mkdir /opt/intel && \
-    curl -L https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.2/linux/l_openvino_toolkit_ubuntu20_2022.2.0.7713.af16ea1d79a_x86_64.tgz --output openvino_2022.2.0.7713.tgz && \
-    tar -xf openvino_2022.2.0.7713.tgz && \
-    sudo mv l_openvino_toolkit_ubuntu20_2022.2.0.7713.af16ea1d79a_x86_64 /opt/intel/openvino_2022.2.0.7713 && \
-    sudo ln -s /opt/intel/openvino_2022.2.0.7713 /opt/intel/openvino_2022
+    wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
+        -O /tmp/openvino.tgz --no-check-certificate --quiet && \
+    tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
+    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} /opt/intel/openvino_2022 && \
+    rm -rf /tmp/*
 
 # Install OpenVINO dependencies
 ENV INSTALL_DIR /opt/intel/openvino_2022/
 WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls -la /opt/intel/openvino_2022/install_dependencies && echo y | ./install_openvino_dependencies.sh
+RUN echo y | ./install_openvino_dependencies.sh
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
 # Configure for GPU, MYRIAD
