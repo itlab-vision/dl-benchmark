@@ -4,7 +4,7 @@
 
 Model | Intel® Distribution<br>of OpenVINO™ Toolkit | Intel® Optimizations<br>for TensorFlow | TensorFlow<br>Lite | MXNet |
 -|-|-|-|-|
-AlexNet|+|+|-|+|
+AlexNet|+|-|-|+|
 DenseNet-121|+|-|+|+|
 DenseNet-161|+|-|-|+|
 DenseNet-169|-|-|-|+|
