@@ -82,6 +82,9 @@ PERSON (1874, 288), (1976, 545)<br>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
+person-vehicle-bike-detection-2000 | Bounding box:<br>CAR (121, 391) (318, 477)<br>CAR (551, 374) (647, 456)<br>CAR (634, 385) (722, 437)<br>BIKE (310, 210) (551, 774)<br>PERSON (1790, 284) (1885, 531)<br>PERSON (1892, 301) (1977, 515)<br>| Bounding box:<br>CAR (121, 391) (318, 477)<br>CAR (551, 374) (647, 456)<br>CAR (634, 385) (722, 437)<br>BIKE (310, 210) (551, 774)<br>PERSON (1790, 284) (1885, 531)<br>PERSON (1892, 301) (1977, 515)<br>|
+person-vehicle-bike-detection-2001 | Bounding box:<br>CAR (108, 394) (310, 477)<br>BIKE (321, 185) (545, 742)<br>PERSON (1782, 278) (1889, 538)<br>PERSON (1877, 295) (1971, 530)<br>| Bounding box:<br>CAR (108, 394) (310, 477)<br>BIKE (321, 185) (545, 742)<br>PERSON (1782, 278) (1889, 538)<br>PERSON (1877, 295) (1971, 530)<br>|
+person-vehicle-bike-detection-2002 | Boounding box:<br>CAR (554, 376) (666,455)<br>CAR (0, 401) (86, 517)<br>BIKE (334, 200) (540, 635)<br>PERSON (1783, 269) (1881, 540)<br>PERSON (1878, 298) (1973, 527)<br>PERSON (329, 193) (545, 627)<br>| Boounding box:<br>CAR (554, 376) (666,455)<br>CAR (0, 401) (86, 517)<br>BIKE (334, 200) (540, 635)<br>PERSON (1783, 269) (1881, 540)<br>PERSON (1878, 298) (1973, 527)<br>PERSON (329, 193) (545, 627)<br>|
 person-vehicle-bike-detection-crossroad-0078 | Bounding box:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR (627, 379), (724, 444),<br>BIKE (319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>| Bounding box:<br>CAR (-4, 400), (80, 515),<br>CAR (114, 392), (326, 480),<br>CAR (547, 382), (645, 457),<br>CAR(627, 379), (724, 444),<br>BIKE(319, 232), (546, 717),<br>PERSON (329, 228), (541, 697),<br>PERSON (1783, 278), (1887, 530),<br>PERSON (1882, 294), (1974, 524)<br>|
 person-vehicle-bike-detection-crossroad-1016 | Bounding box:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>| Bounding box:<br>CAR (-1, 405), (85, 518),<br>CAR (533, 370), (637, 455),<br>PERSON (319, 213), (554, 722),<br>PERSON (1783, 270), (1884, 536),<br>PERSON (1883, 299), (1975, 513)<br>|
 
@@ -123,6 +126,9 @@ PERSON (211, 78), (273, 279)<br>
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
 person-detection-asl-0001 | Bounding box:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>| Bounding box:<br>PERSON (35, 17), (84, 192),<br>PERSON (79, 13), (122, 194),<br>PERSON (211, 78), (273, 279)<br>|
+person-detection-asl-0200 | Bounding box:<br>PERSON (28, 12), (66, 155),<br>PERSON (63, 8), (97, 158),<br>PERSON (169, 65), (215, 223)<br>| Bounding box:<br>PERSON (28, 12), (66, 155),<br>PERSON (63, 8), (97, 158),<br>PERSON (169, 65), (215, 223)<br>|
+person-detection-asl-0201 | Bounding box:<br>PERSON (41, 19), (97, 235),<br>PERSON (254, 96), (320, 335),<br>PERSON (93, 15), (147, 236)<br>| Bounding box:<br>PERSON (41, 19), (97, 235),<br>PERSON (254, 96), (320, 335),<br>PERSON (93, 15), (147, 236)<br>|
+person-detection-asl-0202 | Bounding box:<br>PERSON (338, 127), (430, 446),<br>PERSON (127, 16), (195, 315),<br>PERSON (56, 27), (129, 314)<br>| Bounding box:<br>PERSON (338, 127), (430, 446),<br>PERSON (127, 16), (195, 315),<br>PERSON (56, 27), (129, 314)<br>|
 
 ### Test image #6
 
@@ -160,6 +166,9 @@ Bounding boxes (upper left and bottom right corners):<br>
 
 Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
 ------|---------------------------------------|------------------------------------------|
+face-detection-0200 | Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>| Bounding box:<br>(188, 143) (284, 275),<br>(616, 47) (700, 204)<br>|
+face-detection-0202 | Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| Bounding box:<br>(189, 139) (285, 277),<br>(613, 38) (701, 204)<br>| 
+face-detection-0204 | Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>| Bounding box:<br>(189, 142) (288, 275),<br>(614, 43) (704, 204)<br>|
 face-detection-adas-0001 | Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>| Bounding box:<br>(189, 140) (288, 284),<br>(616, 45) (704, 213)<br>|
 face-detection-adas-binary-0001 | Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>| Bounding box:<br>(186, 137) (289, 277),<br> (616, 53) (706, 211)<br>|
 face-detection-retail-0004 | Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>| Bounding box:<br>(189, 143) (286, 275),<br>(613, 57) (694, 201)<br>|
@@ -638,6 +647,24 @@ Model | Python (latency mode, implementation) | Python (throughput mode, impleme
 ------|---------------------------------------|------------------------------------------|
 image-retrieval-0001 | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Full tensor][ImgRetr_sync] | 0.1158277 -0.0189930<br> 0.0530676 0.0290345<br> ...<br> 0.2057585 -0.0367919<br> -0.0067885 -0.0031499<br> [Full tensor][ImgRetr_async] |
 
+### Test image #5
+
+Data source: [Internet][internet_pinterest]
+
+Image resolution: 128 x 256
+
+
+<div style='float: center'>
+<img width="128" src="images\person-reidentification-retail_1.png"></img>
+</div>
+
+Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+------|---------------------------------------|------------------------------------------|
+person-reidentification-retail-0277 | -0.5144883 -0.4489283<br> 0.1324019 0.2539501<br> ...<br> 0.4898967 0.1124130<br> -0.1284953 0.0117971<br> [Full tensor][PersReidRetail-0277_sync] | Errors in output |
+person-reidentification-retail-0286 | 0.2997471 -0.2456339<br> -0.1295844 -0.2274195<br> ...<br> 0.2052885 0.1565714<br> 0.2504670 0.2383912<br> [Full tensor][PersReidRetail-0286_sync] | Errors in output |
+person-reidentification-retail-0287 | -0.2050491 -0.4432146<br> 0.6389340 0.2023722<br> ...<br> -0.6498539 -0.0128914<br> -0.5972998 -0.3941978<br> [Full tensor][PersReidRetail-0287_sync] | Errors in output |
+person-reidentification-retail-0288 | 0.2380135 0.3185425<br> -0.3636540 0.3864555<br> ...<br> -0.3466439 -0.3920009<br> -0.0821614 0.1705070<br> [Full tensor][PersReidRetail-0288_sync] | Errors in output |
+
 ## Action recognition
 
 ### Tensor #1
@@ -805,10 +832,18 @@ resnet18-xnor-binary-onnx-0001 |4.7719054 lifeboat<br>1.7933186 drilling platfor
 [DARE_async]: encoding/python_async_action-recognition-kelly.csv
 [ImgRetr_sync]: encoding/image-retrieval-0001_s.csv
 [ImgRetr_async]: encoding/image-retrieval-0001_a.csv
+[PersReidRetail-0277_sync]: encoding/person-reidentification-retail-0277_sync.csv
+[PersReidRetail-0286_sync]: encoding/person-reidentification-retail-0286_sync.csv
+[PersReidRetail-0287_sync]: encoding/person-reidentification-retail-0287_sync.csv
+[PersReidRetail-0288_sync]: encoding/person-reidentification-retail-0288_sync.csv
 [face_reidentification_sync]: encoding/python_sync_Aaron_Peirsol_0002.csv
 [face_reidentification_async]: encoding/python_async_Aaron_Peirsol_0002.csv
 [github_ARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/action-recognition-0001-encoder/description
 [github_DARE]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/driver-action-recognition-adas-0002-encoder/description
+[github_PRR_0277]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0277
+[github_PRR_0286]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0286
+[github_PRR_0287]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0287
+[github_PRR_0288]: https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/person-reidentification-retail-0288
 [github_road_segmentation]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/road-segmentation-adas-0001/description
 [github_single_image_super_resolution]: https://github.com/opencv/open_model_zoo/tree/master/models/intel/single-image-super-resolution-1032/description
 [LFW]: http://vis-www.cs.umass.edu/lfw/index.html
