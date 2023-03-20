@@ -59,7 +59,7 @@ RUN ls /opt/intel/openvino_2022/
 # Install OpenVINO dependencies
 ENV INSTALL_DIR /opt/intel/openvino_2022/
 WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls -la /opt/intel/openvino_2022/install_dependencies && echo y | ./install_openvino_dependencies.sh
+RUN echo y | ./install_openvino_dependencies.sh
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
 # Configure for GPU, MYRIAD
