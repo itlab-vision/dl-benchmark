@@ -1,7 +1,3 @@
-# Copyright (C) 2023 KNS Group LLC (YADRO)
-# SPDX-License-Identifier: Apache-2.0
-#
-
 # search for ORT_INSTALL_DIR in env variables
 if (NOT DEFINED ORT_INSTALL_DIR)
     if (DEFINED ENV{ORT_INSTALL_DIR})
