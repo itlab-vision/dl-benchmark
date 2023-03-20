@@ -79,6 +79,6 @@ WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
 
-# Download dataset
-ARG DATASET_DOWNLOAD_LINK=<Link to dataset project>
-RUN git clone $DATASET_DOWNLOAD_LINK
+# Download dataset if repository with dataset is set
+ARG DATASET_DOWNLOAD_LINK
+RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
