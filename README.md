@@ -7,25 +7,25 @@ DLI is a benchmark for deep learning inference on various hardware.
 The goal of the project is to develop a software for measuring
 the performance of a wide range of deep learning models
 inferring on various popular frameworks and various hardware,
-as well as regularly publishing the obtained data.
+as well as regularly publishing the obtained measurements.
 
 The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
-of deep models inferred on Intel platforms (Intel CPUs, Intel
+of deep models inferred on Intel-platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
-- [Intel® Optimization for TensorFlow][intel-tensorflow].
+- [Intel® Optimizations for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
 - [MXNet][mxnet].
 
-More information about DLI is available
-[here][dli-ru-web-page] (in Russian)
-or [here][dli-web-page] (in English).
+More information about DLI is available on the web-site
+([here][dli-ru-web-page] (in Russian)
+or [here][dli-web-page] (in English)) or on the [Wiki page][dli-wiki].
 
 ## License
 
@@ -64,7 +64,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
     for Caffe.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
-  - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
+  - `TensorFlow`is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
 
 - `docs` directory contains auxiliary documentation. Please, find
@@ -73,11 +73,11 @@ Novgorod State University Publishing House, 2021. – 423 p.
 - `results` directory contains benchmarking and validation results.
 
   - [`benchmarking`](results/benchmarking) contains benchmarking 
-    results in html and xslx formats.
+    results in html- and xslx-formats.
   - [`accuracy`](results/accuracy) contains accuracy
-    results in html and xslx formats.
+    results in html- and xslx-formats.
   - [`validation`](results/validation) contains tables that confirms 
-    correctness of inference implemenration.
+    correctness of inference implementation for the benchmarked models.
 
     - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md) 
       is a table that confirms correctness of inference implementation 
@@ -94,10 +94,10 @@ Novgorod State University Publishing House, 2021. – 423 p.
       based on Intel® Optimizations for TensorFlow for several public models.
     - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md) 
       is a table that confirms correctness of inference implementation 
-      based on TensorFlow Lite for several public models.
+      based on TensorFlow Lite for public models.
     - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
       is a table that confirms correctness of inference implementation 
-      based on MXNet.
+      based on MXNet for [GluonCV-models][gluoncv-omz].
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
@@ -114,7 +114,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
     using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
-  - `config_maker`contains GUI application to make configuration files
+  - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
   - `csv2html` is a set of scripts to convert performance and accuracy
@@ -183,6 +183,7 @@ Report questions, issues and suggestions, using:
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
+[gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
