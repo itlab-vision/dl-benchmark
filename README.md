@@ -21,6 +21,7 @@ DLI supports inference using the following frameworks:
 - [Intel® Optimization for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
+- [MXNet][mxnet].
 - [OpenCV DNN][opencv-dnn].
 
 More information about DLI is available
@@ -86,6 +87,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
     - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel® Optimization for TensorFlow for several public models.
+    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
+      is a table that confirms correctness of inference implementation 
+      based on MXNet.
 
   - [`models_checklist.md`](results/models_checklist.md) contains a list
     of supported deep models (in accordance with the Open Model Zoo).
@@ -159,8 +163,9 @@ Report questions, issues and suggestions, using:
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
-[tensorflow-lite]: https://www.tensorflow.org/lite/
-[onnx-runtime]: https://onnxruntime.ai/
+[tensorflow-lite]: https://www.tensorflow.org/lite
+[onnx-runtime]: https://onnxruntime.ai
+[mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli

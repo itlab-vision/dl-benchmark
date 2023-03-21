@@ -4,6 +4,7 @@ import argparse
 import re
 import logging as log
 from time import time
+import traceback
 
 import tensorflow as tf
 from io_adapter import IOAdapter
@@ -333,8 +334,8 @@ def main():
             result_output(time, fps, latency, log)
         else:
             raw_result_output(time, fps, latency)
-    except Exception as ex:
-        log.error(str(ex))
+    except Exception:
+        log.error(traceback.format_exc())
         sys.exit(1)
 
 
