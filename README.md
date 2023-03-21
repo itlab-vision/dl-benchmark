@@ -52,12 +52,18 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
 ## Repo structure
 
+- `demo` directory contains demos for different frameworks
+  and operating systems.
+
+  - `OpenVINO_DLDT` is directory that contains demos
+    for Intel® Distribution of OpenVINO™ Toolkit.
+
 - `docker` directory contains Dockerfiles.
 
-  - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel® 
-    Distribution of OpenVINO™ Toolkit.
-  - `Caffe`is a directory of Dockerfiles for Intel® Optimization 
+  - `Caffe`is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
+  - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
+    Distribution of OpenVINO™ Toolkit.
   - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
     for TensorFlow.
 
@@ -73,25 +79,34 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implemenration.
 
-    - [`validation_results.md`](results/validation/validation_results.md) 
+    - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel Distribution of OpenVINO™ toolkit for public models.
-    - [`validation_results_intel_models.md`](results/validation/validation_results_intel_models.md)
+    - [`validation_results_openvino_intel_models.md`](results/validation/validation_results_openvino_intel_models.md)
       is a table that confirms correctness of inference implementation 
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-    - [`validation_results_caffe.md`](results/validation/validation_results.md) 
+    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md) 
       is a table that confirms correctness of inference implementation 
       based on Intel® Optimization for Caffe for several public models.
-    - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
+    - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md) 
       is a table that confirms correctness of inference implementation 
-      based on Intel® Optimization for TensorFlow for several public models.
+      based on Intel® Optimizations for TensorFlow for several public models.
+    - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md) 
+      is a table that confirms correctness of inference implementation 
+      based on TensorFlow Lite for several public models.
     - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
       is a table that confirms correctness of inference implementation 
       based on MXNet.
 
-  - [`models_checklist.md`](results/models_checklist.md) contains a list
-    of supported deep models (in accordance with the Open Model Zoo).
+  - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
+    of deep models inferred by MXNet checked in the DLI benchmark.
+  - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
+    of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
+    of deep models inferred by TensorFlow checked in the DLI benchmark.
+  - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
+    of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 
@@ -108,6 +123,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
      tables from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains python inference implementation.
+  - `model_converters` contains converters of deep models.
   - `node_info` contains a set of functions to get information about
     computational node.
   - `onnxruntime_benchmark` is the tool that allows to measure
