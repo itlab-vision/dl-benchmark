@@ -61,7 +61,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
 - `docker` directory contains Dockerfiles.
 
-  - `Caffe`is a directory of Dockerfiles for Intel® Optimization
+  - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
@@ -80,24 +80,24 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implementation for the benchmarked models.
 
-    - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md)
+      is a table that confirms correctness of inference implementation
       based on Intel Distribution of OpenVINO™ toolkit for public models.
     - [`validation_results_openvino_intel_models.md`](results/validation/validation_results_openvino_intel_models.md)
-      is a table that confirms correctness of inference implementation 
+      is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
+      is a table that confirms correctness of inference implementation
       based on Intel® Optimization for Caffe for several public models.
-    - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md)
+      is a table that confirms correctness of inference implementation
       based on Intel® Optimizations for TensorFlow for several public models.
-    - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md)
+      is a table that confirms correctness of inference implementation
       based on TensorFlow Lite for public models.
     - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
-      is a table that confirms correctness of inference implementation 
+      is a table that confirms correctness of inference implementation
       based on MXNet for [GluonCV-models][gluoncv-omz].
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
@@ -118,7 +118,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
-  - `cpp_dl_benchmark` contains tools that allows to measure
+  - `cpp_dl_benchmark` contains tools that allow to measure
     deep learning models inference performance with
     [ONNX Runtime](https://github.com/microsoft/onnxruntime)
     and [OpenCV DNN](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).

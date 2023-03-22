@@ -12,7 +12,7 @@
 
 using HighresClock = std::chrono::high_resolution_clock;
 
-using IOTensorsInfo = std::pair<std::vector<TensorDescr>, std::vector<TensorDescr>>;
+using IOTensorsInfo = std::pair<std::vector<TensorDescription>, std::vector<TensorDescription>>;
 
 class Launcher {
 protected:

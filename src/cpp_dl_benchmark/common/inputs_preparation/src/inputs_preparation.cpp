@@ -302,7 +302,7 @@ std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::I
 }
 
 inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vector<std::string>>& input_files,
-                                           const std::vector<TensorDescr>& model_inputs,
+                                           const std::vector<TensorDescription>& model_inputs,
                                            const std::string& layout_string,
                                            const std::string& shape_string,
                                            const std::string& mean_string,
