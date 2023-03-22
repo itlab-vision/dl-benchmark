@@ -64,7 +64,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
     for Caffe.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
-  - `TensorFlow`is a directory of Dockerfiles for Intel® Optimizations
+  - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
 
 - `docs` directory contains auxiliary documentation. Please, find
