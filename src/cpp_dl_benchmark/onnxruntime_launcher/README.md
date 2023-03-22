@@ -1,6 +1,6 @@
 # ONNX Runtime Benchmark
 
-The tool allows to measure deep learning models inference performance with [ONNX Runtime](https://github.com/microsoft/onnxruntime).
+The tool allows to measure deep learning models inference performance with [ONNX Runtime][onnx-runtime].
 
 ## Build ONNX Runtime
 
@@ -33,7 +33,7 @@ The tool allows to measure deep learning models inference performance with [ONNX
 
 ## Build ONNX Runtime Benchmark
 
-To build the tool you need to have an installation of [ONNX Runtime](https://github.com/microsoft/onnxruntime) and [OpenCV](https://github.com/opencv/opencv). Set the following environment variables so that cmake can find them during configuration step:
+To build the tool you need to have an installation of [ONNX Runtime][onnx-runtime] and [OpenCV][opencv]. Set the following environment variables so that cmake can find them during configuration step:
 * `ORT_INSTALL_DIR` pointing to ONNX Runtime install directory.
 * `OpenCV_DIR` pointing to OpenCV folder with `OpenCVConfig.cmake`.
 
@@ -213,3 +213,7 @@ Below is a sample output of the tool from the terminal:
 [ INFO ]        Max:     84.00 ms
 [ INFO ] Throughput: 29.06 FPS
 ```
+
+<!-- LINKS -->
+[onnx-runtime]: https://github.com/microsoft/onnxruntime
+[opencv]: https://github.com/opencv/opencv

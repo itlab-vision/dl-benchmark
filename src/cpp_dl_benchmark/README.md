@@ -1,6 +1,6 @@
 # CPP DL Benchmark
 
-The tool allows to measure deep learning models inference performance with various inference frameworks. This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app) as a reference and stick to its measurement methodology, thus provide consistent performance results.
+The tool allows to measure deep learning models inference performance with various inference frameworks. This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app] as a reference and stick to its measurement methodology, thus provide consistent performance results.
 
 ## Common prerequisites
 
@@ -58,3 +58,6 @@ Options:
         [--save_report]                               save report in JSON format.
         [--report_path <PATH>]                        destination path for report.
 ```
+
+<!-- LINKS -->
+[benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
