@@ -120,9 +120,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `configs` contains template configuration files.
   - `cpp_dl_benchmark` contains tools that allow to measure
     deep learning models inference performance with
-    [ONNX Runtime](https://github.com/microsoft/onnxruntime)
-    and [OpenCV DNN](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).
-    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
+    [ONNX Runtime][onnx-runtime-github]
+    and [OpenCV DNN][opencv-dnn].
+    This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app]
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
   - `csv2html` is a set of scripts to convert performance and accuracy
@@ -181,8 +181,10 @@ Report questions, issues and suggestions, using:
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
 [tensorflow-lite]: https://www.tensorflow.org/lite
 [onnx-runtime]: https://onnxruntime.ai
+[onnx-runtime-github]: https://github.com/microsoft/onnxruntime
 [mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
+[benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
