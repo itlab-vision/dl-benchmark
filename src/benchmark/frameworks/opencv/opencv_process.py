@@ -37,18 +37,32 @@ class OpenCVProcess(ProcessHandler):
         backend = self._test.dep_parameters.backend
         common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--backend', backend)
 
-        scalefactor = self._test.dep_parameters.scalefactor
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--scalefactor',
-                                                                         scalefactor)
+        input_scale = self._test.dep_parameters.input_scale
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_scale', input_scale)
 
-        size = self._test.dep_parameters.size
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--size', size)
-        
+        input_shape = self._test.dep_parameters.input_shape
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_shape', input_shape)
+
+        input_name = self._test.dep_parameters.input_name
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_name', input_name)
+
+        output_names = self._test.dep_parameters.output_names
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--output_names', output_names)
+
         mean = self._test.dep_parameters.mean
         common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
 
+        std = self._test.dep_parameters.std
+        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--std', std)
+
         swapRB = self._test.dep_parameters.swapRB
         common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--swapRB', swapRB)
+
+        crop = self._test.dep_parameters.crop
+        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--crop', crop)
+
+        layout = self._test.dep_parameters.layout
+        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--layout', layout)
 
         common_params = OpenCVProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
         command_line = f'{python} {path_to_opencv_script} {common_params}'

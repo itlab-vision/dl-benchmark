@@ -10,11 +10,15 @@ class OpenCVTest(Test):
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Target device': self.indep_parameters.device})
         parameters.update({'Backend': self.dep_parameters.backend})
-        parameters.update({'Scale': self.dep_parameters.scalefactor})
-        parameters.update({'Size': self.dep_parameters.size})
+        parameters.update({'Input scale': self.dep_parameters.input_scale})
+        parameters.update({'Input shape': self.dep_parameters.input_shape})
+        parameters.update({'Input name': self.dep_parameters.input_name})
+        parameters.update({'Output names': self.dep_parameters.output_names})
         parameters.update({'Mean': self.dep_parameters.mean})
+        parameters.update({'Std': self.dep_parameters.std})
         parameters.update({'Channel swap': self.dep_parameters.swapRB})
         parameters.update({'Crop': self.dep_parameters.crop})
+        parameters.update({'Layout': self.dep_parameters.layout})
         other_param = self._get_optional_parameters_string(parameters)
 
         report_res = {
