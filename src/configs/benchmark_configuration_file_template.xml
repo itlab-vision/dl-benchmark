@@ -152,4 +152,36 @@
             <ChannelSwap></ChannelSwap>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenCV</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Backend>IE</Backend>
+            <InputScale></InputScale>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <OutputNames></OutputNames>
+            <Mean></Mean>
+            <SwapRB></SwapRB>
+            <Crop></Crop>
+            <Layout></Layout>
+        </FrameworkDependent>
+    </Test>
 </Tests>
