@@ -129,27 +129,27 @@
             <Name></Name>
             <Precision></Precision>
             <SourceFramework></SourceFramework>
-            <ModelPath></ModelPath>
-            <WeightsPath></WeightsPath>
+            <ModelPath></ModelPath> <!-- Не нужен для MXNet при загрузке моделей из Gluon Model Zoo -->
+            <WeightsPath></WeightsPath> <!-- Не нужен для MXNet при загрузке моделей из Gluon Model Zoo -->
         </Model>
         <Dataset>
             <Name></Name>
             <Path></Path>
         </Dataset>
         <FrameworkIndependent>
-            <InferenceFramework>OpenCV</InferenceFramework>
+            <InferenceFramework>MXNet</InferenceFramework>
             <BatchSize></BatchSize>
-            <Device></Device>
+            <Device>CPU</Device>
             <IterationCount></IterationCount>
-            <TestTimeLimit></TestTimeLimit>
+            <TestTimeLimit></TestTimeLimit> 
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Backend></Backend>
-            <Scalefactor></Scalefactor>
-            <Size></Size>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Normalize></Normalize>
             <Mean></Mean>
-            <SwapRB></SwapRB>
-            <Crop></Crop>
+            <Std></Std>            
+            <ChannelSwap></ChannelSwap>
         </FrameworkDependent>
     </Test>
 </Tests>

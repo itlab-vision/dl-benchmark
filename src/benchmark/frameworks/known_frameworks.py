@@ -4,4 +4,4 @@ class KnownFrameworks:
     caffe = 'Caffe'
     onnx_runtime = 'ONNX Runtime'
     tensorflow_lite = 'TensorFlowLite'
-    opencv = 'OpenCV'
+    mxnet = 'MXNet'

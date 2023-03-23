@@ -177,12 +177,44 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         return transformed_images
 
 
-class OpenCVTransformer(Transformer):
+class MXNetTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
 
+    def __set_norm(self, image):
+        import mxnet
+
+        if self._converting['norm'] is True:
+            mean = mxnet.nd.array([self._converting['mean'][0],
+                                   self._converting['mean'][1],
+                                   self._converting['mean'][2]])
+            std = mxnet.nd.array([self._converting['std'][0],
+                                  self._converting['std'][1],
+                                  self._converting['std'][2]])
+            normalized_image = mxnet.image.color_normalize(
+                mxnet.nd.array(image).astype(np.float32) / 255, mean=mean, std=std)
+            return normalized_image
+        return image
+
+    def __set_channel_swap(self, image):
+        if self._converting['channel_swap'] is not None:
+            transposing_form = (self._converting['channel_swap'][0],
+                                self._converting['channel_swap'][1],
+                                self._converting['channel_swap'][2])
+            transposed_image = image.transpose(transposing_form)
+            return transposed_image
+        return image
+
     def _transform(self, image):
-        return cv2.dnn.blobFromImage(image, **self._converting)
+        normalized_image = self.__set_norm(image)
+        transposed_image = self.__set_channel_swap(normalized_image)
+        return transposed_image
 
     def transform_images(self, images, shape, element_type, *args):
-        return cv2.dnn.blobFromImages(images, **self._converting)
+        import mxnet
+
+        batch_size = shape[0]
+        transformed_images = mxnet.nd.zeros(shape=shape, dtype=element_type)
+        for i in range(batch_size):
+            transformed_images[i] = self._transform(images[i])
+        return transformed_images

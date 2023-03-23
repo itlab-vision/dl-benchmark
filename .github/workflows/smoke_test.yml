@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
-          python -m pip install openvino-dev[caffe,tensorflow2]==2022.2.0
+          python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke test for inference benchmark
         run: cd test/smoke_test && ./run_bench_smoke_test.sh

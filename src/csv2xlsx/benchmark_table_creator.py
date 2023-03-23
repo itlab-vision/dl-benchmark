@@ -452,7 +452,7 @@ class XlsxBenchmarkTable(XlsxTable):
                                       self._cell_format_title2)
                     for key, value in topology_record[self._KEY_FPS].items():
                         formatting = self._cell_format_fps
-                        if value == 'None':
+                        if value == 'None' or pandas.isnull(value):
                             value = 'NaN'
                             formatting = self._cell_format_nan_fps
                         elif value == 'Undefined':
