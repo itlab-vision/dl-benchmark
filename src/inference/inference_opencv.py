@@ -1,9 +1,11 @@
 import argparse
 import logging as log
+import os
 import sys
 from time import time
 
 import cv2
+import numpy as np
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -21,7 +23,7 @@ def cli_argument_parser():
                         dest='model')
     parser.add_argument('-w', '--weights',
                         help='Path to file with a trained weights.',
-                        required=True,
+                        default=None,
                         type=str,
                         dest='weights')
     parser.add_argument('-i', '--input',
@@ -58,20 +60,10 @@ def cli_argument_parser():
                         dest='number_top')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification', 'detection', 'segmentation'],
+                        choices=['classification'],
                         default='feedforward',
                         type=str,
                         dest='task')
-    parser.add_argument('--color_map',
-                        help='Classes color map',
-                        type=str,
-                        default=None,
-                        dest='color_map')
-    parser.add_argument('--prob_threshold',
-                        help='Probability threshold for detections filtering',
-                        default=0.5,
-                        type=float,
-                        dest='threshold')
     parser.add_argument('-ni', '--number_iter',
                         help='Number of inference iterations',
                         default=1,
@@ -87,16 +79,21 @@ def cli_argument_parser():
                         default='_input',
                         type=str,
                         dest='input_name')
-    parser.add_argument('--scalefactor',
-                        help='Parameter input scale',
+    parser.add_argument('-on', '--output_names',
+                        help='Output layer names',
+                        type=str,
+                        nargs='*',
+                        dest='output_names')
+    parser.add_argument('--input_scale',
+                        help='Parameter inverse scale factor',
                         default=1.0,
                         type=float,
-                        dest='scalefactor')
-    parser.add_argument('--size',
-                        help='Parameter size',
-                        default=[224, 224],
+                        dest='inv_scale_factor')
+    parser.add_argument('--input_shape',
+                        help='Input tensor shape in "height width channels" order',
+                        default=[224, 224, 3],
                         type=int,
-                        nargs=2,
+                        nargs=3,
                         dest='size')
     parser.add_argument('--mean',
                         help='Parameter mean',
@@ -104,6 +101,12 @@ def cli_argument_parser():
                         type=float,
                         nargs=3,
                         dest='mean')
+    parser.add_argument('--std',
+                        help='Parameter std',
+                        default=[1, 1, 1],
+                        type=float,
+                        nargs=3,
+                        dest='std')
     parser.add_argument('--swapRB',
                         help='Parameter channel swap',
                         default=False,
@@ -114,6 +117,11 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='crop')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default=None,
+                        type=str,
+                        dest='layout')
 
     args = parser.parse_args()
 
@@ -132,13 +140,21 @@ def set_backend_to_infer(net, backend):
 def set_device_to_infer(net, device):
     if device == 'CPU':
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-    # TODO: add devices
+    elif device == 'GPU':
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+    elif device == 'GPU_FP16':
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL_FP16)
+    elif device == 'MYRIAD':
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
     else:
         raise ValueError('The device is not available')
 
 
 def load_network(model, weights):
-    net = cv2.dnn.readNet(model, weights)
+    if weights is not None:
+        net = cv2.dnn.readNet(model, weights)
+    else:
+        net = cv2.dnn.readNet(model)
     return net
 
 
@@ -146,7 +162,7 @@ def load_images_to_network(net, input_):
     net.setInput(input_)
 
 
-def inference_opencv(net, input_name, number_iter, get_slice):
+def inference_opencv(net, input_name, output_names, number_iter, get_slice):
     result = None
     time_infer = []
     slice_input = None
@@ -154,17 +170,27 @@ def inference_opencv(net, input_name, number_iter, get_slice):
     if number_iter == 1:
         slice_input = get_slice(0)
         load_images_to_network(net, slice_input[input_name])
-        t0 = time()
-        result = net.forward()
-        t1 = time()
+        if output_names:
+            t0 = time()
+            result = net.forward(output_names)
+            t1 = time()
+        else:
+            t0 = time()
+            result = net.forward()
+            t1 = time()
         time_infer.append(t1 - t0)
     else:
         for i in range(number_iter):
             slice_input = get_slice(i)
             load_images_to_network(net, slice_input[input_name])
-            t0 = time()
-            net.forward()
-            t1 = time()
+            if output_names:
+                t0 = time()
+                result = net.forward(output_names)
+                t1 = time()
+            else:
+                t0 = time()
+                result = net.forward()
+                t1 = time()
             time_infer.append(t1 - t0)
 
     return result, time_infer
@@ -179,6 +205,21 @@ def process_result(batch_size, inference_time):
     return average_time, latency, fps
 
 
+def print_topK_preds(result, number_top, log):
+    labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
+    with open(labels, 'r') as f:
+        labels_map = [line.strip() for line in f]
+    log.info('Top {0} results:'.format(number_top))
+    for batch, probs in enumerate(result):
+        probs = np.exp(np.squeeze(probs).astype(np.float64))
+        probs /= np.sum(probs)
+        top_ind = np.argsort(probs)[-number_top:][::-1]  # noqa: PLE1130
+        log.info('Result for image {0}'.format(batch + 1))
+        for id_ in top_ind:
+            det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
+            log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
+
+
 def result_output(average_time, fps, latency, log):
     log.info('Average time of single pass : {0:.3f}'.format(average_time))
     log.info('FPS : {0:.3f}'.format(fps))
@@ -191,11 +232,13 @@ def raw_result_output(average_time, fps, latency):
 
 def create_dict_for_transformer(args):
     dictionary = {
-        'scalefactor': args.scalefactor,
-        'size': tuple(args.size),
+        'scalefactor': 1 / args.inv_scale_factor,
+        'size': (args.size[0], args.size[1]),
         'mean': tuple(args.mean),
         'swapRB': args.swapRB,
         'crop': args.crop,
+        'std': args.std,
+        'layout': args.layout,
     }
     return dictionary
 
@@ -203,12 +246,7 @@ def create_dict_for_transformer(args):
 def create_dict_for_wrapper(args):
     dictionary = {
         'input_layer_name': args.input_name,
-        'input_layer_shape': [
-            args.batch_size,
-            args.size[0],
-            args.size[1],
-            len(args.mean)
-        ]
+        'input_layer_shape': [args.batch_size, *args.size]
     }
     return dictionary
 
@@ -246,11 +284,16 @@ def main():
         io.prepare_input(net, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
-        result, inference_time = inference_opencv(net, args.input_name, args.number_iter, io.get_slice_input)
+        result, inference_time = inference_opencv(
+            net, args.input_name, args.output_names, args.number_iter, io.get_slice_input)
         average_time, latency, fps = process_result(args.batch_size, inference_time)
 
         if not args.raw_output:
-            io.process_output(result, log)
+            if args.backend == 'IE':
+                output_names = args.output_names[0] if args.output_names else '_output'
+                io.process_output({ output_names: np.array(result).reshape(args.batch_size, -1) }, log)
+            else:
+                print_topK_preds(np.array(result).reshape(args.batch_size, -1), args.number_top, log)
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
