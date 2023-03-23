@@ -148,7 +148,7 @@
             <InputShape></InputShape>
             <Normalize></Normalize>
             <Mean></Mean>
-            <Std></Std>            
+            <Std></Std>
             <ChannelSwap></ChannelSwap>
         </FrameworkDependent>
     </Test>

@@ -246,7 +246,7 @@ def create_dict_for_transformer(args):
 def create_dict_for_wrapper(args):
     dictionary = {
         'input_layer_name': args.input_name,
-        'input_layer_shape': [args.batch_size, *args.size]
+        'input_layer_shape': [args.batch_size, *args.size],
     }
     return dictionary
 
@@ -291,7 +291,7 @@ def main():
         if not args.raw_output:
             if args.backend == 'IE':
                 output_names = args.output_names[0] if args.output_names else '_output'
-                io.process_output({ output_names: np.array(result).reshape(args.batch_size, -1) }, log)
+                io.process_output({output_names: np.array(result).reshape(args.batch_size, -1)}, log)
             else:
                 print_topK_preds(np.array(result).reshape(args.batch_size, -1), args.number_top, log)
             result_output(average_time, fps, latency, log)
