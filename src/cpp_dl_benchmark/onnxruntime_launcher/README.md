@@ -39,7 +39,7 @@ mkdir build && cd build
 ```
 3. In the created directory run `cmake` command:
 ```
-cmake -DCMAKE_BUILD_TYPE=Release -BUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/onnxruntime_benchmark
+cmake -DCMAKE_BUILD_TYPE=Release -BUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
 ```
 
 4. Run `cmake --build`
