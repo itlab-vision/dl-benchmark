@@ -20,7 +20,7 @@ protected:
 
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    // time stamps for total time measurments;
+    // time stamps for total time measurements;
     HighresClock::time_point total_start_time;
     HighresClock::time_point total_end_time;
 

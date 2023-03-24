@@ -22,7 +22,7 @@ DLI supports inference using the following frameworks:
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
 - [MXNet][mxnet].
-- [OpenCV DNN][opencv-dnn].
+- [OpenCV DNN][opencv-dnn] (C++ and Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -118,10 +118,10 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
-  - `cpp_dl_benchmark` contains tools that allow to measure
+  - `cpp_dl_benchmark` contains C++ tools that allow to measure
     deep learning models inference performance with
     [ONNX Runtime][onnx-runtime-github]
-    and [OpenCV DNN][opencv-dnn].
+    and [OpenCV DNN][opencv-dnn] in C++ API implementation.
     This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app]
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
