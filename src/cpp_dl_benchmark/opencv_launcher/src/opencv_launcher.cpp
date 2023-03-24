@@ -20,7 +20,7 @@ using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
 OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
     if (nthreads > 0) {
-        cv::setNumThreads(this->nthreads);
+        cv::setNumThreads(nthreads);
     }
     this->nthreads = cv::getNumThreads();
 }
