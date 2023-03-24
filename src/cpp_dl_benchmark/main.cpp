@@ -217,7 +217,8 @@ int main(int argc, char* argv[]) {
 
         std::string target_device = "CPU";  // can be changed when ov provider will be added
         logger::info << "Device: " << target_device << logger::endl;
-        logger::info << "\tThreads number: " << (FLAGS_nthreads ? std::to_string(FLAGS_nthreads) : "DEFAULT")
+        logger::info << "\tThreads number: "
+                     << (launcher->get_threads_num() ? std::to_string(launcher->get_threads_num()) : "DEFAULT")
                      << logger::endl;
 
         log_step();  // Configuring input of the model
