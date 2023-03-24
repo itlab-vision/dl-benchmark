@@ -19,11 +19,10 @@
 using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
 OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
-    // If threads == 0, OpenCV will disable threading optimizations and run all it's functions sequentially
-    if (this->nthreads == 0) {
-        this->nthreads = cv::getNumberOfCPUs();
+    if (nthreads > 0) {
+        cv::setNumThreads(nthreads);
     }
-    cv::setNumThreads(this->nthreads);
+    this->nthreads = cv::getNumThreads();
 }
 
 void OCVLauncher::log_framework_version() const {
