@@ -47,6 +47,8 @@ public:
 
     std::vector<double> get_latencies() const;
     double get_total_time_ms() const;
-
+    int get_threads_num() const {
+        return nthreads;
+    }
     void reset_timers();
 };

@@ -19,7 +19,10 @@
 using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
 OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
-    cv::setNumThreads(nthreads);
+    if (nthreads > 0) {
+        cv::setNumThreads(nthreads);
+    }
+    this->nthreads = cv::getNumThreads();
 }
 
 void OCVLauncher::log_framework_version() const {
