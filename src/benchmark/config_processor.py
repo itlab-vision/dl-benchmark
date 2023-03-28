@@ -8,7 +8,7 @@ from frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
 
 
 def process_config(config, log):
-    test_parser = TestConfigParser()
+    test_parser = TestConfigParser(log)
     test_list = []
 
     tests = test_parser.get_tests_list(config)
@@ -28,39 +28,73 @@ def process_config(config, log):
 
 
 class TestConfigParser:
+    def __init__(self, log):
+        self._log = log
+
     def get_tests_list(self, config):
         return minidom.parse(config).getElementsByTagName('Test')
 
     def parse_model(self, curr_test):
         model_tag = curr_test.getElementsByTagName('Model')[0]
 
+        task = model_tag.getElementsByTagName('Task')[0].firstChild.data
+        model_name = model_tag.getElementsByTagName('Name')[0].firstChild.data
+        precision = model_tag.getElementsByTagName('Precision')[0].firstChild.data
+        source_framework = model_tag.getElementsByTagName('SourceFramework')[0].firstChild.data
+
+        model_path = ''
+        try:
+            model_path = model_tag.getElementsByTagName('ModelPath')[0].firstChild.data
+        except Exception as ex:
+            self._log.warning(f'Parsing model path failed. Exception was generated: {str(ex)}.')
+        weights_path = ''
+        try:
+            weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data
+        except Exception as ex:
+            self._log.warning(f'Parsing weights path failed. Exception was generated: {str(ex)}.')
+
+        self._log.info(f'Model:\n\tName - {model_name}\n\tTask - {task}\n\t'
+                       f'Precision - {precision}\n\tSource framework - {source_framework}\n\t'
+                       f'Model path - {model_path}\n\tWeights path - {weights_path}')
         return Model(
-            task=model_tag.getElementsByTagName('Task')[0].firstChild.data,
-            name=model_tag.getElementsByTagName('Name')[0].firstChild.data,
-            precision=model_tag.getElementsByTagName('Precision')[0].firstChild.data,
-            source_framework=model_tag.getElementsByTagName('SourceFramework')[0].firstChild.data,
-            model_path=model_tag.getElementsByTagName('ModelPath')[0].firstChild.data,
-            weights_path=model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data,
+            task=task, name=model_name, precision=precision,
+            source_framework=source_framework, model_path=model_path,
+            weights_path=weights_path,
         )
 
     def parse_dataset(self, curr_test):
         dataset_tag = curr_test.getElementsByTagName('Dataset')[0]
 
+        name = dataset_tag.getElementsByTagName('Name')[0].firstChild.data
+        path = dataset_tag.getElementsByTagName('Path')[0].firstChild.data
+
+        self._log.info(f'Dataset:\n\tName - {name}\n\tPath - {path}')
         return Dataset(
-            name=dataset_tag.getElementsByTagName('Name')[0].firstChild.data,
-            path=dataset_tag.getElementsByTagName('Path')[0].firstChild.data,
+            name=name, path=path,
         )
 
     def parse_independent_parameters(self, curr_test):
         indep_parameters_tag = curr_test.getElementsByTagName('FrameworkIndependent')[0]
         _batch_size = indep_parameters_tag.getElementsByTagName('BatchSize')[0].firstChild
 
+        inference_framework = indep_parameters_tag.getElementsByTagName('InferenceFramework')[0].firstChild.data
+        batch_size = _batch_size.data if _batch_size else None
+        device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data
+        iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data
+        test_time_limit = indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data
+
+        self._log.info(f'Framework independent parameters:\n\t'
+                       f'Inference framework - {inference_framework}\n\t'
+                       f'Batch size - {batch_size}\n\t'
+                       f'Device - {device}\n\t'
+                       f'Number of iterations - {iteration_count}\n\t'
+                       f'Time limit of test execution - {test_time_limit}')
         return FrameworkIndependentParameters(
-            inference_framework=indep_parameters_tag.getElementsByTagName('InferenceFramework')[0].firstChild.data,
-            batch_size=_batch_size.data if _batch_size else None,
-            device=indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data,
-            iterarion_count=indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data,
-            test_time_limit=indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data,
+            inference_framework=inference_framework,
+            batch_size=batch_size,
+            device=device,
+            iterarion_count=iteration_count,
+            test_time_limit=test_time_limit,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):
