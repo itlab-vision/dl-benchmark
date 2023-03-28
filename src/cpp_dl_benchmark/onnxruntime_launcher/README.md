@@ -1,54 +1,72 @@
 # ONNX Runtime Benchmark
-The tool allows to measure deep learning models inference performance with [ONNX Runtime](https://github.com/microsoft/onnxruntime).
+
+The tool allows to measure deep learning models inference performance with [ONNX Runtime][onnx-runtime].
 
 ## Build ONNX Runtime
+
 1. Clone repository, checkout to the latest stable release and update submodules:
-```
-git clone  https://github.com/microsoft/onnxruntime.git
-cd onnxruntime
-git checkout v1.14.0
-git submodule update --init --recursive
-```
-2. Create `build` directory:
-```
-mkdir build && cd build
-```
-3. Configure it with `cmake`:
-```
-cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON -Donnxruntime_BUILD_UNIT_TESTS=OFF -Donnxruntime_BUILD_SHARED_LIB=ON -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake
-```
-4. Build and install project:
-```
-make install -j$(nproc --all)
-```
+   
+    ```
+    git clone https://github.com/microsoft/onnxruntime.git
+    cd onnxruntime
+    git checkout v1.14.0
+    git submodule update --init --recursive
+    ```
+
+1. Create `build` directory:
+   
+    ```
+    mkdir build && cd build
+    ```
+
+1. Configure it with `cmake`:
+   
+    ```
+    cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON -Donnxruntime_BUILD_UNIT_TESTS=OFF -Donnxruntime_BUILD_SHARED_LIB=ON -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake
+    ```
+
+1. Build and install project:
+
+    ```
+    make install -j$(nproc --all)
+    ```
 
 ## Build ONNX Runtime Benchmark
-To build the tool you need to have an installation of [ONNX Runtime](https://github.com/microsoft/onnxruntime) and [OpenCV](https://github.com/opencv/opencv). Set the following environment variables so that cmake can find them during configuration step:
+
+To build the tool you need to have an installation of [ONNX Runtime][onnx-runtime] and [OpenCV][opencv]. Set the following environment variables so that cmake can find them during configuration step:
 * `ORT_INSTALL_DIR` pointing to ONNX Runtime install directory.
 * `OpenCV_DIR` pointing to OpenCV folder with `OpenCVConfig.cmake`.
 
 1. Clone repository and update submodules:
-```
-git clone https://github.com/itlab-vision/dl-benchmark
-cd dl-benchmark
-git submodule update --init --recursive
-```
-2. Create `build` directory:
-```
-mkdir build && cd build
-```
-3. In the created directory run `cmake` command:
-```
-cmake -DCMAKE_BUILD_TYPE=Release -BUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
-```
 
-4. Run `cmake --build`
-```
-cmake --build .
-```
+    ```
+    git clone https://github.com/itlab-vision/dl-benchmark
+    cd dl-benchmark
+    git submodule update --init --recursive
+    ```
+
+1. Create `build` directory:
+
+    ```
+    mkdir build && cd build
+    ```
+
+1. In the created directory run `cmake` command:
+
+    ```
+    cmake -DCMAKE_BUILD_TYPE=Release -BUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+    ```
+
+1. Build tool
+
+    ```
+    cmake --build .
+    ```
+
 Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>/bin` directory, where `BUILD_TYPE` whether `Debug` or `Release`.
 
 ## Usage
+
 Running the tool  with `-h` option shows the help message:
 ```
 onnxruntime_benchmark
@@ -84,40 +102,52 @@ Options:
 ```
 
 ### Basic usage
+
 To run tool with default options you should provide only path to model file in `.onnx` format
+
 ```
 ./onnxruntime_benchmark -m model.onnx
 ```
 By default, the application makes inference on randomly-generated tensors for 60 seconds. For inference only default provider (`CPU` device) is available for now.
 
 ### Inputs
+
 To pass inputs for model use `-i` option.
+
 ```
 ./onnxruntime_benchmark -m model.onnx -i <path_to_input_data>
 ```
+
 By default, number of inputs to use determined based on model's batch size. If yout want to make inference on some files set, you can specify the number of files to take with `-nireq` option.
 
 If the model has several inputs, files or folders must be specified for each:
+
 ```
 ./onnxruntime_benchmark -m model.onnx -i input1:file1 input2:file2 input3:file3
 ```
 
 ### Shape and layout options
+
 To make inference with dynamic model, you must specify shape for every model's input:
+
 ```
 ./onnxruntime_benchmark -m model.onnx -i input1:file1 input2:file2 input3:file3 -shape input1[N,C],input1[N,C],input1[N,C]
 ```
 Or if all inputs have the same shape you could pass just `-shape [N,C]`. The same rules are applied to `-layout` option.
 
 ### Report
+
 To save a report with tool configuration and performance results specify `-save_report` flag:
+
 ```
 ./onnxruntime_benchmark -m model.onnx -save_report -report_path report/report.json
 ```
 if `-report_path` isn't provided, it will be saved in the current directory under `ort_benchmark.json` name.
 
 ## Output examples
+
 Below is a sample output of the tool from the terminal:
+
 ```
 ./onnxruntime_benchmark -m /home/ivikhrev/dev/models/public/resnet-50-pytorch/resnet-v1-50.onnx -i ../../../test_data -nireq 3
 [Step 1/8] Parsing and validating input arguments
@@ -183,3 +213,7 @@ Below is a sample output of the tool from the terminal:
 [ INFO ]        Max:     84.00 ms
 [ INFO ] Throughput: 29.06 FPS
 ```
+
+<!-- LINKS -->
+[onnx-runtime]: https://github.com/microsoft/onnxruntime
+[opencv]: https://github.com/opencv/opencv

@@ -12,7 +12,7 @@
 
 using HighresClock = std::chrono::high_resolution_clock;
 
-using IOTensorsInfo = std::pair<std::vector<TensorDescr>, std::vector<TensorDescr>>;
+using IOTensorsInfo = std::pair<std::vector<TensorDescription>, std::vector<TensorDescription>>;
 
 class Launcher {
 protected:
@@ -20,7 +20,7 @@ protected:
 
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    // time stamps for total time measurments;
+    // time stamps for total time measurements;
     HighresClock::time_point total_start_time;
     HighresClock::time_point total_end_time;
 

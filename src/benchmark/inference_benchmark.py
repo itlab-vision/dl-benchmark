@@ -55,8 +55,8 @@ def cli_argument_parser():
     return args
 
 
-def inference_benchmark(executor_type, test_list, output_handler, log, cpp_benchmarks_dir=None,
-                        openvino_cpp_benchmark_dir=None):
+def inference_benchmark(executor_type, test_list, output_handler, log,
+                        cpp_benchmarks_dir=None, openvino_cpp_benchmark_dir=None):
     status = Status.EXIT_SUCCESS
 
     try:
@@ -72,8 +72,11 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
             benchmarks_path = openvino_cpp_benchmark_dir
 
         try:
-            test_process = FrameworkWrapperRegistry()[framework_name].create_process(test, process_executor,
-                                                                                     log, benchmarks_path)
+            log.info('Creating separate process for the test')
+            test_process = FrameworkWrapperRegistry()[framework_name].create_process(
+                test, process_executor, log, benchmarks_path)
+
+            log.info('Executing process')
             test_process.execute()
 
             test_status = test_process.get_status()
@@ -85,7 +88,7 @@ def inference_benchmark(executor_type, test_list, output_handler, log, cpp_bench
             log.error(f'Inference failed with exception: {ex}', exc_info=True)
             test_process = None
 
-        log.info('Saving test result in file\n')
+        log.info('Saving test result in file')
         output_handler.add_row_to_table(process_executor, test, test_process)
 
     return status
@@ -96,6 +99,8 @@ if __name__ == '__main__':
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()
+
+    log.info(f'Parsing configuration file {args.config_path}')
     test_list = process_config(args.config_path, log)
 
     log.info(f'Create result table with name: {args.result_file}')
@@ -103,9 +108,11 @@ if __name__ == '__main__':
     output_handler = OutputHandler(args.result_file, args.csv_delimiter)
     output_handler.create_table()
 
-    log.info(f'Start {len(test_list)} inference tests\n')
+    log.info(f'Start {len(test_list)} inference tests')
 
-    inference_status = inference_benchmark(args.executor_type, test_list, output_handler, log,
-                                           args.cpp_benchmarks_dir, args.openvino_cpp_benchmark_dir)
+    inference_status = inference_benchmark(args.executor_type, test_list,
+                                           output_handler, log,
+                                           args.cpp_benchmarks_dir,
+                                           args.openvino_cpp_benchmark_dir)
     log.info('Inference tests completed' if not inference_status.value else 'Inference tests failed')
     sys.exit(inference_status.value)
