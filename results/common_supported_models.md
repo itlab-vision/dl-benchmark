@@ -21,8 +21,8 @@ Inception-ResNet-v2|+|+|+|-|
 MobileNet-v1-0.5-224|+|-|-|+|
 **MobileNet-v2-1.0-224**|+|+|+|+|
 MobileNet-v2-1.4-224|+|+|+-|-|
-MobileNet-v3-large-1.0-224|+|-(?)|+|+|
-MobileNet-v3-small-1.0-224|+|-(?)|+|+|
+**MobileNet-v3-large-1.0-224**|+|+|+|+|
+**MobileNet-v3-small-1.0-224**|+|+|+|+|
 ResNet-18-v1|+|-|-|+|
 ResNet-18-v2|-|-|-|+|
 ResNet-34-v1|+|-|-|+|
