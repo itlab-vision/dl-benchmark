@@ -1,4 +1,4 @@
 [submodule "gflags"]
-	path = src/cpp_dl_benchmark/thirdparty/gflags
+    path = src/cpp_dl_benchmark/thirdparty/gflags
     url = https://github.com/gflags/gflags.git
     branch = master

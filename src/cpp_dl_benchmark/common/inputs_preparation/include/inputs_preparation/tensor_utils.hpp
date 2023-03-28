@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-struct TensorDescr {
+struct TensorDescription {
     std::string name;
     std::vector<int> shape;
     std::vector<int> data_shape;

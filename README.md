@@ -7,25 +7,26 @@ DLI is a benchmark for deep learning inference on various hardware.
 The goal of the project is to develop a software for measuring
 the performance of a wide range of deep learning models
 inferring on various popular frameworks and various hardware,
-as well as regularly publishing the obtained data.
+as well as regularly publishing the obtained measurements.
 
 The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
-of deep models inferred on Intel platforms (Intel CPUs, Intel
+of deep models inferred on Intel-platforms (Intel CPUs, Intel
 Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
-- [Intel® Optimization for TensorFlow][intel-tensorflow].
+- [Intel® Optimizations for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
 - [ONNX Runtime][onnx-runtime].
-- [OpenCV DNN][opencv-dnn].
+- [MXNet][mxnet].
+- [OpenCV DNN][opencv-dnn] (C++ and Python API).
 
-More information about DLI is available
-[here][dli-ru-web-page] (in Russian)
-or [here][dli-web-page] (in English).
+More information about DLI is available on the web-site
+([here][dli-ru-web-page] (in Russian)
+or [here][dli-web-page] (in English)) or on the [Wiki page][dli-wiki].
 
 ## License
 
@@ -52,13 +53,19 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
 ## Repo structure
 
+- `demo` directory contains demos for different frameworks
+  and operating systems.
+
+  - `OpenVINO_DLDT` is directory that contains demos
+    for Intel® Distribution of OpenVINO™ Toolkit.
+
 - `docker` directory contains Dockerfiles.
 
-  - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel® 
-    Distribution of OpenVINO™ Toolkit.
-  - `Caffe`is a directory of Dockerfiles for Intel® Optimization 
+  - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
-  - `TensorFlow`is a directory of Dockerfiles for Intel® Optimization
+  - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
+    Distribution of OpenVINO™ Toolkit.
+  - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
 
 - `docs` directory contains auxiliary documentation. Please, find
@@ -67,28 +74,40 @@ Novgorod State University Publishing House, 2021. – 423 p.
 - `results` directory contains benchmarking and validation results.
 
   - [`benchmarking`](results/benchmarking) contains benchmarking 
-    results in html and xslx formats.
+    results in html- and xslx-formats.
   - [`accuracy`](results/accuracy) contains accuracy
-    results in html and xslx formats.
+    results in html- and xslx-formats.
   - [`validation`](results/validation) contains tables that confirms 
-    correctness of inference implemenration.
+    correctness of inference implementation for the benchmarked models.
 
-    - [`validation_results.md`](results/validation/validation_results.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md)
+      is a table that confirms correctness of inference implementation
       based on Intel Distribution of OpenVINO™ toolkit for public models.
-    - [`validation_results_intel_models.md`](results/validation/validation_results_intel_models.md)
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_openvino_intel_models.md`](results/validation/validation_results_openvino_intel_models.md)
+      is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-    - [`validation_results_caffe.md`](results/validation/validation_results.md) 
-      is a table that confirms correctness of inference implementation 
+    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
+      is a table that confirms correctness of inference implementation
       based on Intel® Optimization for Caffe for several public models.
-    - [`validation_results_tensorflow.md`](results/validation/validation_results.md) 
-      is a table that confirms correctness of inference implementation 
-      based on Intel® Optimization for TensorFlow for several public models.
+    - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md)
+      is a table that confirms correctness of inference implementation
+      based on Intel® Optimizations for TensorFlow for several public models.
+    - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md)
+      is a table that confirms correctness of inference implementation
+      based on TensorFlow Lite for public models.
+    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
+      is a table that confirms correctness of inference implementation
+      based on MXNet for [GluonCV-models][gluoncv-omz].
 
-  - [`models_checklist.md`](results/models_checklist.md) contains a list
-    of supported deep models (in accordance with the Open Model Zoo).
+  - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
+    of deep models inferred by MXNet checked in the DLI benchmark.
+  - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
+    of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
+    of deep models inferred by TensorFlow checked in the DLI benchmark.
+  - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
+    of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 
@@ -96,14 +115,14 @@ Novgorod State University Publishing House, 2021. – 423 p.
     using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
-  - `config_maker`contains GUI application to make configuration files
+  - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
-  - `cpp_dl_benchmark` contains tools that allows to measure
+  - `cpp_dl_benchmark` contains C++ tools that allow to measure
     deep learning models inference performance with
-    [ONNX Runtime](https://github.com/microsoft/onnxruntime)
-    and [OpenCV DNN](https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html).
-    This implementation inspired by [OpenVINO Benchmark C++ tool](https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app)
+    [ONNX Runtime][onnx-runtime-github]
+    and [OpenCV DNN][opencv-dnn] in C++ API implementation.
+    This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app]
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
   - `csv2html` is a set of scripts to convert performance and accuracy
@@ -112,6 +131,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
      tables from csv to xlsx.
   - `deployment` is a set of deployment tools.
   - `inference` contains python inference implementation.
+  - `model_converters` contains converters of deep models.
   - `node_info` contains a set of functions to get information about
     computational node.
   - `quantization` contains scripts to quantize model to INT8-precision
@@ -159,12 +179,16 @@ Report questions, issues and suggestions, using:
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
 [intel-caffe]: https://github.com/intel/caffe
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
-[tensorflow-lite]: https://www.tensorflow.org/lite/
-[onnx-runtime]: https://onnxruntime.ai/
+[tensorflow-lite]: https://www.tensorflow.org/lite
+[onnx-runtime]: https://onnxruntime.ai
+[onnx-runtime-github]: https://github.com/microsoft/onnxruntime
+[mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
+[benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
+[gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build

@@ -152,4 +152,33 @@
             <InferenceRequestsCount></InferenceRequestsCount>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath> <!-- Не нужен для MXNet при загрузке моделей из Gluon Model Zoo -->
+            <WeightsPath></WeightsPath> <!-- Не нужен для MXNet при загрузке моделей из Gluon Model Zoo -->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>MXNet</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device>CPU</Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Normalize></Normalize>
+            <Mean></Mean>
+            <Std></Std>            
+            <ChannelSwap></ChannelSwap>
+        </FrameworkDependent>
+    </Test>
 </Tests>

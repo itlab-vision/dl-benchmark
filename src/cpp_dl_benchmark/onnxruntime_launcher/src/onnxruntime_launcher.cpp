@@ -110,7 +110,7 @@ void ONNXLauncher::fill_inputs_outputs_info() {
 }
 
 IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
-    std::vector<TensorDescr> input_tensors_info;
+    std::vector<TensorDescription> input_tensors_info;
     for (size_t i = 0; i < io.input_names.size(); ++i) {
         std::vector<int> shape(io.input_shapes[i].size());
         std::transform(io.input_shapes[i].begin(), io.input_shapes[i].end(), shape.begin(), [](int64_t x) {
@@ -119,7 +119,7 @@ IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
         input_tensors_info.push_back(
             {std::string(io.input_names[i]), shape, shape, "", get_data_precision(io.input_data_precisions[i]), false});
     }
-    std::vector<TensorDescr> output_tensors_info;
+    std::vector<TensorDescription> output_tensors_info;
     for (size_t i = 0; i < io.output_names.size(); ++i) {
         std::vector<int> shape(io.output_shapes[i].size());
         std::transform(io.output_shapes[i].begin(), io.output_shapes[i].end(), shape.begin(), [](int64_t x) {

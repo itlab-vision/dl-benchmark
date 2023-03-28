@@ -151,3 +151,20 @@ class TensorFlowLiteIOModelWrapper(IOModelWrapper):
         for input_ in inputs:
             if layer_name == input_['name']:
                 return input_['dtype']
+
+
+class MXNetIOModelWrapper(IOModelWrapper):
+    def __init__(self, args):
+        # model wrapper supports only one input (batch of images)
+        self._input_names = [args['input_name']]
+        self._input_shapes = [args['input_shape']]
+
+    def get_input_layer_names(self, model):
+        return self._input_names
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shapes[0]
+
+    def get_input_layer_dtype(self, model, layer_name):
+        import numpy as np
+        return np.float32
