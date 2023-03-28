@@ -416,7 +416,7 @@ inference_tensorflowlite.py
   в формате `input0[value0],input1[value1]`. По умолчанию `(0, 0, 0)`.
 - `--layout` - формат входных тензоров в формате `input0(value0),input1(value1)`. По умолчанию `NHWC`.
 - `--input_shapes` - размеры входных тензоров в формате `input0[value0],input1[value1]`,
-  например `input[1, 224, 224, 3]`, порядок размерностей должен соответсвовать формату входного тензора.
+  например `input[1,224,224,3]`, порядок размерностей должен соответсвовать формату входного тензора.
   По умолчанию не установлен.
 - `--input_names` - название входных узлов модели. По умолчанию не установлен.
 - `--output_names` - имена выходных узлов модели. По умолчанию не установлен.
@@ -428,8 +428,9 @@ inference_tensorflowlite.py
 - `--delegate_options` - настройки для библиотеки с аппаратным ускорением моделей
   в формате "option1: value1; option2: value2". По умолчанию не установлены.
 
-Подробнее про [TFLite Delegates](https://www.tensorflow.org/lite/performance/delegates). По умолчанию TensorFlow
-устанавливается с Flex Delegate, используемым при конвертации TF операций в TFLite и их исполнении.
+Подробнее про [TFLite Delegates][tflite_delegates]. По умолчанию TensorFlow
+использует Flex Delegate для конвертации TF операций в TFLite и их исполнения,
+и XNNPACK для ускорения исполнения операций на x86 архитектуре.
 
 #### Примеры запуска
 
@@ -550,3 +551,4 @@ python inference_mxnet.py --model <file_name>.json \
 
 <!-- LINKS -->
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
+[tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
