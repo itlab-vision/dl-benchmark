@@ -6,3 +6,4 @@ class KnownFrameworks:
     tensorflow_lite = 'TensorFlowLite'
     mxnet = 'MXNet'
     opencv = 'OpenCV'
+    opencv_dnn_cpp = 'OpenCV DNN Cpp'
