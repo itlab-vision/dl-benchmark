@@ -195,7 +195,7 @@
             <Path></Path>
         </Dataset>
         <FrameworkIndependent>
-            <InferenceFramework>OpenCV</InferenceFramework>
+            <InferenceFramework>OpenCV DNN Python</InferenceFramework>
             <BatchSize></BatchSize>
             <Device></Device>
             <IterationCount></IterationCount>

@@ -4,7 +4,7 @@ from frameworks.openvino.openvino_parameters_parser import OpenVINOParametersPar
 from frameworks.tensorflow.tensorflow_parameters_parser import TensorFlowParametersParser
 from frameworks.tensorflow_lite.tensorflow_lite_parameters_parser import TensorFlowLiteParametersParser
 from frameworks.mxnet.mxnet_parameters_parser import MXNetParametersParser
-from frameworks.opencv.opencv_parameters_parser import OpenCVParametersParser
+from frameworks.opencv_dnn_python.opencv_dnn_python_parameters_parser import OpenCVDNNPythonParametersParser
 from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
 
 
@@ -21,8 +21,8 @@ def get_parameters_parser(framework):
         return TensorFlowLiteParametersParser()
     if framework == KnownFrameworks.mxnet:
         return MXNetParametersParser()
-    if framework == KnownFrameworks.opencv:
-        return OpenCVParametersParser()
+    if framework == KnownFrameworks.opencv_dnn_python:
+        return OpenCVDNNPythonParametersParser()
     if framework == KnownFrameworks.opencv_dnn_cpp:
         return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

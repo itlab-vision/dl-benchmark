@@ -3,13 +3,13 @@ from pathlib import Path
 from ..processes import ProcessHandler
 
 
-class OpenCVProcess(ProcessHandler):
+class OpenCVDNNPythonProcess(ProcessHandler):
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
     @staticmethod
     def create_process(test, executor, log):
-        return OpenCVProcess(test, executor, log)
+        return OpenCVDNNPythonProcess(test, executor, log)
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
@@ -35,7 +35,7 @@ class OpenCVProcess(ProcessHandler):
         common_params = f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration}'
 
         backend = self._test.dep_parameters.backend
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--backend', backend)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--backend', backend)
 
         input_scale = self._test.dep_parameters.input_scale
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_scale', input_scale)
@@ -50,21 +50,21 @@ class OpenCVProcess(ProcessHandler):
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--output_names', output_names)
 
         mean = self._test.dep_parameters.mean
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
 
         std = self._test.dep_parameters.std
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--std', std)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--std', std)
 
         swapRB = self._test.dep_parameters.swapRB
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--swapRB', swapRB)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--swapRB', swapRB)
 
         crop = self._test.dep_parameters.crop
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--crop', crop)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--crop', crop)
 
         layout = self._test.dep_parameters.layout
-        common_params = OpenCVProcess._add_optional_argument_to_cmd_line(common_params, '--layout', layout)
+        common_params = OpenCVDNNPythonProcess._add_optional_argument_to_cmd_line(common_params, '--layout', layout)
 
-        common_params = OpenCVProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        common_params = OpenCVDNNPythonProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
         command_line = f'{python} {path_to_opencv_script} {common_params}'
 
         return command_line
