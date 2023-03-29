@@ -1,4 +1,5 @@
 import sys
+import traceback
 import argparse
 import logging as log
 from time import time
@@ -253,8 +254,8 @@ def main():
         del model
         del compiled_model
         del core
-    except Exception as ex:
-        print('ERROR! : {0}'.format(str(ex)))
+    except Exception:
+        log.error(traceback.format_exc())
         sys.exit(1)
 
 

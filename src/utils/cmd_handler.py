@@ -65,4 +65,4 @@ class CMDHandler(metaclass=abc.ABCMeta):
             else:
                 os.system(f'pkill -TERM -P {pid}')
         except OSError as err:
-            print(err)
+            self.log.error(err)
