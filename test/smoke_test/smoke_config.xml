@@ -150,4 +150,37 @@
             <ChannelSwap></ChannelSwap>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>mobilenet-v1-1.0-224-tf</Name>
+            <Precision>default</Precision>
+            <SourceFramework>tf</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224_frozen.pb</ModelPath>
+            <WeightsPath>none</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenCV DNN Python</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>60</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Backend>DNN</Backend>
+            <InputName></InputName>
+            <OutputNames></OutputNames>
+            <InputScale>127.5</InputScale>
+            <InputShape>224 224 3</InputShape>
+            <Mean>127.5 127.5 127.5</Mean>
+            <Std></Std>
+            <SwapRB>True</SwapRB>
+            <Crop></Crop>
+            <Layout></Layout>
+        </FrameworkDependent>
+    </Test>
 </Tests>
