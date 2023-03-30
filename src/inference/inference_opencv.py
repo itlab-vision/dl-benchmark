@@ -2,6 +2,7 @@ import argparse
 import logging as log
 import os
 import sys
+import traceback
 from time import time
 
 import cv2
@@ -26,6 +27,11 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='weights')
+    parser.add_argument('--precision',
+                        help='Specify the precision of weights (FP32 by default)',
+                        default='FP32',
+                        type=str,
+                        dest='precision')
     parser.add_argument('-i', '--input',
                         help='Path to data',
                         required=True,
@@ -137,13 +143,14 @@ def set_backend_to_infer(net, backend):
         raise ValueError('The backend is not available')
 
 
-def set_device_to_infer(net, device):
+def set_device_to_infer(net, device, precision):
     if device == 'CPU':
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
     elif device == 'GPU':
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
-    elif device == 'GPU_FP16':
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL_FP16)
+        if precision == 'FP16':
+            net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL_FP16)
+        else:
+            net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
     elif device == 'MYRIAD':
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
     else:
@@ -205,19 +212,15 @@ def process_result(batch_size, inference_time):
     return average_time, latency, fps
 
 
-def print_topK_preds(result, number_top, log):
-    labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
-    with open(labels, 'r') as f:
-        labels_map = [line.strip() for line in f]
-    log.info('Top {0} results:'.format(number_top))
-    for batch, probs in enumerate(result):
-        probs = np.exp(np.squeeze(probs).astype(np.float64))
-        probs /= np.sum(probs)
-        top_ind = np.argsort(probs)[-number_top:][::-1]  # noqa: PLE1130
-        log.info('Result for image {0}'.format(batch + 1))
-        for id_ in top_ind:
-            det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
-            log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
+def prepare_output(result, output_names, task, args):
+    if task == 'feedforward':
+        return {}
+    if (output_names is None) or len(output_names) == 0:
+        output_names = ['_output']
+    if task == 'classification':
+        return {output_names[0]: np.array(result).reshape(args.batch_size, -1)}
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
 
 
 def result_output(average_time, fps, latency, log):
@@ -274,31 +277,39 @@ def main():
 
         log.info('The assign of the backend to infer')
         set_backend_to_infer(net, args.backend)
-        log.info('The backend has been assigned: {0}'.format(args.backend))
+        log.info(f'The backend has been assigned: {args.backend}')
 
         log.info('The assign of the device to infer')
-        set_device_to_infer(net, args.device)
-        log.info('The device has been assigned: {0}'.format(args.device))
+        set_device_to_infer(net, args.device, args.precision)
+        log.info(f'The device has been assigned: {args.device} ({args.precision})')
 
-        log.info('Prepare input data')
+        log.info('Preparing input data')
         io.prepare_input(net, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
         result, inference_time = inference_opencv(
             net, args.input_name, args.output_names, args.number_iter, io.get_slice_input)
+
+        log.info('Computing performance metrics')
         average_time, latency, fps = process_result(args.batch_size, inference_time)
 
         if not args.raw_output:
-            if args.backend == 'IE':
-                output_names = args.output_names[0] if args.output_names else '_output'
-                io.process_output({output_names: np.array(result).reshape(args.batch_size, -1)}, log)
-            else:
-                print_topK_preds(np.array(result).reshape(args.batch_size, -1), args.number_top, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Converting output tensor to print results')
+                    result = prepare_output(result, args.output_names, args.task, args)
+
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
     except Exception as ex:
-        print('ERROR! : {0}'.format(str(ex)))
+        log.error(traceback.format_exc())
         sys.exit(1)
 
 

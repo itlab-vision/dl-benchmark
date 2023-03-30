@@ -34,6 +34,9 @@ class OpenCVDNNPythonProcess(ProcessHandler):
         iteration = self._test.indep_parameters.iteration
         common_params = f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration}'
 
+        precision = self._test.model.precision
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)
+
         backend = self._test.dep_parameters.backend
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--backend', backend)
 

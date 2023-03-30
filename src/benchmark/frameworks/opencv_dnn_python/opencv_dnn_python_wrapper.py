@@ -5,7 +5,7 @@ from ..known_frameworks import KnownFrameworks
 
 
 class OpenCVDNNPythonWrapper(FrameworkWrapper):
-    framework_name = KnownFrameworks.opencv
+    framework_name = KnownFrameworks.opencv_dnn_python
 
     @staticmethod
     def create_process(test, executor, log, cpp_benchmarks_dir=None):
