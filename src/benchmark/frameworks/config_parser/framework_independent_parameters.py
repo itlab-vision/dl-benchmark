@@ -21,7 +21,7 @@ class FrameworkIndependentParameters(FrameworkParameters):
             self.device = device.upper()
         else:
             raise ValueError('Device is required parameter. '
-                             'Supported values: CPU, GPU, FPGA, MYRIAD.')
+                             'Supported values: CPU, GPU, FPGA, MYRIAD, MLIR.')
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
@@ -35,7 +35,7 @@ class FrameworkIndependentParameters(FrameworkParameters):
 
     @staticmethod
     def _device_is_correct(device):
-        const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA']
+        const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA', 'MLIR']
         if device.upper() in const_correct_devices:
             return True
         return False
