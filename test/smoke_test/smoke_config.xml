@@ -154,7 +154,7 @@
         <Model>
             <Task>classification</Task>
             <Name>mobilenet-v1-1.0-224-tf</Name>
-            <Precision>default</Precision>
+            <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
             <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224_frozen.pb</ModelPath>
             <WeightsPath>none</WeightsPath>

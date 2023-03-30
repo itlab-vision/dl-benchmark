@@ -1,6 +1,5 @@
 import argparse
 import logging as log
-import os
 import sys
 import traceback
 from time import time
@@ -267,6 +266,8 @@ def main():
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         log.info('Loading network files:\n\t {0}\n\t {1}'.format(args.model, args.weights))
+        if args.weights == '' or args.weights == 'none' or args.weights == 'None':
+            args.weights = None
         net = load_network(args.model, args.weights)
 
         layer_name = model_wrapper.get_input_layer_names(net)
@@ -308,7 +309,7 @@ def main():
             result_output(average_time, fps, latency, log)
         else:
             raw_result_output(average_time, fps, latency)
-    except Exception as ex:
+    except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)
 
