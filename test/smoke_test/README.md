@@ -7,5 +7,5 @@
    ./run_smoke_test.sh
    ```
    This script performs download and convert steps for test models, runs inference_benchmark.py on simple config, and checks result file:
-   * There are 5 tests
+   * There are 6 tests
    * All the tests are passed
