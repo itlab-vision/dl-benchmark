@@ -9,16 +9,20 @@ def create_process(test, executor, log, cpp_benchmarks_dir=None):
         return SyncOpenVINOProcess(test, executor, log)
     if mode == 'async':
         return AsyncOpenVINOProcess(test, executor, log)
+    if mode == 'ovbenchmark_python_sync':
+        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'none', 'sync')
+    if mode == 'ovbenchmark_python_async':
+        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'none', 'async')
     if mode == 'ovbenchmark_python_latency':
         return OpenVINOBenchmarkPythonProcess(test, executor, log, 'latency')
     if mode == 'ovbenchmark_python_throughput':
         return OpenVINOBenchmarkPythonProcess(test, executor, log, 'throughput')
     if mode == 'ovbenchmark_python_onnx':
-        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log)
+        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log, 'none', 'sync')
     if mode == 'ovbenchmark_cpp_latency':
         return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir, 'latency')
     if mode == 'ovbenchmark_cpp_throughput':
         return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir, 'throughput')
     if mode == 'ovbenchmark_cpp_onnx':
-        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir)
+        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir, 'none', 'sync')
     raise AssertionError(f'Unknown openvino running mode {mode}')
