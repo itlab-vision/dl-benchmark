@@ -5,4 +5,5 @@ class KnownFrameworks:
     onnx_runtime = 'ONNX Runtime'
     tensorflow_lite = 'TensorFlowLite'
     mxnet = 'MXNet'
+    opencv_dnn_python = 'OpenCV DNN Python'
     opencv_dnn_cpp = 'OpenCV DNN Cpp'

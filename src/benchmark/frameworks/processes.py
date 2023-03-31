@@ -112,6 +112,10 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         return f'{command_line} {argument} {value}'
 
     @staticmethod
+    def _add_flag_to_cmd_line(command_line, flag):
+        return f'{command_line} {flag}'
+
+    @staticmethod
     def _add_env_to_cmd_line(command_line, name, value):
         return f'{name}={value} {command_line}'
 

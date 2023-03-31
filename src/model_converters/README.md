@@ -14,7 +14,7 @@ This will convert model from `<source_framework>` to TFLite format.
 
 ### TFLite converter parameters
 
-- `--model-path` absolute path to model in TensorFlow or ONNX format.
+- `--model-path` absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
 - `--input-names` comma-separated names of the input layers.
 - `--input-shapes` comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
 - `--output-names` comma-separated names of the output layers.
