@@ -120,8 +120,11 @@ class OpenVINOParameters(FrameworkParameters):
     @staticmethod
     def _mode_is_correct(mode):
         const_correct_mode = ['sync', 'async',
-                              'ovbenchmark_python_latency', 'ovbenchmark_python_throughput', 'ovbenchmark_python_onnx',
-                              'ovbenchmark_cpp_latency', 'ovbenchmark_cpp_throughput', 'ovbenchmark_cpp_onnx']
+                              'ovbenchmark_python_sync', 'ovbenchmark_python_async',
+                              'ovbenchmark_python_latency', 'ovbenchmark_python_throughput',
+                              'ovbenchmark_python_onnx',
+                              'ovbenchmark_cpp_latency', 'ovbenchmark_cpp_throughput',
+                              'ovbenchmark_cpp_onnx']
         if mode.lower() in const_correct_mode:
             return True
         raise ValueError(f'Mode is a required parameter. Mode can only take values: {", ".join(const_correct_mode)}')
