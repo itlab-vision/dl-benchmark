@@ -98,6 +98,10 @@ void OCVLauncher::warmup_inference() {
     run(blobs[0]);
 }
 
+void OCVLauncher::topk(const Labels &lbls, uint64_t k) {
+
+}
+
 void OCVLauncher::run(const cv::Mat& input_blob) {
     net.setInput(input_blob);
     total_start_time = std::min(HighresClock::now(), total_start_time);

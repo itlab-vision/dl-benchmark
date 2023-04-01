@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <numeric>
 #include <string>
@@ -168,6 +169,15 @@ void ONNXLauncher::run(const std::vector<Ort::Value>& input_tensors) {
     total_end_time = std::max(HighresClock::now(), total_end_time);
 }
 
+std::vector<Ort::Value> ONNXLauncher::run_for_output(const std::vector<Ort::Value>& input_tensors){
+    return session->Run(Ort::RunOptions{nullptr},
+                               io.input_names.data(),
+                               input_tensors.data(),
+                               io.input_names.size(),
+                               io.output_names.data(),
+                               io.output_names.size());
+}
+
 int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     int iteration = 0;
     auto start_time = HighresClock::now();
@@ -180,4 +190,46 @@ int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     }
 
     return iteration;
+}
+
+void ONNXLauncher::topk_onnx(const std::vector<Ort::Value> &output, const Labels &lbls, uint64_t k) {
+    
+    std::vector<std::pair<int,float>> copy_from_tensor;
+    std::vector<std::string> classes_from_labels;
+    std::string line;
+    auto valfromtens = output[0].GetTensorData<float>();
+    size_t count = output[0].GetTensorTypeAndShapeInfo().GetElementCount();
+    
+    if(k > count) {
+        throw std::domain_error("Invalid value of k");
+    }
+
+    for(int i = 0; i < count; i++){
+        copy_from_tensor.push_back(std::make_pair(i, valfromtens[i]));
+    }
+
+    std::sort(copy_from_tensor.begin(), copy_from_tensor.end(), [](auto const &l, auto const &h){return l.second > h.second;});
+    std::filesystem::path file_path(lbls.path);
+    std::ifstream a(file_path);
+    if(a.is_open()){
+        while(getline(a, line)){
+            classes_from_labels.push_back(line);
+        }
+        a.close();
+    }
+    else {
+        throw std::invalid_argument("File doesn't exist or error when openning.");
+    }
+    for(int i = 0; i < k; i++){
+        std::cout << i + 1<< ". " << classes_from_labels[copy_from_tensor[i].first] << " " << copy_from_tensor[i].second << std::endl;
+    }
+}
+
+void ONNXLauncher::topk(const Labels &lbls, uint64_t k) {
+    for(int i = 0; i < tensors.size();i++){
+        std::cout << "\n\n\n";
+        auto Tens = run_for_output(tensors[i]);
+        topk_onnx(Tens, lbls, k);
+    }
+    std::cout << "\n\n\n";
 }
