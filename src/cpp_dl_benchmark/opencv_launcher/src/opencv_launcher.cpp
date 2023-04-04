@@ -29,9 +29,17 @@ void OCVLauncher::log_framework_version() const {
     logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
 
+void OCVLauncher::set_backend(cv::dnn::Net &net) {
+#ifdef OCV_DNN
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+#elif OCV_DNN_WITH_OV
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_INFERENCE_ENGINE);
+#endif
+}
+
 void OCVLauncher::read(const std::string model_file, const std::string weights_file) {
     net = cv::dnn::readNet(model_file, weights_file);
-    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+    set_backend(net);
 
     std::vector<MatShape> inputShapes, outputShapes;
     net.getLayerShapes(MatShape(), 0, inputShapes, outputShapes);

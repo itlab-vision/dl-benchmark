@@ -2,7 +2,7 @@
 #include "inputs_preparation/inputs_preparation.hpp"
 #include "utils/args_handler.hpp"
 
-#ifdef OCV_DNN
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
 #include "opencv_launcher.hpp"
 #elif ORT_DEFAULT
 #include "onnxruntime_launcher.hpp"
@@ -27,12 +27,12 @@ constexpr char model_msg[] =
     "path to a file with a trained model or a config file.\n"
     "                                                      available formats\n"
     "                                                          ONNX Runtime - onnx\n"
-    "                                                          OpenCV DNN - onnx, pb, protoxt.";
+    "                                                          OpenCV - .xml, onnx, pb, protoxt.";
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
-                               "                                                      available formats:\n"
-                               "                                                          OpenCV DNN - caffemodel.";
+                               "                          available formats:\n"
+                               "                          OpenCV - caffemodel, .bin";
 DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =
@@ -93,6 +93,8 @@ void parse(int argc, char* argv[]) {
         std::cout <<
 #ifdef OCV_DNN
             "opencv_dnn"
+#elif OCV_DNN_WITH_OV
+            "opencv_dnn_ov"
 #elif ORT_DEFAULT
             "onnxruntime"
 #endif
@@ -119,7 +121,7 @@ void parse(int argc, char* argv[]) {
     if (FLAGS_m.empty()) {
         throw std::invalid_argument{"-m <MODEL FILE> can't be empty"};
     }
-#ifdef OCV_DNN
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
     if (FLAGS_shape.empty()) {
         throw std::invalid_argument{"[--shape <[N,C,H,W]>] can't be empty"};
     }
@@ -173,7 +175,7 @@ int main(int argc, char* argv[]) {
 
         std::unique_ptr<Launcher> launcher;
 
-#ifdef OCV_DNN
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads);
 #elif ORT_DEFAULT
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads);
@@ -193,6 +195,8 @@ int main(int argc, char* argv[]) {
                                {{"inference_framework",
 #ifdef OCV_DNN
                                  "opencv_dnn"
+#elif OCV_DNN_WITH_OV
+                                 "opencv_dnn_ov"
 #elif ORT_DEFAULT
                                  "onnxruntime"
 #endif

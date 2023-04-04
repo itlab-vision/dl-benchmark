@@ -13,19 +13,27 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
     git checkout 4.7.0
     ```
 
-1. Create `build` directory:
+2. Create `build` directory:
    
     ```
     mkdir build && cd build
     ```
 
-1. Configure it with `cmake`:
-   
-    ```
-    cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF ..
-    ```
+3. Configure it with `cmake`:
+   3.1. For OpenCV with OpenVINO:
+        Setup environment variables to detect OpenVINO:
+        ```
+        source /openvino/bin/setupvars.sh
+        ```
+        ```
+        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -D WITH_OPENVINO=ON -DBUILD_DOCS=OFF ..
+        ```
+   3.2. For OpenCV:
+        ```
+        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=OFF -DBUILD_DOCS=OFF ..
+        ```
 
-1. Build and install project:
+4. Build and install project:
 
     ```
     make install -j$(nproc --all)
@@ -44,19 +52,23 @@ so that cmake can find it during configuration step:
     git submodule update --init --recursive
     ```
 
-1. Create `build` directory:
+2. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-1. In the created directory run `cmake` command:
+3. In the created directory run `cmake` command:
+    3.1. For OPENCV_LAUNCHER with OpenVINO:
+         ```
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=ON -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         ```
+    3.2. For OPENCV_LAUNCHER:
+         ```
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+         ```
 
-    ```
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
-    ```
-
-1. Build tool
+4. Build tool
 
     ```
     cmake --build .
@@ -66,7 +78,7 @@ Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>
 
 ## Usage
 
-OpenCV DNN launcher supports models in `ONNX`, `Caffe` and `TensorFlow` formats,
+OpenCV DNN launcher supports models in `IR (OpenVINO)`, '`ONNX`, `Caffe` and `TensorFlow` formats,
 no custom backends are tested for now.
 
 Limitations on the models:

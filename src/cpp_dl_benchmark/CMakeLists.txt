@@ -64,7 +64,7 @@ find_package(OpenCV REQUIRED core imgproc imgcodecs)
 add_subdirectory(common)
 add_subdirectory(thirdparty/gflags)
 
-if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_IE_LAUNCHER)
+if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_OV_LAUNCHER)
     add_subdirectory(opencv_launcher)
 endif()
 
