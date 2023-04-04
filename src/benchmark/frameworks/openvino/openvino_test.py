@@ -10,6 +10,7 @@ class OpenVINOTest(Test):
     def get_report(self):
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
+        parameters.update({'Frontend': self.dep_parameters.frontend})
         parameters.update({'Async request count': self.dep_parameters.async_request})
         parameters.update({'Infer request count': self.dep_parameters.infer_request})
         parameters.update({'Iteration count': self.indep_parameters.iteration})

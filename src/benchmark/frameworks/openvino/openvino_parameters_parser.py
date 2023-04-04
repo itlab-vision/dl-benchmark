@@ -8,6 +8,7 @@ class OpenVINOParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_MODE_TAG = 'Mode'
+        CONFIG_FRAMEWORK_DEPENDENT_FRONTEND_TAG = 'Frontend'
         CONFIG_FRAMEWORK_DEPENDENT_EXTENSION_TAG = 'Extension'
         CONFIG_FRAMEWORK_DEPENDENT_INFER_REQUEST_COUNT_TAG = 'InferenceRequestsCount'
         CONFIG_FRAMEWORK_DEPENDENT_ASYNC_REQUEST_COUNT_TAG = 'AsyncRequestCount'
@@ -36,6 +37,10 @@ class OpenVINOParametersParser(DependentParametersParser):
             _infer_request_count = dep_parameters_tag.getElementsByTagName(
                 CONFIG_FRAMEWORK_DEPENDENT_INFER_REQUEST_COUNT_TAG)[0].firstChild
 
+        _frontend = None
+        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_FRONTEND_TAG):
+            _frontend = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_FRONTEND_TAG)[0].firstChild
+
         _shape, _layout, _mean, _input_scale = None, None, None, None
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SHAPE_TAG):
             _shape = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SHAPE_TAG)[0].firstChild
@@ -48,6 +53,7 @@ class OpenVINOParametersParser(DependentParametersParser):
 
         return OpenVINOParameters(
             mode=_mode.data if _mode else None,
+            frontend=_frontend.data if _frontend else 'IR',
             extension=_extension.data if _extension else None,
             infer_request_count=_infer_request_count.data if _infer_request_count else None,
             async_request_count=_async_request_count.data if _async_request_count else None,
@@ -61,9 +67,10 @@ class OpenVINOParametersParser(DependentParametersParser):
 
 
 class OpenVINOParameters(FrameworkParameters):
-    def __init__(self, mode, extension, infer_request_count, async_request_count, thread_count, stream_count,
+    def __init__(self, mode, frontend, extension, infer_request_count, async_request_count, thread_count, stream_count,
                  shape, layout, mean, input_scale):
         self.mode = None
+        self.frontend = None
         self.extension = None
         self.infer_request = None
         self.async_request = None
@@ -108,7 +115,9 @@ class OpenVINOParameters(FrameworkParameters):
             if self._parameter_not_is_none(layout):
                 self.layout = layout.strip()
 
-        if 'onnx' in self.mode.lower():
+        if self._frontend_is_correct(frontend):
+            self.frontend = frontend if frontend else 'IR'
+        if self.frontend != 'IR':
             if self._parameter_not_is_none(mean):
                 if self._mean_is_correct(mean):
                     self.mean = mean.strip()
@@ -120,11 +129,21 @@ class OpenVINOParameters(FrameworkParameters):
     @staticmethod
     def _mode_is_correct(mode):
         const_correct_mode = ['sync', 'async',
-                              'ovbenchmark_python_latency', 'ovbenchmark_python_throughput', 'ovbenchmark_python_onnx',
-                              'ovbenchmark_cpp_latency', 'ovbenchmark_cpp_throughput', 'ovbenchmark_cpp_onnx']
+                              'ovbenchmark_python_latency', 'ovbenchmark_python_throughput',
+                              'ovbenchmark_cpp_latency', 'ovbenchmark_cpp_throughput']
         if mode.lower() in const_correct_mode:
             return True
         raise ValueError(f'Mode is a required parameter. Mode can only take values: {", ".join(const_correct_mode)}')
+
+    @staticmethod
+    def _frontend_is_correct(frontend):
+        const_correct_frontend = ['ir', 'tensorflow', 'onnx']
+        if not frontend:
+            return True
+        if frontend.lower() in const_correct_frontend:
+            return True
+        raise ValueError('Frontend is a optional parameter (by default it is ir),'
+                         f'but frontend can only take values: {", ".join(const_correct_frontend)}')
 
     def _extension_path_is_correct(self, extension):
         return not self._parameter_not_is_none(extension) or Path(extension).exists()
