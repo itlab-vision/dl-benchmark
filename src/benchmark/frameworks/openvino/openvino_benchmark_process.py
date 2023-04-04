@@ -95,7 +95,8 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         arguments = self._add_common_arguments(arguments, device)
         if (frontend != 'IR'):
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
         return command_line
 
@@ -135,7 +136,8 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         arguments = self._add_common_arguments(arguments, device)
         if (frontend != 'IR'):
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line
