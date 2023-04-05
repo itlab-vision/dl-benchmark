@@ -20,18 +20,22 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
     ```
 
 3. Configure it with `cmake`:
-   3.1. For OpenCV with OpenVINO:
-        Setup environment variables to detect OpenVINO:
-        ```
-        source /openvino/bin/setupvars.sh
-        ```
-        ```
+
+    - For OpenCV with OpenVINO:
+
+    Setup environment variables to detect OpenVINO:
+
+    ```
+        source <openvino_dir>/setupvars.sh
+
         cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -D WITH_OPENVINO=ON -DBUILD_DOCS=OFF ..
-        ```
-   3.2. For OpenCV:
-        ```
+    ```
+
+    - For OpenCV:
+
+    ```
         cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=OFF -DBUILD_DOCS=OFF ..
-        ```
+    ```
 
 4. Build and install project:
 
@@ -66,7 +70,7 @@ so that cmake can find it during configuration step:
          ```
     - For OPENCV_LAUNCHER:
          ```
-         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_LAUNCHER=ON -DBUILD_OPENCV_OV_LAUNCHER=OFF -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=OFF -DBUILD_OPENCV_LAUNCHER=ON -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
          ```
 
 4. Build tool
