@@ -1,6 +1,9 @@
 from .framework_parameters_parser import FrameworkParameters
 
 
+CORRECT_DEVICE_NAMES = ['CPU', 'GPU', 'MYRIAD', 'FPGA', 'MLIR']
+
+
 class FrameworkIndependentParameters(FrameworkParameters):
     def __init__(self, inference_framework, batch_size, device, iterarion_count, test_time_limit):
         self.inference_framework = None
@@ -17,11 +20,12 @@ class FrameworkIndependentParameters(FrameworkParameters):
                 self.batch_size = int(batch_size)
             else:
                 raise ValueError('Batch size can only take values: integer greater than zero.')
+        device = device.upper()
         if self._device_is_correct(device):
-            self.device = device.upper()
+            self.device = device
         else:
             raise ValueError('Device is required parameter. '
-                             'Supported values: CPU, GPU, FPGA, MYRIAD.')
+                             f'Supported values: {CORRECT_DEVICE_NAMES}')
         if self._parameter_not_is_none(iterarion_count) and self._int_value_is_correct(iterarion_count):
             self.iteration = int(iterarion_count)
         else:
@@ -35,7 +39,4 @@ class FrameworkIndependentParameters(FrameworkParameters):
 
     @staticmethod
     def _device_is_correct(device):
-        const_correct_devices = ['CPU', 'GPU', 'MYRIAD', 'FPGA']
-        if device.upper() in const_correct_devices:
-            return True
-        return False
+        return device in CORRECT_DEVICE_NAMES
