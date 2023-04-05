@@ -13,7 +13,14 @@ class OpenCVDNNCppProcess(ProcessHandler):
         if not cpp_benchmarks_dir:
             raise invalid_path_exception
 
-        self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('opencv_dnn_benchmark')
+        backend = self._test.dep_parameters.backend
+        if backend == 'IE':
+            self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('opencv_dnn_ov_benchmark')
+        elif backend == 'DNN':
+            self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('opencv_dnn_benchmark')
+        else:
+            raise ValueError(f'Unknown backend: {backend} !')
+
         if not self._benchmark_path.is_file():
             raise invalid_path_exception
 
