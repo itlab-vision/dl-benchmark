@@ -15,7 +15,7 @@ class CppParametersParser(DependentParametersParser):
         _inference_requests_count = dep_parameters_tag.getElementsByTagName('InferenceRequestsCount')[0].firstChild
 
         return CppParameters(
-            backend=_backend.data if _backend else 'DNN',
+            backend=_backend.data if _backend else None,
             shape=_shape.data if _shape else None,
             layout=_layout.data if _layout else None,
             mean=_mean.data if _mean else None,
