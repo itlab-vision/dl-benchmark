@@ -79,7 +79,7 @@ Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>
 
 ## Usage
 
-OpenCV DNN launcher supports models in `IR (OpenVINO)`, '`ONNX`, `Caffe` and `TensorFlow` formats,
+OpenCV DNN launcher supports models in `IR (OpenVINO)`, `ONNX`, `Caffe` and `TensorFlow` formats,
 no custom backends are tested for now.
 
 Limitations on the models:
