@@ -121,11 +121,6 @@ void parse(int argc, char* argv[]) {
     if (FLAGS_m.empty()) {
         throw std::invalid_argument{"-m <MODEL FILE> can't be empty"};
     }
-#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
-    if (FLAGS_shape.empty()) {
-        throw std::invalid_argument{"[--shape <[N,C,H,W]>] can't be empty"};
-    }
-#endif
 }
 
 void log_model_inputs_outputs(const IOTensorsInfo& tensors_info) {

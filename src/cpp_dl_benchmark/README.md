@@ -20,7 +20,7 @@ The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
 
 ## Build
 
-To build specific launcher please refer to the corresponding `README.md` file in the launcher directory.
+To build specific launcher please refer to the corresponding `README.md` file in the launcher directory. By default all laucnhers will be built.
 
 ## Usage
 

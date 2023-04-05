@@ -10,6 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 option(ENABLE_CLANG_FORMAT "Enable clang-format during the build" ON)
 option(BUILD_ONNXRUNTIME_LAUNCHER "Build OpenCV launcher" ON)
 option(BUILD_OPENCV_LAUNCHER "Build OpenCV launcher" ON)
+option(BUILD_OPENCV_OV_LAUNCHER "Build OpenCV with OpenVINO backend launcher" ON)
 
 include(CMakeParseArguments)
 

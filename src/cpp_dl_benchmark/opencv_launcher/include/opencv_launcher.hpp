@@ -47,7 +47,7 @@ private:
 
     std::vector<cv::Mat> output_blobs;
 
-    static void set_backend(cv::dnn::Net &net);
+    static void set_backend(cv::dnn::Net& net);
 
     void run(const cv::Mat& input_blob);
 };
