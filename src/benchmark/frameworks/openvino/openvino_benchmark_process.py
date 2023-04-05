@@ -102,41 +102,17 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        frontend = self._test.dep_parameters.frontend
 
         arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
-
-        command_line = f'benchmark_app {arguments}'
-
-        return command_line
-
-
-class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
-    def __init__(self, test, executor, log, perf_hint='', api_mode=''):
-        super().__init__(test, executor, log, perf_hint, api_mode)
-
-    @staticmethod
-    def create_process(test, executor, log):
-        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log)
-
-    def _fill_command_line(self):
-        model_xml = self._test.model.model
-        dataset = self._test.dataset.path
-        batch = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
-        iteration = self._test.indep_parameters.iteration
-
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
-
-        arguments = self._add_common_arguments(arguments, device)
-        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
-        arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
-
+        if frontend != 'IR':
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
 
         return command_line
@@ -167,6 +143,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        frontend = self._test.dep_parameters.frontend
 
         arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
                      f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
@@ -174,6 +151,10 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
+        if frontend != 'IR':
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
 
@@ -196,32 +177,3 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
 
         return average_time_of_single_pass, fps, latency
-
-
-class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
-    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint='', api_mode=''):
-        super().__init__(test, executor, log, cpp_benchmarks_dir, perf_hint, api_mode)
-
-    @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
-        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir)
-
-    def _fill_command_line(self):
-        model_xml = self._test.model.model
-        dataset = self._test.dataset.path
-        batch = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
-        iteration = self._test.indep_parameters.iteration
-
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
-                     f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
-
-        arguments = self._add_common_arguments(arguments, device)
-        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
-        arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
-
-        command_line = f'{self._benchmark_path} {arguments}'
-
-        return command_line
