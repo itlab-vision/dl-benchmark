@@ -5,7 +5,7 @@ class OpenCVDNNCppTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
-    def get_report(self):
+    def get_report(self, process):
         parameters = {}
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Shape': self.dep_parameters.shape})

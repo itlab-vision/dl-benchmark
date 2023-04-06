@@ -5,7 +5,7 @@ class TensorFlowTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
-    def get_report(self):
+    def get_report(self, process):
         other_param = ', '.join([f'Device: {self.indep_parameters.device}',
                                  f'Iteration count: {self.indep_parameters.iteration}',
                                  f'Thread count: {self.dep_parameters.nthreads}',

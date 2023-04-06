@@ -7,12 +7,18 @@ class OpenVINOTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
-    def get_report(self):
+    def get_report(self, process):
+        infer_requests_count = self.dep_parameters.infer_request
+        if process.get_status() == 0 and not infer_requests_count:
+            self._log.info('InferenceRequestsCount is not set in XML config, '
+                              'will try to extract it from launcher JSON report or console output')
+            infer_requests_count = process.extract_inference_param('nireq')
+
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Frontend': self.dep_parameters.frontend})
         parameters.update({'Async request count': self.dep_parameters.async_request})
-        parameters.update({'Infer request count': self.dep_parameters.infer_request})
+        parameters.update({'Infer request count': infer_requests_count})
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Thread count': self.dep_parameters.nthreads})
         parameters.update({'Stream count': self.dep_parameters.nstreams})
