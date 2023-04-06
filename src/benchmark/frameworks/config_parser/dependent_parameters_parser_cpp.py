@@ -6,7 +6,10 @@ class CppParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         dep_parameters_tag = curr_test.getElementsByTagName('FrameworkDependent')[0]
 
-        _backend = dep_parameters_tag.getElementsByTagName('Backend')[0].firstChild
+        _backend = None
+        if dep_parameters_tag.getElementsByTagName('Backend'):
+            _backend = dep_parameters_tag.getElementsByTagName('Backend')[0].firstChild
+
         _shape = dep_parameters_tag.getElementsByTagName('InputShape')[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName('Layout')[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName('Mean')[0].firstChild
