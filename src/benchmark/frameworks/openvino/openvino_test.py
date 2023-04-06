@@ -11,7 +11,7 @@ class OpenVINOTest(Test):
         infer_requests_count = self.dep_parameters.infer_request
         if process.get_status() == 0 and not infer_requests_count:
             self._log.info('InferenceRequestsCount is not set in XML config, '
-                              'will try to extract it from launcher JSON report or console output')
+                           'will try to extract it from launcher JSON report or console output')
             infer_requests_count = process.extract_inference_param('nireq')
 
         parameters = OrderedDict()

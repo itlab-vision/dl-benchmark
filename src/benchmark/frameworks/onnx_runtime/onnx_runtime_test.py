@@ -6,6 +6,12 @@ class OnnxRuntimeTest(Test):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
     def get_report(self, process):
+        infer_requests_count = self.dep_parameters.inference_requests_count
+        if process.get_status() == 0 and not infer_requests_count:
+            self._log.info('InferenceRequestsCount is not set in XML config, '
+                           'will try to extract it from launcher JSON report or console output')
+            infer_requests_count = process.get_json_report_content()['configurations_setup']['tensors_num']
+
         parameters = {}
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Shape': self.dep_parameters.shape})
@@ -13,7 +19,7 @@ class OnnxRuntimeTest(Test):
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Scale': self.dep_parameters.scale})
         parameters.update({'Thread count': self.dep_parameters.thread_count})
-        parameters.update({'Inference requests count': self.dep_parameters.inference_requests_count})
+        parameters.update({'Inference requests count': infer_requests_count})
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {
