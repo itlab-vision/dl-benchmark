@@ -253,3 +253,35 @@ class OpenCVTransformer(Transformer):
         blob = cv2.dnn.blobFromImages(images, **self._converting)
         transformed_blob = self.__set_layout_order(blob / self._std)
         return transformed_blob
+
+
+class PyTorchTransformer(Transformer):
+    def __init__(self, converting):
+        self._converting = converting
+
+    def __set_norm(self, image):
+        if not self._converting['norm']:
+            return image
+
+        import torchvision
+
+        preprocess = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize(mean=self._converting['mean'],
+                                             std=self._converting['std']),
+        ])
+
+        return preprocess(image.astype(np.float32) / 255)
+
+    def _transform(self, image):
+        normalized_image = self.__set_norm(image)
+        return normalized_image
+
+    def transform_images(self, images, shape, element_type, *args):
+        import torch
+
+        batch_size = shape[0]
+        transformed_images = torch.zeros(shape, dtype=element_type)
+        for i in range(batch_size):
+            transformed_images[i] = self._transform(images[i])
+        return transformed_images
