@@ -71,6 +71,14 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
         return arguments
 
+    def extract_inference_param(self, key):
+        regex = re.compile(rf'\s*{key}\s*:\s*(?P<value>.+)$')
+        for line in self._output:
+            res = regex.search(line)
+            if res:
+                return res.group('value')
+        return None
+
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
     def __init__(self, test, executor, log, perf_hint=''):

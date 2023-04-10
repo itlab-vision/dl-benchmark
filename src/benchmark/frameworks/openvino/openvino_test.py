@@ -19,6 +19,10 @@ class OpenVINOTest(Test):
         else:
             infer_requests_count = tensors_num
 
+        RUNTIME_PARAMETER_NAMES = ('INFERENCE_PRECISION_HINT', 'INFERENCE_NUM_THREADS', 'NUM_STREAMS',
+                                   'OPTIMAL_NUMBER_OF_INFER_REQUESTS', 'AFFINITY')
+        runtime_parameters = {key: process.extract_inference_param(key) for key in RUNTIME_PARAMETER_NAMES}
+
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Frontend': self.dep_parameters.frontend})
@@ -31,6 +35,7 @@ class OpenVINOTest(Test):
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Scale': self.dep_parameters.input_scale})
         parameters.update({'Shape': self.dep_parameters.shape})
+        parameters.update(runtime_parameters)
         other_param = self._get_optional_parameters_string(parameters)
 
         report_res = {
