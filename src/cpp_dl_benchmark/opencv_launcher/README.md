@@ -76,15 +76,14 @@ so that cmake can find it during configuration step:
 4. Build tool
 
     ```
-    cmake --build . -- -j8
+    cmake --build . -- -j$(nproc --all)
     ```
 
 Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>/bin` directory, where `BUILD_TYPE` whether `Debug` or `Release`.
 
 ## Usage
 
-OpenCV DNN launcher supports models in `IR (OpenVINO)`, `ONNX`, `Caffe` and `TensorFlow` formats,
-no custom backends are tested for now.
+OpenCV DNN launcher supports models in `IR (OpenVINO)` with `DNN_BACKEND_INFERENCE_ENGINE` (backend); `ONNX`, `Caffe` and `TensorFlow` formats with `DNN_BACKEND_OPENCV` (backend).
 
 Limitations on the models:
 - One input

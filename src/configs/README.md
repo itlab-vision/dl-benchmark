@@ -128,7 +128,8 @@
     переменной окружения, [здесь][kmp-affinity-docs].
 
 - Набор тегов для тестирования вывода средствами ONNX Runtime и OpenCV DNN CPP:
-
+  - `Backend` - тег, обязательный для заполнения в OpenCV DNN CPP.
+    Определяет бэкенд входного тензора. Поддерживаются два вида бэкенда: IE и DNN. По умолчанию установлен как DNN.
   - `InputShape` - тег, необязательный для заполнения для ONNX Runtime и обязательный для OpenCV DNN CPP.
     Определяет размеры входного тензора. По умолчанию не установлен.
     В настоящий момент OpenCV не может определить размеры входного тензора во многих случаях, поэтому необходимо
@@ -410,6 +411,7 @@
       <TestTimeLimit>60</TestTimeLimit>
     </FrameworkIndependent>
     <FrameworkDependent>
+      <Backend>DNN</Backend>
       <InputShape>[1,3,224,224]</InputShape>
       <Layout></Layout>
       <Mean>[123.675,116.28,103.53]</Mean>
