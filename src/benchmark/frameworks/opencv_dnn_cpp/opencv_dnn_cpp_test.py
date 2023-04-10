@@ -19,7 +19,7 @@ class OpenCVDNNCppTest(Test):
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Scale': self.dep_parameters.scale})
         parameters.update({'Thread count': self.dep_parameters.thread_count})
-        parameters.update({'Inference requests count': 1})
+        parameters.update({'Infer request count': 1})
         parameters.update({'Number of tensors': tensors_num})
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
