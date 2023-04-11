@@ -14,6 +14,7 @@ class OpenCVDNNCppTest(Test):
         parameters.update({'Scale': self.dep_parameters.scale})
         parameters.update({'Thread count': self.dep_parameters.thread_count})
         parameters.update({'Inference requests count': self.dep_parameters.inference_requests_count})
+        parameters.update({'Backend': self.dep_parameters.backend})
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {
