@@ -28,7 +28,7 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
     ```
         source <openvino_dir>/setupvars.sh
 
-        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -D WITH_OPENVINO=ON -DBUILD_DOCS=OFF ..
+        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=ON -DBUILD_DOCS=OFF ..
     ```
 
     - For OpenCV:
