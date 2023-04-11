@@ -9,13 +9,13 @@ class OnnxRuntimeTest(Test):
         tensors_num = self.dep_parameters.inference_requests_count
         if process.get_status() == 0 and not tensors_num:
             self._log.info('InferenceRequestsCount is not set in XML config, '
-                           'will try to extract it from launcher JSON report or console output')
+                           'will try to extract it from the launcher JSON report or console output')
             tensors_num = process.get_json_report_content()['configurations_setup']['tensors_num']
 
         batch_size = self.indep_parameters.batch_size
         if process.get_status() == 0 and not batch_size:
             self._log.info('BatchSize is not set in XML config, '
-                           'will try to extract it from launcher JSON report')
+                           'will try to extract it from the launcher JSON report')
             batch_size = process.get_json_report_content()['configurations_setup']['batch_size']
 
         parameters = {}
