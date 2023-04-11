@@ -33,7 +33,7 @@ class OutputHandler:
 
     @staticmethod
     def __create_table_row(executor, test, process):
-        report = test.get_report()
+        report = test.get_report(process)
         if process is not None:
             status_code = process.get_status()
             process_status = (Status(status_code) if (Status.has_value(status_code) and status_code != 1)

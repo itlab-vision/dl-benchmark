@@ -12,6 +12,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._output = None
         self._status = None
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
+        self._report_path = None
 
     @staticmethod
     def get_cmd_python_version():
@@ -60,11 +61,18 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def get_performance_metrics(self):
         pass
 
+    def get_json_report_content(self):
+        if self._report_path:
+            return json.loads(self._executor.get_file_content(self._report_path))
+
+    def get_output_lines(self):
+        return self._output
+
     def get_performance_metrics_cpp(self):
         if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        report = json.loads(self._executor.get_file_content(self._report_path))
+        report = self.get_json_report_content()
 
         # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000

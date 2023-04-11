@@ -1,5 +1,4 @@
 import re
-import json
 from pathlib import Path
 
 from .openvino_process import OpenVINOProcess
@@ -72,6 +71,14 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
         return arguments
 
+    def extract_inference_param(self, key):
+        regex = re.compile(rf'\s*{key}\s*[:,]\s*(?P<value>.+)$')
+        for line in self._output:
+            res = regex.search(line)
+            if res:
+                return res.group('value')
+        return None
+
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
     def __init__(self, test, executor, log, perf_hint=''):
@@ -99,6 +106,17 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
                                                                 self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
         return command_line
+
+    def extract_inference_param(self, key):
+        if key == 'nireq':
+            regex = re.compile(r'\s*(\d+)\s*inference\s+requests')
+            for line in self._output:
+                if 'Measuring performance' in line:
+                    res = regex.search(line)
+                    if res:
+                        return res.group(1)
+            return None
+        return super().extract_inference_param(key)
 
 
 class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
@@ -146,7 +164,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        report = json.loads(self._executor.get_file_content(self._report_path))
+        report = self.get_json_report_content()
 
         # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000
@@ -159,3 +177,8 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
 
         return average_time_of_single_pass, fps, latency
+
+    def extract_inference_param(self, key):
+        if key == 'nireq':
+            return self.get_json_report_content()['configuration_setup']['nireq']
+        return super().extract_inference_param(key)

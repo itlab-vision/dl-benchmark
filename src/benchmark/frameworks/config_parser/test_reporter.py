@@ -1,4 +1,5 @@
 import abc
+import logging as log
 
 
 class Test(metaclass=abc.ABCMeta):
@@ -7,9 +8,10 @@ class Test(metaclass=abc.ABCMeta):
         self.dataset = dataset
         self.indep_parameters = indep_parameters
         self.dep_parameters = dep_parameters
+        self._log = log
 
     @abc.abstractmethod
-    def get_report(self):
+    def get_report(self, process):
         pass
 
     @staticmethod
