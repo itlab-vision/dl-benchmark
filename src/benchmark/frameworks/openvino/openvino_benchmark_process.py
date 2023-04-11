@@ -72,7 +72,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         return arguments
 
     def extract_inference_param(self, key):
-        regex = re.compile(rf'\s*{key}\s*:\s*(?P<value>.+)$')
+        regex = re.compile(rf'\s*{key}\s*[:,]\s*(?P<value>.+)$')
         for line in self._output:
             res = regex.search(line)
             if res:
