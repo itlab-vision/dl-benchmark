@@ -96,7 +96,6 @@ def cli_argument_parser():
                         help='Number of threads to use for inference on the CPU. (Max by default)',
                         default=None,
                         type=int,
-                        nargs=1,
                         dest='number_threads')
     parser.add_argument('--delegate_ext',
                         help='Path to delegate library',
