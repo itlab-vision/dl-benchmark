@@ -145,6 +145,7 @@
             <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
+            <Backend>DNN</Backend>
             <InputShape></InputShape>
             <Layout></Layout>
             <Mean></Mean>

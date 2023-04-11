@@ -5,7 +5,13 @@ class OpenCVDNNCppTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
 
-    def get_report(self):
+    def get_report(self, process):
+        tensors_num = self.dep_parameters.inference_requests_count
+        if process.get_status() == 0 and not tensors_num:
+            self._log.info('InferenceRequestsCount is not set in XML config, '
+                           'will try to extract it from launcher JSON report or console output')
+            tensors_num = process.get_json_report_content()['configurations_setup']['tensors_num']
+
         parameters = {}
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Shape': self.dep_parameters.shape})
@@ -13,7 +19,9 @@ class OpenCVDNNCppTest(Test):
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Scale': self.dep_parameters.scale})
         parameters.update({'Thread count': self.dep_parameters.thread_count})
-        parameters.update({'Inference requests count': self.dep_parameters.inference_requests_count})
+        parameters.update({'Infer request count': 1})
+        parameters.update({'Number of tensors': tensors_num})
+        parameters.update({'Backend': self.dep_parameters.backend})
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {

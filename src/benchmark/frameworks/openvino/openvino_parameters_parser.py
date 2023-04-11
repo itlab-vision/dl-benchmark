@@ -101,7 +101,7 @@ class OpenVINOParameters(FrameworkParameters):
                 if self._int_value_is_correct(async_request_count):
                     self.async_request = async_request_count
                 else:
-                    raise ValueError('Async requiest count can only take values: integer greater than zero.')
+                    raise ValueError('Async request count can only take values: integer greater than zero.')
         if self.mode == 'Async' or 'ovbenchmark' in self.mode.lower():
             if self._parameter_not_is_none(stream_count):
                 if self._int_value_is_correct(stream_count):
