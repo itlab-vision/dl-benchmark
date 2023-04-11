@@ -21,6 +21,7 @@ class OpenCVDNNCppTest(Test):
         parameters.update({'Thread count': self.dep_parameters.thread_count})
         parameters.update({'Infer request count': 1})
         parameters.update({'Number of tensors': tensors_num})
+        parameters.update({'Backend': self.dep_parameters.backend})
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {

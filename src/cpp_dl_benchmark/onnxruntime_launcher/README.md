@@ -5,7 +5,7 @@ The tool allows to measure deep learning models inference performance with [ONNX
 ## Build ONNX Runtime
 
 1. Clone repository, checkout to the latest stable release and update submodules:
-   
+
     ```
     git clone https://github.com/microsoft/onnxruntime.git
     cd onnxruntime
@@ -13,19 +13,19 @@ The tool allows to measure deep learning models inference performance with [ONNX
     git submodule update --init --recursive
     ```
 
-1. Create `build` directory:
-   
+2. Create `build` directory:
+
     ```
     mkdir build && cd build
     ```
 
-1. Configure it with `cmake`:
-   
+3. Configure it with `cmake`:
+
     ```
     cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON -Donnxruntime_BUILD_UNIT_TESTS=OFF -Donnxruntime_BUILD_SHARED_LIB=ON -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake
     ```
 
-1. Build and install project:
+4. Build and install project:
 
     ```
     make install -j$(nproc --all)
@@ -45,19 +45,19 @@ To build the tool you need to have an installation of [ONNX Runtime][onnx-runtim
     git submodule update --init --recursive
     ```
 
-1. Create `build` directory:
+2. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-1. In the created directory run `cmake` command:
+3. In the created directory run `cmake` command:
 
     ```
-    cmake -DCMAKE_BUILD_TYPE=Release -BUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_LAUNCHER=ON -DBUILD_OPENCV_LAUNCHER=OFF -DBUILD_OPENCV_OV_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
     ```
 
-1. Build tool
+4. Build tool
 
     ```
     cmake --build .
