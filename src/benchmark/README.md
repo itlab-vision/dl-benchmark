@@ -205,7 +205,10 @@ python3 inference_benchmark.py \
 ### Использование
 
 1. В конфигурационном файле (секция `FrameworkDependent`)
-   укажите `Mode`: `ovbenchmark_cpp_latency` или `ovbenchmark_cpp_throughput`.
+   укажите `Mode`: `sync` или `async`;
+           `CodeSource`: `ovbenchmark`;
+           `Runtime`: `cpp`;
+           `Hint`: `none`, `latency` или `throughput`.
 
 1. Найдите исполняемый файл `benchmark_app` по адресу, приведенному ниже.
 
@@ -235,9 +238,12 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 ### Использование
 
 1. В конфигурационном файле (секция `FrameworkDependent`)
-   укажите `Mode`: `ovbenchmark_python_latency` или `ovbenchmark_python_throughput`.
+   укажите `Mode`: `sync` или `async`;
+           `CodeSource`: `ovbenchmark`;
+           `Runtime`: `python`;
+           `Hint`: `none`, `latency` или `throughput`.
 
-1. Запустите скрипт `inference_benchmark.py`.
+2. Запустите скрипт `inference_benchmark.py`.
 
    ```bash
    python3 inference_benchmark.py -c <path_to_benchmark_configuration_file.xml> -r result.csv

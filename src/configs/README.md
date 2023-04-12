@@ -61,12 +61,15 @@
     - `Sync` используется для реализации latency-режима.
     - `Async` используется для реализации latency-режима при создании очереди из одного запроса
     и throughput-режима при создании очереди из большего числа запросов.
-    - `Ovbenchmark_Python_Latency` - это запуск python benchmark_app с async api и hint latency.
-    - `Ovbenchmark_Python_Throughput` - это запуск python benchmark_app с async api и hint throughput.
-    - `Ovbenchmark_Cpp_Latency` - это запуск c++ benchmark_app с async api и hint latency.
-    - `Ovbenchmark_Cpp_Throughput` - это запуск c++ benchmark_app с async api и hint throughput.
+  - `CodeSource` - тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `handwritten`;
+    определяет запуск benchmark_app из openvino или запуск самописных скриптов из данного репозитория
+  - `Runtime`- тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `python`;
+    используется совместно с запуском benchmark_app. Определяет версию benchmark_app.
+  - `Hint`- тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `latency`;
+    используется совместно с запуском benchmark_app. Определяет "подсказку"
+    для выставления оптимальных параметров OpenVINO режимов.
   - `Frontend` - тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `ir`;
-    используется совместно с python или c++ benchmark_app. Определяет расширение внешнего интерфейса.
+    используется совместно с запуском benchmark_app. Определяет расширение внешнего интерфейса.
   - `Extension` - тег, необязательный для заполнения. Описывает абсолютный путь
     до реализации слоев, неподдерживаемых OpenVINO.
   - `AsyncRequestCount` - опциональный тег. Может быть заполнен для асинхронноого
