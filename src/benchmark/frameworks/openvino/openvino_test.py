@@ -25,6 +25,9 @@ class OpenVINOTest(Test):
 
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
+        parameters.update({'Code Source': self.dep_parameters.code_source})
+        parameters.update({'Runtime': self.dep_parameters.runtime})
+        parameters.update({'Hint': self.dep_parameters.hint})
         parameters.update({'Frontend': self.dep_parameters.frontend})
         parameters.update({'Async request count': self.dep_parameters.async_request})
         parameters.update({'Infer request count': infer_requests_count})

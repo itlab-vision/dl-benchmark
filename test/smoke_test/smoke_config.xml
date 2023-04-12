@@ -77,7 +77,8 @@
             <TestTimeLimit>60</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Mode>ovbenchmark_python_latency</Mode>
+            <Mode>async</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
             <Extension></Extension>
             <AsyncRequestCount>1</AsyncRequestCount>
             <ThreadCount></ThreadCount>
@@ -105,7 +106,8 @@
             <TestTimeLimit>60</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Mode>ovbenchmark_python_throughput</Mode>
+            <Mode>sync</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
             <Extension></Extension>
             <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
@@ -118,8 +120,8 @@
             <Name>mobilenet-v1-1.0-224-tf</Name>
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
-            <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224_frozen.pb</ModelPath>
-            <WeightsPath>none</WeightsPath>
+            <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -133,13 +135,41 @@
             <TestTimeLimit>60</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Mode>ovbenchmark_python_latency</Mode>
-            <Frontend>tensorflow</Frontend>
-            <InputShape></InputShape>
-            <Mean>[127.5,127.5,127.5]</Mean>
-            <InputScale>[127.5,127.5,127.5]</InputScale>
-            <Layout></Layout>
-            <InferenceRequestsCount></InferenceRequestsCount>
+            <Mode>async</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
+            <Runtime>python</Runtime>
+            <Hint>none</Hint>
+            <Extension></Extension>
+            <AsyncRequestCount>1</AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>mobilenet-v1-1.0-224-tf</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>tf</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>60</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>async</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
+            <Runtime>python</Runtime>
+            <Hint>throughput</Hint>
             <Extension></Extension>
             <AsyncRequestCount>1</AsyncRequestCount>
             <ThreadCount></ThreadCount>
@@ -167,7 +197,8 @@
             <TestTimeLimit>60</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
-            <Mode>ovbenchmark_python_throughput</Mode>
+            <Mode>async</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
             <Frontend>tensorflow</Frontend>
             <InputShape></InputShape>
             <Mean>[127.5,127.5,127.5]</Mean>

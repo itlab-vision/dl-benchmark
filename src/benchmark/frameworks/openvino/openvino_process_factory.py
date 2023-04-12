@@ -4,20 +4,19 @@ from .openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProce
 
 def create_process(test, executor, log, cpp_benchmarks_dir=None):
     mode = test.dep_parameters.mode.lower()
-    if mode == 'sync':
+    code_source = test.dep_parameters.code_source
+    runtime = test.dep_parameters.runtime
+    hint = test.dep_parameters.hint
+    if mode == 'sync' and code_source == 'handwritten':
         return SyncOpenVINOProcess(test, executor, log)
-    if mode == 'async':
+    if mode == 'async' and code_source == 'handwritten':
         return AsyncOpenVINOProcess(test, executor, log)
-    if mode == 'ovbenchmark_python_sync':
-        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'none', 'sync')
-    if mode == 'ovbenchmark_python_async':
-        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'none', 'async')
-    if mode == 'ovbenchmark_python_latency':
-        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'latency')
-    if mode == 'ovbenchmark_python_throughput':
-        return OpenVINOBenchmarkPythonProcess(test, executor, log, 'throughput')
-    if mode == 'ovbenchmark_cpp_latency':
-        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir, 'latency')
-    if mode == 'ovbenchmark_cpp_throughput':
-        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir, 'throughput')
-    raise AssertionError(f'Unknown openvino running mode {mode}')
+    if code_source == 'ovbenchmark' and runtime == 'python':
+        return OpenVINOBenchmarkPythonProcess(test, executor, log, hint, mode)
+    if code_source == 'ovbenchmark' and runtime == 'cpp':
+        return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir, hint, mode)
+    raise AssertionError('Unsupportend combination of: '
+                         f'openvino running mode {mode}, '
+                         f'code_source {code_source}, '
+                         f'runtime {runtime}, '
+                         f'hint {hint}')

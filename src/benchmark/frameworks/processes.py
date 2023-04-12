@@ -160,6 +160,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                          ]
         if hasattr(self._test.dep_parameters, 'mode'):
             test_settings.append(self._test.dep_parameters.mode)
+        if hasattr(self._test.dep_parameters, 'code_source'):
+            test_settings.append(self._test.dep_parameters.code_source)
+        if hasattr(self._test.dep_parameters, 'runtime'):
+            test_settings.append(self._test.dep_parameters.runtime)
+        if hasattr(self._test.dep_parameters, 'hint'):
+            test_settings.append(self._test.dep_parameters.hint)
         filename = '_'.join(test_settings)
         filename += '.log'
         return filename
