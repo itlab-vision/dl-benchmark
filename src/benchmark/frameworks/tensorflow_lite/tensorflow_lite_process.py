@@ -59,14 +59,14 @@ class TensorFlowLiteProcess(ProcessHandler):
 
         nthreads = self._test.dep_parameters.nthreads
         if nthreads:
-            command_line = self._add_env_to_cmd_line(command_line, '--nthreads', nthreads)
+            command_line = self._add_argument_to_cmd_line(command_line, '-nthreads', nthreads)
 
         delegate = self._test.dep_parameters.delegate
         if delegate:
-            command_line = self._add_env_to_cmd_line(command_line, '--delegate_ext', delegate)
+            command_line = self._add_argument_to_cmd_line(command_line, '--delegate_ext', delegate)
 
         delegate_options = self._test.dep_parameters.delegate_options
         if delegate_options:
-            command_line = self._add_env_to_cmd_line(command_line, '--delegate_options', delegate_options)
+            command_line = self._add_argument_to_cmd_line(command_line, '--delegate_options', delegate_options)
 
         return command_line
