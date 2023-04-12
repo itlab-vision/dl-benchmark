@@ -64,12 +64,12 @@ def test_python_version(os, mocker):
                                                  ['OpenCV DNN Cpp', OpenCVDNNCppProcess],
                                                  ['ONNX Runtime', OnnxRuntimeProcess],
                                                  ['TensorFlowLite', TensorFlowLiteProcess]])
-@pytest.mark.parametrize('complex_test', [['sync',  'handwritten', None,     SyncOpenVINOProcess],
-                                          ['async', 'handwritten', None,     AsyncOpenVINOProcess],
-                                          ['sync',  'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],
-                                          ['sync',  'ovbenchmark', 'cpp',    OpenVINOBenchmarkCppProcess],
+@pytest.mark.parametrize('complex_test', [['sync', 'handwritten', None, SyncOpenVINOProcess],
+                                          ['async', 'handwritten', None, AsyncOpenVINOProcess],
+                                          ['sync', 'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],
+                                          ['sync', 'ovbenchmark', 'cpp', OpenVINOBenchmarkCppProcess],
                                           ['async', 'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],
-                                          ['async', 'ovbenchmark', 'cpp',    OpenVINOBenchmarkCppProcess],
+                                          ['async', 'ovbenchmark', 'cpp', OpenVINOBenchmarkCppProcess],
                                           ])
 def test_framework_wrapper(inference_framework, complex_test, mocker):
     test = TEST_BASIC_LINE
