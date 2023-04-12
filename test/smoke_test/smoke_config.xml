@@ -80,7 +80,7 @@
             <Mode>async</Mode>
             <CodeSource>ovbenchmark</CodeSource>
             <Extension></Extension>
-            <AsyncRequestCount>1</AsyncRequestCount>
+            <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
         </FrameworkDependent>
@@ -140,7 +140,7 @@
             <Runtime>python</Runtime>
             <Hint>none</Hint>
             <Extension></Extension>
-            <AsyncRequestCount>1</AsyncRequestCount>
+            <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
         </FrameworkDependent>
@@ -171,7 +171,7 @@
             <Runtime>python</Runtime>
             <Hint>throughput</Hint>
             <Extension></Extension>
-            <AsyncRequestCount>1</AsyncRequestCount>
+            <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
         </FrameworkDependent>
@@ -206,7 +206,7 @@
             <Layout></Layout>
             <InferenceRequestsCount></InferenceRequestsCount>
             <Extension></Extension>
-            <AsyncRequestCount>1</AsyncRequestCount>
+            <AsyncRequestCount></AsyncRequestCount>
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
         </FrameworkDependent>
