@@ -10,6 +10,6 @@ result_file="results_benchmark.csv"
 
 python3 ../../src/benchmark/inference_benchmark.py -r $result_file --executor_type host_machine -c ./smoke_config.xml
 check_exit_code inference_benchmark
-check_results_file $result_file 10
+check_results_file $result_file 11
 
 exit $return_value

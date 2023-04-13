@@ -5,15 +5,25 @@ from .openvino_process import OpenVINOProcess
 
 
 class OpenVINOBenchmarkProcess(OpenVINOProcess):
-    def __init__(self, test, executor, log, perf_hint=''):
+    def __init__(self, test, executor, log, perf_hint='', api_mode=''):
         super().__init__(test, executor, log)
         self._perf_hint = perf_hint
+        self._api_mode = api_mode
 
     @staticmethod
     def _add_perf_hint_for_cmd_line(command_line, perf_hint):
         hint = perf_hint.lower()
-        if hint in ('latency', 'throughput'):
+        if hint in ('latency', 'throughput', 'none'):
             return f'{command_line} -hint {hint}'
+
+        return command_line
+
+    @staticmethod
+    def _add_api_mode_for_cmd_line(command_line, api_mode):
+        api = api_mode.lower()
+        if api in ('sync', 'async'):
+            return f'{command_line} -api {api}'
+
         return command_line
 
     @staticmethod
@@ -22,6 +32,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
             return f'{command_line} -c {extension}'
         if 'CPU' in device or 'MYRIAD' in device:
             return f'{command_line} -l {extension}'
+
         return command_line
 
     def get_performance_metrics(self):
@@ -69,6 +80,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nstreams', nstreams)
         nthreads = self._test.dep_parameters.nthreads
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+
         return arguments
 
     def extract_inference_param(self, key):
@@ -81,9 +93,8 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
-    def __init__(self, test, executor, log, perf_hint=''):
-        super().__init__(test, executor, log, perf_hint)
-        self._perf_hint = perf_hint
+    def __init__(self, test, executor, log, perf_hint='', api_mode=''):
+        super().__init__(test, executor, log, perf_hint, api_mode)
 
     @staticmethod
     def create_process(test, executor, log):
@@ -98,13 +109,16 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         frontend = self._test.dep_parameters.frontend
 
         arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
+
+        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
-        if (frontend != 'IR'):
+        if frontend != 'IR':
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
                                                                 self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
+
         return command_line
 
     def extract_inference_param(self, key):
@@ -120,9 +134,8 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
 
 
 class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
-    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint=''):
-        super().__init__(test, executor, log, perf_hint)
-        self._perf_hint = perf_hint
+    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint='', api_mode=''):
+        super().__init__(test, executor, log, perf_hint, api_mode)
 
         invalid_path_exception = ValueError('Must provide valid path to the folder '
                                             'with OpenVINO C++ benchmark_app (--openvino_cpp_benchmark_dir)')
@@ -150,14 +163,16 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
                      f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
 
+        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
-        if (frontend != 'IR'):
+        if frontend != 'IR':
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
             arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
                                                                 self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
+
         return command_line
 
     def get_performance_metrics(self):

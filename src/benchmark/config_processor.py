@@ -12,6 +12,7 @@ def process_config(config, log):
     test_list = []
 
     tests = test_parser.get_tests_list(config)
+    status = 0
     for idx, curr_test in enumerate(tests):
         try:
             model = test_parser.parse_model(curr_test)
@@ -24,7 +25,8 @@ def process_config(config, log):
                                                                                indep_parameters, dep_parameters))
         except ValueError as valerr:
             log.warning(f'Test {idx + 1} not added to test list: {valerr}')
-    return test_list
+            status = 1
+    return test_list, status
 
 
 class TestConfigParser:

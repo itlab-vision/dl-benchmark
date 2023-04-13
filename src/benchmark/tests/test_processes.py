@@ -64,20 +64,24 @@ def test_python_version(os, mocker):
                                                  ['OpenCV DNN Cpp', OpenCVDNNCppProcess],
                                                  ['ONNX Runtime', OnnxRuntimeProcess],
                                                  ['TensorFlowLite', TensorFlowLiteProcess]])
-@pytest.mark.parametrize('mode', [['sync', SyncOpenVINOProcess], ['async', AsyncOpenVINOProcess],
-                                  ['ovbenchmark_python_latency', OpenVINOBenchmarkPythonProcess],
-                                  ['ovbenchmark_python_throughput', OpenVINOBenchmarkPythonProcess],
-                                  ['ovbenchmark_cpp_latency', OpenVINOBenchmarkCppProcess],
-                                  ['ovbenchmark_cpp_throughput', OpenVINOBenchmarkCppProcess]])
-def test_framework_wrapper(inference_framework, mode, mocker):
+@pytest.mark.parametrize('complex_test', [['sync', 'handwritten', None, SyncOpenVINOProcess],
+                                          ['async', 'handwritten', None, AsyncOpenVINOProcess],
+                                          ['sync', 'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],
+                                          ['sync', 'ovbenchmark', 'cpp', OpenVINOBenchmarkCppProcess],
+                                          ['async', 'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],
+                                          ['async', 'ovbenchmark', 'cpp', OpenVINOBenchmarkCppProcess],
+                                          ])
+def test_framework_wrapper(inference_framework, complex_test, mocker):
     test = TEST_BASIC_LINE
     test.indep_parameters.inference_framework = inference_framework[0]
-    test.dep_parameters.mode = mode[0]
+    test.dep_parameters.mode = complex_test[0]
+    test.dep_parameters.code_source = complex_test[1]
+    test.dep_parameters.runtime = complex_test[2]
     wrapper = WRAPPER_REGISTRY[inference_framework[0]]
     mocker.patch('pathlib.Path.is_file', return_value=True)
     if inference_framework[0] == KnownFrameworks.openvino_dldt:
         assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
-                          mode[1])
+                          complex_test[-1])
     else:
         assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
                           inference_framework[1])
