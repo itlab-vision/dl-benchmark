@@ -97,7 +97,7 @@ class XlsxBenchmarkTable(XlsxTable):
             for inference_framework in machine_inference_frameworks:
                 framework_devices = []
                 for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
+                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
                     matcher = re.match(pattern, value)
                     device_name = matcher.group('device_name')
                     if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -124,7 +124,7 @@ class XlsxBenchmarkTable(XlsxTable):
                 for device in framework_devices:
                     device_precisions = []
                     for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
+                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
                         matcher = re.match(pattern, value)
                         device_name = matcher.group('device_name')
                         if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -157,7 +157,7 @@ class XlsxBenchmarkTable(XlsxTable):
                     for precision in device_precisions:
                         device_precision_modes = []
                         for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
+                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
                             matcher = re.match(pattern, value)
                             device_name = matcher.group('device_name')
                             if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -324,7 +324,7 @@ class XlsxBenchmarkTable(XlsxTable):
                                              self._infrastructure)
         idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
                                                   self._inference_frameworks[idx1])
-        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[\W\w]+)[,]+[.]*')
+        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
         matcher = re.match(pattern, value[self._KEY_PARAMETERS])
         device_name = matcher.group('device_name')
         idx3 = self._find_device_idx(device_name, self._devices[idx1][idx2])
