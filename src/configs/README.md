@@ -411,6 +411,43 @@
 </Tests>
 ```
 
+#### Пример заполнения конфигурации для измерения производительности вывода средствами PyTorch
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>alexnet</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>PyTorch</SourceFramework>
+      <ModelPath></ModelPath>
+      <WeightsPath></WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>PyTorch</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>10</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit> 
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <InputName>data</InputName>
+      <InputShape>1 3 224 224</InputShape>
+      <Normalize>True</Normalize>
+      <Mean>0.485 0.456 0.406</Mean>
+      <Std>0.229 0.224 0.225</Std>
+      <OutputName></OutputName>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
 ## Заполнение файла конфигурации для скрипта оценки точности
 
 ### Правила заполнения

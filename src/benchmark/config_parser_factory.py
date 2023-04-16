@@ -5,6 +5,7 @@ from frameworks.tensorflow.tensorflow_parameters_parser import TensorFlowParamet
 from frameworks.tensorflow_lite.tensorflow_lite_parameters_parser import TensorFlowLiteParametersParser
 from frameworks.mxnet.mxnet_parameters_parser import MXNetParametersParser
 from frameworks.opencv_dnn_python.opencv_dnn_python_parameters_parser import OpenCVDNNPythonParametersParser
+from frameworks.pytorch.pytorch_parameters_parser import PyTorchParametersParser
 from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
 
 
@@ -25,4 +26,6 @@ def get_parameters_parser(framework):
         return OpenCVDNNPythonParametersParser()
     if framework == KnownFrameworks.opencv_dnn_cpp:
         return CppParametersParser()
+    if framework == KnownFrameworks.pytorch:
+        return PyTorchParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

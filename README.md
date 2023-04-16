@@ -23,6 +23,7 @@ DLI supports inference using the following frameworks:
 - [ONNX Runtime][onnx-runtime].
 - [MXNet][mxnet].
 - [OpenCV DNN][opencv-dnn] (C++ and Python API).
+- [PyTorch][pytorch].
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -99,6 +100,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
     - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
       is a table that confirms correctness of inference implementation
       based on MXNet for [GluonCV-models][gluoncv-omz].
+    - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
+      is a table that confirms correctness of inference implementation
+      based on PyTorch for [TorchVision][torchvision].
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
@@ -108,6 +112,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
     of deep models inferred by TensorFlow checked in the DLI benchmark.
   - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
     of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
+  - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
+    of deep models inferred by PyTorch checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 
@@ -184,11 +190,13 @@ Report questions, issues and suggestions, using:
 [onnx-runtime-github]: https://github.com/microsoft/onnxruntime
 [mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
+[pytorch]: https://pytorch.org/
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
 [open-model-zoo]: https://github.com/opencv/open_model_zoo
 [gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
+[torchvision]: https://pytorch.org/vision/stable/models.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build

@@ -237,7 +237,7 @@ def main():
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device)
 
-        log.info(f'Shape of the input layer {args.input_name}: {args.input_shape}')
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(compiled_model, args.input)
