@@ -96,11 +96,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         weights = self._test.model.weight
         dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
+        time = self._test.indep_parameters.test_time_limit
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path}'
+        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
 
