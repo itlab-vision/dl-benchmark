@@ -26,6 +26,7 @@ class FrameworkIndependentParameters(FrameworkParameters):
         else:
             raise ValueError('Iteration count is required parameter. '
                              'Iteration count can only take values: integer greater than zero.')
+
         if self._parameter_not_is_none(test_time_limit) and self._float_value_is_correct(test_time_limit):
             self.test_time_limit = float(test_time_limit)
         else:

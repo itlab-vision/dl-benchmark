@@ -107,8 +107,9 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         frontend = self._test.dep_parameters.frontend
+        time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
+        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time}'
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
