@@ -25,7 +25,7 @@ class OpenVINOTest(Test):
 
         if runtime_parameters['Count'] is not None:
             # for benchmark app
-            actual_iterations = runtime_parameters['Count'].split('')[0]
+            actual_iterations = runtime_parameters['Count'].strip().split('')[0]
         else:
             # effective for sync/async python launchers
             actual_iterations = self.indep_parameters.iteration

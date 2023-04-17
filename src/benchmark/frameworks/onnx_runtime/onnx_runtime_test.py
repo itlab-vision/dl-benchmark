@@ -12,8 +12,6 @@ class OnnxRuntimeTest(Test):
             self._log.info('InferenceRequestsCount is not set in XML config, '
                            'will try to extract it from the launcher JSON report or console output')
             tensors_num = json_report_content['configurations_setup']['tensors_num']
-        print(f'Json report content:\n'
-              f'{json_report_content}')
 
         batch_size = self.indep_parameters.batch_size
         if process.get_status() == 0 and not batch_size:
