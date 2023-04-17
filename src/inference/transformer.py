@@ -278,10 +278,9 @@ class PyTorchTransformer(Transformer):
         return normalized_image
 
     def transform_images(self, images, shape, element_type, *args):
-        import torch
-
-        batch_size = shape[0]
-        transformed_images = torch.zeros(shape, dtype=element_type)
-        for i in range(batch_size):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
