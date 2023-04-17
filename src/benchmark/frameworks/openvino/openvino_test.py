@@ -20,7 +20,7 @@ class OpenVINOTest(Test):
             infer_requests_count = tensors_num
 
         RUNTIME_PARAMETER_NAMES = ('INFERENCE_PRECISION_HINT', 'INFERENCE_NUM_THREADS', 'NUM_STREAMS',
-                                   'OPTIMAL_NUMBER_OF_INFER_REQUESTS', 'AFFINITY')
+                                   'OPTIMAL_NUMBER_OF_INFER_REQUESTS', 'AFFINITY','Count')
         runtime_parameters = {key: process.extract_inference_param(key) for key in RUNTIME_PARAMETER_NAMES}
 
         parameters = OrderedDict()
