@@ -23,6 +23,13 @@ class OpenVINOTest(Test):
                                    'OPTIMAL_NUMBER_OF_INFER_REQUESTS', 'AFFINITY','Count')
         runtime_parameters = {key: process.extract_inference_param(key) for key in RUNTIME_PARAMETER_NAMES}
 
+        if runtime_parameters['Count'] is not None:
+            # for benchmark app
+            actual_iterations = runtime_parameters['Count'].split('')[0]
+        else:
+            # effective for sync/async python launchers
+            actual_iterations = self.indep_parameters.iteration
+
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Code Source': self.dep_parameters.code_source})
@@ -32,7 +39,7 @@ class OpenVINOTest(Test):
         parameters.update({'Async request count': self.dep_parameters.async_request})
         parameters.update({'Infer request count': infer_requests_count})
         parameters.update({'Number of tensors': tensors_num})
-        parameters.update({'Iteration count': self.indep_parameters.iteration})
+        parameters.update({'Iteration count': actual_iterations})
         parameters.update({'Thread count': self.dep_parameters.nthreads})
         parameters.update({'Stream count': self.dep_parameters.nstreams})
         parameters.update({'Mean': self.dep_parameters.mean})
