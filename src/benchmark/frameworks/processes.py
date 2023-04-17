@@ -96,7 +96,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         weights = self._test.model.weight
         dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
-        time = self._test.indep_parameters.test_time_limit
+        time = int(self._test.indep_parameters.test_time_limit)
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
