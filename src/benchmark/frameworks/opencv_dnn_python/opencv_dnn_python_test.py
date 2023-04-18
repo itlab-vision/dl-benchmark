@@ -7,8 +7,8 @@ class OpenCVDNNPythonTest(Test):
 
     def get_report(self, process):
         parameters = {}
+        parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Iteration count': self.indep_parameters.iteration})
-        parameters.update({'Target device': self.indep_parameters.device})
         parameters.update({'Backend': self.dep_parameters.backend})
         parameters.update({'Input scale': self.dep_parameters.input_scale})
         parameters.update({'Input shape': self.dep_parameters.input_shape})
