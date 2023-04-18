@@ -40,7 +40,9 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self.__log.info(f'Start inference test on model: {self._test.model.name}')
         self.__log.info(f'Command line is: {command_line}')
         self._executor.set_target_framework(self._test.indep_parameters.inference_framework)
+
         # add timeout overhead because time_limit in bechmark app applies for inference stage only
+        # set None n case of test_time_limit is unset for backward compatibility
         configured_time_limit = self._test.indep_parameters.test_time_limit
         timeout = configured_time_limit + 300 if configured_time_limit else None
         self._status, self._output = self._executor.execute_process(command_line, timeout)
