@@ -21,10 +21,12 @@ googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.
 googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9969806 Granny Smith<br>0.0001207 Rhodesian ridgeback<br>0.0000488 hair slide<br>0.0000473 pineapple, ananas<br>0.0000330 banana|
-mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.2949494 pitcher, ewer<br>0.1867124 saltshaker, salt shaker<br>0.1249271 necklace<br>0.0867643 piggy bank, penny bank<br>0.0360211 Granny Smith|
+mobilenet-v2-1.0-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.4164807 Granny Smith<br>0.3500757 piggy bank, penny bank<br>0.0358796 saltshaker, salt shaker<br>0.0147685 vase<br>0.0131548 pitcher, ewer|
+mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.3428614 saltshaker, salt shaker<br>0.0935006 vase<br>0.0899924 Granny Smith<br>0.0667358 pitcher, ewer<br>0.0666182 piggy bank, penny bank|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|8.0107708 Granny Smith<br>4.4552484 piggy bank, penny bank<br>4.2636762 bell pepper<br>3.9343853 candle, taper, wax light<br>3.5531902 pomegranate|
+mobilenet-v3-small-1.0-224|-| 0.4481893 Granny Smith<br>0.0884615 lemon<br>0.0727510 pop bottle, soda bottle<br>0.0331238 saltshaker, salt shaker<br>0.0218442 pitcher, ewer|
+mobilenet-v3-large-1.0-224|-|0.6718515 Granny Smith<br>0.1939126 piggy bank, penny bank<br>0.0254287 lemon<br>0.0245753 vase<br>0.0090322 teapot|
 resnet-50-tf|Mean: [123.675,116.28,103.53].| 0.9553038 Granny Smith<br>0.0052123 lemon<br>0.0047185 piggy bank, penny bank<br>0.0045875 orange<br>0.0044233 necklace|
 
 #### Test image #2
@@ -44,10 +46,12 @@ googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.
 googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].| 0.9339716 junco, snowbird<br>0.0006892 chickadee<br>0.0005481 brambling, Fringilla montifringilla<br>0.0004948 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0004539 water ouzel, dipper|
-mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.7099941 junco, snowbird<br>0.2239839 chickadee<br>0.0195020 goldfinch, Carduelis carduelis<br>0.0140457 jay<br>0.0136091 brambling, Fringilla montifringilla|
+mobilenet-v2-1.0-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.3981952 junco, snowbird<br>0.0649636 chickadee<br>0.0456628 brambling, Fringilla montifringilla<br>0.0063850 water ouzel, dipper<br>0.0041957 goldfinch, Carduelis carduelis|
+mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.7363465 chickadee<br>0.0283495 junco, snowbird<br>0.0117877 brambling, Fringilla montifringilla<br>0.0083691 goldfinch, Carduelis carduelis<br>0.0035830 water ouzel, dipper|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|10.0273972 junco, snowbird<br>4.6770372 brambling, Fringilla montifringilla<br>4.2079940 goldfinch, Carduelis carduelis<br>4.1425276 water ouzel, dipper<br>4.0244055 chickadee|
+mobilenet-v3-small-1.0-224|-|0.5813942 junco, snowbird<br>0.0588930 brambling, Fringilla montifringilla<br>0.0446762 house finch, linnet, Carpodacus mexicanus<br>0.0411857 goldfinch, Carduelis carduelis<br>0.0150912 chickadee|
+mobilenet-v3-large-1.0-224|-|0.7943738 junco, snowbird<br>0.0318200 brambling, Fringilla montifringilla<br>0.0084637 water ouzel, dipper<br>0.0071047 goldfinch, Carduelis carduelis<br>0.0061734 chickadee|
 resnet-50-tf|Mean: [123.675,116.28,103.53].|0.9983400 junco, snowbird<br>0.0004680 brambling, Fringilla montifringilla<br>0.0003848 chickadee<br>0.0003656 water ouzel, dipper<br>0.0003383 goldfinch, Carduelis carduelis|
 
 #### Test image #3
@@ -67,10 +71,12 @@ googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.
 googlenet-v2-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v3|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
 googlenet-v4-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.6737013 lifeboat<br>0.0432948 submarine, pigboat, sub, U-boat<br>0.0322841 fireboat<br>0.0264144 beacon, lighthouse, beacon light, pharos<br>0.0147488 drilling platform, offshore rig|
-mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet_v2_1.0_224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
-mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
+mobilenet-v1-1.0-224-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.1175058 lifeboat<br>0.1106691 aircraft carrier, carrier, flattop, attack aircraft carrier<br>0.1055247 liner, ocean liner<br>0.0836357 beacon, lighthouse, beacon light, pharos<br>0.0784211 drilling platform, offshore rig|
+mobilenet-v2-1.0-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.2761748 beacon, lighthouse, beacon light, pharos<br>0.1192475 liner, ocean liner<br>0.0864237 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0541655 drilling platform, offshore rig<br>0.0266723 container ship, containership, container vessel|
+mobilenet-v2-1.4-224|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.2250047 beacon, lighthouse, beacon light, pharos<br>0.2051269 container ship, containership, container vessel<br>0.1319712 liner, ocean liner<br>0.0256291 dock, dockage, docking facility<br>0.0241968 breakwater, groin, groyne, mole, bulwark, seawall, jetty|
 inception-resnet-v2-tf|Image resolution: 299x299.<br>Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|6.4228325 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>6.0842223 liner, ocean liner<br>5.8280630 fireboat<br>5.7098336 dock, dockage, docking facility<br>5.6666737 container ship, containership, container vessel|
+mobilenet-v3-small-1.0-224|-|0.0980954 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0957138 container ship, containership, container vessel<br>0.0853775 pirate, pirate ship<br>0.0690932 drilling platform, offshore rig<br>0.0685616 lifeboat|
+mobilenet-v3-large-1.0-224|-|0.1806492 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1449896 lifeboat<br>0.1315165 submarine, pigboat, sub, U-boat<br>0.0884149 dock, dockage, docking facility<br>0.0476540 fireboat|
 resnet-50-tf|Mean: [123.675,116.28,103.53].|0.2357713 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1480762 liner, ocean liner<br>0.1104688 container ship, containership, container vessel<br>0.1095407 drilling platform, offshore rig<br>0.0915569 beacon, lighthouse, beacon light, pharos|
 
 ### Other tasks

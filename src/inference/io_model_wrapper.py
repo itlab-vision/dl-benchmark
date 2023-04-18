@@ -168,3 +168,19 @@ class MXNetIOModelWrapper(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         import numpy as np
         return np.float32
+
+
+class OpenCVIOModelWrapper(IOModelWrapper):
+    def __init__(self, args):
+        self._input_name = [args['input_layer_name']]
+        self._input_shape = [args['input_layer_shape']]
+
+    def get_input_layer_names(self, model):
+        return self._input_name
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shape[0]
+
+    def get_input_layer_dtype(self, model, layer_name):
+        from numpy import float32
+        return float32

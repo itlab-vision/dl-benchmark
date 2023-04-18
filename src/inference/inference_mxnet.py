@@ -275,7 +275,7 @@ def main():
         else:
             raise ValueError('Incorrect arguments.')
 
-        log.info(f'Shape of the input layer {args.input_name}: {args.input_shape}')
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(net, args.input)
