@@ -160,8 +160,9 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         frontend = self._test.dep_parameters.frontend
+        time = self._test.indep_parameters.test_time_limit
 
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time}'
                      f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
