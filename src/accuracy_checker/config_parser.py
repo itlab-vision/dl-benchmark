@@ -60,6 +60,8 @@ class Test:
             return 'TensorFlow_Lite'
         elif framework == 'mxnet':
             return 'MXNet'
+        elif framework == 'opencv':
+            return 'OpenCV'
         else:
             return 'Unsupported framework'
 
