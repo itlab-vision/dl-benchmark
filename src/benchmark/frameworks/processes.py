@@ -40,8 +40,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self.__log.info(f'Start inference test on model: {self._test.model.name}')
         self.__log.info(f'Command line is: {command_line}')
         self._executor.set_target_framework(self._test.indep_parameters.inference_framework)
-        self._status, self._output = self._executor.execute_process(command_line,
-                                                                    self._test.indep_parameters.test_time_limit)
+
+        # add timeout overhead because time_limit in bechmark app applies for inference stage only
+        # set None n case of test_time_limit is unset for backward compatibility
+        configured_time_limit = self._test.indep_parameters.test_time_limit
+        timeout = configured_time_limit + 300 if configured_time_limit else None
+        self._status, self._output = self._executor.execute_process(command_line, timeout)
 
         if type(self._output) is not list:
             self._output = self._output.decode('utf-8').split('\n')[:-1]
@@ -95,11 +99,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         weights = self._test.model.weight
         dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
+        time = int(self._test.indep_parameters.test_time_limit)
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path}'
+        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
 
