@@ -30,9 +30,10 @@ class Transformer:
         return shape[1:]
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
-        for i in range(b):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
@@ -52,10 +53,11 @@ class OpenVINOTransformer(Transformer):
         return shape[1], shape[2], shape[3]
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
         image_index = 0
-        for i in range(b):
+        for i in range(dataset_size):
             image_index %= images.shape[0]
             transformed_images[i] = self._transform(images[image_index], shape)
             image_index += 1
@@ -123,9 +125,10 @@ class TensorFlowTransformer(Transformer):
         return transformed_image
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
-        for i in range(b):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
@@ -214,10 +217,10 @@ class MXNetTransformer(Transformer):
 
     def transform_images(self, images, shape, element_type, *args):
         import mxnet
-
-        batch_size = shape[0]
-        transformed_images = mxnet.nd.zeros(shape=shape, dtype=element_type)
-        for i in range(batch_size):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = mxnet.nd.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
