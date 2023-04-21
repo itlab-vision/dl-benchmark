@@ -74,7 +74,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>6</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -103,7 +103,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>6</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>sync</Mode>
@@ -132,7 +132,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>6</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -163,7 +163,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>6</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -194,7 +194,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>6</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>

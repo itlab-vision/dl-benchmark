@@ -1,12 +1,7 @@
-from collections import OrderedDict
-
 from ..config_parser.test_reporter import Test
 
 
 class OpenVINOTest(Test):
-    def __init__(self, model, dataset, indep_parameters, dep_parameters):
-        super().__init__(model, dataset, indep_parameters, dep_parameters)
-
     def get_report(self, process):
         tensors_num = self.dep_parameters.infer_request
         if process.get_status() == 0 and not tensors_num:
@@ -31,23 +26,12 @@ class OpenVINOTest(Test):
             # effective for sync/async python launchers
             actual_iterations = self.indep_parameters.iteration
 
-        parameters = OrderedDict()
-        parameters.update({'Device': self.indep_parameters.device})
-        parameters.update({'Code Source': self.dep_parameters.code_source})
-        parameters.update({'Runtime': self.dep_parameters.runtime})
-        parameters.update({'Hint': self.dep_parameters.hint})
-        parameters.update({'Frontend': self.dep_parameters.frontend})
-        parameters.update({'Async request count': self.dep_parameters.async_request})
-        parameters.update({'Infer request count': infer_requests_count})
-        parameters.update({'Number of tensors': tensors_num})
-        parameters.update({'Iteration count': actual_iterations})
-        parameters.update({'Thread count': self.dep_parameters.nthreads})
-        parameters.update({'Stream count': self.dep_parameters.nstreams})
-        parameters.update({'Mean': self.dep_parameters.mean})
-        parameters.update({'Scale': self.dep_parameters.input_scale})
-        parameters.update({'Shape': self.dep_parameters.shape})
+        parameters = self.prepare_framework_params()
+        parameters['Infer request count'] = infer_requests_count
+        parameters['Number of tensors'] = tensors_num
+        parameters['Iteration count'] = actual_iterations
         parameters.update(runtime_parameters)
-        other_param = self._get_optional_parameters_string(parameters)
+        optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {
             'task': self.model.task,
@@ -58,7 +42,7 @@ class OpenVINOTest(Test):
             'precision': self.model.precision,
             'batch_size': self.indep_parameters.batch_size,
             'mode': self.dep_parameters.mode,
-            'framework_params': other_param,
+            'framework_params': optional_parameters_string,
         }
 
         return report_res

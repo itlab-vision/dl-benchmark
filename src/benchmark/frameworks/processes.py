@@ -108,10 +108,10 @@ class ProcessHandler(metaclass=abc.ABCMeta):
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
 
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.input_shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-mean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-scale', self._test.dep_parameters.scale)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-scale', self._test.dep_parameters.input_scale)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads',
                                                             self._test.dep_parameters.thread_count)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',

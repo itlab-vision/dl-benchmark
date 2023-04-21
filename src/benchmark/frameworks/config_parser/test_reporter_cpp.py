@@ -1,10 +1,7 @@
-from ..config_parser.test_reporter import Test
+from .test_reporter import Test
 
 
-class OpenCVDNNCppTest(Test):
-    def __init__(self, model, dataset, indep_parameters, dep_parameters):
-        super().__init__(model, dataset, indep_parameters, dep_parameters)
-
+class CppTest(Test):
     def get_report(self, process):
         tensors_num = self.dep_parameters.inference_requests_count
         json_report_content = process.get_json_report_content()
@@ -21,16 +18,10 @@ class OpenCVDNNCppTest(Test):
 
         actual_iterations = json_report_content['execution_results']['iterations_num']
 
-        parameters = {}
-        parameters.update({'Iteration count': actual_iterations})
-        parameters.update({'Shape': self.dep_parameters.shape})
-        parameters.update({'Layout': self.dep_parameters.layout})
-        parameters.update({'Mean': self.dep_parameters.mean})
-        parameters.update({'Scale': self.dep_parameters.scale})
-        parameters.update({'Thread count': self.dep_parameters.thread_count})
-        parameters.update({'Infer request count': 1})
-        parameters.update({'Number of tensors': tensors_num})
-        parameters.update({'Backend': self.dep_parameters.backend})
+        parameters = self.prepare_framework_params()
+        parameters['Infer request count'] = 1
+        parameters['Number of tensors'] = tensors_num
+        parameters['Iteration count'] = actual_iterations
         optional_parameters_string = self._get_optional_parameters_string(parameters)
 
         report_res = {
