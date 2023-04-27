@@ -29,13 +29,14 @@ class ColorFormatter(log.Formatter):
         return formatter.format(record)
 
 
-def exception_hook(type, message, stack):   # noqa
+def exception_hook(exc_type, message, stack):   # noqa
     """
     Allows capturing uncaught exceptions to the log file.
     Usage: define sys.excepthook = exception_hook
     Warning: works only for the main thread.
     """
-    log.error(f'Uncaught exception: {message}. Traceback: {traceback.format_tb(stack)}')
+    log.error(f'Uncaught exception: {exc_type.__name__}: {message}.\nTraceback:\n'
+              f'{"".join(traceback.format_tb(stack))}')
 
 
 def configure_logger(name='', level=log.INFO, use_default_formatter=False):

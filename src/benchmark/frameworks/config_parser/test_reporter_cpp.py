@@ -16,7 +16,7 @@ class CppTest(Test):
                            'will try to extract it from the launcher JSON report')
             batch_size = json_report_content['configurations_setup']['batch_size']
 
-        actual_iterations = json_report_content['execution_results']['iterations_num']
+        actual_iterations = json_report_content['execution_results'].get('iterations_num', 'N/A')
 
         parameters = self.prepare_framework_params()
         parameters['Infer request count'] = 1
