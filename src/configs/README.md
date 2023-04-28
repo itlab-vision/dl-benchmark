@@ -117,11 +117,14 @@
     окружения KMP_AFFINITY. По умолчанию не задан. Подробнее про атрибуты, принимаемые
     переменной окружения, [здесь][kmp-affinity-docs].
 
-- Набор тегов для тестирования вывода средствами ONNX Runtime:
+- Набор тегов для тестирования вывода средствами ONNX Runtime и OpenCV DNN CPP:
 
-  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `InputShape` - тег, необязательный для заполнения для ONNX Runtime и обязательный для OpenCV DNN CPP.
+    Определяет размеры входного тензора. По умолчанию не установлен.
+    В настоящий момент OpenCV не может определить размеры входного тензора во многих случаях, поэтому необходимо
+    выставлять это значение.
   - `Layout` - тег, необязательный для заполнения. Определяет формат входного тензора. По умолчанию не установлен и 
-    выбирается ONNX Runtime автоматически.
+    выбирается фреймворком автоматически.
   - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
     по каждому из каналов входного изображения.
   - `InputScale`- тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
@@ -130,7 +133,7 @@
     потоков для выполнения вывода. По умолчанию будет выставлено число потоков, равное
     физическому количеству ядер в системе.
   - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
-    не установлен и выбирается ONNX Runtime автоматически.
+    не установлен и выбирается фреймворком автоматически.
 
 - Набор тегов для тестирования вывода средствами TensorFlow Lite:
 
@@ -320,7 +323,7 @@
       <TestTimeLimit>60</TestTimeLimit>
     </FrameworkIndependent>
     <FrameworkDependent>
-      <Shape></Shape>
+      <InputShape></InputShape>
       <Layout></Layout>
       <Mean>[123.675,116.28,103.53]</Mean>
       <InputScale>[58.395,57.12,57.375]</InputScale>
@@ -366,6 +369,43 @@
       <ThreadCount></ThreadCount>
       <Delegate></Delegate>
       <DelegateOptions></DelegateOptions>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами OpenCV DNN CPP
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>resnet-50-pytorch</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>pytorch</SourceFramework>
+      <ModelPath>public/resnet-50-pytorch/resnet-v1-50.onnx</ModelPath>
+      <WeightsPath>None</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>OpenCV DNN Cpp</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>100</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <InputShape>[1,3,224,224]</InputShape>
+      <Layout></Layout>
+      <Mean>[123.675,116.28,103.53]</Mean>
+      <InputScale>[58.395,57.12,57.375]</InputScale>
+      <ThreadCount></ThreadCount>
+      <InferenceRequestsCount></InferenceRequestsCount>
     </FrameworkDependent>
   </Test>
 </Tests>

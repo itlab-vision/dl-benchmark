@@ -1,10 +1,12 @@
 import numpy as np
+import cv2
 
 
 LAYER_LAYOUT_TO_IMAGE = {
     'NCHW': [0, 3, 1, 2],
     'NHWC': [0, 1, 2, 3],
     'NCWH': [0, 3, 2, 1],
+    'NWCH': [0, 2, 3, 1],
     'NWHC': [0, 2, 1, 3],
     'NCDHW': [0, 4, 1, 2, 3],
     'NDCHW': [0, 1, 4, 2, 3],
@@ -28,9 +30,10 @@ class Transformer:
         return shape[1:]
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
-        for i in range(b):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
@@ -50,10 +53,11 @@ class OpenVINOTransformer(Transformer):
         return shape[1], shape[2], shape[3]
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size, shape[1], shape[2], shape[3]]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
         image_index = 0
-        for i in range(b):
+        for i in range(dataset_size):
             image_index %= images.shape[0]
             transformed_images[i] = self._transform(images[image_index], shape)
             image_index += 1
@@ -121,9 +125,10 @@ class TensorFlowTransformer(Transformer):
         return transformed_image
 
     def transform_images(self, images, shape, element_type, *args):
-        b = shape[0]
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
-        for i in range(b):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
 
@@ -213,8 +218,39 @@ class MXNetTransformer(Transformer):
     def transform_images(self, images, shape, element_type, *args):
         import mxnet
 
-        batch_size = shape[0]
-        transformed_images = mxnet.nd.zeros(shape=shape, dtype=element_type)
-        for i in range(batch_size):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + shape[1:]
+        transformed_images = mxnet.nd.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
+
+
+class OpenCVTransformer(Transformer):
+    def __init__(self, converting):
+        self._converting = converting
+        self._std = np.asarray(converting['std'], dtype=np.float32)
+        self._std.shape = (1, 3, 1, 1)
+        del self._converting['std']
+        self._layout = self._converting['layout']
+        del self._converting['layout']
+
+    def get_shape_in_chw_order(self, shape, *args):
+        h, w, c = shape[1:]
+        return c, h, w
+
+    def __set_layout_order(self, image):
+        if self._layout is not None:
+            self._layout = LAYER_LAYOUT_TO_IMAGE[self._layout]
+            image = image.transpose(self._layout)
+        return image
+
+    def _transform(self, image):
+        blob = cv2.dnn.blobFromImage(image, **self._converting)
+        transformed_blob = self.__set_layout_order(blob / self._std)
+        return transformed_blob
+
+    def transform_images(self, images, shape, element_type, *args):
+        blob = cv2.dnn.blobFromImages(images, **self._converting)
+        transformed_blob = self.__set_layout_order(blob / self._std)
+        return transformed_blob
