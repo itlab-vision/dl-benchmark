@@ -17,6 +17,7 @@ using IOTensorsInfo = std::pair<std::vector<TensorDescription>, std::vector<Tens
 class Launcher {
 protected:
     int nthreads;
+    utils::Device device;
 
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
@@ -29,11 +30,13 @@ protected:
     std::vector<double> latencies;
 
 public:
-    Launcher(int nthreads) : nthreads(nthreads){};
+    Launcher(int nthreads, const std::string& device)
+        : nthreads(nthreads), device(utils::get_device_from_str(device)){};
     virtual ~Launcher() {}
 
-    virtual void log_framework_version() const = 0;
-
+    virtual std::string get_framework_name() const = 0;
+    virtual std::string get_framework_version() const = 0;
+    virtual std::string get_backend_name() const = 0;
     virtual void read(const std::string model_file, const std::string weights_file = "") = 0;
     virtual void load() = 0;
 

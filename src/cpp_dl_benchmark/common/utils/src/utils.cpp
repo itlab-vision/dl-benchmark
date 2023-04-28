@@ -10,6 +10,22 @@
 #include <string>
 #include <vector>
 
+std::string utils::get_device_str(Device d) {
+    if (device_to_str_map.count(d) > 0) {
+        return device_to_str_map.at(d);
+    }
+    return "UNKNOWN";
+}
+
+utils::Device utils::get_device_from_str(const std::string& dstr) {
+    for (const auto& [device, device_str] : device_to_str_map) {
+        if (device_str == dstr) {
+            return device;
+        }
+    }
+    return Device::UNKNOWN;
+}
+
 std::string utils::get_precision_str(DataPrecision p) {
     if (precision_to_str_map.count(p) > 0) {
         return precision_to_str_map.at(p);

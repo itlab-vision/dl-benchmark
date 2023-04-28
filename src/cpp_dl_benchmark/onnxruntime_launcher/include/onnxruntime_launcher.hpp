@@ -17,10 +17,12 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class ONNXLauncher : public Launcher {
 public:
-    ONNXLauncher(int nthreads_) : Launcher(nthreads_){};
-    virtual ~ONNXLauncher(){};
+    ONNXLauncher(int nthreads, const std::string& device) : Launcher(nthreads, device){};
+    virtual ~ONNXLauncher();
 
-    void log_framework_version() const override;
+    std::string get_framework_name() const override;
+    std::string get_framework_version() const override;
+    std::string get_backend_name() const override;
 
     void read(const std::string model_file, const std::string weights_file = "") override;
     void load() override{};
@@ -49,6 +51,9 @@ private:
     std::shared_ptr<Ort::Env> env;
     std::shared_ptr<Ort::Session> session;
     Ort::SessionOptions session_options;
+#ifdef ORT_CUDA
+    OrtCUDAProviderOptionsV2* cuda_options = nullptr;
+#endif
     std::vector<std::vector<Ort::Value>> tensors;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 

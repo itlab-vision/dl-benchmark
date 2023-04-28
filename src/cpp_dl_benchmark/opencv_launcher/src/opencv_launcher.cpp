@@ -18,15 +18,27 @@
 
 using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
-OCVLauncher::OCVLauncher(int nthreads) : Launcher(nthreads) {
+OCVLauncher::OCVLauncher(int nthreads, const std::string& device) : Launcher(nthreads, device) {
     if (nthreads > 0) {
         cv::setNumThreads(nthreads);
     }
     this->nthreads = cv::getNumThreads();
 }
 
-void OCVLauncher::log_framework_version() const {
-    logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
+std::string OCVLauncher::get_framework_name() const {
+    return "OpenCV";
+}
+
+std::string OCVLauncher::get_framework_version() const {
+    return std::string(CV_VERSION);
+}
+
+std::string OCVLauncher::get_backend_name() const {
+#ifdef OCV_DNN
+    return "default";
+#elif OCV_DNN_WITH_OV
+    return "OpenVINO";
+#endif
 }
 
 void OCVLauncher::set_backend(cv::dnn::Net& net) {
@@ -40,6 +52,13 @@ void OCVLauncher::set_backend(cv::dnn::Net& net) {
 void OCVLauncher::read(const std::string model_file, const std::string weights_file) {
     net = cv::dnn::readNet(model_file, weights_file);
     set_backend(net);
+
+    if (device == utils::Device::GPU) {
+        net.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL);
+    }
+    else if (device != utils::Device::CPU) {
+        throw std::runtime_error(utils::get_device_str(device) + " device is not supported!");
+    }
 
     std::vector<MatShape> inputShapes, outputShapes;
     net.getLayerShapes(MatShape(), 0, inputShapes, outputShapes);

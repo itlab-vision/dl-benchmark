@@ -5,6 +5,7 @@
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
+#include <onnxruntime_c_api.h>
 #include <onnxruntime_cxx_api.h>
 
 #include <algorithm>
@@ -43,20 +44,67 @@ ONNXTensorElementDataType get_onnx_data_type(utils::DataPrecision precision) {
     }
     throw std::invalid_argument("Does not support element data type " + utils::get_precision_str(precision));
 }
+
+void check_status(OrtStatusPtr status) {
+    if (status != nullptr) {
+        std::string error_message = Ort::GetApi().GetErrorMessage(status);
+        OrtErrorCode error_code = Ort::GetApi().GetErrorCode(status);
+        Ort::GetApi().ReleaseStatus(status);
+        throw Ort::Exception(std::move(error_message), error_code);
+    }
+}
 }  // namespace
 
-void ONNXLauncher::log_framework_version() const {
-    logger::info << "ONNX Runtime version: " << OrtGetApiBase()->GetVersionString() << logger::endl;
+ONNXLauncher::~ONNXLauncher() {
+#ifdef ORT_CUDA
+    Ort::GetApi().ReleaseCUDAProviderOptions(cuda_options);
+#endif
+}
+
+std::string ONNXLauncher::get_framework_name() const {
+    return "ONNXRuntime";
+}
+
+std::string ONNXLauncher::get_framework_version() const {
+    return std::string(OrtGetApiBase()->GetVersionString());
+}
+
+std::string ONNXLauncher::get_backend_name() const {
+#ifdef ORT_DEFAULT
+    return "default";
+#elif ORT_CUDA
+    return "CUDA";
+#endif
 }
 
 void ONNXLauncher::read(const std::string model_file, const std::string weights_file) {
     env = std::make_shared<Ort::Env>(ORT_LOGGING_LEVEL_ERROR, "ORT Benchmark");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-    session_options.SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
-    if (nthreads > 0) {
-        session_options.SetIntraOpNumThreads(nthreads);
+    if (device == utils::Device::CPU) {
+        session_options.SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
+        if (nthreads > 0) {
+            session_options.SetIntraOpNumThreads(nthreads);
+        }
     }
+#ifdef ORT_CUDA
+    else if (device == utils::Device::CUDA) {
+        check_status(Ort::GetApi().CreateCUDAProviderOptions(&cuda_options));
+        std::vector<const char*> keys{"device_id",
+                                      "arena_extend_strategy",
+                                      "cudnn_conv_algo_search",
+                                      "do_copy_in_default_stream",
+                                      "cudnn_conv_use_max_workspace",
+                                      "cudnn_conv1d_pad_to_nc1d"};
+        std::vector<const char*> values{"0", "kSameAsRequested", "DEFAULT", "1", "1", "1"};
+        check_status(Ort::GetApi().UpdateCUDAProviderOptions(cuda_options, keys.data(), values.data(), keys.size()));
+        check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_CUDA_V2(session_options, cuda_options));
+    }
+#endif
+    else {
+        throw std::runtime_error(utils::get_device_str(device) + " device is not supported!");
+    }
+
     session = std::make_shared<Ort::Session>(*env, model_file.c_str(), session_options);
 }
 

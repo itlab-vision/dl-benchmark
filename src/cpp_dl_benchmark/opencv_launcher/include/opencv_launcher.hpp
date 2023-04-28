@@ -18,10 +18,12 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class OCVLauncher : public Launcher {
 public:
-    OCVLauncher(int nthreads);
+    OCVLauncher(int nthreads, const std::string& device);
     virtual ~OCVLauncher(){};
 
-    void log_framework_version() const override;
+    std::string get_framework_name() const override;
+    std::string get_framework_version() const override;
+    std::string get_backend_name() const override;
 
     void read(const std::string model_file, const std::string weights_file = "") override;
     void load() override{};
