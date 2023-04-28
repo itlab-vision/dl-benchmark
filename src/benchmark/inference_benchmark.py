@@ -9,7 +9,7 @@ from frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
 from output import OutputHandler
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
-from logger_conf import exception_hook  # noqa: E402
+from logger_conf import configure_logger, exception_hook  # noqa: E402
 from constants import Status  # noqa: E402
 
 
@@ -95,11 +95,7 @@ def inference_benchmark(executor_type, test_list, output_handler, log,
 
 
 if __name__ == '__main__':
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
+    configure_logger()
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()

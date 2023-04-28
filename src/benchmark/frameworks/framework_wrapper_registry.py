@@ -38,4 +38,3 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[OpenCVDNNPythonWrapper.framework_name] = OpenCVDNNPythonWrapper()
         self._framework_wrappers[MXNetWrapper.framework_name] = MXNetWrapper()
         self._framework_wrappers[OpenCVDNNCppWrapper.framework_name] = OpenCVDNNCppWrapper()
-

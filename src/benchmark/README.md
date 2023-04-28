@@ -252,4 +252,3 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [onnx-runtime]: https://onnxruntime.ai
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
-
