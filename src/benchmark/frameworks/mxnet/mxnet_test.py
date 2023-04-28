@@ -13,6 +13,7 @@ class MXNetTest(Test):
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Input name': self.dep_parameters.input_name})
         parameters.update({'Input shape': self.dep_parameters.input_shape})
+        parameters.update({'Hybridization flag': self.dep_parameters.hybridize})
         parameters.update({'Normalization flag': self.dep_parameters.normalize})
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Standard deviation': self.dep_parameters.std})

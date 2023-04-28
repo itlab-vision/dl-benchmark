@@ -30,6 +30,11 @@ def cli_argument_parser():
                         help='Model name to download using GluonCV package.',
                         type=str,
                         dest='model_name')
+    parser.add_argument('--hybrid',
+                        help='Flag to enable symbolic computations.'
+                             'Default value is false.',
+                        action='store_true',
+                        dest='hybrid')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
                         required=True,
@@ -158,7 +163,7 @@ def load_network_gluon(model_json, model_params, context, input_name):
     return deserialized_net
 
 
-def load_network_gluon_model_zoo(model_name, context, save_model, path_save_model):
+def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
     log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
@@ -174,8 +179,9 @@ def load_network_gluon_model_zoo(model_name, context, save_model, path_save_mode
 
     log.info(f'Info about the network:\n{net}')
 
-    log.info('Hybridizing model to accelerate inference')
-    net.hybridize()
+    log.info(f'Hybridizing model to accelerate inference: {hybrid}')
+    if hybrid is True:
+        net.hybridize()
     return net
 
 
@@ -269,7 +275,7 @@ def main():
         if ((args.model_name is not None)
                 and (args.model_json is None)
                 and (args.model_params is None)):
-            net = load_network_gluon_model_zoo(args.model_name, context,
+            net = load_network_gluon_model_zoo(args.model_name, args.hybrid, context,
                                                args.save_model, args.path_save_model)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
