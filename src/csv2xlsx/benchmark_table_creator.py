@@ -97,7 +97,8 @@ class XlsxBenchmarkTable(XlsxTable):
             for inference_framework in machine_inference_frameworks:
                 framework_devices = []
                 for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
+                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*'
+                                         r'(?P<parameters>[\w\W\d\.,\[\];:]+)')
                     matcher = re.match(pattern, value)
                     device_name = matcher.group('device_name')
                     if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -124,7 +125,8 @@ class XlsxBenchmarkTable(XlsxTable):
                 for device in framework_devices:
                     device_precisions = []
                     for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
+                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*'
+                                             r'(?P<parameters>[\w\W\d\.,\[\];:]+)')
                         matcher = re.match(pattern, value)
                         device_name = matcher.group('device_name')
                         if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -157,10 +159,10 @@ class XlsxBenchmarkTable(XlsxTable):
                     for precision in device_precisions:
                         device_precision_modes = []
                         for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
+                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*'
+                                                 r'(?P<parameters>[\w\W\d\.,\[\];:]+)')
                             matcher = re.match(pattern, value)
                             device_name = matcher.group('device_name')
-                            parameters = matcher.group('parameters')
                             if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
                                     and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
                                     and device_name == device
@@ -199,7 +201,8 @@ class XlsxBenchmarkTable(XlsxTable):
                         for mode in execution_modes:
                             framework_device_precision_mode_execparams = []
                             for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                                pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
+                                pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*'
+                                                     r'(?P<parameters>[\w\W\d\.,\[\];:]+)')
                                 matcher = re.match(pattern, value)
                                 device_name = matcher.group('device_name')
                                 parameters = matcher.group('parameters')
@@ -253,7 +256,8 @@ class XlsxBenchmarkTable(XlsxTable):
                         col_indeces5 = []
                         for idx5 in range(len(machine_framework_device_precision_modes)):
                             machine_framework_device_precision_mode = machine_framework_device_precision_modes[idx5]
-                            machine_framework_device_precision_mode_execparams = self._execution_parameters[idx][idx2][idx3][idx4][idx5]
+                            machine_framework_device_precision_mode_execparams = \
+                                self._execution_parameters[idx][idx2][idx3][idx4][idx5]
                             col_indeces6 = []
                             for idx6 in range(len(machine_framework_device_precision_mode_execparams)):
                                 execparams = machine_framework_device_precision_mode_execparams[idx6]
