@@ -71,4 +71,4 @@ class PyTorchParameters(FrameworkParameters):
         if self._parameter_not_is_none(model_type):
             self.model_type = model_type
         if self._parameter_not_is_none(inference_mode):
-            self.inference_mode = inference_mode  
+            self.inference_mode = inference_mode

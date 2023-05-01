@@ -74,7 +74,7 @@ class PyTorchProcess(ProcessHandler):
 
         common_params = PyTorchProcess._add_argument_to_cmd_line(
             common_params, '--raw_output', 'true')
-        
+
         model_type = self._test.dep_parameters.model_type
         if model_type:
             common_params = PyTorchProcess._add_argument_to_cmd_line(

@@ -158,9 +158,9 @@ def load_model_from_file(model_path):
 
 def compile_model(module, device, model_type):
     if model_type == 'baseline':
-        log.info(f'Inference will be executed on baseline model')
+        log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
-        log.info(f'Inference will be executed on scripted model')
+        log.info('Inference will be executed on scripted model')
         module = torch.jit.script(module)
     else:
         raise ValueError(f'Model type {model_type} is not supported for inference')
