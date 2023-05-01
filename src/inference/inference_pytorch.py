@@ -17,7 +17,7 @@ def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
-                        help='Path to PyTorch model.',
+                        help='Path to PyTorch model with format .pt.',
                         type=str,
                         dest='model')
     parser.add_argument('-mn', '--model_name',
@@ -104,10 +104,21 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
-                             'CUDA (CPU by default)',
+                             'NVIDIA GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('--model_type',
+                        help='Model type for inference',
+                        choices=['scripted', 'baseline'],
+                        default='scripted',
+                        type=str,
+                        dest='model_type')
+    parser.add_argument('--inference_mode',
+                        help='Inference mode',
+                        default=True,
+                        type=bool,
+                        dest='inference_mode')
 
     args = parser.parse_args()
 
@@ -119,7 +130,7 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cpu')
-    elif device == 'CUDA':
+    elif device == 'NVIDIA GPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cuda')
     else:
@@ -136,11 +147,23 @@ def load_model_from_module(model_name):
 
 
 def load_model_from_file(model_path):
+    log.info(f'Loading model from path {model_path}')
+    file_type = model_path.split('.')[-1]
+    supported_files = ['pt']
+    if file_type not in supported_files:
+        raise ValueError(f'The file type {file_type} is not supported')
     model = torch.load(model_path)
     return model
 
 
-def compile_model(module, device):
+def compile_model(module, device, model_type):
+    if model_type == 'baseline':
+        log.info(f'Inference will be executed on baseline model')
+    elif model_type == 'scripted':
+        log.info(f'Inference will be executed on scripted model')
+        module = torch.jit.script(module)
+    else:
+        raise ValueError(f'Model type {model_type} is not supported for inference')
     module.to(device)
     module.eval()
     return module
@@ -165,23 +188,24 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def inference_pytorch(model, num_iterations, get_slice, input_name):
-    predictions = None
-    time_infer = []
-    slice_input = None
-    if num_iterations == 1:
-        slice_input = get_slice(0)
-        t0 = time()
-        predictions = torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
-        t1 = time()
-        time_infer.append(t1 - t0)
-    else:
-        for i in range(num_iterations):
-            slice_input = get_slice(i)
+def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode):
+    with torch.inference_mode(inference_mode):
+        predictions = None
+        time_infer = []
+        slice_input = None
+        if num_iterations == 1:
+            slice_input = get_slice(0)
             t0 = time()
-            torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+            predictions = torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
+        else:
+            for i in range(num_iterations):
+                slice_input = get_slice(i)
+                t0 = time()
+                torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+                t1 = time()
+                time_infer.append(t1 - t0)
 
     return predictions, time_infer
 
@@ -235,7 +259,7 @@ def main():
             raise ValueError('Incorrect arguments.')
 
         device = get_device_to_infer(args.device)
-        compiled_model = compile_model(model, device)
+        compiled_model = compile_model(model, device, args.model_type)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
@@ -244,7 +268,7 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input, args.input_name)
+                                                   io.get_slice_input, args.input_name, args.inference_mode)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = process_result(args.batch_size, inference_time)

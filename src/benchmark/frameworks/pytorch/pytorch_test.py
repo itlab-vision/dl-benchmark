@@ -17,6 +17,8 @@ class PyTorchTest(Test):
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Standard deviation': self.dep_parameters.std})
         parameters.update({'Output Name': self.dep_parameters.output_name})
+        parameters.update({'Model type': self.dep_parameters.model_type})
+        parameters.update({'Inference mode': self.dep_parameters.inference_mode})
         other_param = self._get_optional_parameters_string(parameters)
 
         report_res = {

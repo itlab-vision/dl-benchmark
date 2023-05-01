@@ -190,7 +190,7 @@ Report questions, issues and suggestions, using:
 [onnx-runtime-github]: https://github.com/microsoft/onnxruntime
 [mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
-[pytorch]: https://pytorch.org/
+[pytorch]: https://pytorch.org
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli

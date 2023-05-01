@@ -43,8 +43,9 @@ class PyTorchProcess(ProcessHandler):
             raise Exception('Incorrect model parameters. Set model name or file name.')
 
         input_name = self._test.dep_parameters.input_name
-        common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-            common_params, '--input_name', input_name)
+        if input_name:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--input_name', input_name)
 
         normalize = self._test.dep_parameters.normalize
         if normalize == 'True':
@@ -52,23 +53,37 @@ class PyTorchProcess(ProcessHandler):
                 common_params, '--norm')
 
         mean = self._test.dep_parameters.mean
-        common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-            common_params, '--mean', mean)
+        if mean:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--mean', mean)
 
         std = self._test.dep_parameters.std
-        common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-            common_params, '--std', std)
+        if std:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--std', std)
 
         output_name = self._test.dep_parameters.output_name
-        common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-            common_params, '--output_name', output_name)
+        if output_name:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--output_name', output_name)
 
         device = self._test.indep_parameters.device
-        common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-            common_params, '--device', device)
+        if device:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--device', device)
 
         common_params = PyTorchProcess._add_argument_to_cmd_line(
             common_params, '--raw_output', 'true')
+        
+        model_type = self._test.dep_parameters.model_type
+        if model_type:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--model_type', model_type)
+
+        inference_mode = self._test.dep_parameters.inference_mode
+        if inference_mode:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--inference_mode', inference_mode)
 
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 
