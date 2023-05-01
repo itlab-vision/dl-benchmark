@@ -256,8 +256,8 @@ class XlsxBenchmarkTable(XlsxTable):
                         col_indeces5 = []
                         for idx5 in range(len(machine_framework_device_precision_modes)):
                             machine_framework_device_precision_mode = machine_framework_device_precision_modes[idx5]
-                            machine_framework_device_precision_mode_execparams = \
-                                self._execution_parameters[idx][idx2][idx3][idx4][idx5]
+                            machine_framework_device_precision_mode_execparams = (
+                                self._execution_parameters[idx][idx2][idx3][idx4][idx5])
                             col_indeces6 = []
                             for idx6 in range(len(machine_framework_device_precision_mode_execparams)):
                                 execparams = machine_framework_device_precision_mode_execparams[idx6]
