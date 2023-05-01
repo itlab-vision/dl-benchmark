@@ -97,7 +97,7 @@ class XlsxBenchmarkTable(XlsxTable):
             for inference_framework in machine_inference_frameworks:
                 framework_devices = []
                 for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
+                    pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
                     matcher = re.match(pattern, value)
                     device_name = matcher.group('device_name')
                     if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -124,7 +124,7 @@ class XlsxBenchmarkTable(XlsxTable):
                 for device in framework_devices:
                     device_precisions = []
                     for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
+                        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
                         matcher = re.match(pattern, value)
                         device_name = matcher.group('device_name')
                         if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
@@ -157,9 +157,10 @@ class XlsxBenchmarkTable(XlsxTable):
                     for precision in device_precisions:
                         device_precision_modes = []
                         for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
-                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
+                            pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
                             matcher = re.match(pattern, value)
                             device_name = matcher.group('device_name')
+                            parameters = matcher.group('parameters')
                             if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
                                     and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == inference_framework
                                     and device_name == device
@@ -175,10 +176,52 @@ class XlsxBenchmarkTable(XlsxTable):
 
         logging.info(f'FINISH: _get_execution_modes(). {self._execution_modes}')
 
+    def _get_execution_parameters(self):
+        logging.info('START: _get_execution_parameters()')
+
+        self._execution_parameters = []
+        for idx in range(len(self._infrastructure)):
+            machine = self._infrastructure[idx]
+            machine_frameworks = self._inference_frameworks[idx]
+            machine_execparams = []
+            for idx2 in range(len(machine_frameworks)):
+                framework = machine_frameworks[idx2]
+                machine_framework_devices = self._devices[idx][idx2]
+                machine_framework_execparams = []
+                for idx3 in range(len(machine_framework_devices)):
+                    device = machine_framework_devices[idx3]
+                    machine_framework_device_precisions = self._precisions[idx][idx2][idx3]
+                    framework_device_execparams = []
+                    for idx4 in range(len(machine_framework_device_precisions)):
+                        precision = machine_framework_device_precisions[idx4]
+                        execution_modes = self._execution_modes[idx][idx2][idx3][idx4]
+                        framework_device_precision_execparams = []
+                        for mode in execution_modes:
+                            framework_device_precision_mode_execparams = []
+                            for key, value in self._data_dictionary[self._KEY_PARAMETERS].items():
+                                pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
+                                matcher = re.match(pattern, value)
+                                device_name = matcher.group('device_name')
+                                parameters = matcher.group('parameters')
+                                if (self._data_dictionary[self._KEY_INFRASTRUCTURE][key] == machine
+                                        and self._data_dictionary[self._KEY_INFERENCE_FRAMEWORK][key] == framework
+                                        and device_name == device
+                                        and self._data_dictionary[self._KEY_PRECISION][key] == precision
+                                        and self._data_dictionary[self._KEY_EXECUTION_MODE][key] == mode
+                                        and parameters not in framework_device_precision_mode_execparams):
+                                    framework_device_precision_mode_execparams.append(parameters)
+                            framework_device_precision_execparams.append(framework_device_precision_mode_execparams)
+                        framework_device_execparams.append(framework_device_precision_execparams)
+                    machine_framework_execparams.append(framework_device_execparams)
+                machine_execparams.append(machine_framework_execparams)
+            self._execution_parameters.append(machine_execparams)
+
+        logging.info(f'FINISH: _get_execution_parameters(). {self._execution_parameters}')
+
     def _fill_horizontal_title(self):
         logging.info('START: _fill_horizontal_title()')
 
-        rel_row_idx = 4
+        rel_row_idx = 5
         rel_col_idx = 5
 
         self._col_indeces = []
@@ -187,85 +230,109 @@ class XlsxBenchmarkTable(XlsxTable):
             col_idx = rel_col_idx
             num_cols = 0
             machine = self._infrastructure[idx]
-            machine_inference_frameworks = self._inference_frameworks[idx]
-            col_idx3 = col_idx
+            machine_frameworks = self._inference_frameworks[idx]
+            col_idx4 = col_idx
             col_indeces2 = []
-            for idx2 in range(len(machine_inference_frameworks)):
-                machine_framework = machine_inference_frameworks[idx2]
+            for idx2 in range(len(machine_frameworks)):
+                machine_framework = machine_frameworks[idx2]
                 machine_framework_devices = self._devices[idx][idx2]
                 col_idx2 = col_idx
+                col_idx3 = col_idx
                 num_cols2 = 0
+                num_cols3 = 0
                 col_indeces3 = []
                 for idx3 in range(len(machine_framework_devices)):
                     machine_framework_device = machine_framework_devices[idx3]
-                    framework_device_precisions = self._precisions[idx][idx2][idx3]
+                    machine_framework_device_precisions = self._precisions[idx][idx2][idx3]
                     col_idx1 = col_idx
                     num_cols1 = 0
                     col_indeces4 = []
-                    for idx4 in range(len(framework_device_precisions)):
-                        framework_device_precision = framework_device_precisions[idx4]
-                        framework_device_precision_modes = self._execution_modes[idx][idx2][idx3][idx4]
+                    for idx4 in range(len(machine_framework_device_precisions)):
+                        machine_framework_device_precision = machine_framework_device_precisions[idx4]
+                        machine_framework_device_precision_modes = self._execution_modes[idx][idx2][idx3][idx4]
                         col_indeces5 = []
-                        for idx5 in range(len(framework_device_precision_modes)):
-                            framework_device_precision_mode = framework_device_precision_modes[idx5]
-                            self._sheet.write(row_idx, col_idx + idx5,
-                                              framework_device_precision_mode,
-                                              self._cell_format_title1)
-                            col_indeces5.append(col_idx + idx5)
-                        k = len(framework_device_precision_modes)
-                        if k > 1:
-                            self._sheet.merge_range(row_idx - 1, col_idx1,
-                                                    row_idx - 1, col_idx1 + k - 1,
-                                                    framework_device_precision,
+                        for idx5 in range(len(machine_framework_device_precision_modes)):
+                            machine_framework_device_precision_mode = machine_framework_device_precision_modes[idx5]
+                            machine_framework_device_precision_mode_execparams = self._execution_parameters[idx][idx2][idx3][idx4][idx5]
+                            col_indeces6 = []
+                            for idx6 in range(len(machine_framework_device_precision_mode_execparams)):
+                                execparams = machine_framework_device_precision_mode_execparams[idx6]
+                                self._sheet.write(row_idx, col_idx + idx6,
+                                                  execparams,
+                                                  self._cell_format_title1)
+                                col_indeces6.append(col_idx + idx6)
+                            k = len(machine_framework_device_precision_mode_execparams)
+                            if k > 1:
+                                self._sheet.merge_range(row_idx - 1, col_idx1,
+                                                        row_idx - 1, col_idx1 + k - 1,
+                                                        machine_framework_device_precision_mode,
+                                                        self._cell_format_title1)
+                            elif k == 1:
+                                self._sheet.write(row_idx - 1, col_idx1,
+                                                  machine_framework_device_precision_mode,
+                                                  self._cell_format_title1)
+                            else:
+                                msg = 'Incorrect number of execution modes'
+                                logging.error(msg)
+                                raise ValueError(msg)
+                            col_idx += k
+                            col_idx1 += k
+                            num_cols1 += k
+                            num_cols2 += k
+                            num_cols3 += k
+                            num_cols += k
+                            col_indeces5.append(col_indeces6)
+                        if num_cols1 > 1:
+                            self._sheet.merge_range(row_idx - 2, col_idx2,
+                                                    row_idx - 2, col_idx2 + num_cols1 - 1,
+                                                    machine_framework_device_precision,
                                                     self._cell_format_title1)
-                        elif k == 1:
-                            self._sheet.write(row_idx - 1, col_idx1,
-                                              framework_device_precision,
+                        elif num_cols1 == 1:
+                            self._sheet.write(row_idx - 2, col_idx2,
+                                              machine_framework_device_precision,
                                               self._cell_format_title1)
                         else:
-                            msg = 'Incorrect number of device precision modes'
+                            msg = 'Incorrect number of precisions'
                             logging.error(msg)
                             raise ValueError(msg)
-                        col_idx += k
-                        col_idx1 += k
-                        num_cols1 += k
-                        num_cols2 += k
-                        num_cols += k
+                        col_idx2 += num_cols1
                         col_indeces4.append(col_indeces5)
-                    if num_cols1 > 1:
-                        self._sheet.merge_range(row_idx - 2, col_idx2,
-                                                row_idx - 2, col_idx2 + num_cols1 - 1,
+                    if num_cols2 > 1:
+                        self._sheet.merge_range(row_idx - 3, col_idx3,
+                                                row_idx - 3, col_idx3 + num_cols2 - 1,
                                                 machine_framework_device,
                                                 self._cell_format_title1)
-                    elif num_cols1 == 1:
-                        self._sheet.write(row_idx - 2, col_idx2,
+                    elif num_cols2 == 1:
+                        self._sheet.write(row_idx - 3, col_idx3,
                                           machine_framework_device,
                                           self._cell_format_title1)
                     else:
                         msg = 'Incorrect number of devices'
                         logging.error(msg)
                         raise ValueError(msg)
-                    col_idx2 += num_cols1
+                    col_idx3 += num_cols2
                     col_indeces3.append(col_indeces4)
-                if num_cols2 > 1:
-                    self._sheet.merge_range(row_idx - 3, col_idx3,
-                                            row_idx - 3, col_idx3 + num_cols2 - 1,
-                                            machine_framework, self._cell_format_title1)
-                elif num_cols2 == 1:
-                    self._sheet.write(row_idx - 3, col_idx3,
-                                      machine_framework, self._cell_format_title1)
+                if num_cols3 > 1:
+                    self._sheet.merge_range(row_idx - 4, col_idx4,
+                                            row_idx - 4, col_idx4 + num_cols3 - 1,
+                                            machine_framework,
+                                            self._cell_format_title1)
+                elif num_cols3 == 1:
+                    self._sheet.write(row_idx - 4, col_idx4 + num_cols3 - 1,
+                                      machine_framework,
+                                      self._cell_format_title1)
                 else:
                     msg = 'Incorrect number of frameworks'
                     logging.error(msg)
                     raise ValueError(msg)
-                col_idx3 += num_cols2
+                col_idx4 += num_cols3
                 col_indeces2.append(col_indeces3)
             if num_cols > 1:
-                self._sheet.merge_range(row_idx - 4, rel_col_idx,
-                                        row_idx - 4, rel_col_idx + num_cols - 1,
+                self._sheet.merge_range(row_idx - 5, rel_col_idx,
+                                        row_idx - 5, rel_col_idx + num_cols - 1,
                                         machine, self._cell_format_title1)
             elif num_cols == 1:
-                self._sheet.write(row_idx - 4, rel_col_idx,
+                self._sheet.write(row_idx - 5, rel_col_idx,
                                   machine, self._cell_format_title1)
             else:
                 msg = 'Incorrect number of machines'
@@ -286,33 +353,34 @@ class XlsxBenchmarkTable(XlsxTable):
         self._init_xlsx_parameters()
 
         # Freeze title panes
-        self._sheet.freeze_panes(5, 5)
+        self._sheet.freeze_panes(6, 5)
 
         # Write horizontal title (first cells before infrastructure)
-        self._sheet.merge_range('A1:A5', self._KEY_TASK_TYPE, self._cell_format_title1)
+        self._sheet.merge_range('A1:A6', self._KEY_TASK_TYPE, self._cell_format_title1)
 
         col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TOPOLOGY_NAME], self._cell_format)
         self._sheet.set_column(1, 1, col_width)
-        self._sheet.merge_range('B1:B5', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
+        self._sheet.merge_range('B1:B6', self._KEY_TOPOLOGY_NAME, self._cell_format_title1)
 
         col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_TRAIN_FRAMEWORK], self._cell_format)
         self._sheet.set_column(2, 2, col_width)
-        self._sheet.merge_range('C1:C5', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
+        self._sheet.merge_range('C1:C6', self._KEY_TRAIN_FRAMEWORK, self._cell_format_title1)
 
         self._add_new_line(self._data_dictionary[self._KEY_BLOB_SIZE])
         col_width = XlsxTable._get_column_width(
             self._data_dictionary[self._KEY_BLOB_SIZE], self._cell_format)
         self._sheet.set_column(3, 3, col_width)
-        self._sheet.merge_range('D1:D5', self._KEY_BLOB_SIZE, self._cell_format_title1)
-        self._sheet.merge_range('E1:E5', self._KEY_BATCH_SIZE, self._cell_format_title1)
+        self._sheet.merge_range('D1:D6', self._KEY_BLOB_SIZE, self._cell_format_title1)
+        self._sheet.merge_range('E1:E6', self._KEY_BATCH_SIZE, self._cell_format_title1)
 
         self._get_infrastructure()
         self._get_inference_frameworks()
         self._get_devices()
         self._get_precisions()
         self._get_execution_modes()
+        self._get_execution_parameters()
 
         # Write horizontal title (cells corresponding infrastructure)
         self._fill_horizontal_title()
@@ -324,15 +392,18 @@ class XlsxBenchmarkTable(XlsxTable):
                                              self._infrastructure)
         idx2 = self._find_inference_framework_idx(value[self._KEY_INFERENCE_FRAMEWORK],
                                                   self._inference_frameworks[idx1])
-        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[.]*')
+        pattern = re.compile(r'[.]*Device:[ ]*(?P<device_name>[^,]+)[,]+[ ]*(?P<parameters>[\w\W\d\.,\[\];:]+)')
         matcher = re.match(pattern, value[self._KEY_PARAMETERS])
         device_name = matcher.group('device_name')
+        parameters = matcher.group('parameters')
         idx3 = self._find_device_idx(device_name, self._devices[idx1][idx2])
         idx4 = self._find_precision_idx(value[self._KEY_PRECISION],
                                         self._precisions[idx1][idx2][idx3])
         idx5 = self._find_execution_mode_idx(value[self._KEY_EXECUTION_MODE],
                                              self._execution_modes[idx1][idx2][idx3][idx4])
-        return self._col_indeces[idx1][idx2][idx3][idx4][idx5]
+        idx6 = self._find_execparams_idx(parameters,
+                                         self._execution_parameters[idx1][idx2][idx3][idx4][idx5])
+        return self._col_indeces[idx1][idx2][idx3][idx4][idx5][idx6]
 
     def _find_row_records(self, task_type, topology_name, train_framework,
                           blob_size, batch_size, experiments,
@@ -407,7 +478,7 @@ class XlsxBenchmarkTable(XlsxTable):
     def write_test_results(self):
         logging.info('START: write_test_results()')
 
-        row_idx = 5
+        row_idx = 6
         for task_type, task_records in self._table_records.items():  # loop by tasks
             if len(task_records) <= 0:
                 continue
@@ -476,15 +547,15 @@ class XlsxBenchmarkTable(XlsxTable):
 
         rel_col_idx = 5  # task type, topology, framework, blob sizes, batch size
         rel_row_idx = 0
-        num_header_rows = 5  # infrastructure, framework, device, precision, mode
-        col_depth = 3
+        num_header_rows = 6  # infrastructure, framework, device, precision, mode, parameters
+        col_depth = 4
         self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
         self._draw_bold_bolder(num_header_rows - 1, 0,
                                self._full_num_rows - num_header_rows + 1,
                                rel_col_idx)
         for idx in range(len(self._infrastructure)):
-            execution_modes = list(deepflatten(self._execution_modes[idx], depth=col_depth))
-            num_cols = len(execution_modes)
+            execution_parameters = list(deepflatten(self._execution_parameters[idx], depth=col_depth))
+            num_cols = len(execution_parameters)
             self._draw_bold_bolder(rel_row_idx, rel_col_idx, num_header_rows, num_cols)
             self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
                                    self._full_num_rows - num_header_rows + 1, num_cols)

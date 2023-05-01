@@ -117,6 +117,10 @@ class XlsxTable(metaclass=abc.ABCMeta):
         return self._find_idx(execution_mode, available_execution_modes,
                               'Unknown execution mode')
 
+    def _find_execparams_idx(self, parameters, available_parameters):
+        return self._find_idx(parameters, available_parameters,
+                              'Unknown param')
+
     @abc.abstractmethod
     def _find_column_idx(self, value):
         pass
