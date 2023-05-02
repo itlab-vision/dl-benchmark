@@ -2,26 +2,34 @@ import platform
 import subprocess
 from collections import OrderedDict
 
-from openvino.runtime import Core
+try:
+    from openvino.runtime import Core
+    _ov_core_supported = True
+except ImportError:
+    _ov_core_supported = False
 
 
 def get_cpu_name():
-    core = Core()
-    if 'CPU' in core.available_devices:
-        cpuname = core.get_property('CPU', 'FULL_DEVICE_NAME')
-    else:
-        cpuname = 'Undefined'
-    del core
+    cpuname = 'Undefined'
+
+    if _ov_core_supported:
+        core = Core()
+        if 'CPU' in core.available_devices:
+            cpuname = core.get_property('CPU', 'FULL_DEVICE_NAME')
+        del core
+
     return cpuname
 
 
 def get_gpu_name():
-    core = Core()
-    if 'GPU' in core.available_devices:
-        gpuname = core.get_property('GPU', 'FULL_DEVICE_NAME')
-    else:
-        gpuname = 'Undefined'
-    del core
+    gpuname = 'Undefined'
+
+    if _ov_core_supported:
+        core = Core()
+        if 'GPU' in core.available_devices:
+            gpuname = core.get_property('GPU', 'FULL_DEVICE_NAME')
+        del core
+
     return gpuname
 
 
