@@ -2,7 +2,7 @@ from .openvino_benchmark_process import OpenVINOBenchmarkPythonProcess, OpenVINO
 from .openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
 
 
-def create_process(test, executor, log, cpp_benchmarks_dir=None):
+def create_process(test, executor, log, cpp_benchmarks_dir=None, **kwargs):
     mode = test.dep_parameters.mode.lower()
     code_source = test.dep_parameters.code_source
     runtime = test.dep_parameters.runtime

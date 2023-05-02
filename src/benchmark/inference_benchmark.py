@@ -67,14 +67,15 @@ def inference_benchmark(executor_type, test_list, output_handler, log,
 
     for test in test_list:
         framework_name = test.indep_parameters.inference_framework
+        device = test.indep_parameters.device
         benchmarks_path = cpp_benchmarks_dir
         if 'openvino' in framework_name.lower():
             benchmarks_path = openvino_cpp_benchmark_dir
 
         try:
-            log.info('Creating separate process for the test')
+            log.info(f'Creating separate process for the test {framework_name}')
             test_process = FrameworkWrapperRegistry()[framework_name].create_process(
-                test, process_executor, log, benchmarks_path)
+                test, process_executor, log, benchmarks_path, device=device)
 
             log.info('Executing process')
             test_process.execute()
