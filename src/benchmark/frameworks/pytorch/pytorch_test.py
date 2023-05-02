@@ -12,7 +12,6 @@ class PyTorchTest(Test):
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Input name': self.dep_parameters.input_name})
-        parameters.update({'Input shape': self.dep_parameters.input_shape})
         parameters.update({'Normalization flag': self.dep_parameters.normalize})
         parameters.update({'Mean': self.dep_parameters.mean})
         parameters.update({'Standard deviation': self.dep_parameters.std})

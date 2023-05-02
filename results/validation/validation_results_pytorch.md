@@ -66,8 +66,6 @@ vgg19_bn              |0.8778616 Granny Smith<br>0.0404896 lemon<br>0.0315287 or
 wide_resnet50_2              |0.8607227 Granny Smith<br>0.0346713 piggy bank, penny bank<br>0.0130316 abacus<br>0.0083917 necklace<br>0.0075835 spindle<br>|
 wide_resnet101_2              |0.5728682 Granny Smith<br>0.0822066 piggy bank, penny bank<br>0.0709140 tennis ball<br>0.0597228 golf ball<br>0.0115059 goblet<br>|
 
-
-
 ### Test image #2
 
 Data source: [ImageNet][imagenet]
@@ -119,7 +117,6 @@ vgg19              |0.9994042 junco, snowbird<br>0.0003172 brambling, Fringilla 
 vgg19_bn              |0.9999533 junco, snowbird<br>0.0000318 chickadee<br>0.0000074 brambling, Fringilla montifringilla<br>0.0000030 water ouzel, dipper<br>0.0000021 house finch, linnet, Carpodacus mexicanus<br>|
 wide_resnet50_2              |0.9617861 junco, snowbird<br>0.0119062 water ouzel, dipper<br>0.0064385 chickadee<br>0.0044642 brambling, Fringilla montifringilla<br>0.0019096 bulbul<br>|
 wide_resnet101_2              |0.9748272 junco, snowbird<br>0.0074479 water ouzel, dipper<br>0.0047218 chickadee<br>0.0023339 brambling, Fringilla montifringilla<br>0.0022661 goldfinch, Carduelis carduelis<br>|
-
 
 ### Test image #3
 

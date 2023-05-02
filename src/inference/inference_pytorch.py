@@ -183,7 +183,7 @@ def create_dict_for_transformer(args):
 def create_dict_for_modelwrapper(args):
     dictionary = {
         'input_name': args.input_name,
-        'input_shape': args.input_shape,
+        'input_shape': [args.batch_size] + args.input_shape[1:],
     }
     return dictionary
 
