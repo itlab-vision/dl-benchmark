@@ -126,43 +126,11 @@ class XlsxTable(metaclass=abc.ABCMeta):
         pass
 
     def _draw_bold_bolder(self, rel_row_idx, rel_col_idx, num_rows, num_cols):
-        # top left corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx,
-                                       rel_row_idx, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # bottom left corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
-                                       rel_row_idx + num_rows - 1, rel_col_idx,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 5,
-                                                                         'right': 1})})
-        # top right corner
-        self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
-                                       rel_row_idx, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 5,
-                                                                         'bottom': 1,
-                                                                         'left': 1,
-                                                                         'right': 5})})
-        # bottom right corner
-        self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
-                                       {'type': 'formula', 'criteria': 'True',
-                                        'format': self._book.add_format({'top': 1,
-                                                                         'bottom': 5,
-                                                                         'left': 1,
-                                                                         'right': 5})})
         if (num_cols > 2):
             # top
             self._sheet.conditional_format(rel_row_idx, rel_col_idx + 1,
                                            rel_row_idx, rel_col_idx + num_cols - 2,
-                                           {'type': 'formula', 'criteria': 'True',
+                                           {'type': 'no_blanks',
                                             'format': self._book.add_format({'top': 5,
                                                                              'bottom': 1,
                                                                              'left': 1,
@@ -170,26 +138,89 @@ class XlsxTable(metaclass=abc.ABCMeta):
             # bottom
             self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + 1,
                                            rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 2,
-                                           {'type': 'formula', 'criteria': 'True',
+                                           {'type': 'no_blanks',
                                             'format': self._book.add_format({'top': 1,
                                                                              'bottom': 5,
                                                                              'left': 1,
                                                                              'right': 1})})
         if (num_rows > 2):
+            # right
+            self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
+                                           rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 1,
+                                                                             'left': 1,
+                                                                             'right': 5})})
             # left
             self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx,
                                            rel_row_idx + num_rows - 2, rel_col_idx,
-                                           {'type': 'formula', 'criteria': 'True',
+                                           {'type': 'no_blanks',
                                             'format': self._book.add_format({'top': 1,
                                                                              'bottom': 1,
                                                                              'left': 5,
                                                                              'right': 1})})
-            # right
-            self._sheet.conditional_format(rel_row_idx + 1, rel_col_idx + num_cols - 1,
-                                           rel_row_idx + num_rows - 2, rel_col_idx + num_cols - 1,
-                                           {'type': 'formula', 'criteria': 'True',
-                                            'format': self._book.add_format({'top': 1,
+        if num_cols == 1:
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx,
+                                           rel_row_idx, rel_col_idx,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 5,
                                                                              'bottom': 1,
+                                                                             'left': 5,
+                                                                             'right': 5})})
+            self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
+                                           rel_row_idx + num_rows - 1, rel_col_idx,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 5,
+                                                                             'left': 5,
+                                                                             'right': 5})})
+        if num_rows == 1:
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx,
+                                           rel_row_idx, rel_col_idx,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 5,
+                                                                             'bottom': 5,
+                                                                             'left': 5,
+                                                                             'right': 1})})
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
+                                           rel_row_idx, rel_col_idx + num_cols - 1,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 5,
+                                                                             'bottom': 5,
+                                                                             'left': 1,
+                                                                             'right': 5})})
+        if num_rows > 1 and num_cols > 1:
+            # top left corner
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx,
+                                           rel_row_idx, rel_col_idx,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 5,
+                                                                             'bottom': 1,
+                                                                             'left': 5,
+                                                                             'right': 1})})
+            # bottom left corner
+            self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx,
+                                           rel_row_idx + num_rows - 1, rel_col_idx,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 5,
+                                                                             'left': 5,
+                                                                             'right': 1})})
+            # top right corner
+            self._sheet.conditional_format(rel_row_idx, rel_col_idx + num_cols - 1,
+                                           rel_row_idx, rel_col_idx + num_cols - 1,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 5,
+                                                                             'bottom': 1,
+                                                                             'left': 1,
+                                                                             'right': 5})})
+            # bottom right corner
+            self._sheet.conditional_format(rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                           rel_row_idx + num_rows - 1, rel_col_idx + num_cols - 1,
+                                           {'type': 'no_blanks',
+                                            'format': self._book.add_format({'top': 1,
+                                                                             'bottom': 5,
                                                                              'left': 1,
                                                                              'right': 5})})
 

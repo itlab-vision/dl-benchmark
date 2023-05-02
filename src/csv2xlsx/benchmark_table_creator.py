@@ -554,15 +554,15 @@ class XlsxBenchmarkTable(XlsxTable):
         num_header_rows = 6  # infrastructure, framework, device, precision, mode, parameters
         col_depth = 4
         self._draw_bold_bolder(0, 0, num_header_rows, rel_col_idx)
-        self._draw_bold_bolder(num_header_rows - 1, 0,
-                               self._full_num_rows - num_header_rows + 1,
+        self._draw_bold_bolder(num_header_rows, 0,
+                               self._full_num_rows - num_header_rows,
                                rel_col_idx)
         for idx in range(len(self._infrastructure)):
             execution_parameters = list(deepflatten(self._execution_parameters[idx], depth=col_depth))
             num_cols = len(execution_parameters)
             self._draw_bold_bolder(rel_row_idx, rel_col_idx, num_header_rows, num_cols)
-            self._draw_bold_bolder(rel_row_idx + num_header_rows - 1, rel_col_idx,
-                                   self._full_num_rows - num_header_rows + 1, num_cols)
+            self._draw_bold_bolder(rel_row_idx + num_header_rows, rel_col_idx,
+                                   self._full_num_rows - num_header_rows, num_cols)
             rel_col_idx += num_cols
 
         logging.info('FINISH: beautify_table()')
