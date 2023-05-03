@@ -149,8 +149,8 @@ def load_model_from_module(model_name):
 def load_model_from_file(model_path):
     log.info(f'Loading model from path {model_path}')
     file_type = model_path.split('.')[-1]
-    supported_files = ['pt']
-    if file_type not in supported_files:
+    supported_extensions = ['pt']
+    if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
     model = torch.load(model_path)
     return model

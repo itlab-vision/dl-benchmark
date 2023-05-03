@@ -27,17 +27,17 @@ class PyTorchProcess(ProcessHandler):
         python = ProcessHandler.get_cmd_python_version()
 
         name = self._test.model.name
-        model_pth = self._test.model.model
+        model_pt = self._test.model.model
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
         if ((name is not None)
-                and (model_pth is None or model_pth == '')):
+                and (model_pt is None or model_pt == '')):
             common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
                              f'-b {batch_size} -ni {iteration}')
-        elif ((model_pth is not None) or (model_pth != '')):
-            common_params = (f'-m {model_pth} -i {dataset} -is {input_shape} '
+        elif ((model_pt is not None) or (model_pt != '')):
+            common_params = (f'-m {model_pt} -i {dataset} -is {input_shape} '
                              f'-b {batch_size} -ni {iteration}')
         else:
             raise Exception('Incorrect model parameters. Set model name or file name.')

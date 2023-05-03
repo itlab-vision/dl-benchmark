@@ -709,7 +709,7 @@ python inference_pytorch.py --model_name <model_name> \
 **Запуск вывода для модели, которая загружается из файлов**
 
 ```bash
-python inference_pytorch.py --model <file_name>.pth \
+python inference_pytorch.py --model <file_name>.pt \
                             --input_name <input_name> \
                             --input_shape <input_shape> \
                             --input <path_to_data> \
