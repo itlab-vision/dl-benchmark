@@ -35,7 +35,6 @@ class IOAdapter(metaclass=abc.ABCMeta):
     @staticmethod
     def __create_list_images(input_):
         images = []
-        input_is_correct = True
         if os.path.exists(input_[0]):
             if os.path.isdir(input_[0]):
                 path = os.path.abspath(input_[0])
@@ -43,13 +42,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             elif os.path.isfile(input_[0]):
                 for image in input_:
                     if not os.path.isfile(image):
-                        input_is_correct = False
-                        break
+                        raise ValueError(f'Path to image does not exist: {image}')
                     images.append(os.path.abspath(image))
         else:
-            input_is_correct = False
-        if not input_is_correct:
-            raise ValueError('Wrong path to image or to directory with images')
+            raise ValueError(f'Path to image or to directory with images does not exist: {input_[0]}')
         return images
 
     @staticmethod
@@ -85,7 +81,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                     h, w = input_shape[1:]
                     data = cv2.resize(data, (w, h))
             except Exception as ex:
-                raise ValueError(f'Unable to read input file {filename}. Exception occured: {str(ex)}')
+                raise ValueError(f'Unable to read input file {filename}. Exception occurred: {str(ex)}')
 
         return data
 
