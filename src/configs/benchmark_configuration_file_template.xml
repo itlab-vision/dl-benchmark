@@ -116,6 +116,7 @@
             <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
+            <Provider>Default</Provider>
             <InputShape></InputShape>
             <Layout></Layout>
             <Mean></Mean>

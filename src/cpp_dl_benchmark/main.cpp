@@ -4,7 +4,7 @@
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
 #include "opencv_launcher.hpp"
-#elif defined(ORT_DEFAULT) || defined(ORT_CUDA)
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
 #include "onnxruntime_launcher.hpp"
 #endif
 
@@ -105,6 +105,8 @@ void parse(int argc, char* argv[]) {
             "onnxruntime"
 #elif ORT_CUDA
             "onnxruntime_cuda"
+#elif ORT_TRT
+            "onnxruntime_trt"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -183,15 +185,15 @@ int main(int argc, char* argv[]) {
         if (device.empty()) {
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT)
             device = "CPU";
-#elif ORT_CUDA
-            device = "CUDA";
+#elif defined(ORT_CUDA) || defined(ORT_TRT)
+            device = "NVIDIA_GPU";
 #endif
             logger::info << "Device wasn't specified. Default will be used: " << device << logger::endl;
         }
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
-#elif defined(ORT_DEFAULT) || defined(ORT_CUDA)
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
 #endif
 
@@ -199,6 +201,7 @@ int main(int argc, char* argv[]) {
             report = std::make_shared<Report>(FLAGS_report_path);
             report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", launcher->get_framework_name()}});
             report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", launcher->get_framework_version()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"device", device}});
             report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", launcher->get_backend_name()}});
         }
 

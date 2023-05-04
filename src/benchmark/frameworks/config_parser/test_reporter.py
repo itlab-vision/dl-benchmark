@@ -51,6 +51,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['hint'] = 'Hint'
         match_parameter_description['frontend'] = 'Frontend'
         match_parameter_description['backend'] = 'Backend'
+        match_parameter_description['provider'] = 'Execution Provider'
         match_parameter_description['delegate'] = 'Delegate'
         match_parameter_description['delegate_options'] = 'Delegate options'
 

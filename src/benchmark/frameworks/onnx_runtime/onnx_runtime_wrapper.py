@@ -8,8 +8,8 @@ class OnnxRuntimeWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.onnx_runtime
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir, device='CPU', **kwargs):
-        return OnnxRuntimeProcess.create_process(test, executor, log, cpp_benchmarks_dir, device)
+    def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
+        return OnnxRuntimeProcess.create_process(test, executor, log, cpp_benchmarks_dir)
 
     @staticmethod
     def create_test(model, dataset, indep_parameters, dep_parameters):

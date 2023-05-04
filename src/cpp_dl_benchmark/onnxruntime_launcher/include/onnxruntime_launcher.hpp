@@ -53,6 +53,8 @@ private:
     Ort::SessionOptions session_options;
 #ifdef ORT_CUDA
     OrtCUDAProviderOptionsV2* cuda_options = nullptr;
+#elif ORT_TRT
+    OrtTensorRTProviderOptionsV2* tensorrt_options = nullptr;
 #endif
     std::vector<std::vector<Ort::Value>> tensors;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;

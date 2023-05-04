@@ -19,14 +19,14 @@ namespace utils {
 enum class Device : unsigned int {
     CPU = 0,
     GPU,
-    CUDA,
+    NVIDIA_GPU,
     ARM,
     UNKNOWN
 };
 
 static const std::map<Device, std::string> device_to_str_map = {{Device::CPU, "CPU"},
                                                                 {Device::GPU, "GPU"},
-                                                                {Device::CUDA, "CUDA"},
+                                                                {Device::NVIDIA_GPU, "NVIDIA_GPU"},
                                                                 {Device::ARM, "ARM"}};
 
 std::string get_device_str(Device d);

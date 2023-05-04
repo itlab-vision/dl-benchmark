@@ -74,6 +74,8 @@ std::string ONNXLauncher::get_backend_name() const {
     return "default";
 #elif ORT_CUDA
     return "CUDA";
+#elif ORT_TRT
+    return "TensorRT";
 #endif
 }
 
@@ -88,7 +90,7 @@ void ONNXLauncher::read(const std::string model_file, const std::string weights_
         }
     }
 #ifdef ORT_CUDA
-    else if (device == utils::Device::CUDA) {
+    else if (device == utils::Device::NVIDIA_GPU) {
         check_status(Ort::GetApi().CreateCUDAProviderOptions(&cuda_options));
         std::vector<const char*> keys{"device_id",
                                       "arena_extend_strategy",
@@ -99,6 +101,11 @@ void ONNXLauncher::read(const std::string model_file, const std::string weights_
         std::vector<const char*> values{"0", "kSameAsRequested", "DEFAULT", "1", "1", "1"};
         check_status(Ort::GetApi().UpdateCUDAProviderOptions(cuda_options, keys.data(), values.data(), keys.size()));
         check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_CUDA_V2(session_options, cuda_options));
+    }
+#elif ORT_TRT
+    else if (device == utils::Device::NVIDIA_GPU) {
+        check_status(Ort::GetApi().CreateTensorRTProviderOptions(&tensorrt_options));
+        check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_TensorRT_V2(session_options, tensorrt_options));
     }
 #endif
     else {

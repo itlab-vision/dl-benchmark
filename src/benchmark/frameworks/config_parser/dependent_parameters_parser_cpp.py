@@ -10,6 +10,10 @@ class CppParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName('Backend'):
             _backend = dep_parameters_tag.getElementsByTagName('Backend')[0].firstChild
 
+        _provider = None
+        if dep_parameters_tag.getElementsByTagName('Provider'):
+            _provider = dep_parameters_tag.getElementsByTagName('Provider')[0].firstChild
+
         _input_shape = dep_parameters_tag.getElementsByTagName('InputShape')[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName('Layout')[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName('Mean')[0].firstChild
@@ -19,6 +23,7 @@ class CppParametersParser(DependentParametersParser):
 
         return CppParameters(
             backend=_backend.data if _backend else None,
+            provider=_provider.data if _provider else 'Default',
             input_shape=_input_shape.data if _input_shape else None,
             layout=_layout.data if _layout else None,
             mean=_mean.data if _mean else None,

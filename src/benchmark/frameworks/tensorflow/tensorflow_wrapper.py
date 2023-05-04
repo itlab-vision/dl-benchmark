@@ -7,7 +7,7 @@ class TensorFlowWrapper(FrameworkWrapper):
     framework_name = 'TensorFlow'
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None, **kwargs):
+    def create_process(test, executor, log, **kwargs):
         return TensorFlowProcess.create_process(test, executor, log)
 
     @staticmethod

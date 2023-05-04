@@ -77,13 +77,16 @@ def test_framework_wrapper(inference_framework, complex_test, mocker):
     test.dep_parameters.mode = complex_test[0]
     test.dep_parameters.code_source = complex_test[1]
     test.dep_parameters.runtime = complex_test[2]
+    test.dep_parameters.provider = 'Default'
     wrapper = WRAPPER_REGISTRY[inference_framework[0]]
     mocker.patch('pathlib.Path.is_file', return_value=True)
     if inference_framework[0] == KnownFrameworks.openvino_dldt:
-        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
+        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log,
+                                                 cpp_benchmarks_dir='valid/benchmark/path'),
                           complex_test[-1])
     else:
-        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log, 'valid/benchmark/path'),
+        assert isinstance(wrapper.create_process(test, get_host_executor(mocker), log,
+                                                 cpp_benchmarks_dir='valid/benchmark/path'),
                           inference_framework[1])
 
 
