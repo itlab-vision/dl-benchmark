@@ -260,10 +260,12 @@ class PyTorchTransformer(Transformer):
         self._converting = converting
 
     def __set_norm(self, image):
-        if not self._converting['norm']:
-            return image
-
         import torchvision
+
+        if not self._converting['norm']:
+            preprocess = torchvision.transforms.Compose([
+                torchvision.transforms.ToTensor()])
+            return preprocess(image.astype(np.float32))
 
         preprocess = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
