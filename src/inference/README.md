@@ -609,7 +609,6 @@ python inference_mxnet.py --model_name <model_name> \
                           --input_name <input_name> \
                           --input_shape <input_shape> \
                           --norm --mean <mean> --std <std> \
-                          --batch_size <batch_size> \
                           --save_model --path_save_model <path_save_model>
 ```
 
@@ -621,8 +620,7 @@ python inference_mxnet.py --model <file_name>.json \
                           --input_name <input_name> \
                           --input_shape <input_shape> \
                           --input <path_to_data> \
-                          --labels <label_file>.json \
-                          --batch_size <batch_size>
+                          --labels <label_file>.json
 ```
 
 ## Вывод глубоких моделей с использованием PyTorch (TorchVision)
@@ -654,6 +652,8 @@ inference_pytorch.py
 - `-t / --task` - название задачи. Текущая реализация поддерживает
   решение задачи классификации. По умолчанию принимает значение
   `feedforward`.
+- `-b / --batch_size` - количество изображений, которые будут обработаны
+  за один проход сети. По умолчанию равно `1`.
 - `-in / --input_name` - название входа модели. По умолчанию модель
   имеет один вход с названием `data`. Текущая реализация вывода
   предусматривает наличие только одного входа.
