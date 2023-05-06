@@ -123,11 +123,11 @@ def main():
     if args.mean != '' and args.scale != '':
         args.mean = std_transformer(args.mean)
         args.scale = std_transformer(args.scale)
-    
-    dict_of_arguments = {' -w ': args.weights, 
-                         ' --shape ': args.shape, 
-                         ' --mean ': args.mean, 
-                         ' --scale ': args.scale, 
+
+    dict_of_arguments = {' -w ': args.weights,
+                         ' --shape ': args.shape,
+                         ' --mean ': args.mean,
+                         ' --scale ': args.scale,
                          ' -l ': args.labels_path}
 
     for par, arg in dict_of_arguments.items():
@@ -142,7 +142,11 @@ def main():
     else:
         prepare_input(args.input, tmp.name, cur_path, os.path.basename(args.input))
      
-    onnxruntime_benchmark_process(args.model_path, args.input, args.benchmark_path, len(os.listdir(tmp.name)), dict_of_arguments)
+    onnxruntime_benchmark_process(args.model_path,
+                                  args.input,
+                                  args.benchmark_path,
+                                  len(os.listdir(tmp.name)),
+                                  dict_of_arguments)
 
     if args.labels_path != '':
         output_process(args.labels_path, tmp)
