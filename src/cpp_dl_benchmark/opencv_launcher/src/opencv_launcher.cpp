@@ -98,7 +98,7 @@ void OCVLauncher::warmup_inference() {
     run(blobs[0]);
 }
 
-void OCVLauncher::topk(const Labels &lbls, uint64_t k) {
+void OCVLauncher::dump_output() {
 
 }
 

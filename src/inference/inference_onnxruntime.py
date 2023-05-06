@@ -4,7 +4,67 @@ import numpy as np
 import os
 import sys
 from PIL import Image
-import onnxruntime as ort
+import tempfile
+
+def cli_argument_parser():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-m', '--model',
+                        help='Path to an .onnx file with a trained model.',
+                        required=True,
+                        type=str,
+                        dest='model_path')
+    
+    parser.add_argument('-bch', '--benchmark_app',
+                        help='Path to onnxruntime_benchmark',
+                        required=True,
+                        type=str,
+                        dest='benchmark_path')
+
+    parser.add_argument('-i', '--input',
+                        help='Path to data',
+                        required=True,
+                        type=str,
+                        dest='input')
+    
+    parser.add_argument('-w', '--weights',
+                        help='Path to a model weights file',
+                        required=False,
+                        type=str,
+                        default='',
+                        dest='weights')
+    
+    parser.add_argument('-sh', '--shape',
+                        help='Shape for network input <[N,C,H,W]>',
+                        required=False,
+                        default='',
+                        type=str,
+                        dest='shape')
+    
+    parser.add_argument('-l', '--labels_path',
+                        help='Path to labels.txt file',
+                        required=False,
+                        default='',
+                        type=str,
+                        dest='labels_path')
+    
+    parser.add_argument('-mean',
+                        help='Mean values in <[R,G,B]>',
+                        required=False,
+                        default='',
+                        type=str,
+                        dest='mean')
+    
+    parser.add_argument('-scale',
+                        help='Scale values in <[R,G,B]>',
+                        required=False,
+                        default='',
+                        type=str,
+                        dest='scale')
+
+    args = parser.parse_args()
+
+    return args
 
 def image_resize(image, min_len):
     image = Image.fromarray(image)
@@ -22,59 +82,64 @@ def crop_center(image, crop_w, crop_h):
     start_y = h//2 - crop_h//2
     return image[start_y:start_y+crop_h, start_x:start_x+crop_w, :]
 
-def prepare_input(mean, std, image_path):
+def prepare_input(mean, std, image_path, temp_dir_path, cur_dir_path, name_of_output):
     image = cv2.imread(image_path)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     image = image_resize(image, 256)
-
-    mean_vec = np.array([0.485, 0.456, 0.406])
-    stddev_vec = np.array([0.229, 0.224, 0.225])
-
     image = crop_center(image, 224, 224)
     img_data = image.astype('float32')
-    out = np.zeros((1,1000))
-    normir_image_data = np.zeros(img_data.shape).astype('float32')
+    os.chdir(temp_dir_path)
+    cv2.imwrite(name_of_output, img_data)
+    os.chdir(cur_dir_path)
 
-    for i in range(img_data.shape[2]):
-        normir_image_data[:,:,i] = (img_data[:,:,i]/255 - mean_vec[i]) / stddev_vec[i]
+def onnxruntime_benchmark_process(model, input, benchmark, num_of_images, dict_of_arguments):
+    os.system(f'./{benchmark} -m {model} -i {input} -niter 1 -nireq {num_of_images}' + dict_of_arguments[' -w '] + dict_of_arguments[' --shape '] + dict_of_arguments[' --mean '] + dict_of_arguments[' --scale '] + ' --dump_flag')
 
-    cv2.imwrite("probe.bmp", normir_image_data)
-
-def onnx_py_inference(image_path, model_path, labels_path):
-    image = cv2.imread(image_path)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    mean_vec = np.array([0.485, 0.456, 0.406])
-    stddev_vec = np.array([0.229, 0.224, 0.225])
-    image = crop_center(image, 224, 224)
-    image = image.transpose(2, 0 ,1)
-    img_data = image.astype('float32')
-    normir_image_data = np.zeros(img_data.shape).astype('float32')
-
-    for i in range(img_data.shape[0]):
-        normir_image_data[i,:,:] = (img_data[i,:,:]/255 - mean_vec[i]) / stddev_vec[i]
-    
-    normir_image_data = normir_image_data.reshape(1, 3, 224, 224).astype('float32')
-    ort_sess = ort.InferenceSession(model_path)
-    input_name = ort_sess.get_inputs()[0].name
-    output_name = ort_sess.get_outputs()[0].name
-    outputs = ort_sess.run([output_name],{input_name:normir_image_data})
-    result = np.argsort(outputs[0])[0,995:]
-
+def output_process(labels_path, tmp_dir):
+    print('\n')
     with open(labels_path) as file:
-        lines = file.readlines()
-    for i in result[::-1]:
-        print(lines[i], outputs[0][0][i])
+        classes = file.readlines()
+        classes = [line.rstrip('\n') for line in classes]
+    for i in range(0, len(os.listdir(tmp_dir.name))):
+        out = np.loadtxt('output' + str(i))
+        result = np.argsort(out)[995:]
+        for j in result[::-1]:
+            print(f'{classes[j]} {out[j]}')
+        print('\n')
+        os.remove('output' + str(i))
 
-
-
-
+def std_transformer(std):
+    std = std[1:-1]
+    tmp = np.array(std.split(','), dtype=float)[::-1] * 255
+    return f'[{tmp[0]},{tmp[1]},{tmp[2]}]'
 
 def main():
-    image_path = "../../img/ILSVRC2012_val_00000023.JPEG"
-    model_path = "../../omz-models/mobilenetv2-12.onnx"
-    labels_path = "labels/image_net_synset.txt"
-    #onnx_py_inference(image_path, model_path, labels_path)
-    prepare_input(0, 0, image_path)
+    tmp = tempfile.TemporaryDirectory()
+    cur_path = os.getcwd()
+    args = cli_argument_parser()
+
+    if args.mean != '' and args.scale != '':
+        args.mean = std_transformer(args.mean)
+        args.scale = std_transformer(args.scale)
+    
+    dict_of_arguments = {' -w ':args.weights, ' --shape ':args.shape, ' --mean ':args.mean, ' --scale ':args.scale}
+
+    for par, arg in dict_of_arguments.items():
+        if arg != '':
+            dict_of_arguments[par] = par + arg
+    
+    if os.path.isdir(args.input):
+        for entry in os.scandir(args.input):
+            if entry.is_file():
+                print(entry.path)
+                prepare_input(0,0,entry.path, tmp.name, cur_path, entry.name)
+    else:
+        prepare_input(0,0,args.input, tmp.name, cur_path ,os.path.basename(args.input))
+    
+    onnxruntime_benchmark_process(args.model_path, args.input, args.benchmark_path, len(os.listdir(tmp.name)), dict_of_arguments)
+
+    if args.labels_path != '':
+        output_process(args.labels_path, tmp)
+    
     return 0
 
 if __name__ == '__main__':

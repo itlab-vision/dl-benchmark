@@ -33,7 +33,7 @@ public:
     void warmup_inference() override;
     int evaluate(int iterations_num, uint64_t time_limit_ns) override;
 
-    void topk(const Labels &lbls, uint64_t k) override;
+    void dump_output() override;
     
 
 private:
@@ -57,5 +57,4 @@ private:
 
     void run(const std::vector<Ort::Value>& input_tensors);
     std::vector<Ort::Value> run_for_output(const std::vector<Ort::Value>& input_tensors);
-    void topk_onnx(const std::vector<Ort::Value> &output, const Labels &lbls, uint64_t k = 5);
 };

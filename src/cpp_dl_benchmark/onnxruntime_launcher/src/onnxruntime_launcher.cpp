@@ -192,44 +192,22 @@ int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     return iteration;
 }
 
-void ONNXLauncher::topk_onnx(const std::vector<Ort::Value> &output, const Labels &lbls, uint64_t k) {
-    
-    std::vector<std::pair<int,float>> copy_from_tensor;
-    std::vector<std::string> classes_from_labels;
-    std::string line;
-    auto valfromtens = output[0].GetTensorData<float>();
-    size_t count = output[0].GetTensorTypeAndShapeInfo().GetElementCount();
-    
-    if(k > count) {
-        throw std::domain_error("Invalid value of k");
-    }
-
-    for(int i = 0; i < count; i++){
-        copy_from_tensor.push_back(std::make_pair(i, valfromtens[i]));
-    }
-
-    std::sort(copy_from_tensor.begin(), copy_from_tensor.end(), [](auto const &l, auto const &h){return l.second > h.second;});
-    std::filesystem::path file_path(lbls.path);
-    std::ifstream a(file_path);
-    if(a.is_open()){
-        while(getline(a, line)){
-            classes_from_labels.push_back(line);
-        }
-        a.close();
-    }
-    else {
-        throw std::invalid_argument("File doesn't exist or error when openning.");
-    }
-    for(int i = 0; i < k; i++){
-        std::cout << i + 1<< ". " << classes_from_labels[copy_from_tensor[i].first] << " " << copy_from_tensor[i].second << std::endl;
-    }
-}
-
-void ONNXLauncher::topk(const Labels &lbls, uint64_t k) {
+void ONNXLauncher::dump_output() {
+    std::vector<std::pair<const float*, size_t>> tmp;
     for(int i = 0; i < tensors.size();i++){
-        std::cout << "\n\n\n";
+        std::string name = "output" + std::to_string(i);
+        std::ofstream file(name);
         auto Tens = run_for_output(tensors[i]);
-        topk_onnx(Tens, lbls, k);
+        auto val = Tens[0].GetTensorData<float>();
+        auto size = Tens[0].GetTensorTypeAndShapeInfo().GetElementCount();
+        if(file.is_open()){
+            for(int j = 0; j < size; j++){
+                file << std::to_string(val[j]) <<'\n';
+            }
+        }
+        else{
+            throw std::domain_error("Something went wrong, can't open file");
+        }
+        file.close();
     }
-    std::cout << "\n\n\n";
 }

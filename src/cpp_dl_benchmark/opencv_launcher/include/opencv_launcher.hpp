@@ -33,7 +33,7 @@ public:
 
     void warmup_inference() override;
     int evaluate(int iterations_num, uint64_t time_limit_ns) override;
-    void topk(const Labels &lbls, uint64_t k) override;
+    void dump_output() override;
 
 private:
     cv::dnn::Net net;

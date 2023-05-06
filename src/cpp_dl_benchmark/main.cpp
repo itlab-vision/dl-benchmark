@@ -87,11 +87,8 @@ DEFINE_bool(save_report, false, save_report_msg);
 constexpr char report_path_msg[] = "destination path for report.";
 DEFINE_string(report_path, "", report_path_msg);
 
-constexpr char labels_path_msg[] = "destination path for .txt file with labels for model.";
-DEFINE_string(labels_path, "", labels_path_msg);
-
-constexpr char count_of_max_msg[] = "count of maximums in output processing.";
-DEFINE_uint64(k, 5, count_of_max_msg);
+constexpr char dump_msg[] = "save final tensor value.";
+DEFINE_bool(dump_flag, false, dump_msg);
 
 void parse(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, false);
@@ -120,8 +117,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[-t <NUMBER>]                                 " << time_msg
                   << "\n\t[--save_report]                               " << save_report_msg
                   << "\n\t[--report_path <PATH>]                        " << report_path_msg
-                  << "\n\t[--labels_path <PATH>]                        " << labels_path_msg
-                  << "\n\t[--k <NUMBER>]                                " << count_of_max_msg << "\n";
+                  << "\n\t[--dump_flag]                                 " << dump_msg << "\n";
         exit(0);
     }
     if (FLAGS_m.empty()) {
@@ -307,9 +303,8 @@ int main(int argc, char* argv[]) {
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
 
         
-        if(!FLAGS_labels_path.empty()){
-            Labels lbls(FLAGS_labels_path);
-            launcher->topk(lbls, FLAGS_k);
+        if(FLAGS_dump_flag){
+            launcher->dump_output();
         }
         
         // warm up before benhcmarking
