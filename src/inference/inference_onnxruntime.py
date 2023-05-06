@@ -9,60 +9,51 @@ import tempfile
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
-
     parser.add_argument('-m', '--model',
                         help='Path to an .onnx file with a trained model.',
                         required=True,
                         type=str,
                         dest='model_path')
-    
     parser.add_argument('-bch', '--benchmark_app',
                         help='Path to onnxruntime_benchmark',
                         required=True,
                         type=str,
                         dest='benchmark_path')
-
     parser.add_argument('-i', '--input',
                         help='Path to data',
                         required=True,
                         type=str,
                         dest='input')
-    
     parser.add_argument('-w', '--weights',
                         help='Path to a model weights file',
                         required=False,
                         type=str,
                         default='',
                         dest='weights')
-    
     parser.add_argument('-sh', '--shape',
                         help='Shape for network input <[N,C,H,W]>',
                         required=False,
                         default='',
                         type=str,
                         dest='shape')
-    
     parser.add_argument('-l', '--labels_path',
                         help='Path to labels.txt file',
                         required=False,
                         default='',
                         type=str,
                         dest='labels_path')
-    
     parser.add_argument('-mean',
                         help='Mean values in <[R,G,B]>',
                         required=False,
                         default='',
                         type=str,
                         dest='mean')
-    
     parser.add_argument('-scale',
                         help='Scale values in <[R,G,B]>',
                         required=False,
                         default='',
                         type=str,
                         dest='scale')
-
     args = parser.parse_args()
 
     return args
@@ -83,7 +74,7 @@ def crop_center(image, crop_w, crop_h):
     h, w, c = image.shape
     start_x = w // 2 - crop_w // 2
     start_y = h // 2 - crop_h // 2
-    return image[start_y:start_y+crop_h, start_x:start_x+crop_w, :]
+    return image[start_y:start_y + crop_h, start_x:start_x + crop_w, :]
 
 
 def prepare_input(image_path, temp_dir_path, cur_dir_path, name_of_output):
@@ -100,7 +91,7 @@ def onnxruntime_benchmark_process(model, input_images, benchmark, num_of_images,
     comm = f'./{benchmark} -m {model} -i {input_images} -niter 1 -nireq {num_of_images}'
     comm = comm + dict_of_arguments[' -w '] + dict_of_arguments[' --shape '] + dict_of_arguments[' --mean '] + dict_of_arguments[' --scale ']
     if dict_of_arguments[' -l '] != '':
-        comm +=  ' --dump_flag'
+        comm += ' --dump_flag'
     os.system(comm)
 
 
@@ -133,7 +124,11 @@ def main():
         args.mean = std_transformer(args.mean)
         args.scale = std_transformer(args.scale)
     
-    dict_of_arguments = {' -w ': args.weights, ' --shape ': args.shape, ' --mean ': args.mean, ' --scale ': args.scale, ' -l ': args.labels_path}
+    dict_of_arguments = {' -w ': args.weights, 
+                         ' --shape ': args.shape, 
+                         ' --mean ': args.mean, 
+                         ' --scale ': args.scale, 
+                         ' -l ': args.labels_path}
 
     for par, arg in dict_of_arguments.items():
         if arg != '':
