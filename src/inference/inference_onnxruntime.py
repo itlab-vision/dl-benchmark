@@ -89,7 +89,8 @@ def prepare_input(image_path, temp_dir_path, cur_dir_path, name_of_output):
 
 def onnxruntime_benchmark_process(model, input_images, benchmark, num_of_images, dict_of_arguments):
     comm = f'./{benchmark} -m {model} -i {input_images} -niter 1 -nireq {num_of_images}'
-    comm = comm + dict_of_arguments[' -w '] + dict_of_arguments[' --shape '] + dict_of_arguments[' --mean '] + dict_of_arguments[' --scale ']
+    comm += dict_of_arguments[' -w '] + dict_of_arguments[' --shape ']
+    comm += dict_of_arguments[' --mean '] + dict_of_arguments[' --scale ']
     if dict_of_arguments[' -l '] != '':
         comm += ' --dump_flag'
     os.system(comm)
@@ -133,7 +134,7 @@ def main():
     for par, arg in dict_of_arguments.items():
         if arg != '':
             dict_of_arguments[par] = par + arg
-    
+
     if os.path.isdir(args.input):
         for entry in os.scandir(args.input):
             if entry.is_file():
@@ -141,7 +142,7 @@ def main():
                 prepare_input(entry.path, tmp.name, cur_path, entry.name)
     else:
         prepare_input(args.input, tmp.name, cur_path, os.path.basename(args.input))
-     
+
     onnxruntime_benchmark_process(args.model_path,
                                   args.input,
                                   args.benchmark_path,
@@ -150,7 +151,7 @@ def main():
 
     if args.labels_path != '':
         output_process(args.labels_path, tmp)
-    
+
     return 0
 
 
