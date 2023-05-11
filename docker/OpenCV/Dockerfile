@@ -43,19 +43,19 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO
+ENV INSTALL_DIR /opt/intel/openvino_2022
 ARG OV_SHORT_VERSION=2022.3
 ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.9052.9752fafe8eb_x86_64"
 RUN sudo mkdir /opt/intel && \
     wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
         -O /tmp/openvino.tgz --no-check-certificate --quiet && \
     tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
-    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} /opt/intel/openvino_2022 && \
+    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
     rm -rf /tmp/*
 
 # Install OpenVINO dependencies
-ENV INSTALL_DIR /opt/intel/openvino_2022
 WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls -la /opt/intel/openvino_2022/install_dependencies && echo y | ./install_openvino_dependencies.sh
+RUN ls -la $INSTALL_DIR/install_dependencies && echo y | ./install_openvino_dependencies.sh
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
 # Configure for GPU, MYRIAD
@@ -65,11 +65,12 @@ RUN usermod -a -G video,users root
 # Install openvino-dev
 WORKDIR /tmp/
 RUN pip3 install --upgrade pip
-RUN pip3 install openvino-dev==2022.3
+RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 
 # Install OpenCV
+ARG OCV_VERSION=4.7.0
 RUN pip uninstall opencv-python -y
-RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch 4.x --single-branch
+RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch ${OCV_VERSION} --single-branch
 ENV OpenCV_BUILD_DIR=/root/build-opencv
 RUN mkdir $OpenCV_BUILD_DIR
 WORKDIR $OpenCV_BUILD_DIR
@@ -92,8 +93,9 @@ ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH
 ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:$PYTHONPATH}"
 
 #accuracy-check
+ARG OMZ_VERSION="${OV_SHORT_VERSION}.0"
 WORKDIR /tmp/
-RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch 2022.3.0 --single-branch --depth 1
+RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
