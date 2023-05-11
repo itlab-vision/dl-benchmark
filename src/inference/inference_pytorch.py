@@ -203,7 +203,7 @@ def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mo
             for i in range(num_iterations):
                 slice_input = get_slice(i)
                 t0 = time()
-                torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+                model(slice_input[input_name])
                 t1 = time()
                 time_infer.append(t1 - t0)
 
