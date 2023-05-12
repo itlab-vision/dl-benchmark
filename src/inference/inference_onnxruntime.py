@@ -94,7 +94,7 @@ def cli_argument_parser():
                         default='',
                         type=str,
                         dest='scale')
-    parser.add_argument('-t','--task',
+    parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing method',
                         required=False,
                         default='',
