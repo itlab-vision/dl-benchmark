@@ -9,7 +9,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._test = test
         self._output = None
         self._status = None
-        self.supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf'}
+        self.supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf',
+                                     'TensorFlow_Lite': 'tf_lite', 'MXNet': 'mxnet', 'OpenCV': 'opencv'}
         self.csv_name = executor.get_csv_file()
 
     @staticmethod

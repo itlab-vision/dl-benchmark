@@ -56,6 +56,12 @@ class Test:
             return 'Caffe'
         elif framework == 'tf':
             return 'TensorFlow'
+        elif framework == 'tf_lite':
+            return 'TensorFlow_Lite'
+        elif framework == 'mxnet':
+            return 'MXNet'
+        elif framework == 'opencv':
+            return 'OpenCV'
         else:
             return 'Unsupported framework'
 

@@ -1,33 +1,27 @@
-import argparse
-import logging as log
-import os
 import sys
+import argparse
 import traceback
+import importlib
+import logging as log
 from time import time
-import warnings
 
-import mxnet
-import gluoncv
+import torch
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
-from io_model_wrapper import MXNetIOModelWrapper
-from transformer import MXNetTransformer
+from io_model_wrapper import PyTorchIOModelWrapper
+from transformer import PyTorchTransformer
 
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model.',
+                        help='Path to PyTorch model with format .pt.',
                         type=str,
-                        dest='model_json')
-    parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
-                        type=str,
-                        dest='model_params')
+                        dest='model')
     parser.add_argument('-mn', '--model_name',
-                        help='Model name to download using GluonCV package.',
+                        help='Model name from TorchVision.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-i', '--input',
@@ -42,10 +36,10 @@ def cli_argument_parser():
                         type=str,
                         dest='input_name')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,'
-                             'W is an input tensor width,'
+                        help='Input shape BxCxHxW, B is a batch size,'
+                             'C is an input tensor number of channels'
                              'H is an input tensor height,'
-                             'C is an input tensor number of channels.',
+                             'W is an input tensor width.',
                         required=True,
                         type=int,
                         nargs=4,
@@ -68,15 +62,9 @@ def cli_argument_parser():
                         type=float,
                         nargs=3,
                         dest='std')
-    parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
-                        type=int,
-                        nargs=3,
-                        dest='channel_swap')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
-                        default=None,
+                        default='output',
                         type=str,
                         nargs='+',
                         dest='output_names')
@@ -87,7 +75,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-l', '--labels',
                         help='Labels mapping file.',
-                        default='image_net_labels.json',
+                        default=None,
                         type=str,
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
@@ -120,16 +108,17 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
-    parser.add_argument('-s', '--save_model',
-                        help='Flag to indicate whether the model should be saved'
-                             '(it may be required for GluonCV-models)',
-                        action='store_true',
-                        dest='save_model')
-    parser.add_argument('-p', '--path_save_model',
-                        help='Path to save model',
-                        default=None,
+    parser.add_argument('--model_type',
+                        help='Model type for inference',
+                        choices=['scripted', 'baseline'],
+                        default='scripted',
                         type=str,
-                        dest='path_save_model')
+                        dest='model_type')
+    parser.add_argument('--inference_mode',
+                        help='Inference mode',
+                        default=True,
+                        type=bool,
+                        dest='inference_mode')
 
     args = parser.parse_args()
 
@@ -140,48 +129,48 @@ def get_device_to_infer(device):
     log.info('Get device for inference')
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
-        return mxnet.cpu()
+        return torch.device('cpu')
     elif device == 'NVIDIA GPU':
         log.info(f'Inference will be executed on {device}')
-        return mxnet.gpu()
+        return torch.device('cuda')
     else:
         log.info(f'The device {device} is not supported')
         raise ValueError('The device is not supported')
 
 
-def load_network_gluon(model_json, model_params, context, input_name):
-    log.info(f'Deserializing network from file ({model_json}, {model_params})')
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
-            model_json, [input_name], model_params, ctx=context)
-    return deserialized_net
+def load_model_from_module(model_name):
+    model_cls = model_name
+    model_path = 'torchvision.models'
+    model_cls = importlib.import_module(model_path).__getattribute__(model_cls)
+    module = model_cls(weights=True)
+    return module
 
 
-def load_network_gluon_model_zoo(model_name, context, save_model, path_save_model):
-    log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-    net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
+def load_model_from_file(model_path):
+    log.info(f'Loading model from path {model_path}')
+    file_type = model_path.split('.')[-1]
+    supported_extensions = ['pt']
+    if file_type not in supported_extensions:
+        raise ValueError(f'The file type {file_type} is not supported')
+    model = torch.load(model_path)
+    return model
 
-    if save_model is True:
-        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
-        if path_save_model is None:
-            path_save_model = os.getcwd()
-        path_save_model = os.path.join(path_save_model, model_name)
-        if not os.path.exists(path_save_model):
-            os.mkdir(path_save_model)
-        gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
-                                   preprocess=None, layout='CHW', ctx=context)
 
-    log.info(f'Info about the network:\n{net}')
-
-    log.info('Hybridizing model to accelerate inference')
-    net.hybridize()
-    return net
+def compile_model(module, device, model_type):
+    if model_type == 'baseline':
+        log.info('Inference will be executed on baseline model')
+    elif model_type == 'scripted':
+        log.info('Inference will be executed on scripted model')
+        module = torch.jit.script(module)
+    else:
+        raise ValueError(f'Model type {model_type} is not supported for inference')
+    module.to(device)
+    module.eval()
+    return module
 
 
 def create_dict_for_transformer(args):
     dictionary = {
-        'channel_swap': args.channel_swap,
         'mean': args.mean,
         'std': args.std,
         'norm': args.norm,
@@ -194,31 +183,29 @@ def create_dict_for_transformer(args):
 def create_dict_for_modelwrapper(args):
     dictionary = {
         'input_name': args.input_name,
-        'input_shape': args.input_shape,
+        'input_shape': [args.batch_size] + args.input_shape[1:],
     }
     return dictionary
 
 
-def inference_mxnet(net, num_iterations, get_slice, input_name,
-                    k=5, file_labels='image_net_labels.json'):
-    predictions = None
-    time_infer = []
-    slice_input = None
-    if num_iterations == 1:
-        slice_input = get_slice(0)
-        t0 = time()
-        predictions = net(slice_input[input_name]).softmax()
-        mxnet.nd.waitall()
-        t1 = time()
-        time_infer.append(t1 - t0)
-    else:
-        for i in range(num_iterations):
-            slice_input = get_slice(i)
+def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode):
+    with torch.inference_mode(inference_mode):
+        predictions = None
+        time_infer = []
+        slice_input = None
+        if num_iterations == 1:
+            slice_input = get_slice(0)
             t0 = time()
-            net(slice_input[input_name]).softmax()
-            mxnet.nd.waitall()
+            predictions = torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
+        else:
+            for i in range(num_iterations):
+                slice_input = get_slice(i)
+                t0 = time()
+                torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+                t1 = time()
+                time_infer.append(t1 - t0)
 
     return predictions, time_infer
 
@@ -247,7 +234,7 @@ def prepare_output(result, output_names, task):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
-        return {output_names[0]: result.asnumpy()}
+        return {output_names[0]: result.detach().numpy()}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -260,31 +247,28 @@ def main():
     )
     args = cli_argument_parser()
     try:
-        model_wrapper = MXNetIOModelWrapper(create_dict_for_modelwrapper(args))
-        data_transformer = MXNetTransformer(create_dict_for_transformer(args))
+        model_wrapper = PyTorchIOModelWrapper(create_dict_for_modelwrapper(args))
+        data_transformer = PyTorchTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        context = get_device_to_infer(args.device)
-
-        if ((args.model_name is not None)
-                and (args.model_json is None)
-                and (args.model_params is None)):
-            net = load_network_gluon_model_zoo(args.model_name, context,
-                                               args.save_model, args.path_save_model)
-        elif (args.model_json is not None) and (args.model_params is not None):
-            net = load_network_gluon(args.model_json, args.model_params, context,
-                                     args.input_name)
+        if args.model_name is not None and args.model is None:
+            model = load_model_from_module(args.model_name)
+        elif args.model_name is None and args.model is not None:
+            model = load_model_from_file(args.model)
         else:
             raise ValueError('Incorrect arguments.')
+
+        device = get_device_to_infer(args.device)
+        compiled_model = compile_model(model, device, args.model_type)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
         log.info(f'Preparing input data {args.input}')
-        io.prepare_input(net, args.input)
+        io.prepare_input(compiled_model, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
-        result, inference_time = inference_mxnet(net, args.number_iter,
-                                                 io.get_slice_input, args.input_name)
+        result, inference_time = inference_pytorch(compiled_model, args.number_iter,
+                                                   io.get_slice_input, args.input_name, args.inference_mode)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = process_result(args.batch_size, inference_time)
