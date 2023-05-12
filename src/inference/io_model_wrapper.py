@@ -200,7 +200,7 @@ class PyTorchIOModelWrapper(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         import torch
         return torch.float32
-    
+
 
 class OnnxRuntimeWrapper(IOModelWrapper):
     def __init__(self, model):
