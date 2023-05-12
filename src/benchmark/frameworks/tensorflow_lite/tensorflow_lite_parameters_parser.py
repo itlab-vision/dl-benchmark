@@ -62,26 +62,26 @@ class TensorFlowLiteParameters(FrameworkParameters):
         self.delegate = None
         self.delegate_options = None
 
-        if self._parameter_not_is_none(channel_swap):
+        if self._parameter_is_not_none(channel_swap):
             self.channel_swap = self._process_sequence_arg(channel_swap)
-        if self._parameter_not_is_none(mean):
+        if self._parameter_is_not_none(mean):
             self.mean = self._process_sequence_arg(mean)
-        if self._parameter_not_is_none(input_scale):
+        if self._parameter_is_not_none(input_scale):
             self.input_scale = self._process_sequence_arg(input_scale)
-        if self._parameter_not_is_none(input_shape):
+        if self._parameter_is_not_none(input_shape):
             self.input_shape = self._process_sequence_arg(input_shape)
-        if self._parameter_not_is_none(input_name):
+        if self._parameter_is_not_none(input_name):
             self.input_name = input_name
-        if self._parameter_not_is_none(layout):
+        if self._parameter_is_not_none(layout):
             self.layout = layout
-        if self._parameter_not_is_none(thread_count):
+        if self._parameter_is_not_none(thread_count):
             if self._int_value_is_correct(thread_count):
                 self.nthreads = thread_count
             else:
                 raise ValueError('Threads count can only take integer value')
-        if self._parameter_not_is_none(delegate):
+        if self._parameter_is_not_none(delegate):
             self.delegate = delegate
-        if self._parameter_not_is_none(delegate_options):
+        if self._parameter_is_not_none(delegate_options):
             self.delegate_options = delegate_options
 
     @staticmethod

@@ -11,18 +11,18 @@ class CppParameters(FrameworkParameters):
         self.thread_count = None
         self.inference_requests_count = None
 
-        if self._parameter_not_is_none(backend):
+        if self._parameter_is_not_none(backend):
             self.backend = backend.strip()
-        if self._parameter_not_is_none(input_shape):
+        if self._parameter_is_not_none(input_shape):
             self.input_shape = input_shape.strip()
-        if self._parameter_not_is_none(layout):
+        if self._parameter_is_not_none(layout):
             self.layout = layout.strip()
-        if self._parameter_not_is_none(mean):
+        if self._parameter_is_not_none(mean):
             self.mean = mean.strip()
-        if self._parameter_not_is_none(input_scale):
+        if self._parameter_is_not_none(input_scale):
             self.input_scale = input_scale.strip()
-        if self._parameter_not_is_none(thread_count) and self._int_value_is_correct(thread_count):
+        if self._parameter_is_not_none(thread_count) and self._int_value_is_correct(thread_count):
             self.thread_count = thread_count
-        if self._parameter_not_is_none(inference_requests_count) and self._int_value_is_correct(
+        if self._parameter_is_not_none(inference_requests_count) and self._int_value_is_correct(
                 inference_requests_count):
             self.inference_requests_count = inference_requests_count

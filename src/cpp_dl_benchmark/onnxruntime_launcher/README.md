@@ -13,19 +13,19 @@ The tool allows to measure deep learning models inference performance with [ONNX
     git submodule update --init --recursive
     ```
 
-2. Create `build` directory:
+1. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-3. Configure it with `cmake`:
+1. Configure it with `cmake`:
 
     ```
     cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON -Donnxruntime_BUILD_UNIT_TESTS=OFF -Donnxruntime_BUILD_SHARED_LIB=ON -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake
     ```
 
-4. Build and install project:
+1. Build and install project:
 
     ```
     make install -j$(nproc --all)
@@ -45,19 +45,19 @@ To build the tool you need to have an installation of [ONNX Runtime][onnx-runtim
     git submodule update --init --recursive
     ```
 
-2. Create `build` directory:
+1. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-3. In the created directory run `cmake` command:
+1. In the created directory run `cmake` command:
 
     ```
     cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_LAUNCHER=ON -DBUILD_OPENCV_LAUNCHER=OFF -DBUILD_OPENCV_OV_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
     ```
 
-4. Build tool
+1. Build tool
 
     ```
     cmake --build .
