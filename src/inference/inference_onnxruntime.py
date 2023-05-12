@@ -94,14 +94,14 @@ def cli_argument_parser():
                         default='',
                         type=str,
                         dest='scale')
-    parser.add_argument('-task',
-                        help='Scale values in <[R,G,B]>',
+    parser.add_argument('-t','--task',
+                        help='Task type determines the type of output processing method',
                         required=False,
                         default='',
                         type=str,
                         dest='task')
     parser.add_argument('-batch',
-                        help='Scale values in <[R,G,B]>',
+                        help='Batch size',
                         required=False,
                         default=1,
                         type=int,

@@ -297,7 +297,4 @@ class OnnxRuntimeTransformer(Transformer):
         return shape[1:]
 
     def transform_images(self, images, shape, element_type, *args):
-        h, w, c = images.shape[1:]
-        start_x = w // 2 - shape[2] // 2
-        start_y = h // 2 - shape[3] // 2
-        return images[start_y:start_y + shape[3], start_x:start_x + shape[2], :]
+        return images
