@@ -31,6 +31,7 @@ tflite_converter.py --model-path /<full_path_to_models_dir>/_models_dir/public/s
 tflite_converter.py --model-path /<full_path_to_models_dir>/_models_dir/public/yolo-v1-tiny-tf/yolo-v1-tiny.pb --source-framework tf --input-names input_1 --input-shapes [1, 416, 416, 3] --output-names conv2d_9/BiasAdd
 ```
 
+
 # Conversion to TF2 saved model format and optimization with TRT for NVIDIA devices
 
 TF Converter supports model conversion to TF2 saved model format from frozen graph and meta formats of TF model or from ONNX model
@@ -53,3 +54,23 @@ python tf_converter.py --model-path <path/to/input/model> --tensor_rt_precision 
 - `--tensor_rt_model_dir` A path where Tensor RT optimized model will be saved. Default <model-path.parent>
   /tensor_rt_<Precision>
 
+
+# Conversion OMZ models to .pt pytorch format
+
+To get .pt format models along .onnx, apply the following patch to OMZ converter script:
+
+```sh
+diff --git a/tools/model_tools/src/openvino/model_zoo/internal_scripts/pytorch_to_onnx.py b/tools/model_tools/src/openvino/model_zoo/internal_scripts/pytorch_to_onnx.py
+index 0449a8f26..65fc2a8d5 100644
+--- a/tools/model_tools/src/openvino/model_zoo/internal_scripts/pytorch_to_onnx.py
++++ b/tools/model_tools/src/openvino/model_zoo/internal_scripts/pytorch_to_onnx.py
+@@ -163,6 +163,9 @@ def convert_to_onnx(model, input_shapes, output_file, input_names, output_names,
+         torch.zeros(input_shape, dtype=INPUT_DTYPE_TO_TORCH[inputs_dtype])
+         for input_shape in input_shapes)
+     model(*dummy_inputs)
++    pt_output_file = output_file.with_suffix(".pt")
++    traced_model = torch.jit.trace(model, dummy_inputs, strict=False)
++    traced_model.save(pt_output_file)
+     torch.onnx.export(model, dummy_inputs, str(output_file), verbose=False, opset_version=opset_version,
+                       input_names=input_names.split(','), output_names=output_names.split(','), **conversion_params)
+```
