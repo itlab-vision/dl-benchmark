@@ -1,8 +1,8 @@
 import abc
-import os
-
 import json
+import os
 from pathlib import Path
+
 import cv2
 import numpy as np
 

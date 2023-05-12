@@ -173,7 +173,7 @@
             <BatchSize></BatchSize>
             <Device>CPU</Device>
             <IterationCount></IterationCount>
-            <TestTimeLimit></TestTimeLimit> 
+            <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName></InputName>
