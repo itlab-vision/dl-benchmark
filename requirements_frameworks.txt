@@ -1,2 +1,3 @@
-openvino-dev[caffe,mxnet,tensorflow2]==2022.3.0
+openvino-dev[caffe,mxnet,tensorflow2,pytorch]==2022.3.0
 gluoncv
+torchvision
