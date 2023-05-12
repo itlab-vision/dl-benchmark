@@ -301,37 +301,3 @@ class OnnxRuntimeTransformer(Transformer):
         start_x = w // 2 - shape[2] // 2
         start_y = h // 2 - shape[3] // 2
         return images[start_y:start_y + shape[3], start_x:start_x + shape[2], :]
-
-
-class PyTorchTransformer(Transformer):
-    def __init__(self, converting):
-        self._converting = converting
-
-    def __set_norm(self, image):
-        import torchvision
-
-        if not self._converting['norm']:
-            preprocess = torchvision.transforms.Compose([
-                torchvision.transforms.ToTensor()])
-            return preprocess(image.astype(np.float32))
-
-        preprocess = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize(mean=self._converting['mean'],
-                                             std=self._converting['std']),
-        ])
-
-        return preprocess(image.astype(np.float32) / 255)
-
-    def _transform(self, image):
-        normalized_image = self.__set_norm(image)
-        return normalized_image
-
-    def transform_images(self, images, shape, element_type, *args):
-        import torch
-        dataset_size = images.shape[0]
-        new_shape = [dataset_size] + shape[1:]
-        transformed_images = torch.zeros(new_shape, dtype=element_type)
-        for i in range(dataset_size):
-            transformed_images[i] = self._transform(images[i])
-        return transformed_images
