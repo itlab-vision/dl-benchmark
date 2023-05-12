@@ -2,9 +2,49 @@ import cv2
 import argparse
 import numpy as np
 import os
+import subprocess
 import sys
-from PIL import Image
+import onnxruntime as ort
+import logging as log
+from io_model_wrapper import OnnxRuntimeWrapper
+from transformer import OnnxRuntimeTransformer
+from io_adapter import IOAdapter
 import tempfile
+
+
+class OnnxRuntimeProcess():
+    def __init__(self):
+        self._command_line = './'
+
+    def _add_argument(self, name_of_arg, value_of_arg):
+        if name_of_arg == ' -bch ':
+            self._command_line += value_of_arg
+        elif name_of_arg == ' -l ':
+            if value_of_arg != '':
+                self._command_line += ' --dump_flag '
+        elif value_of_arg != '':
+            self._command_line += name_of_arg + value_of_arg
+
+    def create_command_line(self, dict_of_args):
+        for name, arg in dict_of_args.items():
+            self._add_argument(name, arg)
+        self._command_line += ' -niter 1 '
+
+    def execute(self):
+        subprocess.run(self._command_line, shell=True)
+
+    def parse_output(self, labels, tmp_dir):
+        print('\n')
+        with open(labels) as file:
+            classes = file.readlines()
+            classes = [line.rstrip('\n') for line in classes]
+        for i in range(0, len(os.listdir(tmp_dir.name))):
+            out = np.loadtxt('output' + str(i))
+            result = np.argsort(out)[995:]
+            for j in result[::-1]:
+                print(f'{classes[j]} {out[j]}')
+            print('\n')
+            os.remove('output' + str(i))
 
 
 def cli_argument_parser():
@@ -23,6 +63,7 @@ def cli_argument_parser():
                         help='Path to data',
                         required=True,
                         type=str,
+                        nargs='+',
                         dest='input')
     parser.add_argument('-w', '--weights',
                         help='Path to a model weights file',
@@ -30,84 +71,45 @@ def cli_argument_parser():
                         type=str,
                         default='',
                         dest='weights')
-    parser.add_argument('-sh', '--shape',
+    parser.add_argument('--input_shape',
                         help='Shape for network input <[N,C,H,W]>',
                         required=False,
                         default='',
                         type=str,
                         dest='shape')
-    parser.add_argument('-l', '--labels_path',
+    parser.add_argument('-l', '--labels',
                         help='Path to labels.txt file',
                         required=False,
                         default='',
                         type=str,
-                        dest='labels_path')
-    parser.add_argument('-mean',
+                        dest='labels')
+    parser.add_argument('--mean',
                         help='Mean values in <[R,G,B]>',
                         required=False,
                         default='',
                         type=str,
                         dest='mean')
-    parser.add_argument('-scale',
+    parser.add_argument('--scale',
                         help='Scale values in <[R,G,B]>',
                         required=False,
                         default='',
                         type=str,
                         dest='scale')
+    parser.add_argument('-task',
+                        help='Scale values in <[R,G,B]>',
+                        required=False,
+                        default='',
+                        type=str,
+                        dest='task')
+    parser.add_argument('-batch',
+                        help='Scale values in <[R,G,B]>',
+                        required=False,
+                        default=1,
+                        type=int,
+                        dest='batch_size')
     args = parser.parse_args()
 
     return args
-
-
-def image_resize(image, min_len):
-    image = Image.fromarray(image)
-    ratio = float(min_len) / min(image.size[0], image.size[1])
-    if image.size[0] > image.size[1]:
-        new_size = (int(round(ratio * image.size[0])), min_len)
-    else:
-        new_size = (min_len, int(round(ratio * image.size[1])))
-    image = image.resize(new_size, Image.BILINEAR)
-    return np.array(image)
-
-
-def crop_center(image, crop_w, crop_h):
-    h, w, c = image.shape
-    start_x = w // 2 - crop_w // 2
-    start_y = h // 2 - crop_h // 2
-    return image[start_y:start_y + crop_h, start_x:start_x + crop_w, :]
-
-
-def prepare_input(image_path, temp_dir_path, cur_dir_path, name_of_output):
-    image = cv2.imread(image_path)
-    image = image_resize(image, 256)
-    image = crop_center(image, 224, 224)
-    img_data = image.astype('float32')
-    os.chdir(temp_dir_path)
-    cv2.imwrite(name_of_output, img_data)
-    os.chdir(cur_dir_path)
-
-
-def onnxruntime_benchmark_process(model, input_images, benchmark, num_of_images, dict_of_arguments):
-    comm = f'./{benchmark} -m {model} -i {input_images} -niter 1 -nireq {num_of_images}'
-    comm += dict_of_arguments[' -w '] + dict_of_arguments[' --shape ']
-    comm += dict_of_arguments[' --mean '] + dict_of_arguments[' --scale ']
-    if dict_of_arguments[' -l '] != '':
-        comm += ' --dump_flag'
-    os.system(comm)
-
-
-def output_process(labels_path, tmp_dir):
-    print('\n')
-    with open(labels_path) as file:
-        classes = file.readlines()
-        classes = [line.rstrip('\n') for line in classes]
-    for i in range(0, len(os.listdir(tmp_dir.name))):
-        out = np.loadtxt('output' + str(i))
-        result = np.argsort(out)[995:]
-        for j in result[::-1]:
-            print(f'{classes[j]} {out[j]}')
-        print('\n')
-        os.remove('output' + str(i))
 
 
 def std_transformer(std):
@@ -116,42 +118,61 @@ def std_transformer(std):
     return f'[{tmp[0]},{tmp[1]},{tmp[2]}]'
 
 
+def create_dict_from_args_for_process(args, nireq):
+    return {' -bch ': args.benchmark_path,
+            ' -m ': args.model_path,
+            ' -i ': args.input,
+            ' -w ': args.weights,
+            ' --shape ': args.shape,
+            ' --scale ': args.scale,
+            ' --mean ': args.mean,
+            ' -l ': args.labels,
+            ' -nireq ': nireq}
+
+
+def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
+    os.chdir(tmp_dir)
+    for i in range(0, len(names_of_output)):
+        for val in io.get_slice_input(i).values():
+            cv2.imwrite(names_of_output[i], val[0])
+    os.chdir(cur_path)
+
+
+def prepare_output_names(input):
+    list_of_names = []
+    if os.path.isdir(input[0]):
+        for entry in os.scandir(input[0]):
+            if entry.is_file():
+                list_of_names.append(entry.name)
+    else:
+        list_of_names.append(os.path.basename(input[0]))
+    return list_of_names
+
+
 def main():
     tmp = tempfile.TemporaryDirectory()
     cur_path = os.getcwd()
     args = cli_argument_parser()
 
+    model = ort.InferenceSession(args.model_path)
+
+    model_wrapper = OnnxRuntimeWrapper(model)
+    model_data = OnnxRuntimeTransformer(model)
+    io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
+    io.prepare_input(model, args.input)
+
     if args.mean != '' and args.scale != '':
         args.mean = std_transformer(args.mean)
         args.scale = std_transformer(args.scale)
 
-    dict_of_arguments = {' -w ': args.weights,
-                         ' --shape ': args.shape,
-                         ' --mean ': args.mean,
-                         ' --scale ': args.scale,
-                         ' -l ': args.labels_path}
+    list_of_names = prepare_output_names(args.input)
+    prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
 
-    for par, arg in dict_of_arguments.items():
-        if arg != '':
-            dict_of_arguments[par] = par + arg
-
-    if os.path.isdir(args.input):
-        for entry in os.scandir(args.input):
-            if entry.is_file():
-                print(entry.path)
-                prepare_input(entry.path, tmp.name, cur_path, entry.name)
-    else:
-        prepare_input(args.input, tmp.name, cur_path, os.path.basename(args.input))
-
-    onnxruntime_benchmark_process(args.model_path,
-                                  args.input,
-                                  args.benchmark_path,
-                                  len(os.listdir(tmp.name)),
-                                  dict_of_arguments)
-
-    if args.labels_path != '':
-        output_process(args.labels_path, tmp)
-
+    args.input = tmp.name
+    proc = OnnxRuntimeProcess()
+    proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp.name)))))
+    proc.execute()
+    proc.parse_output(args.labels, tmp)
     return 0
 
 

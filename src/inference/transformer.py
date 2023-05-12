@@ -250,3 +250,17 @@ class OpenCVTransformer(Transformer):
         blob = cv2.dnn.blobFromImages(images, **self._converting)
         transformed_blob = self.__set_layout_order(blob / self._std)
         return transformed_blob
+
+
+class OnnxRuntimeTransformer(Transformer):
+    def __init__(self, model):
+        self._model = model
+
+    def get_shape_in_chw_order(self, shape, *args):
+        return shape[1:]
+
+    def transform_images(self, images, shape, element_type, *args):
+        h, w, c = images.shape[1:]
+        start_x = w // 2 - shape[2] // 2
+        start_y = h // 2 - shape[3] // 2
+        return images[start_y:start_y + shape[3], start_x:start_x + shape[2], :]
