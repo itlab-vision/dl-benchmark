@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 import onnxruntime as ort
-import logging as log
 from io_model_wrapper import OnnxRuntimeWrapper
 from transformer import OnnxRuntimeTransformer
 from io_adapter import IOAdapter
@@ -138,14 +137,14 @@ def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
     os.chdir(cur_path)
 
 
-def prepare_output_names(input):
+def prepare_output_names(input_):
     list_of_names = []
-    if os.path.isdir(input[0]):
-        for entry in os.scandir(input[0]):
+    if os.path.isdir(input_[0]):
+        for entry in os.scandir(input_[0]):
             if entry.is_file():
                 list_of_names.append(entry.name)
     else:
-        list_of_names.append(os.path.basename(input[0]))
+        list_of_names.append(os.path.basename(input_[0]))
     return list_of_names
 
 
