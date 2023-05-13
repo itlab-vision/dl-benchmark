@@ -9,37 +9,42 @@ from io_model_wrapper import OnnxRuntimeModelWrapperCpp
 from transformer import OnnxRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
+import logging as log
 
 
 class OnnxRuntimeProcess():
     def __init__(self):
-        self._command_line = './'
+        self._command_line = ''
 
     def _add_argument(self, name_of_arg, value_of_arg):
-        if name_of_arg == ' -bch ':
-            self._command_line += value_of_arg
-        elif name_of_arg == ' -l ':
-            if value_of_arg != '':
-                self._command_line += ' --dump_flag '
-        elif value_of_arg != '':
-            self._command_line += name_of_arg + value_of_arg
+        self._command_line += ' ' + name_of_arg + ' ' + value_of_arg
+
+    def _add_option(self, name_of_arg):
+        self._command_line += ' ' + name_of_arg
 
     def create_command_line(self, dict_of_args):
         for name, arg in dict_of_args.items():
-            self._add_argument(name, arg)
-        self._command_line += ' -niter 1 '
+            if name == '-bch':
+                self._add_option(arg)
+            elif name == '-l':
+                if arg != '':
+                    self._add_option('--dump_flag')
+            elif arg != '':
+                self._add_argument(name, arg)
 
     def execute(self):
         subprocess.run(self._command_line, shell=True)
 
-    def parse_output(self, labels, tmp_dir):
-        print('\n')
+    def parse_output(self, labels, tmp_dir, list_of_names):
+        log.info('Output results: \n')
+        list_of_names = list_of_names[::-1]
         with open(labels) as file:
             classes = file.readlines()
             classes = [line.rstrip('\n') for line in classes]
         for i in range(0, len(os.listdir(tmp_dir.name))):
             out = np.loadtxt('output' + str(i))
             result = np.argsort(out)[995:]
+            log.info(f'Results for {list_of_names[i]}:\n')
             for j in result[::-1]:
                 print(f'{classes[j]} {out[j]}')
             print('\n')
@@ -106,6 +111,12 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='batch_size')
+    parser.add_argument('-niter',
+                        help='Number of iterations',
+                        required=False,
+                        default=1,
+                        type=int,
+                        dest='niter')
     args = parser.parse_args()
 
     return args
@@ -118,15 +129,16 @@ def std_transformer(std):
 
 
 def create_dict_from_args_for_process(args, nireq):
-    return {' -bch ': args.benchmark_path,
-            ' -m ': args.model_path,
-            ' -i ': args.input,
-            ' -w ': args.weights,
-            ' --shape ': args.shape,
-            ' --scale ': args.scale,
-            ' --mean ': args.mean,
-            ' -l ': args.labels,
-            ' -nireq ': nireq}
+    return {'-bch': args.benchmark_path,
+            '-m': args.model_path,
+            '-i': args.input,
+            '-w': args.weights,
+            '--shape': args.shape,
+            '--scale': args.scale,
+            '--mean': args.mean,
+            '-l': args.labels,
+            '-nireq': nireq,
+            '-niter': str(args.niter)}
 
 
 def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
@@ -149,6 +161,11 @@ def prepare_output_file_names(input_):
 
 
 def main():
+    log.basicConfig(
+        format='[ %(levelname)s ] %(message)s',
+        level=log.INFO,
+        stream=sys.stdout,
+    )
     tmp = tempfile.TemporaryDirectory()
     cur_path = os.getcwd()
     args = cli_argument_parser()
@@ -171,7 +188,7 @@ def main():
     proc = OnnxRuntimeProcess()
     proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp.name)))))
     proc.execute()
-    proc.parse_output(args.labels, tmp)
+    proc.parse_output(args.labels, tmp, list_of_names)
     return 0
 
 
