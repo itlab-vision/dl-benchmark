@@ -171,11 +171,11 @@ void ONNXLauncher::run(const std::vector<Ort::Value>& input_tensors) {
 
 std::vector<Ort::Value> ONNXLauncher::run_for_output(const std::vector<Ort::Value>& input_tensors){
     return session->Run(Ort::RunOptions{nullptr},
-                               io.input_names.data(),
-                               input_tensors.data(),
-                               io.input_names.size(),
-                               io.output_names.data(),
-                               io.output_names.size());
+                        io.input_names.data(),
+                        input_tensors.data(),
+                        io.input_names.size(),
+                        io.output_names.data(),
+                        io.output_names.size());
 }
 
 int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {

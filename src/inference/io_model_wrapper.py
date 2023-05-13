@@ -202,7 +202,7 @@ class PyTorchIOModelWrapper(IOModelWrapper):
         return torch.float32
 
 
-class OnnxRuntimeWrapper(IOModelWrapper):
+class OnnxRuntimeModelWrapperCpp(IOModelWrapper):
     def __init__(self, model):
         self._input_shape = model.get_inputs()[0].shape
         self._input_name = model.get_inputs()[0].name

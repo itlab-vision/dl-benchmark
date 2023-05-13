@@ -289,7 +289,7 @@ class PyTorchTransformer(Transformer):
         return transformed_images
 
 
-class OnnxRuntimeTransformer(Transformer):
+class OnnxRuntimeTransformerCpp(Transformer):
     def __init__(self, model):
         self._model = model
 

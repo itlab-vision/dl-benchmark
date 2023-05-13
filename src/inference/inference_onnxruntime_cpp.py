@@ -5,8 +5,8 @@ import os
 import subprocess
 import sys
 import onnxruntime as ort
-from io_model_wrapper import OnnxRuntimeWrapper
-from transformer import OnnxRuntimeTransformer
+from io_model_wrapper import OnnxRuntimeModelWrapperCpp
+from transformer import OnnxRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
 
@@ -137,7 +137,7 @@ def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
     os.chdir(cur_path)
 
 
-def prepare_output_names(input_):
+def prepare_output_file_names(input_):
     list_of_names = []
     if os.path.isdir(input_[0]):
         for entry in os.scandir(input_[0]):
@@ -155,8 +155,8 @@ def main():
 
     model = ort.InferenceSession(args.model_path)
 
-    model_wrapper = OnnxRuntimeWrapper(model)
-    model_data = OnnxRuntimeTransformer(model)
+    model_wrapper = OnnxRuntimeModelWrapperCpp(model)
+    model_data = OnnxRuntimeTransformerCpp(model)
     io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
     io.prepare_input(model, args.input)
 
@@ -164,7 +164,7 @@ def main():
         args.mean = std_transformer(args.mean)
         args.scale = std_transformer(args.scale)
 
-    list_of_names = prepare_output_names(args.input)
+    list_of_names = prepare_output_file_names(args.input)
     prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
 
     args.input = tmp.name
