@@ -229,84 +229,88 @@ class XlsxBenchmarkTable(XlsxTable):
 
         self._col_indeces = []
         for idx in range(len(self._infrastructure)):
-            row_idx = rel_row_idx
-            col_idx = rel_col_idx
-            num_cols = 0
             machine = self._infrastructure[idx]
             machine_frameworks = self._inference_frameworks[idx]
-            col_idx4 = col_idx
+
+            row_idx = rel_row_idx
+
+            col_idx2 = rel_col_idx
+            num_cols2 = 0
             col_indeces2 = []
             for idx2 in range(len(machine_frameworks)):
                 machine_framework = machine_frameworks[idx2]
                 machine_framework_devices = self._devices[idx][idx2]
-                col_idx2 = col_idx
-                col_idx3 = col_idx
-                num_cols2 = 0
+
+                col_idx3 = col_idx2
                 num_cols3 = 0
                 col_indeces3 = []
                 for idx3 in range(len(machine_framework_devices)):
                     machine_framework_device = machine_framework_devices[idx3]
                     machine_framework_device_precisions = self._precisions[idx][idx2][idx3]
-                    col_idx1 = col_idx
-                    num_cols1 = 0
+
+                    col_idx4 = col_idx3
+                    num_cols4 = 0
                     col_indeces4 = []
                     for idx4 in range(len(machine_framework_device_precisions)):
                         machine_framework_device_precision = machine_framework_device_precisions[idx4]
                         machine_framework_device_precision_modes = self._execution_modes[idx][idx2][idx3][idx4]
+
+                        col_idx5 = col_idx4
+                        num_cols5 = 0
                         col_indeces5 = []
                         for idx5 in range(len(machine_framework_device_precision_modes)):
                             machine_framework_device_precision_mode = machine_framework_device_precision_modes[idx5]
                             machine_framework_device_precision_mode_execparams = (
                                 self._execution_parameters[idx][idx2][idx3][idx4][idx5])
+
+                            col_idx6 = col_idx5
+                            num_cols6 = len(machine_framework_device_precision_mode_execparams)
                             col_indeces6 = []
-                            for idx6 in range(len(machine_framework_device_precision_mode_execparams)):
+                            for idx6 in range(num_cols6):
                                 execparams = machine_framework_device_precision_mode_execparams[idx6]
-                                self._sheet.write(row_idx, col_idx + idx6,
+                                self._sheet.write(row_idx, col_idx6 + idx6,
                                                   execparams,
                                                   self._cell_format_title1)
-                                col_indeces6.append(col_idx + idx6)
-                            k = len(machine_framework_device_precision_mode_execparams)
-                            if k > 1:
-                                self._sheet.merge_range(row_idx - 1, col_idx1,
-                                                        row_idx - 1, col_idx1 + k - 1,
+                                col_indeces6.append(col_idx6 + idx6)
+
+                            if num_cols6 > 1:
+                                self._sheet.merge_range(row_idx - 1, col_idx5,
+                                                        row_idx - 1, col_idx5 + num_cols6 - 1,
                                                         machine_framework_device_precision_mode,
                                                         self._cell_format_title1)
-                            elif k == 1:
-                                self._sheet.write(row_idx - 1, col_idx1,
+                            elif num_cols6 == 1:
+                                self._sheet.write(row_idx - 1, col_idx5,
                                                   machine_framework_device_precision_mode,
                                                   self._cell_format_title1)
                             else:
                                 msg = 'Incorrect number of execution modes'
                                 logging.error(msg)
                                 raise ValueError(msg)
-                            col_idx += k
-                            col_idx1 += k
-                            num_cols1 += k
-                            num_cols2 += k
-                            num_cols3 += k
-                            num_cols += k
+                            col_idx5 += num_cols6
+                            num_cols5 += num_cols6
                             col_indeces5.append(col_indeces6)
-                        if num_cols1 > 1:
-                            self._sheet.merge_range(row_idx - 2, col_idx2,
-                                                    row_idx - 2, col_idx2 + num_cols1 - 1,
+                        if num_cols5 > 1:
+                            self._sheet.merge_range(row_idx - 2, col_idx4,
+                                                    row_idx - 2, col_idx4 + num_cols5 - 1,
                                                     machine_framework_device_precision,
                                                     self._cell_format_title1)
-                        elif num_cols1 == 1:
-                            self._sheet.write(row_idx - 2, col_idx2,
+                        elif num_cols5 == 1:
+                            self._sheet.write(row_idx - 2, col_idx4,
                                               machine_framework_device_precision,
                                               self._cell_format_title1)
                         else:
                             msg = 'Incorrect number of precisions'
                             logging.error(msg)
                             raise ValueError(msg)
-                        col_idx2 += num_cols1
+                        col_idx4 += num_cols5
+                        num_cols4 += num_cols5
                         col_indeces4.append(col_indeces5)
-                    if num_cols2 > 1:
+                    if num_cols4 > 1:
                         self._sheet.merge_range(row_idx - 3, col_idx3,
-                                                row_idx - 3, col_idx3 + num_cols2 - 1,
+                                                row_idx - 3, col_idx3 + num_cols4 - 1,
                                                 machine_framework_device,
                                                 self._cell_format_title1)
-                    elif num_cols2 == 1:
+                    elif num_cols4 == 1:
                         self._sheet.write(row_idx - 3, col_idx3,
                                           machine_framework_device,
                                           self._cell_format_title1)
@@ -314,37 +318,40 @@ class XlsxBenchmarkTable(XlsxTable):
                         msg = 'Incorrect number of devices'
                         logging.error(msg)
                         raise ValueError(msg)
-                    col_idx3 += num_cols2
+                    col_idx3 += num_cols4
+                    num_cols3 += num_cols4
                     col_indeces3.append(col_indeces4)
                 if num_cols3 > 1:
-                    self._sheet.merge_range(row_idx - 4, col_idx4,
-                                            row_idx - 4, col_idx4 + num_cols3 - 1,
+                    self._sheet.merge_range(row_idx - 4, col_idx2,
+                                            row_idx - 4, col_idx2 + num_cols3 - 1,
                                             machine_framework,
                                             self._cell_format_title1)
                 elif num_cols3 == 1:
-                    self._sheet.write(row_idx - 4, col_idx4 + num_cols3 - 1,
+                    self._sheet.write(row_idx - 4, col_idx2 + num_cols3 - 1,
                                       machine_framework,
                                       self._cell_format_title1)
                 else:
                     msg = 'Incorrect number of frameworks'
                     logging.error(msg)
                     raise ValueError(msg)
-                col_idx4 += num_cols3
+                col_idx2 += num_cols3
+                num_cols2 += num_cols3
                 col_indeces2.append(col_indeces3)
-            if num_cols > 1:
+            if num_cols2 > 1:
                 self._sheet.merge_range(row_idx - 5, rel_col_idx,
-                                        row_idx - 5, rel_col_idx + num_cols - 1,
+                                        row_idx - 5, rel_col_idx + num_cols2 - 1,
                                         machine, self._cell_format_title1)
-            elif num_cols == 1:
+            elif num_cols2 == 1:
                 self._sheet.write(row_idx - 5, rel_col_idx,
                                   machine, self._cell_format_title1)
             else:
                 msg = 'Incorrect number of machines'
                 logging.error(msg)
                 raise ValueError(msg)
-            rel_col_idx += num_cols
+            rel_col_idx += num_cols2
             self._col_indeces.append(col_indeces2)
 
+        logging.info(self._col_indeces)
         logging.info('FINISH: _fill_horizontal_title()')
 
     def _add_new_line(self, values, sep=','):
@@ -467,14 +474,13 @@ class XlsxBenchmarkTable(XlsxTable):
         logging.info('FINISH: create_table_rows()')
 
     def _get_records_group(self, task_records, topology_name, train_framework,
-                           blob_size, processed_records_idxs):
+                           processed_records_idxs):
         records_group = []
         for idx in range(len(task_records)):
             record = task_records[idx]
             if (idx not in processed_records_idxs
                     and record[self._KEY_TOPOLOGY_NAME] == topology_name
-                    and record[self._KEY_TRAIN_FRAMEWORK] == train_framework
-                    and record[self._KEY_BLOB_SIZE] == blob_size):
+                    and record[self._KEY_TRAIN_FRAMEWORK] == train_framework):
                 processed_records_idxs.append(idx)
                 records_group.append(record)
         return records_group
@@ -496,11 +502,9 @@ class XlsxBenchmarkTable(XlsxTable):
             for record in task_records:  # searching for records for the same topologies
                 topology_name = record[self._KEY_TOPOLOGY_NAME]
                 train_framework = record[self._KEY_TRAIN_FRAMEWORK]
-                blob_size = record[self._KEY_BLOB_SIZE]
                 records_group = self._get_records_group(task_records,
                                                         topology_name,
                                                         train_framework,
-                                                        blob_size,
                                                         processed_records_idxs)
                 topology_num_records = len(records_group)
                 if topology_num_records == 0:
@@ -514,15 +518,12 @@ class XlsxBenchmarkTable(XlsxTable):
                                             row_idx + topology_num_records - 1,
                                             2, train_framework,
                                             self._cell_format_title2)
-                    self._sheet.merge_range(row_idx, 3,
-                                            row_idx + topology_num_records - 1,
-                                            3, blob_size,
-                                            self._cell_format)
                 else:
                     self._sheet.write(row_idx, 1, topology_name, self._cell_format_title2)
                     self._sheet.write(row_idx, 2, train_framework, self._cell_format_title2)
-                    self._sheet.write(row_idx, 3, blob_size, self._cell_format)
                 for topology_record in records_group:
+                    self._sheet.write(row_idx, 3, topology_record[self._KEY_BLOB_SIZE],
+                                      self._cell_format_title2)
                     self._sheet.write(row_idx, 4, topology_record[self._KEY_BATCH_SIZE],
                                       self._cell_format_title2)
                     for key, value in topology_record[self._KEY_FPS].items():
