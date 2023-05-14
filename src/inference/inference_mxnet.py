@@ -274,8 +274,8 @@ def main():
                                                  io.get_slice_input, args.input_name)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics(args.batch_size,
-                                                                      inference_time)
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -289,9 +289,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            pp.log_performance_metrics(log, average_time, fps, latency)
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            pp.print_performance_metrics(average_time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)
