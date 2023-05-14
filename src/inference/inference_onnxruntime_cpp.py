@@ -111,7 +111,7 @@ class OnnxRuntimeProcess():
 
     def execute(self):
         proc = subprocess.run(self._command_line, shell=True)
-        if(proc.returncode != 0):
+        if proc.returncode != 0:
             log.error(traceback.format_exc())
             sys.exit(1)
 
