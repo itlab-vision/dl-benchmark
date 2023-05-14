@@ -205,8 +205,7 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def inference_mxnet(net, num_iterations, get_slice, input_name,
-                    k=5, file_labels='image_net_labels.json'):
+def inference_mxnet(net, num_iterations, get_slice, input_name):
     predictions = None
     time_infer = []
     slice_input = None
