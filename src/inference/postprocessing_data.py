@@ -36,3 +36,21 @@ def calculate_fps(pictures, time):
     if time == 0:
         return -1
     return pictures / time
+
+
+def calculate_performance_metrics(batch_size, inference_time):
+    inference_time = three_sigma_rule(inference_time)
+    average_time = calculate_average_time(inference_time)
+    latency = calculate_latency(inference_time)
+    fps = calculate_fps(batch_size, latency)
+    return average_time, latency, fps
+
+
+def log_performance_metrics(log, average_time, fps, latency):
+    log.info('Average time of single pass : {0:.3f}'.format(average_time))
+    log.info('FPS : {0:.3f}'.format(fps))
+    log.info('Latency : {0:.3f}'.format(latency))
+
+
+def print_performance_metrics(average_time, fps, latency):
+    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
