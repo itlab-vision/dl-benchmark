@@ -99,7 +99,7 @@ void OCVLauncher::warmup_inference() {
 }
 
 void OCVLauncher::dump_output() {
-
+    throw std::domain_error("Method is not implemented");
 }
 
 void OCVLauncher::run(const cv::Mat& input_blob) {

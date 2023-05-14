@@ -10,45 +10,7 @@ from transformer import OnnxRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
 import logging as log
-
-
-class OnnxRuntimeProcess():
-    def __init__(self):
-        self._command_line = ''
-
-    def _add_argument(self, name_of_arg, value_of_arg):
-        self._command_line += ' ' + name_of_arg + ' ' + value_of_arg
-
-    def _add_option(self, name_of_arg):
-        self._command_line += ' ' + name_of_arg
-
-    def create_command_line(self, dict_of_args):
-        for name, arg in dict_of_args.items():
-            if name == '-bch':
-                self._add_option(arg)
-            elif name == '-l':
-                if arg != '':
-                    self._add_option('--dump_flag')
-            elif arg != '':
-                self._add_argument(name, arg)
-
-    def execute(self):
-        subprocess.run(self._command_line, shell=True)
-
-    def parse_output(self, labels, tmp_dir, list_of_names):
-        log.info('Output results: \n')
-        list_of_names = list_of_names[::-1]
-        with open(labels) as file:
-            classes = file.readlines()
-            classes = [line.rstrip('\n') for line in classes]
-        for i in range(0, len(os.listdir(tmp_dir.name))):
-            out = np.loadtxt('output' + str(i))
-            result = np.argsort(out)[995:]
-            log.info(f'Results for {list_of_names[i]}:\n')
-            for j in result[::-1]:
-                print(f'{classes[j]} {out[j]}')
-            print('\n')
-            os.remove('output' + str(i))
+import traceback
 
 
 def cli_argument_parser():
@@ -117,9 +79,50 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='niter')
+    parser.add_argument('-nt', '--number_top',
+                        help='Number of top results.',
+                        default=5,
+                        type=int,
+                        dest='number_top')
     args = parser.parse_args()
 
     return args
+
+
+class OnnxRuntimeProcess():
+    def __init__(self):
+        self._command_line = ''
+
+    def _add_argument(self, name_of_arg, value_of_arg):
+        self._command_line += ' ' + name_of_arg + ' ' + value_of_arg
+
+    def _add_option(self, name_of_arg):
+        self._command_line += ' ' + name_of_arg
+
+    def create_command_line(self, dict_of_args):
+        for name, arg in dict_of_args.items():
+            if name == '-bch':
+                self._add_option(arg)
+            elif name == '-l':
+                if arg != '':
+                    self._add_option('--dump_flag')
+            elif arg != '':
+                self._add_argument(name, arg)
+
+    def execute(self):
+        proc = subprocess.run(self._command_line, shell=True)
+        if(proc.returncode != 0):
+            log.error(traceback.format_exc())
+            sys.exit(1)
+
+    def process_benchmark_output(self, list_of_names, tmp_dir):
+        list_of_names = list_of_names[::-1]
+        result = {'images': []}
+        for i in range(0, len(os.listdir(tmp_dir.name))):
+            out = np.loadtxt('output' + str(i))
+            result['images'].append(out)
+            os.remove('output' + str(i))
+        return result
 
 
 def std_transformer(std):
@@ -169,27 +172,36 @@ def main():
     tmp = tempfile.TemporaryDirectory()
     cur_path = os.getcwd()
     args = cli_argument_parser()
+    try:
+        log.info(f'Reading model {args.model_path}')
+        model = ort.InferenceSession(args.model_path)
 
-    model = ort.InferenceSession(args.model_path)
+        model_wrapper = OnnxRuntimeModelWrapperCpp(model)
+        model_data = OnnxRuntimeTransformerCpp(model)
+        io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
+        log.info('Preparing input images for model')
+        io.prepare_input(model, args.input)
 
-    model_wrapper = OnnxRuntimeModelWrapperCpp(model)
-    model_data = OnnxRuntimeTransformerCpp(model)
-    io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
-    io.prepare_input(model, args.input)
+        if args.mean != '' and args.scale != '':
+            log.info('Transform mean and std from RGB to BGR')
+            args.mean = std_transformer(args.mean)
+            args.scale = std_transformer(args.scale)
+        log.info('Prepare output file names')
+        list_of_names = prepare_output_file_names(args.input)
+        log.info('Preparing images for benchmark in temporary directory')
+        prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
 
-    if args.mean != '' and args.scale != '':
-        args.mean = std_transformer(args.mean)
-        args.scale = std_transformer(args.scale)
-
-    list_of_names = prepare_output_file_names(args.input)
-    prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
-
-    args.input = tmp.name
-    proc = OnnxRuntimeProcess()
-    proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp.name)))))
-    proc.execute()
-    proc.parse_output(args.labels, tmp, list_of_names)
-    return 0
+        args.input = tmp.name
+        log.info('Initializing onnxruntime process')
+        proc = OnnxRuntimeProcess()
+        proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp.name)))))
+        log.info('Onnxruntime benchmark process:\n')
+        proc.execute()
+        res = proc.process_benchmark_output(list_of_names, tmp)
+        io.process_output(res, log)
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':
