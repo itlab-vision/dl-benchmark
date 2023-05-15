@@ -217,6 +217,7 @@ class MXNetTransformer(Transformer):
 
     def transform_images(self, images, shape, element_type, *args):
         import mxnet
+
         dataset_size = images.shape[0]
         new_shape = [dataset_size] + shape[1:]
         transformed_images = mxnet.nd.zeros(shape=new_shape, dtype=element_type)

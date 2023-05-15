@@ -7,6 +7,7 @@ class MXNetParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
+        CONFIG_FRAMEWORK_DEPENDENT_HYBRIDIZE_TAG = 'Hybridize'
         CONFIG_FRAMEWORK_DEPENDENT_NORMALIZE_TAG = 'Normalize'
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_STD_TAG = 'Std'
@@ -18,6 +19,9 @@ class MXNetParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG)[0].firstChild
         _input_shape = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
+        _hybridize = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_HYBRIDIZE_TAG)[0].firstChild
+        print(_hybridize.data)
         _normalize = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_NORMALIZE_TAG)[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName(
@@ -30,6 +34,7 @@ class MXNetParametersParser(DependentParametersParser):
         return MXNetParameters(
             input_name=_input_name.data if _input_name else None,
             input_shape=_input_shape.data if _input_shape else None,
+            hybridize=_hybridize.data if _hybridize else None,
             normalize=_normalize.data if _normalize else None,
             mean=_mean.data if _mean else None,
             std=_std.data if _std else None,
@@ -38,9 +43,11 @@ class MXNetParametersParser(DependentParametersParser):
 
 
 class MXNetParameters(FrameworkParameters):
-    def __init__(self, input_name, input_shape, normalize, mean, std, channel_swap):
+    def __init__(self, input_name, input_shape, hybridize, normalize,
+                 mean, std, channel_swap):
         self.input_name = None
         self.input_shape = None
+        self.hybridize = None
         self.normalize = None
         self.mean = None
         self.std = None
@@ -50,6 +57,8 @@ class MXNetParameters(FrameworkParameters):
             self.input_name = input_name
         if self._parameter_is_not_none(input_shape):
             self.input_shape = input_shape
+        if self._parameter_is_not_none(hybridize):
+            self.hybridize = hybridize
         if self._parameter_is_not_none(normalize):
             self.normalize = normalize
         if self._parameter_is_not_none(mean):

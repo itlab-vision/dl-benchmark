@@ -48,6 +48,11 @@ class MXNetProcess(ProcessHandler):
         common_params = MXNetProcess._add_optional_argument_to_cmd_line(
             common_params, '--input_name', input_name)
 
+        hybridize = self._test.dep_parameters.hybridize
+        if hybridize == 'True':
+            common_params = MXNetProcess._add_flag_to_cmd_line(
+                common_params, '--hybrid')
+
         normalize = self._test.dep_parameters.normalize
         if normalize == 'True':
             common_params = MXNetProcess._add_flag_to_cmd_line(
