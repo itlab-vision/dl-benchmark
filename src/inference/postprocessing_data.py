@@ -38,7 +38,9 @@ def calculate_fps(pictures, time):
     return pictures / time
 
 
-def calculate_performance_metrics_sync_mode(batch_size, inference_time):
+def calculate_performance_metrics_sync_mode(batch_size, inference_time,
+                                            min_infer_time = 0.0):
+    inference_time = delete_incorrect_time(inference_time, min_infer_time)
     inference_time = three_sigma_rule(inference_time)
     average_time = calculate_average_time(inference_time)
     latency = calculate_latency(inference_time)
@@ -47,13 +49,13 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time):
 
 
 def log_performance_metrics_sync_mode(log, average_time, fps, latency):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
+    log.info(f'Average time of single pass : {average_time:.3f}')
+    log.info(f'FPS : {fps:.3f}')
+    log.info(f'Latency : {latency:.3f}')
 
 
 def print_performance_metrics_sync_mode(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
+    print(f'{average_time:.3f},{fps:.3f},{latency:.3f}')
 
 
 def calculate_performance_metrics_async_mode(inference_time, batch_size, iteration_count):
