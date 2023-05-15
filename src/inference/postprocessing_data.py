@@ -39,7 +39,7 @@ def calculate_fps(pictures, time):
 
 
 def calculate_performance_metrics_sync_mode(batch_size, inference_time,
-                                            min_infer_time = 0.0):
+                                            min_infer_time=0.0):
     inference_time = delete_incorrect_time(inference_time, min_infer_time)
     inference_time = three_sigma_rule(inference_time)
     average_time = calculate_average_time(inference_time)

@@ -195,11 +195,11 @@ def main():
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
-        result, time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
+        result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(time,
-                                                                                args.batch_size,
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time,
                                                                                 args.mininfer)
 
         if not args.raw_output:
