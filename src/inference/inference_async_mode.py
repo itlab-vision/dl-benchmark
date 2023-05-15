@@ -226,12 +226,21 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) with {args.requests} requests on {args.device}')
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
+
+        log.info('Computing performance metrics')
         average_time, fps = pp.calculate_performance_metrics_async_mode(time,
                                                                         args.batch_size,
                                                                         args.number_iter)
 
         if not args.raw_output:
-            io.process_output(result, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
             pp.log_performance_metrics_async_mode(log, average_time, fps)
         else:
             pp.print_performance_metrics_async_mode(average_time, fps)
