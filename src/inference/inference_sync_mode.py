@@ -187,11 +187,9 @@ def main():
         utils.reshape_input(model, args.batch_size)
 
         log.info('Prepare input data')
-
         io.prepare_input(model, args.input)
 
         log.info('Create executable network')
-
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
