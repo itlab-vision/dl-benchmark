@@ -177,9 +177,9 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         return transformed_image
 
     def transform_images(self, images, shape, element_type, input_name):
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        transformed_images = np.zeros(shape=shape)
         transformed_images = self._transform(images, input_name)
-        return transformed_images
+        return transformed_images.astype(element_type)
 
 
 class MXNetTransformer(Transformer):
@@ -287,3 +287,7 @@ class PyTorchTransformer(Transformer):
         for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
+
+
+class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
+    pass

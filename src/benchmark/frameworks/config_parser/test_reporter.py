@@ -63,6 +63,9 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['num_inter_threads'] = 'Inter threads'
         match_parameter_description['num_intra_threads'] = 'Intra threads'
 
+        match_parameter_description['execution_providers'] = 'Execution Providers'
+        match_parameter_description['execution_mode'] = 'Execution Mode'
+
         match_parameter_description['mean'] = 'Mean'
         match_parameter_description['input_scale'] = 'Scale'
         match_parameter_description['layout'] = 'Layout'

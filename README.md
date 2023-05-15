@@ -20,7 +20,7 @@ DLI supports inference using the following frameworks:
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimizations for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
-- [ONNX Runtime][onnx-runtime].
+- [ONNX Runtime][onnx-runtime] (C++ and Python API).
 - [MXNet][mxnet].
 - [OpenCV DNN][opencv-dnn] (C++ and Python API).
 - [PyTorch][pytorch].

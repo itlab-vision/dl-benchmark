@@ -188,6 +188,25 @@
   - `InferenceMode` - тег, необязательный для заполнения. Определяет режим запуска модели.
     По умолчанию не установлен.
 
+- Набор тегов для тестирования вывода средствами ONNX Runtime Python API:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного изображения. По умолчанию будет установлен NCHW.
+  - `InputShapes` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `InputNames` - тег, необязательный для заполнения. Определяет название входного узла модели. 
+    По умолчанию не установлен.
+  - `ThreadCount` - опциональный тег. Описывает максимальное количество физических
+    потоков для выполнения вывода.
+  - `ExecutionProviders` - провайдер, с помощью которого будет выполнен проход сети. По умолчанию используется `CPUExecutionProvider`
+  - `InterThreadCount` - количество потоков, используемых для распараллеливания исполнения вывода (между узлами).
+    По умолчанию устанавливается onnxruntime.
+  - `ExecutionMode` - режим выполнения. По умолчанию устанавливается последовательное выполнение - `ORT_SEQUENTIAL`.
+
 
 ### Примеры заполнения
 
@@ -481,6 +500,47 @@
       <OutputName></OutputName>
       <ModelType>scripted</ModelType>
       <InferenceMode>True</InferenceMode>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами ONNX Runtime Python API
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>mobilenet-v2-pytorch</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>pytorch</SourceFramework>
+      <ModelPath>public/mobilenet-v2-pytorch/mobilenet-v2.onnx</ModelPath>
+      <WeightsPath>None</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>ONNX Runtime Python</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>100</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <ChannelSwap></ChannelSwap>
+      <Mean>[127.5,127.5,127.5]</Mean>
+      <InputScale>[127.5,127.5,127.5]</InputScale>
+      <InputShapes></InputShapes>
+      <InputNames></InputNames>
+      <Layout></Layout>
+      <ExecutionProviders></ExecutionProviders>
+      <ThreadCount></ThreadCount>
+      <InterThreadCount></InterThreadCount>
+      <ExecutionMode></ExecutionMode>
     </FrameworkDependent>
   </Test>
 </Tests>

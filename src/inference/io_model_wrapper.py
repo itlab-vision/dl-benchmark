@@ -200,3 +200,39 @@ class PyTorchIOModelWrapper(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         import torch
         return torch.float32
+
+
+class ONNXIOModelWrapper(IOModelWrapper):
+    def __init__(self, inputs, batch):
+        self._inputs = inputs
+        self._batch = batch
+
+    def get_input_layer_names(self, model):
+        if self._inputs:
+            return list(self._inputs.keys())
+
+        inputs_info = model.get_inputs()
+        return [input_layer.name for input_layer in inputs_info]
+
+    def get_input_layer_shape(self, model, layer_name):
+        if self._inputs:
+            input_shape = self._inputs[layer_name]
+        else:
+            inputs_info = model.get_inputs()
+            for model_input in inputs_info:
+                if model_input.name == layer_name:
+                    input_shape = model_input.shape
+
+        return [self._batch, *input_shape[1:]]
+
+    def get_input_layer_dtype(self, model, layer_name):
+        inputs_info = model.get_inputs()
+        for model_input in inputs_info:
+            if model_input.name == layer_name:
+                dtype = model_input.type.replace('tensor(', '').replace(')', '')
+                if dtype == 'float':
+                    dtype += '32'
+                return dtype
+
+        from numpy import float32
+        return float32

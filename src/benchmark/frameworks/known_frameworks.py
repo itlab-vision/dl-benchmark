@@ -3,6 +3,7 @@ class KnownFrameworks:
     tensorflow = 'TensorFlow'
     caffe = 'Caffe'
     onnx_runtime = 'ONNX Runtime'
+    onnx_runtime_python = 'ONNX Runtime Python'
     tensorflow_lite = 'TensorFlowLite'
     mxnet = 'MXNet'
     opencv_dnn_python = 'OpenCV DNN Python'

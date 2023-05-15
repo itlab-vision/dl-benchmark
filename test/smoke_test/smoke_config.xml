@@ -369,4 +369,37 @@
             <InferenceMode></InferenceMode>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>efficientnet-b0-pytorch</Name>
+            <Precision>default</Precision>
+            <SourceFramework>pytorch</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet-b0.onnx</ModelPath>
+            <WeightsPath>None</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>ONNX Runtime Python</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>60</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean>[123.675,116.28,103.53]</Mean>
+            <InputScale>[58.395,57.12,57.375]</InputScale>
+            <InputShapes></InputShapes>
+            <InputNames></InputNames>
+            <Layout></Layout>
+            <ExecutionProviders></ExecutionProviders>
+            <ThreadCount></ThreadCount>
+            <InterThreadCount></InterThreadCount>
+            <ExecutionMode></ExecutionMode>
+        </FrameworkDependent>
+    </Test>
 </Tests>
