@@ -175,10 +175,10 @@ def main():
     try:
         log.info(f'Reading model {args.model_path}')
         model = ort.InferenceSession(args.model_path)
-
         model_wrapper = OnnxRuntimeModelWrapperCpp(model)
         model_data = OnnxRuntimeTransformerCpp(model)
         io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
+
         log.info('Preparing input images for model')
         io.prepare_input(model, args.input)
 
@@ -186,19 +186,24 @@ def main():
             log.info('Transform mean and std from RGB to BGR')
             args.mean = std_transformer(args.mean)
             args.scale = std_transformer(args.scale)
+
         log.info('Prepare output file names')
         list_of_names = prepare_output_file_names(args.input)
+
         log.info('Preparing images for benchmark in temporary directory')
         prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
 
         args.input = tmp.name
+
         log.info('Initializing onnxruntime process')
         proc = OnnxRuntimeProcess()
         proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp.name)))))
+
         log.info('Onnxruntime benchmark process:\n')
         proc.execute()
         res = proc.process_benchmark_output(list_of_names, tmp)
         io.process_output(res, log)
+
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)
