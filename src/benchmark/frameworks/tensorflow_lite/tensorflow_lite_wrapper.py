@@ -1,5 +1,5 @@
 from .tensorflow_lite_process import TensorFlowLiteProcess
-from .tensorflow_lite_test import TensorFlowLiteTest
+from ..config_parser.test_reporter import Test
 from ..framework_wrapper import FrameworkWrapper
 
 
@@ -12,4 +12,4 @@ class TensorFlowLiteWrapper(FrameworkWrapper):
 
     @staticmethod
     def create_test(model, dataset, indep_parameters, dep_parameters):
-        return TensorFlowLiteTest(model, dataset, indep_parameters, dep_parameters)
+        return Test(model, dataset, indep_parameters, dep_parameters)

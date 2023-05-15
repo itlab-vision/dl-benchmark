@@ -12,6 +12,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._output = None
         self._status = None
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
+        self._report_path = None
 
     @staticmethod
     def get_cmd_python_version():
@@ -39,8 +40,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self.__log.info(f'Start inference test on model: {self._test.model.name}')
         self.__log.info(f'Command line is: {command_line}')
         self._executor.set_target_framework(self._test.indep_parameters.inference_framework)
-        self._status, self._output = self._executor.execute_process(command_line,
-                                                                    self._test.indep_parameters.test_time_limit)
+
+        # add timeout overhead because time_limit in bechmark app applies for inference stage only
+        # set None n case of test_time_limit is unset for backward compatibility
+        configured_time_limit = self._test.indep_parameters.test_time_limit
+        timeout = configured_time_limit + 300 if configured_time_limit else None
+        self._status, self._output = self._executor.execute_process(command_line, timeout)
 
         if type(self._output) is not list:
             self._output = self._output.decode('utf-8').split('\n')[:-1]
@@ -60,11 +65,18 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def get_performance_metrics(self):
         pass
 
+    def get_json_report_content(self):
+        if self._report_path:
+            return json.loads(self._executor.get_file_content(self._report_path))
+
+    def get_output_lines(self):
+        return self._output
+
     def get_performance_metrics_cpp(self):
         if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        report = json.loads(self._executor.get_file_content(self._report_path))
+        report = self.get_json_report_content()
 
         # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000
@@ -87,18 +99,19 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         weights = self._test.model.weight
         dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
+        time = int(self._test.indep_parameters.test_time_limit)
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path}'
+        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
 
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.shape)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.input_shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-mean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-scale', self._test.dep_parameters.scale)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-scale', self._test.dep_parameters.input_scale)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads',
                                                             self._test.dep_parameters.thread_count)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
@@ -152,6 +165,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                          ]
         if hasattr(self._test.dep_parameters, 'mode'):
             test_settings.append(self._test.dep_parameters.mode)
+        if hasattr(self._test.dep_parameters, 'code_source'):
+            test_settings.append(self._test.dep_parameters.code_source)
+        if hasattr(self._test.dep_parameters, 'runtime'):
+            test_settings.append(self._test.dep_parameters.runtime)
+        if hasattr(self._test.dep_parameters, 'hint'):
+            test_settings.append(self._test.dep_parameters.hint)
         filename = '_'.join(test_settings)
         filename += '.log'
         return filename

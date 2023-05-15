@@ -56,19 +56,19 @@ class PyTorchParameters(FrameworkParameters):
         self.model_type = None
         self.inference_mode = None
 
-        if self._parameter_not_is_none(input_name):
+        if self._parameter_is_not_none(input_name):
             self.input_name = input_name
-        if self._parameter_not_is_none(input_shape):
+        if self._parameter_is_not_none(input_shape):
             self.input_shape = input_shape
-        if self._parameter_not_is_none(normalize):
+        if self._parameter_is_not_none(normalize):
             self.normalize = normalize
-        if self._parameter_not_is_none(mean):
+        if self._parameter_is_not_none(mean):
             self.mean = mean
-        if self._parameter_not_is_none(std):
+        if self._parameter_is_not_none(std):
             self.std = std
-        if self._parameter_not_is_none(output_name):
+        if self._parameter_is_not_none(output_name):
             self.output_name = output_name
-        if self._parameter_not_is_none(model_type):
+        if self._parameter_is_not_none(model_type):
             self.model_type = model_type
-        if self._parameter_not_is_none(inference_mode):
+        if self._parameter_is_not_none(inference_mode):
             self.inference_mode = inference_mode

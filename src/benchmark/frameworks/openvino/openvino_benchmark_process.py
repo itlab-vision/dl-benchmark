@@ -1,20 +1,29 @@
 import re
-import json
 from pathlib import Path
 
 from .openvino_process import OpenVINOProcess
 
 
 class OpenVINOBenchmarkProcess(OpenVINOProcess):
-    def __init__(self, test, executor, log, perf_hint=''):
+    def __init__(self, test, executor, log, perf_hint='', api_mode=''):
         super().__init__(test, executor, log)
         self._perf_hint = perf_hint
+        self._api_mode = api_mode
 
     @staticmethod
     def _add_perf_hint_for_cmd_line(command_line, perf_hint):
         hint = perf_hint.lower()
-        if hint in ('latency', 'throughput'):
+        if hint in ('latency', 'throughput', 'none'):
             return f'{command_line} -hint {hint}'
+
+        return command_line
+
+    @staticmethod
+    def _add_api_mode_for_cmd_line(command_line, api_mode):
+        api = api_mode.lower()
+        if api in ('sync', 'async'):
+            return f'{command_line} -api {api}'
+
         return command_line
 
     @staticmethod
@@ -23,6 +32,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
             return f'{command_line} -c {extension}'
         if 'CPU' in device or 'MYRIAD' in device:
             return f'{command_line} -l {extension}'
+
         return command_line
 
     def get_performance_metrics(self):
@@ -70,13 +80,21 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nstreams', nstreams)
         nthreads = self._test.dep_parameters.nthreads
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+
         return arguments
+
+    def extract_inference_param(self, key):
+        regex = re.compile(rf'\s*{key}\s*[:,]\s*(?P<value>.+)$')
+        for line in self._output:
+            res = regex.search(line)
+            if res:
+                return res.group('value')
+        return None
 
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
-    def __init__(self, test, executor, log, perf_hint=''):
-        super().__init__(test, executor, log, perf_hint)
-        self._perf_hint = perf_hint
+    def __init__(self, test, executor, log, perf_hint='', api_mode=''):
+        super().__init__(test, executor, log, perf_hint, api_mode)
 
     @staticmethod
     def create_process(test, executor, log):
@@ -88,44 +106,37 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        frontend = self._test.dep_parameters.frontend
+        time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration}'
+        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time}'
+
+        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
+        if frontend != 'IR':
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
+
         return command_line
 
-
-class OpenVINOBenchmarkPythonOnnxProcess(OpenVINOBenchmarkPythonProcess):
-    def __init__(self, test, executor, log):
-        super().__init__(test, executor, log, 'none')
-
-    @staticmethod
-    def create_process(test, executor, log):
-        return OpenVINOBenchmarkPythonOnnxProcess(test, executor, log)
-
-    def _fill_command_line(self):
-        model_xml = self._test.model.model
-        dataset = self._test.dataset.path
-        batch = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
-        iteration = self._test.indep_parameters.iteration
-
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
-                     f'-hint none -api sync ')
-
-        arguments = self._add_common_arguments(arguments, device)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
-
-        command_line = f'benchmark_app {arguments}'
-        return command_line
+    def extract_inference_param(self, key):
+        if key == 'nireq':
+            regex = re.compile(r'\s*(\d+)\s*inference\s+requests')
+            for line in self._output:
+                if 'Measuring performance' in line:
+                    res = regex.search(line)
+                    if res:
+                        return res.group(1)
+            return None
+        return super().extract_inference_param(key)
 
 
 class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
-    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint=''):
-        super().__init__(test, executor, log, perf_hint)
-        self._perf_hint = perf_hint
+    def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint='', api_mode=''):
+        super().__init__(test, executor, log, perf_hint, api_mode)
 
         invalid_path_exception = ValueError('Must provide valid path to the folder '
                                             'with OpenVINO C++ benchmark_app (--openvino_cpp_benchmark_dir)')
@@ -148,21 +159,29 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        frontend = self._test.dep_parameters.frontend
+        time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
+        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time} '
                      f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
 
+        arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
+        if frontend != 'IR':
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+                                                                self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
+
         return command_line
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
-        report = json.loads(self._executor.get_file_content(self._report_path))
+        report = self.get_json_report_content()
 
         # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000
@@ -176,29 +195,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
         return average_time_of_single_pass, fps, latency
 
-
-class OpenVINOBenchmarkCppOnnxProcess(OpenVINOBenchmarkCppProcess):
-    def __init__(self, test, executor, log, cpp_benchmarks_dir):
-        super().__init__(test, executor, log, cpp_benchmarks_dir, 'none')
-
-    @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
-        return OpenVINOBenchmarkCppOnnxProcess(test, executor, log, cpp_benchmarks_dir)
-
-    def _fill_command_line(self):
-        model_xml = self._test.model.model
-        dataset = self._test.dataset.path
-        batch = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
-        iteration = self._test.indep_parameters.iteration
-
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} '
-                     f'-hint none -api sync -report_type "no_counters" '
-                     f'-json_stats -report_folder {self._report_path.parent.absolute()}')
-
-        arguments = self._add_common_arguments(arguments, device)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-        arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale', self._test.dep_parameters.input_scale)
-
-        command_line = f'{self._benchmark_path} {arguments}'
-        return command_line
+    def extract_inference_param(self, key):
+        if key == 'nireq':
+            return self.get_json_report_content()['configuration_setup']['nireq']
+        return super().extract_inference_param(key)

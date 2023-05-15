@@ -29,9 +29,17 @@ void OCVLauncher::log_framework_version() const {
     logger::info << "OpenCV version: " << CV_VERSION << logger::endl;
 }
 
+void OCVLauncher::set_backend(cv::dnn::Net& net) {
+#ifdef OCV_DNN
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+#elif OCV_DNN_WITH_OV
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_INFERENCE_ENGINE);
+#endif
+}
+
 void OCVLauncher::read(const std::string model_file, const std::string weights_file) {
     net = cv::dnn::readNet(model_file, weights_file);
-    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+    set_backend(net);
 
     std::vector<MatShape> inputShapes, outputShapes;
     net.getLayerShapes(MatShape(), 0, inputShapes, outputShapes);
@@ -72,11 +80,11 @@ void OCVLauncher::fill_inputs_outputs_info() {
 
 IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
     std::vector<TensorDescription> input_tensors_info{{input_names[0],
-                                                 input_shapes[0],
-                                                 input_shapes[0],
-                                                 "",
-                                                 utils::DataPrecision::FP32,
-                                                 true}};  // only CV_32F type for IO supported
+                                                       input_shapes[0],
+                                                       input_shapes[0],
+                                                       "",
+                                                       utils::DataPrecision::FP32,
+                                                       true}};  // only CV_32F type for IO supported
     std::vector<TensorDescription> output_tensors_info;
     for (size_t i = 0; i < output_names.size(); ++i) {
         output_tensors_info.push_back(

@@ -14,15 +14,27 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
     ```
 
 1. Create `build` directory:
-   
+
     ```
     mkdir build && cd build
     ```
 
 1. Configure it with `cmake`:
-   
+
+    - For OpenCV with OpenVINO:
+
+    Setup environment variables to detect OpenVINO:
+
     ```
-    cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF ..
+        source <openvino_dir>/setupvars.sh
+
+        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=ON -DBUILD_DOCS=OFF ..
+    ```
+
+    - For OpenCV:
+
+    ```
+        cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=OFF -DBUILD_DOCS=OFF ..
     ```
 
 1. Build and install project:
@@ -52,22 +64,26 @@ so that cmake can find it during configuration step:
 
 1. In the created directory run `cmake` command:
 
-    ```
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
-    ```
+    - For OPENCV_LAUNCHER with OpenVINO:
+         ```
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=ON -DBUILD_OPENCV_LAUNCHER=OFF -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         ```
+    - For OPENCV_LAUNCHER:
+         ```
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=OFF -DBUILD_OPENCV_LAUNCHER=ON -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         ```
 
 1. Build tool
 
     ```
-    cmake --build .
+    cmake --build . -- -j$(nproc --all)
     ```
 
 Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>/bin` directory, where `BUILD_TYPE` whether `Debug` or `Release`.
 
 ## Usage
 
-OpenCV DNN launcher supports models in `ONNX`, `Caffe` and `TensorFlow` formats,
-no custom backends are tested for now.
+OpenCV DNN launcher supports models in `IR (OpenVINO)` with `DNN_BACKEND_INFERENCE_ENGINE` (backend); `ONNX`, `Caffe` and `TensorFlow` formats with `DNN_BACKEND_OPENCV` (backend).
 
 Limitations on the models:
 - One input
