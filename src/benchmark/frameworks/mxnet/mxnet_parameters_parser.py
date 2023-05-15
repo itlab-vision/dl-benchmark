@@ -53,17 +53,17 @@ class MXNetParameters(FrameworkParameters):
         self.std = None
         self.channel_swap = None
 
-        if self._parameter_not_is_none(input_name):
+        if self._parameter_is_not_none(input_name):
             self.input_name = input_name
-        if self._parameter_not_is_none(input_shape):
+        if self._parameter_is_not_none(input_shape):
             self.input_shape = input_shape
-        if self._parameter_not_is_none(hybridize):
+        if self._parameter_is_not_none(hybridize):
             self.hybridize = hybridize
-        if self._parameter_not_is_none(normalize):
+        if self._parameter_is_not_none(normalize):
             self.normalize = normalize
-        if self._parameter_not_is_none(mean):
+        if self._parameter_is_not_none(mean):
             self.mean = mean
-        if self._parameter_not_is_none(std):
+        if self._parameter_is_not_none(std):
             self.std = std
-        if self._parameter_not_is_none(channel_swap):
+        if self._parameter_is_not_none(channel_swap):
             self.channel_swap = channel_swap

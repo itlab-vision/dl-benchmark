@@ -27,6 +27,7 @@
             <ThreadCount></ThreadCount>
             <StreamCount></StreamCount>
             <!-- Следующие параметры могут отсутствовать -->
+            <Frontend></Frontend>
             <InputShape></InputShape>
             <Layout></Layout>
             <Mean></Mean>
@@ -144,6 +145,7 @@
             <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
+            <Backend>DNN</Backend>
             <InputShape></InputShape>
             <Layout></Layout>
             <Mean></Mean>

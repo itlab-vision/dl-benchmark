@@ -101,7 +101,8 @@ if __name__ == '__main__':
     args = cli_argument_parser()
 
     log.info(f'Parsing configuration file {args.config_path}')
-    test_list = process_config(args.config_path, log)
+    test_list, test_creation_status = process_config(args.config_path, log)
+    log.info('All tests are added to test list' if not test_creation_status else 'Not all tests are added to test list')
 
     log.info(f'Create result table with name: {args.result_file}')
 
@@ -115,4 +116,4 @@ if __name__ == '__main__':
                                            args.cpp_benchmarks_dir,
                                            args.openvino_cpp_benchmark_dir)
     log.info('Inference tests completed' if not inference_status.value else 'Inference tests failed')
-    sys.exit(inference_status.value)
+    sys.exit(inference_status.value or test_creation_status)

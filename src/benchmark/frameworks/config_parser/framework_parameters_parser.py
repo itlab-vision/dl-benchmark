@@ -1,6 +1,6 @@
 class FrameworkParameters:
     @staticmethod
-    def _parameter_not_is_none(parameter):
+    def _parameter_is_not_none(parameter):
         return parameter is not None
 
     @staticmethod
