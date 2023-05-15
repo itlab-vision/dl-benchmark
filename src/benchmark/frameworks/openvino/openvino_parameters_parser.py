@@ -109,14 +109,14 @@ class OpenVINOParameters(FrameworkParameters):
         if self._code_source_is_correct(code_source):
             self.code_source = code_source
 
-        if self._parameter_not_is_none(runtime):
+        if self._parameter_is_not_none(runtime):
             if self._runtime_is_correct(runtime):
                 self.runtime = runtime
         else:
             if self.code_source == 'ovbenchmark':
                 self.runtime = 'python'
 
-        if self._parameter_not_is_none(hint):
+        if self._parameter_is_not_none(hint):
             if self._hint_is_correct(hint):
                 self.hint = hint
         else:
@@ -128,48 +128,48 @@ class OpenVINOParameters(FrameworkParameters):
         else:
             raise ValueError('Wrong extension path for device. File not found.')
 
-        if self._parameter_not_is_none(infer_request_count):
+        if self._parameter_is_not_none(infer_request_count):
             if self._int_value_is_correct(infer_request_count):
                 self.infer_request = infer_request_count
             if self.code_source == 'ovbenchmark' and self.hint != 'none':
                 raise ValueError(f'Cannot set nireq for ovbenchmark and hint {self.hint}')
 
         if self.mode == 'Sync' or self.code_source == 'ovbenchmark':
-            if self._parameter_not_is_none(thread_count):
+            if self._parameter_is_not_none(thread_count):
                 if self._int_value_is_correct(thread_count):
                     self.nthreads = int(thread_count)
                 else:
                     raise ValueError('Thread count can only take values: integer greater than zero.')
 
         if self.mode == 'Async' and self.code_source == 'handwritten':
-            if self._parameter_not_is_none(async_request_count):
+            if self._parameter_is_not_none(async_request_count):
                 if self._int_value_is_correct(async_request_count):
                     self.async_request = async_request_count
                 else:
                     raise ValueError('Async request count can only take values: integer greater than zero.')
 
         if self.mode == 'Async' or self.code_source == 'ovbenchmark':
-            if self._parameter_not_is_none(stream_count):
+            if self._parameter_is_not_none(stream_count):
                 if self._int_value_is_correct(stream_count):
                     self.nstreams = stream_count
                 else:
                     raise ValueError('Stream count can only take values: integer greater than zero.')
 
         if self.code_source == 'ovbenchmark':
-            if self._parameter_not_is_none(shape):
+            if self._parameter_is_not_none(shape):
                 self.shape = shape.strip()
-            if self._parameter_not_is_none(layout):
+            if self._parameter_is_not_none(layout):
                 self.layout = layout.strip()
 
         if self._frontend_is_correct(frontend):
             self.frontend = frontend if frontend else 'IR'
         if self.frontend != 'IR':
-            if self._parameter_not_is_none(mean):
+            if self._parameter_is_not_none(mean):
                 if self._mean_is_correct(mean):
                     self.mean = mean.strip()
                 else:
                     raise ValueError('Mean can only take values: list of 3 float elements.')
-            if self._parameter_not_is_none(input_scale):
+            if self._parameter_is_not_none(input_scale):
                 self.input_scale = input_scale.strip()
 
     @staticmethod
@@ -213,4 +213,4 @@ class OpenVINOParameters(FrameworkParameters):
                          f'but Frontend can only take values: {", ".join(const_correct_frontend)}')
 
     def _extension_path_is_correct(self, extension):
-        return not self._parameter_not_is_none(extension) or Path(extension).exists()
+        return not self._parameter_is_not_none(extension) or Path(extension).exists()

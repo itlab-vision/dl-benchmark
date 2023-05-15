@@ -13,13 +13,13 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
     git checkout 4.7.0
     ```
 
-2. Create `build` directory:
+1. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-3. Configure it with `cmake`:
+1. Configure it with `cmake`:
 
     - For OpenCV with OpenVINO:
 
@@ -37,7 +37,7 @@ To get `OpenCV` you need either download [prebuilt binaries](https://opencv.org/
         cmake -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DWITH_OPENVINO=OFF -DBUILD_DOCS=OFF ..
     ```
 
-4. Build and install project:
+1. Build and install project:
 
     ```
     make install -j$(nproc --all)
@@ -56,13 +56,13 @@ so that cmake can find it during configuration step:
     git submodule update --init --recursive
     ```
 
-2. Create `build` directory:
+1. Create `build` directory:
 
     ```
     mkdir build && cd build
     ```
 
-3. In the created directory run `cmake` command:
+1. In the created directory run `cmake` command:
 
     - For OPENCV_LAUNCHER with OpenVINO:
          ```
@@ -73,7 +73,7 @@ so that cmake can find it during configuration step:
          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=OFF -DBUILD_OPENCV_LAUNCHER=ON -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
          ```
 
-4. Build tool
+1. Build tool
 
     ```
     cmake --build . -- -j$(nproc --all)

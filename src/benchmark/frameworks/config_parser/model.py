@@ -20,27 +20,27 @@ class Model:
         self.model = None
         self.weight = None
         self.precision = None
-        if self._parameter_not_is_none(source_framework):
+        if self._parameter_is_not_none(source_framework):
             self.source_framework = source_framework
         else:
             raise ValueError('Source framework is required parameter.')
-        if self._parameter_not_is_none(name):
+        if self._parameter_is_not_none(name):
             self.name = name
         else:
             raise ValueError('Model name is required parameter.')
-        if self._parameter_not_is_none(model_path):
+        if self._parameter_is_not_none(model_path):
             self.model = model_path
         else:
             raise ValueError('Path to model is required parameter.')
-        if self._parameter_not_is_none(weights_path):
+        if self._parameter_is_not_none(weights_path):
             self.weight = weights_path
         else:
             raise ValueError('Path to model weights is required parameter.')
-        if self._parameter_not_is_none(precision):
+        if self._parameter_is_not_none(precision):
             self.precision = precision
         else:
             raise ValueError('Precision is required parameter.')
 
     @staticmethod
-    def _parameter_not_is_none(parameter):
+    def _parameter_is_not_none(parameter):
         return True if parameter is not None else False

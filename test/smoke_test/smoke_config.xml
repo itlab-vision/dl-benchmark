@@ -236,7 +236,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <InputShape>224 224 3</InputShape>
-            <InputName></InputName>
+            <InputName>input:0</InputName>
             <OutputNames></OutputNames>
             <ThreadCount></ThreadCount>
             <InterOpParallelismThreads></InterOpParallelismThreads>
@@ -336,6 +336,37 @@
             <SwapRB>True</SwapRB>
             <Crop></Crop>
             <Layout></Layout>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>alexnet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>60</TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <OutputName></OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
         </FrameworkDependent>
     </Test>
 </Tests>

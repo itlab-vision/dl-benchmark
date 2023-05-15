@@ -61,14 +61,15 @@
     - `Sync` используется для реализации latency-режима.
     - `Async` используется для реализации latency-режима при создании очереди из одного запроса
     и throughput-режима при создании очереди из большего числа запросов.
-  - `CodeSource` - тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `handwritten`;
-    определяет запуск benchmark_app из openvino или запуск самописных скриптов из данного репозитория
+  - `CodeSource` - тег, необязательный для заполнения; по умолчанию равен `handwritten`;
+    определяет запуск `benchmark_app` из пакет Intel Distribution of OpenVINO Toolkit или
+    запуск собственных реализаций вывода средствами OpenVINO.
   - `Runtime`- тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `python`;
     используется совместно с запуском benchmark_app. Определяет версию benchmark_app.
   - `Hint`- тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `latency`;
     используется совместно с запуском benchmark_app. Определяет "подсказку"
-    для выставления оптимальных параметров OpenVINO режимов.
-  - `Frontend` - тег, необязательный для заполнения; может отсуствовать; по умолчанию равен `ir`;
+    для выставления оптимальных параметров режимов OpenVINO.
+  - `Frontend` - тег, необязательный для заполнения; по умолчанию равен `ir`;
     используется совместно с запуском benchmark_app. Определяет расширение внешнего интерфейса.
   - `Extension` - тег, необязательный для заполнения. Описывает абсолютный путь
     до реализации слоев, неподдерживаемых OpenVINO.
@@ -168,6 +169,24 @@
     физическому количеству ядер в системе.
   - `Delegate` - опциональный тег. Устанавливает путь до библиотеки-делегата, больше информации [здесь][https://www.tensorflow.org/lite/performance/delegates]. По умолчанию не установлен.
   - `DelegateOptions` - опциональный тег. Устанавливает параметры для библиотеки-делегата в формате `option1: value1; option2: value2`.
+
+- Набор тегов для тестирования вывода средствами PyTorch:
+
+  - `Normalize` - тег, необязательный для заполнения. Описывает необходимость нормировки изображений
+    с использованием модуля `torchvision.transforms`.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `Std` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора в формате NCHW. По умолчанию не установлен.
+  - `InputName` - тег, необязательный для заполнения. Определяет название входного узла модели.
+    По умолчанию не установлен.
+  - `OutputName` - тег, необязательный для заполнения. Определяет название выходного узла модели.
+    По умолчанию не установлен.
+  - `ModelType` - тег, необязательный для заполнения. Определяет тип модели для запуска.
+    По умолчанию не установлен.
+  - `InferenceMode` - тег, необязательный для заполнения. Определяет режим запуска модели.
+    По умолчанию не установлен.
 
 
 ### Примеры заполнения
@@ -423,6 +442,45 @@
       <InputScale>[58.395,57.12,57.375]</InputScale>
       <ThreadCount></ThreadCount>
       <InferenceRequestsCount></InferenceRequestsCount>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами PyTorch
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>alexnet</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>PyTorch</SourceFramework>
+      <ModelPath></ModelPath>
+      <WeightsPath></WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/mnt/datasets/ILSVRC2012_img_val</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>PyTorch</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>10</IterationCount>
+      <TestTimeLimit>60</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <InputName>data</InputName>
+      <InputShape>1 3 224 224</InputShape>
+      <Normalize>True</Normalize>
+      <Mean>0.485 0.456 0.406</Mean>
+      <Std>0.229 0.224 0.225</Std>
+      <OutputName></OutputName>
+      <ModelType>scripted</ModelType>
+      <InferenceMode>True</InferenceMode>
     </FrameworkDependent>
   </Test>
 </Tests>

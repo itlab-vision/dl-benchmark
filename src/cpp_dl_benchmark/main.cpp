@@ -31,8 +31,8 @@ constexpr char model_msg[] =
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
-                               "                                                      available formats:\n"
-                               "                                                          OpenCV - .caffemodel, .bin";
+                               "                          available formats:\n"
+                               "                          OpenCV - .caffemodel, .bin";
 DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =

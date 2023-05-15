@@ -16,6 +16,7 @@
 - [ONNX Runtime][onnx-runtime].
 - [OpenCV][opencv].
 - [MXNet][mxnet].
+- [PyTorch][pytorch].
 
 ### Алгоритм работы скрипта
 
@@ -106,10 +107,10 @@ Inference Engine предоставляет 2 программных интер�
 
 **Примечание:** в публикуемой html-таблице содержатся только показатели FPS.
 
-### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV и MXNet
+### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet и PyTorch
 
 При оценке производительности вывода для Intel® Optimization for Caffe,
-Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV и MXNet 
+Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet и PyTorch
 осуществляется последовательный и независимый запуск запросов.
 Запуск очередного запроса выполняется после завершения предыдущего.
 Для каждого запроса осуществляется замер времени его выполнения.
@@ -258,3 +259,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [onnx-runtime]: https://onnxruntime.ai
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
+[pytorch]: https://pytorch.org

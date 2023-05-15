@@ -69,11 +69,15 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['input_shape'] = 'Input shape'
         match_parameter_description['input_name'] = 'Input name'
         match_parameter_description['output_names'] = 'Output names'
+        # duplicate because pytorch launcher does not match common template. To be fixed
+        match_parameter_description['output_name'] = 'Output name'
         match_parameter_description['normalize'] = 'Normalization flag'
         match_parameter_description['std'] = 'Standard deviation'
         match_parameter_description['channel_swap'] = 'Channel swap'
         match_parameter_description['swapRB'] = 'Channel swap'
         match_parameter_description['crop'] = 'Crop'
+        match_parameter_description['model_type'] = 'Model type'
+        match_parameter_description['inference_mode'] = 'Inference mode'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:
