@@ -183,8 +183,8 @@ def inference_tflite(interpreter, number_iter, get_slice):
             interpreter.set_tensor(input_info[name][0], data.astype(input_info[name][1]))
         t0 = time()
         interpreter.invoke()
-        result = [interpreter.get_tensor(output['index']) for output in outputs]
         t1 = time()
+        result = [interpreter.get_tensor(output['index']) for output in outputs]
         time_infer.append(t1 - t0)
 
     return result, time_infer
