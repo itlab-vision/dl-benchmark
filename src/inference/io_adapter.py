@@ -63,11 +63,17 @@ class IOAdapter(metaclass=abc.ABCMeta):
         return result
 
     def __read_data(self, filename, shape, dtype, input_shape):
+        def get_itemsize(dtype):
+            try:
+                return dtype().itemsize
+            except TypeError:
+                return np.dtype(dtype).itemsize
+
         data = []
         file_type = filename.split('.')[-1]
         if file_type == 'bin':
             file_size = os.path.getsize(filename)
-            input_size = dtype().itemsize * int(np.prod(shape[1:]))
+            input_size = get_itemsize(dtype) * int(np.prod(shape[1:]))
 
             if file_size != input_size:
                 raise Exception(
