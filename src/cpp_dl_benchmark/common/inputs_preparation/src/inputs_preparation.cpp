@@ -178,6 +178,9 @@ TensorBuffer get_tensor_from_image(const inputs::InputDescr& input_descr, int ba
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
     }
+    else if (precision == utils::DataPrecision::FP16) {
+        return create_tensor_from_image<short>(input_descr, batch_size, start_index);
+    }
     else if (precision == utils::DataPrecision::I32) {
         return create_tensor_from_image<int32_t>(input_descr, batch_size, start_index);
     }
@@ -185,7 +188,7 @@ TensorBuffer get_tensor_from_image(const inputs::InputDescr& input_descr, int ba
         return create_tensor_from_image<int64_t>(input_descr, batch_size, start_index);
     }
 
-    throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
+    throw std::invalid_argument("Unsupported tensor precision in get_tensor_from_image(): " + utils::get_precision_str(precision));
 }
 
 TensorBuffer get_image_info_tensor(const inputs::InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
@@ -203,7 +206,7 @@ TensorBuffer get_image_info_tensor(const inputs::InputDescr& input_descr, const 
         return create_image_info_tensor<int64_t>(input_descr, image_size, batch_size);
     }
 
-    throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
+    throw std::invalid_argument("Unsupported tensor precision in get_image_info_tensor(): " + utils::get_precision_str(precision));
 }
 
 TensorBuffer get_tensor_from_binary(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
@@ -224,7 +227,7 @@ TensorBuffer get_tensor_from_binary(const inputs::InputDescr& input_descr, int b
         return create_tensor_from_binary<uint8_t>(input_descr, batch_size, start_index);
     }
 
-    throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
+    throw std::invalid_argument("Unsupported tensor precision in get_tensor_from_binary(): " + utils::get_precision_str(precision));
 }
 
 TensorBuffer get_random_tensor(const inputs::InputDescr& input_descr) {
@@ -250,7 +253,7 @@ TensorBuffer get_random_tensor(const inputs::InputDescr& input_descr) {
     else if (precision == utils::DataPrecision::BOOL) {
         return create_random_tensor<uint8_t, uint32_t>(input_descr, 0, 1);
     }
-    throw std::invalid_argument("Unsupported tensor precision: " + utils::get_precision_str(precision));
+    throw std::invalid_argument("Unsupported tensor precision in get_random_tensor(): " + utils::get_precision_str(precision));
 }
 
 std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::InputsInfo& inputs_info,

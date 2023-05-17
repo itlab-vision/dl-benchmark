@@ -105,6 +105,11 @@ void ONNXLauncher::read(const std::string model_file, const std::string weights_
 #elif ORT_TRT
     else if (device == utils::Device::NVIDIA_GPU) {
         check_status(Ort::GetApi().CreateTensorRTProviderOptions(&tensorrt_options));
+        std::vector<const char*> keys{"device_id",
+                                      "trt_fp16_enable",
+                                      "trt_max_workspace_size"};
+        std::vector<const char*> values{"0", "1", "4294967296"};
+        check_status(Ort::GetApi().UpdateTensorRTProviderOptions(tensorrt_options, keys.data(), values.data(), keys.size()));
         check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_TensorRT_V2(session_options, tensorrt_options));
     }
 #endif

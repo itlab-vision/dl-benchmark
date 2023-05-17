@@ -393,8 +393,8 @@
             <ChannelSwap></ChannelSwap>
             <Mean>[123.675,116.28,103.53]</Mean>
             <InputScale>[58.395,57.12,57.375]</InputScale>
-            <InputShapes></InputShapes>
-            <InputNames></InputNames>
+            <InputShape></InputShape>
+            <InputName></InputName>
             <Layout></Layout>
             <ExecutionProviders></ExecutionProviders>
             <ThreadCount></ThreadCount>

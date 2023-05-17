@@ -50,7 +50,8 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_names', input_name)
 
         layout = self._test.dep_parameters.layout
-        common_params = self._add_optional_argument_to_cmd_line(common_params, '--layout', layout)
+        if layout:
+            common_params = self._add_optional_argument_to_cmd_line(common_params, '--layout', f'"{layout}"')
 
         execution_providers = self._test.dep_parameters.execution_providers
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--execution_providers',
