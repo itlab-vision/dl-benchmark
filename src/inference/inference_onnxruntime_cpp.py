@@ -105,7 +105,7 @@ class OnnxRuntimeProcess():
                 self._add_option(arg)
             elif name == '-l':
                 if arg != '':
-                    self._add_option('--dump_flag')
+                    self._add_option('--dump_output')
             elif arg != '':
                 self._add_argument(name, arg)
 

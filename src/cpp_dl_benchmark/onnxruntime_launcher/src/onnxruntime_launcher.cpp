@@ -169,7 +169,7 @@ void ONNXLauncher::run(const std::vector<Ort::Value>& input_tensors) {
     total_end_time = std::max(HighresClock::now(), total_end_time);
 }
 
-std::vector<Ort::Value> ONNXLauncher::run_for_output(const std::vector<Ort::Value>& input_tensors){
+std::vector<Ort::Value> ONNXLauncher::run_for_output(const std::vector<Ort::Value>& input_tensors) {
     return session->Run(Ort::RunOptions{nullptr},
                         io.input_names.data(),
                         input_tensors.data(),
@@ -197,16 +197,16 @@ void ONNXLauncher::dump_output() {
     for(int i = 0; i < tensors.size();i++){
         std::string name = "output" + std::to_string(i);
         std::ofstream file(name);
-        auto Tens = run_for_output(tensors[i]);
-        auto val = Tens[0].GetTensorData<float>();
-        auto size = Tens[0].GetTensorTypeAndShapeInfo().GetElementCount();
+        auto tens = run_for_output(tensors[i]);
+        auto val = tens[0].GetTensorData<float>();
+        auto size = tens[0].GetTensorTypeAndShapeInfo().GetElementCount();
         if(file.is_open()){
             for(int j = 0; j < size; j++){
                 file << std::to_string(val[j]) <<'\n';
             }
         }
         else{
-            throw std::domain_error("Something went wrong, can't open file");
+            throw std::runtime_error("Something went wrong, can't open file");
         }
         file.close();
     }
