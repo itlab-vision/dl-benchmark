@@ -29,6 +29,11 @@ ORT_EXECUTION_PROVIDERS_OPTIONS = {
         'cudnn_conv_use_max_workspace': '1',
         'cudnn_conv1d_pad_to_nc1d': '1',
     },
+    'TensorrtExecutionProvider': {
+        'device_id': 0,
+        'trt_fp16_enable': False,
+        'trt_max_workspace_size': 4294967296,
+    },
 }
 
 
@@ -210,7 +215,8 @@ def create_inference_session(model, execution_providers, device, session_options
     provider_options = []
     for provider in execution_providers:
         options = ORT_EXECUTION_PROVIDERS_OPTIONS.get(provider, {})
-        options['device_type'] = device
+        if provider == 'OpenVINOExecutionProvider':
+            options['device_type'] = device
         provider_options.append(options)
 
     session = onnx_rt.InferenceSession(
