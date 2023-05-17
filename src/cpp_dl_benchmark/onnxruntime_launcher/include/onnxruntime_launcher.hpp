@@ -35,7 +35,6 @@ public:
 
     void dump_output() override;
     
-
 private:
     struct IOInfo {
         std::vector<const char*> input_names;
