@@ -316,6 +316,7 @@ def main():
 
         log.info('Preparing input data')
         io.prepare_input(inference_session, args.input)
+        io.fill_unset_inputs(inference_session, log)
 
         if args.output_names is None:
             outputs = inference_session.get_outputs()
