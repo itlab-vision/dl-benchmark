@@ -106,6 +106,10 @@ void OCVLauncher::warmup_inference() {
     run(blobs[0]);
 }
 
+void OCVLauncher::dump_output() {
+    throw std::logic_error("Method is not implemented");
+}
+
 void OCVLauncher::run(const cv::Mat& input_blob) {
     net.setInput(input_blob);
     total_start_time = std::min(HighresClock::now(), total_start_time);
