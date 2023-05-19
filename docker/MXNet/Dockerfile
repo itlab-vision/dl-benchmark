@@ -27,12 +27,11 @@ ARG DEPENDENCIES="apt-utils \
                   lsb-release \
                   libgtk-3-0 \
                   libtool \
-                  pandas \
+                  python3-pandas \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
                   python3-venv \
-                  pycocotools \
                   pciutils \
                   libpython3.8 \
                   udev \
@@ -60,9 +59,16 @@ RUN ls -la $INSTALL_DIR/install_dependencies && echo y | ./install_openvino_depe
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
 # Install openvino-dev
+ARG OV_SHORT_VERSION=2022.3
 WORKDIR /tmp/
 RUN pip3 install --upgrade pip
 RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
+
+# Install pycocotools
+RUN pip3 install pycocotools
+
+# Install OpenCV dependencies
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 
 # Install GluonCV
 RUN pip3 install gluoncv[full]
