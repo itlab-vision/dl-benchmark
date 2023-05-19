@@ -4,7 +4,8 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
-from src.model_converters.tensorflow_common import load_model, convert_with_tensor_rt, is_gpu_available  # noqa
+from src.model_converters.tensorflow_common import (load_model, convert_with_tensor_rt, is_gpu_available,  # noqa
+                                                    get_input_operation_name)  # noqa
 
 
 def cli_argument_parser():
@@ -17,7 +18,7 @@ def cli_argument_parser():
                         dest='model_path')
     parser.add_argument('--input_name',
                         help='Input tensor names',
-                        default=False,
+                        default=None,
                         type=str,
                         nargs=1,
                         dest='input_name')
@@ -78,7 +79,7 @@ def convert_model_to_tf2_format(model_path: Path,
                                 converted_model_path='auto',
                                 tensor_rt_precision=None,
                                 tensor_rt_converted_path='auto'):
-    input_op_name = [ts.split(':')[0] for ts in input_name]
+    input_op_name = get_input_operation_name(input_name)
     saved_model_dir = convert_to_saved_model(model_path, input_op_name=input_op_name,
                                              output_names=output_names, saved_model_dir=converted_model_path)
     convert_saved_model_with_tensor_rt(saved_model_dir, tensor_rt_precision, tensor_rt_converted_path)

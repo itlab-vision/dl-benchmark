@@ -14,7 +14,8 @@ from io_model_wrapper import TensorFlowIOModelWrapper
 from transformer import TensorFlowTransformer
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
-from src.model_converters.tensorflow_common import load_model, get_gpu_devices, is_gpu_available  # noqa
+from src.model_converters.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
+                                                    get_input_operation_name)  # noqa
 
 
 def cli_argument_parser():
@@ -247,8 +248,9 @@ def main():
     if args.device == 'CPU' and is_gpu_available():
         log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
                     f' tensorflow will use NVIDIA_GPU by default')
+    input_name = args.input_name
+    input_op_name = get_input_operation_name(input_name)
 
-    input_op_name = [ts.split(':')[0] for ts in args.input_name]
     output_names = args.output_names
     model_path = Path(args.model_path)
 
@@ -276,6 +278,8 @@ def main():
 
     log.info('Preparing input data')
     io.prepare_input(graph, args.input)
+    io.fill_unset_inputs(graph, log)
+
     inputs_names = model_wrapper.get_input_layer_names(graph)
     log.info(f'Got input names {inputs_names}')
     outputs_names = model_wrapper.get_outputs_layer_names(graph, output_names)

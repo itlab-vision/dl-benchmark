@@ -124,6 +124,8 @@ def load_model(model_path, input_names, output_names, const_inputs, log, saved_m
             for const_input in const_inputs:
                 model_graph = freeze_constant_input(model_graph, *const_input)
 
+        if input_names is None:
+            raise AssertionError('To load model in format differing from saved model Input names should be specified')
         input_names = get_tf_input_names(model_graph, input_names)
 
         if saved_model_dir == 'auto':
@@ -205,3 +207,8 @@ def get_gpu_devices():
 
 def is_gpu_available():
     return len(get_gpu_devices()) > 0
+
+
+def get_input_operation_name(input_name):
+    input_op_name = [ts.split(':')[0] for ts in input_name] if input_name is not None else None
+    return input_op_name
