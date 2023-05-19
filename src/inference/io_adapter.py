@@ -1,4 +1,5 @@
 import abc
+import itertools
 import json
 import os
 from pathlib import Path
@@ -24,16 +25,15 @@ class IOAdapter(metaclass=abc.ABCMeta):
         chw = self._transformer.get_shape_in_chw_order(shape, input_name)
         images = []
         image_shapes = []
-        niter = np.ceil(max(self._batch_size, len(data)) / len(data)).astype(int)
-        for _ in range(niter):
-            for i in range(len(data)):
-                image = self.__read_data(data[i], shape, dtype, chw)
-                image_shapes.append(chw[1:])
-                images.append(image)
+        for image in data:
+            image = self.__read_data(image, shape, dtype, chw)
+            image_shapes.append(chw[1:])
+            images.append(image)
         return np.array(images), image_shapes
 
     @staticmethod
     def __create_list_images(input_):
+        # TODO should we limit number of images? what if we have 50K images?
         images = []
         if os.path.exists(input_[0]):
             if os.path.isdir(input_[0]):
@@ -107,7 +107,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                 input_value = self.__fill_random(input_shape, element_type)
                 input_value = self._transformer.transform_images(input_value, input_shape, element_type, input_name)
 
-            self._transformed_input.update({input_name: input_value})
+            self._transformed_input.update({input_name: itertools.cycle(input_value)})
 
     @staticmethod
     def __fill_input_info(input_shape, image_sizes, element_type):
@@ -142,7 +142,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
             transformed_value = self._transformer.transform_images(value, shape, element_type, input_blob)
         self._input.update({input_blob: value})
         self._original_shapes.update({input_blob: shapes})
-        self._transformed_input.update({input_blob: transformed_value})
+        self._transformed_input.update({input_blob: itertools.cycle(transformed_value)})
 
     def prepare_input(self, model, input_):
         self._input = {}
@@ -160,9 +160,9 @@ class IOAdapter(metaclass=abc.ABCMeta):
     def get_slice_input(self, iteration):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
-            slice_input[key] = self._transformed_input[key][(iteration * self._batch_size) % len(
-                self._transformed_input[key]): (((iteration + 1) * self._batch_size - 1)
-                                                % len(self._transformed_input[key])) + 1:]
+            data_gen = self._transformed_input[key]
+            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_input[key] = np.stack(slice_data)
         return slice_input
 
     @staticmethod
