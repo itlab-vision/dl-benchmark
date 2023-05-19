@@ -197,12 +197,12 @@ void ONNXLauncher::dump_output() {
     for(int i = 0; i < tensors.size();i++){
         std::string name = "output" + std::to_string(i);
         std::ofstream file(name);
-        auto tens = run_for_output(tensors[i]);
-        auto val = tens[0].GetTensorData<float>();
-        auto size = tens[0].GetTensorTypeAndShapeInfo().GetElementCount();
+        auto result = run_for_output(tensors[i]);
+        auto raw_data = result[0].GetTensorData<float>();
+        auto size = result[0].GetTensorTypeAndShapeInfo().GetElementCount();
         if(file.is_open()){
             for(int j = 0; j < size; j++){
-                file << std::to_string(val[j]) <<'\n';
+                file << std::to_string(raw_data[j]) <<'\n';
             }
         }
         else{

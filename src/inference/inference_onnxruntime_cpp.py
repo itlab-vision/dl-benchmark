@@ -11,6 +11,7 @@ from io_adapter import IOAdapter
 import tempfile
 import logging as log
 import traceback
+import ast
 
 
 def cli_argument_parser():
@@ -94,10 +95,10 @@ class OnnxRuntimeProcess():
         self._command_line = ''
 
     def _add_argument(self, name_of_arg, value_of_arg):
-        self._command_line += ' ' + name_of_arg + ' ' + value_of_arg
+        self._command_line += f' {name_of_arg} {value_of_arg}'
 
     def _add_option(self, name_of_arg):
-        self._command_line += ' ' + name_of_arg
+        self._command_line += f' {name_of_arg}'
 
     def create_command_line(self, dict_of_args):
         for name, arg in dict_of_args.items():
@@ -118,16 +119,16 @@ class OnnxRuntimeProcess():
     def process_benchmark_output(self, list_of_names, tmp_dir):
         list_of_names = list_of_names[::-1]
         result = {'images': []}
-        for i in range(0, len(os.listdir(tmp_dir.name))):
-            out = np.loadtxt('output' + str(i))
+        for i, name in enumerate(os.listdir(tmp_dir.name)):
+            out = np.loadtxt(f'output{i}')
             result['images'].append(out)
-            os.remove('output' + str(i))
+            os.remove(f'output{i}')
         return result
 
 
 def std_transformer(std):
-    std = std[1:-1]
-    tmp = np.array(std.split(','), dtype=float)[::-1] * 255
+    std = ast.literal_eval(std)
+    tmp = np.asarray(std)[::-1] * 255
     return f'[{tmp[0]},{tmp[1]},{tmp[2]}]'
 
 
@@ -141,14 +142,14 @@ def create_dict_from_args_for_process(args, nireq):
             '--mean': args.mean,
             '-l': args.labels,
             '-nireq': nireq,
-            '-niter': str(args.niter)}
+            '-niter': args.niter}
 
 
 def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
     os.chdir(tmp_dir)
-    for i in range(0, len(names_of_output)):
+    for i, name in enumerate(names_of_output):
         for val in io.get_slice_input(i).values():
-            cv2.imwrite(names_of_output[i], val[0])
+            cv2.imwrite(name, val[0])
     os.chdir(cur_path)
 
 
