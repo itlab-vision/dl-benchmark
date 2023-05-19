@@ -104,7 +104,7 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
-                             'NVIDIA GPU (CPU by default)',
+                             'NVIDIA_GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -130,7 +130,7 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cpu')
-    elif device == 'NVIDIA GPU':
+    elif device == 'NVIDIA_GPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cuda')
     else:
@@ -188,7 +188,7 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode):
+def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode, device):
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
@@ -196,14 +196,15 @@ def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mo
         if num_iterations == 1:
             slice_input = get_slice(0)
             t0 = time()
-            predictions = torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+            data = slice_input[input_name].to(device)
+            predictions = torch.nn.functional.softmax(model(data), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             for i in range(num_iterations):
-                slice_input = get_slice(i)
+                data = get_slice(i)[input_name].to(device)
                 t0 = time()
-                torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+                model(data)
                 t1 = time()
                 time_infer.append(t1 - t0)
 
@@ -268,7 +269,8 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input, args.input_name, args.inference_mode)
+                                                   io.get_slice_input, args.input_name, args.inference_mode,
+                                                   device)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = process_result(args.batch_size, inference_time)
