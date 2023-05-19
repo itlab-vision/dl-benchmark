@@ -200,3 +200,19 @@ class PyTorchIOModelWrapper(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         import torch
         return torch.float32
+
+
+class OnnxRuntimeModelWrapperCpp(IOModelWrapper):
+    def __init__(self, model):
+        self._input_shape = model.get_inputs()[0].shape
+        self._input_name = model.get_inputs()[0].name
+
+    def get_input_layer_names(self, model):
+        return self._input_name
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shape
+
+    def get_input_layer_dtype(self, model, layer_name):
+        from numpy import float32
+        return float32

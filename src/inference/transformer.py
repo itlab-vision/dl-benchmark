@@ -288,3 +288,14 @@ class PyTorchTransformer(Transformer):
         for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i])
         return transformed_images
+
+
+class OnnxRuntimeTransformerCpp(Transformer):
+    def __init__(self, model):
+        self._model = model
+
+    def get_shape_in_chw_order(self, shape, *args):
+        return shape[1:]
+
+    def transform_images(self, images, shape, element_type, *args):
+        return images
