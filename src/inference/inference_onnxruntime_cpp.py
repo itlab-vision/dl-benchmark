@@ -119,7 +119,7 @@ class OnnxRuntimeProcess():
     def process_benchmark_output(self, list_of_names, tmp_dir):
         list_of_names = list_of_names[::-1]
         result = {'images': []}
-        for i, name in enumerate(os.listdir(tmp_dir.name)):
+        for i, _ in enumerate(os.listdir(tmp_dir.name)):
             out = np.loadtxt(f'output{i}')
             result['images'].append(out)
             os.remove(f'output{i}')
