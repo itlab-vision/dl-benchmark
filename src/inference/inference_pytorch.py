@@ -21,8 +21,19 @@ def cli_argument_parser():
                         help='Path to PyTorch model with format .pt.',
                         type=str,
                         dest='model')
+    parser.add_argument('-w', '--weights',
+                        help='Path to file with format .pth with weights of PyTorch model',
+                        type=str,
+                        default=None,
+                        dest='weights')
+    parser.add_argument('-mm', '--module',
+                        help='Module with model architecture.',
+                        default='torchvision.models',
+                        type=str,
+                        dest='module')
     parser.add_argument('-mn', '--model_name',
-                        help='Model name from TorchVision.',
+                        help='Model name from the module.',
+                        required=True,
                         type=str,
                         dest='model_name')
     parser.add_argument('-i', '--input',
@@ -159,13 +170,17 @@ def get_tensor_rt_dtype(tensor_rt_precision):
     else:
         return None
 
-
-def load_model_from_module(model_name):
-    model_cls = model_name
-    model_path = 'torchvision.models'
-    model_cls = importlib.import_module(model_path).__getattribute__(model_cls)
-    module = model_cls(weights=True)
-    return module
+def load_model_from_module(model_name, module, weights):
+    log.info(f'Loading model from module {module}')
+    model_cls = importlib.import_module(module).__getattribute__(model_name)
+    if weights is None or weights == '':
+        log.info('Loading pretrained model')
+        return model_cls(weights=True)
+    else:
+        log.info(f'Loading model with weights from file {weights}')
+        model = model_cls()
+        model.load_state_dict(torch.load(weights))
+        return model
 
 
 def load_model_from_file(model_path):
@@ -257,12 +272,10 @@ def main():
         data_transformer = PyTorchTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        if args.model_name is not None and args.model is None:
-            model = load_model_from_module(args.model_name)
-        elif args.model_name is None and args.model is not None:
+        if args.model is not None:
             model = load_model_from_file(args.model)
         else:
-            raise ValueError('Incorrect arguments.')
+            model = load_model_from_module(args.model_name, args.module, args.weights)
 
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device, args.model_type,

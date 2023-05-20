@@ -1,5 +1,5 @@
 from .pytorch_process import PyTorchProcess
-from ..config_parser.test_reporter import Test
+from .pytorch_test import PyTorchTest
 from ..framework_wrapper import FrameworkWrapper
 from ..known_frameworks import KnownFrameworks
 
@@ -13,4 +13,4 @@ class PyTorchWrapper(FrameworkWrapper):
 
     @staticmethod
     def create_test(model, dataset, indep_parameters, dep_parameters):
-        return Test(model, dataset, indep_parameters, dep_parameters)
+        return PyTorchTest(model, dataset, indep_parameters, dep_parameters)

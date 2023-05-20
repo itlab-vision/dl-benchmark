@@ -379,6 +379,7 @@
             <SourceFramework>PyTorch</SourceFramework>
             <ModelPath></ModelPath>
             <WeightsPath></WeightsPath>
+            <Module>torchvision.models</Module>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>
