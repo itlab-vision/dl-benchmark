@@ -163,13 +163,13 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                          self._test.model.precision,
                          str(self._test.indep_parameters.batch_size),
                          ]
-        if hasattr(self._test.dep_parameters, 'mode'):
+        if hasattr(self._test.dep_parameters, 'mode') and self._test.dep_parameters.mode:
             test_settings.append(self._test.dep_parameters.mode)
-        if hasattr(self._test.dep_parameters, 'code_source'):
+        if hasattr(self._test.dep_parameters, 'code_source') and self._test.dep_parameters.code_source:
             test_settings.append(self._test.dep_parameters.code_source)
-        if hasattr(self._test.dep_parameters, 'runtime'):
+        if hasattr(self._test.dep_parameters, 'runtime') and self._test.dep_parameters.runtime:
             test_settings.append(self._test.dep_parameters.runtime)
-        if hasattr(self._test.dep_parameters, 'hint'):
+        if hasattr(self._test.dep_parameters, 'hint') and self._test.dep_parameters.hint:
             test_settings.append(self._test.dep_parameters.hint)
         filename = '_'.join(test_settings)
         filename += '.log'
