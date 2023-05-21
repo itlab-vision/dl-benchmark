@@ -1,6 +1,5 @@
 from .mxnet_process import MXNetProcess
 from .mxnet_test import MXNetTest
-from ..config_parser.test_reporter import Test
 from ..framework_wrapper import FrameworkWrapper
 from ..known_frameworks import KnownFrameworks
 
