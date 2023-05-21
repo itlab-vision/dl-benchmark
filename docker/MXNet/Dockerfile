@@ -64,8 +64,8 @@ WORKDIR /tmp/
 RUN pip3 install --upgrade pip
 RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 
-# Install pycocotools
-RUN pip3 install pycocotools
+# Install pycocotools, docker, PyYAML
+RUN pip3 install pycocotools docker PyYAML
 
 # Install OpenCV dependencies
 RUN apt-get install ffmpeg libsm6 libxext6 -y
@@ -89,5 +89,4 @@ RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
 
 # Download DLI source code
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
-    pip3 install docker PyYAML
+RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1
