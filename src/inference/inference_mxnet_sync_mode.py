@@ -210,16 +210,18 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
     time_infer = []
     slice_input = None
     if num_iterations == 1:
-        slice_input = get_slice(0)
+        mxnet.nd.waitall()
         t0 = time()
+        slice_input = get_slice(0)
         predictions = net(slice_input[input_name]).softmax()
         mxnet.nd.waitall()
         t1 = time()
         time_infer.append(t1 - t0)
     else:
         for i in range(num_iterations):
-            slice_input = get_slice(i)
+            mxnet.nd.waitall()
             t0 = time()
+            slice_input = get_slice(i)
             net(slice_input[input_name]).softmax()
             mxnet.nd.waitall()
             t1 = time()

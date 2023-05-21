@@ -9,23 +9,15 @@ class MXNetProcess(ProcessHandler):
 
     @staticmethod
     def create_process(test, executor, log):
-        return MXNetProcess(test, executor, log)
-
-    def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        mode = test.dep_parameters.mode.lower()
+        if mode == 'sync':
+            return SyncMXNetProcess(test, executor, log)
+        elif mode == 'async':
+            return AsyncMXNetProcess(test, executor, log)
+        else:
+            raise AssertionError(f'Unknown inference mode {mode}')
 
     def _fill_command_line(self):
-        path_to_mxnet_script = Path.joinpath(self.inference_script_root, 'inference_mxnet.py')
-        python = ProcessHandler.get_cmd_python_version()
-
         name = self._test.model.name
         model_json = self._test.model.model
         model_params = self._test.model.weight
@@ -77,6 +69,53 @@ class MXNetProcess(ProcessHandler):
         common_params = MXNetProcess._add_argument_to_cmd_line(
             common_params, '--raw_output', 'true')
 
-        command_line = f'{python} {path_to_mxnet_script} {common_params}'
+        return f'{common_params}'
+
+
+class SyncMXNetProcess(MXNetProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        if self._status != 0 or len(self._output) == 0:
+            return None, None, None
+
+        result = self._output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+        latency = float(result[2])
+
+        return average_time, fps, latency
+
+    def _fill_command_line(self):
+        path_to_sync_script = Path.joinpath(self.inference_script_root,
+                                            'inference_mxnet_sync_mode.py')
+        python = ProcessHandler.get_cmd_python_version()
+        common_params = super()._fill_command_line()
+        command_line = f'{python} {path_to_sync_script} {common_params}'
+
+        return command_line
+
+
+class AsyncMXNetProcess(MXNetProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        if self._status != 0 or len(self._output) == 0:
+            return None, None, None
+
+        result = self._output[-1].strip().split(',')
+        average_time = float(result[0])
+        fps = float(result[1])
+
+        return average_time, fps, 0
+
+    def _fill_command_line(self):
+        path_to_async_script = Path.joinpath(self.inference_script_root,
+                                             'inference_mxnet_async_mode.py')
+        python = ProcessHandler.get_cmd_python_version()
+        common_params = super()._fill_command_line()
+        command_line = f'{python} {path_to_async_script} {common_params}'
 
         return command_line
