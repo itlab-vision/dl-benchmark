@@ -190,6 +190,7 @@ class PyTorchIOModelWrapper(IOModelWrapper):
     def __init__(self, args):
         self._input_names = [args['input_name']]
         self._input_shapes = [args['input_shape']]
+        self._dtype = args['dtype']
 
     def get_input_layer_names(self, model):
         return self._input_names
@@ -198,8 +199,7 @@ class PyTorchIOModelWrapper(IOModelWrapper):
         return self._input_shapes[0]
 
     def get_input_layer_dtype(self, model, layer_name):
-        import torch
-        return torch.float32
+        return self._dtype
 
 
 class ONNXIOModelWrapper(IOModelWrapper):

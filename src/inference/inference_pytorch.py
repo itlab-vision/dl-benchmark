@@ -119,6 +119,12 @@ def cli_argument_parser():
                         default=True,
                         type=bool,
                         dest='inference_mode')
+    parser.add_argument('--tensor_rt_precision',
+                        help='Tensor RT precision FP16, FP32.'
+                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with Tensor-RT support',
+                        type=str,
+                        default=None,
+                        dest='tensor_rt_precision')
 
     args = parser.parse_args()
 
@@ -136,6 +142,24 @@ def get_device_to_infer(device):
     else:
         log.info(f'The device {device} is not supported')
         raise ValueError('The device is not supported')
+
+
+def is_gpu_available():
+    return torch.cuda.is_available()
+
+
+def get_dtype(tensor_rt_precision):
+    if tensor_rt_precision:
+        tensor_rt_dtype = None
+        if tensor_rt_precision == 'FP32':
+            tensor_rt_dtype = torch.float
+        elif tensor_rt_precision == 'FP16':
+            tensor_rt_dtype = torch.half
+        else:
+            raise ValueError(f'Unknown Tensor RT precision {tensor_rt_precision}')
+        return tensor_rt_dtype
+    else:
+        return torch.float
 
 
 def load_model_from_module(model_name):
@@ -156,7 +180,7 @@ def load_model_from_file(model_path):
     return model
 
 
-def compile_model(module, device, model_type):
+def compile_model(module, device, model_type, use_tensorrt, shape, dtype):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -166,7 +190,18 @@ def compile_model(module, device, model_type):
         raise ValueError(f'Model type {model_type} is not supported for inference')
     module.to(device)
     module.eval()
-    return module
+
+    if use_tensorrt:
+        if is_gpu_available():
+            import torch_tensorrt
+            inputs = [torch_tensorrt.Input(shape, dtype=dtype)]
+            trt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
+                                                   enabled_precisions=dtype)
+            return trt_ts_module
+        else:
+            raise ValueError('GPU is not available')
+    else:
+        return module
 
 
 def create_dict_for_transformer(args):
@@ -180,10 +215,11 @@ def create_dict_for_transformer(args):
     return dictionary
 
 
-def create_dict_for_modelwrapper(args):
+def create_dict_for_modelwrapper(args, dtype):
     dictionary = {
         'input_name': args.input_name,
         'input_shape': [args.batch_size] + args.input_shape[1:],
+        'dtype': dtype,
     }
     return dictionary
 
@@ -196,13 +232,13 @@ def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mo
         if num_iterations == 1:
             slice_input = get_slice(0)
             t0 = time()
-            data = slice_input[input_name].to(device)
+            data = torch.from_numpy(slice_input[input_name]).to(device)
             predictions = torch.nn.functional.softmax(model(data), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             for i in range(num_iterations):
-                data = get_slice(i)[input_name].to(device)
+                data = torch.from_numpy(get_slice(i)[input_name]).to(device)
                 t0 = time()
                 model(data)
                 t1 = time()
@@ -248,7 +284,8 @@ def main():
     )
     args = cli_argument_parser()
     try:
-        model_wrapper = PyTorchIOModelWrapper(create_dict_for_modelwrapper(args))
+        dtype = get_dtype(args.tensor_rt_precision)
+        model_wrapper = PyTorchIOModelWrapper(create_dict_for_modelwrapper(args, dtype))
         data_transformer = PyTorchTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
@@ -260,7 +297,8 @@ def main():
             raise ValueError('Incorrect arguments.')
 
         device = get_device_to_infer(args.device)
-        compiled_model = compile_model(model, device, args.model_type)
+        compiled_model = compile_model(model, device, args.model_type,
+                                       args.tensor_rt_precision is not None, args.input_shape, dtype)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 

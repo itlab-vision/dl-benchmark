@@ -85,6 +85,11 @@ class PyTorchProcess(ProcessHandler):
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--inference_mode', inference_mode)
 
+        tensor_rt_precision = self._test.dep_parameters.tensor_rt_precision
+        if tensor_rt_precision:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--tensor_rt_precision', tensor_rt_precision)
+
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 
         return command_line
