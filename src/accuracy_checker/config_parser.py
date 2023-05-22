@@ -62,6 +62,8 @@ class Test:
             return 'MXNet'
         elif framework == 'opencv':
             return 'OpenCV'
+        elif framework == 'pytorch':
+            return 'PyTorch'
         else:
             return 'Unsupported framework'
 
