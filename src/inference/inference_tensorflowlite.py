@@ -6,7 +6,12 @@ import logging as log
 from time import time
 import traceback
 
-import tensorflow as tf
+try:
+    import tensorflow.lite as tflite
+except ModuleNotFoundError:
+    import tflite_runtime.interpreter as tflite
+    log.info('Using TFLite from tflite_runtime package')
+
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowLiteIOModelWrapper
 from transformer import TensorFlowLiteTransformer
@@ -156,7 +161,7 @@ def load_delegates(delegate_ext, options):
             except Exception:
                 raise ValueError(f'Unable to parse delegate option: {option}')
 
-    delegate = tf.lite.load_delegate(delegate_ext, delegate_options)
+    delegate = tflite.load_delegate(delegate_ext, delegate_options)
     return [delegate]
 
 
@@ -294,7 +299,7 @@ def main():
             delegate = load_delegates(args.delegate_ext, args.delegate_options)
 
         log.info(f'Loading network files:\n\t {args.model_path}')
-        interpreter = load_network(tf.lite, args.model_path, args.number_threads, delegate)
+        interpreter = load_network(tflite, args.model_path, args.number_threads, delegate)
 
         args.input_names = model_wrapper.get_input_layer_names(interpreter)
 
