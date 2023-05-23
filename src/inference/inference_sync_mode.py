@@ -1,14 +1,13 @@
-import sys
-import traceback
 import argparse
 import logging as log
-
-from io_adapter import IOAdapter
-from io_model_wrapper import OpenVINOIOModelWrapper
-from transformer import OpenVINOTransformer
+import sys
+import traceback
 
 import postprocessing_data as pp
 import utils
+from io_adapter import IOAdapter
+from io_model_wrapper import OpenVINOIOModelWrapper
+from transformer import OpenVINOTransformer
 
 
 def cli_argument_parser():
@@ -147,8 +146,8 @@ def infer_sync(compiled_model, number_iter, get_slice):
     request = compiled_model.create_infer_request()
     result = None
     time_infer = []
-    for i in range(number_iter):
-        utils.set_input_to_blobs(request, get_slice(i))
+    for _ in range(number_iter):
+        utils.set_input_to_blobs(request, get_slice())
         request.infer()
         time_infer.append(request.latency / 1000)
     if number_iter == 1:

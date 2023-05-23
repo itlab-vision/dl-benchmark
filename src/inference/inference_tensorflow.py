@@ -188,14 +188,14 @@ def inference_tensorflow(model, number_iter, get_slice):
     log.info(f'Starting inference ({number_iter} iterations)')
 
     if number_iter == 1:
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         t0 = time()
         result = infer_slice(model, slice_input)
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for i in range(number_iter):
-            slice_input = get_slice(i)
+        for _ in range(number_iter):
+            slice_input = get_slice()
             t0 = time()
             infer_slice(model, slice_input)
             t1 = time()

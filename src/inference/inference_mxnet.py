@@ -3,11 +3,11 @@ import logging as log
 import os
 import sys
 import traceback
-from time import time
 import warnings
+from time import time
 
-import mxnet
 import gluoncv
+import mxnet
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -205,16 +205,17 @@ def inference_mxnet(net, num_iterations, get_slice, input_name,
     time_infer = []
     slice_input = None
     if num_iterations == 1:
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         t0 = time()
         predictions = net(slice_input[input_name]).softmax()
         mxnet.nd.waitall()
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for i in range(num_iterations):
-            slice_input = get_slice(i)
+        for _ in range(num_iterations):
+            slice_input = get_slice()
             t0 = time()
+            mxnet.npx.reset_np()
             net(slice_input[input_name]).softmax()
             mxnet.nd.waitall()
             t1 = time()
@@ -284,7 +285,7 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,
-                                                 io.get_slice_input, args.input_name)
+                                                 io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = process_result(args.batch_size, inference_time)

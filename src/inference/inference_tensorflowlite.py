@@ -1,22 +1,22 @@
-import sys
-import ast
 import argparse
-import re
+import ast
 import logging as log
-from time import time
+import re
+import sys
 import traceback
+from time import time
 
 try:
     import tensorflow.lite as tflite
 except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
+
     log.info('Using TFLite from tflite_runtime package')
 
+import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowLiteIOModelWrapper
 from transformer import TensorFlowLiteTransformer
-
-import postprocessing_data as pp
 
 
 def names_arg(values):
@@ -183,8 +183,8 @@ def inference_tflite(interpreter, number_iter, get_slice):
         input_info[model_input['name']] = (model_input['index'], model_input['dtype'], model_input['shape'])
 
     outputs = interpreter.get_output_details()
-    for i in range(number_iter):
-        for name, data in get_slice(i).items():
+    for _ in range(number_iter):
+        for name, data in get_slice().items():
             interpreter.set_tensor(input_info[name][0], data.astype(input_info[name][1]))
         t0 = time()
         interpreter.invoke()

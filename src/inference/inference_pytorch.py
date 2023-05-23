@@ -1,8 +1,8 @@
-import sys
 import argparse
-import traceback
 import importlib
 import logging as log
+import sys
+import traceback
 from time import time
 
 import torch
@@ -228,17 +228,18 @@ def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mo
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
-        slice_input = None
         if num_iterations == 1:
-            slice_input = get_slice(0)
+            slice_input = get_slice()
             t0 = time()
-            data = torch.from_numpy(slice_input[input_name]).to(device)
+            torch_data = torch.from_numpy(slice_input[input_name])
+            data = torch_data.to(device)
             predictions = torch.nn.functional.softmax(model(data), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            for i in range(num_iterations):
-                data = torch.from_numpy(get_slice(i)[input_name]).to(device)
+            for _ in range(num_iterations):
+                torch_data = torch.from_numpy(get_slice()[input_name])
+                data = torch_data.to(device)
                 t0 = time()
                 model(data)
                 t1 = time()

@@ -1,17 +1,17 @@
-import sys
-import traceback
 import argparse
 import logging as log
+import sys
+import traceback
 from time import time
 
 import numpy as np
 from openvino.runtime import AsyncInferQueue
-from io_adapter import IOAdapter
-from io_model_wrapper import OpenVINOIOModelWrapper
-from transformer import OpenVINOTransformer
 
 import postprocessing_data as pp
 import utils
+from io_adapter import IOAdapter
+from io_model_wrapper import OpenVINOIOModelWrapper
+from transformer import OpenVINOTransformer
 
 
 def cli_argument_parser():
@@ -164,7 +164,7 @@ def infer_async(compiled_model, number_iter, num_request, get_slice):
         if idle_id < 0:
             infer_queue.wait(num_requests=1)
             idle_id = infer_queue.get_idle_request_id()
-        utils.set_input_to_blobs(infer_queue[idle_id], get_slice(iteration))
+        utils.set_input_to_blobs(infer_queue[idle_id], get_slice())
         infer_queue.start_async()
         iteration += 1
     infer_queue.wait_all()

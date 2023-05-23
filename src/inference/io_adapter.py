@@ -157,12 +157,21 @@ class IOAdapter(metaclass=abc.ABCMeta):
             input_blob = self._io_model_wrapper.get_input_layer_names(model)[0]
             self.__parse_input_instance(input_[0], input_blob, model)
 
-    def get_slice_input(self, iteration):
+    def get_slice_input(self, *args, **kwargs):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
             data_gen = self._transformed_input[key]
             slice_data = [next(data_gen) for _ in range(self._batch_size)]
             slice_input[key] = np.stack(slice_data)
+        return slice_input
+
+    def get_slice_input_mxnet(self, *args, **kwargs):
+        import mxnet
+        slice_input = dict.fromkeys(self._transformed_input.keys(), None)
+        for key in self._transformed_input:
+            data_gen = self._transformed_input[key]
+            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 
     @staticmethod

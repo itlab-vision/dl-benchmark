@@ -14,7 +14,6 @@ from io_adapter import IOAdapter
 from io_model_wrapper import ONNXIOModelWrapper
 from transformer import ONNXRuntimeTransformer
 
-
 ORT_EXECUTION_MODE = {
     'ORT_SEQUENTIAL': onnx_rt.ExecutionMode.ORT_SEQUENTIAL,
     'ORT_PARALLEL': onnx_rt.ExecutionMode.ORT_PARALLEL,
@@ -231,14 +230,14 @@ def inference_onnx_runtime(session, output_names, number_iter, get_slice):
     slice_input = None
 
     if number_iter == 1:
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         t0 = time()
         result = session.run(output_names, slice_input)
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for i in range(number_iter):
-            slice_input = get_slice(i)
+        for _ in range(number_iter):
+            slice_input = get_slice()
             t0 = time()
             session.run(output_names, slice_input)
             t1 = time()
