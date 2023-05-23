@@ -43,23 +43,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO
-ENV INSTALL_DIR /opt/intel/openvino_2022
-ARG OV_SHORT_VERSION=2022.3
-ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.9052.9752fafe8eb_x86_64"
-RUN sudo mkdir /opt/intel && \
-    wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
-        -O /tmp/openvino.tgz --no-check-certificate --quiet && \
-    tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
-    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
-    rm -rf /tmp/*
-
-# Install OpenVINO dependencies
-WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls -la $INSTALL_DIR/install_dependencies && echo y | ./install_openvino_dependencies.sh
-RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
+ARG OV_SHORT_VERSION=2023.0.0dev20230217
+RUN pip3 install openvino==${OV_SHORT_VERSION}
 
 # Install openvino-dev
-ARG OV_SHORT_VERSION=2022.3
 WORKDIR /tmp/
 RUN pip3 install --upgrade pip
 RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
@@ -68,7 +55,7 @@ RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 RUN pip3 install pycocotools docker PyYAML
 
 # Install OpenCV dependencies
-RUN apt-get install ffmpeg libsm6 libxext6 -y
+RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 
 # Install GluonCV
 RUN pip3 install gluoncv[full]
@@ -78,14 +65,13 @@ ARG MXNET_VERSION=1.9.1
 RUN pip3 install mxnet==${MXNET_VERSION}
 
 # Download Accuracy Checker
-ARG OMZ_VERSION="${OV_SHORT_VERSION}.0"
+ARG OMZ_VERSION=2022.3.0
 WORKDIR /tmp/
 RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
-    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
+RUN /bin/bash -c 'accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
 
 # Download DLI source code
 WORKDIR /tmp/
