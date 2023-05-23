@@ -47,20 +47,15 @@ class PyTorchProcess(ProcessHandler):
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--input_name', input_name)
 
-        normalize = self._test.dep_parameters.normalize
-        if normalize == 'True':
-            common_params = PyTorchProcess._add_flag_to_cmd_line(
-                common_params, '--norm')
-
         mean = self._test.dep_parameters.mean
         if mean:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--mean', mean)
 
-        std = self._test.dep_parameters.std
-        if std:
-            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-                common_params, '--std', std)
+        input_scale = self._test.dep_parameters.input_scale
+        if input_scale:
+            common_params = self._add_argument_to_cmd_line(
+                common_params, '--input_scale', input_scale)
 
         output_name = self._test.dep_parameters.output_name
         if output_name:
@@ -89,6 +84,15 @@ class PyTorchProcess(ProcessHandler):
         if tensor_rt_precision:
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--tensor_rt_precision', tensor_rt_precision)
+
+        layout = self._test.dep_parameters.layout
+        if layout:
+            common_params = self._add_optional_argument_to_cmd_line(common_params, '--layout', f'"{layout}"')
+
+        input_type = self._test.dep_parameters.input_type
+        if input_type:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--input_type', input_type)
 
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 

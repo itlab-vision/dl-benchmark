@@ -1,6 +1,8 @@
 import argparse
+import ast
 import importlib
 import logging as log
+import re
 import sys
 import traceback
 from time import time
@@ -11,6 +13,13 @@ import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformer
+
+
+def names_arg(values):
+    if values is not None:
+        values = values.split(',')
+
+    return values
 
 
 def cli_argument_parser():
@@ -30,38 +39,25 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
-    parser.add_argument('-in', '--input_name',
-                        help='Input name.',
-                        default='data',
+    parser.add_argument('-in', '--input_names',
+                        help='Names of the input tensors',
+                        default=None,
+                        type=names_arg,
+                        dest='input_names')
+    parser.add_argument('-is', '--input_shapes',
+                        help='Input tensor shapes',
+                        default=None,
                         type=str,
-                        dest='input_name')
-    parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxCxHxW, B is a batch size,'
-                             'C is an input tensor number of channels'
-                             'H is an input tensor height,'
-                             'W is an input tensor width.',
-                        required=True,
-                        type=int,
-                        nargs=4,
-                        dest='input_shape')
-    parser.add_argument('--norm',
-                        help='Flag to normalize input images'
-                             '(use --mean and --std arguments to set'
-                             'required normalization parameters).',
-                        action='store_true',
-                        dest='norm')
+                        dest='input_shapes')
     parser.add_argument('--mean',
-                        help='Mean values.',
-                        default=[0, 0, 0],
-                        type=float,
-                        nargs=3,
+                        help='Parameter mean',
+                        default=None,
+                        type=str,
                         dest='mean')
-    parser.add_argument('--std',
-                        help='Standard deviation values.',
-                        default=[1., 1., 1.],
-                        type=float,
-                        nargs=3,
-                        dest='std')
+    parser.add_argument('--input_scale',
+                        help='Parameter input scale',
+                        type=str,
+                        dest='input_scale')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
                         default='output',
@@ -125,6 +121,16 @@ def cli_argument_parser():
                         type=str,
                         default=None,
                         dest='tensor_rt_precision')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default=None,
+                        type=str,
+                        dest='layout')
+    parser.add_argument('--input_type',
+                        help='Parameter input type',
+                        default=None,
+                        type=str,
+                        dest='input_type')
 
     args = parser.parse_args()
 
@@ -148,7 +154,7 @@ def is_gpu_available():
     return torch.cuda.is_available()
 
 
-def get_dtype(tensor_rt_precision):
+def get_trt_dtype(tensor_rt_precision):
     if tensor_rt_precision:
         tensor_rt_dtype = None
         if tensor_rt_precision == 'FP32':
@@ -159,7 +165,7 @@ def get_dtype(tensor_rt_precision):
             raise ValueError(f'Unknown Tensor RT precision {tensor_rt_precision}')
         return tensor_rt_dtype
     else:
-        return torch.float
+        return None
 
 
 def load_model_from_module(model_name):
@@ -180,7 +186,7 @@ def load_model_from_file(model_path):
     return model
 
 
-def compile_model(module, device, model_type, use_tensorrt, shape, dtype):
+def compile_model(module, device, model_type, use_tensorrt, shapes, trt_dtype):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -194,9 +200,10 @@ def compile_model(module, device, model_type, use_tensorrt, shape, dtype):
     if use_tensorrt:
         if is_gpu_available():
             import torch_tensorrt
-            inputs = [torch_tensorrt.Input(shape, dtype=dtype)]
+            inputs = [torch_tensorrt.Input(shapes[key], dtype=trt_dtype) for key in shapes]
             trt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
-                                                   enabled_precisions=dtype)
+                                                   truncate_long_and_double=True,
+                                                   enabled_precisions=trt_dtype)
             return trt_ts_module
         else:
             raise ValueError('GPU is not available')
@@ -205,43 +212,32 @@ def compile_model(module, device, model_type, use_tensorrt, shape, dtype):
 
 
 def create_dict_for_transformer(args):
-    dictionary = {
-        'mean': args.mean,
-        'std': args.std,
-        'norm': args.norm,
-        'input_shape': args.input_shape,
-        'batch_size': args.batch_size,
-    }
+    dictionary = {}
+    for name in args.input_names:
+        mean = args.mean.get(name, None)
+        input_scale = args.input_scale.get(name, None)
+        layout = args.layout.get(name, 'NCHW')
+        dictionary[name] = {'channel_swap': None, 'mean': mean,
+                            'input_scale': input_scale, 'layout': layout}
     return dictionary
 
 
-def create_dict_for_modelwrapper(args, dtype):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:],
-        'dtype': dtype,
-    }
-    return dictionary
-
-
-def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode, device):
+def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device):
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
         if num_iterations == 1:
-            slice_input = get_slice()
+            inputs = [torch.from_numpy(get_slice()[input_name]).to(device) for input_name in input_names]
             t0 = time()
-            torch_data = torch.from_numpy(slice_input[input_name])
-            data = torch_data.to(device)
-            predictions = torch.nn.functional.softmax(model(data), dim=1)
+            predictions = torch.nn.functional.softmax(model(*inputs), dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             for _ in range(num_iterations):
-                torch_data = torch.from_numpy(get_slice()[input_name])
-                data = torch_data.to(device)
+                inputs = [torch.from_numpy(get_slice()[input_name]).to(device) for input_name in input_names]
                 t0 = time()
-                model(data)
+                with torch.no_grad():
+                    model(*inputs)
                 t1 = time()
                 time_infer.append(t1 - t0)
 
@@ -277,6 +273,46 @@ def prepare_output(result, output_names, task):
         raise ValueError(f'Unsupported task {task} to print inference results')
 
 
+def parse_input_arg(values, input_names):
+    return_values = {}
+    if values is not None:
+        matches = re.findall(r'(.*?)\[(.*?)\],?', values)
+        if matches:
+            for i, match in enumerate(matches):
+                name, value = match
+                value = ast.literal_eval(value)
+                if name != '':
+                    return_values[name] = value
+                else:
+                    if input_names is None:
+                        raise ValueError('Please set --input-names parameter'
+                                         ' or use input0[value0],input1[value1] format')
+                    return_values[input_names[i]] = list(value)
+        else:
+            raise ValueError(f'Unable to parse input parameter: {values}')
+    return return_values
+
+
+def parse_layout_arg(values, input_names):
+    return_values = {}
+    if values is not None:
+        matches = re.findall(r'(.*?)\((.*?)\),?', values)
+        if matches:
+            for i, match in enumerate(matches):
+                name, value = match
+                if name != '':
+                    return_values[name] = value
+                else:
+                    if input_names is None:
+                        raise ValueError(f'Please set --input-names parameter'
+                                         f' or use input0(value0),input1(value1) format instead {values}')
+                    return_values[input_names[i]] = value
+        else:
+            values = values.split(',')
+            return_values = dict(zip(input_names, values))
+    return return_values
+
+
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -285,8 +321,13 @@ def main():
     )
     args = cli_argument_parser()
     try:
-        dtype = get_dtype(args.tensor_rt_precision)
-        model_wrapper = PyTorchIOModelWrapper(create_dict_for_modelwrapper(args, dtype))
+        trt_dtype = get_trt_dtype(args.tensor_rt_precision)
+        args.input_shapes = parse_input_arg(args.input_shapes, args.input_names)
+        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, trt_dtype, args.input_type)
+
+        args.mean = parse_input_arg(args.mean, args.input_names)
+        args.input_scale = parse_input_arg(args.input_scale, args.input_names)
+        args.layout = parse_layout_arg(args.layout, args.input_names)
         data_transformer = PyTorchTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
@@ -299,16 +340,18 @@ def main():
 
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device, args.model_type,
-                                       args.tensor_rt_precision is not None, args.input_shape, dtype)
+                                       args.tensor_rt_precision is not None, args.input_shapes, trt_dtype)
 
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
+        for layer_name in args.input_names:
+            layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
+            log.info(f'Shape for input layer {layer_name}: {layer_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(compiled_model, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input, args.input_name, args.inference_mode,
+                                                   io.get_slice_input, args.input_names, args.inference_mode,
                                                    device)
 
         log.info('Computing performance metrics')

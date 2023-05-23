@@ -187,19 +187,31 @@ class OpenCVIOModelWrapper(IOModelWrapper):
 
 
 class PyTorchIOModelWrapper(IOModelWrapper):
-    def __init__(self, args):
-        self._input_names = [args['input_name']]
-        self._input_shapes = [args['input_shape']]
-        self._dtype = args['dtype']
+    def __init__(self, input_shapes, batch_size, trt_dtype, custom_input_type):
+        self._shapes = input_shapes
+        self._batch = batch_size
+        self._input_names = input_shapes.keys()
+        self._trt_dtype = trt_dtype
+        self._custom_input_type = custom_input_type
 
     def get_input_layer_names(self, model):
-        return self._input_names
+        return list(self._input_names)
 
     def get_input_layer_shape(self, model, layer_name):
-        return self._input_shapes[0]
+        input_shape = self._shapes[layer_name]
+        return [self._batch, *input_shape[1:]]
 
     def get_input_layer_dtype(self, model, layer_name):
-        return self._dtype
+        from numpy import float32, float16
+        if self._trt_dtype:
+            import torch
+            if self._trt_dtype in [torch.float, torch.float32]:
+                return float32
+            elif self._trt_dtype in [torch.half, torch.float16]:
+                return float16
+        elif self._custom_input_type:
+            return self._custom_input_type
+        return float32
 
 
 class ONNXIOModelWrapper(IOModelWrapper):
