@@ -155,26 +155,6 @@ def infer_sync(compiled_model, number_iter, get_slice):
     return result, time_infer
 
 
-def process_result(inference_time, batch_size, min_infer_time):
-    correct_time = pp.delete_incorrect_time(inference_time, min_infer_time)
-    correct_time = pp.three_sigma_rule(correct_time)
-    average_time = pp.calculate_average_time(correct_time)
-    latency = pp.calculate_latency(correct_time)
-    fps = pp.calculate_fps(batch_size, latency)
-
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency, log):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
-
-
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -206,23 +186,31 @@ def main():
         utils.reshape_input(model, args.batch_size)
 
         log.info('Prepare input data')
-
         io.prepare_input(model, args.input)
 
         log.info('Create executable network')
-
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
+        result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
 
-        result, time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
-        average_time, latency, fps = process_result(time, args.batch_size, args.mininfer)
+        log.info('Computing performance metrics')
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time,
+                                                                                args.mininfer)
 
         if not args.raw_output:
-            io.process_output(result, log)
-            result_output(average_time, fps, latency, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(average_time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
         del model
         del compiled_model
         del core

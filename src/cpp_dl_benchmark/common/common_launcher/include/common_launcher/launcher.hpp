@@ -48,6 +48,8 @@ public:
     virtual void warmup_inference() = 0;
     virtual int evaluate(int iterations_num, uint64_t time_limit_ns) = 0;
 
+    virtual void dump_output() = 0;
+
     std::vector<double> get_latencies() const;
     double get_total_time_ms() const;
     int get_threads_num() const {

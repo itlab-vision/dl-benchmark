@@ -90,10 +90,10 @@ Options:
                                                       ex., "input1[1,128],input2[1,128],input3[1,128]" or just "[1,3,224,224]"
         [--layout <[NCHW]>]                           layout for network input.
                                                       ex.: "input1[NCHW],input2[NC]" or just "[NCHW]"
-        [--mean <R G B>]                              mean values per channel for input image.
+        [--mean <B G R>]                              mean values per channel for input image.
                                                       applicable only for models with image input.
                                                       ex.: [123.675,116.28,103.53] or with specifying inputs src[255,255,255]
-        [--scale <R G B>]                             scale values per channel for input image.
+        [--scale <B G R>]                             scale values per channel for input image.
                                                       applicable only for models with image inputs.
                                                       ex.: [58.395,57.12,57.375] or with specifying inputs src[255,255,255]
         [--nthreads <NUMBER>]                         number of threads to utilize.

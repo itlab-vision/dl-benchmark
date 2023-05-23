@@ -217,6 +217,7 @@ class MXNetTransformer(Transformer):
 
     def transform_images(self, images, shape, element_type, *args):
         import mxnet
+
         dataset_size = images.shape[0]
         new_shape = [dataset_size] + shape[1:]
         transformed_images = mxnet.nd.zeros(shape=new_shape, dtype=element_type)
@@ -261,3 +262,14 @@ class PyTorchTransformer(TensorFlowLiteTransformer):
 
 class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
     pass
+
+
+class OnnxRuntimeTransformerCpp(Transformer):
+    def __init__(self, model):
+        self._model = model
+
+    def get_shape_in_chw_order(self, shape, *args):
+        return shape[1:]
+
+    def transform_images(self, images, shape, element_type, *args):
+        return images

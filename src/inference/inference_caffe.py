@@ -162,24 +162,6 @@ def inference_caffe(net, number_iter, get_slice):
     return result, time_infer
 
 
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency, log):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
-
-
 def create_dict_for_transformer(args):
     dictionary = {
         'channel_swap': args.channel_swap,
@@ -206,28 +188,37 @@ def main():
         set_device_to_infer(args.device)
 
         log.info('The device has been assigned: {0}'.format(args.device))
-        log.info('Loading network files:\n\t {0}\n\t {1}'.format(args.model_prototxt, args.model_caffemodel))
-
+        log.info('Loading network files:\n\t {0}\n\t {1}'.format(
+            args.model_prototxt, args.model_caffemodel))
         net = load_network(args.model_prototxt, args.model_caffemodel)
         net = network_input_reshape(net, args.batch_size)
-        input_shapes = get_input_shape(model_wrapper, net)
 
+        input_shapes = get_input_shape(model_wrapper, net)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
-        log.info('Prepare input data')
 
+        log.info('Prepare input data')
         io.prepare_input(net, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
-
         result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)
-        time, latency, fps = process_result(args.batch_size, inference_time)
+
+        log.info('Computing performance metrics')
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
 
         if not args.raw_output:
-            io.process_output(result, log)
-            result_output(time, fps, latency, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

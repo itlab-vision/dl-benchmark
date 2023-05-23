@@ -204,25 +204,6 @@ def reshape_model_input(io_model_wrapper, model, log):
             model.resize_tensor_input(model_input['index'], shape)
 
 
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency, log):
-    log.info(f'Average time of single pass : {average_time:.3f}')
-    log.info(f'FPS : {fps:.3f}')
-    log.info(f'Latency : {latency:.3f}')
-
-
-def raw_result_output(average_time, fps, latency):
-    print(f'{average_time:.3f},{fps:.3f},{latency:.3f}')
-
-
 def create_dict_for_transformer(args):
     dictionary = {}
     for name in args.input_names:
@@ -322,7 +303,8 @@ def main():
         log.info(f'Starting inference ({args.number_iter} iterations)')
         result, inference_time = inference_tflite(interpreter, args.number_iter, io.get_slice_input)
 
-        time, latency, fps = process_result(args.batch_size, inference_time)
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
@@ -335,9 +317,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            result_output(time, fps, latency, log)
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

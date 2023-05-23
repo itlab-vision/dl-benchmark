@@ -30,6 +30,11 @@ def cli_argument_parser():
                         help='Model name to download using GluonCV package.',
                         type=str,
                         dest='model_name')
+    parser.add_argument('--hybrid',
+                        help='Flag to enable symbolic computations.'
+                             'Default value is false.',
+                        action='store_true',
+                        dest='hybrid')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
                         required=True,
@@ -158,7 +163,7 @@ def load_network_gluon(model_json, model_params, context, input_name):
     return deserialized_net
 
 
-def load_network_gluon_model_zoo(model_name, context, save_model, path_save_model):
+def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
     log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
@@ -174,8 +179,9 @@ def load_network_gluon_model_zoo(model_name, context, save_model, path_save_mode
 
     log.info(f'Info about the network:\n{net}')
 
-    log.info('Hybridizing model to accelerate inference')
-    net.hybridize()
+    log.info(f'Hybridizing model to accelerate inference: {hybrid}')
+    if hybrid is True:
+        net.hybridize()
     return net
 
 
@@ -194,13 +200,12 @@ def create_dict_for_transformer(args):
 def create_dict_for_modelwrapper(args):
     dictionary = {
         'input_name': args.input_name,
-        'input_shape': args.input_shape,
+        'input_shape': [args.batch_size] + args.input_shape[1:4],
     }
     return dictionary
 
 
-def inference_mxnet(net, num_iterations, get_slice, input_name,
-                    k=5, file_labels='image_net_labels.json'):
+def inference_mxnet(net, num_iterations, get_slice, input_name):
     predictions = None
     time_infer = []
     slice_input = None
@@ -222,24 +227,6 @@ def inference_mxnet(net, num_iterations, get_slice, input_name,
             time_infer.append(t1 - t0)
 
     return predictions, time_infer
-
-
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
 
 
 def prepare_output(result, output_names, task):
@@ -270,7 +257,7 @@ def main():
         if ((args.model_name is not None)
                 and (args.model_json is None)
                 and (args.model_params is None)):
-            net = load_network_gluon_model_zoo(args.model_name, context,
+            net = load_network_gluon_model_zoo(args.model_name, args.hybrid, context,
                                                args.save_model, args.path_save_model)
         elif (args.model_json is not None) and (args.model_params is not None):
             net = load_network_gluon(args.model_json, args.model_params, context,
@@ -288,7 +275,8 @@ def main():
                                                  io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = process_result(args.batch_size, inference_time)
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -302,9 +290,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            result_output(average_time, fps, latency)
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(average_time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

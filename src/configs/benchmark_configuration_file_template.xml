@@ -178,6 +178,7 @@
         <FrameworkDependent>
             <InputName></InputName>
             <InputShape></InputShape>
+            <Hybridize></Hybridize>
             <Normalize></Normalize>
             <Mean></Mean>
             <Std></Std>

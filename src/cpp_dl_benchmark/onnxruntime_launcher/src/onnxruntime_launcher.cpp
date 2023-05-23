@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <numeric>
 #include <string>
@@ -228,6 +229,15 @@ void ONNXLauncher::run(const std::vector<Ort::Value>& input_tensors) {
     total_end_time = std::max(HighresClock::now(), total_end_time);
 }
 
+std::vector<Ort::Value> ONNXLauncher::run_for_output(const std::vector<Ort::Value>& input_tensors) {
+    return session->Run(Ort::RunOptions{nullptr},
+                        io.input_names.data(),
+                        input_tensors.data(),
+                        io.input_names.size(),
+                        io.output_names.data(),
+                        io.output_names.size());
+}
+
 int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     int iteration = 0;
     auto start_time = HighresClock::now();
@@ -240,4 +250,24 @@ int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     }
 
     return iteration;
+}
+
+void ONNXLauncher::dump_output() {
+    std::vector<std::pair<const float*, size_t>> tmp;
+    for(int i = 0; i < tensors.size();i++){
+        std::string name = "output" + std::to_string(i);
+        std::ofstream file(name);
+        auto result = run_for_output(tensors[i]);
+        auto raw_data = result[0].GetTensorData<float>();
+        auto size = result[0].GetTensorTypeAndShapeInfo().GetElementCount();
+        if(file.is_open()){
+            for(int j = 0; j < size; j++){
+                file << std::to_string(raw_data[j]) <<'\n';
+            }
+        }
+        else{
+            throw std::runtime_error("Something went wrong, can't open file");
+        }
+        file.close();
+    }
 }

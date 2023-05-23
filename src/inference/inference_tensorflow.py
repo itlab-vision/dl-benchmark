@@ -124,6 +124,7 @@ def cli_argument_parser():
                         default=None,
                         type=int,
                         dest='num_intra_threads')
+
     args = parser.parse_args()
 
     return args
@@ -211,25 +212,6 @@ def infer_slice(model, slice_input):
     return res
 
 
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency, log):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
-
-
 def create_dict_for_transformer(args):
     dictionary = {'channel_swap': args.channel_swap, 'mean': args.mean,
                   'input_scale': args.input_scale}
@@ -288,15 +270,16 @@ def main():
                                                   io.get_slice_input)
 
     log.info('Computing performance metrics')
-    average_time, latency, fps = process_result(args.batch_size, inference_time)
+    average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                            inference_time)
 
     if not args.raw_output:
         if args.number_iter == 1:
             result = prepare_output(result, outputs_names, args.task)
             io.process_output(result, log)
-        result_output(average_time, fps, latency, log)
+        pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
     else:
-        raw_result_output(average_time, fps, latency)
+        pp.print_performance_metrics_sync_mode(average_time, fps, latency)
 
 
 if __name__ == '__main__':

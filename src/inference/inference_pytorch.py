@@ -244,24 +244,6 @@ def inference_pytorch(model, num_iterations, get_slice, input_names, inference_m
     return predictions, time_infer
 
 
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-    return average_time, latency, fps
-
-
-def result_output(average_time, fps, latency):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
-
-
 def prepare_output(result, output_names, task):
     if task == 'feedforward':
         return {}
@@ -355,7 +337,8 @@ def main():
                                                    device)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = process_result(args.batch_size, inference_time)
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -369,9 +352,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            result_output(average_time, fps, latency)
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(average_time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

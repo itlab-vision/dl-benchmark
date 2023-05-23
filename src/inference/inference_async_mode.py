@@ -179,22 +179,6 @@ def infer_async(compiled_model, number_iter, num_request, get_slice):
     return result, inference_time
 
 
-def process_result(inference_time, batch_size, iteration_count):
-    average_time = inference_time / iteration_count
-    fps = pp.calculate_fps(batch_size * iteration_count, inference_time)
-
-    return average_time, fps
-
-
-def result_output(average_time, fps, log):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-
-
-def raw_result_output(average_time, fps):
-    print('{0:.3f},{1:.3f}'.format(average_time, fps))
-
-
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -225,11 +209,9 @@ def main():
         utils.reshape_input(model, args.batch_size)
 
         log.info('Prepare input data')
-
         io.prepare_input(model, args.input)
 
         log.info('Create executable network')
-
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
         log.info('Runtime parameters')
@@ -244,13 +226,24 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) with {args.requests} requests on {args.device}')
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
-        average_time, fps = process_result(time, args.batch_size, args.number_iter)
+
+        log.info('Computing performance metrics')
+        average_time, fps = pp.calculate_performance_metrics_async_mode(time,
+                                                                        args.batch_size,
+                                                                        args.number_iter)
 
         if not args.raw_output:
-            io.process_output(result, log)
-            result_output(average_time, fps, log)
+            if args.number_iter == 1:
+                try:
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+            log.info('Performance results')
+            pp.log_performance_metrics_async_mode(log, average_time, fps)
         else:
-            raw_result_output(average_time, fps)
+            pp.print_performance_metrics_async_mode(average_time, fps)
         del model
         del compiled_model
         del core

@@ -93,6 +93,9 @@ DEFINE_bool(save_report, false, save_report_msg);
 constexpr char report_path_msg[] = "destination path for report.";
 DEFINE_string(report_path, "", report_path_msg);
 
+constexpr char dump_msg[] = "save final tensor value.";
+DEFINE_bool(dump_output, false, dump_msg);
+
 void parse(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, false);
     if (FLAGS_h || 1 == argc) {
@@ -126,7 +129,8 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
                   << "\n\t[-t <NUMBER>]                                 " << time_msg
                   << "\n\t[--save_report]                               " << save_report_msg
-                  << "\n\t[--report_path <PATH>]                        " << report_path_msg << "\n";
+                  << "\n\t[--report_path <PATH>]                        " << report_path_msg
+                  << "\n\t[--dump_output]                               " << dump_msg << "\n";
         exit(0);
     }
     if (FLAGS_m.empty()) {
@@ -314,6 +318,10 @@ int main(int argc, char* argv[]) {
                  (num_iterations > 0
                       ? std::to_string(num_iterations) + " iterations"
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
+
+        if(FLAGS_dump_output){
+            launcher->dump_output();
+        }
 
         // warm up before benhcmarking
         launcher->warmup_inference();
