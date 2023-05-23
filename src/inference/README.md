@@ -519,10 +519,16 @@ python3 inference_opencv.py \
 
 #### Аргументы командной строки
 
-Название скрипта:
+Название скриптов:
 
 ```bash
-inference_mxnet.py
+# синхронный режим
+inference_mxnet_sync_mode.py
+```
+
+```bash
+# асинхронный режим
+inference_mxnet_async_mode.py
 ```
 
 Обязательные аргументы:
@@ -556,6 +562,8 @@ inference_mxnet.py
 - `-in / --input_name` - название входа модели. По умолчанию модель
   имеет один вход с названием `data`. Текущая реализация вывода
   предусматривает наличие только одного входа.
+- `--hybrid` - флаг включения символьных вычислений. По умолчанию
+  не установлен.
 - `--norm` - флаг необходимости нормировки изображений.
   Выполняется с использованием функции ` mxnet.image.color_normalize`.
   Среднее и среднеквадратическое отклонение, которые принимаются
@@ -601,26 +609,39 @@ inference_mxnet.py
 
 #### Примеры запуска
 
-**Запуск вывода для модели, которая загружается из Gluon Model Zoo**
+**Запуск вывода в синхронном режиме для модели, которая загружается из Gluon Model Zoo**
 
 ```bash
-python inference_mxnet.py --model_name <model_name> \
-                          --input <path_to_data> \
-                          --input_name <input_name> \
-                          --input_shape <input_shape> \
-                          --norm --mean <mean> --std <std> \
-                          --save_model --path_save_model <path_save_model>
+python inference_mxnet_sync_mode.py --model_name <model_name> \
+                                    --input <path_to_data> \
+                                    --hybrid \
+                                    --input_name <input_name> \
+                                    --input_shape <input_shape> \
+                                    --norm --mean <mean> --std <std> \
+                                    --save_model --path_save_model <path_save_model>
 ```
 
-**Запуск вывода для модели, которая загружается из файлов**
+**Запуск вывода в асинхронном режиме для модели, которая загружается из Gluon Model Zoo**
 
 ```bash
-python inference_mxnet.py --model <file_name>.json \
-                          --weights <file_name>.params \
-                          --input_name <input_name> \
-                          --input_shape <input_shape> \
-                          --input <path_to_data> \
-                          --labels <label_file>.json
+python inference_mxnet_async_mode.py --model_name <model_name> \
+                                     --input <path_to_data> \
+                                     --hybrid \
+                                     --input_name <input_name> \
+                                     --input_shape <input_shape> \
+                                     --norm --mean <mean> --std <std> \
+                                     --save_model --path_save_model <path_save_model>
+```
+
+**Запуск вывода в синхронном режиме для модели, которая загружается из файлов**
+
+```bash
+python inference_mxnet_sync_mode.py --model <file_name>.json \
+                                    --weights <file_name>.params \
+                                    --input_name <input_name> \
+                                    --input_shape <input_shape> \
+                                    --input <path_to_data> \
+                                    --labels <label_file>.json
 ```
 
 ## Вывод глубоких моделей с использованием PyTorch (TorchVision)
