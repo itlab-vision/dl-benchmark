@@ -1,8 +1,6 @@
 import argparse
-import ast
 import importlib
 import logging as log
-import re
 import sys
 import traceback
 from time import time
@@ -10,16 +8,10 @@ from time import time
 import torch
 
 import postprocessing_data as pp
+import preprocessing_data as prep
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformer
-
-
-def names_arg(values):
-    if values is not None:
-        values = values.split(',')
-
-    return values
 
 
 def cli_argument_parser():
@@ -42,7 +34,7 @@ def cli_argument_parser():
     parser.add_argument('-in', '--input_names',
                         help='Names of the input tensors',
                         default=None,
-                        type=names_arg,
+                        type=prep.names_arg,
                         dest='input_names')
     parser.add_argument('-is', '--input_shapes',
                         help='Input tensor shapes',
@@ -211,17 +203,6 @@ def compile_model(module, device, model_type, use_tensorrt, shapes, trt_dtype):
         return module
 
 
-def create_dict_for_transformer(args):
-    dictionary = {}
-    for name in args.input_names:
-        mean = args.mean.get(name, None)
-        input_scale = args.input_scale.get(name, None)
-        layout = args.layout.get(name, 'NCHW')
-        dictionary[name] = {'channel_swap': None, 'mean': mean,
-                            'input_scale': input_scale, 'layout': layout}
-    return dictionary
-
-
 def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device):
     with torch.inference_mode(inference_mode):
         predictions = None
@@ -255,46 +236,6 @@ def prepare_output(result, output_names, task):
         raise ValueError(f'Unsupported task {task} to print inference results')
 
 
-def parse_input_arg(values, input_names):
-    return_values = {}
-    if values is not None:
-        matches = re.findall(r'(.*?)\[(.*?)\],?', values)
-        if matches:
-            for i, match in enumerate(matches):
-                name, value = match
-                value = ast.literal_eval(value)
-                if name != '':
-                    return_values[name] = value
-                else:
-                    if input_names is None:
-                        raise ValueError('Please set --input-names parameter'
-                                         ' or use input0[value0],input1[value1] format')
-                    return_values[input_names[i]] = list(value)
-        else:
-            raise ValueError(f'Unable to parse input parameter: {values}')
-    return return_values
-
-
-def parse_layout_arg(values, input_names):
-    return_values = {}
-    if values is not None:
-        matches = re.findall(r'(.*?)\((.*?)\),?', values)
-        if matches:
-            for i, match in enumerate(matches):
-                name, value = match
-                if name != '':
-                    return_values[name] = value
-                else:
-                    if input_names is None:
-                        raise ValueError(f'Please set --input-names parameter'
-                                         f' or use input0(value0),input1(value1) format instead {values}')
-                    return_values[input_names[i]] = value
-        else:
-            values = values.split(',')
-            return_values = dict(zip(input_names, values))
-    return return_values
-
-
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -304,13 +245,13 @@ def main():
     args = cli_argument_parser()
     try:
         trt_dtype = get_trt_dtype(args.tensor_rt_precision)
-        args.input_shapes = parse_input_arg(args.input_shapes, args.input_names)
+        args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
         model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, trt_dtype, args.input_type)
 
-        args.mean = parse_input_arg(args.mean, args.input_names)
-        args.input_scale = parse_input_arg(args.input_scale, args.input_names)
-        args.layout = parse_layout_arg(args.layout, args.input_names)
-        data_transformer = PyTorchTransformer(create_dict_for_transformer(args))
+        args.mean = prep.parse_input_arg(args.mean, args.input_names)
+        args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
+        args.layout = prep.parse_layout_arg(args.layout, args.input_names)
+        data_transformer = PyTorchTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         if args.model_name is not None and args.model is None:

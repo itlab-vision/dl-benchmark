@@ -1,7 +1,5 @@
 import argparse
-import ast
 import logging as log
-import re
 import sys
 import traceback
 from time import time
@@ -10,6 +8,7 @@ import numpy as np
 import onnxruntime as onnx_rt
 
 import postprocessing_data as pp
+import preprocessing_data as prep
 from io_adapter import IOAdapter
 from io_model_wrapper import ONNXIOModelWrapper
 from transformer import ONNXRuntimeTransformer
@@ -36,13 +35,6 @@ ORT_EXECUTION_PROVIDERS_OPTIONS = {
 }
 
 
-def names_arg(values):
-    if values is not None:
-        values = values.split(',')
-
-    return values
-
-
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
@@ -65,7 +57,7 @@ def cli_argument_parser():
     parser.add_argument('--execution_providers',
                         help='Execution provider name (CPUExecutionProvider by default).',
                         default='CPUExecutionProvider',
-                        type=names_arg,
+                        type=prep.names_arg,
                         dest='execution_providers')
     parser.add_argument('-b', '--batch_size',
                         help='Size of the processed pack',
@@ -101,12 +93,12 @@ def cli_argument_parser():
     parser.add_argument('-in', '--input_names',
                         help='Input layer name',
                         default=None,
-                        type=names_arg,
+                        type=prep.names_arg,
                         dest='input_names')
     parser.add_argument('-on', '--output_names',
                         help='Output layer names',
                         default=None,
-                        type=names_arg,
+                        type=prep.names_arg,
                         dest='output_names')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
@@ -152,46 +144,6 @@ def cli_argument_parser():
     args = parser.parse_args()
 
     return args
-
-
-def parse_input_arg(values, input_names):
-    return_values = {}
-    if values is not None:
-        matches = re.findall(r'(.*?)\[(.*?)\],?', values)
-        if matches:
-            for i, match in enumerate(matches):
-                name, value = match
-                value = ast.literal_eval(value)
-                if name != '':
-                    return_values[name] = value
-                else:
-                    if input_names is None:
-                        raise ValueError(f'Please set --input-names parameter'
-                                         f' or use input0[value0],input1[value1] format instead {values}')
-                    return_values[input_names[i]] = value
-        else:
-            raise ValueError(f'Unable to parse input parameter: {values}')
-    return return_values
-
-
-def parse_layout_arg(values, input_names):
-    return_values = {}
-    if values is not None:
-        matches = re.findall(r'(.*?)\((.*?)\),?', values)
-        if matches:
-            for i, match in enumerate(matches):
-                name, value = match
-                if name != '':
-                    return_values[name] = value
-                else:
-                    if input_names is None:
-                        raise ValueError(f'Please set --input-names parameter'
-                                         f' or use input0(value0),input1(value1) format instead {values}')
-                    return_values[input_names[i]] = value
-        else:
-            values = values.split(',')
-            return_values = dict(zip(input_names, values))
-    return return_values
 
 
 def set_session_options(number_threads, execution_mode, num_inter_threads):
@@ -276,19 +228,6 @@ def raw_result_output(average_time, fps, latency):
     print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
 
 
-def create_dict_for_transformer(args):
-    dictionary = {}
-    for name in args.input_names:
-        channel_swap = args.channel_swap.get(name, None)
-        mean = args.mean.get(name, None)
-        input_scale = args.input_scale.get(name, None)
-        layout = args.layout.get(name, 'NCHW')
-        dictionary[name] = {'channel_swap': channel_swap, 'mean': mean,
-                            'input_scale': input_scale, 'layout': layout}
-
-    return dictionary
-
-
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -297,7 +236,7 @@ def main():
     )
     args = cli_argument_parser()
     try:
-        args.input_shapes = parse_input_arg(args.input_shapes, args.input_names)
+        args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
         model_wrapper = ONNXIOModelWrapper(args.input_shapes, args.batch_size)
 
         log.info('Setting inference session options')
@@ -307,12 +246,12 @@ def main():
 
         args.input_names = model_wrapper.get_input_layer_names(inference_session)
 
-        args.mean = parse_input_arg(args.mean, args.input_names)
-        args.input_scale = parse_input_arg(args.input_scale, args.input_names)
-        args.channel_swap = parse_input_arg(args.channel_swap, args.input_names)
-        args.layout = parse_layout_arg(args.layout, args.input_names)
+        args.mean = prep.parse_input_arg(args.mean, args.input_names)
+        args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
+        args.channel_swap = prep.parse_input_arg(args.channel_swap, args.input_names)
+        args.layout = prep.parse_layout_arg(args.layout, args.input_names)
 
-        data_transformer = ONNXRuntimeTransformer(create_dict_for_transformer(args))
+        data_transformer = ONNXRuntimeTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         for layer_name in args.input_names:
