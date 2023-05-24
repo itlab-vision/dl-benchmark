@@ -229,7 +229,7 @@ def inference_pytorch(model, num_iterations, get_slice, input_names, inference_m
         if num_iterations == 1:
             inputs = [torch.from_numpy(get_slice()[input_name]).to(device) for input_name in input_names]
             t0 = time()
-            predictions = torch.nn.functional.softmax(model(*inputs), dim=1)
+            predictions = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
             t1 = time()
             time_infer.append(t1 - t0)
         else:
