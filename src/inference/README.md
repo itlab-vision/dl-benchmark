@@ -671,7 +671,7 @@ inference_pytorch.py
 - `-w / --weights` - путь до файла с весами в формате `.pth`.
 - `-mm / --module` - путь до Python модуля или относительный путь
   до Python файла с архитектурой модели. По умолчанию, данный параметр
-  принимает значение `torchvision.models`, модуль с моделями, которые решают
+  принимает значение `torchvision.models`, модуль с [моделями][torchvision_models], которые решают
   задачу классификации.
 - `-t / --task` - название задачи. Текущая реализация поддерживает
   решение задачи классификации. По умолчанию принимает значение
@@ -809,3 +809,4 @@ python3 inference_onnx_runtime.py \
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
 [torchvision]: https://pytorch.org/vision/stable/models.html
+[torchvision_models]: https://pytorch.org/vision/0.15/models.html

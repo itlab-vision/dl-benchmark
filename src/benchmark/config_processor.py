@@ -58,7 +58,7 @@ class TestConfigParser:
         try:
             module = model_tag.getElementsByTagName('Module')[0].firstChild.data
         except Exception as ex:
-            self._log.warning(f'Parsing weights path failed. Exception was generated: {str(ex)}.')
+            self._log.warning(f'Parsing module name failed. Exception was generated: {str(ex)}.')
 
         self._log.info(f'Model:\n\tName - {model_name}\n\tTask - {task}\n\t'
                        f'Precision - {precision}\n\tSource framework - {source_framework}\n\t'

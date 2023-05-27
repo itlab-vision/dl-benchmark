@@ -47,4 +47,4 @@ class Model:
 
     @staticmethod
     def _parameter_is_not_none(parameter):
-        return True if parameter is not None else False
+        return parameter is not None

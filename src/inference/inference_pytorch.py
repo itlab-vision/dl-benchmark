@@ -170,6 +170,7 @@ def get_tensor_rt_dtype(tensor_rt_precision):
     else:
         return None
 
+
 def load_model_from_module(model_name, module, weights):
     log.info(f'Loading model from module {module}')
     model_cls = importlib.import_module(module).__getattribute__(model_name)
