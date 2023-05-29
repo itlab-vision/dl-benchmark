@@ -218,16 +218,6 @@ def prepare_output(result, output_names, task, args):
         raise ValueError(f'Unsupported task {task} to print inference results')
 
 
-def result_output(average_time, fps, latency, log):
-    log.info('Average time of single pass : {0:.3f}'.format(average_time))
-    log.info('FPS : {0:.3f}'.format(fps))
-    log.info('Latency : {0:.3f}'.format(latency))
-
-
-def raw_result_output(average_time, fps, latency):
-    print('{0:.3f},{1:.3f},{2:.3f}'.format(average_time, fps, latency))
-
-
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
@@ -285,9 +275,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            result_output(average_time, fps, latency, log)
+            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
         else:
-            raw_result_output(average_time, fps, latency)
+            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

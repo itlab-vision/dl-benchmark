@@ -208,17 +208,20 @@ def inference_pytorch(model, num_iterations, get_slice, input_names, inference_m
         predictions = None
         time_infer = []
         if num_iterations == 1:
-            inputs = [torch.from_numpy(get_slice()[input_name]).to(device) for input_name in input_names]
+            inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
             t0 = time()
             predictions = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             for _ in range(num_iterations):
-                inputs = [torch.from_numpy(get_slice()[input_name]).to(device) for input_name in input_names]
+                inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+                if device.type == 'cuda':
+                    torch.cuda.synchronize()
                 t0 = time()
-                with torch.no_grad():
-                    model(*inputs)
+                model(*inputs)
+                if device.type == 'cuda':
+                    torch.cuda.synchronize()
                 t1 = time()
                 time_infer.append(t1 - t0)
 

@@ -69,6 +69,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['hybridize'] = 'Hybridization flag'
         match_parameter_description['model_type'] = 'Model type'
         match_parameter_description['inference_mode'] = 'Inference mode'
+        match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:
