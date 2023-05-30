@@ -57,7 +57,7 @@ class MXNetParameters(FrameworkParameters):
         self.std = None
         self.channel_swap = None
 
-        if self._parameter_is_not_none(mode):
+        if self._mode_is_correct(mode):
             self.mode = mode
         if self._parameter_is_not_none(input_name):
             self.input_name = input_name
@@ -73,3 +73,10 @@ class MXNetParameters(FrameworkParameters):
             self.std = std
         if self._parameter_is_not_none(channel_swap):
             self.channel_swap = channel_swap
+
+    @staticmethod
+    def _mode_is_correct(mode):
+        const_correct_mode = ['sync', 'async']
+        if mode.lower() in const_correct_mode:
+            return True
+        raise ValueError(f'Mode is required parameter. Mode can only take values: {", ".join(const_correct_mode)}')
