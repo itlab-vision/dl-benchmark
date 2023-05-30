@@ -519,10 +519,16 @@ python3 inference_opencv.py \
 
 #### Аргументы командной строки
 
-Название скрипта:
+Название скриптов:
 
 ```bash
-inference_mxnet.py
+# синхронный режим
+inference_mxnet_sync_mode.py
+```
+
+```bash
+# асинхронный режим
+inference_mxnet_async_mode.py
 ```
 
 Обязательные аргументы:
@@ -556,6 +562,8 @@ inference_mxnet.py
 - `-in / --input_name` - название входа модели. По умолчанию модель
   имеет один вход с названием `data`. Текущая реализация вывода
   предусматривает наличие только одного входа.
+- `--hybrid` - флаг включения символьных вычислений. По умолчанию
+  не установлен.
 - `--norm` - флаг необходимости нормировки изображений.
   Выполняется с использованием функции ` mxnet.image.color_normalize`.
   Среднее и среднеквадратическое отклонение, которые принимаются
@@ -578,7 +586,7 @@ inference_mxnet.py
   `(2, 1, 0)`.
 - `-d / --device` - оборудование, на котором выполняется вывод сети.
   Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
-  (значение параметра `GPU`). По умолчанию принимает значение `CPU`.
+  (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
 - `-l / --labels`- путь до файла в формате JSON с перечнем меток
   при решении задачи. По умолчанию принимает значение
   `image_net_labels.json`, что соответствует меткам набора данных
@@ -601,26 +609,39 @@ inference_mxnet.py
 
 #### Примеры запуска
 
-**Запуск вывода для модели, которая загружается из Gluon Model Zoo**
+**Запуск вывода в синхронном режиме для модели, которая загружается из Gluon Model Zoo**
 
 ```bash
-python inference_mxnet.py --model_name <model_name> \
-                          --input <path_to_data> \
-                          --input_name <input_name> \
-                          --input_shape <input_shape> \
-                          --norm --mean <mean> --std <std> \
-                          --save_model --path_save_model <path_save_model>
+python inference_mxnet_sync_mode.py --model_name <model_name> \
+                                    --input <path_to_data> \
+                                    --hybrid \
+                                    --input_name <input_name> \
+                                    --input_shape <input_shape> \
+                                    --norm --mean <mean> --std <std> \
+                                    --save_model --path_save_model <path_save_model>
 ```
 
-**Запуск вывода для модели, которая загружается из файлов**
+**Запуск вывода в асинхронном режиме для модели, которая загружается из Gluon Model Zoo**
 
 ```bash
-python inference_mxnet.py --model <file_name>.json \
-                          --weights <file_name>.params \
-                          --input_name <input_name> \
-                          --input_shape <input_shape> \
-                          --input <path_to_data> \
-                          --labels <label_file>.json
+python inference_mxnet_async_mode.py --model_name <model_name> \
+                                     --input <path_to_data> \
+                                     --hybrid \
+                                     --input_name <input_name> \
+                                     --input_shape <input_shape> \
+                                     --norm --mean <mean> --std <std> \
+                                     --save_model --path_save_model <path_save_model>
+```
+
+**Запуск вывода в синхронном режиме для модели, которая загружается из файлов**
+
+```bash
+python inference_mxnet_sync_mode.py --model <file_name>.json \
+                                    --weights <file_name>.params \
+                                    --input_name <input_name> \
+                                    --input_shape <input_shape> \
+                                    --input <path_to_data> \
+                                    --labels <label_file>.json
 ```
 
 ## Вывод глубоких моделей с использованием PyTorch (TorchVision)
@@ -657,21 +678,14 @@ inference_pytorch.py
 - `-in / --input_name` - название входа модели. По умолчанию модель
   имеет один вход с названием `data`. Текущая реализация вывода
   предусматривает наличие только одного входа.
-- `--norm` - флаг необходимости нормировки изображений.
-  Выполняется с использованием модуля `torchvision.transforms`.
-  Среднее и среднеквадратическое отклонение, которые принимаются
-  на вход указываются в следующих двух аргументах.
-- `--mean` - среднее значение интенсивности, которое вычитается
-  из изображений в процессе нормировки. Для классификационных моделей
-  из [TorchVision][torchvision], которые обучены на наборе
-  данных ImageNet, значение равно `0.485 0.456 0.406`. По умолчанию
-  данный параметр принимает значение `0 0 0`.
-- `--std` - среднеквадратическое отклонение интенсивности, на которое
-  делится значение интенсивности каждого пикселя входного изображения
-  в процессе нормировки. Для классификационных моделей
-  из [TorchVision][torchvision], которые обучены на наборе
-  данных ImageNet, значение равно `0.229 0.224 0.225`. По умолчанию
-  данный параметр принимает значение `1 1 1`.
+- `--mean` - параметры для вычитания средних по каждому цветовому каналу изображения
+  в формате `input0[value0],input1[value1]`. По умолчанию `(0, 0, 0)`.
+- `--input_scale` - коэффициент масштабирования изображения в формате `input0[value0],input1[value1]`.
+  По умолчанию равен `1`.
+- `--layout` - формат входных тензоров в формате `input0(value0),input1(value1)`. По умолчанию `NHWC`.
+- `--input_shapes` - размеры входных тензоров в формате `input0[value0],input1[value1]`,
+  например `input[1,224,224,3]`, порядок размерностей должен соответсвовать формату входного тензора.
+  По умолчанию не установлен.
 - `--output_names` - название выхода модели. По умолчанию модель
   имеет один вход с названием `output`. Текущая реализация вывода
   предусматривает наличие только одного выхода.
@@ -702,7 +716,7 @@ python inference_pytorch.py --model_name <model_name> \
                             --input <path_to_data> \
                             --input_name <input_name> \
                             --input_shape <input_shape> \
-                            --norm --mean <mean> --std <std> \
+                            --mean <mean> --input_scale <scale> \
                             --batch_size <batch_size>
 ```
 
