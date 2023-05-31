@@ -1,9 +1,11 @@
 import argparse
+import json
 import logging as log
 import os
 import sys
 import traceback
 import warnings
+from pathlib import Path
 from time import time
 
 import gluoncv
@@ -12,6 +14,7 @@ import mxnet
 import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
+from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
 
 
@@ -135,6 +138,10 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='path_save_model')
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'mxnet_sync_inference_report.json',
+                        dest='report_path')
 
     args = parser.parse_args()
 
@@ -248,6 +255,12 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='MxNet', version=mxnet.__version__)
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
+
     try:
         model_wrapper = MXNetIOModelWrapper(create_dict_for_modelwrapper(args))
         data_transformer = MXNetTransformer(create_dict_for_transformer(args))
@@ -276,8 +289,11 @@ def main():
                                                  io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                                inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                      inference_time)
+        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        log.info(f'Write report to {args.report_path}')
+        report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -291,9 +307,8 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-        else:
-            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
+            log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

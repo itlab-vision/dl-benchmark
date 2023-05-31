@@ -1,8 +1,10 @@
 import argparse
 import importlib
+import json
 import logging as log
 import sys
 import traceback
+from pathlib import Path
 from time import time
 
 import torch
@@ -11,6 +13,7 @@ import postprocessing_data as pp
 import preprocessing_data as prep
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
+from reporter.report_writer import ReportWriter
 from transformer import PyTorchTransformer
 
 
@@ -123,9 +126,12 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='input_type')
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'pytorch_inference_report.json',
+                        dest='report_path')
 
     args = parser.parse_args()
-
     return args
 
 
@@ -246,6 +252,12 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='PyTorch', version=torch.__version__)
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
+
     try:
         trt_dtype = get_trt_dtype(args.tensor_rt_precision)
         args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
@@ -281,8 +293,11 @@ def main():
                                                    device)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                                inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                      inference_time)
+        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        log.info(f'Write report to {args.report_path}')
+        report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -295,10 +310,8 @@ def main():
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
-            log.info('Performance results')
-            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-        else:
-            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
+        log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

@@ -4,6 +4,9 @@ from ..processes import ProcessHandler
 
 
 class MXNetProcess(ProcessHandler):
+    benchmark_app_name = 'mxnet_python_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -17,6 +20,9 @@ class MXNetProcess(ProcessHandler):
         else:
             raise AssertionError(f'Unknown inference mode {mode}')
 
+    def get_performance_metrics(self):
+        return self.get_performance_metrics_from_json_report()
+
     def _fill_command_line(self):
         name = self._test.model.name
         model_json = self._test.model.model
@@ -29,10 +35,10 @@ class MXNetProcess(ProcessHandler):
                 and (model_json is None or model_json == '')
                 and (model_params is None or model_params == '')):
             common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
-                             f'-b {batch_size} -ni {iteration}')
+                             f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
         elif (name is None) and (model_json is not None) and (model_params is not None):
             common_params = (f'-m {model_json} -w {model_params} -i {dataset} '
-                             f'-is {input_shape} -b {batch_size} -ni {iteration}')
+                             f'-is {input_shape} -b {batch_size} -ni {iteration} --report_path {self.report_path}')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
 
@@ -77,15 +83,7 @@ class SyncMXNetProcess(MXNetProcess):
         super().__init__(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_sync_script = Path.joinpath(self.inference_script_root,
@@ -102,14 +100,7 @@ class AsyncMXNetProcess(MXNetProcess):
         super().__init__(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-
-        return average_time, fps, 0
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_async_script = Path.joinpath(self.inference_script_root,

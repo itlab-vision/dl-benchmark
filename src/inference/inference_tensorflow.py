@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging as log
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ from tensorflow.python.saved_model import signature_constants
 import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowIOModelWrapper
+from reporter.report_writer import ReportWriter
 from transformer import TensorFlowTransformer
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -124,6 +126,10 @@ def cli_argument_parser():
                         default=None,
                         type=int,
                         dest='num_intra_threads')
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'tf_inference_report.json',
+                        dest='report_path')
 
     args = parser.parse_args()
 
@@ -223,6 +229,11 @@ def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='TensorFlow', version=tf.__version__)
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
 
     if args.device == 'NVIDIA_GPU' and not is_gpu_available():
         raise AssertionError('NVIDIA_GPU device not found on hostmachine, unable to infer on NVIDIA_GPU')
@@ -270,16 +281,19 @@ def main():
                                                   io.get_slice_input)
 
     log.info('Computing performance metrics')
-    average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                            inference_time)
+    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                  inference_time)
+
+    report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+    log.info(f'Write report to {args.report_path}')
+    report_writer.write_report(args.report_path)
 
     if not args.raw_output:
         if args.number_iter == 1:
             result = prepare_output(result, outputs_names, args.task)
             io.process_output(result, log)
-        pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-    else:
-        pp.print_performance_metrics_sync_mode(average_time, fps, latency)
+
+    log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
 
 if __name__ == '__main__':

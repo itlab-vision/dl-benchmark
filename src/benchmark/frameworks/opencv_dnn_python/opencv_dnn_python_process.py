@@ -4,6 +4,9 @@ from ..processes import ProcessHandler
 
 
 class OpenCVDNNPythonProcess(ProcessHandler):
+    benchmark_app_name = 'opencv_python_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -12,15 +15,7 @@ class OpenCVDNNPythonProcess(ProcessHandler):
         return OpenCVDNNPythonProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_opencv_script = Path.joinpath(self.inference_script_root, 'inference_opencv.py')
@@ -32,7 +27,8 @@ class OpenCVDNNPythonProcess(ProcessHandler):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
-        common_params = f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration}'
+        common_params = (f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration}'
+                         f' --report_path {self.report_path}')
 
         precision = self._test.model.precision
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)

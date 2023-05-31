@@ -1,8 +1,12 @@
 import argparse
+import json
 import logging as log
 import sys
 import traceback
+from pathlib import Path
 from time import time
+
+from reporter.report_writer import ReportWriter
 
 try:
     import tensorflow.lite as tflite
@@ -122,6 +126,10 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='labels')
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'tflite_inference_report.json',
+                        dest='report_path')
 
     args = parser.parse_args()
 
@@ -209,6 +217,11 @@ def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='TF-Lite')
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
     try:
         args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
         model_wrapper = TensorFlowLiteIOModelWrapper(args.input_shapes, args.batch_size)
@@ -242,8 +255,13 @@ def main():
         log.info(f'Starting inference ({args.number_iter} iterations)')
         result, inference_time = inference_tflite(interpreter, args.number_iter, io.get_slice_input)
 
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                                inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                      inference_time)
+
+        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        log.info(f'Write report to {args.report_path}')
+        report_writer.write_report(args.report_path)
+
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
@@ -255,10 +273,8 @@ def main():
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
-            log.info('Performance results')
-            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-        else:
-            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
+            log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

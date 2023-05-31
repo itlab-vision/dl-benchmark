@@ -93,6 +93,9 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
+    benchmark_app_name = 'openvino_benchmark_python'
+    launcher_latency_units = 'milliseconds'
+
     def __init__(self, test, executor, log, perf_hint='', api_mode=''):
         super().__init__(test, executor, log, perf_hint, api_mode)
 
@@ -135,6 +138,9 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
 
 
 class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
+    benchmark_app_name = 'openvino_benchmark_cpp'
+    launcher_latency_units = 'milliseconds'
+
     def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint='', api_mode=''):
         super().__init__(test, executor, log, perf_hint, api_mode)
 
@@ -147,7 +153,9 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         if not self._benchmark_path.is_file():
             raise invalid_path_exception
 
-        self._report_path = executor.get_path_to_logs_folder().joinpath('benchmark_report.json')
+    @property
+    def report_path(self):
+        return Path(self._executor.get_path_to_logs_folder()) / 'benchmark_report.json'
 
     @staticmethod
     def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
@@ -163,7 +171,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         time = int(self._test.indep_parameters.test_time_limit)
 
         arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time} '
-                     f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
+                     f'-report_type "no_counters" -json_stats -report_folder {self.report_path.parent.absolute()}')
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)

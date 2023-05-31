@@ -1,6 +1,7 @@
 import abc
 import json
 import platform
+from datetime import datetime
 from pathlib import Path
 
 
@@ -11,8 +12,25 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._executor = executor
         self._output = None
         self._status = None
+        self.timestamp = datetime.now().strftime('%d.%m.%y_%H:%M:%S')
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
-        self._report_path = None
+
+    @property
+    @abc.abstractmethod
+    def benchmark_app_name(self):
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def launcher_latency_units(self):
+        # use seconds or milliseconds as latency measuring units
+        raise NotImplementedError
+
+    @property
+    def report_path(self):
+        report_name = f'{self.benchmark_app_name}_{self._test.model.name}_{self.timestamp}.json'
+        report_path = Path(self._executor.get_path_to_logs_folder()) / report_name
+        return report_path
 
     @staticmethod
     def get_cmd_python_version():
@@ -66,28 +84,26 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         pass
 
     def get_json_report_content(self):
-        if self._report_path:
-            return json.loads(self._executor.get_file_content(self._report_path))
+        if self.report_path:
+            return json.loads(self._executor.get_file_content(self.report_path))
 
     def get_output_lines(self):
         return self._output
 
-    def get_performance_metrics_cpp(self):
+    def get_performance_metrics_from_json_report(self):
         if self._status != 0 or len(self._output) == 0:
             return None, None, None
 
         report = self.get_json_report_content()
 
-        # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000
-        duration = float(report['execution_results']['execution_time'])
-        iter_count = float(report['execution_results']['iterations_num'])
-        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 3)
-                                       if None not in (duration, iter_count) else None)
-
         fps = float(report['execution_results']['throughput'])
-        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
-
+        reported_latency = report['execution_results'].get('latency_median', None)
+        latency = float(reported_latency) if reported_latency else 0.0
+        average_time_of_single_pass = float(report['execution_results']['latency_avg'])
+        if self.launcher_latency_units == 'milliseconds':
+            latency = round(latency / MILLISECONDS_IN_SECOND, 5)
+            average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
         return average_time_of_single_pass, fps, latency
 
     @abc.abstractmethod
@@ -104,7 +120,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
+        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-d', self._test.indep_parameters.device)

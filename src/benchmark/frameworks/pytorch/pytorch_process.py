@@ -4,7 +4,11 @@ from ..processes import ProcessHandler
 
 
 class PyTorchProcess(ProcessHandler):
+    benchmark_app_name = 'pytorch_python_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
+        log.info('Initialize pytorch process')
         super().__init__(test, executor, log)
 
     @staticmethod
@@ -12,15 +16,7 @@ class PyTorchProcess(ProcessHandler):
         return PyTorchProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_pytorch_script = Path.joinpath(self.inference_script_root, 'inference_pytorch.py')
@@ -32,13 +28,14 @@ class PyTorchProcess(ProcessHandler):
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
+        report_path = self.report_path
         if ((name is not None)
                 and (model_pt is None or model_pt == '')):
             common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
-                             f'-b {batch_size} -ni {iteration}')
+                             f'-b {batch_size} -ni {iteration} --report_path {report_path}')
         elif ((model_pt is not None) or (model_pt != '')):
             common_params = (f'-m {model_pt} -i {dataset} -is {input_shape} '
-                             f'-b {batch_size} -ni {iteration}')
+                             f'-b {batch_size} -ni {iteration} --report_path {report_path}')
         else:
             raise Exception('Incorrect model parameters. Set model name or file name.')
 
