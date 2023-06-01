@@ -17,7 +17,6 @@ ARG DEPENDENCIES="apt-utils \
                   vim \
                   automake \
                   build-essential \
-                  cmake \
                   cpio \
                   curl \
                   dialog \
@@ -42,13 +41,18 @@ RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
+#install cmake
+WORKDIR /tmp/
+ARG CMAKE_VERSION=3.24
+RUN pip3 install cmake==${CMAKE_VERSION}
+
 #install onnxruntime
 WORKDIR /tmp/
 ARG ONNX_VERSION=1.14.0
 RUN git clone https://github.com/microsoft/onnxruntime.git && \ 
     cd onnxruntime && \ 
     git checkout v${ONNX_VERSION} && \ 
-    git submodule update --init --recursive && \ mkdir build && cd build && \
+    git submodule update --init --recursive && mkdir build && cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=install \
         -DCMAKE_BUILD_TYPE=Release \
         -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON \
