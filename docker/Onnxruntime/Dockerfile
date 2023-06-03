@@ -61,3 +61,44 @@ RUN git clone https://github.com/microsoft/onnxruntime.git && \
         -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake && \ 
     make install -j$(nproc --all)
 RUN pip3 install onnxruntime==${ONNX_VERSION}
+
+#install Opencv
+WORKDIR /tmp/
+ARG OCV_VERSION=4.7.0
+RUN pip uninstall opencv-python -y
+RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch ${OCV_VERSION} --single-branch
+ENV OpenCV_BUILD_DIR=/root/build-opencv
+RUN mkdir $OpenCV_BUILD_DIR
+WORKDIR $OpenCV_BUILD_DIR
+RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
+    cmake -G Ninja \
+        -D CMAKE_INSTALL_PREFIX=install \
+        -D CMAKE_BUILD_TYPE=Release \
+        -D BUILD_EXAMPLES=OFF \
+        -D BUILD_TESTS=OFF \
+        -D BUILD_DOCS=OFF \
+        -D WITH_OPENVINO=ON \
+        -D OPENCV_LIB_INSTALL_PATH=lib \
+        -D OPENCV_CONFIG_INSTALL_PATH=cmake \
+        -D PYTHON3_PACKAGES_PATH=install/python/python3 \
+        /tmp/opencv/ && ninja && cmake --install .' && \
+    rm -rf /tmp/*
+ENV OpenCV_INSTALL_DIR="$OpenCV_BUILD_DIR/install"
+ENV OpenCV_DIR="$OpenCV_INSTALL_DIR/cmake"
+ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:$PYTHONPATH}"
+
+#accuracy-check
+ARG OMZ_VERSION="${OV_SHORT_VERSION}.0"
+WORKDIR /tmp/
+RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN tar xvf cifar-10-python.tar.gz -C sample
+RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
+    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
+
+# Download DLI source code
+WORKDIR /tmp/
+RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
+    pip3 install docker PyYAML
