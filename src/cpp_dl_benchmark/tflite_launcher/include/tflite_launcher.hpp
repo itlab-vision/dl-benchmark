@@ -4,8 +4,10 @@
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
-#include <opencv2/core/mat.hpp>
-#include <opencv2/dnn.hpp>
+#include <tensorflow/lite/delegates/gpu/delegate.h>
+#include <tensorflow/lite/interpreter.h>
+#include <tensorflow/lite/kernels/register.h>
+#include <tensorflow/lite/model.h>
 
 #include <chrono>
 #include <cstdint>
@@ -14,10 +16,10 @@
 #include <string>
 #include <vector>
 
-class OCVLauncher : public Launcher {
+class TFLiteLauncher : public Launcher {
 public:
-    OCVLauncher(const int nthreads, const std::string& device);
-    virtual ~OCVLauncher(){};
+    TFLiteLauncher(const int nthreads, const std::string& device);
+    virtual ~TFLiteLauncher();
 
     std::string get_framework_name() const override;
     std::string get_framework_version() const override;
@@ -33,22 +35,30 @@ public:
 
     void warmup_inference() override;
     int evaluate(int iterations_num, uint64_t time_limit_ns) override;
-    void dump_output() override;
+    void dump_output() override{};
 
 private:
-    cv::dnn::Net net;
+    // Note that the model instance must outlive the
+    // interpreter instance.
+    std::unique_ptr<tflite::FlatBufferModel> model = nullptr;
+    std::unique_ptr<tflite::Interpreter> interpreter = nullptr;
+    std::unique_ptr<tflite::ops::builtin::BuiltinOpResolver> resolver;
+
+    /// Use raw pointer as TfLiteDelegate is a C structure, so it has no
+    /// virtual destructor. The default deleter of the unique_ptr does not know
+    /// how to delete C++ objects deriving from TfLiteDelegate.
+    TfLiteDelegate* gpu_delegate = nullptr;
+    TfLiteDelegate* xnnpack_delegate = nullptr;
+
     std::vector<std::string> input_names;
     std::vector<std::vector<int>> input_shapes;
+    std::vector<TfLiteType> input_data_precisions;
 
     std::vector<std::string> output_names;
     std::vector<std::vector<int>> output_shapes;
+    std::vector<TfLiteType> output_data_precisions;
 
-    std::vector<cv::Mat> blobs;
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    std::vector<cv::Mat> output_blobs;
-
-    static void set_backend(cv::dnn::Net& net);
-
-    void run(const cv::Mat& input_blob);
+    void run(const std::vector<TensorBuffer>& tbuffers);
 };

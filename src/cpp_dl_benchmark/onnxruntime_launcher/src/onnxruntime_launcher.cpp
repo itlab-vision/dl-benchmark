@@ -10,8 +10,8 @@
 
 #include <algorithm>
 #include <chrono>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <numeric>
 #include <string>
@@ -80,7 +80,7 @@ std::string ONNXLauncher::get_backend_name() const {
 #endif
 }
 
-void ONNXLauncher::read(const std::string model_file, const std::string weights_file) {
+void ONNXLauncher::read(const std::string& model_file, const std::string& weights_file) {
     env = std::make_shared<Ort::Env>(ORT_LOGGING_LEVEL_ERROR, "ORT Benchmark");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -106,12 +106,12 @@ void ONNXLauncher::read(const std::string model_file, const std::string weights_
 #elif ORT_TRT
     else if (device == utils::Device::NVIDIA_GPU) {
         check_status(Ort::GetApi().CreateTensorRTProviderOptions(&tensorrt_options));
-        std::vector<const char*> keys{"device_id",
-                                      "trt_fp16_enable",
-                                      "trt_max_workspace_size"};
+        std::vector<const char*> keys{"device_id", "trt_fp16_enable", "trt_max_workspace_size"};
         std::vector<const char*> values{"0", "1", "4294967296"};
-        check_status(Ort::GetApi().UpdateTensorRTProviderOptions(tensorrt_options, keys.data(), values.data(), keys.size()));
-        check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_TensorRT_V2(session_options, tensorrt_options));
+        check_status(
+            Ort::GetApi().UpdateTensorRTProviderOptions(tensorrt_options, keys.data(), values.data(), keys.size()));
+        check_status(
+            Ort::GetApi().SessionOptionsAppendExecutionProvider_TensorRT_V2(session_options, tensorrt_options));
     }
 #endif
     else {
@@ -192,7 +192,7 @@ IOTensorsInfo ONNXLauncher::get_io_tensors_info() const {
     return {input_tensors_info, output_tensors_info};
 }
 
-void ONNXLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tbuffers) {
+void ONNXLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tbuffers) {
     tensor_buffers = std::move(tbuffers);
     auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
     tensors.resize(tensor_buffers.size());
@@ -254,18 +254,18 @@ int ONNXLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
 
 void ONNXLauncher::dump_output() {
     std::vector<std::pair<const float*, size_t>> tmp;
-    for(int i = 0; i < tensors.size();i++){
+    for (int i = 0; i < tensors.size(); i++) {
         std::string name = "output" + std::to_string(i);
         std::ofstream file(name);
         auto result = run_for_output(tensors[i]);
         auto raw_data = result[0].GetTensorData<float>();
         auto size = result[0].GetTensorTypeAndShapeInfo().GetElementCount();
-        if(file.is_open()){
-            for(int j = 0; j < size; j++){
-                file << std::to_string(raw_data[j]) <<'\n';
+        if (file.is_open()) {
+            for (int j = 0; j < size; j++) {
+                file << std::to_string(raw_data[j]) << '\n';
             }
         }
-        else{
+        else {
             throw std::runtime_error("Something went wrong, can't open file");
         }
         file.close();

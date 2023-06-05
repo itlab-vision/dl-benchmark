@@ -30,23 +30,23 @@ protected:
     std::vector<double> latencies;
 
 public:
-    Launcher(int nthreads, const std::string& device)
+    Launcher(const int nthreads, const std::string& device)
         : nthreads(nthreads), device(utils::get_device_from_str(device)){};
     virtual ~Launcher() {}
 
     virtual std::string get_framework_name() const = 0;
     virtual std::string get_framework_version() const = 0;
     virtual std::string get_backend_name() const = 0;
-    virtual void read(const std::string model_file, const std::string weights_file = "") = 0;
+    virtual void read(const std::string& model_file, const std::string& weights_file = "") = 0;
     virtual void load() = 0;
 
     virtual void fill_inputs_outputs_info() = 0;
     virtual IOTensorsInfo get_io_tensors_info() const = 0;
 
-    virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tensor_buffers) = 0;
+    virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) = 0;
 
     virtual void warmup_inference() = 0;
-    virtual int evaluate(int iterations_num, uint64_t time_limit_ns) = 0;
+    virtual int evaluate(const int iterations_num, const uint64_t time_limit_ns) = 0;
 
     virtual void dump_output() = 0;
 

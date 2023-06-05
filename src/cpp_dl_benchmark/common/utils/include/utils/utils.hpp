@@ -34,10 +34,15 @@ std::string get_device_str(Device d);
 Device get_device_from_str(const std::string& dstr);
 
 enum class DataPrecision : unsigned int {
-    FP32 = 0,
-    FP16,
+    FP16 = 0,
+    FP32,
+    FP64,
     U8,
+    U16,
+    U32,
+    U64,
     I8,
+    I16,
     I32,
     I64,
     BOOL,

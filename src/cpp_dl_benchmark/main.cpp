@@ -6,6 +6,8 @@
 #include "opencv_launcher.hpp"
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
 #include "onnxruntime_launcher.hpp"
+#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+#include "tflite_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -46,7 +48,7 @@ constexpr char device_msg[] =
     "target device to infer on. Avalaibale devices depends on the framework:\n"
     "                                                          ONNX Runtime: CPU, CUDA (CUDA EP)\n"
     "                                                          OpenCV: CPU, GPU";
-DEFINE_string(d, "", device_msg);
+DEFINE_string(d, "CPU", device_msg);
 
 constexpr char batch_size_msg[] = "batch size value. If not provided, batch size value is determined from the model";
 DEFINE_uint32(b, 0, batch_size_msg);
@@ -110,6 +112,10 @@ void parse(int argc, char* argv[]) {
             "onnxruntime_cuda"
 #elif ORT_TRT
             "onnxruntime_trt"
+#elif TFLITE_DEFAULT
+            "tflite"
+#elif TFLITE_XNNPACK
+            "tflite_xnnpack"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -199,6 +205,8 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
+#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
 #endif
 
         if (FLAGS_save_report) {
@@ -319,7 +327,7 @@ int main(int argc, char* argv[]) {
                       ? std::to_string(num_iterations) + " iterations"
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
 
-        if(FLAGS_dump_output){
+        if (FLAGS_dump_output) {
             launcher->dump_output();
         }
 
