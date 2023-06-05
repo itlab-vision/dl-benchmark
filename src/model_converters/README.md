@@ -14,12 +14,12 @@ This will convert model from `<source_framework>` to TFLite format.
 
 ### TFLite converter parameters
 
-- `--model-path` absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
-- `--input-names` comma-separated names of the input layers.
-- `--input-shapes` comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
-- `--output-names` comma-separated names of the output layers.
-- `--freeze-constant-input` pair "name"="value", replaces input layer with constant with provided value.
-- `--source-framework` source framework for convertion to TensorFlow Lite format.
+- `--model-path` is an absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
+- `--input-names` is a comma-separated names of the input layers.
+- `--input-shapes` is a comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
+- `--output-names` is a comma-separated names of the output layers.
+- `--freeze-constant-input` is a pair "name"="value", replaces input layer with constant with provided value.
+- `--source-framework` is a source framework for convertion to TensorFlow Lite format.
 
 ### Examples of usage
 
@@ -32,7 +32,7 @@ tflite_converter.py --model-path /<full_path_to_models_dir>/_models_dir/public/y
 ```
 
 
-# Conversion to TF2 saved model format and optimization with TRT for NVIDIA devices
+# Conversion to TF2 saved model format and optimization with TensorRT for NVIDIA devices
 
 TF Converter supports model conversion to TF2 saved model format from frozen graph and meta formats of TF model or from ONNX model
 
@@ -44,18 +44,18 @@ python tf_converter.py --model-path <path/to/input/model> --tensor_rt_precision 
 
 ### TF converter parameters
 
-- `--model-path` absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
-- `--input-names` comma-separated names of the input layers.
-- `--input-shapes` comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
-- `--output-names` comma-separated names of the output layers.
-- `--saved_model_dir` path where tf2 saved model will be saved. Default <model-path.parent>/saved_model.
-- `--tensor_rt_precision` Tensor RT precision FP16, FP32. If not defined, no Tensor-RT conversion will be applied.
+- `--model-path` is an absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
+- `--input-names` is a comma-separated names of the input layers.
+- `--input-shapes` is a comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
+- `--output-names` is a comma-separated names of the output layers.
+- `--saved_model_dir` is a path where tf2 saved model will be saved. Default <model-path.parent>/saved_model.
+- `--tensor_rt_precision` is a Tensor RT precision FP16, FP32. If not defined, no Tensor-RT conversion will be applied.
   Applicable only for hosts with NVIDIA GPU and tensorflow built with Tensor-RT support.
-- `--tensor_rt_model_dir` A path where Tensor RT optimized model will be saved. Default <model-path.parent>
+- `--tensor_rt_model_dir` is a path where Tensor RT optimized model will be saved. Default <model-path.parent>
   /tensor_rt_<Precision>
 
 
-# Conversion OMZ models to .pt pytorch format
+# Converting OMZ models to PyTorch format .pt
 
 To get .pt format models along .onnx, apply the following patch to OMZ converter script:
 

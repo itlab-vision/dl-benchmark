@@ -754,7 +754,7 @@ inference_onnx_runtime.py
 - `-d / --device` - оборудование, на котором будет выполнен проход сети.
 - `--execution_providers` - провайдер, с помощью которого будет выполнен
   проход сети. По умолчанию используется `CPUExecutionProvider`.
-  Подробнее про доступные [провайдеры][execution_providers]
+  Подробнее про доступные [провайдеры][execution_providers].
 - `-ni / --number_iter` - количество прямых проходов по сети. По умолчанию
   выполняется один проход по сети.
 - `-t / --task` - наименование решаемой задачи (`classification`). 
@@ -774,9 +774,9 @@ inference_onnx_runtime.py
 - `--output_names` - имена выходных узлов модели. По умолчанию не установлен.
 - `--raw_output` - работа скрипта без логов. По умолчанию не установлен.
 - `-nthreads / --number_threads` - количество потоков, используемых для распараллеливания выполнения внутри узлов.
-  По умолчанию устанавливается onnxruntime.
+  По умолчанию устанавливается ONNX Runtime.
 - `--number_inter_threads` - количество потоков, используемых для распараллеливания исполнения вывода (между узлами).
-  По умолчанию устанавливается onnxruntime.
+  По умолчанию устанавливается ONNX Runtime.
 - `--execution_mode` - режим выполнения. По умолчанию устанавливается последовательное выполнение - `ORT_SEQUENTIAL`.
 
 #### Примеры запуска
@@ -788,7 +788,7 @@ python3 inference_onnx_runtime.py \
 ```
 
 <!-- LINKS -->
-[execution_providers]: https://onnxruntime.ai/docs/execution-providers/
+[execution_providers]: https://ONNX Runtime.ai/docs/execution-providers
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
 [torchvision]: https://pytorch.org/vision/stable/models.html

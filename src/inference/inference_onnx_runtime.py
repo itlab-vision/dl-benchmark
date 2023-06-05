@@ -198,15 +198,6 @@ def inference_onnx_runtime(session, output_names, number_iter, get_slice):
     return result, time_infer
 
 
-def process_result(batch_size, inference_time):
-    inference_time = pp.three_sigma_rule(inference_time)
-    average_time = pp.calculate_average_time(inference_time)
-    latency = pp.calculate_latency(inference_time)
-    fps = pp.calculate_fps(batch_size, latency)
-
-    return average_time, latency, fps
-
-
 def prepare_output(result, output_names, task, args):
     if task == 'feedforward':
         return {}
@@ -261,7 +252,8 @@ def main():
             inference_session, args.output_names, args.number_iter, io.get_slice_input)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = process_result(args.batch_size, inference_time)
+        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                                inference_time)
 
         if not args.raw_output:
             if args.number_iter == 1:

@@ -5,7 +5,7 @@ from ..processes import ProcessHandler
 
 ONNX_CPP_BENCHMARK_NAME = {'Default': 'onnxruntime_benchmark',
                            'CUDA': 'onnxruntime_cuda_benchmark',
-                           'TRT': 'onnxruntime_trt_benchmark',
+                           'TensorRT': 'onnxruntime_tensorrt_benchmark',
                            }
 
 
@@ -33,7 +33,7 @@ class OnnxRuntimeProcess(ProcessHandler):
         device = test.indep_parameters.device
         provider = test.dep_parameters.provider
         if ((device == 'CPU' and provider not in ['Default'])
-           or (device == 'NVIDIA_GPU' and provider not in ['CUDA', 'TRT'])):
+           or (device == 'NVIDIA_GPU' and provider not in ['CUDA', 'TensorRT'])):
             raise AssertionError('Unsupportend combination of: '
                                  f'device {device}, '
                                  f'execution provider {provider}')

@@ -59,7 +59,8 @@ Options:
         [--niter <NUMBER>]                            number of iterations. If not provided, default time limit is set.
         [-t <NUMBER>]                                 time limit for inference in seconds
         [--save_report]                               save report in JSON format.
-        [--report_path <PATH>]                        destination path for report
+        [--report_path <PATH>]                        destination path for report.
+        [--dump_output]                               save final tensor value.
 ```
 
 <!-- LINKS -->
