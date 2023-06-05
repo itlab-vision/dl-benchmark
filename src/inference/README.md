@@ -788,7 +788,7 @@ python3 inference_onnx_runtime.py \
 ```
 
 <!-- LINKS -->
-[execution_providers]: https://ONNX Runtime.ai/docs/execution-providers
+[execution_providers]: https://onnxruntime.ai/docs/execution-providers
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
 [torchvision]: https://pytorch.org/vision/stable/models.html

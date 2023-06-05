@@ -49,9 +49,9 @@ python tf_converter.py --model-path <path/to/input/model> --tensor_rt_precision 
 - `--input-shapes` is a comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
 - `--output-names` is a comma-separated names of the output layers.
 - `--saved_model_dir` is a path where tf2 saved model will be saved. Default <model-path.parent>/saved_model.
-- `--tensor_rt_precision` is a Tensor RT precision FP16, FP32. If not defined, no Tensor-RT conversion will be applied.
-  Applicable only for hosts with NVIDIA GPU and tensorflow built with Tensor-RT support.
-- `--tensor_rt_model_dir` is a path where Tensor RT optimized model will be saved. Default <model-path.parent>
+- `--tensor_rt_precision` is a TensorRT precision FP16, FP32. If not defined, no TensorRT conversion will be applied.
+  Applicable only for hosts with NVIDIA GPU and tensorflow built with TensorRT support.
+- `--tensor_rt_model_dir` is a path where TensorRT optimized model will be saved. Default <model-path.parent>
   /tensor_rt_<Precision>
 
 

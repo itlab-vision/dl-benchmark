@@ -184,7 +184,7 @@ def convert_with_tensor_rt(input_saved_model_dir, output_model_dir, log, precisi
     elif precision == 'FP16':
         precision_mode = trt.TrtPrecisionMode.FP16
     else:
-        raise AssertionError(f'Unknown tensor-RT precision {precision}')
+        raise AssertionError(f'Unknown TensorRT precision {precision}')
 
     # Conversion Parameters
     conversion_params = trt.TrtConversionParams(

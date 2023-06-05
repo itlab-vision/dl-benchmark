@@ -108,8 +108,8 @@ def cli_argument_parser():
                         type=bool,
                         dest='inference_mode')
     parser.add_argument('--tensor_rt_precision',
-                        help='Tensor RT precision FP16, FP32.'
-                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with Tensor-RT support',
+                        help='TensorRT precision FP16, FP32.'
+                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with TensorRT support',
                         type=str,
                         default=None,
                         dest='tensor_rt_precision')
@@ -154,7 +154,7 @@ def get_tensor_rt_dtype(tensor_rt_precision):
         elif tensor_rt_precision == 'FP16':
             tensor_rt_dtype = torch.half
         else:
-            raise ValueError(f'Unknown Tensor RT precision {tensor_rt_precision}')
+            raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
         return tensor_rt_dtype
     else:
         return None
@@ -194,8 +194,8 @@ def compile_model(module, device, model_type, use_tensorrt, shapes, tensor_rt_dt
             import torch_tensorrt
             inputs = [torch_tensorrt.Input(shapes[key], dtype=tensor_rt_dtype) for key in shapes]
             tensor_rt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
-                                                   truncate_long_and_double=True,
-                                                   enabled_precisions=tensor_rt_dtype)
+                                                         truncate_long_and_double=True,
+                                                         enabled_precisions=tensor_rt_dtype)
             return tensor_rt_ts_module
         else:
             raise ValueError('GPU is not available')
