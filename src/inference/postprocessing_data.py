@@ -33,21 +33,25 @@ def calculate_latency(time):
     return latency, latency_std
 
 
-def calculate_average_fps(pictures, time):
+def calculate_batch_fps(batch_size, time):
     if time == 0:
         return -1
-    return pictures / time
+    return batch_size / time
 
 
-def calculate_performance_metrics_sync_mode(batch_size, inference_time,
-                                            min_infer_time=0.0):
+def calculate_average_fps(iter_number, batch_size, inference_time):
+    return iter_number * batch_size / inference_time
+
+
+def calculate_performance_metrics_sync_mode(batch_size, inference_time, number_iterations, min_infer_time=0.0):
     first_inference_time = inference_time[0]
     execution_time = sum(inference_time)
     inference_time = delete_incorrect_time(inference_time, min_infer_time)
     inference_time = three_sigma_rule(inference_time)
     average_time = calculate_average_time(inference_time)
     latency, latency_std = calculate_latency(inference_time)
-    fps = calculate_average_fps(batch_size, latency)
+    batch_fps = calculate_batch_fps(batch_size, latency)
+    average_fps = calculate_average_fps(number_iterations, batch_size, sum(inference_time))
     inference_result = {
         'execution_time': round(execution_time, 3),
         'first_inference_time': round(first_inference_time, 5),
@@ -56,7 +60,8 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time,
         'latency_std': round(latency_std, 5),
         'latency_max': round(max(inference_time), 5),
         'latency_min': round(min(inference_time), 5),
-        'throughput': round(fps, 3),
+        'batch_throughput': round(batch_fps, 3),
+        'throughput': round(average_fps, 3),
     }
     return inference_result
 
@@ -73,7 +78,7 @@ def print_performance_metrics_sync_mode(log, average_time, fps, latency):
 
 def calculate_performance_metrics_async_mode(inference_time, batch_size, iteration_count):
     average_time = inference_time / iteration_count
-    fps = calculate_average_fps(batch_size * iteration_count, inference_time)
+    fps = calculate_average_fps(iteration_count, batch_size, inference_time)
     inference_result = {
         'execution_time': round(inference_time, 3),
         'latency_avg': round(average_time, 5),

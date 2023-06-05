@@ -289,8 +289,7 @@ def main():
                                                  io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                      inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter)
         report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)

@@ -1,4 +1,5 @@
 import abc
+import copy
 import itertools
 import json
 import os
@@ -161,7 +162,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
             data_gen = self._transformed_input[key]
-            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_data = [copy.deepcopy(next(data_gen)) for _ in range(self._batch_size)]
             slice_input[key] = np.stack(slice_data)
         return slice_input
 
@@ -170,7 +171,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
             data_gen = self._transformed_input[key]
-            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_data = [copy.deepcopy(next(data_gen)) for _ in range(self._batch_size)]
             slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 

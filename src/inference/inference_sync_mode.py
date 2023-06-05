@@ -207,8 +207,7 @@ def main():
         result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                      inference_time,
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter,
                                                                       args.mininfer)
 
         report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
