@@ -5,6 +5,7 @@ from .openvino.openvino_wrapper import OpenVINOWrapper
 from .singleton import Singleton
 from .tensorflow.tensorflow_wrapper import TensorFlowWrapper
 from .onnx_runtime.onnx_runtime_wrapper import OnnxRuntimeWrapper
+from .onnx_runtime_python.onnx_runtime_python_wrapper import ONNXRuntimePythonWrapper
 from .tensorflow_lite.tensorflow_lite_wrapper import TensorFlowLiteWrapper
 from .opencv_dnn_python.opencv_dnn_python_wrapper import OpenCVDNNPythonWrapper
 from .mxnet.mxnet_wrapper import MXNetWrapper
@@ -35,6 +36,7 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[TensorFlowWrapper.framework_name] = TensorFlowWrapper()
         self._framework_wrappers[OpenVINOWrapper.framework_name] = OpenVINOWrapper()
         self._framework_wrappers[OnnxRuntimeWrapper.framework_name] = OnnxRuntimeWrapper()
+        self._framework_wrappers[ONNXRuntimePythonWrapper.framework_name] = ONNXRuntimePythonWrapper()
         self._framework_wrappers[TensorFlowLiteWrapper.framework_name] = TensorFlowLiteWrapper()
         self._framework_wrappers[OpenCVDNNPythonWrapper.framework_name] = OpenCVDNNPythonWrapper()
         self._framework_wrappers[MXNetWrapper.framework_name] = MXNetWrapper()

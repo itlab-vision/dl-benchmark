@@ -150,7 +150,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         self._report_path = executor.get_path_to_logs_folder().joinpath('benchmark_report.json')
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+    def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
         return OpenVINOBenchmarkCppProcess(test, executor, log, cpp_benchmarks_dir)
 
     def _fill_command_line(self):

@@ -16,12 +16,14 @@ public:
     Report(const std::string& report_path) : path(report_path) {}
 
     enum class Category : unsigned int {
-        CMD_OPTIONS = 0,
+        FRAMEWORK_INFO = 0,
+        CMD_OPTIONS,
         CONFIGURATION_SETUP,
         EXECUTION_RESULTS,
     };
 
     const std::map<Category, std::string> record_categories_str = {
+        {Category::FRAMEWORK_INFO, "framework_info"},
         {Category::CMD_OPTIONS, "cmd_options"},
         {Category::CONFIGURATION_SETUP, "configurations_setup"},
         {Category::EXECUTION_RESULTS, "execution_results"}};

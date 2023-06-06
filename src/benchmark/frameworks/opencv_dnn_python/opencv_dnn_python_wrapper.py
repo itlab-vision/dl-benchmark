@@ -8,7 +8,7 @@ class OpenCVDNNPythonWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.opencv_dnn_python
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+    def create_process(test, executor, log, **kwargs):
         return OpenCVDNNPythonProcess.create_process(test, executor, log)
 
     @staticmethod

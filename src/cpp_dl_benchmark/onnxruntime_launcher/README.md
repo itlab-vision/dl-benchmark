@@ -75,13 +75,16 @@ Options:
         [-help]                                       print help on all arguments
          -m <MODEL FILE>                              path to a file with a trained model or a config file.
                                                       available formats
-                                                          ONNX Runtime - onnx
-                                                          OpenCV DNN - onnx, pb, protoxt.
+                                                          ONNX Runtime - .onnx
+                                                          OpenCV - .xml, .onnx, .pb, .protoxt.
         [-w <WEIGHTS FILE>]                           path to a model weights file.
                                                       available formats:
-                                                          OpenCV DNN - caffemodel.
+                                                          OpenCV - .caffemodel, .bin
         [-i <INPUT>]                                  path to an input to process. The input must be an image and/or binaries, a folder of images and/or binaries.
                                                       ex.: "input1:file1 input2:file2 input3:file3" or just path to the file or folder if model has one input
+        [-d <DEVICE>]                                 target device to infer on. Avalaibale devices depends on the framework:
+                                                          ONNX Runtime: CPU, CUDA (CUDA EP)
+                                                          OpenCV: CPU, GPU
         [-b <NUMBER>]                                 batch size value. If not provided, batch size value is determined from the model
         [--shape <[N,C,H,W]>]                         shape for network input.
                                                       ex., "input1[1,128],input2[1,128],input3[1,128]" or just "[1,3,224,224]"

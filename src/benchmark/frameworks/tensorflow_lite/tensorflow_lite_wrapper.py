@@ -7,7 +7,7 @@ class TensorFlowLiteWrapper(FrameworkWrapper):
     framework_name = 'TensorFlowLite'
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmark_path=None):
+    def create_process(test, executor, log, cpp_benchmark_path=None, **kwargs):
         return TensorFlowLiteProcess.create_process(test, executor, log)
 
     @staticmethod

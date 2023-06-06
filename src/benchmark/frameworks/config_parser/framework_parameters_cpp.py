@@ -2,8 +2,10 @@ from .framework_parameters_parser import FrameworkParameters
 
 
 class CppParameters(FrameworkParameters):
-    def __init__(self, backend, input_shape, layout, mean, input_scale, thread_count, inference_requests_count):
+    def __init__(self, backend, provider, input_shape, layout, mean, input_scale, thread_count,
+                 inference_requests_count):
         self.backend = None
+        self.provider = None
         self.input_shape = None
         self.layout = None
         self.mean = None
@@ -13,6 +15,8 @@ class CppParameters(FrameworkParameters):
 
         if self._parameter_is_not_none(backend):
             self.backend = backend.strip()
+        if self._parameter_is_not_none(provider):
+            self.provider = provider.strip()
         if self._parameter_is_not_none(input_shape):
             self.input_shape = input_shape.strip()
         if self._parameter_is_not_none(layout):

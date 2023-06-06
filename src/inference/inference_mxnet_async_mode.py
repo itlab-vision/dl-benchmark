@@ -146,7 +146,7 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.cpu()
-    elif device == 'NVIDIA GPU':
+    elif device == 'NVIDIA_GPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.gpu()
     else:
@@ -211,15 +211,15 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
     if num_iterations == 1:
         mxnet.nd.waitall()
         inference_time = time()
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         predictions = net(slice_input[input_name]).softmax()
         mxnet.nd.waitall()
         inference_time = time() - inference_time
     else:
         mxnet.nd.waitall()
         inference_time = time()
-        for i in range(num_iterations):
-            slice_input = get_slice(i)
+        for _ in range(num_iterations):
+            slice_input = get_slice()
             net(slice_input[input_name]).softmax()
         mxnet.nd.waitall()
         inference_time = time() - inference_time
@@ -270,7 +270,7 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,
-                                                 io.get_slice_input, args.input_name)
+                                                 io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
         average_time, fps = pp.calculate_performance_metrics_async_mode(inference_time,

@@ -187,32 +187,64 @@ class OpenCVIOModelWrapper(IOModelWrapper):
 
 
 class PyTorchIOModelWrapper(IOModelWrapper):
-    def __init__(self, args):
-        self._input_names = [args['input_name']]
-        self._input_shapes = [args['input_shape']]
+    def __init__(self, input_shapes, batch_size, tensor_rt_dtype, custom_input_type):
+        self._shapes = input_shapes
+        self._batch = batch_size
+        self._input_names = input_shapes.keys()
+        self._tensor_rt_dtype = tensor_rt_dtype
+        self._custom_input_type = custom_input_type
 
     def get_input_layer_names(self, model):
-        return self._input_names
+        return list(self._input_names)
 
     def get_input_layer_shape(self, model, layer_name):
-        return self._input_shapes[0]
+        input_shape = self._shapes[layer_name]
+        return [self._batch, *input_shape[1:]]
 
     def get_input_layer_dtype(self, model, layer_name):
-        import torch
-        return torch.float32
+        from numpy import float32, float16
+        if self._tensor_rt_dtype:
+            import torch
+            if self._tensor_rt_dtype in [torch.float, torch.float32]:
+                return float32
+            elif self._tensor_rt_dtype in [torch.half, torch.float16]:
+                return float16
+        elif self._custom_input_type:
+            return self._custom_input_type
+        return float32
 
 
-class OnnxRuntimeModelWrapperCpp(IOModelWrapper):
-    def __init__(self, model):
-        self._input_shape = model.get_inputs()[0].shape
-        self._input_name = model.get_inputs()[0].name
+class ONNXIOModelWrapper(IOModelWrapper):
+    def __init__(self, inputs, batch):
+        self._inputs = inputs
+        self._batch = batch
 
     def get_input_layer_names(self, model):
-        return self._input_name
+        if self._inputs:
+            return list(self._inputs.keys())
+
+        inputs_info = model.get_inputs()
+        return [input_layer.name for input_layer in inputs_info]
 
     def get_input_layer_shape(self, model, layer_name):
-        return self._input_shape
+        if self._inputs:
+            input_shape = self._inputs[layer_name]
+        else:
+            inputs_info = model.get_inputs()
+            for model_input in inputs_info:
+                if model_input.name == layer_name:
+                    input_shape = model_input.shape
+
+        return [self._batch, *input_shape[1:]]
 
     def get_input_layer_dtype(self, model, layer_name):
+        inputs_info = model.get_inputs()
+        for model_input in inputs_info:
+            if model_input.name == layer_name:
+                dtype = model_input.type.replace('tensor(', '').replace(')', '')
+                if dtype == 'float':
+                    dtype += '32'
+                return dtype
+
         from numpy import float32
         return float32

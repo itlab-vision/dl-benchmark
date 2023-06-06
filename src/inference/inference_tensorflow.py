@@ -1,15 +1,21 @@
-import sys
 import argparse
 import logging as log
+import sys
+from pathlib import Path
 from time import time
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.saved_model import signature_constants
+
+import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowIOModelWrapper
 from transformer import TensorFlowTransformer
 
-import postprocessing_data as pp
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.model_converters.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
+                                                    get_input_operation_name)  # noqa
 
 
 def cli_argument_parser():
@@ -177,73 +183,33 @@ def prepare_output(result, outputs_name, task):
     return {outputs_name[i]: result[i] for i in range(len(result))}
 
 
-def load_network(tensorflow, model, output_names=None):
-    suffix = model.rpartition('.')[2]
-    if suffix == 'pb':
-        return load_model_from_pb(tensorflow, model)
-    elif suffix == 'meta':
-        return load_model_from_checkpoint(tensorflow, model, output_names)
-    else:
-        raise ValueError(f'Unsupported file format of the model: {suffix}')
-
-
-def load_model_from_pb(tensorflow, model):
-    with tensorflow.io.gfile.GFile(model, 'rb') as f:
-        graph_def = tensorflow.compat.v1.GraphDef()
-        graph_def.ParseFromString(f.read())
-    with tensorflow.Graph().as_default() as graph:
-        tensorflow.import_graph_def(graph_def)
-        return graph
-
-
-def load_model_from_checkpoint(tensorflow, model, output_names):
-    graph = tensorflow.Graph()
-    prefix = model.rpartition('.')[0]
-    with tf.compat.v1.Session() as sess:
-        saver = tf.compat.v1.train.import_meta_graph(model)
-        sess.run(tf.compat.v1.global_variables_initializer())
-        saver.restore(sess, prefix)
-        frozen_graph_def = tf.compat.v1.graph_util.convert_variables_to_constants(
-            sess,
-            sess.graph_def,
-            output_names)
-    with graph.as_default():
-        tensorflow.import_graph_def(frozen_graph_def, name='')
-    return graph
-
-
-def inference_tensorflow(graph, inputs_names, outputs_names, number_iter, get_slice, config):
+def inference_tensorflow(model, number_iter, get_slice):
     result = None
     time_infer = []
-    slice_input = None
-    try:
-        tensors = [graph.get_tensor_by_name('import/{0}:0'.format(name)) for name in outputs_names]
-    except Exception:
-        tensors = [graph.get_tensor_by_name('{0}:0'.format(name)) for name in outputs_names]
-    with tf.compat.v1.Session(graph=graph, config=config) as sess:
-        if number_iter == 1:
-            slice_input = get_slice(0)
+    log.info(f'Starting inference ({number_iter} iterations)')
+
+    if number_iter == 1:
+        slice_input = get_slice()
+        t0 = time()
+        result = infer_slice(model, slice_input)
+        t1 = time()
+        time_infer.append(t1 - t0)
+    else:
+        for _ in range(number_iter):
+            slice_input = get_slice()
             t0 = time()
-            result = sess.run(tensors, slice_input)
+            infer_slice(model, slice_input)
             t1 = time()
             time_infer.append(t1 - t0)
-        else:
-            for i in range(number_iter):
-                slice_input = get_slice(i)
-                t0 = time()
-                sess.run(tensors, slice_input)
-                t1 = time()
-                time_infer.append(t1 - t0)
-
-        return result, time_infer
+    log.info('Inference completed')
+    return result, time_infer
 
 
-def create_config_for_inference(num_intra_threads, num_inter_threads):
-    config = tf.compat.v1.ConfigProto(
-        intra_op_parallelism_threads=num_intra_threads,
-        inter_op_parallelism_threads=num_inter_threads)
-
-    return config
+def infer_slice(model, slice_input):
+    model._num_positional_args = len(slice_input.keys())
+    inputs = [tf.convert_to_tensor(value) for value in slice_input.values()]
+    res = model(*inputs)
+    return res
 
 
 def create_dict_for_transformer(args):
@@ -257,52 +223,63 @@ def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
-    try:
-        model_wrapper = TensorFlowIOModelWrapper(args)
-        data_transformer = TensorFlowTransformer(create_dict_for_transformer(args))
-        io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        log.info('Loading network files:\n\t {0}'.format(args.model_path))
+    if args.device == 'NVIDIA_GPU' and not is_gpu_available():
+        raise AssertionError('NVIDIA_GPU device not found on hostmachine, unable to infer on NVIDIA_GPU')
 
-        graph = load_network(tf, args.model_path, args.output_names)
-        input_shapes = get_input_shape(model_wrapper, graph)
+    if args.device == 'CPU' and is_gpu_available():
+        log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
+                    f' tensorflow will use NVIDIA_GPU by default')
+    input_name = args.input_name
+    input_op_name = get_input_operation_name(input_name)
 
-        for layer in input_shapes:
-            log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
+    output_names = args.output_names
+    model_path = Path(args.model_path)
 
-        log.info('Preparing input data')
-        io.prepare_input(graph, args.input)
+    model_wrapper = TensorFlowIOModelWrapper(args)
+    data_transformer = TensorFlowTransformer(create_dict_for_transformer(args))
+    io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        log.info('Starting inference ({0} iterations)'.format(args.number_iter))
-        inputs_names = model_wrapper.get_input_layer_names(graph)
-        outputs_names = model_wrapper.get_outputs_layer_names(graph, args.output_names)
-        config = create_config_for_inference(args.num_intra_threads, args.num_inter_threads)
-        result, inference_time = inference_tensorflow(graph, inputs_names, outputs_names,
-                                                      args.number_iter, io.get_slice_input,
-                                                      config)
+    log.info(f'Loading network files:\n\t {args.model_path}')
+    model_path = model_path.parent if model_path.name == 'saved_model.pb' else model_path
 
-        log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                                inference_time)
+    model, _ = load_model(model_path,
+                          input_names=input_op_name,
+                          output_names=output_names,
+                          const_inputs=[],
+                          log=log)
 
-        if not args.raw_output:
-            if args.number_iter == 1:
-                try:
-                    log.info('Converting output tensor to print results')
-                    result = prepare_output(result, outputs_names, args.task)
+    signature_key = signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    func = model._backref_to_saved_model.signatures[signature_key]
+    graph = func.graph
 
-                    log.info('Inference results')
-                    io.process_output(result, log)
-                except Exception as ex:
-                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+    input_shapes = get_input_shape(model_wrapper, graph)
 
-            log.info('Performance results')
-            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-        else:
-            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
-    except Exception as ex:
-        log.error(str(ex))
-        sys.exit(1)
+    for layer in input_shapes:
+        log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
+
+    log.info('Preparing input data')
+    io.prepare_input(graph, args.input)
+    io.fill_unset_inputs(graph, log)
+
+    inputs_names = model_wrapper.get_input_layer_names(graph)
+    log.info(f'Got input names {inputs_names}')
+    outputs_names = model_wrapper.get_outputs_layer_names(graph, output_names)
+
+    result, inference_time = inference_tensorflow(model, args.number_iter,
+                                                  io.get_slice_input)
+
+    log.info('Computing performance metrics')
+    average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
+                                                                            inference_time)
+
+    if not args.raw_output:
+        if args.number_iter == 1:
+            result = prepare_output(result, outputs_names, args.task)
+            io.process_output(result, log)
+        pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
+    else:
+        pp.print_performance_metrics_sync_mode(average_time, fps, latency)
 
 
 if __name__ == '__main__':

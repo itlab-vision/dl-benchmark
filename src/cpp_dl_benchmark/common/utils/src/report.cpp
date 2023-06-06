@@ -16,7 +16,7 @@ void Report::save() {
     nlohmann::json js;
     std::filesystem::path file_path(path);
     if (!file_path.has_extension()) {
-        file_path /= "ort_benchmark.json";
+        file_path /= "benchmark_report.json";
     }
     if (file_path.has_parent_path() && !std::filesystem::exists(file_path.parent_path())) {
         std::filesystem::create_directory(file_path.parent_path());

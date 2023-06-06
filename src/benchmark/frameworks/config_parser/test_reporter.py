@@ -51,6 +51,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['hint'] = 'Hint'
         match_parameter_description['frontend'] = 'Frontend'
         match_parameter_description['backend'] = 'Backend'
+        match_parameter_description['provider'] = 'Execution Provider'
         match_parameter_description['delegate'] = 'Delegate'
         match_parameter_description['delegate_options'] = 'Delegate options'
 
@@ -62,9 +63,13 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['num_inter_threads'] = 'Inter threads'
         match_parameter_description['num_intra_threads'] = 'Intra threads'
 
+        match_parameter_description['execution_providers'] = 'Execution Providers'
+        match_parameter_description['execution_mode'] = 'Execution Mode'
+
         match_parameter_description['hybridize'] = 'Hybridization flag'
         match_parameter_description['model_type'] = 'Model type'
         match_parameter_description['inference_mode'] = 'Inference mode'
+        match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:

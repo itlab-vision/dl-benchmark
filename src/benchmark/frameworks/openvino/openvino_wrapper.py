@@ -8,8 +8,8 @@ class OpenVINOWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.openvino_dldt
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
-        return create_process(test, executor, log, cpp_benchmarks_dir)
+    def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
+        return create_process(test, executor, log, cpp_benchmarks_dir, **kwargs)
 
     @staticmethod
     def create_test(model, dataset, indep_parameters, dep_parameters):

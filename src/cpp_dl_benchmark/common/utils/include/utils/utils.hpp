@@ -15,6 +15,24 @@ using HighresClock = std::chrono::high_resolution_clock;
 using ns = std::chrono::nanoseconds;
 
 namespace utils {
+
+enum class Device : unsigned int {
+    CPU = 0,
+    GPU,
+    NVIDIA_GPU,
+    ARM,
+    UNKNOWN
+};
+
+static const std::map<Device, std::string> device_to_str_map = {{Device::CPU, "CPU"},
+                                                                {Device::GPU, "GPU"},
+                                                                {Device::NVIDIA_GPU, "NVIDIA_GPU"},
+                                                                {Device::ARM, "ARM"}};
+
+std::string get_device_str(Device d);
+
+Device get_device_from_str(const std::string& dstr);
+
 enum class DataPrecision : unsigned int {
     FP32 = 0,
     FP16,

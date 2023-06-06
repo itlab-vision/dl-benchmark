@@ -1,8 +1,9 @@
 import abc
-import os
-
+import itertools
 import json
+import os
 from pathlib import Path
+
 import cv2
 import numpy as np
 
@@ -24,18 +25,16 @@ class IOAdapter(metaclass=abc.ABCMeta):
         chw = self._transformer.get_shape_in_chw_order(shape, input_name)
         images = []
         image_shapes = []
-        niter = np.ceil(max(self._batch_size, len(data)) / len(data)).astype(int)
-        for _ in range(niter):
-            for i in range(len(data)):
-                image = self.__read_data(data[i], shape, dtype, chw)
-                image_shapes.append(chw[1:])
-                images.append(image)
+        for image in data:
+            image = self.__read_data(image, shape, dtype, chw)
+            image_shapes.append(chw[1:])
+            images.append(image)
         return np.array(images), image_shapes
 
     @staticmethod
     def __create_list_images(input_):
+        # TODO should we limit number of images? what if we have 50K images?
         images = []
-        input_is_correct = True
         if os.path.exists(input_[0]):
             if os.path.isdir(input_[0]):
                 path = os.path.abspath(input_[0])
@@ -43,13 +42,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             elif os.path.isfile(input_[0]):
                 for image in input_:
                     if not os.path.isfile(image):
-                        input_is_correct = False
-                        break
+                        raise ValueError(f'Path to image does not exist: {image}')
                     images.append(os.path.abspath(image))
         else:
-            input_is_correct = False
-        if not input_is_correct:
-            raise ValueError('Wrong path to image or to directory with images')
+            raise ValueError(f'Path to image or to directory with images does not exist: {input_[0]}')
         return images
 
     @staticmethod
@@ -67,11 +63,17 @@ class IOAdapter(metaclass=abc.ABCMeta):
         return result
 
     def __read_data(self, filename, shape, dtype, input_shape):
+        def get_itemsize(dtype):
+            try:
+                return dtype().itemsize
+            except TypeError:
+                return np.dtype(dtype).itemsize
+
         data = []
         file_type = filename.split('.')[-1]
         if file_type == 'bin':
             file_size = os.path.getsize(filename)
-            input_size = dtype().itemsize * int(np.prod(shape[1:]))
+            input_size = get_itemsize(dtype) * int(np.prod(shape[1:]))
 
             if file_size != input_size:
                 raise Exception(
@@ -85,9 +87,62 @@ class IOAdapter(metaclass=abc.ABCMeta):
                     h, w = input_shape[1:]
                     data = cv2.resize(data, (w, h))
             except Exception as ex:
-                raise ValueError(f'Unable to read input file {filename}. Exception occured: {str(ex)}')
+                raise ValueError(f'Unable to read input file {filename}. Exception occurred: {str(ex)}')
 
         return data
+
+    def fill_unset_inputs(self, model, log):
+        all_inputs = self._io_model_wrapper.get_input_layer_names(model)
+        unfilled_inputs = [name for name in all_inputs if name not in self._transformed_input]
+        image_sizes = list(self._original_shapes.values())
+
+        for i, input_name in enumerate(unfilled_inputs):
+            input_shape = self._io_model_wrapper.get_input_layer_shape(model, input_name)
+            element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_name)
+            if len(input_shape) == 2 and input_shape[-1] >= 2:
+                log.info(f'Input {input_name} will be filled with image size')
+                input_value = self.__fill_input_info(input_shape, image_sizes[i], element_type)
+            else:
+                log.warning(f'Input {input_name} will be filled with random values')
+                input_value = self.__fill_random(input_shape, element_type)
+                input_value = self._transformer.transform_images(input_value, input_shape, element_type, input_name)
+
+            self._transformed_input.update({input_name: itertools.cycle(input_value)})
+
+    @staticmethod
+    def __fill_input_info(input_shape, image_sizes, element_type):
+        input_value = np.ones((len(image_sizes), input_shape[1]), dtype=element_type)
+        for i, image_size in enumerate(image_sizes):
+            input_value[i][:2] = image_size
+
+        return input_value
+
+    @staticmethod
+    def __fill_random(input_shape, element_type):
+        rand_min, rand_max = (0, 1) if element_type == 'bool' else (np.iinfo(np.uint8).min, np.iinfo(np.uint8).max)
+        if np.dtype(element_type).kind in ['i', 'u', 'b']:
+            rand_max += 1
+        rs = np.random.RandomState(np.random.MT19937(np.random.SeedSequence(0)))
+        input_value = rs.uniform(rand_min, rand_max, input_shape)
+
+        return input_value
+
+    def __parse_input_instance(self, input_file, input_blob, model):
+        file_format = input_file.split('.')[-1]
+        if 'csv' == file_format:
+            value = self.__parse_tensors(input_file)
+            shapes = [value.shape]
+            transformed_value = value
+        else:
+            input_files = input_file.split(',')
+            value = self.__create_list_images(input_files)
+            shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
+            element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
+            value, shapes = self.__convert_images(shape, value, element_type, input_blob)
+            transformed_value = self._transformer.transform_images(value, shape, element_type, input_blob)
+        self._input.update({input_blob: value})
+        self._original_shapes.update({input_blob: shapes})
+        self._transformed_input.update({input_blob: itertools.cycle(transformed_value)})
 
     def prepare_input(self, model, input_):
         self._input = {}
@@ -95,46 +150,28 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._original_shapes = {}
         if ':' in input_[0]:
             for str_ in input_:
-                value = str_.split(':')[-1]
-                key = str_.split(f':{value}')[0]
-                file_format = value.split('.')[-1]
-                if 'csv' == file_format:
-                    value = self.__parse_tensors(value)
-                    shapes = [value.shape]
-                    transformed_value = value
-                else:
-                    value = value.split(',')
-                    value = self.__create_list_images(value)
-                    shape = self._io_model_wrapper.get_input_layer_shape(model, key)
-                    element_type = self._io_model_wrapper.get_input_layer_dtype(model, key)
-                    value, shapes = self.__convert_images(shape, value, element_type, key)
-                    transformed_value = self._transformer.transform_images(value, shape, element_type, key)
-                self._input.update({key: value})
-                self._original_shapes.update({key: shapes})
-                self._transformed_input.update({key: transformed_value})
+                input_file = str_.split(':')[-1]
+                input_blob = str_.split(f':{input_file}')[0]
+                self.__parse_input_instance(input_file, input_blob, model)
         else:
             input_blob = self._io_model_wrapper.get_input_layer_names(model)[0]
-            file_format = input_[0].split('.')[-1]
-            if 'csv' == file_format:
-                value = self.__parse_tensors(input_[0])
-                shapes = [value.shape]
-                transformed_value = value
-            else:
-                value = self.__create_list_images(input_)
-                shape = self._io_model_wrapper.get_input_layer_shape(model, input_blob)
-                element_type = self._io_model_wrapper.get_input_layer_dtype(model, input_blob)
-                value, shapes = self.__convert_images(shape, value, element_type, input_blob)
-                transformed_value = self._transformer.transform_images(value, shape, element_type, input_blob)
-            self._input.update({input_blob: value})
-            self._original_shapes.update({input_blob: shapes})
-            self._transformed_input.update({input_blob: transformed_value})
+            self.__parse_input_instance(input_[0], input_blob, model)
 
-    def get_slice_input(self, iteration):
+    def get_slice_input(self, *args, **kwargs):
         slice_input = dict.fromkeys(self._transformed_input.keys(), None)
         for key in self._transformed_input:
-            slice_input[key] = self._transformed_input[key][(iteration * self._batch_size) % len(
-                self._transformed_input[key]): (((iteration + 1) * self._batch_size - 1)
-                                                % len(self._transformed_input[key])) + 1:]
+            data_gen = self._transformed_input[key]
+            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_input[key] = np.stack(slice_data)
+        return slice_input
+
+    def get_slice_input_mxnet(self, *args, **kwargs):
+        import mxnet
+        slice_input = dict.fromkeys(self._transformed_input.keys(), None)
+        for key in self._transformed_input:
+            data_gen = self._transformed_input[key]
+            slice_data = [next(data_gen) for _ in range(self._batch_size)]
+            slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 
     @staticmethod

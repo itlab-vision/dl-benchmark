@@ -1,18 +1,15 @@
-import ast
 import argparse
-import copy
-import shutil
-import sys
+import ast
 import logging as log
+import sys
 from pathlib import Path
 
 import onnx
+import tensorflow as tf
 from onnx_tf.backend import prepare
 
-import tensorflow as tf
-import tensorflow.compat.v1 as tf_v1
-from tensorflow.python.saved_model import signature_constants
-from tensorflow.python.saved_model import tag_constants
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.model_converters.tensorflow_common import load_model  # noqa
 
 
 def is_sequence(element):
@@ -24,7 +21,7 @@ def shapes_arg(values):
     if not is_sequence(shapes):
         raise argparse.ArgumentTypeError(f'{shapes}: must be a sequence')
     if not all(is_sequence(shape) for shape in shapes):
-        shapes = (shapes, )
+        shapes = (shapes,)
     for shape in shapes:
         if not is_sequence(shape):
             raise argparse.ArgumentTypeError(f'{shape}: must be a sequence')
@@ -66,86 +63,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_pb_file(file):
-    with tf_v1.io.gfile.GFile(file, 'rb') as f:
-        graph_def = tf_v1.GraphDef()
-        graph_def.ParseFromString(f.read())
-
-        return graph_def
-
-
-def load_meta_file(file):
-    with open(file, 'rb') as f:
-        graph_def = tf_v1.MetaGraphDef()
-        graph_def.ParseFromString(f.read())
-
-        return graph_def
-
-
-def load_saved_model(saved_model_dir):
-    saved_model = tf.saved_model.load(saved_model_dir)
-    model = saved_model.signatures[tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY]
-    model._backref_to_saved_model = saved_model
-
-    return model
-
-
-def load_tf_model(file):
-    model_type = file.suffix
-    if model_type in ['.pb', '.frozen']:
-        model = load_pb_file(file)
-    elif model_type == '.meta':
-        model = load_meta_file(file)
-    else:
-        raise ValueError(f'Unsupported file type: {model_type}')
-
-    return model
-
-
-def get_tf_input_names(graph, input_names=None):
-    if input_names is not None:
-        return input_names
-
-    try:
-        nodes = graph.node
-    except AttributeError:
-        nodes = graph.graph_def.node
-
-    inputs_ops = {'Placeholder'}
-    input_names = [x.name for x in nodes if not x.input and x.op in inputs_ops]
-
-    if not input_names:
-        raise ValueError('No input blobs found, please set --input-names parameter')
-
-    return input_names
-
-
-def get_tf_output_names(graph, output_names=None):
-    if output_names is not None:
-        return output_names
-
-    nodes_map = {}
-    try:
-        nodes = graph.node
-    except AttributeError:
-        nodes = graph.graph_def.node
-
-    for node in nodes:
-        for parent in node.input:
-            nodes_map.update({parent: nodes_map.get(parent, []) + [node.name]})
-
-    not_outputs_types = {'Const', 'Assign', 'NoOp', 'Placeholder', 'Assert'}
-    output_names = [
-        x.name for x in nodes
-        if x.name not in nodes_map and x.op not in not_outputs_types
-    ]
-
-    if not output_names:
-        raise ValueError('No output blobs found, please set --output-names parameter')
-
-    return output_names
-
-
 def get_saved_model_input_names(graph, input_names=None):
     if input_names is not None:
         return input_names
@@ -156,73 +73,6 @@ def get_saved_model_input_names(graph, input_names=None):
             input_names.extend(input_signature.keys())
 
     return input_names
-
-
-def freeze_constant_input(model_graph, constant_input_name, constant_value):
-    new_graph_def = tf_v1.GraphDef()
-    with tf_v1.Session(graph=tf_v1.Graph()):
-        tf_v1.import_graph_def(model_graph, name='')
-
-        c = tf.constant(constant_value, name=f'{constant_input_name}_1')
-
-        for node in model_graph.node:
-            if node.name == constant_input_name:
-                new_graph_def.node.extend([c.op.node_def])
-            else:
-                node_inputs = node.input
-                for i, node_input in enumerate(node_inputs):
-                    if constant_input_name in node_input:
-                        node.input[i] = node_input.replace(constant_input_name, f'{constant_input_name}_1')
-                new_graph_def.node.extend([copy.deepcopy(node)])
-
-    return new_graph_def
-
-
-def freeze_metagraph(meta_graph, checkpoint_path, output_names):
-    with tf_v1.Session() as sess:
-        saver = tf_v1.train.import_meta_graph(meta_graph, clear_devices=True)
-        saver.restore(sess, tf_v1.train.latest_checkpoint(checkpoint_path))
-        frozen_graph_def = tf_v1.graph_util.convert_variables_to_constants(
-            sess,
-            sess.graph_def,
-            output_names,
-        )
-
-    return frozen_graph_def
-
-
-def convert_to_saved_model(model_graph, input_names, output_names, saved_model_dir):
-    builder = tf_v1.saved_model.builder.SavedModelBuilder(saved_model_dir)
-    sigs = {}
-    with tf_v1.Session(graph=tf_v1.Graph()) as sess:
-        tf_v1.import_graph_def(model_graph, name='')
-        g = tf_v1.get_default_graph()
-
-        inputs = {}
-        for input_name in input_names:
-            inputs[input_name] = g.get_tensor_by_name(f'{input_name}:0')
-
-        outputs = {}
-        for output_name in output_names:
-            outputs[output_name] = g.get_tensor_by_name(f'{output_name}:0')
-
-        def_key = signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-        sigs[def_key] = tf_v1.saved_model.signature_def_utils.predict_signature_def(inputs, outputs)
-        builder.add_meta_graph_and_variables(sess,
-                                             [tag_constants.SERVING],
-                                             signature_def_map=sigs)
-        builder.save()
-
-
-def set_input_shapes(model, inputs):
-    for i, _ in enumerate(inputs):
-        input_name = model.inputs[i].name.split(':0')[0]
-        input_shape = inputs.get(input_name, None)
-        if input_shape is None:
-            input_shape = inputs.get(f'{input_name}:0', model.inputs[i].shape)
-        model.inputs[i].set_shape(input_shape)
-
-    return model
 
 
 def convert_to_tflite(concrete_function, output_file):
@@ -277,30 +127,15 @@ def fix_onnx_resize_nodes(model):
     return fixed_model
 
 
-def load_model(model_path, input_names, output_names, const_inputs, log):
-    if not model_path.is_dir():
-        model_graph = load_tf_model(model_path)
-        output_names = get_tf_output_names(model_graph, output_names)
+def set_input_shapes(model, inputs):
+    for i, _ in enumerate(inputs):
+        input_name = model.inputs[i].name.split(':0')[0]
+        input_shape = inputs.get(input_name, None)
+        if input_shape is None:
+            input_shape = inputs.get(f'{input_name}:0', model.inputs[i].shape)
+        model.inputs[i].set_shape(input_shape)
 
-        if model_path.suffix == '.meta':
-            checkpoint_path = model_path.parent
-            model_graph = freeze_metagraph(model_graph, checkpoint_path, output_names)
-
-        if const_inputs:
-            log.info('Freezing constant input')
-            for const_input in const_inputs:
-                model_graph = freeze_constant_input(model_graph, *const_input)
-
-        input_names = get_tf_input_names(model_graph, input_names)
-
-        model_path = model_path.parent / 'saved_model'
-        if model_path.exists():
-            shutil.rmtree(str(model_path))
-
-        log.info('Converting to saved model')
-        convert_to_saved_model(model_graph, input_names, output_names, str(model_path))
-
-    return load_saved_model(model_path)
+    return model
 
 
 def main():
@@ -326,7 +161,7 @@ def main():
             tf_model.export_graph(model_path)
 
     log.info('Loading TF model')
-    model = load_model(model_path, args.input_names, args.output_names, args.freeze_constant_input, log)
+    model, _ = load_model(model_path, args.input_names, args.output_names, args.freeze_constant_input, log)
 
     if args.input_shapes:
         log.info(f'Setting input shapes to {args.input_shapes}')

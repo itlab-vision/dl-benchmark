@@ -72,9 +72,9 @@ def inference_benchmark(executor_type, test_list, output_handler, log,
             benchmarks_path = openvino_cpp_benchmark_dir
 
         try:
-            log.info('Creating separate process for the test')
+            log.info(f'Creating separate process for the test {framework_name}')
             test_process = FrameworkWrapperRegistry()[framework_name].create_process(
-                test, process_executor, log, benchmarks_path)
+                test, process_executor, log, cpp_benchmarks_dir=benchmarks_path)
 
             log.info('Executing process')
             test_process.execute()

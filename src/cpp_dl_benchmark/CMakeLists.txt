@@ -8,7 +8,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 option(ENABLE_CLANG_FORMAT "Enable clang-format during the build" ON)
-option(BUILD_ONNXRUNTIME_LAUNCHER "Build OpenCV launcher" ON)
+option(BUILD_ONNXRUNTIME_LAUNCHER "Build ONNX Runtime launcher with default CPU Execution provider" ON)
+option(BUILD_ONNXRUNTIME_CUDA_LAUNCHER "Build ONNX Runtime launcher with CUDA Execution provider" ON)
+option(BUILD_ONNXRUNTIME_TENSORRT_LAUNCHER "Build ONNX Runtime launcher with TensorRT Execution provider" ON)
 option(BUILD_OPENCV_LAUNCHER "Build OpenCV launcher" ON)
 option(BUILD_OPENCV_OV_LAUNCHER "Build OpenCV with OpenVINO backend launcher" ON)
 
@@ -69,6 +71,6 @@ if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_OV_LAUNCHER)
     add_subdirectory(opencv_launcher)
 endif()
 
-if (BUILD_ONNXRUNTIME_LAUNCHER)
+if (BUILD_ONNXRUNTIME_LAUNCHER OR BUILD_ONNXRUNTIME_CUDA_LAUNCHER OR BUILD_ONNXRUNTIME_TENSORRT_LAUNCHER)
     add_subdirectory(onnxruntime_launcher)
 endif()

@@ -8,7 +8,7 @@ class MXNetWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.mxnet
 
     @staticmethod
-    def create_process(test, executor, log, cpp_benchmarks_dir=None):
+    def create_process(test, executor, log, **kwargs):
         return MXNetProcess.create_process(test, executor, log)
 
     @staticmethod

@@ -3,11 +3,11 @@ import logging as log
 import os
 import sys
 import traceback
-from time import time
 import warnings
+from time import time
 
-import mxnet
 import gluoncv
+import mxnet
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -121,7 +121,7 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
-                             'NVIDIA GPU (CPU by default)',
+                             'NVIDIA_GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -146,7 +146,7 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.cpu()
-    elif device == 'NVIDIA GPU':
+    elif device == 'NVIDIA_GPU':
         log.info(f'Inference will be executed on {device}')
         return mxnet.gpu()
     else:
@@ -212,16 +212,16 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
     if num_iterations == 1:
         mxnet.nd.waitall()
         t0 = time()
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         predictions = net(slice_input[input_name]).softmax()
         mxnet.nd.waitall()
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for i in range(num_iterations):
+        for _ in range(num_iterations):
             mxnet.nd.waitall()
             t0 = time()
-            slice_input = get_slice(i)
+            slice_input = get_slice()
             net(slice_input[input_name]).softmax()
             mxnet.nd.waitall()
             t1 = time()
@@ -273,7 +273,7 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,
-                                                 io.get_slice_input, args.input_name)
+                                                 io.get_slice_input_mxnet, args.input_name)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,

@@ -107,10 +107,10 @@ Inference Engine предоставляет 2 программных интер�
 
 **Примечание:** в публикуемой html-таблице содержатся только показатели FPS.
 
-### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet и PyTorch
+### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch и ONNX Runtime
 
 При оценке производительности вывода для Intel® Optimization for Caffe,
-Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet и PyTorch
+Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch и ONNX Runtime
 осуществляется последовательный и независимый запуск запросов.
 Запуск очередного запроса выполняется после завершения предыдущего.
 Для каждого запроса осуществляется замер времени его выполнения.

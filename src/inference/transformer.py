@@ -177,9 +177,9 @@ class TensorFlowLiteTransformer(TensorFlowTransformer):
         return transformed_image
 
     def transform_images(self, images, shape, element_type, input_name):
-        transformed_images = np.zeros(shape=shape, dtype=element_type)
+        transformed_images = np.zeros(shape=shape)
         transformed_images = self._transform(images, input_name)
-        return transformed_images
+        return transformed_images.astype(element_type)
 
 
 class MXNetTransformer(Transformer):
@@ -256,38 +256,12 @@ class OpenCVTransformer(Transformer):
         return transformed_blob
 
 
-class PyTorchTransformer(Transformer):
-    def __init__(self, converting):
-        self._converting = converting
+class PyTorchTransformer(TensorFlowLiteTransformer):
+    pass
 
-    def __set_norm(self, image):
-        import torchvision
 
-        if not self._converting['norm']:
-            preprocess = torchvision.transforms.Compose([
-                torchvision.transforms.ToTensor()])
-            return preprocess(image.astype(np.float32))
-
-        preprocess = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize(mean=self._converting['mean'],
-                                             std=self._converting['std']),
-        ])
-
-        return preprocess(image.astype(np.float32) / 255)
-
-    def _transform(self, image):
-        normalized_image = self.__set_norm(image)
-        return normalized_image
-
-    def transform_images(self, images, shape, element_type, *args):
-        import torch
-        dataset_size = images.shape[0]
-        new_shape = [dataset_size] + shape[1:]
-        transformed_images = torch.zeros(new_shape, dtype=element_type)
-        for i in range(dataset_size):
-            transformed_images[i] = self._transform(images[i])
-        return transformed_images
+class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
+    pass
 
 
 class OnnxRuntimeTransformerCpp(Transformer):

@@ -1,13 +1,14 @@
-import sys
 import argparse
-import traceback
 import importlib
 import logging as log
+import sys
+import traceback
 from time import time
 
 import torch
 
 import postprocessing_data as pp
+import preprocessing_data as prep
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformer
@@ -30,38 +31,25 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
-    parser.add_argument('-in', '--input_name',
-                        help='Input name.',
-                        default='data',
+    parser.add_argument('-in', '--input_names',
+                        help='Names of the input tensors',
+                        default=None,
+                        type=prep.names_arg,
+                        dest='input_names')
+    parser.add_argument('-is', '--input_shapes',
+                        help='Input tensor shapes',
+                        default=None,
                         type=str,
-                        dest='input_name')
-    parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxCxHxW, B is a batch size,'
-                             'C is an input tensor number of channels'
-                             'H is an input tensor height,'
-                             'W is an input tensor width.',
-                        required=True,
-                        type=int,
-                        nargs=4,
-                        dest='input_shape')
-    parser.add_argument('--norm',
-                        help='Flag to normalize input images'
-                             '(use --mean and --std arguments to set'
-                             'required normalization parameters).',
-                        action='store_true',
-                        dest='norm')
+                        dest='input_shapes')
     parser.add_argument('--mean',
-                        help='Mean values.',
-                        default=[0, 0, 0],
-                        type=float,
-                        nargs=3,
+                        help='Parameter mean',
+                        default=None,
+                        type=str,
                         dest='mean')
-    parser.add_argument('--std',
-                        help='Standard deviation values.',
-                        default=[1., 1., 1.],
-                        type=float,
-                        nargs=3,
-                        dest='std')
+    parser.add_argument('--input_scale',
+                        help='Parameter input scale',
+                        type=str,
+                        dest='input_scale')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
                         default='output',
@@ -104,7 +92,7 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
-                             'NVIDIA GPU (CPU by default)',
+                             'NVIDIA_GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -119,6 +107,22 @@ def cli_argument_parser():
                         default=True,
                         type=bool,
                         dest='inference_mode')
+    parser.add_argument('--tensor_rt_precision',
+                        help='TensorRT precision FP16, FP32.'
+                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with TensorRT support',
+                        type=str,
+                        default=None,
+                        dest='tensor_rt_precision')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default=None,
+                        type=str,
+                        dest='layout')
+    parser.add_argument('--input_type',
+                        help='Parameter input type',
+                        default=None,
+                        type=str,
+                        dest='input_type')
 
     args = parser.parse_args()
 
@@ -130,12 +134,30 @@ def get_device_to_infer(device):
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cpu')
-    elif device == 'NVIDIA GPU':
+    elif device == 'NVIDIA_GPU':
         log.info(f'Inference will be executed on {device}')
         return torch.device('cuda')
     else:
         log.info(f'The device {device} is not supported')
         raise ValueError('The device is not supported')
+
+
+def is_gpu_available():
+    return torch.cuda.is_available()
+
+
+def get_tensor_rt_dtype(tensor_rt_precision):
+    if tensor_rt_precision:
+        tensor_rt_dtype = None
+        if tensor_rt_precision == 'FP32':
+            tensor_rt_dtype = torch.float
+        elif tensor_rt_precision == 'FP16':
+            tensor_rt_dtype = torch.half
+        else:
+            raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
+        return tensor_rt_dtype
+    else:
+        return None
 
 
 def load_model_from_module(model_name):
@@ -156,7 +178,7 @@ def load_model_from_file(model_path):
     return model
 
 
-def compile_model(module, device, model_type):
+def compile_model(module, device, model_type, use_tensorrt, shapes, tensor_rt_dtype):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -166,44 +188,40 @@ def compile_model(module, device, model_type):
         raise ValueError(f'Model type {model_type} is not supported for inference')
     module.to(device)
     module.eval()
-    return module
+
+    if use_tensorrt:
+        if is_gpu_available():
+            import torch_tensorrt
+            inputs = [torch_tensorrt.Input(shapes[key], dtype=tensor_rt_dtype) for key in shapes]
+            tensor_rt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
+                                                         truncate_long_and_double=True,
+                                                         enabled_precisions=tensor_rt_dtype)
+            return tensor_rt_ts_module
+        else:
+            raise ValueError('GPU is not available')
+    else:
+        return module
 
 
-def create_dict_for_transformer(args):
-    dictionary = {
-        'mean': args.mean,
-        'std': args.std,
-        'norm': args.norm,
-        'input_shape': args.input_shape,
-        'batch_size': args.batch_size,
-    }
-    return dictionary
-
-
-def create_dict_for_modelwrapper(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:],
-    }
-    return dictionary
-
-
-def inference_pytorch(model, num_iterations, get_slice, input_name, inference_mode):
+def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device):
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
-        slice_input = None
         if num_iterations == 1:
-            slice_input = get_slice(0)
+            inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
             t0 = time()
-            predictions = torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+            predictions = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            for i in range(num_iterations):
-                slice_input = get_slice(i)
+            for _ in range(num_iterations):
+                inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+                if device.type == 'cuda':
+                    torch.cuda.synchronize()
                 t0 = time()
-                torch.nn.functional.softmax(model(slice_input[input_name]), dim=1)
+                model(*inputs)
+                if device.type == 'cuda':
+                    torch.cuda.synchronize()
                 t1 = time()
                 time_infer.append(t1 - t0)
 
@@ -229,8 +247,14 @@ def main():
     )
     args = cli_argument_parser()
     try:
-        model_wrapper = PyTorchIOModelWrapper(create_dict_for_modelwrapper(args))
-        data_transformer = PyTorchTransformer(create_dict_for_transformer(args))
+        tensor_rt_dtype = get_tensor_rt_dtype(args.tensor_rt_precision)
+        args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
+        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, tensor_rt_dtype, args.input_type)
+
+        args.mean = prep.parse_input_arg(args.mean, args.input_names)
+        args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
+        args.layout = prep.parse_layout_arg(args.layout, args.input_names)
+        data_transformer = PyTorchTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         if args.model_name is not None and args.model is None:
@@ -241,16 +265,20 @@ def main():
             raise ValueError('Incorrect arguments.')
 
         device = get_device_to_infer(args.device)
-        compiled_model = compile_model(model, device, args.model_type)
+        compiled_model = compile_model(model, device, args.model_type,
+                                       args.tensor_rt_precision is not None, args.input_shapes, tensor_rt_dtype)
 
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
+        for layer_name in args.input_names:
+            layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
+            log.info(f'Shape for input layer {layer_name}: {layer_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(compiled_model, args.input)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input, args.input_name, args.inference_mode)
+                                                   io.get_slice_input, args.input_names, args.inference_mode,
+                                                   device)
 
         log.info('Computing performance metrics')
         average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,

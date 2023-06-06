@@ -144,15 +144,15 @@ def inference_caffe(net, number_iter, get_slice):
     time_infer = []
     slice_input = None
     if number_iter == 1:
-        slice_input = get_slice(0)
+        slice_input = get_slice()
         load_images_to_network(net, slice_input)
         t0 = time()
         result = net.forward()
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for i in range(number_iter):
-            slice_input = get_slice(i)
+        for _ in range(number_iter):
+            slice_input = get_slice()
             load_images_to_network(net, slice_input)
             t0 = time()
             net.forward()

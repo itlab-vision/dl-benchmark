@@ -4,7 +4,7 @@
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
 #include "opencv_launcher.hpp"
-#elif ORT_DEFAULT
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
 #include "onnxruntime_launcher.hpp"
 #endif
 
@@ -26,13 +26,13 @@ DEFINE_bool(h, false, help_msg);
 constexpr char model_msg[] =
     "path to a file with a trained model or a config file.\n"
     "                                                      available formats\n"
-    "                                                          ONNX Runtime - onnx\n"
-    "                                                          OpenCV - .xml, onnx, pb, protoxt.";
+    "                                                          ONNX Runtime - .onnx\n"
+    "                                                          OpenCV - .xml, .onnx, .pb, .protoxt.";
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
                                "                          available formats:\n"
-                               "                          OpenCV - caffemodel, .bin";
+                               "                          OpenCV - .caffemodel, .bin";
 DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =
@@ -41,6 +41,12 @@ constexpr char input_msg[] =
     "path "
     "to the file or folder if model has one input";
 DEFINE_string(i, "", input_msg);
+
+constexpr char device_msg[] =
+    "target device to infer on. Avalaibale devices depends on the framework:\n"
+    "                                                          ONNX Runtime: CPU, CUDA (CUDA EP)\n"
+    "                                                          OpenCV: CPU, GPU";
+DEFINE_string(d, "", device_msg);
 
 constexpr char batch_size_msg[] = "batch size value. If not provided, batch size value is determined from the model";
 DEFINE_uint32(b, 0, batch_size_msg);
@@ -100,6 +106,10 @@ void parse(int argc, char* argv[]) {
             "opencv_dnn_ov"
 #elif ORT_DEFAULT
             "onnxruntime"
+#elif ORT_CUDA
+            "onnxruntime_cuda"
+#elif ORT_TENSORRT
+            "onnxruntime_tensorrt"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -108,6 +118,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t -m <MODEL FILE>                              " << model_msg
                   << "\n\t[-w <WEIGHTS FILE>]                           " << weights_msg
                   << "\n\t[-i <INPUT>]                                  " << input_msg
+                  << "\n\t[-d <DEVICE>]                                 " << device_msg
                   << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
                   << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
                   << "\n\t[--layout <[NCHW]>]                           " << layout_msg
@@ -174,37 +185,45 @@ int main(int argc, char* argv[]) {
 
         std::unique_ptr<Launcher> launcher;
 
-#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
-        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads);
-#elif ORT_DEFAULT
-        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads);
+        std::string device = FLAGS_d;
+        if (device.empty()) {
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT)
+            device = "CPU";
+#elif defined(ORT_CUDA) || defined(ORT_TENSORRT)
+            device = "NVIDIA_GPU";
 #endif
+            logger::info << "Device wasn't specified. Default will be used: " << device << logger::endl;
+        }
+
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
+        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
+        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
+#endif
+
+        if (FLAGS_save_report) {
+            report = std::make_shared<Report>(FLAGS_report_path);
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", launcher->get_framework_name()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", launcher->get_framework_version()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"device", device}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", launcher->get_backend_name()}});
+        }
 
         logger::info << "Checking input files" << logger::endl;
         std::vector<gflags::CommandLineFlagInfo> flags;
         gflags::GetAllFlags(&flags);
         if (FLAGS_save_report) {
-            report = std::make_shared<Report>(FLAGS_report_path);
             for (auto& flag : flags) {
                 if (!flag.is_default) {
                     report->add_record(Report::Category::CMD_OPTIONS, {{flag.name, flag.current_value}});
                 }
             }
-            report->add_record(Report::Category::CMD_OPTIONS,
-                               {{"inference_framework",
-#ifdef OCV_DNN
-                                 "opencv_dnn"
-#elif OCV_DNN_WITH_OV
-                                 "opencv_dnn_ov"
-#elif ORT_DEFAULT
-                                 "onnxruntime"
-#endif
-                               }});
         }
         auto input_files = args::parse_input_files_arguments(gflags::GetArgvs());
 
-        log_step();  // Loading ONNX Runtime
-        launcher->log_framework_version();
+        log_step();  // Loading framework
+        logger::info << launcher->get_framework_name() << " " << launcher->get_framework_version() << logger::endl;
+        logger::info << "\tEnabled backend: " << launcher->get_backend_name() << logger::endl;
 
         log_step();  // Reading model files
         logger::info << "Reading model " << FLAGS_m << logger::endl;
@@ -218,8 +237,7 @@ int main(int argc, char* argv[]) {
         auto io_tensors_info = launcher->get_io_tensors_info();
         log_model_inputs_outputs(io_tensors_info);
 
-        std::string target_device = "CPU";  // can be changed when ov provider will be added
-        logger::info << "Device: " << target_device << logger::endl;
+        logger::info << "Device: " << device << logger::endl;
         logger::info << "\tThreads number: "
                      << (launcher->get_threads_num() ? std::to_string(launcher->get_threads_num()) : "DEFAULT")
                      << logger::endl;
@@ -287,8 +305,8 @@ int main(int argc, char* argv[]) {
                                 {"duration", std::to_string(utils::sec_to_ms(time_limit_sec))},
                                 {"iterations_num", std::to_string(num_iterations)},
                                 {"tensors_num", std::to_string(num_requests)},
-                                {"provider", "ORTDefault"},
-                                {"target_device", "CPU"},
+                                {"target_device", device},
+                                {"threads_num", std::to_string(launcher->get_threads_num())},
                                 {"precision", utils::get_precision_str(io_tensors_info.first[0].data_precision)}});
         }
 
@@ -301,11 +319,10 @@ int main(int argc, char* argv[]) {
                       ? std::to_string(num_iterations) + " iterations"
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
 
-        
         if(FLAGS_dump_output){
             launcher->dump_output();
         }
-        
+
         // warm up before benhcmarking
         launcher->warmup_inference();
         auto first_inference_time = launcher->get_latencies()[0];

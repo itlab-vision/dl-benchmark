@@ -107,6 +107,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-d', self._test.indep_parameters.device)
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-shape', self._test.dep_parameters.input_shape)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-layout', self._test.dep_parameters.layout)
