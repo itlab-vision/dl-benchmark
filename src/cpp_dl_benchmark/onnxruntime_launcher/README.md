@@ -62,7 +62,7 @@ To build the tool you need to have an installation of [ONNX Runtime][onnx-runtim
         ```
     - For ONNX Runtime with TensorRT provider launcher:
         ```
-        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_TRT_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_TENSORRT_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
         ```
 
 1. Build tool

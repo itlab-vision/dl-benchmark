@@ -111,8 +111,8 @@ def cli_argument_parser():
                         type=bool,
                         dest='inference_mode')
     parser.add_argument('--tensor_rt_precision',
-                        help='Tensor RT precision FP16, FP32.'
-                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with Tensor-RT support',
+                        help='TensorRT precision FP16, FP32.'
+                             ' Applicable only for hosts with NVIDIA GPU and pytorch built with TensorRT support',
                         type=str,
                         default=None,
                         dest='tensor_rt_precision')
@@ -132,6 +132,7 @@ def cli_argument_parser():
                         dest='report_path')
 
     args = parser.parse_args()
+
     return args
 
 
@@ -152,7 +153,7 @@ def is_gpu_available():
     return torch.cuda.is_available()
 
 
-def get_trt_dtype(tensor_rt_precision):
+def get_tensor_rt_dtype(tensor_rt_precision):
     if tensor_rt_precision:
         tensor_rt_dtype = None
         if tensor_rt_precision == 'FP32':
@@ -160,7 +161,7 @@ def get_trt_dtype(tensor_rt_precision):
         elif tensor_rt_precision == 'FP16':
             tensor_rt_dtype = torch.half
         else:
-            raise ValueError(f'Unknown Tensor RT precision {tensor_rt_precision}')
+            raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
         return tensor_rt_dtype
     else:
         return None
@@ -184,7 +185,7 @@ def load_model_from_file(model_path):
     return model
 
 
-def compile_model(module, device, model_type, use_tensorrt, shapes, trt_dtype):
+def compile_model(module, device, model_type, use_tensorrt, shapes, tensor_rt_dtype):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -198,11 +199,11 @@ def compile_model(module, device, model_type, use_tensorrt, shapes, trt_dtype):
     if use_tensorrt:
         if is_gpu_available():
             import torch_tensorrt
-            inputs = [torch_tensorrt.Input(shapes[key], dtype=trt_dtype) for key in shapes]
-            trt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
-                                                   truncate_long_and_double=True,
-                                                   enabled_precisions=trt_dtype)
-            return trt_ts_module
+            inputs = [torch_tensorrt.Input(shapes[key], dtype=tensor_rt_dtype) for key in shapes]
+            tensor_rt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
+                                                         truncate_long_and_double=True,
+                                                         enabled_precisions=tensor_rt_dtype)
+            return tensor_rt_ts_module
         else:
             raise ValueError('GPU is not available')
     else:
@@ -259,9 +260,9 @@ def main():
                                              target_device=args.device)
 
     try:
-        trt_dtype = get_trt_dtype(args.tensor_rt_precision)
+        tensor_rt_dtype = get_tensor_rt_dtype(args.tensor_rt_precision)
         args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
-        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, trt_dtype, args.input_type)
+        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, tensor_rt_dtype, args.input_type)
 
         args.mean = prep.parse_input_arg(args.mean, args.input_names)
         args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
@@ -278,7 +279,7 @@ def main():
 
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device, args.model_type,
-                                       args.tensor_rt_precision is not None, args.input_shapes, trt_dtype)
+                                       args.tensor_rt_precision is not None, args.input_shapes, tensor_rt_dtype)
 
         for layer_name in args.input_names:
             layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)

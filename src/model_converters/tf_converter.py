@@ -17,31 +17,31 @@ def cli_argument_parser():
                         type=Path,
                         dest='model_path')
     parser.add_argument('--input_name',
-                        help='Input tensor names',
+                        help='Input tensor names.',
                         default=None,
                         type=str,
                         nargs=1,
                         dest='input_name')
     parser.add_argument('--output_names',
-                        help='Output tensor names',
+                        help='Output tensor names.',
                         default=False,
                         type=str,
                         nargs='+',
                         dest='output_names')
     parser.add_argument('--saved_model_dir',
-                        help='A path where tf2 saved model will be saved',
+                        help='A path where tf2 saved model will be saved.',
                         required=False,
                         default='auto',
                         type=str,
                         dest='saved_model_dir')
     parser.add_argument('--tensor_rt_precision',
-                        help='Tensor RT precision FP16, FP32. If not defined, no Tensor-RT conversion will be applied.'
-                             ' Applicable only for hosts with NVIDIA GPU and tensorflow built with Tensor-RT support',
+                        help='TensorRT precision FP16, FP32. If not defined, no TensorRT conversion will be applied.'
+                             ' Applicable only for hosts with NVIDIA GPU and tensorflow built with TensorRT support.',
                         type=str,
                         default=None,
                         dest='tensor_rt_precision')
     parser.add_argument('--tensor_rt_model_dir',
-                        help='A path where Tensor RT optimized model will be saved',
+                        help='A path where TensorRT optimized model will be saved.',
                         required=False,
                         default='auto',
                         type=str,
@@ -60,7 +60,7 @@ def convert_to_saved_model(model_path: Path, input_op_name: list, output_names: 
 def convert_saved_model_with_tensor_rt(saved_model_dir, tensor_rt_precision=None, tensor_rt_converted_path='auto'):
     if tensor_rt_precision is not None:
         if not is_gpu_available():
-            errmsg = 'No NVIDIA_GPU detected on hostmachine, Tensor-RT conversion impossible'
+            errmsg = 'No NVIDIA_GPU detected on hostmachine, TensorRT conversion impossible'
             log.error(errmsg)
             raise AssertionError(errmsg)
 
@@ -71,7 +71,7 @@ def convert_saved_model_with_tensor_rt(saved_model_dir, tensor_rt_precision=None
         convert_with_tensor_rt(saved_model_dir, output_model_dir=str(converted_model_dir), log=log,
                                precision=tensor_rt_precision)
     else:
-        log.warning('Provided tensor RT precision is None, nothing to convert')
+        log.warning('Provided TensorRT precision is None, nothing to convert')
 
 
 def convert_model_to_tf2_format(model_path: Path,

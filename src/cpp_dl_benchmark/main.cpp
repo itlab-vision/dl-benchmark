@@ -4,7 +4,7 @@
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
 #include "opencv_launcher.hpp"
-#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
 #include "onnxruntime_launcher.hpp"
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
 #include "tflite_launcher.hpp"
@@ -117,8 +117,8 @@ void parse(int argc, char* argv[]) {
             "onnxruntime"
 #elif ORT_CUDA
             "onnxruntime_cuda"
-#elif ORT_TRT
-            "onnxruntime_trt"
+#elif ORT_TENSORRT
+            "onnxruntime_tensorrt"
 #elif TFLITE_DEFAULT
             "tflite"
 #elif TFLITE_XNNPACK
@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
         if (device.empty()) {
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT)
             device = "CPU";
-#elif defined(ORT_CUDA) || defined(ORT_TRT)
+#elif defined(ORT_CUDA) || defined(ORT_TENSORRT)
             device = "NVIDIA_GPU";
 #endif
             logger::info << "Device wasn't specified. Default will be used: " << device << logger::endl;
@@ -213,7 +213,7 @@ int main(int argc, char* argv[]) {
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
-#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TRT)
+#elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);

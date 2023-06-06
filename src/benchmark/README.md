@@ -210,9 +210,9 @@ python3 inference_benchmark.py \
 
 1. В конфигурационном файле (секция `FrameworkDependent`)
    укажите `Mode`: `sync` или `async`;
-   `CodeSource`: `ovbenchmark`;
-   `Runtime`: `cpp`;
-   `Hint`: `none`, `latency` или `throughput`.
+           `CodeSource`: `ovbenchmark`;
+           `Runtime`: `cpp`;
+           `Hint`: `none`, `latency` или `throughput`.
 
 1. Найдите исполняемый файл `benchmark_app` по адресу, приведенному ниже.
 
@@ -243,9 +243,9 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 
 1. В конфигурационном файле (секция `FrameworkDependent`)
    укажите `Mode`: `sync` или `async`;
-   `CodeSource`: `ovbenchmark`;
-   `Runtime`: `python`;
-   `Hint`: `none`, `latency` или `throughput`.
+           `CodeSource`: `ovbenchmark`;
+           `Runtime`: `python`;
+           `Hint`: `none`, `latency` или `throughput`.
 
 1. Запустите скрипт `inference_benchmark.py`.
 
@@ -256,17 +256,10 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 <!-- LINKS -->
 
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
-
 [intel-caffe]: https://github.com/intel/caffe
-
 [intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
-
 [tensorflow-lite]: https://www.tensorflow.org/lite
-
 [onnx-runtime]: https://onnxruntime.ai
-
 [mxnet]: https://mxnet.apache.org
-
 [opencv]: https://opencv.org
-
 [pytorch]: https://pytorch.org

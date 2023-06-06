@@ -35,11 +35,11 @@ if (BUILD_ONNXRUNTIME_CUDA_LAUNCHER)
         DEFINITIONS ORT_CUDA)
 endif()
 
-if (BUILD_ONNXRUNTIME_TRT_LAUNCHER)
-    add_launcher(NAME onnxruntime_trt_benchmark
+if (BUILD_ONNXRUNTIME_TENSORRT_LAUNCHER)
+    add_launcher(NAME onnxruntime_tensorrt_benchmark
         SOURCES ${SOURCES}
         HEADERS ${HEADERS}
         INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include" ${ORT_INCLUDE}
         DEPENDENCIES ${ORT_LIBRARIES}
-        DEFINITIONS ORT_TRT)
+        DEFINITIONS ORT_TENSORRT)
 endif()

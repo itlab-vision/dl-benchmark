@@ -75,7 +75,7 @@ std::string ONNXLauncher::get_backend_name() const {
     return "default";
 #elif ORT_CUDA
     return "CUDA";
-#elif ORT_TRT
+#elif ORT_TENSORRT
     return "TensorRT";
 #endif
 }
@@ -103,7 +103,7 @@ void ONNXLauncher::read(const std::string& model_file, const std::string& weight
         check_status(Ort::GetApi().UpdateCUDAProviderOptions(cuda_options, keys.data(), values.data(), keys.size()));
         check_status(Ort::GetApi().SessionOptionsAppendExecutionProvider_CUDA_V2(session_options, cuda_options));
     }
-#elif ORT_TRT
+#elif ORT_TENSORRT
     else if (device == utils::Device::NVIDIA_GPU) {
         check_status(Ort::GetApi().CreateTensorRTProviderOptions(&tensorrt_options));
         std::vector<const char*> keys{"device_id", "trt_fp16_enable", "trt_max_workspace_size"};
