@@ -8,6 +8,8 @@
 #include "onnxruntime_launcher.hpp"
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
 #include "tflite_launcher.hpp"
+#elif PYTORCH
+#include "pytorch_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -63,6 +65,11 @@ constexpr char layout_msg[] =
     "                                                      ex.: \"input1[NCHW],input2[NC]\" or just \"[NCHW]\"";
 DEFINE_string(layout, "", layout_msg);
 
+constexpr char dtype_msg[] =
+    "data type of network input.\n"
+    "                                                      ex.: \"input1[FP32],input2[FP32]\" or just \"[FP32]\"";
+DEFINE_string(dtype, "", dtype_msg);
+
 constexpr char input_mean_msg[] =
     "mean values per channel for input image.\n"
     "                                                      applicable only for models with image input.\n"
@@ -116,6 +123,8 @@ void parse(int argc, char* argv[]) {
             "tflite"
 #elif TFLITE_XNNPACK
             "tflite_xnnpack"
+#elif PYTORCH
+            "pytorch"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -128,6 +137,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
                   << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
                   << "\n\t[--layout <[NCHW]>]                           " << layout_msg
+                  << "\n\t[--dtype <[FP32]>]                           " << dtype_msg
                   << "\n\t[--mean <R G B>]                              " << input_mean_msg
                   << "\n\t[--scale <R G B>]                             " << input_scale_msg
                   << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
@@ -149,12 +159,12 @@ void log_model_inputs_outputs(const IOTensorsInfo& tensors_info) {
 
     logger::info << "\tModel inputs:" << logger::endl;
     for (const auto& input : model_inputs) {
-        logger::info << "\t\t" << input.name << ": " << utils::get_precision_str(input.data_precision) << " "
+        logger::info << "\t\t" << input.name << ": " << utils::get_data_precision_str(input.data_precision) << " "
                      << args::shape_string(input.shape) << logger::endl;
     }
     logger::info << "\tModel outputs:" << logger::endl;
     for (const auto& output : model_outputs) {
-        logger::info << "\t\t" << output.name << ": " << utils::get_precision_str(output.data_precision) << " "
+        logger::info << "\t\t" << output.name << ": " << utils::get_data_precision_str(output.data_precision) << " "
                      << args::shape_string(output.shape) << logger::endl;
     }
 }
@@ -207,6 +217,8 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
+#elif PYTORCH
+        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
 #endif
 
         if (FLAGS_save_report) {
@@ -251,12 +263,13 @@ int main(int argc, char* argv[]) {
                      << logger::endl;
 
         log_step();  // Configuring input of the model
-        auto inputs_info = inputs::get_inputs_info(input_files,
-                                                   io_tensors_info.first,
+        auto inputs_info = inputs::get_inputs_info(io_tensors_info.first,
+                                                   input_files,
                                                    FLAGS_layout,
                                                    FLAGS_shape,
                                                    FLAGS_mean,
-                                                   FLAGS_scale);
+                                                   FLAGS_scale,
+                                                   FLAGS_dtype);
 
         // determine batch size
         int batch_size = inputs::get_batch_size(inputs_info);
@@ -308,14 +321,17 @@ int main(int argc, char* argv[]) {
         }
         uint64_t time_limit_ns = utils::sec_to_ns(time_limit_sec);
         if (report) {
-            report->add_record(Report::Category::CONFIGURATION_SETUP,
-                               {{"batch_size", std::to_string(batch_size)},
-                                {"duration", std::to_string(utils::sec_to_ms(time_limit_sec))},
-                                {"iterations_num", std::to_string(num_iterations)},
-                                {"tensors_num", std::to_string(num_requests)},
-                                {"target_device", device},
-                                {"threads_num", std::to_string(launcher->get_threads_num())},
-                                {"precision", utils::get_precision_str(io_tensors_info.first[0].data_precision)}});
+            report->add_record(
+                Report::Category::CONFIGURATION_SETUP,
+                {{"batch_size", std::to_string(batch_size)},
+                 {"duration", std::to_string(utils::sec_to_ms(time_limit_sec))},
+                 {"iterations_num", std::to_string(num_iterations)},
+                 {"tensors_num", std::to_string(num_requests)},
+                 {"target_device", device},
+                 {"threads_num", std::to_string(launcher->get_threads_num())},
+                 {"precision",
+                  io_tensors_info.first.empty() ? "UNKNOWN"
+                                                : get_data_precision_str(io_tensors_info.first[0].data_precision)}});
         }
 
         log_step();  // Creating input tensors

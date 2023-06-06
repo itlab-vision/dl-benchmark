@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+namespace inputs {
 template<typename T>
 using UniformDistribution = typename std::conditional<
     std::is_floating_point<T>::value,
@@ -46,7 +47,7 @@ const T get_mat_value(const cv::Mat& mat, size_t h, size_t w, size_t c) {
 };
 
 template<class T, class T2>
-TensorBuffer create_random_tensor(const inputs::InputDescr& input_descr,
+TensorBuffer create_random_tensor(const InputDescr& input_descr,
                                   T rand_min = std::numeric_limits<uint8_t>::min(),
                                   T rand_max = std::numeric_limits<uint8_t>::max()) {
     logger::info << "\t\tRandomly generated data" << logger::endl;
@@ -67,7 +68,7 @@ TensorBuffer create_random_tensor(const inputs::InputDescr& input_descr,
 }
 
 template<class T>
-TensorBuffer create_tensor_from_image(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_image(const InputDescr& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto& files = input_descr.files;
 
@@ -99,9 +100,7 @@ TensorBuffer create_tensor_from_image(const inputs::InputDescr& input_descr, int
 }
 
 template<class T>
-TensorBuffer create_image_info_tensor(const inputs::InputDescr& input_descr,
-                                      const cv::Size& image_size,
-                                      int batch_size) {
+TensorBuffer create_image_info_tensor(const InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
     auto tensor_descr = input_descr.tensor_descr;
 
     int64_t tensor_size =
@@ -129,7 +128,7 @@ TensorBuffer create_image_info_tensor(const inputs::InputDescr& input_descr,
 }
 
 template<class T>
-TensorBuffer create_tensor_from_binary(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_binary(const InputDescr& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto& files = input_descr.files;
 
@@ -173,7 +172,7 @@ TensorBuffer create_tensor_from_binary(const inputs::InputDescr& input_descr, in
     return buff;
 }
 
-TensorBuffer get_tensor_from_image(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_image(const InputDescr& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
@@ -192,10 +191,10 @@ TensorBuffer get_tensor_from_image(const inputs::InputDescr& input_descr, int ba
     }
 
     throw std::invalid_argument("Unsupported tensor precision in get_tensor_from_image(): " +
-                                utils::get_precision_str(precision));
+                                utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_image_info_tensor(const inputs::InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
+TensorBuffer get_image_info_tensor(const InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_image_info_tensor<short>(input_descr, image_size, batch_size);
@@ -211,10 +210,10 @@ TensorBuffer get_image_info_tensor(const inputs::InputDescr& input_descr, const 
     }
 
     throw std::invalid_argument("Unsupported tensor precision in get_image_info_tensor(): " +
-                                utils::get_precision_str(precision));
+                                utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_tensor_from_binary(const inputs::InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_binary(const InputDescr& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_tensor_from_binary<short>(input_descr, batch_size, start_index);
@@ -233,10 +232,10 @@ TensorBuffer get_tensor_from_binary(const inputs::InputDescr& input_descr, int b
     }
 
     throw std::invalid_argument("Unsupported tensor precision in get_tensor_from_binary(): " +
-                                utils::get_precision_str(precision));
+                                utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_random_tensor(const inputs::InputDescr& input_descr) {
+TensorBuffer get_random_tensor(const InputDescr& input_descr) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_random_tensor<short, short>(input_descr);
@@ -260,12 +259,12 @@ TensorBuffer get_random_tensor(const inputs::InputDescr& input_descr) {
         return create_random_tensor<uint8_t, uint32_t>(input_descr, 0, 1);
     }
     throw std::invalid_argument("Unsupported tensor precision in get_random_tensor(): " +
-                                utils::get_precision_str(precision));
+                                utils::get_data_precision_str(precision));
 }
 
-std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::InputsInfo& inputs_info,
-                                                                 int batch_size,
-                                                                 int tensors_num) {
+std::vector<std::vector<TensorBuffer>> get_input_tensors(const InputsInfo& inputs_info,
+                                                         int batch_size,
+                                                         int tensors_num) {
     std::vector<cv::Size> img_input_sizes;
     for (const auto& [name, input_descr] : inputs_info) {
         const auto& tensor_descr = input_descr.tensor_descr;
@@ -282,7 +281,7 @@ std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::I
         for (const auto& [name, input_descr] : inputs_info) {
             const auto& tensor_descr = input_descr.tensor_descr;
             logger::info << " \t" << name << " (" << tensor_descr.layout << " "
-                         << utils::get_precision_str(tensor_descr.data_precision) << " "
+                         << utils::get_data_precision_str(tensor_descr.data_precision) << " "
                          << args::shape_string(tensor_descr.data_shape) << ")" << logger::endl;
 
             if (!input_descr.files.empty() && static_cast<int>(input_descr.files.size()) < batch_size) {
@@ -311,35 +310,196 @@ std::vector<std::vector<TensorBuffer>> inputs::get_input_tensors(const inputs::I
     return tensors;
 }
 
-inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vector<std::string>>& input_files,
-                                           const std::vector<TensorDescription>& model_inputs,
-                                           const std::string& layout_string,
-                                           const std::string& shape_string,
-                                           const std::string& mean_string,
-                                           const std::string& scale_string) {
+void fill_input_files(InputDescr& input_descr,
+                      const std::map<std::string, std::vector<std::string>>& input_files,
+                      const std::string& name) {
+    if (input_files.count(name) > 0) {
+        input_descr.files = input_files.at(name);
+    }
+    else if (input_files.count("") > 0 && input_files.size() == 1) {  // case with 1 input without specifying name
+        input_descr.files = input_files.at("");
+    }
+    else if (input_files.size() > 1) {
+        throw std::invalid_argument("Input name " + name + " not found in the names provided with -i argument.");
+    }
+}
+
+void fill_shape(InputDescr& input_descr,
+                const std::map<std::string, std::vector<int>>& input_shapes,
+                const std::string& name,
+                bool is_dynamic_input) {
+    auto& tensor_descr = input_descr.tensor_descr;
+    auto& data_shape = tensor_descr.data_shape;
+    if (!input_shapes.empty() && (is_dynamic_input || tensor_descr.is_reshapable)) {
+        if (input_shapes.count(name) > 0) {
+            data_shape = input_shapes.at(name);
+        }
+        else if (input_shapes.count("") > 0 && input_shapes.size() == 1) {  // handle case without specifying name
+            data_shape = input_shapes.at("");
+        }
+        else if (input_shapes.size() > 1) {
+            throw std::invalid_argument("Input name " + name +
+                                        " not found in the names provided with -shape argument.");
+        }
+    }
+    else if (!input_shapes.empty()) {
+        logger::warn << "Model inputs are static, -shape option will be ignored!" << logger::endl;
+    }
+}
+
+void fill_layout(InputDescr& input_descr,
+                 const std::map<std::string, std::string>& input_layouts,
+                 const std::string& name) {
+    auto& tensor_descr = input_descr.tensor_descr;
+    auto& layout = tensor_descr.layout;
+    if (!input_layouts.empty()) {
+        if (input_layouts.count(name) > 0) {
+            layout = input_layouts.at(name);
+        }
+        else if (input_layouts.count("") > 0 && input_layouts.size() == 1) {
+            layout = input_layouts.at("");
+        }
+        else if (input_layouts.size() > 1) {
+            throw std::invalid_argument("Input name " + name +
+                                        " not found in the names provided with -layout argument.");
+        }
+    }
+    else {
+        logger::warn << "Layout for input \"" << name
+                     << "\" will be detected automatically, as it wasn't provided explicitly." << logger::endl;
+        input_descr.tensor_descr.layout = utils::guess_layout_from_shape(input_descr.tensor_descr.data_shape);
+    }
+}
+
+void fill_data_type(InputDescr& input_descr,
+                    const std::map<std::string, utils::DataPrecision>& input_dtypes,
+                    const std::string& name) {
+    if (!input_dtypes.empty()) {
+        utils::DataPrecision dp;
+        if (input_dtypes.count(name) > 0) {
+            dp = input_dtypes.at(name);
+        }
+        else if (input_dtypes.count("") > 0 && input_dtypes.size() == 1) {
+            dp = input_dtypes.at("");
+        }
+        else if (input_dtypes.size() > 1) {
+            throw std::invalid_argument("Input name " + name +
+                                        " not found in the names provided with -dtype argument.");
+        }
+        if (!input_dtypes.empty()) {
+            input_descr.tensor_descr.data_precision = dp;
+        }
+    }
+}
+
+void fill_mean_values(InputDescr& input_descr,
+                      const std::map<std::string, std::vector<float>>& means,
+                      const std::string& name) {
+    auto& tensor_descr = input_descr.tensor_descr;
+    if (!means.empty()) {
+        std::vector<float> mean;
+        if (means.count(name) > 0) {
+            mean = means.at(name);
+        }
+        else if (means.count("") > 0 && means.size() == 1) {
+            mean = means.at("");
+        }
+        else if (means.size() > 1) {
+            throw std::invalid_argument("Input name " + name + " not found in the names provided with -mean argument.");
+        }
+        if (!mean.empty()) {
+            if (mean.size() != static_cast<size_t>(tensor_descr.channels())) {
+                throw std::logic_error("Number of mean values (" + std::to_string(mean.size()) +
+                                       ") must be equal to the number of model's input channels (" +
+                                       std::to_string(tensor_descr.channels()) + ")");
+            }
+            input_descr.mean = mean;
+        }
+    }
+}
+
+void fill_scale_values(InputDescr& input_descr,
+                       const std::map<std::string, std::vector<float>>& scales,
+                       const std::string& name) {
+    auto& tensor_descr = input_descr.tensor_descr;
+    if (!scales.empty()) {
+        std::vector<float> scale;
+        if (scales.count(name) > 0) {
+            scale = scales.at(name);
+        }
+        else if (scales.count("") > 0 && scales.size() == 1) {
+            scale = scales.at("");
+        }
+        else if (scales.size() > 1) {
+            throw std::invalid_argument("Input name " + name +
+                                        " not found in the names provided with -scales argument.");
+        }
+
+        if (!scale.empty()) {
+            if (scale.size() != static_cast<size_t>(tensor_descr.channels())) {
+                throw std::logic_error("Number of scale values (" + std::to_string(scale.size()) +
+                                       ") must be equal to the number of model's input channels (" +
+                                       std::to_string(tensor_descr.channels()) + ")");
+            }
+            input_descr.scale = scale;
+        }
+    }
+}
+
+InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
+                           const std::map<std::string, std::vector<std::string>>& input_files,
+                           const std::string& layout_string,
+                           const std::string& shape_string,
+                           const std::string& mean_string,
+                           const std::string& scale_string,
+                           const std::string& dtype_string) {
     // parse input layouts and input shapes
-    std::map<std::string, std::string> input_layouts = args::parse_shape_layout_string(layout_string);
+    std::map<std::string, std::string> input_layouts = args::parse_parameter_string(layout_string);
     std::map<std::string, std::vector<int>> input_shapes;
-    for (const auto& [input_name, shape] : args::parse_shape_layout_string(shape_string)) {
+    for (const auto& [input_name, shape] : args::parse_parameter_string(shape_string)) {
         input_shapes.emplace(input_name, args::string_to_vec<int>(shape, ','));
     }
 
+    std::map<std::string, utils::DataPrecision> input_dtypes;
+    for (const auto& [input_name, dtype] : args::parse_parameter_string(dtype_string)) {
+        input_dtypes.emplace(input_name, utils::get_data_precision_from_str(dtype));
+    }
+
     // parse mean and check
-    std::map<std::string, std::vector<float>> means = args::parse_mean_scale_string(mean_string);
-    for (const auto& [input_name, input_mean] : means) {
-        if (input_mean.size() > 4) {
+    std::map<std::string, std::vector<float>> means;  // = args::parse_parameter_string(mean_string);
+    for (const auto& [input_name, mean] : args::parse_parameter_string(mean_string)) {
+        means.emplace(input_name, args::string_to_vec<float>(mean, ','));
+        if (means.at(input_name).size() > 4) {
             throw std::logic_error("Mean must have one value per channel (up to 4 channels supposed), but given: " +
                                    mean_string);
         }
     }
 
     // parse scale and check
-    std::map<std::string, std::vector<float>> scales = args::parse_mean_scale_string(scale_string);
-    for (const auto& [input_name, input_scale] : scales) {
-        if (input_scale.size() > 4) {
+    std::map<std::string, std::vector<float>> scales;  //= args::parse_mean_scale_string(scale_string);
+    for (const auto& [input_name, scale] : args::parse_parameter_string(scale_string)) {
+        scales.emplace(input_name, args::string_to_vec<float>(scale, ','));
+        if (scales.at(input_name).size() > 4) {
             throw std::logic_error("Scale must have one value per channel (up to 4 channels supposed), but given: " +
-                                   mean_string);
+                                   scale_string);
         }
+    }
+
+    // handle case when framework doesn't provide info about model inputs (pytorch)
+    if (model_inputs.empty() && !input_shapes.empty() && !input_dtypes.empty()) {
+        for (const auto& [name, shape] : input_shapes) {
+            model_inputs.push_back({name,
+                                    shape,
+                                    shape,
+                                    "",
+                                    utils::DataPrecision::UNKNOWN,
+                                    true});  // probably need cmd flag to indicate reshapable inputs in the future
+        }
+        input_shapes.clear();  // reset input shapes as now they are considered as model shapes, not command line ones
+    }
+    else if (model_inputs.empty() && (input_shapes.empty() || input_dtypes.empty())) {
+        throw std::logic_error("Framework doesn't provide model inputs info, please pass -shape, -dtype and "
+                               "-layout (optionally) arguments.");
     }
 
     // Check dynamic inputs
@@ -351,103 +511,18 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
         throw std::logic_error("Shapes must be specified explicitly for models with dynamic input shapes.");
     }
 
-    inputs::InputsInfo inputs_info;
+    InputsInfo inputs_info;
     for (const auto& input : model_inputs) {
-        inputs::InputDescr input_descr;
+        InputDescr input_descr;
         input_descr.tensor_descr = input;
-        auto& tensor_descr = input_descr.tensor_descr;
-
         std::string name = input.name;
-        if (input_files.count(name) > 0) {
-            input_descr.files = input_files.at(name);
-        }
-        else if (input_files.count("") > 0 && input_files.size() == 1) {  // case with 1 input without specifying name
-            input_descr.files = input_files.at("");
-        }
-        else if (input_files.size() > 1) {
-            throw std::invalid_argument("Input name " + name + " not found in the names provided with -i argument.");
-        }
 
-        auto& data_shape = tensor_descr.data_shape;
-        if (!input_shapes.empty() && (is_dynamic_input || tensor_descr.is_reshapable)) {
-            if (input_shapes.count(name) > 0) {
-                data_shape = input_shapes.at(name);
-            }
-            else if (input_shapes.count("") > 0 && input_shapes.size() == 1) {  // handle case without specifying name
-                data_shape = input_shapes.at("");
-            }
-            else if (input_shapes.size() > 1) {
-                throw std::invalid_argument("Input name " + name +
-                                            " not found in the names provided with -shape argument.");
-            }
-        }
-        else if (!input_shapes.empty()) {
-            logger::warn << "Model inputs are static, -shape option will be ignored!" << logger::endl;
-        }
-
-        auto& layout = tensor_descr.layout;
-        if (!input_layouts.empty()) {
-            if (input_layouts.count(name) > 0) {
-                layout = input_layouts.at(name);
-            }
-            else if (input_layouts.count("") > 0 && input_layouts.size() == 1) {
-                layout = input_layouts.at("");
-            }
-            else if (input_layouts.size() > 1) {
-                throw std::invalid_argument("Input name " + name +
-                                            " not found in the names provided with -layout argument.");
-            }
-        }
-        else {
-            logger::warn << "Layout for input \"" << name
-                         << "\" will be detected automatically, as it wasn't provided explicitly." << logger::endl;
-            input_descr.tensor_descr.layout = utils::guess_layout_from_shape(input_descr.tensor_descr.data_shape);
-        }
-
-        if (!means.empty()) {
-            std::vector<float> mean;
-            if (means.count(name) > 0) {
-                mean = means.at(name);
-            }
-            else if (means.count("") > 0 && means.size() == 1) {
-                mean = means.at("");
-            }
-            else if (means.size() > 1) {
-                throw std::invalid_argument("Input name " + name +
-                                            " not found in the names provided with -mean argument.");
-            }
-            if (!mean.empty()) {
-                if (mean.size() != static_cast<size_t>(tensor_descr.channels())) {
-                    throw std::logic_error("Number of mean values (" + std::to_string(mean.size()) +
-                                           ") must be equal to the number of model's input channels (" +
-                                           std::to_string(tensor_descr.channels()) + ")");
-                }
-                input_descr.mean = mean;
-            }
-        }
-
-        if (!scales.empty()) {
-            std::vector<float> scale;
-            if (scales.count(name) > 0) {
-                scale = scales.at(name);
-            }
-            else if (scales.count("") > 0 && scales.size() == 1) {
-                scale = scales.at("");
-            }
-            else if (scales.size() > 1) {
-                throw std::invalid_argument("Input name " + name +
-                                            " not found in the names provided with -scales argument.");
-            }
-
-            if (!scale.empty()) {
-                if (scale.size() != static_cast<size_t>(tensor_descr.channels())) {
-                    throw std::logic_error("Number of scale values (" + std::to_string(scale.size()) +
-                                           ") must be equal to the number of model's input channels (" +
-                                           std::to_string(tensor_descr.channels()) + ")");
-                }
-                input_descr.scale = scale;
-            }
-        }
+        fill_input_files(input_descr, input_files, name);
+        fill_shape(input_descr, input_shapes, name, is_dynamic_input);
+        fill_layout(input_descr, input_layouts, name);
+        fill_data_type(input_descr, input_dtypes, name);
+        fill_mean_values(input_descr, means, name);
+        fill_scale_values(input_descr, scales, name);
 
         inputs_info.emplace(name, input_descr);
     }
@@ -455,13 +530,13 @@ inputs::InputsInfo inputs::get_inputs_info(const std::map<std::string, std::vect
     return inputs_info;
 }
 
-void inputs::set_batch_size(inputs::InputsInfo& inputs_info, int batch_size) {
+void set_batch_size(InputsInfo& inputs_info, int batch_size) {
     for (auto& [_, input_descr] : inputs_info) {
         input_descr.tensor_descr.set_batch(batch_size);
     }
 }
 
-int inputs::get_batch_size(const inputs::InputsInfo& inputs_info) {
+int get_batch_size(const InputsInfo& inputs_info) {
     int batch_size = 0;
     for (auto& [name, info] : inputs_info) {
         auto& tensor_descr = info.tensor_descr;
@@ -481,3 +556,4 @@ int inputs::get_batch_size(const inputs::InputsInfo& inputs_info) {
     }
     return batch_size;
 }
+}  // namespace inputs

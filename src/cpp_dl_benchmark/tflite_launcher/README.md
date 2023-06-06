@@ -51,7 +51,7 @@ git checkout v2.10.0
     cmake --build . -- -j$(nproc --all)
     ```
 
-    > **NOTE:**  
+    > **NOTE:**
     > In case of cross-compilation, you might need to bring to target machine
     > besides `libtensorflow-lite.so` its dependencies (located in <tflite_build_dir>/_deps):
     > ```

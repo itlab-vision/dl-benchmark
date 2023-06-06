@@ -23,12 +23,13 @@ int get_batch_size(const InputsInfo& inputs_info);
 
 void set_batch_size(InputsInfo& inputs_info, int batch_size);
 
-InputsInfo get_inputs_info(const std::map<std::string, std::vector<std::string>>& input_files,
-                           const std::vector<TensorDescription>& model_inputs,
+InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
+                           const std::map<std::string, std::vector<std::string>>& input_files,
                            const std::string& layout_string,
                            const std::string& shape_string,
                            const std::string& mean_string,
-                           const std::string& scale_string);
+                           const std::string& scale_string,
+                           const std::string& dtype_string);
 
 std::vector<std::vector<TensorBuffer>> get_input_tensors(const InputsInfo& inputs_info,
                                                          int batch_size,

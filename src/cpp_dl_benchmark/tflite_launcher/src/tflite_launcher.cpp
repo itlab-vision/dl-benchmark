@@ -53,7 +53,7 @@ TfLiteType get_tflite_data_type(utils::DataPrecision precision) {
             return tflite_type;
         }
     }
-    throw std::invalid_argument("Does not support element data type " + utils::get_precision_str(precision));
+    throw std::invalid_argument("Does not support element data type " + utils::get_data_precision_str(precision));
 }
 }  // namespace
 
