@@ -9,3 +9,4 @@ class KnownFrameworks:
     opencv_dnn_python = 'OpenCV DNN Python'
     opencv_dnn_cpp = 'OpenCV DNN Cpp'
     pytorch = 'PyTorch'
+    pytorch_cpp = 'PyTorch Cpp'

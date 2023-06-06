@@ -14,6 +14,10 @@ class CppParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName('Provider'):
             _provider = dep_parameters_tag.getElementsByTagName('Provider')[0].firstChild
 
+        _input_type = None
+        if dep_parameters_tag.getElementsByTagName('InputType'):
+            _input_type = dep_parameters_tag.getElementsByTagName('InputType')[0].firstChild
+
         _input_shape = dep_parameters_tag.getElementsByTagName('InputShape')[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName('Layout')[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName('Mean')[0].firstChild
@@ -30,4 +34,5 @@ class CppParametersParser(DependentParametersParser):
             input_scale=_input_scale.data if _input_scale else None,
             thread_count=_thread_count.data if _thread_count else None,
             inference_requests_count=_inference_requests_count.data if _inference_requests_count else None,
+            input_type=_input_type.data if _input_type else None,
         )

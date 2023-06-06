@@ -140,6 +140,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                                                             self._test.dep_parameters.thread_count)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
                                                             self._test.dep_parameters.inference_requests_count)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-dtype',
+                                                            self._test.dep_parameters.input_type)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line

@@ -23,7 +23,7 @@ DLI supports inference using the following frameworks:
 - [ONNX Runtime][onnx-runtime] (C++ and Python API).
 - [MXNet][mxnet].
 - [OpenCV DNN][opencv-dnn] (C++ and Python API).
-- [PyTorch][pytorch].
+- [PyTorch][pytorch] (C++ and Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)

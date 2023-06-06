@@ -11,6 +11,7 @@ from .opencv_dnn_python.opencv_dnn_python_wrapper import OpenCVDNNPythonWrapper
 from .mxnet.mxnet_wrapper import MXNetWrapper
 from .opencv_dnn_cpp.opencv_dnn_cpp_wrapper import OpenCVDNNCppWrapper
 from .pytorch.pytorch_wrapper import PyTorchWrapper
+from .pytorch_cpp.pytorch_cpp_wrapper import PyTorchCppWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
@@ -42,3 +43,4 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[MXNetWrapper.framework_name] = MXNetWrapper()
         self._framework_wrappers[OpenCVDNNCppWrapper.framework_name] = OpenCVDNNCppWrapper()
         self._framework_wrappers[PyTorchWrapper.framework_name] = PyTorchWrapper()
+        self._framework_wrappers[PyTorchCppWrapper.framework_name] = PyTorchCppWrapper()

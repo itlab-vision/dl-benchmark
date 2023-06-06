@@ -14,7 +14,12 @@ from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
 from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
 from src.benchmark.frameworks.processes import ProcessHandler
 from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
+from src.benchmark.frameworks.opencv_dnn_python.opencv_dnn_python_process import OpenCVDNNPythonProcess
+from src.benchmark.frameworks.onnx_runtime_python.onnx_runtime_python_process import ONNXRuntimePythonProcess
 from src.benchmark.frameworks.tensorflow_lite.tensorflow_lite_process import TensorFlowLiteProcess
+from src.benchmark.frameworks.pytorch.pytorch_process import PyTorchProcess
+from src.benchmark.frameworks.pytorch_cpp.pytorch_cpp_process import PyTorchCppProcess
+from src.benchmark.frameworks.mxnet.mxnet_process import MXNetProcess
 from src.benchmark.tests.test_executor import get_host_executor
 
 log.basicConfig(
@@ -59,11 +64,18 @@ def test_python_version(os, mocker):
     assert ProcessHandler.get_cmd_python_version() == os[1]
 
 
-@pytest.mark.parametrize('inference_framework', [['OpenVINO DLDT', OpenVINOProcess], ['Caffe', IntelCaffeProcess],
+@pytest.mark.parametrize('inference_framework', [['OpenVINO DLDT', OpenVINOProcess],
+                                                 ['Caffe', IntelCaffeProcess],
                                                  ['TensorFlow', TensorFlowProcess],
                                                  ['OpenCV DNN Cpp', OpenCVDNNCppProcess],
                                                  ['ONNX Runtime', OnnxRuntimeProcess],
-                                                 ['TensorFlowLite', TensorFlowLiteProcess]])
+                                                 ['TensorFlowLite', TensorFlowLiteProcess],
+                                                 ['PyTorch', PyTorchProcess],
+                                                 ['PyTorch Cpp', PyTorchCppProcess],
+                                                 ['MXNet', MXNetProcess],
+                                                 ['OpenCV DNN Python', OpenCVDNNPythonProcess],
+                                                 ['ONNX Runtime Python', ONNXRuntimePythonProcess],
+                                                 ])
 @pytest.mark.parametrize('complex_test', [['sync', 'handwritten', None, SyncOpenVINOProcess],
                                           ['async', 'handwritten', None, AsyncOpenVINOProcess],
                                           ['sync', 'ovbenchmark', 'python', OpenVINOBenchmarkPythonProcess],

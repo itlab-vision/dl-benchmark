@@ -31,4 +31,6 @@ def get_parameters_parser(framework):
         return CppParametersParser()
     if framework == KnownFrameworks.pytorch:
         return PyTorchParametersParser()
+    if framework == KnownFrameworks.pytorch_cpp:
+        return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')
