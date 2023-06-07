@@ -8,7 +8,7 @@
 #include "onnxruntime_launcher.hpp"
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
 #include "tflite_launcher.hpp"
-#elif PYTORCH
+#elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
 #include "pytorch_launcher.hpp"
 #endif
 
@@ -125,6 +125,8 @@ void parse(int argc, char* argv[]) {
             "tflite_xnnpack"
 #elif PYTORCH
             "pytorch"
+#elif PYTORCH_TENSORRT
+            "pytorch_tensorrt"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -137,7 +139,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
                   << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
                   << "\n\t[--layout <[NCHW]>]                           " << layout_msg
-                  << "\n\t[--dtype <[FP32]>]                           " << dtype_msg
+                  << "\n\t[--dtype <[FP32]>]                            " << dtype_msg
                   << "\n\t[--mean <R G B>]                              " << input_mean_msg
                   << "\n\t[--scale <R G B>]                             " << input_scale_msg
                   << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
@@ -217,7 +219,7 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
 #elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
-#elif PYTORCH
+#elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
 #endif
 
@@ -337,6 +339,7 @@ int main(int argc, char* argv[]) {
         log_step();  // Creating input tensors
         auto tensors_buffers = inputs::get_input_tensors(inputs_info, batch_size, num_requests);
         launcher->prepare_input_tensors(std::move(tensors_buffers));
+        launcher->compile();
 
         log_step(std::to_string(num_requests) + " inference requests, limits: " +
                  (num_iterations > 0

@@ -15,8 +15,9 @@ option(BUILD_ONNXRUNTIME_TENSORRT_LAUNCHER "Build ONNX Runtime launcher with Ten
 option(BUILD_OPENCV_LAUNCHER "Build OpenCV launcher" OFF)
 option(BUILD_OPENCV_OV_LAUNCHER "Build OpenCV with OpenVINO backend launcher" OFF)
 option(BUILD_TFLITE_LAUNCHER "Build TensorFlow Lite with default CPU delegate launcher" OFF)
-option(BUILD_TFLITE_XNNPACK_LAUNCHER "Build TensorFlow Lite with XNNPack delegate launcher " OFF)
-option(BUILD_PYTORCH_LAUNCHER "Build PyTorch launcher " OFF)
+option(BUILD_TFLITE_XNNPACK_LAUNCHER "Build TensorFlow Lite with XNNPack delegate launcher" OFF)
+option(BUILD_PYTORCH_LAUNCHER "Build PyTorch launcher" OFF)
+option(BUILD_PYTORCH_TENSORRT_LAUNCHER "Build PyTorch-TensorRT launcher" OFF)
 
 include(CMakeParseArguments)
 
@@ -93,6 +94,6 @@ if (BUILD_TFLITE_LAUNCHER OR BUILD_TFLITE_XNNPACK_LAUNCHER)
     add_subdirectory(tflite_launcher)
 endif()
 
-if (BUILD_PYTORCH_LAUNCHER)
+if (BUILD_PYTORCH_LAUNCHER OR BUILD_PYTORCH_TENSORRT_LAUNCHER)
     add_subdirectory(pytorch_launcher)
 endif()

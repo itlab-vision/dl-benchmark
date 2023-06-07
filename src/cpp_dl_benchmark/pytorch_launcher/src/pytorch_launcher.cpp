@@ -2,6 +2,9 @@
 
 #include <torch/script.h>
 #include <torch/torch.h>
+#ifdef PYTORCH_TENSORRT
+#include "torch_tensorrt/torch_tensorrt.h"
+#endif
 
 #include <algorithm>
 #include <chrono>
@@ -89,13 +92,29 @@ void PytorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer
     tensor_buffers = std::move(tbuffers);
     tensors.resize(tensor_buffers.size());
     for (int i = 0; i < tensor_buffers.size(); ++i) {
+        if (i == 0) {
+            input_shapes.resize(tensor_buffers[0].size());
+        }
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
             const auto& buffer = tensor_buffers[i][j];
             std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(
                 torch::from_blob(buffer.get(), shape, get_data_type(buffer.precision())).to(torch_device));
+            if (i == 0) {
+                input_shapes[j] = shape;
+            }
         }
     }
+}
+
+void PytorchLauncher::compile() {
+#ifdef PYTORCH_TENSORRT
+    logger::info << "Compile model for TensorRT" << logger::endl;
+    auto compile_settings = torch_tensorrt::ts::CompileSpec(input_shapes);
+    compile_settings.enabled_precisions = {torch::kFloat};
+    compile_settings.truncate_long_and_double = true;
+    module = torch_tensorrt::ts::compile(module, compile_settings);
+#endif
 }
 
 void PytorchLauncher::run(const int input_idx) {

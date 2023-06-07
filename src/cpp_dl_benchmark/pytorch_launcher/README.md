@@ -48,10 +48,17 @@ so that cmake can find it during configuration step:
     ```
 
 1. In the created directory run `cmake` command:
-
-    ```
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTORCH_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
-    ```
+    - For PyTorch with default settings:
+        ```
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTORCH_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+    - For Torch-TensorRT:
+        ```
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTORCH_TENSORRT_LAUNCHER=ON \
+            -DTorch_DIR=<PyTorch_DIR>/share/cmake/Torch/ \
+            -DTORCH_TENSORRT_DIR=<Torch-TensorRT_DIR> \
+            <dl-benchmark>/src/cpp_dl_benchmark
+        ```
 
 1. Build tool
 

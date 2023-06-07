@@ -279,6 +279,7 @@
             <ThreadCount></ThreadCount>
             <InferenceRequestsCount></InferenceRequestsCount>
             <InputType></InputType>
+            <TensorRTPrecision></TensorRTPrecision>
         </FrameworkDependent>
     </Test>
 </Tests>

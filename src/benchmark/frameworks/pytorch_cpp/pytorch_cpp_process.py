@@ -16,7 +16,13 @@ class PyTorchCppProcess(ProcessHandler):
         if not cpp_benchmarks_dir:
             raise invalid_path_exception
 
-        self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('pytorch_benchmark')
+        if self._test.dep_parameters.tensor_rt_precision:
+            if self._test.dep_parameters.tensor_rt_precision == 'FP32':
+                self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('pytorch_tensorrt_benchmark')
+            else:
+                raise ValueError('Unknown TensorRT precision')
+        else:
+            self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('pytorch_benchmark')
 
         if not self._benchmark_path.is_file():
             raise invalid_path_exception

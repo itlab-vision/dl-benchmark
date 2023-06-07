@@ -31,6 +31,7 @@ public:
     IOTensorsInfo get_io_tensors_info() const override;
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
+    void compile() override{};
 
     void dump_output() override;
 

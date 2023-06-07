@@ -11,3 +11,15 @@ if (BUILD_PYTORCH_LAUNCHER)
                  DEPENDENCIES ${TORCH_LIBRARIES}
                  DEFINITIONS PYTORCH)
 endif()
+
+if (BUILD_PYTORCH_TENSORRT_LAUNCHER)
+    find_library(TORCH_TENSORRT_LIB libtorchtrt.so
+                 ${TORCH_TENSORRT_DIR}/lib
+                 CMAKE_FIND_ROOT_PATH_BOTH)
+    add_launcher(NAME pytorch_tensorrt_benchmark
+                 SOURCES ${SOURCES}
+                 HEADERS ${HEADERS}
+                 INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include" "${TORCH_TENSORRT_DIR}/include/"
+                 DEPENDENCIES ${TORCH_LIBRARIES} ${TORCH_TENSORRT_LIB}
+                 DEFINITIONS PYTORCH_TENSORRT)
+endif()

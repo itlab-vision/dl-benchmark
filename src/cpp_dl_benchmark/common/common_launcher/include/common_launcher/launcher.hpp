@@ -38,6 +38,7 @@ public:
     virtual void read(const std::string& model_file, const std::string& weights_file = "") = 0;
     virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) = 0;
     virtual void load() = 0;
+    virtual void compile() = 0;
 
     virtual void fill_inputs_outputs_info() = 0;
     virtual IOTensorsInfo get_io_tensors_info() const = 0;

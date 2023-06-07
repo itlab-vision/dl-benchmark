@@ -30,6 +30,7 @@ public:
     IOTensorsInfo get_io_tensors_info() const override;
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
+    void compile() override;
 
     void dump_output() override{};
 
@@ -38,7 +39,7 @@ private:
     torch::DeviceType device_type;
 
     std::vector<std::string> input_names;
-    std::vector<std::vector<int>> input_shapes;
+    std::vector<std::vector<int64_t>> input_shapes;
     std::vector<torch::Dtype> input_data_precisions;
 
     std::vector<std::string> output_names;

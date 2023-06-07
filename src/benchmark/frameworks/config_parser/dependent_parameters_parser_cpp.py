@@ -18,6 +18,11 @@ class CppParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName('InputType'):
             _input_type = dep_parameters_tag.getElementsByTagName('InputType')[0].firstChild
 
+        _tensor_rt_precision = None
+        if dep_parameters_tag.getElementsByTagName('TensorRTPrecision'):
+            _tensor_rt_precision = dep_parameters_tag.getElementsByTagName(
+                'TensorRTPrecision')[0].firstChild
+
         _input_shape = dep_parameters_tag.getElementsByTagName('InputShape')[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName('Layout')[0].firstChild
         _mean = dep_parameters_tag.getElementsByTagName('Mean')[0].firstChild
@@ -28,6 +33,7 @@ class CppParametersParser(DependentParametersParser):
         return CppParameters(
             backend=_backend.data if _backend else None,
             provider=_provider.data if _provider else 'Default',
+            tensor_rt_precision=_tensor_rt_precision.data if _tensor_rt_precision else None,
             input_shape=_input_shape.data if _input_shape else None,
             layout=_layout.data if _layout else None,
             mean=_mean.data if _mean else None,
