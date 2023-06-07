@@ -118,7 +118,7 @@ RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
     accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
 
-# Download DLI source code
+# Download DLI source  code
 WORKDIR /tmp/
 RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
