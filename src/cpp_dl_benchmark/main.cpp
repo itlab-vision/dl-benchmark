@@ -357,14 +357,15 @@ int main(int argc, char* argv[]) {
         int iterations_num = launcher->evaluate(num_iterations, time_limit_ns);
 
         log_step();  // Saving statistics report
-        Metrics metrics(launcher->get_latencies(), batch_size);
         double total_time = launcher->get_total_time_ms();
+        Metrics metrics(launcher->get_latencies(), batch_size);
         // Performance metrics report
         logger::info << "Count: " << iterations_num << " iterations" << logger::endl;
         logger::info << "Duration: " << utils::format_double(total_time) << " ms" << logger::endl;
         logger::info << "Latency:" << logger::endl;
         logger::info << "\tMedian   " << utils::format_double(metrics.latency.median) << " ms" << logger::endl;
         logger::info << "\tAverage: " << utils::format_double(metrics.latency.avg) << " ms" << logger::endl;
+        logger::info << "\tStd:     " << utils::format_double(metrics.latency.std) << " ms" << logger::endl;
         logger::info << "\tMin:     " << utils::format_double(metrics.latency.min) << " ms" << logger::endl;
         logger::info << "\tMax:     " << utils::format_double(metrics.latency.max) << " ms" << logger::endl;
         logger::info << "Throughput: " << utils::format_double(metrics.fps) << " FPS" << logger::endl;
@@ -375,6 +376,7 @@ int main(int argc, char* argv[]) {
                                 {"first_inference_time", utils::format_double(first_inference_time)},
                                 {"iterations_num", std::to_string(iterations_num)},
                                 {"latency_avg", utils::format_double(metrics.latency.avg)},
+                                {"latency_std", utils::format_double(metrics.latency.std)},
                                 {"latency_max", utils::format_double(metrics.latency.max)},
                                 {"latency_median", utils::format_double(metrics.latency.median)},
                                 {"latency_min", utils::format_double(metrics.latency.min)},

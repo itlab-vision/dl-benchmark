@@ -98,36 +98,14 @@ void PytorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer
     }
 }
 
-void PytorchLauncher::warmup_inference() {
-    run(tensors[0]);
-}
-
-void PytorchLauncher::run(const std::vector<torch::jit::IValue>& tensors) {
+void PytorchLauncher::run(const int input_idx) {
     torch::InferenceMode guard;
-
-    total_start_time = std::min(HighresClock::now(), total_start_time);
 
     if (device == utils::Device::NVIDIA_GPU)
         torch::cuda::synchronize();
     infer_start_time = HighresClock::now();
-    module.forward(tensors);
+    module.forward(tensors[input_idx]);
     if (device == utils::Device::NVIDIA_GPU)
         torch::cuda::synchronize();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
-
-    total_end_time = std::max(HighresClock::now(), total_end_time);
-}
-
-int PytorchLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
-    int iteration = 0;
-    auto start_time = HighresClock::now();
-    auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    while ((iterations_num != 0 && iteration < iterations_num) ||
-           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        run(tensors[iteration % tensor_buffers.size()]);
-        ++iteration;
-        uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    }
-
-    return iteration;
 }

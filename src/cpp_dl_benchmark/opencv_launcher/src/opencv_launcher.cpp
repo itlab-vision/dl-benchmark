@@ -121,35 +121,14 @@ void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&&
     }
 }
 
-void OCVLauncher::warmup_inference() {
-    run(blobs[0]);
-}
-
 void OCVLauncher::dump_output() {
     throw std::logic_error("Method is not implemented");
 }
 
-void OCVLauncher::run(const cv::Mat& input_blob) {
-    net.setInput(input_blob);
-    total_start_time = std::min(HighresClock::now(), total_start_time);
+void OCVLauncher::run(const int input_idx) {
+    net.setInput(blobs[input_idx]);
 
     infer_start_time = HighresClock::now();
     net.forward(output_blobs, output_names);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
-
-    total_end_time = std::max(HighresClock::now(), total_end_time);
-}
-
-int OCVLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
-    int iteration = 0;
-    auto start_time = HighresClock::now();
-    auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    while ((iterations_num != 0 && iteration < iterations_num) ||
-           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        run(blobs[iteration % blobs.size()]);
-        ++iteration;
-        uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    }
-
-    return iteration;
 }

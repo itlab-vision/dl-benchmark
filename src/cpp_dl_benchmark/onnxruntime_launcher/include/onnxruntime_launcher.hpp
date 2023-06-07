@@ -32,9 +32,6 @@ public:
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
 
-    void warmup_inference() override;
-    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
-
     void dump_output() override;
 
 private:
@@ -59,8 +56,7 @@ private:
     OrtTensorRTProviderOptionsV2* tensorrt_options = nullptr;
 #endif
     std::vector<std::vector<Ort::Value>> tensors;
-    std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    void run(const std::vector<Ort::Value>& input_tensors);
-    std::vector<Ort::Value> run_for_output(const std::vector<Ort::Value>& input_tensors);
+    void run(const int input_idx) override;
+    std::vector<Ort::Value> run_for_output(const int input_idx);
 };

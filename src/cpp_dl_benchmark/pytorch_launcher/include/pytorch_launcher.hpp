@@ -31,8 +31,6 @@ public:
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
 
-    void warmup_inference() override;
-    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
     void dump_output() override{};
 
 private:
@@ -47,8 +45,7 @@ private:
     std::vector<std::vector<int>> output_shapes;
     std::vector<torch::Dtype> output_data_precisions;
 
-    std::vector<std::vector<TensorBuffer>> tensor_buffers;
     std::vector<std::vector<torch::jit::IValue>> tensors;
 
-    void run(const std::vector<torch::jit::IValue>& tbuffers);
+    void run(const int input_idx);
 };

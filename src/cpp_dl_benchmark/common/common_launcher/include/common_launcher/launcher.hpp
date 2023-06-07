@@ -21,13 +21,11 @@ protected:
 
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    // time stamps for total time measurements;
-    HighresClock::time_point total_start_time;
-    HighresClock::time_point total_end_time;
-
     // time stamps for individual inference
     HighresClock::time_point infer_start_time;
     std::vector<double> latencies;
+
+    virtual void run(const int input_idx) = 0;
 
 public:
     Launcher(const int nthreads, const std::string& device)
@@ -38,15 +36,14 @@ public:
     virtual std::string get_framework_version() const = 0;
     virtual std::string get_backend_name() const = 0;
     virtual void read(const std::string& model_file, const std::string& weights_file = "") = 0;
+    virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) = 0;
     virtual void load() = 0;
 
     virtual void fill_inputs_outputs_info() = 0;
     virtual IOTensorsInfo get_io_tensors_info() const = 0;
 
-    virtual void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) = 0;
-
-    virtual void warmup_inference() = 0;
-    virtual int evaluate(const int iterations_num, const uint64_t time_limit_ns) = 0;
+    void warmup_inference();
+    int evaluate(int iterations_num, uint64_t time_limit_ns);
 
     virtual void dump_output() = 0;
 

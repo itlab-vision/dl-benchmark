@@ -31,8 +31,6 @@ public:
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
 
-    void warmup_inference() override;
-    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
     void dump_output() override;
 
 private:
@@ -44,11 +42,9 @@ private:
     std::vector<std::vector<int>> output_shapes;
 
     std::vector<cv::Mat> blobs;
-    std::vector<std::vector<TensorBuffer>> tensor_buffers;
-
     std::vector<cv::Mat> output_blobs;
 
     static void set_backend(cv::dnn::Net& net);
 
-    void run(const cv::Mat& input_blob);
+    void run(const int input_idx) override;
 };

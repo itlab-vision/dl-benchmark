@@ -174,11 +174,8 @@ void TFLiteLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>
     }
 }
 
-void TFLiteLauncher::warmup_inference() {
-    run(tensor_buffers[0]);
-}
-
-void TFLiteLauncher::run(const std::vector<TensorBuffer>& tbuffers) {
+void TFLiteLauncher::run(const int input_idx) {
+    auto& tbuffers = tensor_buffers[input_idx];
     for (size_t i = 0; i < interpreter->inputs().size(); ++i) {
         if (TfLiteTensorCopyFromBuffer(interpreter->input_tensor(i), tbuffers[i].get(), tbuffers[i].size()) !=
             kTfLiteOk) {
@@ -188,29 +185,11 @@ void TFLiteLauncher::run(const std::vector<TensorBuffer>& tbuffers) {
         }
     }
 
-    total_start_time = std::min(HighresClock::now(), total_start_time);
-
     infer_start_time = HighresClock::now();
     auto status = interpreter->Invoke();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 
-    total_end_time = std::max(HighresClock::now(), total_end_time);
-
     if (status != kTfLiteOk) {
         throw std::runtime_error("Failed invoke interpreter");
     }
-}
-
-int TFLiteLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
-    int iteration = 0;
-    auto start_time = HighresClock::now();
-    auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    while ((iterations_num != 0 && iteration < iterations_num) ||
-           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        run(tensor_buffers[iteration % tensor_buffers.size()]);
-        ++iteration;
-        uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    }
-
-    return iteration;
 }

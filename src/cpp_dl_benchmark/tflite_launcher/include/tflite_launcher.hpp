@@ -33,8 +33,6 @@ public:
 
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
 
-    void warmup_inference() override;
-    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
     void dump_output() override{};
 
 private:
@@ -58,7 +56,5 @@ private:
     std::vector<std::vector<int>> output_shapes;
     std::vector<TfLiteType> output_data_precisions;
 
-    std::vector<std::vector<TensorBuffer>> tensor_buffers;
-
-    void run(const std::vector<TensorBuffer>& tbuffers);
+    void run(const int input_idx);
 };
