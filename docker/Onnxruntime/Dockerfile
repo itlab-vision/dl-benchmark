@@ -46,24 +46,28 @@ WORKDIR /tmp/
 ARG CMAKE_VERSION=3.24
 RUN pip3 install cmake==${CMAKE_VERSION}
 
-#install onnxruntime
-WORKDIR /tmp/
-ARG ONNX_VERSION=1.14.0
-RUN git clone https://github.com/microsoft/onnxruntime.git && \ 
-    cd onnxruntime && \ 
-    git checkout v${ONNX_VERSION} && \ 
-    git submodule update --init --recursive && mkdir build && cd build && \
-    cmake -DCMAKE_INSTALL_PREFIX=install \
-        -DCMAKE_BUILD_TYPE=Release \
-        -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON \
-        -Donnxruntime_BUILD_UNIT_TESTS=OFF \
-        -Donnxruntime_BUILD_SHARED_LIB=ON \
-        -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake && \ 
-    make install -j$(nproc --all)
-RUN pip3 install onnxruntime==${ONNX_VERSION}
+# Install OpenVINO
+ENV INSTALL_DIR /opt/intel/openvino_2022
+ARG OV_SHORT_VERSION=2022.3
+ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.9052.9752fafe8eb_x86_64"
+RUN sudo mkdir /opt/intel && \
+    wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
+        -O /tmp/openvino.tgz --no-check-certificate --quiet && \
+    tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
+    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
+    rm -rf /tmp/*
 
-#install Opencv
+# Install OpenVINO dependencies
+WORKDIR $INSTALL_DIR/install_dependencies
+RUN ls -la $INSTALL_DIR/install_dependencies && echo y | ./install_openvino_dependencies.sh
+RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
+
+# Install openvino-dev
 WORKDIR /tmp/
+RUN pip3 install --upgrade pip
+RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
+
+# Install OpenCV
 ARG OCV_VERSION=4.7.0
 RUN pip uninstall opencv-python -y
 RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch ${OCV_VERSION} --single-branch
@@ -88,7 +92,23 @@ ENV OpenCV_DIR="$OpenCV_INSTALL_DIR/cmake"
 ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:$PYTHONPATH}"
 
-#accuracy-check
+#install onnxruntime
+WORKDIR /tmp/
+ARG ONNX_VERSION=1.14.0
+RUN git clone https://github.com/microsoft/onnxruntime.git && \ 
+    cd onnxruntime && \ 
+    git checkout v${ONNX_VERSION} && \ 
+    git submodule update --init --recursive && mkdir build && cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=install \
+        -DCMAKE_BUILD_TYPE=Release \
+        -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON \
+        -Donnxruntime_BUILD_UNIT_TESTS=OFF \
+        -Donnxruntime_BUILD_SHARED_LIB=ON \
+        -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake && \ 
+    make install -j$(nproc --all)
+RUN pip3 install onnxruntime==${ONNX_VERSION}
+
+# accuracy-check
 ARG OMZ_VERSION="${OV_SHORT_VERSION}.0"
 WORKDIR /tmp/
 RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
