@@ -7,6 +7,7 @@ from pathlib import Path
 
 import postprocessing_data as pp
 import utils
+from inference_tools.loop_tools import loop_inference
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
 from reporter.report_writer import ReportWriter
@@ -143,23 +144,34 @@ def cli_argument_parser():
                         type=Path,
                         default=Path(__file__).parent / 'openvino_sync_inference_report.json',
                         dest='report_path')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
 
     args = parser.parse_args()
 
     return args
 
 
-def infer_sync(compiled_model, number_iter, get_slice):
+def infer_sync(compiled_model, number_iter, get_slice, test_duration):
     request = compiled_model.create_infer_request()
     result = None
-    time_infer = []
-    for _ in range(number_iter):
-        utils.set_input_to_blobs(request, get_slice())
-        request.infer()
-        time_infer.append(request.latency / 1000)
+    time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, request)
     if number_iter == 1:
         result = utils.get_request_result(request)
     return result, time_infer
+
+
+def inference_iteration(get_slice, request):
+    utils.set_input_to_blobs(request, get_slice())
+    exec_time = infer_slice(request)
+    return exec_time
+
+
+def infer_slice(request):
+    request.infer()
+    exec_time = request.latency / 1000
+    return exec_time
 
 
 def main():
@@ -204,13 +216,12 @@ def main():
         compiled_model = utils.compile_model(core, model, args.device, args.priority)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
-        result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input)
+        result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input, args.time)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter,
-                                                                      args.mininfer)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.mininfer)
 
-        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 

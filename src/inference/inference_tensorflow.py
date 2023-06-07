@@ -3,13 +3,13 @@ import json
 import logging as log
 import sys
 from pathlib import Path
-from time import time
 
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import signature_constants
 
 import postprocessing_data as pp
+from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import TensorFlowIOModelWrapper
 from reporter.report_writer import ReportWriter
@@ -130,6 +130,9 @@ def cli_argument_parser():
                         type=Path,
                         default=Path(__file__).parent / 'tf_inference_report.json',
                         dest='report_path')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
 
     args = parser.parse_args()
 
@@ -189,28 +192,28 @@ def prepare_output(result, outputs_name, task):
     return {outputs_name[i]: result[i] for i in range(len(result))}
 
 
-def inference_tensorflow(model, number_iter, get_slice):
+def inference_tensorflow(model, number_iter, get_slice, test_duration):
     result = None
     time_infer = []
     log.info(f'Starting inference ({number_iter} iterations)')
 
     if number_iter == 1:
         slice_input = get_slice()
-        t0 = time()
-        result = infer_slice(model, slice_input)
-        t1 = time()
-        time_infer.append(t1 - t0)
+        result, exec_time = infer_slice(model, slice_input)
+        time_infer.append(exec_time)
     else:
-        for _ in range(number_iter):
-            slice_input = get_slice()
-            t0 = time()
-            infer_slice(model, slice_input)
-            t1 = time()
-            time_infer.append(t1 - t0)
+        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model)
     log.info('Inference completed')
     return result, time_infer
 
 
+def inference_iteration(get_slice, model):
+    slice_input = get_slice()
+    _, exec_time = infer_slice(model, slice_input)
+    return exec_time
+
+
+@get_exec_time()
 def infer_slice(model, slice_input):
     model._num_positional_args = len(slice_input.keys())
     inputs = [tf.convert_to_tensor(value) for value in slice_input.values()]
@@ -278,12 +281,12 @@ def main():
     outputs_names = model_wrapper.get_outputs_layer_names(graph, output_names)
 
     result, inference_time = inference_tensorflow(model, args.number_iter,
-                                                  io.get_slice_input)
+                                                  io.get_slice_input, args.time)
 
     log.info('Computing performance metrics')
-    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter)
+    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
 
-    report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+    report_writer.update_execution_results(**inference_result)
     log.info(f'Write report to {args.report_path}')
     report_writer.write_report(args.report_path)
 

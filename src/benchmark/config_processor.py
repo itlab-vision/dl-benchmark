@@ -83,7 +83,7 @@ class TestConfigParser:
         batch_size = _batch_size.data if _batch_size else None
         device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data
         iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data
-        test_time_limit = indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data
+        test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)
 
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'

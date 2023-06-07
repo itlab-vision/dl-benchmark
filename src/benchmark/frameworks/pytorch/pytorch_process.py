@@ -28,16 +28,25 @@ class PyTorchProcess(ProcessHandler):
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
+        time_limit = self._test.indep_parameters.test_time_limit
         report_path = self.report_path
         if ((name is not None)
                 and (model_pt is None or model_pt == '')):
             common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
-                             f'-b {batch_size} -ni {iteration} --report_path {report_path}')
+                             f'-b {batch_size} -ni {iteration} ')
         elif ((model_pt is not None) or (model_pt != '')):
             common_params = (f'-m {model_pt} -i {dataset} -is {input_shape} '
-                             f'-b {batch_size} -ni {iteration} --report_path {report_path}')
+                             f'-b {batch_size} -ni {iteration}')
         else:
             raise Exception('Incorrect model parameters. Set model name or file name.')
+
+        if report_path:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--report_path', report_path)
+
+        if time_limit:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--time', time_limit)
 
         input_name = self._test.dep_parameters.input_name
         if input_name:

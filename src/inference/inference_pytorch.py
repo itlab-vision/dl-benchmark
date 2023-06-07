@@ -11,6 +11,7 @@ import torch
 
 import postprocessing_data as pp
 import preprocessing_data as prep
+from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
@@ -129,8 +130,11 @@ def cli_argument_parser():
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'pytorch_inference_report.json',
-                        dest='report_path')
-
+                        dest='report_path',
+                        help='Path to json benchmark report path, default: ./pytorch_inference_report.json')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
     args = parser.parse_args()
 
     return args
@@ -210,7 +214,7 @@ def compile_model(module, device, model_type, use_tensorrt, shapes, tensor_rt_dt
         return module
 
 
-def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device):
+def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device, test_duration):
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
@@ -221,18 +225,25 @@ def inference_pytorch(model, num_iterations, get_slice, input_names, inference_m
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            for _ in range(num_iterations):
-                inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-                if device.type == 'cuda':
-                    torch.cuda.synchronize()
-                t0 = time()
-                model(*inputs)
-                if device.type == 'cuda':
-                    torch.cuda.synchronize()
-                t1 = time()
-                time_infer.append(t1 - t0)
-
+            # several decorator calls in order to use variables as decorator parameters
+            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
+                                                                                            input_names, model)
     return predictions, time_infer
+
+
+@get_exec_time()
+def infer_slice(device, inputs, model):
+    model(*inputs)
+    if device.type == 'cuda':
+        torch.cuda.synchronize()
+
+
+def inference_iteration(device, get_slice, input_names, model):
+    inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+    if device.type == 'cuda':
+        torch.cuda.synchronize()
+    _, exec_time = infer_slice(device, inputs, model)
+    return exec_time
 
 
 def prepare_output(result, output_names, task):
@@ -288,14 +299,15 @@ def main():
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(compiled_model, args.input)
 
-        log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
+        log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input, args.input_names, args.inference_mode,
-                                                   device)
+                                                   io.get_slice_input,
+                                                   args.input_names, args.inference_mode, device,
+                                                   args.time)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter)
-        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
+        report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 

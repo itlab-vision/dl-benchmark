@@ -27,8 +27,12 @@ class TensorFlowLiteProcess(ProcessHandler):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        common_params = (f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration}'
-                         f' --report_path {self.report_path}')
+        common_params = (f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration}')
+
+        common_params = self._add_argument_to_cmd_line(common_params, '--report_path', self.report_path)
+
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params = self._add_argument_to_cmd_line(common_params, '--time', time_limit)
 
         channel_swap = self._test.dep_parameters.channel_swap
         if channel_swap:

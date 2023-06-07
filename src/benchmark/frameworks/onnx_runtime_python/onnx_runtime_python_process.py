@@ -26,9 +26,14 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
-        report_path = self.report_path
 
-        common_params = f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration} --report_path {report_path}'
+        common_params = (f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration}')
+
+        report_path = self.report_path
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--report_path', report_path)
+
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
         channel_swap = self._test.dep_parameters.channel_swap
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)

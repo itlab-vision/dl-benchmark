@@ -18,7 +18,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>10</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -46,7 +46,7 @@
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
             <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>sync</Mode>
@@ -73,8 +73,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>6</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -92,7 +92,8 @@
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
             <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
-            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin</WeightsPath>
+            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
+            </WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -102,8 +103,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>6</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>sync</Mode>
@@ -121,7 +122,8 @@
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
             <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
-            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin</WeightsPath>
+            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
+            </WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -131,8 +133,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>6</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -152,7 +154,8 @@
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
             <ModelPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
-            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin</WeightsPath>
+            <WeightsPath>./working_dir_smoke/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
+            </WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -162,8 +165,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>6</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -193,8 +196,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>6</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -228,8 +231,8 @@
             <InferenceFramework>TensorFlow</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <ChannelSwap></ChannelSwap>
@@ -261,8 +264,8 @@
             <InferenceFramework>TensorFlowLite</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <ChannelSwap></ChannelSwap>
@@ -293,8 +296,8 @@
             <InferenceFramework>MXNet</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>Sync</Mode>
@@ -355,8 +358,8 @@
             <InferenceFramework>OpenCV DNN Python</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Backend>DNN</Backend>
@@ -388,8 +391,8 @@
             <InferenceFramework>PyTorch</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit> 
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName>data</InputName>
@@ -418,8 +421,8 @@
             <InferenceFramework>ONNX Runtime Python</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <ChannelSwap></ChannelSwap>

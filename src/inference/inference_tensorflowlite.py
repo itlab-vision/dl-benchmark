@@ -4,8 +4,8 @@ import logging as log
 import sys
 import traceback
 from pathlib import Path
-from time import time
 
+from inference_tools.loop_tools import loop_inference
 from reporter.report_writer import ReportWriter
 
 try:
@@ -14,6 +14,7 @@ except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
 
     log.info('Using TFLite from tflite_runtime package')
+from inference_tools.loop_tools import get_exec_time
 
 import postprocessing_data as pp
 import preprocessing_data as prep
@@ -130,6 +131,9 @@ def cli_argument_parser():
                         type=Path,
                         default=Path(__file__).parent / 'tflite_inference_report.json',
                         dest='report_path')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
 
     args = parser.parse_args()
 
@@ -173,26 +177,38 @@ def load_network(tensorflow, model, number_threads, delegates):
         raise ValueError(f'Unsupported file format of the model: {suffix}')
 
 
-def inference_tflite(interpreter, number_iter, get_slice):
+def inference_tflite(interpreter, number_iter, get_slice, test_duration):
     result = None
-    time_infer = []
     interpreter.allocate_tensors()
     model_inputs = interpreter.get_input_details()
     input_info = {}
     for model_input in model_inputs:
         input_info[model_input['name']] = (model_input['index'], model_input['dtype'], model_input['shape'])
-
     outputs = interpreter.get_output_details()
-    for _ in range(number_iter):
-        for name, data in get_slice().items():
-            interpreter.set_tensor(input_info[name][0], data.astype(input_info[name][1]))
-        t0 = time()
-        interpreter.invoke()
-        t1 = time()
-        result = [interpreter.get_tensor(output['index']) for output in outputs]
-        time_infer.append(t1 - t0)
-
+    if number_iter > 1:
+        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_info, interpreter)
+    else:
+        result, exec_time = inference_with_output(get_slice, input_info, interpreter, outputs)
+        time_infer = [exec_time]
     return result, time_infer
+
+
+def inference_iteration(get_slice, input_info, interpreter):
+    for name, data in get_slice().items():
+        interpreter.set_tensor(input_info[name][0], data.astype(input_info[name][1]))
+    _, exec_time = infer_slice(interpreter)
+    return exec_time
+
+
+def inference_with_output(get_slice, input_info, interpreter, outputs):
+    exec_time = inference_iteration(get_slice, input_info, interpreter)
+    result = [interpreter.get_tensor(output['index']) for output in outputs]
+    return result, exec_time
+
+
+@get_exec_time()
+def infer_slice(interpreter):
+    interpreter.invoke()
 
 
 def reshape_model_input(io_model_wrapper, model, log):
@@ -253,11 +269,11 @@ def main():
         reshape_model_input(model_wrapper, interpreter, log)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
-        result, inference_time = inference_tflite(interpreter, args.number_iter, io.get_slice_input)
+        result, inference_time = inference_tflite(interpreter, args.number_iter, io.get_slice_input, args.time)
 
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time, args.number_iter)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
 
-        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 

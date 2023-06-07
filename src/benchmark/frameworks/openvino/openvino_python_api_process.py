@@ -18,7 +18,10 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
         iteration = self._test.indep_parameters.iteration
 
         command_line = (f'-m {model_xml} -w {model_bin} -i {dataset} -b {batch} -d {device}'
-                        f' -ni {iteration} --report_path {self.report_path}')
+                        f' -ni {iteration}')
+
+        command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '--report_path',
+                                                                          self.report_path)
 
         extension = self._test.dep_parameters.extension
         if extension:
@@ -74,8 +77,10 @@ class SyncOpenVINOProcess(OpenVINOPythonAPIProcess):
     def _fill_command_line(self):
         path_to_sync_script = Path.joinpath(self.inference_script_root, 'inference_sync_mode.py')
         python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
 
         common_params = super()._fill_command_line()
+        common_params += f' --time {time_limit}'
         command_line = f'{python} {path_to_sync_script} {common_params}'
 
         return command_line
