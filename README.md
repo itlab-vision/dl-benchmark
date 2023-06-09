@@ -19,7 +19,7 @@ DLI supports inference using the following frameworks:
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimizations for TensorFlow][intel-tensorflow].
-- [TensorFlow Lite][tensorflow-lite].
+- [TensorFlow Lite][tensorflow-lite] (C++ and Python API).
 - [ONNX Runtime][onnx-runtime] (C++ and Python API).
 - [MXNet][mxnet].
 - [OpenCV DNN][opencv-dnn] (C++ and Python API).
@@ -42,11 +42,11 @@ Kogteva N. DLI: Deep Learning Inference Benchmark //
 Communications in Computer and Information Science.
 V.1129. 2019. P. 542-553.
 
-1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
-Kustikova V.D. Automation of collecting performance indicators 
-for the inference of deep neural networks in Deep Learning 
-Inference Benchmark // Mathematical modeling and supercomputer 
-technologies. Proceedings of the XXI International Conference 
+1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P.,
+Kustikova V.D. Automation of collecting performance indicators
+for the inference of deep neural networks in Deep Learning
+Inference Benchmark // Mathematical modeling and supercomputer
+technologies. Proceedings of the XXI International Conference
 (N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
 Novgorod State University Publishing House, 2021. – 423 p.
 [https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
@@ -74,11 +74,11 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
 - `results` directory contains benchmarking and validation results.
 
-  - [`benchmarking`](results/benchmarking) contains benchmarking 
+  - [`benchmarking`](results/benchmarking) contains benchmarking
     results in html- and xslx-formats.
   - [`accuracy`](results/accuracy) contains accuracy
     results in html- and xslx-formats.
-  - [`validation`](results/validation) contains tables that confirms 
+  - [`validation`](results/validation) contains tables that confirms
     correctness of inference implementation for the benchmarked models.
 
     - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md)

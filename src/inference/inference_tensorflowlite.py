@@ -12,7 +12,6 @@ try:
     import tensorflow.lite as tflite
 except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
-
     log.info('Using TFLite from tflite_runtime package')
 from inference_tools.loop_tools import get_exec_time
 
