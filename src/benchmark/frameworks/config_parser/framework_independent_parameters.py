@@ -16,7 +16,8 @@ class FrameworkIndependentParameters(FrameworkParameters):
             if self._int_value_is_correct(batch_size):
                 self.batch_size = int(batch_size)
             else:
-                raise ValueError('Batch size can only take values: integer greater than zero.')
+                raise ValueError('Batch size can only take values: integer greater than zero.'
+                                 'Set "None" as batch value to ignore this argument in inference app')
         if self._parameter_is_not_none(device):
             self.device = device.upper()
         else:

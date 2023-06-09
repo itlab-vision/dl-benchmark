@@ -35,6 +35,13 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
         return command_line
 
+    @staticmethod
+    def _add_batch_size_for_cmd_line(command_line, batch_value):
+        if batch_value:
+            return f'{command_line} -b {batch_value}'
+        else:
+            return command_line
+
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
             return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
@@ -116,14 +123,24 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time}'
+        arguments = f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time}'
 
+        arguments = self._add_batch_size_for_cmd_line(arguments, batch)
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
+
         if frontend != 'IR':
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+            mean_arg = '-imean'
+            scale_arg = '-iscale'
+
+            if self._test.dep_parameters.change_preproc_options == 'Rename':
+                mean_arg = '--mean_values'
+                scale_arg = '--scale_values'
+
+            arguments = self._add_optional_argument_to_cmd_line(arguments, mean_arg,
+                                                                self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, scale_arg,
                                                                 self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
 
@@ -134,6 +151,14 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
             regex = re.compile(r'\s*(\d+)\s*inference\s+requests')
             for line in self._output:
                 if 'Measuring performance' in line:
+                    res = regex.search(line)
+                    if res:
+                        return res.group(1)
+            return None
+        elif key == 'batch_size':
+            regex = re.compile(r'\s*Model\sbatch\ssize:\s(\d+)')
+            for line in self._output:
+                if 'Model batch size' in line:
                     res = regex.search(line)
                     if res:
                         return res.group(1)

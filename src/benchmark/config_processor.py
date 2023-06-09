@@ -80,7 +80,9 @@ class TestConfigParser:
         _batch_size = indep_parameters_tag.getElementsByTagName('BatchSize')[0].firstChild
 
         inference_framework = indep_parameters_tag.getElementsByTagName('InferenceFramework')[0].firstChild.data
-        batch_size = _batch_size.data if _batch_size else None
+
+        batch_size = _batch_size.data if (_batch_size and _batch_size.data != 'None') else None
+
         device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data
         iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data
         test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)

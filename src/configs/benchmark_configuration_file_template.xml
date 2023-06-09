@@ -32,6 +32,7 @@
             <Layout></Layout>
             <Mean></Mean>
             <InputScale></InputScale>
+            <ChangePreprocessOptions></ChangePreprocessOptions>
         </FrameworkDependent>
     </Test>
     <Test>
