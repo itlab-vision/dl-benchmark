@@ -224,11 +224,11 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         MILLISECONDS_IN_SECOND = 1000
         duration = float(report['execution_results']['execution_time'])
         iter_count = float(report['execution_results']['iterations_num'])
-        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 3)
+        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 5)
                                        if None not in (duration, iter_count) else None)
 
         fps = round(float(report['execution_results']['throughput']), 3)
-        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
+        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 5)
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,
