@@ -217,7 +217,7 @@ class OpenVINOParameters(FrameworkParameters):
 
     @staticmethod
     def _frontend_is_correct(frontend):
-        const_correct_frontend = ['ir', 'tensorflow', 'onnx']
+        const_correct_frontend = ['ir', 'tensorflow', 'tensorflow_lite', 'onnx']
         if not frontend:
             return True
         if frontend.lower() in const_correct_frontend:
