@@ -1,6 +1,6 @@
 # Model validation and performance analysis status for ONNXruntime
 
-## Public models (Onnx/models repository)
+## Public models (ONNX Model Zoo)
 
 Represented deep models are available in [ONNX Model Zoo][onnx].
 
