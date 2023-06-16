@@ -217,7 +217,7 @@
             <Layout></Layout>
         </FrameworkDependent>
     </Test>
-        <Test>
+    <Test>
         <Model>
             <Task></Task>
             <Name></Name>
