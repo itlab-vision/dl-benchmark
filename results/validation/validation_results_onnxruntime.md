@@ -1,4 +1,4 @@
-# Validation results for the models inferring using Onnxruntime
+# Validation results for the models inferring using ONNXruntime
 
 ## Image classification
 
@@ -13,7 +13,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-Model | Parameters | Python | C++ |
+Model | Parameters | Python API | C++ API |
 -|-|-|-|
 bvlcalexnet-12-int8 | - | - | 0.8704010 Granny Smith<br>0.0510130 tennis ball<br>0.0309220 candle, taper, wax light<br>0.0096150 whistle<br>0.0058280 acorn |
 bvlcalexnet-12 | - | - | 0.9295540 Granny Smith<br>0.0125680 piggy bank, penny bank<br>0.0090160 saltshaker, salt shaker<br>0.0077320 candle, taper, wax light<br>0.0068970 bell pepper |
@@ -48,7 +48,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-Model | Parameters | Python | C++ |
+Model | Parameters | Python API | C++ API |
 -|-|-|-|
 bvlcalexnet-12-int8 | - | - | 0.1778960 junco, snowbird<br>0.1078320 necklace<br>0.0468150 bonnet, poke bonnet<br>0.0468150 weevil<br>0.0396200 barn spider, Araneus cavaticus |
 bvlcalexnet-12 | - | - | 0.9175600 junco, snowbird<br>0.0709890 chickadee<br>0.0055200 brambling, Fringilla montifringilla<br>0.0013350 water ouzel, dipper<br>0.0005600 bulbul |
@@ -83,7 +83,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-Model | Parameters | Python | C++ |
+Model | Parameters | Python API | C++ API |
 -|-|-|-|
 bvlcalexnet-12-int8 | - | - | 0.2657560 lifeboat<br>0.2657560 container ship, containership, container vessel<br>0.0826370 drilling platform, offshore rig<br>0.0699360 pirate, pirate ship<br>0.0699360 liner, ocean liner |
 bvlcalexnet-12 | - | - | 0.7463340 lifeboat<br>0.0592250 container ship, containership, container vessel<br>0.0573870 beacon, lighthouse, beacon light, pharos<br>0.0418250 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0355170 liner, ocean liner |

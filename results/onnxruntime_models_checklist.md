@@ -1,12 +1,12 @@
-# Model validation and performance analysis status for Onnxruntime
+# Model validation and performance analysis status for ONNXruntime
 
 ## Public models (Onnx/models repository)
 
-Represented deep models are available in [Onnx/models][onnx].
+Represented deep models are available in [ONNX Model Zoo][onnx].
 
 ### Image classification
 
-Model | Availability in Onnx/models (2023.03.06) | Availability in the validation table |
+Model | Availability in ONNX Model Zoo (2023.03.06) | Availability in the validation table (C++ API using additional wrapper)|
 -|-|-|
 bvlcalexnet-12 | + | + |
 bvlcalexnet-12-int8 | + | + |
