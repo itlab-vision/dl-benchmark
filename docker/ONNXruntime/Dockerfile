@@ -43,28 +43,16 @@ RUN apt-get update && \
 
 #install cmake
 WORKDIR /tmp/
+RUN pip3 install --upgrade pip
 ARG CMAKE_VERSION=3.24
 RUN pip3 install cmake==${CMAKE_VERSION}
 
-# Install OpenVINO
-ENV INSTALL_DIR /opt/intel/openvino_2022
+# Install openvino
 ARG OV_SHORT_VERSION=2022.3
-ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.9052.9752fafe8eb_x86_64"
-RUN sudo mkdir /opt/intel && \
-    wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
-        -O /tmp/openvino.tgz --no-check-certificate --quiet && \
-    tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
-    sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
-    rm -rf /tmp/*
-
-# Install OpenVINO dependencies
-WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls -la $INSTALL_DIR/install_dependencies && echo y | ./install_openvino_dependencies.sh
-RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
+RUN pip3 install openvino==${OV_SHORT_VERSION}
 
 # Install openvino-dev
 WORKDIR /tmp/
-RUN pip3 install --upgrade pip
 RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 
 # Install OpenCV
@@ -74,14 +62,12 @@ RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth
 ENV OpenCV_BUILD_DIR=/root/build-opencv
 RUN mkdir $OpenCV_BUILD_DIR
 WORKDIR $OpenCV_BUILD_DIR
-RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
-    cmake -G Ninja \
+RUN /bin/bash -c 'cmake -G Ninja \
         -D CMAKE_INSTALL_PREFIX=install \
         -D CMAKE_BUILD_TYPE=Release \
         -D BUILD_EXAMPLES=OFF \
         -D BUILD_TESTS=OFF \
         -D BUILD_DOCS=OFF \
-        -D WITH_OPENVINO=ON \
         -D OPENCV_LIB_INSTALL_PATH=lib \
         -D OPENCV_CONFIG_INSTALL_PATH=cmake \
         -D PYTHON3_PACKAGES_PATH=install/python/python3 \
@@ -92,7 +78,7 @@ ENV OpenCV_DIR="$OpenCV_INSTALL_DIR/cmake"
 ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:$PYTHONPATH}"
 
-#install onnxruntime
+# Install onnxruntime
 WORKDIR /tmp/
 ARG ONNX_VERSION=1.14.0
 RUN git clone https://github.com/microsoft/onnxruntime.git && \ 
@@ -115,8 +101,7 @@ RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git 
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
-RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
-    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
+RUN accuracy_check -c sample/sample_config.yml -m data/test_models -s sample
 
 # Download DLI source code
 WORKDIR /tmp/
