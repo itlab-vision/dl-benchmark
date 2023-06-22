@@ -20,7 +20,7 @@
 Название скрипта:
 
 ```bash
-inference_sync_mode.py
+inference_openvino_sync_mode.py
 ```
 
 Обязательные аргументы:
@@ -61,7 +61,7 @@ inference_sync_mode.py
   задач используйте следующую команду:
 
   ```bash
-  python3 inference_sync_mode.py -h
+  python3 inference_openvino_sync_mode.py -h
   ```
 
 - `--color_map` - путь до карты цветов при решении задачи семантической
@@ -78,7 +78,7 @@ inference_sync_mode.py
 **Командная строка для решения задачи классификации изображений**
 
 ```bash
-python3 inference_sync_mode.py \
+python3 inference_openvino_sync_mode.py \
     -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --labels <path_to_labels>/image_net_synset.txt
@@ -90,7 +90,7 @@ python3 inference_sync_mode.py \
 **Командная строка для решения задачи детектирования объектов**
 
 ```bash
-python3 inference_sync_mode.py \
+python3 inference_openvino_sync_mode.py \
     -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin
 ```
@@ -102,7 +102,7 @@ python3 inference_sync_mode.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 
 ```bash
-python3 inference_sync_mode.py \
+python3 inference_openvino_sync_mode.py \
     -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --color_map <path_to_color_map>/color_map.txt
@@ -119,7 +119,7 @@ python3 inference_sync_mode.py \
 Название скрипта:
 
 ```bash
-inference_async_mode.py
+inference_openvino_async_mode.py
 ```
 
 Обязательные аргументы:
@@ -165,7 +165,7 @@ inference_async_mode.py
   следующую команду:
 
   ```bash
-  python3 inference_async_mode.py -h
+  python3 inference_openvino_async_mode.py -h
   ```
 
 - `--color_map` - путь до карты цветов при решении задачи семантической
@@ -180,7 +180,7 @@ inference_async_mode.py
 **Командная строка для решения задачи классификации изображений**
 
 ```bash
-python3 inference_async_mode.py \
+python3 inference_openvino_async_mode.py \
     -t classification -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --labels <path_to_labels>/image_net_synset.txt
@@ -192,7 +192,7 @@ python3 inference_async_mode.py \
 **Командная строка для решения задачи детектирования объектов**
 
 ```bash
-python3 inference_async_mode.py \
+python3 inference_openvino_async_mode.py \
     -t detection -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin
 ```
@@ -204,7 +204,7 @@ python3 inference_async_mode.py \
 **Командная строка для решения задачи семантической сегментации изображений**
 
 ```bash
-python3 inference_async_mode.py \
+python3 inference_openvino_async_mode.py \
     -t segmentation -i <path_to_image>/<image_name> \
     -m <path_to_model>/<model_name>.xml -w <path_to_weights>/<model_name>.bin \
     --color_map <path_to_color_map>/color_map.txt
