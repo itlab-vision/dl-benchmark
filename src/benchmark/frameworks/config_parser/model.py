@@ -1,5 +1,5 @@
 class Model:
-    def __init__(self, task, name, model_path, weights_path, precision, source_framework):
+    def __init__(self, task, name, model_path, weights_path, precision, source_framework, module=None):
         """
         :param task:
         :type task:
@@ -13,6 +13,8 @@ class Model:
         :type precision:
         :param source_framework:
         :type source_framework:
+        :param module:
+        :type module:
         """
         self.source_framework = None
         self.task = task
@@ -20,6 +22,7 @@ class Model:
         self.model = None
         self.weight = None
         self.precision = None
+        self.module = None
         if self._parameter_is_not_none(source_framework):
             self.source_framework = source_framework
         else:
@@ -40,7 +43,8 @@ class Model:
             self.precision = precision
         else:
             raise ValueError('Precision is required parameter.')
+        self.module = module
 
     @staticmethod
     def _parameter_is_not_none(parameter):
-        return True if parameter is not None else False
+        return parameter is not None

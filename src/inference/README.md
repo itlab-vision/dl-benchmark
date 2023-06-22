@@ -656,11 +656,7 @@ inference_pytorch.py
 
 Обязательные аргументы:
 
-- `-m / --model` - путь до описания архитектуры модели
-  в формате `.pt`.
-- `-mn / --model_name` - название модели, если модель
-  загружается из [TorchVision][torchvision].
-  При таком варианте запуска модель загружается из сети Интернет.
+- `-mn / --model_name` - название модели.
 - `-i / --input` - путь до изображения или директории
   с изображениями (расширения файлов `.jpg`, `.png`,
   `.bmp` и т.д.).
@@ -670,6 +666,13 @@ inference_pytorch.py
 
 Опциональные аргументы:
 
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.pt`.
+- `-w / --weights` - путь до файла с весами в формате `.pth`.
+- `-mm / --module` - путь до Python модуля или относительный путь
+  до Python файла с архитектурой модели. По умолчанию, данный параметр
+  принимает значение `torchvision.models`, модуль с [моделями][torchvision_models], которые решают
+  задачу классификации.
 - `-t / --task` - название задачи. Текущая реализация поддерживает
   решение задачи классификации. По умолчанию принимает значение
   `feedforward`.
@@ -709,7 +712,7 @@ inference_pytorch.py
 
 #### Примеры запуска
 
-**Запуск вывода для модели, которая загружается из TorchVision**
+**Запуск вывода для модели, которая загружается из TorchVision по умолчанию**
 
 ```bash
 python inference_pytorch.py --model_name <model_name> \
@@ -723,7 +726,21 @@ python inference_pytorch.py --model_name <model_name> \
 **Запуск вывода для модели, которая загружается из файлов**
 
 ```bash
-python inference_pytorch.py --model <file_name>.pt \
+python inference_pytorch.py --model_name <model_name> \
+                            --model <file_name>.pt \
+                            --input_name <input_name> \
+                            --input_shape <input_shape> \
+                            --input <path_to_data> \
+                            --labels <label_file>.json \
+                            --batch_size <batch_size>
+```
+
+**Запуск вывода для модели, которая загружается из модуля и отдельного файла с весами**
+
+```bash
+python inference_pytorch.py --model_name <model_name> \
+                            --module <module_name> \
+                            --weights <file_name>.pth \
                             --input_name <input_name> \
                             --input_shape <input_shape> \
                             --input <path_to_data> \
@@ -792,3 +809,4 @@ python3 inference_onnx_runtime.py \
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
 [torchvision]: https://pytorch.org/vision/stable/models.html
+[torchvision_models]: https://pytorch.org/vision/0.15/models.html
