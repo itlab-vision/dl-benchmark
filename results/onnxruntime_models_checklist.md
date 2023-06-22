@@ -1,4 +1,4 @@
-# Model validation and performance analysis status for ONNXruntime
+# Model validation and performance analysis status for ONNXRuntime
 
 ## Public models (ONNX Model Zoo)
 
