@@ -76,6 +76,15 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
                 except ValueError:
                     return None
 
+    def _get_model_batch_size(self):
+        regex = re.compile(r'\s*Model\sbatch\ssize:\s(\d+)')
+        for line in self._output:
+            if 'Model batch size' in line:
+                res = regex.search(line)
+                if res:
+                    return res.group(1)
+        return None
+
     def _add_common_arguments(self, arguments, device):
         extension = self._test.dep_parameters.extension
         if extension:
@@ -93,6 +102,20 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
 
         return arguments
+
+    def _get_mean_scale_args(self):
+        """
+        OpenVINO 2023.0 has mean_values and scale_values instead of imean and iscale.
+        :return: tuple
+        """
+
+        mean_arg = '-imean'
+        scale_arg = '-iscale'
+
+        if self._test.dep_parameters.change_preproc_options == 'Rename':
+            mean_arg = '--mean_values'
+            scale_arg = '--scale_values'
+        return mean_arg, scale_arg
 
     def extract_inference_param(self, key):
         regex = re.compile(rf'\s*{key}\s*[:,]\s*(?P<value>.+)$')
@@ -131,13 +154,7 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         arguments = self._add_common_arguments(arguments, device)
 
         if frontend != 'IR':
-            mean_arg = '-imean'
-            scale_arg = '-iscale'
-
-            if self._test.dep_parameters.change_preproc_options == 'Rename':
-                mean_arg = '--mean_values'
-                scale_arg = '--scale_values'
-
+            mean_arg, scale_arg = self._get_mean_scale_args()
             arguments = self._add_optional_argument_to_cmd_line(arguments, mean_arg,
                                                                 self._test.dep_parameters.mean)
             arguments = self._add_optional_argument_to_cmd_line(arguments, scale_arg,
@@ -156,13 +173,7 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
                         return res.group(1)
             return None
         elif key == 'batch_size':
-            regex = re.compile(r'\s*Model\sbatch\ssize:\s(\d+)')
-            for line in self._output:
-                if 'Model batch size' in line:
-                    res = regex.search(line)
-                    if res:
-                        return res.group(1)
-            return None
+            return self._get_model_batch_size()
         return super().extract_inference_param(key)
 
 
@@ -199,15 +210,17 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time} '
+        arguments = (f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time} '
                      f'-report_type "no_counters" -json_stats -report_folder {self.report_path.parent.absolute()}')
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+        arguments = self._add_batch_size_for_cmd_line(arguments, batch)
         arguments = self._add_common_arguments(arguments, device)
         if frontend != 'IR':
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+            mean_arg, scale_arg = self._get_mean_scale_args()
+            arguments = self._add_optional_argument_to_cmd_line(arguments, mean_arg, self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, scale_arg,
                                                                 self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
@@ -240,4 +253,6 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
     def extract_inference_param(self, key):
         if key == 'nireq':
             return self.get_json_report_content()['configuration_setup']['nireq']
+        elif key == 'batch_size':
+            return self._get_model_batch_size()
         return super().extract_inference_param(key)
