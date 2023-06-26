@@ -59,7 +59,7 @@
    cd docker/OpenVINO_DLDT
    docker stop OpenVINO_DLDT
    docker rm OpenVINO_DLDT
-   docker build -t dli_openvino:2022.2 .25564f7ee3bd
+   docker build -t dli_openvino:2022.2 .
    docker save dli_openvino:2022.2 > dli_openvino:2022.2.tar
    docker load < dli_openvino:2022.2.tar
    sudo docker run --privileged -it -d -v /dev:/dev \
