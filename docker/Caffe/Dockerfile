@@ -1,19 +1,4 @@
-FROM ubuntu:18.04
-USER root
-WORKDIR /
-
-ARG DEPENDENCIES="autoconf \
-                  ca-certificates \
-                  libgtk2.0-dev \
-                  sudo \
-                  vim \
-                  wget \
-                  git \
-                  libprotobuf-dev \
-                  libgl1-mesa-glx"
-RUN apt update && \
-    apt install -y -qq --no-install-recommends ${DEPENDENCIES} && \
-    rm -rf /var/lib/apt/lists/*
+FROM ubuntu_for_dli
 
 WORKDIR /root/
 RUN wget --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
@@ -29,10 +14,6 @@ RUN echo "source activate base" > ~/.bashrc
 
 RUN /bin/bash -c "conda upgrade -c anaconda pip && pip install openvino-python opencv-python docker"
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
-
-WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git
 
 WORKDIR /tmp/open_model_zoo/
 ARG TAG_NAME=<Release tag in the open_model_zoo git repository>

@@ -1,34 +1,10 @@
-FROM ubuntu:18.04
-USER root
-WORKDIR /
-
-ARG DEPENDENCIES="autoconf \
-                  ca-certificates \
-                  libgtk2.0-dev \
-                  ffmpeg \
-                  libsm6 \
-                  libxext6 \
-                  python3-pip \
-                  python3-setuptools \
-                  sudo \
-                  vim \
-                  wget \
-                  git"
-RUN apt-get update && \
-    apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
-    rm -rf /var/lib/apt/lists/*
+FROM ubuntu_for_dli
 
 WORKDIR /root/
 RUN pip3 install --upgrade pip && \
     pip3 install opencv-python requests PyYAML docker
-RUN pip3 install openvino-python
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
-RUN pip3 install --force-reinstall pip==19.0 && \
-    pip3 install intel-tensorflow==1.15.2
-
-WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git
+RUN pip3 install intel-tensorflow==1.15.2
 
 WORKDIR /tmp/open_model_zoo/
 ARG TAG_NAME=<Release tag in the open_model_zoo git repository>
