@@ -217,4 +217,36 @@
             <Layout></Layout>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath><!-- Необязательный параметр, если модель из модуля torchvision.models -->
+            <Module></Module><!-- Необязательный параметр, если модель из модуля torchvision.models -->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Normalize></Normalize>
+            <Mean></Mean>
+            <Std></Std>
+            <OutputName></OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
+        </FrameworkDependent>
+    </Test>
 </Tests>
