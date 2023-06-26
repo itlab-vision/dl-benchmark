@@ -49,10 +49,10 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         # calculate average time of single pass metric to align output with custom launchers
         duration = self._get_benchmark_app_metric('Duration')
         iter_count = self._get_benchmark_app_metric('Count')
-        average_time_of_single_pass = (round(duration / 1000 / iter_count, 3)
+        average_time_of_single_pass = (round(duration / 1000 / iter_count, 5)
                                        if None not in (duration, iter_count) else None)
         fps = self._get_benchmark_app_metric('Throughput')
-        latency = round(self._get_benchmark_app_metric('Median') / 1000, 3)
+        latency = round(self._get_benchmark_app_metric('Median') / 1000, 5)
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,

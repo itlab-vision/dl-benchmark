@@ -6,20 +6,20 @@ import pytest
 from src.benchmark.frameworks.framework_wrapper_registry import FrameworkWrapperRegistry
 from src.benchmark.frameworks.intel_caffe.intel_caffe_process import IntelCaffeProcess
 from src.benchmark.frameworks.known_frameworks import KnownFrameworks
+from src.benchmark.frameworks.mxnet.mxnet_process import MXNetProcess
 from src.benchmark.frameworks.onnx_runtime.onnx_runtime_process import OnnxRuntimeProcess
+from src.benchmark.frameworks.onnx_runtime_python.onnx_runtime_python_process import ONNXRuntimePythonProcess
 from src.benchmark.frameworks.opencv_dnn_cpp.opencv_dnn_cpp_process import OpenCVDNNCppProcess
+from src.benchmark.frameworks.opencv_dnn_python.opencv_dnn_python_process import OpenCVDNNPythonProcess
 from src.benchmark.frameworks.openvino.openvino_benchmark_process import (OpenVINOBenchmarkPythonProcess,
                                                                           OpenVINOBenchmarkCppProcess)
 from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
 from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
 from src.benchmark.frameworks.processes import ProcessHandler
-from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
-from src.benchmark.frameworks.opencv_dnn_python.opencv_dnn_python_process import OpenCVDNNPythonProcess
-from src.benchmark.frameworks.onnx_runtime_python.onnx_runtime_python_process import ONNXRuntimePythonProcess
-from src.benchmark.frameworks.tensorflow_lite.tensorflow_lite_process import TensorFlowLiteProcess
 from src.benchmark.frameworks.pytorch.pytorch_process import PyTorchProcess
 from src.benchmark.frameworks.pytorch_cpp.pytorch_cpp_process import PyTorchCppProcess
-from src.benchmark.frameworks.mxnet.mxnet_process import MXNetProcess
+from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
+from src.benchmark.frameworks.tensorflow_lite.tensorflow_lite_process import TensorFlowLiteProcess
 from src.benchmark.tests.test_executor import get_host_executor
 
 log.basicConfig(
@@ -112,7 +112,7 @@ def test_get_openvino_benchmark_app_metrics(mocker):
     process = OpenVINOBenchmarkPythonProcess(TEST_BASIC_LINE, get_host_executor(mocker), log)
     process._output = OPENVINO_BENCHMARK_RESULT_RAW
     process.execute()
-    assert process.get_performance_metrics() == {'average_time': 0.037,
+    assert process.get_performance_metrics() == {'average_time': 0.0372,
                                                  'batch_fps': 0.0,
                                                  'fps': 26.88,
-                                                 'latency': 0.073}
+                                                 'latency': 0.07326}
