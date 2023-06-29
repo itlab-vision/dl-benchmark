@@ -47,7 +47,7 @@ class AsyncOpenVINOProcess(OpenVINOPythonAPIProcess):
         return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
-        path_to_async_script = Path.joinpath(self.inference_script_root, 'inference_async_mode.py')
+        path_to_async_script = Path.joinpath(self.inference_script_root, 'inference_openvino_async_mode.py')
         python = ProcessHandler.get_cmd_python_version()
 
         common_params = super()._fill_command_line()
@@ -75,7 +75,7 @@ class SyncOpenVINOProcess(OpenVINOPythonAPIProcess):
         return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
-        path_to_sync_script = Path.joinpath(self.inference_script_root, 'inference_sync_mode.py')
+        path_to_sync_script = Path.joinpath(self.inference_script_root, 'inference_openvino_sync_mode.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
 

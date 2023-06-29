@@ -17,8 +17,8 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>10</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>async</Mode>
@@ -45,7 +45,7 @@
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
+            <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
@@ -327,8 +327,8 @@
             <InferenceFramework>MXNet</InferenceFramework>
             <BatchSize>1</BatchSize>
             <Device>CPU</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>60</TestTimeLimit>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode>Async</Mode>
@@ -382,6 +382,7 @@
             <SourceFramework>PyTorch</SourceFramework>
             <ModelPath></ModelPath>
             <WeightsPath></WeightsPath>
+            <Module>torchvision.models</Module>
         </Model>
         <Dataset>
             <Name>ImageNet</Name>

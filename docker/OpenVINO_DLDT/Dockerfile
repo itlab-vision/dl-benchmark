@@ -42,8 +42,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO
-ARG OV_SHORT_VERSION=2022.2
-ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.7713.af16ea1d79a_x86_64"
+ARG OV_SHORT_VERSION=2022.3.1
+ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.9227.cf2c7da5689_x86_64"
 RUN sudo mkdir /opt/intel && \
     wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
         -O /tmp/openvino.tgz --no-check-certificate --quiet && \
@@ -64,12 +64,12 @@ RUN usermod -a -G video,users root
 # Install openvino-dev
 WORKDIR /tmp/
 RUN pip3 install --upgrade pip
-RUN pip3 install openvino-dev==2022.2
+RUN pip3 install openvino-dev==2022.3.1
 
 # Test Accuracy Checker
-RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch 2022.2.0 --single-branch --depth 1
+RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch 2022.3.0 --single-branch --depth 1
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN wget -nv https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN pip3 uninstall opencv-python -y && pip3 install "opencv-python-headless"
 RUN /bin/bash -c "accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"

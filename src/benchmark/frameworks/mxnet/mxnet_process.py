@@ -92,7 +92,9 @@ class SyncMXNetProcess(MXNetProcess):
         path_to_sync_script = Path.joinpath(self.inference_script_root,
                                             'inference_mxnet_sync_mode.py')
         python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
         common_params = super()._fill_command_line()
+        common_params += f' --time {time_limit}'
         command_line = f'{python} {path_to_sync_script} {common_params}'
 
         return command_line

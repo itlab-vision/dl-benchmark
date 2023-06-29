@@ -54,14 +54,20 @@ class TestConfigParser:
             weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data.strip()
         except Exception as ex:
             self._log.warning(f'Parsing weights path failed. Exception was generated: {str(ex)}.')
+        module = ''
+        try:
+            module = model_tag.getElementsByTagName('Module')[0].firstChild.data
+        except Exception as ex:
+            self._log.warning(f'Parsing module name failed. Exception was generated: {str(ex)}.')
 
         self._log.info(f'Model:\n\tName - {model_name}\n\tTask - {task}\n\t'
                        f'Precision - {precision}\n\tSource framework - {source_framework}\n\t'
-                       f'Model path - {model_path}\n\tWeights path - {weights_path}')
+                       f'Model path - {model_path}\n\tWeights path - {weights_path}\n\t'
+                       f'Module - {module}')
         return Model(
             task=task, name=model_name, precision=precision,
             source_framework=source_framework, model_path=model_path,
-            weights_path=weights_path,
+            weights_path=weights_path, module=module,
         )
 
     def parse_dataset(self, curr_test):
