@@ -1,5 +1,6 @@
 import abc
 import json
+import os
 import platform
 from datetime import datetime
 from pathlib import Path
@@ -72,7 +73,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             self.__log.info(f'End inference test on model : {self._test.model.name}')
         else:
             self.__log.warning(f'Inference test on model: {self._test.model.name} was ended with error. '
-                               'Process logs:')
+                               f'Process logs: {self._output}')
             self.__print_error()
             self.__save_failed_test_log()
 
@@ -178,6 +179,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def __save_failed_test_log(self):
         log_filename = self.__make_log_filename()
         out = self._output
+        self.__log.info(f'Save failed test log to {log_filename}')
+
         with open(log_filename, 'w', encoding='utf-8') as file:
             for line in out:
                 file.write(line)
@@ -197,6 +200,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             test_settings.append(self._test.dep_parameters.runtime)
         if hasattr(self._test.dep_parameters, 'hint') and self._test.dep_parameters.hint:
             test_settings.append(self._test.dep_parameters.hint)
-        filename = '_'.join(test_settings)
+        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         filename += '.log'
-        return filename
+        file_root = Path(os.getcwd())
+        if not os.access(file_root, os.W_OK):
+            self.__log.warning(f'Current folder {file_root} not writable, save failed test log to /tmp')
+            file_root = Path('/tmp/failed_test_log')
+            file_root.mkdir(exist_ok=True)
+
+        return file_root / filename
