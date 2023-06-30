@@ -7,7 +7,7 @@ Represented deep models are available in [Open Model Zoo][omz].
 ### Image classification
 
 Model | Availability in OMZ (2023.03.04) | Availability in the validation table (Python API, IE backend) | Availability in the validation table (Python API, DNN backend) 
--|-|-|
+-|-|-|-|
 alexnet|+|+|+|
 caffenet|+|+|+|
 convnext-tiny|+|+|+|
