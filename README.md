@@ -20,9 +20,9 @@ DLI supports inference using the following frameworks:
 - [Intel® Optimization for Caffe][intel-caffe].
 - [Intel® Optimizations for TensorFlow][intel-tensorflow].
 - [TensorFlow Lite][tensorflow-lite].
-- [ONNX Runtime][onnx-runtime] (C++ and Python API).
+- [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
 - [MXNet][mxnet].
-- [OpenCV DNN][opencv-dnn] (C++ and Python API).
+- [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
 - [PyTorch][pytorch].
 
 More information about DLI is available on the web-site
@@ -68,6 +68,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
     Distribution of OpenVINO™ Toolkit.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
+  - `MXNet` is a directory of Dockerfiles for MXNet.
+  - `ONNXRuntime` is a directory of Dockerfiles for ONNXRuntime.
+  - `OpenCV` is a directory of Dockerfiles for OpenCV.
 
 - `docs` directory contains auxiliary documentation. Please, find
   complete documentation at the [Wiki page][dli-wiki].
@@ -88,6 +91,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
       is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
+    - [`validation_results_opencv.md`](results/validation/validation_results_opencv.md)
+      is a table that confirms correctness of inference implementation
+      based on OpenCV DNN.
     - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
       is a table that confirms correctness of inference implementation
       based on Intel® Optimization for Caffe for several public models.
@@ -108,6 +114,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
     of deep models inferred by MXNet checked in the DLI benchmark.
   - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
     of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`opencv_models_checklist.md`](results/opencv_models_checklist.md) contains a list
+    of deep models inferred by OpenCV DNN.
   - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
     of deep models inferred by TensorFlow checked in the DLI benchmark.
   - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
