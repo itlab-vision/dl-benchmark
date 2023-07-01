@@ -69,7 +69,7 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
   - `MXNet` is a directory of Dockerfiles for MXNet.
-  - `ONNXRuntime` is a directory of Dockerfiles for ONNXRuntime.
+  - `ONNXRuntime` is a directory of Dockerfiles for ONNX Runtime.
   - `OpenCV` is a directory of Dockerfiles for OpenCV.
 
 - `docs` directory contains auxiliary documentation. Please, find
