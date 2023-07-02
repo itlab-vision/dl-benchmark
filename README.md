@@ -38,19 +38,26 @@ This project is licensed under the terms of the [Apache 2.0 license](LICENSE).
 Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
-Kogteva N. DLI: Deep Learning Inference Benchmark //
-Communications in Computer and Information Science.
-V.1129. 2019. P. 542-553.
+   Kogteva N. DLI: Deep Learning Inference Benchmark //
+   Communications in Computer and Information Science.
+   V.1129. 2019. P. 542-553.
 
 1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
-Kustikova V.D. Automation of collecting performance indicators 
-for the inference of deep neural networks in Deep Learning 
-Inference Benchmark // Mathematical modeling and supercomputer 
-technologies. Proceedings of the XXI International Conference 
-(N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
-Novgorod State University Publishing House, 2021. – 423 p.
-[https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
-(In Russian)
+   Kustikova V.D. Automation of collecting performance indicators 
+   for the inference of deep neural networks in Deep Learning 
+   Inference Benchmark // Mathematical modeling and supercomputer 
+   technologies. Proceedings of the XXI International Conference 
+   (N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
+   Novgorod State University Publishing House, 2021. – 423 p.
+   [https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
+   (In Russian)
+
+1. Alibekov M.R., Berezina N.E., Vasiliev E.P., Kustikova V.D.,
+   Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
+   Performance analysis methodology of deep neural networks
+   inference on the example of an image classification problem //
+   Russian Supercomputing Days (RSD-2023). - 2023. (Accepted,
+   In Russian)
 
 ## Repo structure
 
