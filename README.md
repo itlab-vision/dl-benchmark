@@ -71,26 +71,38 @@ Please consider citing the following papers.
 
   - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
+  - `MXNet` is a directory of Dockerfiles for MXNet.
+  - `ONNXRuntime` is a directory of Dockerfiles for ONNX Runtime.
+  - `OpenCV` is a directory of Dockerfiles for OpenCV.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
-  - `MXNet` is a directory of Dockerfiles for MXNet.
-  - `ONNXRuntime` is a directory of Dockerfiles for ONNX Runtime.
-  - `OpenCV` is a directory of Dockerfiles for OpenCV.
 
 - `docs` directory contains auxiliary documentation. Please, find
   complete documentation at the [Wiki page][dli-wiki].
 
 - `results` directory contains benchmarking and validation results.
 
-  - [`benchmarking`](results/benchmarking) contains benchmarking 
-    results in html- and xslx-formats.
   - [`accuracy`](results/accuracy) contains accuracy
+    results in html- and xslx-formats.
+  - [`benchmarking`](results/benchmarking) contains benchmarking
     results in html- and xslx-formats.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implementation for the benchmarked models.
 
+    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
+      is a table that confirms correctness of inference implementation
+      based on Intel® Optimization for Caffe for several public models.
+    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
+      is a table that confirms correctness of inference implementation
+      based on MXNet for [GluonCV-models][gluoncv-omz].
+    - [`validation_results_onnxruntime.md`](results/validation/validation_results_onnxruntime.md)
+      is a table that confirms correctness of inference implementation
+      based on ONNX Runtime.
+    - [`validation_results_opencv.md`](results/validation/validation_results_opencv.md)
+      is a table that confirms correctness of inference implementation
+      based on OpenCV DNN.
     - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md)
       is a table that confirms correctness of inference implementation
       based on Intel Distribution of OpenVINO™ toolkit for public models.
@@ -98,37 +110,30 @@ Please consider citing the following papers.
       is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-    - [`validation_results_opencv.md`](results/validation/validation_results_opencv.md)
+    - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
       is a table that confirms correctness of inference implementation
-      based on OpenCV DNN.
-    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
-      is a table that confirms correctness of inference implementation
-      based on Intel® Optimization for Caffe for several public models.
+      based on PyTorch for [TorchVision][torchvision].
     - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md)
       is a table that confirms correctness of inference implementation
       based on Intel® Optimizations for TensorFlow for several public models.
     - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md)
       is a table that confirms correctness of inference implementation
       based on TensorFlow Lite for public models.
-    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
-      is a table that confirms correctness of inference implementation
-      based on MXNet for [GluonCV-models][gluoncv-omz].
-    - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
-      is a table that confirms correctness of inference implementation
-      based on PyTorch for [TorchVision][torchvision].
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
-  - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
-    of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`onnxruntime_models_checklist.md`](results/onnxruntime_models_checklist.md) contains a list
+    of deep models inferred by ONNX Runtime checked in the DLI benchmark.
   - [`opencv_models_checklist.md`](results/opencv_models_checklist.md) contains a list
     of deep models inferred by OpenCV DNN.
+  - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
+    of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
+    of deep models inferred by PyTorch checked in the DLI benchmark.
   - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
     of deep models inferred by TensorFlow checked in the DLI benchmark.
   - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
     of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
-  - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
-    of deep models inferred by PyTorch checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 
