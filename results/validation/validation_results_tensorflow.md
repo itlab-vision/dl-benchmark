@@ -12,7 +12,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121-tf |-|-|
 efficientnet-b0 |-|-|
@@ -39,7 +39,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121-tf |-|-|
 efficientnet-b0 |-|-|
@@ -66,7 +66,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121-tf |-|-|
 efficientnet-b0 |-|-|
@@ -102,7 +102,7 @@ Bounding boxes (upper left and bottom right corners):<br>
 (289, 111), (440, 255)<br>
 (435, 160), (615, 310)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -128,7 +128,7 @@ Image resolution: 500 x 500
 Bounding box (upper left and bottom right corners):<br>
 (117, 86), (365, 465)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -154,7 +154,7 @@ Image resolution: 333 x 500
 Bounding box (upper left and bottom right corners):<br>
 (82, 262), (269, 376)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -182,7 +182,7 @@ TV (110, 41), (397, 304)<br>
 MOUSE (508, 337), (559, 374)<br>
 KEYBOARD (241, 342), (496, 461)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -208,7 +208,7 @@ Image resolution: 500 x 375
 Bounding box (upper left and bottom right corners):<br>
 AEROPLANE (131, 21), (248, 414)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -236,7 +236,7 @@ Bounding boxes (upper left and bottom right corners):<br>
 PERSON (86, 84), (394, 188)<br>
 HORSE (44, 108), (397, 565)<br>
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 ctpn|-|
 efficientdet-d0|-|
@@ -261,7 +261,7 @@ Image: -
 
 Segmented images are identical.
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 deeplabv3|-|
 
@@ -280,7 +280,7 @@ Image:
 
 Segmented images are identical.
 
- Model | Python (implementation) |
+ Model | Python API |
 -------|-------------------------|
 mask_rcnn_resnet50_atrous_coco|-|
 mask_rcnn_inception_resnet_v2_atrous_coco|-|
