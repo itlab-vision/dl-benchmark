@@ -13,7 +13,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Model             |  Python (IE backend, implementation)  |  Python (DNN backend, implementation)  |  C++ (IE backend, implementation)  |  C++ (DNN backend, implementation)  |
+   Model             |  Python API (IE backend)  |  Python API (DNN backend) |    C++ API (IE backend)   |  C++ API (DNN backend)    |
 ---------------------|---------------------------|---------------------------|---------------------------|---------------------------|
 alexnet              |0.9896094 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig<br>|0.9896097 Granny Smith<br>0.0037969 bell pepper<br>0.0013717 piggy bank, penny bank<br>0.0011059 acorn<br>0.0009710 fig<br>|-|-|
 caffenet             |0.8602298 Granny Smith<br>0.0503849 teapot<br>0.0141508 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper<br>|0.8602297 Granny Smith<br>0.0503848 teapot<br>0.0141509 piggy bank, penny bank<br>0.0113873 saltshaker, salt shaker<br>0.0104464 bell pepper<br>|-|-|
@@ -69,7 +69,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-Model             |  Python (IE backend, implementation)  |  Python (DNN backend, implementation)  |  C++ (IE backend, implementation)  |  C++ (DNN backend, implementation)  |
+   Model             |  Python API (IE backend)  |  Python API (DNN backend) |    C++ API (IE backend)   |  C++ API (DNN backend)    |
 ---------------------|---------------------------|---------------------------|---------------------------|---------------------------|
 alexnet              |0.9979280 junco, snowbird<br>0.0020288 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul<br>|0.9979283 junco, snowbird<br>0.0020289 chickadee<br>0.0000137 jay<br>0.0000119 brambling, Fringilla montifringilla<br>0.0000104 bulbul<br>|-|-|
 caffenet             |0.9997593 junco, snowbird<br>0.0002351 chickadee<br>0.0000033 brambling, Fringilla montifringilla<br>0.0000010 bulbul<br>0.0000007 jay<br>|0.9997594 junco, snowbird<br>0.0002351 chickadee<br>0.0000033 brambling, Fringilla montifringilla<br>0.0000010 bulbul<br>0.0000007 jay<br>|-|-|
@@ -125,7 +125,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Model             |  Python (IE backend, implementation)  |  Python (DNN backend, implementation)  |  C++ (IE backend, implementation)  |  C++ (DNN backend, implementation)  |
+   Model             |  Python API (IE backend)  |  Python API (DNN backend) |    C++ API (IE backend)   |  C++ API (DNN backend)    |
 ---------------------|---------------------------|---------------------------|---------------------------|---------------------------|
 alexnet              |0.9991654 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck<br>|0.9991664 lifeboat<br>0.0003741 container ship, containership, container vessel<br>0.0001206 pirate, pirate ship<br>0.0000820 drilling platform, offshore rig<br>0.0000784 wreck<br>|-|-|
 caffenet             |0.9839840 lifeboat<br>0.0109296 container ship, containership, container vessel<br>0.0018576 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0007185 wreck<br>0.0007133 pirate, pirate ship<br>|0.9839852 lifeboat<br>0.0109297 container ship, containership, container vessel<br>0.0018576 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0007185 wreck<br>0.0007133 pirate, pirate ship<br>|-|-|
