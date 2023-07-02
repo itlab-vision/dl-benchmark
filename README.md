@@ -16,14 +16,14 @@ Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
-- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
-- [Intel® Optimization for Caffe][intel-caffe].
-- [Intel® Optimizations for TensorFlow][intel-tensorflow].
-- [TensorFlow Lite][tensorflow-lite].
+- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit] (C++ and Python APIs).
+- [Intel® Optimization for Caffe][intel-caffe] (Python API).
+- [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
+- [TensorFlow Lite][tensorflow-lite] (Python API).
 - [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
-- [MXNet][mxnet].
+- [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
-- [PyTorch][pytorch].
+- [PyTorch][pytorch] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
