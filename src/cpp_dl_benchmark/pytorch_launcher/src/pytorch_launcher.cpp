@@ -36,7 +36,7 @@ utils::DataPrecision get_data_precision(torch::Dtype type) {
 }
 
 torch::Dtype get_data_type(utils::DataPrecision precision) {
-    for (const auto [type, data_prectision] : dtype_to_precision_map) {
+    for (const auto& [type, data_prectision] : dtype_to_precision_map) {
         if (precision == data_prectision) {
             return type;
         }

@@ -34,7 +34,7 @@ std::string get_data_precision_str(const DataPrecision p) {
     return "UNKNOWN";
 }
 DataPrecision get_data_precision_from_str(const std::string& pstr) {
-    for (const auto [data_precision, precision_str] : precision_to_str_map) {
+    for (const auto& [data_precision, precision_str] : precision_to_str_map) {
         if (pstr == precision_str) {
             return data_precision;
         }

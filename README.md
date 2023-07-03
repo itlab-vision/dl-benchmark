@@ -16,14 +16,14 @@ Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
-- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
-- [Intel® Optimization for Caffe][intel-caffe].
-- [Intel® Optimizations for TensorFlow][intel-tensorflow].
-- [TensorFlow Lite][tensorflow-lite] (C++ and Python API).
-- [ONNX Runtime][onnx-runtime] (C++ and Python API).
-- [MXNet][mxnet].
-- [OpenCV DNN][opencv-dnn] (C++ and Python API).
-- [PyTorch][pytorch] (C++ and Python API).
+- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit] (C++ and Python APIs).
+- [Intel® Optimization for Caffe][intel-caffe] (Python API).
+- [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
+- [TensorFlow Lite][tensorflow-lite] (C++ and Python APIs).
+- [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
+- [MXNet][mxnet] (Python Gluon API).
+- [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
+- [PyTorch][pytorch] (C++ and Python APIs).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -126,8 +126,8 @@ Novgorod State University Publishing House, 2021. – 423 p.
   - `configs` contains template configuration files.
   - `cpp_dl_benchmark` contains C++ tools that allow to measure
     deep learning models inference performance with
-    [ONNX Runtime][onnx-runtime-github]
-    and [OpenCV DNN][opencv-dnn] in C++ API implementation.
+    [ONNX Runtime][onnx-runtime-github], [OpenCV DNN][opencv-dnn],
+    [PyTorch][pytorch] and [TensorFlow Lite][tensorflow-lite] in C++ API implementation.
     This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app]
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
