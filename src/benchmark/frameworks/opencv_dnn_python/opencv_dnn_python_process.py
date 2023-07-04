@@ -29,12 +29,11 @@ class OpenCVDNNPythonProcess(ProcessHandler):
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
 
-        common_params = (f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration}')
+        common_params = (f'-m {model} -w {weights} -i {dataset} -b {batch} -d {device} -ni {iteration} '
+                         f'--report_path {self.report_path}')
 
         time_limit = self._test.indep_parameters.test_time_limit
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
-
-        common_params = self._add_optional_argument_to_cmd_line(common_params, '--report_path', self.report_path)
 
         precision = self._test.model.precision
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)
