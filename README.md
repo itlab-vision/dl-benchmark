@@ -16,14 +16,14 @@ Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
-- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
-- [Intel® Optimization for Caffe][intel-caffe].
-- [Intel® Optimizations for TensorFlow][intel-tensorflow].
-- [TensorFlow Lite][tensorflow-lite].
-- [ONNX Runtime][onnx-runtime] (C++ and Python API).
-- [MXNet][mxnet].
-- [OpenCV DNN][opencv-dnn] (C++ and Python API).
-- [PyTorch][pytorch].
+- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit] (C++ and Python APIs).
+- [Intel® Optimization for Caffe][intel-caffe] (Python API).
+- [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
+- [TensorFlow Lite][tensorflow-lite] (Python API).
+- [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
+- [MXNet][mxnet] (Python Gluon API).
+- [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
+- [PyTorch][pytorch] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -38,19 +38,26 @@ This project is licensed under the terms of the [Apache 2.0 license](LICENSE).
 Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
-Kogteva N. DLI: Deep Learning Inference Benchmark //
-Communications in Computer and Information Science.
-V.1129. 2019. P. 542-553.
+   Kogteva N. DLI: Deep Learning Inference Benchmark //
+   Communications in Computer and Information Science.
+   V.1129. 2019. P. 542-553.
 
 1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
-Kustikova V.D. Automation of collecting performance indicators 
-for the inference of deep neural networks in Deep Learning 
-Inference Benchmark // Mathematical modeling and supercomputer 
-technologies. Proceedings of the XXI International Conference 
-(N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
-Novgorod State University Publishing House, 2021. – 423 p.
-[https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
-(In Russian)
+   Kustikova V.D. Automation of collecting performance indicators 
+   for the inference of deep neural networks in Deep Learning 
+   Inference Benchmark // Mathematical modeling and supercomputer 
+   technologies. Proceedings of the XXI International Conference 
+   (N. Novgorod, November 22–26, 2021). – Nizhny Novgorod: Nizhny
+   Novgorod State University Publishing House, 2021. – 423 p.
+   [https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf][mmst-2021].
+   (In Russian)
+
+1. Alibekov M.R., Berezina N.E., Vasiliev E.P., Kustikova V.D.,
+   Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
+   Performance analysis methodology of deep neural networks
+   inference on the example of an image classification problem //
+   Russian Supercomputing Days (RSD-2023). - 2023. (Accepted,
+   In Russian)
 
 ## Repo structure
 
@@ -64,6 +71,9 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
   - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
+  - `MXNet` is a directory of Dockerfiles for MXNet.
+  - `ONNXRuntime` is a directory of Dockerfiles for ONNX Runtime.
+  - `OpenCV` is a directory of Dockerfiles for OpenCV.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
@@ -74,13 +84,25 @@ Novgorod State University Publishing House, 2021. – 423 p.
 
 - `results` directory contains benchmarking and validation results.
 
-  - [`benchmarking`](results/benchmarking) contains benchmarking 
-    results in html- and xslx-formats.
   - [`accuracy`](results/accuracy) contains accuracy
+    results in html- and xslx-formats.
+  - [`benchmarking`](results/benchmarking) contains benchmarking
     results in html- and xslx-formats.
   - [`validation`](results/validation) contains tables that confirms 
     correctness of inference implementation for the benchmarked models.
 
+    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
+      is a table that confirms correctness of inference implementation
+      based on Intel® Optimization for Caffe for several public models.
+    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
+      is a table that confirms correctness of inference implementation
+      based on MXNet for [GluonCV-models][gluoncv-omz].
+    - [`validation_results_onnxruntime.md`](results/validation/validation_results_onnxruntime.md)
+      is a table that confirms correctness of inference implementation
+      based on ONNX Runtime.
+    - [`validation_results_opencv.md`](results/validation/validation_results_opencv.md)
+      is a table that confirms correctness of inference implementation
+      based on OpenCV DNN.
     - [`validation_results_openvino_public_models.md`](results/validation/validation_results_openvino_public_models.md)
       is a table that confirms correctness of inference implementation
       based on Intel Distribution of OpenVINO™ toolkit for public models.
@@ -88,32 +110,30 @@ Novgorod State University Publishing House, 2021. – 423 p.
       is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
-    - [`validation_results_caffe.md`](results/validation/validation_results_caffe.md)
+    - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
       is a table that confirms correctness of inference implementation
-      based on Intel® Optimization for Caffe for several public models.
+      based on PyTorch for [TorchVision][torchvision].
     - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md)
       is a table that confirms correctness of inference implementation
       based on Intel® Optimizations for TensorFlow for several public models.
     - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md)
       is a table that confirms correctness of inference implementation
       based on TensorFlow Lite for public models.
-    - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
-      is a table that confirms correctness of inference implementation
-      based on MXNet for [GluonCV-models][gluoncv-omz].
-    - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
-      is a table that confirms correctness of inference implementation
-      based on PyTorch for [TorchVision][torchvision].
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
+  - [`onnxruntime_models_checklist.md`](results/onnxruntime_models_checklist.md) contains a list
+    of deep models inferred by ONNX Runtime checked in the DLI benchmark.
+  - [`opencv_models_checklist.md`](results/opencv_models_checklist.md) contains a list
+    of deep models inferred by OpenCV DNN.
   - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
     of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
+    of deep models inferred by PyTorch checked in the DLI benchmark.
   - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
     of deep models inferred by TensorFlow checked in the DLI benchmark.
   - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
     of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
-  - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
-    of deep models inferred by PyTorch checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 

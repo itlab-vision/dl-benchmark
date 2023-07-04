@@ -14,7 +14,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9523314 Granny Smith<br>0.0132282 orange<br>0.0125180 lemon<br>0.0027912 banana<br>0.0020333 piggy bank, penny bank|
 googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
@@ -39,7 +39,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|0.9841611 junco, snowbird<br>0.0072198 chickadee<br>0.0034962 brambling, Fringilla montifringilla<br>0.0016226 water ouzel, dipper<br>0.0012858 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
@@ -64,7 +64,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 densenet-121|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].| 0.3022473 liner, ocean liner<br>0.1322417 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1194588 container ship, containership, container vessel<br>0.0795097 drilling platform, offshore rig<br>0.0723070 dock, dockage, docking facility|
 googlenet-v1-tf|Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].|-|
@@ -97,7 +97,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.7150755 Granny Smith<br>0.0202576 piggy bank, penny bank<br>0.0088377 teapot<br>0.0072254 bell pepper<br>0.0058900 banana|
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.6549551 Granny Smith<br>0.1130055 piggy bank, penny bank<br>0.0566443 teapot<br>0.0250644 saltshaker, salt shaker<br>0.0120769 vase|
@@ -133,7 +133,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].| 0.8584890 junco, snowbird<br>0.0235178 brambling, Fringilla montifringilla<br>0.0185745 goldfinch, Carduelis carduelis<br>0.0094353 water ouzel, dipper<br>0.0067247 chickadee|
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.8474838 junco, snowbird<br>0.0402333 chickadee<br>0.0112412 brambling, Fringilla montifringilla<br>0.0056867 water ouzel, dipper<br>0.0020902 goldfinch, Carduelis carduelis|
@@ -169,7 +169,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-Model | Parameters | Python (implementation) |
+Model | Parameters | Python API |
 -|-|-|
 mobilenet_v1_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.1904013 liner, ocean liner<br>0.0967771 lifeboat<br>0.0881745 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0482143 beacon, lighthouse, beacon light, pharos<br>0.0478232 catamaran|
 mobilenet_v2_100_224_fp32_1|Mean: [127.5,127.5,127.5].<br>Input scale: [127.5,127.5,127.5].|0.0606234 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0568781 container ship, containership, container vessel<br>0.0518561 lifeboat<br>0.0431800 beacon, lighthouse, beacon light, pharos<br>0.0337389 drilling platform, offshore rig|
