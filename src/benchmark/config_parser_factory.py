@@ -21,6 +21,8 @@ def get_parameters_parser(framework):
         return CppParametersParser()
     if framework == KnownFrameworks.tensorflow_lite:
         return TensorFlowLiteParametersParser()
+    if framework == KnownFrameworks.tensorflow_lite_cpp:
+        return CppParametersParser()
     if framework == KnownFrameworks.mxnet:
         return MXNetParametersParser()
     if framework == KnownFrameworks.opencv_dnn_python:
@@ -31,4 +33,6 @@ def get_parameters_parser(framework):
         return CppParametersParser()
     if framework == KnownFrameworks.pytorch:
         return PyTorchParametersParser()
+    if framework == KnownFrameworks.pytorch_cpp:
+        return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

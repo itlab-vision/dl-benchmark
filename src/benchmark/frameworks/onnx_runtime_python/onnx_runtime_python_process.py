@@ -4,6 +4,9 @@ from ..processes import ProcessHandler
 
 
 class ONNXRuntimePythonProcess(ProcessHandler):
+    benchmark_app_name = 'ort_python_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -12,15 +15,7 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         return ONNXRuntimePythonProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_onnx_script = Path.joinpath(self.inference_script_root, 'inference_onnx_runtime.py')
@@ -32,7 +27,11 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        common_params = f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration}'
+        common_params = (f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration} '
+                         f'--report_path {self.report_path}')
+
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
         channel_swap = self._test.dep_parameters.channel_swap
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)

@@ -64,13 +64,13 @@ so that cmake can find it during configuration step:
 
 1. In the created directory run `cmake` command:
 
-    - For OPENCV_LAUNCHER with OpenVINO:
+    - For OpenCV DNN launcher:
          ```
-         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=ON -DBUILD_OPENCV_LAUNCHER=OFF -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
          ```
-    - For OPENCV_LAUNCHER:
+    - For OpenCV DNN with OpenVINO launcher:
          ```
-         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=OFF -DBUILD_OPENCV_LAUNCHER=ON -DBUILD_ONNXRUNTIME_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
+         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCV_OV_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
          ```
 
 1. Build tool
@@ -85,11 +85,13 @@ Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>
 
 OpenCV DNN launcher supports models in `IR (OpenVINO)` with `DNN_BACKEND_INFERENCE_ENGINE` (backend); `ONNX`, `Caffe` and `TensorFlow` formats with `DNN_BACKEND_OPENCV` (backend).
 
-Limitations on the models:
+## Limitations
+
+Models must meet the following requirements:
 - One input
 - FP32 input/output types
 
-Note that not all models are supported by OpenCV DNN module. For more information, refer to the [OpenCV documentation][opencv-dnn].
+> **NOTE:** Not all models are supported by OpenCV DNN module. For more information, refer to the [OpenCV documentation][opencv-dnn].
 
 <!-- LINKS -->
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html

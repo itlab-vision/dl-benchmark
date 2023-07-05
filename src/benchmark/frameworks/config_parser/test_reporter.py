@@ -11,8 +11,11 @@ class Test(metaclass=abc.ABCMeta):
         self.indep_parameters = indep_parameters
         self.dep_parameters = dep_parameters
         self._log = log
+        self.iterations = None
 
-    def get_report(self, **kwargs):
+    def get_report(self, process):
+        json_report_content = process.get_json_report_content()
+        self.iterations = json_report_content['execution_results']['iterations_num']
         parameters = self.prepare_framework_params()
         other_param = self._get_optional_parameters_string(parameters)
 
@@ -42,7 +45,7 @@ class Test(metaclass=abc.ABCMeta):
         parameters = OrderedDict()
 
         parameters.update({'Device': self.indep_parameters.device})
-        parameters.update({'Iteration count': self.indep_parameters.iteration})
+        parameters.update({'Iteration count': self.iterations})
 
         match_parameter_description = {}
 

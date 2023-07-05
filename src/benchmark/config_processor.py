@@ -39,19 +39,19 @@ class TestConfigParser:
     def parse_model(self, curr_test):
         model_tag = curr_test.getElementsByTagName('Model')[0]
 
-        task = model_tag.getElementsByTagName('Task')[0].firstChild.data
-        model_name = model_tag.getElementsByTagName('Name')[0].firstChild.data
-        precision = model_tag.getElementsByTagName('Precision')[0].firstChild.data
-        source_framework = model_tag.getElementsByTagName('SourceFramework')[0].firstChild.data
+        task = model_tag.getElementsByTagName('Task')[0].firstChild.data.strip()
+        model_name = model_tag.getElementsByTagName('Name')[0].firstChild.data.strip()
+        precision = model_tag.getElementsByTagName('Precision')[0].firstChild.data.strip()
+        source_framework = model_tag.getElementsByTagName('SourceFramework')[0].firstChild.data.strip()
 
         model_path = ''
         try:
-            model_path = model_tag.getElementsByTagName('ModelPath')[0].firstChild.data
+            model_path = model_tag.getElementsByTagName('ModelPath')[0].firstChild.data.strip()
         except Exception as ex:
             self._log.warning(f'Parsing model path failed. Exception was generated: {str(ex)}.')
         weights_path = ''
         try:
-            weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data
+            weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data.strip()
         except Exception as ex:
             self._log.warning(f'Parsing weights path failed. Exception was generated: {str(ex)}.')
         module = ''
@@ -73,8 +73,8 @@ class TestConfigParser:
     def parse_dataset(self, curr_test):
         dataset_tag = curr_test.getElementsByTagName('Dataset')[0]
 
-        name = dataset_tag.getElementsByTagName('Name')[0].firstChild.data
-        path = dataset_tag.getElementsByTagName('Path')[0].firstChild.data
+        name = dataset_tag.getElementsByTagName('Name')[0].firstChild.data.strip()
+        path = dataset_tag.getElementsByTagName('Path')[0].firstChild.data.strip()
 
         self._log.info(f'Dataset:\n\tName - {name}\n\tPath - {path}')
         return Dataset(
@@ -85,11 +85,13 @@ class TestConfigParser:
         indep_parameters_tag = curr_test.getElementsByTagName('FrameworkIndependent')[0]
         _batch_size = indep_parameters_tag.getElementsByTagName('BatchSize')[0].firstChild
 
-        inference_framework = indep_parameters_tag.getElementsByTagName('InferenceFramework')[0].firstChild.data
-        batch_size = _batch_size.data if _batch_size else None
-        device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data
-        iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data
-        test_time_limit = indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data
+        inference_framework = indep_parameters_tag.getElementsByTagName('InferenceFramework')[0].firstChild.data.strip()
+
+        batch_size = _batch_size.data if (_batch_size and _batch_size.data != 'None') else None
+
+        device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data.strip()
+        iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data.strip()
+        test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)
 
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'

@@ -6,6 +6,10 @@
 #include "opencv_launcher.hpp"
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
 #include "onnxruntime_launcher.hpp"
+#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+#include "tflite_launcher.hpp"
+#elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
+#include "pytorch_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -46,7 +50,7 @@ constexpr char device_msg[] =
     "target device to infer on. Avalaibale devices depends on the framework:\n"
     "                                                          ONNX Runtime: CPU, CUDA (CUDA EP)\n"
     "                                                          OpenCV: CPU, GPU";
-DEFINE_string(d, "", device_msg);
+DEFINE_string(d, "CPU", device_msg);
 
 constexpr char batch_size_msg[] = "batch size value. If not provided, batch size value is determined from the model";
 DEFINE_uint32(b, 0, batch_size_msg);
@@ -60,6 +64,11 @@ constexpr char layout_msg[] =
     "layout for network input.\n"
     "                                                      ex.: \"input1[NCHW],input2[NC]\" or just \"[NCHW]\"";
 DEFINE_string(layout, "", layout_msg);
+
+constexpr char dtype_msg[] =
+    "data type of network input.\n"
+    "                                                      ex.: \"input1[FP32],input2[FP32]\" or just \"[FP32]\"";
+DEFINE_string(dtype, "", dtype_msg);
 
 constexpr char input_mean_msg[] =
     "mean values per channel for input image.\n"
@@ -110,6 +119,14 @@ void parse(int argc, char* argv[]) {
             "onnxruntime_cuda"
 #elif ORT_TENSORRT
             "onnxruntime_tensorrt"
+#elif TFLITE_DEFAULT
+            "tflite"
+#elif TFLITE_XNNPACK
+            "tflite_xnnpack"
+#elif PYTORCH
+            "pytorch"
+#elif PYTORCH_TENSORRT
+            "pytorch_tensorrt"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -122,6 +139,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[-b <NUMBER>]                                 " << batch_size_msg
                   << "\n\t[--shape <[N,C,H,W]>]                         " << shape_msg
                   << "\n\t[--layout <[NCHW]>]                           " << layout_msg
+                  << "\n\t[--dtype <[FP32]>]                            " << dtype_msg
                   << "\n\t[--mean <R G B>]                              " << input_mean_msg
                   << "\n\t[--scale <R G B>]                             " << input_scale_msg
                   << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
@@ -143,12 +161,12 @@ void log_model_inputs_outputs(const IOTensorsInfo& tensors_info) {
 
     logger::info << "\tModel inputs:" << logger::endl;
     for (const auto& input : model_inputs) {
-        logger::info << "\t\t" << input.name << ": " << utils::get_precision_str(input.data_precision) << " "
+        logger::info << "\t\t" << input.name << ": " << utils::get_data_precision_str(input.data_precision) << " "
                      << args::shape_string(input.shape) << logger::endl;
     }
     logger::info << "\tModel outputs:" << logger::endl;
     for (const auto& output : model_outputs) {
-        logger::info << "\t\t" << output.name << ": " << utils::get_precision_str(output.data_precision) << " "
+        logger::info << "\t\t" << output.name << ": " << utils::get_data_precision_str(output.data_precision) << " "
                      << args::shape_string(output.shape) << logger::endl;
     }
 }
@@ -199,6 +217,10 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
+#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
+#elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
+        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
 #endif
 
         if (FLAGS_save_report) {
@@ -243,12 +265,13 @@ int main(int argc, char* argv[]) {
                      << logger::endl;
 
         log_step();  // Configuring input of the model
-        auto inputs_info = inputs::get_inputs_info(input_files,
-                                                   io_tensors_info.first,
+        auto inputs_info = inputs::get_inputs_info(io_tensors_info.first,
+                                                   input_files,
                                                    FLAGS_layout,
                                                    FLAGS_shape,
                                                    FLAGS_mean,
-                                                   FLAGS_scale);
+                                                   FLAGS_scale,
+                                                   FLAGS_dtype);
 
         // determine batch size
         int batch_size = inputs::get_batch_size(inputs_info);
@@ -300,26 +323,30 @@ int main(int argc, char* argv[]) {
         }
         uint64_t time_limit_ns = utils::sec_to_ns(time_limit_sec);
         if (report) {
-            report->add_record(Report::Category::CONFIGURATION_SETUP,
-                               {{"batch_size", std::to_string(batch_size)},
-                                {"duration", std::to_string(utils::sec_to_ms(time_limit_sec))},
-                                {"iterations_num", std::to_string(num_iterations)},
-                                {"tensors_num", std::to_string(num_requests)},
-                                {"target_device", device},
-                                {"threads_num", std::to_string(launcher->get_threads_num())},
-                                {"precision", utils::get_precision_str(io_tensors_info.first[0].data_precision)}});
+            report->add_record(
+                Report::Category::CONFIGURATION_SETUP,
+                {{"batch_size", std::to_string(batch_size)},
+                 {"duration", std::to_string(utils::sec_to_ms(time_limit_sec))},
+                 {"iterations_num", std::to_string(num_iterations)},
+                 {"tensors_num", std::to_string(num_requests)},
+                 {"target_device", device},
+                 {"threads_num", std::to_string(launcher->get_threads_num())},
+                 {"precision",
+                  io_tensors_info.first.empty() ? "UNKNOWN"
+                                                : get_data_precision_str(io_tensors_info.first[0].data_precision)}});
         }
 
         log_step();  // Creating input tensors
         auto tensors_buffers = inputs::get_input_tensors(inputs_info, batch_size, num_requests);
         launcher->prepare_input_tensors(std::move(tensors_buffers));
+        launcher->compile();
 
         log_step(std::to_string(num_requests) + " inference requests, limits: " +
                  (num_iterations > 0
                       ? std::to_string(num_iterations) + " iterations"
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
 
-        if(FLAGS_dump_output){
+        if (FLAGS_dump_output) {
             launcher->dump_output();
         }
 
@@ -333,14 +360,15 @@ int main(int argc, char* argv[]) {
         int iterations_num = launcher->evaluate(num_iterations, time_limit_ns);
 
         log_step();  // Saving statistics report
-        Metrics metrics(launcher->get_latencies(), batch_size);
         double total_time = launcher->get_total_time_ms();
+        Metrics metrics(launcher->get_latencies(), batch_size);
         // Performance metrics report
         logger::info << "Count: " << iterations_num << " iterations" << logger::endl;
         logger::info << "Duration: " << utils::format_double(total_time) << " ms" << logger::endl;
         logger::info << "Latency:" << logger::endl;
         logger::info << "\tMedian   " << utils::format_double(metrics.latency.median) << " ms" << logger::endl;
         logger::info << "\tAverage: " << utils::format_double(metrics.latency.avg) << " ms" << logger::endl;
+        logger::info << "\tStd:     " << utils::format_double(metrics.latency.std) << " ms" << logger::endl;
         logger::info << "\tMin:     " << utils::format_double(metrics.latency.min) << " ms" << logger::endl;
         logger::info << "\tMax:     " << utils::format_double(metrics.latency.max) << " ms" << logger::endl;
         logger::info << "Throughput: " << utils::format_double(metrics.fps) << " FPS" << logger::endl;
@@ -351,6 +379,7 @@ int main(int argc, char* argv[]) {
                                 {"first_inference_time", utils::format_double(first_inference_time)},
                                 {"iterations_num", std::to_string(iterations_num)},
                                 {"latency_avg", utils::format_double(metrics.latency.avg)},
+                                {"latency_std", utils::format_double(metrics.latency.std)},
                                 {"latency_max", utils::format_double(metrics.latency.max)},
                                 {"latency_median", utils::format_double(metrics.latency.median)},
                                 {"latency_min", utils::format_double(metrics.latency.min)},

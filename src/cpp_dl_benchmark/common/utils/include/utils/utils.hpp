@@ -29,15 +29,20 @@ static const std::map<Device, std::string> device_to_str_map = {{Device::CPU, "C
                                                                 {Device::NVIDIA_GPU, "NVIDIA_GPU"},
                                                                 {Device::ARM, "ARM"}};
 
-std::string get_device_str(Device d);
+std::string get_device_str(const Device d);
 
 Device get_device_from_str(const std::string& dstr);
 
 enum class DataPrecision : unsigned int {
-    FP32 = 0,
-    FP16,
+    FP16 = 0,
+    FP32,
+    FP64,
     U8,
+    U16,
+    U32,
+    U64,
     I8,
+    I16,
     I32,
     I64,
     BOOL,
@@ -52,7 +57,9 @@ static const std::map<DataPrecision, std::string> precision_to_str_map = {{DataP
                                                                           {DataPrecision::I64, "INT64"},
                                                                           {DataPrecision::BOOL, "BOOL"}};
 
-std::string get_precision_str(DataPrecision p);
+std::string get_data_precision_str(const DataPrecision p);
+
+DataPrecision get_data_precision_from_str(const std::string& precision_str);
 
 std::string guess_layout_from_shape(const std::vector<int>& shape);
 

@@ -1,7 +1,9 @@
 import argparse
+import json
 import logging as log
 import sys
 import traceback
+from pathlib import Path
 from time import time
 
 import numpy as np
@@ -11,6 +13,7 @@ import postprocessing_data as pp
 import utils
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
+from reporter.report_writer import ReportWriter
 from transformer import OpenVINOTransformer
 
 
@@ -148,7 +151,10 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
-
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'openvino_async_inference_report.json',
+                        dest='report_path')
     args = parser.parse_args()
 
     return args
@@ -186,6 +192,12 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='OpenVINO')
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
+
     try:
         model_wrapper = OpenVINOIOModelWrapper()
         data_transformer = OpenVINOTransformer()
@@ -228,9 +240,12 @@ def main():
         result, time = infer_async(compiled_model, args.number_iter, args.requests, io.get_slice_input)
 
         log.info('Computing performance metrics')
-        average_time, fps = pp.calculate_performance_metrics_async_mode(time,
-                                                                        args.batch_size,
-                                                                        args.number_iter)
+        inference_result = pp.calculate_performance_metrics_async_mode(time,
+                                                                       args.batch_size,
+                                                                       args.number_iter)
+        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        log.info(f'Write report to {args.report_path}')
+        report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -240,10 +255,8 @@ def main():
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
-            log.info('Performance results')
-            pp.log_performance_metrics_async_mode(log, average_time, fps)
-        else:
-            pp.print_performance_metrics_async_mode(average_time, fps)
+        log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
         del model
         del compiled_model
         del core
