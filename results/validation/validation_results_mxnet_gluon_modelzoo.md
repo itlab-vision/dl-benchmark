@@ -29,7 +29,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Model     |  Python (implementation)  |
+   Model     |  Python API  |
 -------------|---------------------------|
 alexnet      |0.4499776 Granny Smith<br>0.0933101 dumbbell<br>0.0876726 ocarina, sweet potato<br>0.0628703 hair slide<br>0.0484683 bottlecap|
 darknet53|0.5883058 Granny Smith<br>0.0645481 candle, taper, wax light<br>0.0236042 piggy bank, penny bank<br>0.0160968 pencil sharpener<br>0.0060462 vase|
@@ -130,7 +130,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Model     |  Python (implementation)  |
+   Model     |  Python API  |
 -------------|---------------------------|
 alexnet      |0.9947649 junco, snowbird<br>0.0043087 chickadee<br>0.0002780 water ouzel, dipper<br>0.0002770 bulbul<br>0.0001244 brambling, Fringilla montifringilla|
 darknet53|0.8250283 junco, snowbird<br>0.0037126 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0019864 brambling, Fringilla montifringilla<br>0.0017965 water ouzel, dipper<br>0.0015356 American coot, marsh hen, mud hen, water hen, Fulica americana|
@@ -231,7 +231,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Model     |  Python (implementation)  |
+   Model     |  Python API  |
 -------------|---------------------------|
 alexnet      |0.3216886 container ship, containership, container vessel<br>0.1360614 drilling platform, offshore rig<br>0.1140693 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1057479 beacon, lighthouse, beacon light, pharos<br>0.0471224 liner, ocean liner|
 darknet53|0.1329412 liner, ocean liner<br>0.1074721 dock, dockage, docking facility<br>0.1047859 drilling platform, offshore rig<br>0.0996367 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0419424 lifeboat|

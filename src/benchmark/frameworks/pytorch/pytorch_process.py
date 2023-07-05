@@ -31,9 +31,8 @@ class PyTorchProcess(ProcessHandler):
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
-        report_path = self.report_path
         common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
-                         f'-b {batch_size} -ni {iteration}')
+                         f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
 
         if model:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
@@ -46,10 +45,6 @@ class PyTorchProcess(ProcessHandler):
         if module:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--module', module)
-
-        if report_path:
-            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-                common_params, '--report_path', report_path)
 
         if time_limit:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(

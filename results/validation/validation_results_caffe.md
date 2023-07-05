@@ -13,7 +13,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.9521238 Granny Smith<br>0.0069122 piggy bank, penny bank<br>0.0054333 candle, taper, wax light<br>0.0037157 saltshaker, salt shaker<br>0.0034601 tennis ball|
 caffenet              |0.8039698 Granny Smith<br>0.0632433 candle, taper, wax light<br>0.0330907 teapot<br>0.0097625 tennis ball<br>0.0090626 saltshaker, salt shaker|
@@ -39,7 +39,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.8866407 junco, snowbird<br>0.1086869 chickadee<br>0.0019401 brambling, Fringilla montifringilla<br>0.0013517 water ouzel, dipper<br>0.0002660 bulbul|
 caffenet              |0.9883578 junco, snowbird<br>0.0000186 chickadee<br>0.0000017 brambling, Fringilla montifringilla<br>0.0000014 water ouzel, dipper<br>0.0000013 house finch, linnet, Carpodacus mexicanus|
@@ -65,7 +65,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.9570842 lifeboat<br>0.0145343 container ship, containership, container vessel<br>0.0057027 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0050276 beacon, lighthouse, beacon light, pharos<br>0.0043956 liner, ocean liner|
 caffenet              |0.5774223 lifeboat<br>0.2691385 container ship, containership, container vessel<br>0.0526851 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0484550 liner, ocean liner<br>0.0084702 beacon, lighthouse, beacon light, pharos|
@@ -100,7 +100,7 @@ Bounding boxes (upper left and bottom right corners):<br>
 (289, 111), (440, 255)<br>
 (435, 160), (615, 310)<br>
 
-   Model              |  Python (implementation)         |
+   Model              |  Python API         |
 ----------------------|----------------------------------|
 mobilenet-ssd         | Bounding box:<br>(46, 133), (657, 445)<br>  |
 ssd300                | Bounding box:<br>(66, 163), (235, 356)<br> |
@@ -120,7 +120,7 @@ Image resolution: 500 x 500
 Bounding box (upper left and bottom right corners):<br>
 (117, 86), (365, 465)
 
-   Model              |      Python (implementation)     |
+   Model              |      Python API     |
 ----------------------|----------------------------------|
 mobilenet-ssd         | Bounding box:<br>(94, 93), (360, 481)  |
 ssd300                | Bounding box:<br>(68, 100), (334,451) |
@@ -140,7 +140,7 @@ Image resolution: 333 x 500
 Bounding box (upper left and bottom right corners):<br>
 (82, 262), (269, 376)
 
-   Model              |     Python (implementation)      |
+   Model              |     Python API      |
 ----------------------|----------------------------------|
 mobilenet-ssd         | Bounding box:<br>(79, 140), (270, 375)  |
 ssd300                | Bounding box:<br>(79, 150), (270, 373)  |

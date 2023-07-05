@@ -1,4 +1,4 @@
-# Validation results for the models inferring using ONNXRuntime
+# Validation results for the models inferring using ONNX Runtime
 
 ## Image classification
 

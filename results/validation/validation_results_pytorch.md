@@ -28,7 +28,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.4499779 Granny Smith<br>0.0933098 dumbbell<br>0.0876729 ocarina, sweet potato<br>0.0628701 hair slide<br>0.0484683 bottlecap<br>|
 densenet121              |0.9523344 Granny Smith<br>0.0132273 orange<br>0.0125171 lemon<br>0.0027910 banana<br>0.0020333 piggy bank, penny bank<br>|
@@ -80,7 +80,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.9947648 junco, snowbird<br>0.0043087 chickadee<br>0.0002780 water ouzel, dipper<br>0.0002770 bulbul<br>0.0001244 brambling, Fringilla montifringilla<br>|
 densenet121              |0.9841599 junco, snowbird<br>0.0072199 chickadee<br>0.0034963 brambling, Fringilla montifringilla<br>0.0016226 water ouzel, dipper<br>0.0012858 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|
@@ -132,7 +132,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Model             |  Python (implementation)  |
+   Model             |  Python API  |
 ---------------------|---------------------------|
 alexnet              |0.3216888 container ship, containership, container vessel<br>0.1360615 drilling platform, offshore rig<br>0.1140690 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1057476 beacon, lighthouse, beacon light, pharos<br>0.0471225 liner, ocean liner<br>|
 densenet121              |0.3022412 liner, ocean liner<br>0.1322481 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1194608 container ship, containership, container vessel<br>0.0795042 drilling platform, offshore rig<br>0.0723068 dock, dockage, docking facility<br>|

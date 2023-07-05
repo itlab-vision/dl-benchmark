@@ -18,10 +18,7 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
         iteration = self._test.indep_parameters.iteration
 
         command_line = (f'-m {model_xml} -w {model_bin} -i {dataset} -b {batch} -d {device}'
-                        f' -ni {iteration}')
-
-        command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '--report_path',
-                                                                          self.report_path)
+                        f' -ni {iteration} --report_path {self.report_path}')
 
         extension = self._test.dep_parameters.extension
         if extension:
