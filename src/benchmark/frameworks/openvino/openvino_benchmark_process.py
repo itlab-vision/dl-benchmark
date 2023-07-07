@@ -35,20 +35,31 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
         return command_line
 
+    @staticmethod
+    def _add_batch_size_for_cmd_line(command_line, batch_value):
+        if batch_value:
+            return f'{command_line} -b {batch_value}'
+        else:
+            return command_line
+
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
-            return None, None, None
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
 
         # calculate average time of single pass metric to align output with custom launchers
         duration = self._get_benchmark_app_metric('Duration')
         iter_count = self._get_benchmark_app_metric('Count')
-        average_time_of_single_pass = (round(duration / 1000 / iter_count, 3)
+        average_time_of_single_pass = (round(duration / 1000 / iter_count, 5)
                                        if None not in (duration, iter_count) else None)
-
         fps = self._get_benchmark_app_metric('Throughput')
-        latency = round(self._get_benchmark_app_metric('Median') / 1000, 3)
-
-        return average_time_of_single_pass, fps, latency
+        latency = round(self._get_benchmark_app_metric('Median') / 1000, 5)
+        metrics = {
+            'average_time': average_time_of_single_pass,
+            'fps': fps,
+            'latency': latency,
+            'batch_fps': 0.0,
+        }
+        return metrics
 
     def _get_benchmark_app_metric(self, metric_name):
         """
@@ -64,6 +75,15 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
                     return float(res.group('metric'))
                 except ValueError:
                     return None
+
+    def _get_model_batch_size(self):
+        regex = re.compile(r'\s*Model\sbatch\ssize:\s(\d+)')
+        for line in self._output:
+            if 'Model batch size' in line:
+                res = regex.search(line)
+                if res:
+                    return res.group(1)
+        return None
 
     def _add_common_arguments(self, arguments, device):
         extension = self._test.dep_parameters.extension
@@ -83,6 +103,20 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
         return arguments
 
+    def _get_mean_scale_args(self):
+        """
+        OpenVINO 2023.0 has mean_values and scale_values instead of imean and iscale.
+        :return: tuple
+        """
+
+        mean_arg = '-imean'
+        scale_arg = '-iscale'
+
+        if self._test.dep_parameters.change_preproc_options == 'Rename':
+            mean_arg = '--mean_values'
+            scale_arg = '--scale_values'
+        return mean_arg, scale_arg
+
     def extract_inference_param(self, key):
         regex = re.compile(rf'\s*{key}\s*[:,]\s*(?P<value>.+)$')
         for line in self._output:
@@ -93,6 +127,9 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
 
 class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
+    benchmark_app_name = 'openvino_benchmark_python'
+    launcher_latency_units = 'milliseconds'
+
     def __init__(self, test, executor, log, perf_hint='', api_mode=''):
         super().__init__(test, executor, log, perf_hint, api_mode)
 
@@ -109,14 +146,18 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time}'
+        arguments = f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time}'
 
+        arguments = self._add_batch_size_for_cmd_line(arguments, batch)
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
         arguments = self._add_common_arguments(arguments, device)
+
         if frontend != 'IR':
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+            mean_arg, scale_arg = self._get_mean_scale_args()
+            arguments = self._add_optional_argument_to_cmd_line(arguments, mean_arg,
+                                                                self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, scale_arg,
                                                                 self._test.dep_parameters.input_scale)
         command_line = f'benchmark_app {arguments}'
 
@@ -131,10 +172,15 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
                     if res:
                         return res.group(1)
             return None
+        elif key == 'batch_size':
+            return self._get_model_batch_size()
         return super().extract_inference_param(key)
 
 
 class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
+    benchmark_app_name = 'openvino_benchmark_cpp'
+    launcher_latency_units = 'milliseconds'
+
     def __init__(self, test, executor, log, cpp_benchmarks_dir, perf_hint='', api_mode=''):
         super().__init__(test, executor, log, perf_hint, api_mode)
 
@@ -147,7 +193,9 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         if not self._benchmark_path.is_file():
             raise invalid_path_exception
 
-        self._report_path = executor.get_path_to_logs_folder().joinpath('benchmark_report.json')
+    @property
+    def report_path(self):
+        return Path(self._executor.get_path_to_logs_folder()) / 'benchmark_report.json'
 
     @staticmethod
     def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
@@ -162,15 +210,17 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = (f'-m {model_xml} -i {dataset} -b {batch} -d {device} -niter {iteration} -t {time} '
-                     f'-report_type "no_counters" -json_stats -report_folder {self._report_path.parent.absolute()}')
+        arguments = (f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time} '
+                     f'-report_type "no_counters" -json_stats -report_folder {self.report_path.parent.absolute()}')
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)
+        arguments = self._add_batch_size_for_cmd_line(arguments, batch)
         arguments = self._add_common_arguments(arguments, device)
         if frontend != 'IR':
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-imean', self._test.dep_parameters.mean)
-            arguments = self._add_optional_argument_to_cmd_line(arguments, '-iscale',
+            mean_arg, scale_arg = self._get_mean_scale_args()
+            arguments = self._add_optional_argument_to_cmd_line(arguments, mean_arg, self._test.dep_parameters.mean)
+            arguments = self._add_optional_argument_to_cmd_line(arguments, scale_arg,
                                                                 self._test.dep_parameters.input_scale)
 
         command_line = f'{self._benchmark_path} {arguments}'
@@ -179,7 +229,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
-            return None, None, None
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
 
         report = self.get_json_report_content()
 
@@ -187,15 +237,22 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
         MILLISECONDS_IN_SECOND = 1000
         duration = float(report['execution_results']['execution_time'])
         iter_count = float(report['execution_results']['iterations_num'])
-        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 3)
+        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 5)
                                        if None not in (duration, iter_count) else None)
 
         fps = round(float(report['execution_results']['throughput']), 3)
-        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
-
-        return average_time_of_single_pass, fps, latency
+        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 5)
+        metrics = {
+            'average_time': average_time_of_single_pass,
+            'fps': fps,
+            'latency': latency,
+            'batch_fps': 0.0,
+        }
+        return metrics
 
     def extract_inference_param(self, key):
         if key == 'nireq':
             return self.get_json_report_content()['configuration_setup']['nireq']
+        elif key == 'batch_size':
+            return self._get_model_batch_size()
         return super().extract_inference_param(key)

@@ -5,6 +5,7 @@ from ..processes import ProcessHandler
 
 
 class OpenVINOPythonAPIProcess(OpenVINOProcess):
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
@@ -16,7 +17,8 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        command_line = f'-m {model_xml} -w {model_bin} -i {dataset} -b {batch} -d {device} -ni {iteration}'
+        command_line = (f'-m {model_xml} -w {model_bin} -i {dataset} -b {batch} -d {device}'
+                        f' -ni {iteration} --report_path {self.report_path}')
 
         extension = self._test.dep_parameters.extension
         if extension:
@@ -32,18 +34,14 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
 
 
 class AsyncOpenVINOProcess(OpenVINOPythonAPIProcess):
+    benchmark_app_name = 'openvino_async_api_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-
-        return average_time, fps, 0
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_async_script = Path.joinpath(self.inference_script_root, 'inference_openvino_async_mode.py')
@@ -64,25 +62,22 @@ class AsyncOpenVINOProcess(OpenVINOPythonAPIProcess):
 
 
 class SyncOpenVINOProcess(OpenVINOPythonAPIProcess):
+    benchmark_app_name = 'openvino_async_api_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_sync_script = Path.joinpath(self.inference_script_root, 'inference_openvino_sync_mode.py')
         python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
 
         common_params = super()._fill_command_line()
+        common_params += f' --time {time_limit}'
         command_line = f'{python} {path_to_sync_script} {common_params}'
 
         return command_line

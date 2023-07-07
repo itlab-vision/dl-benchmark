@@ -7,10 +7,12 @@ from .tensorflow.tensorflow_wrapper import TensorFlowWrapper
 from .onnx_runtime.onnx_runtime_wrapper import OnnxRuntimeWrapper
 from .onnx_runtime_python.onnx_runtime_python_wrapper import ONNXRuntimePythonWrapper
 from .tensorflow_lite.tensorflow_lite_wrapper import TensorFlowLiteWrapper
+from .tensorflow_lite_cpp.tensorflow_lite_cpp_wrapper import TensorFlowLiteCppWrapper
 from .opencv_dnn_python.opencv_dnn_python_wrapper import OpenCVDNNPythonWrapper
 from .mxnet.mxnet_wrapper import MXNetWrapper
 from .opencv_dnn_cpp.opencv_dnn_cpp_wrapper import OpenCVDNNCppWrapper
 from .pytorch.pytorch_wrapper import PyTorchWrapper
+from .pytorch_cpp.pytorch_cpp_wrapper import PyTorchCppWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
@@ -38,7 +40,9 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[OnnxRuntimeWrapper.framework_name] = OnnxRuntimeWrapper()
         self._framework_wrappers[ONNXRuntimePythonWrapper.framework_name] = ONNXRuntimePythonWrapper()
         self._framework_wrappers[TensorFlowLiteWrapper.framework_name] = TensorFlowLiteWrapper()
+        self._framework_wrappers[TensorFlowLiteCppWrapper.framework_name] = TensorFlowLiteCppWrapper()
         self._framework_wrappers[OpenCVDNNPythonWrapper.framework_name] = OpenCVDNNPythonWrapper()
         self._framework_wrappers[MXNetWrapper.framework_name] = MXNetWrapper()
         self._framework_wrappers[OpenCVDNNCppWrapper.framework_name] = OpenCVDNNCppWrapper()
         self._framework_wrappers[PyTorchWrapper.framework_name] = PyTorchWrapper()
+        self._framework_wrappers[PyTorchCppWrapper.framework_name] = PyTorchCppWrapper()

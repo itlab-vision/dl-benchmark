@@ -4,7 +4,11 @@ from ..processes import ProcessHandler
 
 
 class PyTorchProcess(ProcessHandler):
+    benchmark_app_name = 'pytorch_python_benchmark'
+    launcher_latency_units = 'seconds'
+
     def __init__(self, test, executor, log):
+        log.info('Initialize pytorch process')
         super().__init__(test, executor, log)
 
     @staticmethod
@@ -12,15 +16,7 @@ class PyTorchProcess(ProcessHandler):
         return PyTorchProcess(test, executor, log)
 
     def get_performance_metrics(self):
-        if self._status != 0 or len(self._output) == 0:
-            return None, None, None
-
-        result = self._output[-1].strip().split(',')
-        average_time = float(result[0])
-        fps = float(result[1])
-        latency = float(result[2])
-
-        return average_time, fps, latency
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         path_to_pytorch_script = Path.joinpath(self.inference_script_root, 'inference_pytorch.py')
@@ -34,9 +30,9 @@ class PyTorchProcess(ProcessHandler):
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
-
+        time_limit = self._test.indep_parameters.test_time_limit
         common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
-                         f'-b {batch_size} -ni {iteration}')
+                         f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
 
         if model:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
@@ -49,6 +45,10 @@ class PyTorchProcess(ProcessHandler):
         if module:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--module', module)
+
+        if time_limit:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--time', time_limit)
 
         input_name = self._test.dep_parameters.input_name
         if input_name:

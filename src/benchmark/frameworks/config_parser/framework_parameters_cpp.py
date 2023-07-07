@@ -2,8 +2,8 @@ from .framework_parameters_parser import FrameworkParameters
 
 
 class CppParameters(FrameworkParameters):
-    def __init__(self, backend, provider, input_shape, layout, mean, input_scale, thread_count,
-                 inference_requests_count):
+    def __init__(self, backend, provider, tensor_rt_precision, input_shape, layout, mean, input_scale, thread_count,
+                 inference_requests_count, input_type):
         self.backend = None
         self.provider = None
         self.input_shape = None
@@ -12,6 +12,8 @@ class CppParameters(FrameworkParameters):
         self.input_scale = None
         self.thread_count = None
         self.inference_requests_count = None
+        self.input_type = None
+        self.tensor_rt_precision = None
 
         if self._parameter_is_not_none(backend):
             self.backend = backend.strip()
@@ -30,3 +32,7 @@ class CppParameters(FrameworkParameters):
         if self._parameter_is_not_none(inference_requests_count) and self._int_value_is_correct(
                 inference_requests_count):
             self.inference_requests_count = inference_requests_count
+        if self._parameter_is_not_none(input_type):
+            self.input_type = input_type.strip()
+        if self._parameter_is_not_none(tensor_rt_precision):
+            self.tensor_rt_precision = tensor_rt_precision

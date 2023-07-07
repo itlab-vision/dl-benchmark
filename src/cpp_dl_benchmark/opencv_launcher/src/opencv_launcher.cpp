@@ -18,7 +18,7 @@
 
 using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
-OCVLauncher::OCVLauncher(int nthreads, const std::string& device) : Launcher(nthreads, device) {
+OCVLauncher::OCVLauncher(const int nthreads, const std::string& device) : Launcher(nthreads, device) {
     if (nthreads > 0) {
         cv::setNumThreads(nthreads);
     }
@@ -49,7 +49,7 @@ void OCVLauncher::set_backend(cv::dnn::Net& net) {
 #endif
 }
 
-void OCVLauncher::read(const std::string model_file, const std::string weights_file) {
+void OCVLauncher::read(const std::string& model_file, const std::string& weights_file) {
     net = cv::dnn::readNet(model_file, weights_file);
     set_backend(net);
 
@@ -112,7 +112,7 @@ IOTensorsInfo OCVLauncher::get_io_tensors_info() const {
     return {input_tensors_info, output_tensors_info};
 }
 
-void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tbuffers) {
+void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tbuffers) {
     tensor_buffers = std::move(tbuffers);
     for (int i = 0; i < tensor_buffers.size(); ++i) {
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
@@ -121,35 +121,14 @@ void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>> t
     }
 }
 
-void OCVLauncher::warmup_inference() {
-    run(blobs[0]);
-}
-
 void OCVLauncher::dump_output() {
     throw std::logic_error("Method is not implemented");
 }
 
-void OCVLauncher::run(const cv::Mat& input_blob) {
-    net.setInput(input_blob);
-    total_start_time = std::min(HighresClock::now(), total_start_time);
+void OCVLauncher::run(const int input_idx) {
+    net.setInput(blobs[input_idx]);
 
     infer_start_time = HighresClock::now();
     net.forward(output_blobs, output_names);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
-
-    total_end_time = std::max(HighresClock::now(), total_end_time);
-}
-
-int OCVLauncher::evaluate(int iterations_num, uint64_t time_limit_ns) {
-    int iteration = 0;
-    auto start_time = HighresClock::now();
-    auto uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    while ((iterations_num != 0 && iteration < iterations_num) ||
-           (time_limit_ns != 0 && static_cast<uint64_t>(uptime) < time_limit_ns)) {
-        run(blobs[iteration % blobs.size()]);
-        ++iteration;
-        uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time).count();
-    }
-
-    return iteration;
 }

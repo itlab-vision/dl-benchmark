@@ -14,6 +14,12 @@ class OpenVINOTest(Test):
         else:
             infer_requests_count = tensors_num
 
+        batch_size = self.indep_parameters.batch_size
+        if process.get_status() == 0 and not batch_size:
+            self._log.info('Batch size is not set in XML config, '
+                           'will try to extract it from the launcher JSON report or console output')
+            batch_size = process.extract_inference_param('batch_size')
+
         RUNTIME_PARAMETER_NAMES = ('INFERENCE_PRECISION_HINT', 'INFERENCE_NUM_THREADS', 'NUM_STREAMS',
                                    'OPTIMAL_NUMBER_OF_INFER_REQUESTS', 'AFFINITY', 'Count')
         runtime_parameters = {key: process.extract_inference_param(key) for key in RUNTIME_PARAMETER_NAMES}
@@ -40,7 +46,7 @@ class OpenVINOTest(Test):
             'source_framework': self.model.source_framework,
             'inference_framework': self.indep_parameters.inference_framework,
             'precision': self.model.precision,
-            'batch_size': self.indep_parameters.batch_size,
+            'batch_size': batch_size,
             'mode': self.dep_parameters.mode,
             'framework_params': optional_parameters_string,
         }

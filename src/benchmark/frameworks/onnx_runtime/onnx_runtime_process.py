@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 
 from ..processes import ProcessHandler
@@ -10,6 +9,9 @@ ONNX_CPP_BENCHMARK_NAME = {'Default': 'onnxruntime_benchmark',
 
 
 class OnnxRuntimeProcess(ProcessHandler):
+    benchmark_app_name = 'ort_cpp_benchmark'
+    launcher_latency_units = 'milliseconds'
+
     def __init__(self, test, executor, log, cpp_benchmarks_dir='', provider='Default'):
         super().__init__(test, executor, log)
 
@@ -25,9 +27,6 @@ class OnnxRuntimeProcess(ProcessHandler):
         if not self._benchmark_path.is_file():
             raise invalid_path_exception
 
-        self._report_path = executor.get_path_to_logs_folder().joinpath(
-            f'ort_benchmark_{test.model.name}_{datetime.now().strftime("%d.%m.%y_%H:%M:%S")}.json')
-
     @staticmethod
     def create_process(test, executor, log, cpp_benchmarks_dir='', **kwargs):
         device = test.indep_parameters.device
@@ -40,7 +39,7 @@ class OnnxRuntimeProcess(ProcessHandler):
         return OnnxRuntimeProcess(test, executor, log, cpp_benchmarks_dir, provider)
 
     def get_performance_metrics(self):
-        return self.get_performance_metrics_cpp()
+        return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
         return self._fill_command_line_cpp()

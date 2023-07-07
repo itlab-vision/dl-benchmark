@@ -21,6 +21,7 @@ class OpenVINOParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG = 'Layout'
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG = 'InputScale'
+        CONFIG_FRAMEWORK_DEPENDENT_CHANGE_PREPROC_OPTIONS_TAG = 'ChangePreprocessOptions'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -66,6 +67,11 @@ class OpenVINOParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG):
             _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG)[0].firstChild
 
+        _change_preproc_options = None
+        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_CHANGE_PREPROC_OPTIONS_TAG):
+            _change_preproc_options = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_CHANGE_PREPROC_OPTIONS_TAG)[0].firstChild
+
         return OpenVINOParameters(
             mode=_mode.data if _mode else None,
             code_source=_code_source.data if _code_source else 'handwritten',
@@ -81,13 +87,14 @@ class OpenVINOParametersParser(DependentParametersParser):
             layout=_layout.data if _layout else None,
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
+            change_preproc_options=_change_preproc_options.data if _change_preproc_options else None,
         )
 
 
 class OpenVINOParameters(FrameworkParameters):
     def __init__(self, mode, code_source, runtime, hint, frontend, extension,
                  infer_request_count, async_request_count, thread_count, stream_count,
-                 shape, layout, mean, input_scale):
+                 shape, layout, mean, input_scale, change_preproc_options):
         self.mode = None
         self.code_source = None
         self.runtime = None
@@ -102,6 +109,7 @@ class OpenVINOParameters(FrameworkParameters):
         self.layout = None
         self.mean = None
         self.input_scale = None
+        self.change_preproc_options = None
 
         if self._mode_is_correct(mode):
             self.mode = mode.title()
@@ -171,6 +179,11 @@ class OpenVINOParameters(FrameworkParameters):
                     raise ValueError('Mean can only take values: list of 3 float elements.')
             if self._parameter_is_not_none(input_scale):
                 self.input_scale = input_scale.strip()
+            if self._parameter_is_not_none(change_preproc_options):
+                if change_preproc_options != 'Rename':
+                    raise ValueError('Only "Rename" option is available')
+                else:
+                    self.change_preproc_options = change_preproc_options
 
     @staticmethod
     def _mode_is_correct(mode):
@@ -204,7 +217,7 @@ class OpenVINOParameters(FrameworkParameters):
 
     @staticmethod
     def _frontend_is_correct(frontend):
-        const_correct_frontend = ['ir', 'tensorflow', 'onnx']
+        const_correct_frontend = ['ir', 'tensorflow', 'tensorflow_lite', 'onnx']
         if not frontend:
             return True
         if frontend.lower() in const_correct_frontend:

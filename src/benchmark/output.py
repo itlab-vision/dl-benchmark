@@ -26,6 +26,7 @@ class OutputHandler:
             'average_time': 'Average time of single pass (s)',
             'latency': 'Latency',
             'fps': 'FPS',
+            'batch_fps': 'BATCH FPS',
             'error_type': 'Error type',
         }
 
@@ -40,7 +41,8 @@ class OutputHandler:
                               else Status.INFERENCE_FAILURE)
             report['input_shape'] = process.get_model_shape()
             report['status'] = 'Success' if status_code == 0 else 'Failed'
-            report['average_time'], report['fps'], report['latency'] = process.get_performance_metrics()
+            reported_metrics = process.get_performance_metrics()
+            report.update(reported_metrics)
             report['error_type'] = process_status.name if status_code else 'NO_ERROR'
         else:
             report['input_shape'] = 'Undefined'

@@ -17,26 +17,24 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class ONNXLauncher : public Launcher {
 public:
-    ONNXLauncher(int nthreads, const std::string& device) : Launcher(nthreads, device){};
+    ONNXLauncher(const int nthreads, const std::string& device) : Launcher(nthreads, device){};
     virtual ~ONNXLauncher();
 
     std::string get_framework_name() const override;
     std::string get_framework_version() const override;
     std::string get_backend_name() const override;
 
-    void read(const std::string model_file, const std::string weights_file = "") override;
+    void read(const std::string& model_file, const std::string& weights_file = "") override;
     void load() override{};
 
     void fill_inputs_outputs_info() override;
     IOTensorsInfo get_io_tensors_info() const override;
 
-    void prepare_input_tensors(std::vector<std::vector<TensorBuffer>> tensor_buffers) override;
-
-    void warmup_inference() override;
-    int evaluate(int iterations_num, uint64_t time_limit_ns) override;
+    void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
+    void compile() override{};
 
     void dump_output() override;
-    
+
 private:
     struct IOInfo {
         std::vector<const char*> input_names;
@@ -59,8 +57,7 @@ private:
     OrtTensorRTProviderOptionsV2* tensorrt_options = nullptr;
 #endif
     std::vector<std::vector<Ort::Value>> tensors;
-    std::vector<std::vector<TensorBuffer>> tensor_buffers;
 
-    void run(const std::vector<Ort::Value>& input_tensors);
-    std::vector<Ort::Value> run_for_output(const std::vector<Ort::Value>& input_tensors);
+    void run(const int input_idx) override;
+    std::vector<Ort::Value> run_for_output(const int input_idx);
 };

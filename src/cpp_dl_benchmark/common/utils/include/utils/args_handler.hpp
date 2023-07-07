@@ -15,9 +15,7 @@ namespace args {
 std::map<std::string, std::vector<std::string>> parse_input_files_arguments(const std::vector<std::string>& args,
                                                                             size_t max_files = 20);
 
-std::map<std::string, std::string> parse_shape_layout_string(const std::string& parameter_string);
-
-std::map<std::string, std::vector<float>> parse_mean_scale_string(const std::string& parameter_string);
+std::map<std::string, std::string> parse_parameter_string(const std::string& parameter_string);
 
 std::vector<std::string> split(const std::string& s, char delim);
 
