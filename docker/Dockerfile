@@ -37,7 +37,10 @@ ARG DEPENDENCIES="apt-utils \
                   unzip \
                   wget \
                   git \
-                  ninja-build"
+                  ninja-build \
+                  ffmpeg \
+                  libsm6 \
+                  libxext6"
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
