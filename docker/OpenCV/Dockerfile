@@ -1,57 +1,15 @@
-FROM ubuntu:20.04
-USER root
-WORKDIR /
-
-# Setup timezone
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-# Add user
-RUN useradd -ms /bin/bash openvino && \
-    chown openvino -R /home/openvino
-
-# Install dependencies
-ARG DEPENDENCIES="apt-utils \
-                  autoconf \
-                  sudo \
-                  vim \
-                  automake \
-                  build-essential \
-                  cmake \
-                  cpio \
-                  curl \
-                  dialog \
-                  gnupg2 \
-                  libdrm2 \
-                  libglib2.0-0 \
-                  lsb-release \
-                  libgtk-3-0 \
-                  libtool \
-                  python3-pip \
-                  python3-setuptools \
-                  python3-dev \
-                  python3-venv \
-                  pciutils \
-                  libpython3.8 \
-                  udev \
-                  unzip \
-                  wget \
-                  git \
-                  ninja-build"
-RUN apt-get update && \
-    apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
-    rm -rf /var/lib/apt/lists/*
+FROM ubuntu_for_dli
 
 # Install OpenVINO
 ENV INSTALL_DIR /opt/intel/openvino_2022
-ARG OV_SHORT_VERSION=2022.3
-ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.9052.9752fafe8eb_x86_64"
+ARG OV_SHORT_VERSION=2022.3.1
+ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.9227.cf2c7da5689_x86_64"
 RUN sudo mkdir /opt/intel && \
     wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
         -O /tmp/openvino.tgz --no-check-certificate --quiet && \
     tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
     sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
-    rm -rf /tmp/*
+    rm /tmp/openvino.tgz
 
 # Install OpenVINO dependencies
 WORKDIR $INSTALL_DIR/install_dependencies
@@ -62,16 +20,12 @@ RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.
 RUN echo y | ./install_NEO_OCL_driver.sh
 RUN usermod -a -G video,users root
 
-# Install openvino-dev
-WORKDIR /tmp/
-RUN pip3 install --upgrade pip
-RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
-
 # Install OpenCV
+WORKDIR /tmp/
 ARG OCV_VERSION=4.7.0
 RUN pip uninstall opencv-python -y
 RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch ${OCV_VERSION} --single-branch
-ENV OpenCV_BUILD_DIR=/root/build-opencv
+ENV OpenCV_BUILD_DIR=/tmp/build-opencv
 RUN mkdir $OpenCV_BUILD_DIR
 WORKDIR $OpenCV_BUILD_DIR
 RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
@@ -86,27 +40,20 @@ RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
         -D OPENCV_CONFIG_INSTALL_PATH=cmake \
         -D PYTHON3_PACKAGES_PATH=install/python/python3 \
         /tmp/opencv/ && ninja && cmake --install .' && \
-    rm -rf /tmp/*
+        rm -r /tmp/opencv
 ENV OpenCV_INSTALL_DIR="$OpenCV_BUILD_DIR/install"
 ENV OpenCV_DIR="$OpenCV_INSTALL_DIR/cmake"
 ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:$PYTHONPATH}"
 
 #accuracy-check
-ARG OMZ_VERSION="${OV_SHORT_VERSION}.0"
-WORKDIR /tmp/
-RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
     accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
 
-# Download DLI source code
-WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
-    pip3 install docker PyYAML
-
 # Download dataset if repository with dataset is set
 ARG DATASET_DOWNLOAD_LINK
 RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
+WORKDIR /tmp/

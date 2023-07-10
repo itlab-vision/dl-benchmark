@@ -10,7 +10,7 @@ RUN pip3 install cmake==${CMAKE_VERSION}
 ARG OCV_VERSION=4.7.0
 RUN pip uninstall opencv-python -y
 RUN git clone --recurse-submodules https://github.com/opencv/opencv.git  --depth 1 --branch ${OCV_VERSION} --single-branch
-ENV OpenCV_BUILD_DIR=/root/build-opencv
+ENV OpenCV_BUILD_DIR=/tmp/build-opencv
 RUN mkdir $OpenCV_BUILD_DIR
 WORKDIR $OpenCV_BUILD_DIR
 RUN /bin/bash -c 'cmake -G Ninja \
@@ -22,7 +22,8 @@ RUN /bin/bash -c 'cmake -G Ninja \
         -D OPENCV_LIB_INSTALL_PATH=lib \
         -D OPENCV_CONFIG_INSTALL_PATH=cmake \
         -D PYTHON3_PACKAGES_PATH=install/python/python3 \
-        /tmp/opencv/ && ninja && cmake --install .'
+        /tmp/opencv/ && ninja && cmake --install .' && \
+        rm -r /tmp/opencv
 ENV OpenCV_INSTALL_DIR="$OpenCV_BUILD_DIR/install"
 ENV OpenCV_DIR="$OpenCV_INSTALL_DIR/cmake"
 ENV LD_LIBRARY_PATH="$OpenCV_INSTALL_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
@@ -49,3 +50,5 @@ WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN accuracy_check -c sample/sample_config.yml -m data/test_models -s sample
+
+WORKDIR /tmp/
