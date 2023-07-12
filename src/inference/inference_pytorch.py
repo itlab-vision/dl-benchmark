@@ -2,6 +2,7 @@ import argparse
 import importlib
 import json
 import logging as log
+import re
 import sys
 import traceback
 from pathlib import Path
@@ -15,7 +16,21 @@ from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
+from configs.config_utils import prepend_to_path, to_camel_case
 from transformer import PyTorchTransformer
+
+SCRIPT_DIR = Path(__file__).parent
+MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
+
+
+def get_model_config(model_name: str):
+    model_config = None
+
+    for config in Path(MODEL_CONFIGS_PATH).iterdir():
+        if config.stem == model_name.replace('-', '_'):
+            model_config = config
+
+    return model_config
 
 
 def cli_argument_parser():
@@ -40,6 +55,9 @@ def cli_argument_parser():
                         required=True,
                         type=str,
                         dest='model_name')
+    parser.add_argument('--use_model_config',
+                        help='Use model config for inference if it exists',
+                        action='store_true')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
                         required=True,
@@ -114,7 +132,7 @@ def cli_argument_parser():
     parser.add_argument('--model_type',
                         help='Model type for inference',
                         choices=['scripted', 'baseline'],
-                        default='scripted',
+                        default=None,
                         type=str,
                         dest='model_type')
     parser.add_argument('--inference_mode',
@@ -128,6 +146,11 @@ def cli_argument_parser():
                         type=str,
                         default=None,
                         dest='tensor_rt_precision')
+    parser.add_argument('--compile_with_backend',
+                        help='Use torch API compile method with provided backend. Applicable only for torch >= 2.x',
+                        type=str,
+                        default=None,
+                        dest='compile_with_backend')
     parser.add_argument('--layout',
                         help='Parameter input layout',
                         default=None,
@@ -155,12 +178,15 @@ def get_device_to_infer(device):
     log.info('Get device for inference')
     if device == 'CPU':
         log.info(f'Inference will be executed on {device}')
+
         return torch.device('cpu')
     elif device == 'NVIDIA_GPU':
         log.info(f'Inference will be executed on {device}')
+
         return torch.device('cuda')
     else:
         log.info(f'The device {device} is not supported')
+
         raise ValueError('The device is not supported')
 
 
@@ -168,9 +194,13 @@ def is_gpu_available():
     return torch.cuda.is_available()
 
 
+def get_torch_version():
+    return torch.__version__
+
+
 def get_tensor_rt_dtype(tensor_rt_precision):
+    tensor_rt_dtype = None
     if tensor_rt_precision:
-        tensor_rt_dtype = None
         if tensor_rt_precision == 'FP32':
             tensor_rt_dtype = torch.float
         elif tensor_rt_precision == 'FP16':
@@ -178,56 +208,94 @@ def get_tensor_rt_dtype(tensor_rt_precision):
         else:
             raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
         return tensor_rt_dtype
-    else:
-        return None
+
+    return tensor_rt_dtype
 
 
-def load_model_from_module(model_name, module, weights):
-    log.info(f'Loading model from module {module}')
+def load_model_from_module(model_name, module, weights, device):
+    log.info(f'Loading model {model_name} from module')
     model_cls = importlib.import_module(module).__getattribute__(model_name)
+
     if weights is None or weights == '':
         log.info('Loading pretrained model')
         return model_cls(weights=True)
     else:
         log.info(f'Loading model with weights from file {weights}')
         model = model_cls()
-        model.load_state_dict(torch.load(weights))
+        checkpoint = torch.load(weights, map_location=device.lower())
+        model.load_state_dict(checkpoint)
+
         return model
 
 
 def load_model_from_file(model_path):
     log.info(f'Loading model from path {model_path}')
+
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
+
     model = torch.load(model_path)
+
     return model
 
 
-def compile_model(module, device, model_type, use_tensorrt, shapes, tensor_rt_dtype):
+def load_model_from_config(model_name, model_config, module, weights):
+    with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
+        model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
+    model_cls = model_obj()
+    model_cls.set_model_name(model_name)
+    model_cls.set_model_weights(weights=weights, module=module)
+    model = model_cls.create_model()
+
+    weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
+
+    if weights:
+        model(weights=weights)
+        return model()
+
+    if model_cls.pretrained:
+        return model
+
+
+def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, compile_backend):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
         log.info('Inference will be executed on scripted model')
-        module = torch.jit.script(module)
+        model = torch.jit.script(model)
+        if compile_backend:
+            raise ValueError('Can`t use torch.compile() with scripted model')
+
     else:
         raise ValueError(f'Model type {model_type} is not supported for inference')
-    module.to(device)
-    module.eval()
+
+    model.to(device)
+    model.eval()
+
+    if compile_backend:
+        torch_version = get_torch_version()
+        if not re.match(r'(1.\d)\S+', torch_version):
+            mode = 'default'
+            log.info(f'Compile model with "{mode}" mode, "{compile_backend}" backend')
+            model = torch.compile(model, mode=mode, backend=compile_backend)
+        else:
+            raise ValueError('Torch.Compile is only available for PyTorch 2.x versions. '
+                             f'Current version: {torch_version}')
 
     if use_tensorrt:
         if is_gpu_available():
             import torch_tensorrt
             inputs = [torch_tensorrt.Input(shapes[key], dtype=tensor_rt_dtype) for key in shapes]
-            tensor_rt_ts_module = torch_tensorrt.compile(module, inputs=inputs,
+            tensor_rt_ts_module = torch_tensorrt.compile(model, inputs=inputs,
                                                          truncate_long_and_double=True,
                                                          enabled_precisions=tensor_rt_dtype)
             return tensor_rt_ts_module
         else:
             raise ValueError('GPU is not available')
     else:
-        return module
+        return model
 
 
 def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device, test_duration):
@@ -259,6 +327,7 @@ def inference_iteration(device, get_slice, input_names, model):
     if device.type == 'cuda':
         torch.cuda.synchronize()
     _, exec_time = infer_slice(device, inputs, model)
+
     return exec_time
 
 
@@ -281,7 +350,7 @@ def main():
     )
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='PyTorch', version=torch.__version__)
+    report_writer.update_framework_info(name='PyTorch', version=get_torch_version())
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
@@ -298,13 +367,23 @@ def main():
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         if args.model is not None:
+            model_type = 'scripted'
             model = load_model_from_file(args.model)
         else:
-            model = load_model_from_module(args.model_name, args.module, args.weights)
+            model_type = 'baseline'
+            model_config = get_model_config(args.model_name)
+            if model_config and args.use_model_config:
+                model = load_model_from_config(model_name=args.model_name, model_config=model_config,
+                                               module=args.module, weights=args.weights)
+            else:
+                model = load_model_from_module(model_name=args.model_name, module=args.module,
+                                               weights=args.weights, device=args.device)
 
         device = get_device_to_infer(args.device)
-        compiled_model = compile_model(model, device, args.model_type,
-                                       args.tensor_rt_precision is not None, args.input_shapes, tensor_rt_dtype)
+        compiled_model = compile_model(model=model, device=device, model_type=model_type,
+                                       use_tensorrt=args.tensor_rt_precision is not None,
+                                       shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,
+                                       compile_backend=args.compile_with_backend)
 
         for layer_name in args.input_names:
             layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
@@ -314,10 +393,10 @@ def main():
         io.prepare_input(compiled_model, args.input)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time = inference_pytorch(compiled_model, args.number_iter,
-                                                   io.get_slice_input,
-                                                   args.input_names, args.inference_mode, device,
-                                                   args.time)
+        result, inference_time = inference_pytorch(model=compiled_model, num_iterations=args.number_iter,
+                                                   get_slice=io.get_slice_input, input_names=args.input_names,
+                                                   inference_mode=args.inference_mode, device=device,
+                                                   test_duration=args.time)
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
@@ -337,7 +416,6 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
-
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

@@ -107,11 +107,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         if self.launcher_latency_units == 'milliseconds':
             latency = round(latency / MILLISECONDS_IN_SECOND, 5)
             average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
-        metrics = {}
-        metrics['average_time'] = average_time_of_single_pass
-        metrics['fps'] = fps
-        metrics['latency'] = latency
-        metrics['batch_fps'] = batch_fps
+        metrics = {'average_time': average_time_of_single_pass, 'fps': fps, 'latency': latency, 'batch_fps': batch_fps}
+
         return metrics
 
     @abc.abstractmethod

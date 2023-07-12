@@ -251,6 +251,8 @@
             <ModelType></ModelType>
             <InferenceMode></InferenceMode>
             <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig></UseModelConfig>
+            <CompileWithBackend></CompileWithBackend>
         </FrameworkDependent>
     </Test>
     <Test>

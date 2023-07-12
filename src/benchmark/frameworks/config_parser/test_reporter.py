@@ -73,6 +73,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['model_type'] = 'Model type'
         match_parameter_description['inference_mode'] = 'Inference mode'
         match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
+        match_parameter_description['compile_with_backend'] = 'Pytorch compile backend'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:

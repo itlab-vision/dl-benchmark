@@ -24,8 +24,8 @@ class PyTorchProcess(ProcessHandler):
 
         name = self._test.model.name
         model = self._test.model.model
-        weight = self._test.model.weight
         module = self._test.model.module
+        weights = self._test.model.weight
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
@@ -34,17 +34,21 @@ class PyTorchProcess(ProcessHandler):
         common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
                          f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
 
-        if model:
+        if model and model != 'none':
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--model', model)
-
-        if weight:
-            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
-                common_params, '--weights', weight)
 
         if module:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
                 common_params, '--module', module)
+
+        use_model_config = self._test.dep_parameters.use_model_config
+        if use_model_config:
+            common_params = PyTorchProcess._add_flag_to_cmd_line(common_params, '--use_model_config')
+
+        if weights:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--weights', weights)
 
         if time_limit:
             common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
@@ -92,6 +96,11 @@ class PyTorchProcess(ProcessHandler):
         if tensor_rt_precision:
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--tensor_rt_precision', tensor_rt_precision)
+
+        compile_with_backend = self._test.dep_parameters.compile_with_backend
+        if compile_with_backend:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--compile_with_backend', compile_with_backend)
 
         layout = self._test.dep_parameters.layout
         if layout:
