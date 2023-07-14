@@ -241,13 +241,13 @@ def load_model_from_file(model_path):
     return model
 
 
-def load_model_from_config(model_name, model_config, module, weights):
+def load_model_from_config(model_name, model_config, module, weights, device='cpu'):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model()
+    model = model_cls.create_model(device=device)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
@@ -366,6 +366,7 @@ def main():
         data_transformer = PyTorchTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
+        device = get_device_to_infer(args.device)
         if args.model is not None:
             model_type = 'scripted'
             model = load_model_from_file(args.model)
@@ -374,12 +375,11 @@ def main():
             model_config = get_model_config(args.model_name)
             if model_config and args.use_model_config:
                 model = load_model_from_config(model_name=args.model_name, model_config=model_config,
-                                               module=args.module, weights=args.weights)
+                                               module=args.module, weights=args.weights, device=device)
             else:
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
 
-        device = get_device_to_infer(args.device)
         compiled_model = compile_model(model=model, device=device, model_type=model_type,
                                        use_tensorrt=args.tensor_rt_precision is not None,
                                        shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,

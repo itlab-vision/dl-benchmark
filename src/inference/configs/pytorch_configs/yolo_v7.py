@@ -10,7 +10,7 @@ from model_handler import ModelHandler
 
 CONFIG_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(CONFIG_DIR))
-from config_utils import github_clone, prepend_to_path, regex_replace_in_file  # noqa: E402
+from config_utils import github_clone, prepend_to_path, regex_replace_in_file, apply_patch  # noqa: E402
 
 
 class Ensemble(nn.ModuleList):
@@ -48,6 +48,9 @@ class YoloV7(ModelHandler):
         self.model_dir = CONFIG_DIR.joinpath('pytorch_configs', self.model_name)
         github_clone(repo_name='WongKinYiu/yolov7', dist=str(self.model_dir))
 
+        self.patch = CONFIG_DIR.joinpath('pytorch_configs', '1167.patch')
+        apply_patch(folder=str(self.model_dir), patch=str(self.patch))
+
         replace_unused_imports_in_repo(repo_dir=self.model_dir)
 
     def download_model_weigths(self):
@@ -58,13 +61,13 @@ class YoloV7(ModelHandler):
 
         subprocess.run(['wget', '-O', str(self.weights), weights_path])
 
-    def create_model(self):
+    def create_model(self, device):
         with prepend_to_path([str(self.model_dir)]):
             from models.experimental import End2End  # noqa: E402
             from models.common import Conv  # noqa: E402
 
             model = Ensemble()
-            ckpt = torch.load(self.weights, map_location='cpu')
+            ckpt = torch.load(self.weights, map_location=device)
             model.append(ckpt['ema' if ckpt.get('ema') else 'model'].float().fuse().eval())
 
             # Compatibility updates
@@ -82,7 +85,7 @@ class YoloV7(ModelHandler):
 
             model.model[-1].export = False
 
-            return End2End(model, iou_thres=0.65, score_thres=0.35, max_wh=640, device='cpu')
+            return End2End(model, iou_thres=0.65, score_thres=0.35, max_wh=640, device=device)
 
 
 def replace_unused_imports_in_repo(repo_dir: Path):

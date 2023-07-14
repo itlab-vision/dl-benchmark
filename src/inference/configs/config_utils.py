@@ -46,6 +46,10 @@ def github_clone(repo_name: str, dist: str):
     subprocess.run(['git', 'clone', '--progress', repo_name, dist])
 
 
+def apply_patch(folder: str, patch: str):
+    subprocess.run(['patch', '-p1', '--forward', '-i', patch, '-d', folder])
+
+
 def regex_replace_in_file(file: Path, regex: str, replacement: str, log=None):
     with open(file, 'r+') as f:
         content = f.read()

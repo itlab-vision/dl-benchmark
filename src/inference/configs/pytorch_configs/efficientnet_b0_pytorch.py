@@ -13,5 +13,5 @@ class EfficientnetB0Pytorch(ModelHandler):
         weights = importlib.import_module(module).__getattribute__('EfficientNet_B0_Weights')
         self.weights = weights.DEFAULT
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return getattr(importlib.import_module(self.module), self.model_name)

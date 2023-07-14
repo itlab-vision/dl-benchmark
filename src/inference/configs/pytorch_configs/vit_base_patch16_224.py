@@ -8,5 +8,5 @@ class VitBasePatch16224(ModelHandler):
         self.weights = None
         self.pretrained = True
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return ViTForImageClassification.from_pretrained('google/vit-base-patch16-224')

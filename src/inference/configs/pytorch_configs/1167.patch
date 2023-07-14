@@ -1,0 +1,58 @@
+From 109fee31c97ef334a682f06c976ff7c9bf25d87d Mon Sep 17 00:00:00 2001
+From: dh031200 <dh31200@gmail.com>
+Date: Fri, 25 Nov 2022 13:48:13 +0900
+Subject: [PATCH] fix-meshgrid-warning
+
+---
+ models/yolo.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/models/yolo.py b/models/yolo.py
+index 95a019c6ae..7b64360b4c 100644
+--- a/models/yolo.py
++++ b/models/yolo.py
+@@ -78,7 +78,7 @@ def forward(self, x):
+ 
+     @staticmethod
+     def _make_grid(nx=20, ny=20):
+-        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
++        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)], indexing='ij')
+         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
+ 
+     def convert(self, z):
+@@ -191,7 +191,7 @@ def fuse(self):
+             
+     @staticmethod
+     def _make_grid(nx=20, ny=20):
+-        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
++        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)], indexing='ij')
+         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
+ 
+     def convert(self, z):
+@@ -304,7 +304,7 @@ def forward(self, x):
+ 
+     @staticmethod
+     def _make_grid(nx=20, ny=20):
+-        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
++        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)], indexing='ij')
+         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
+ 
+ 
+@@ -414,7 +414,7 @@ def fuse(self):
+ 
+     @staticmethod
+     def _make_grid(nx=20, ny=20):
+-        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
++        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)], indexing='ij')
+         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
+ 
+     def convert(self, z):
+@@ -501,7 +501,7 @@ def forward(self, x):
+ 
+     @staticmethod
+     def _make_grid(nx=20, ny=20):
+-        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
++        yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)], indexing='ij')
+         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
+ 
+ 

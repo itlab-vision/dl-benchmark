@@ -8,5 +8,5 @@ class Wav2vec2Base(ModelHandler):
         self.weights = None
         self.pretrained = True
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return Wav2Vec2ForCTC.from_pretrained('facebook/wav2vec2-base-960h')

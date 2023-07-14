@@ -30,7 +30,7 @@ class RetinafaceResnet50Pytorch(ModelHandler):
 
         subprocess.run(['wget', '-O', str(self.weights), weights_path])
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         with prepend_to_path([str(self.model_dir)]):
             from data.config import cfg_re50  # noqa: E402
             from models.retinaface import RetinaFace  # noqa: E402

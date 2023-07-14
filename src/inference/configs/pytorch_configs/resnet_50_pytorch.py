@@ -13,5 +13,5 @@ class Resnet50Pytorch(ModelHandler):
         weights = importlib.import_module(module).__getattribute__('ResNet50_Weights')
         self.weights = weights.DEFAULT
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return importlib.import_module(self.module).__getattribute__(self.model_name)

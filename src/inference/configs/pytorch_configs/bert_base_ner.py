@@ -8,5 +8,5 @@ class BertBaseNer(ModelHandler):
         self.weights = None
         self.pretrained = True
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return AutoModelForTokenClassification.from_pretrained('dslim/bert-base-NER')

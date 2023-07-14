@@ -8,5 +8,5 @@ class Gpt2(ModelHandler):
         self.weights = None
         self.pretrained = True
 
-    def create_model(self):
+    def create_model(self, **kwargs):
         return GPT2Model.from_pretrained('gpt2')
