@@ -60,6 +60,13 @@ RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
 
 # accuracy-check
-ARG OMZ_VERSION=2022.3.0
 WORKDIR /tmp/
-RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OMZ_VERSION} --single-branch --depth 1
+RUN git clone --recursive https://github.com/openvinotoolkit/open_model_zoo.git --branch ${OV_SHORT_VERSION} --single-branch --depth 1
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+RUN tar xvf cifar-10-python.tar.gz -C sample
+
+# Download dataset if repository with dataset is set
+ARG DATASET_DOWNLOAD_LINK
+RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
+WORKDIR /tmp/

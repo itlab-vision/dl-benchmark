@@ -48,12 +48,5 @@ ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:
 
 #accuracy-check
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
-RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
     accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
-
-# Download dataset if repository with dataset is set
-ARG DATASET_DOWNLOAD_LINK
-RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
-WORKDIR /tmp/

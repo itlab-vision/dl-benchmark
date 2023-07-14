@@ -22,13 +22,8 @@ RUN usermod -a -G video,users root
 
 # Test Accuracy Checker
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN wget -nv https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
-RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN pip3 uninstall opencv-python -y && pip3 install "opencv-python-headless"
 RUN /bin/bash -c "accuracy_check -c sample/sample_config.yml -m data/test_models -s sample"
 
-# Download dataset if repository with dataset is set
-ARG DATASET_DOWNLOAD_LINK
-RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
 WORKDIR /tmp/
 

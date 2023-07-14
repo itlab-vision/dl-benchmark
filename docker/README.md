@@ -57,6 +57,7 @@
 ## Пример последовательности команд для сбора образа OpenVINO и запуска бенчмарка
 
    ```bash
+   docker build -t ubuntu_for_dli .
    cd docker/OpenVINO_DLDT
    docker stop OpenVINO_DLDT
    docker rm OpenVINO_DLDT

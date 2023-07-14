@@ -15,7 +15,5 @@ RUN pip3 install mxnet==${MXNET_VERSION}
 
 # Download Accuracy Checker
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
-RUN tar xvf cifar-10-python.tar.gz -C sample
 RUN /bin/bash -c 'accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
 WORKDIR /tmp/
