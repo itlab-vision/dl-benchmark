@@ -27,6 +27,8 @@ ARG DEPENDENCIES="apt-utils \
                   lsb-release \
                   libgtk-3-0 \
                   libtool \
+                  libprotobuf-dev \
+                  libgl1-mesa-glx \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
