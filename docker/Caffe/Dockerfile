@@ -1,7 +1,7 @@
 FROM ubuntu_for_dli
 
 WORKDIR /root/
-RUN wget --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+RUN wget -q --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b && \
     ./miniconda3/bin/conda create -n caffe-env -y python=3.6.5 && \
     rm -rf /root/miniconda3/pkgs/* && \

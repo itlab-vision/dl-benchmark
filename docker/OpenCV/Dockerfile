@@ -5,7 +5,7 @@ ENV INSTALL_DIR /opt/intel/openvino_2022
 ARG OV_SHORT_VERSION=2022.3.1
 ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.9227.cf2c7da5689_x86_64"
 RUN sudo mkdir /opt/intel && \
-    wget https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
+    wget -q https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION}.tgz \
         -O /tmp/openvino.tgz --no-check-certificate --quiet && \
     tar -zxvf /tmp/openvino.tgz -C /opt/intel/ && \
     sudo ln -s /opt/intel/l_openvino_toolkit_ubuntu20_${OV_LONG_VERSION} $INSTALL_DIR && \
