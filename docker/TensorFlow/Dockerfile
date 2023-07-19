@@ -2,11 +2,16 @@ FROM ubuntu_for_dli
 
 WORKDIR /root/
 ARG TF_VERSION=2.12.0
+ARG FRAMEWORK
 RUN pip3 install --upgrade pip && \
     pip3 install opencv-python requests PyYAML docker
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
-RUN pip3 install intel-tensorflow==${TF_VERSION}
-RUN pip3 install tensorflow==${TF_VERSION}
+
+RUN if [ "$FRAMEWORK" = "intel-tensorflow" ] ; then \
+        pip3 install intel-tensorflow==${TF_VERSION} ; \
+    elif [ "$FRAMEWORK" = "tensorflow" ] ; then \
+        pip3 install tensorflow==${TF_VERSION}; \
+    fi
 
 WORKDIR /tmp/
 COPY models.lst models.lst
