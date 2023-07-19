@@ -19,8 +19,8 @@ class YoloV7(ModelHandler):
         self.model_dir = CONFIG_DIR.joinpath('pytorch_configs', self.model_name)
         github_clone(repo_name='WongKinYiu/yolov7', dist=str(self.model_dir))
 
-        self.patch = CONFIG_DIR.joinpath('pytorch_configs', '1167.patch')
-        apply_patch(folder=str(self.model_dir), patch=str(self.patch))
+        patch = CONFIG_DIR.joinpath('pytorch_configs', 'patches', '1167.patch')
+        apply_patch(folder=str(self.model_dir), patch=str(patch))
 
         replace_unused_imports_in_repo(repo_dir=self.model_dir)
 

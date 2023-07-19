@@ -59,7 +59,7 @@ def cli_argument_parser():
                         help='Use model config for inference if it exists',
                         action='store_true')
     parser.add_argument('-i', '--input',
-                        help='Path to data.',
+                        help='Path to input data',
                         required=True,
                         type=str,
                         nargs='+',
@@ -107,9 +107,9 @@ def cli_argument_parser():
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
-                             'postprocessing (by default), classification - output'
-                             'is a vector of probabilities.',
-                        choices=['feedforward', 'classification', 'yolo_v7', 'text-to-image'],
+                             'postprocessing (by default); classification - output'
+                             'is a vector of probabilities; gpt-2 - text generation.',
+                        choices=['feedforward', 'classification', 'text-to-image', 'yolo_v7', 'gpt-2'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -308,12 +308,17 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
 
             t0 = time()
+
             if task_type in ['classification', 'feedforward']:
                 output = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
-            elif task_type == 'yolo_v7':
-                output = model(*inputs)[0].to('cpu')
             elif task_type == 'text-to-image':
                 output = model(prompt=get_slice())
+            elif task_type == 'yolo_v7':
+                output = model(*inputs)[0].to('cpu')
+            elif task_type == 'gpt-2':
+                from configs.pytorch_configs.gpt_2 import gpt_text_generation
+                output = gpt_text_generation(gpt_model=model, input_promt=get_slice())
+
             t1 = time()
             time_infer.append(t1 - t0)
         else:
@@ -332,9 +337,10 @@ def infer_slice(device, inputs, model):
 
 
 def inference_iteration(device, get_slice, input_names, model, task_type):
+    inputs = None
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-    elif task_type == 'text-to-image':
+    elif task_type in ['gpt-2', 'text-to-image']:
         inputs = get_slice()
 
     if device.type == 'cuda':
@@ -345,16 +351,18 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
 
 
 def prepare_output(result, output_names, task):
-    if task == 'feedforward':
-        return {}
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
-    if task == 'classification':
-        return {output_names[0]: result.detach().numpy()}
-    if task == 'text-to-image':
-        return result.images
-    if task == 'yolo_v7':
+
+    if task == 'feedforward':
+        return {}
+    elif task in ['gpt-2', 'yolo_v7']:
         return result
+    elif task == 'text-to-image':
+        return result.images
+    elif task == 'classification':
+        log.info('Converting output tensor to print results')
+        return {output_names[0]: result.detach().numpy()}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -407,7 +415,7 @@ def main():
                 layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
                 log.info(f'Shape for input layer {layer_name}: {layer_shape}')
 
-        log.info(f'Preparing input data {args.input}')
+        log.info(f'Preparing input data: {args.input}')
         io.prepare_input(compiled_model, args.input)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
@@ -425,7 +433,6 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    log.info('Converting output tensor to print results')
                     result = prepare_output(result, args.output_names, args.task)
 
                     log.info('Inference results')

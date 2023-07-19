@@ -152,6 +152,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._input = {}
         self._transformed_input = {}
         self._original_shapes = {}
+
         if ':' in input_[0]:
             for str_ in input_:
                 input_file = str_.split(':')[-1]
@@ -274,6 +275,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
             return YoloV3TFIO(args, io_model_wrapper, transformer)
+        elif task == 'gpt-2':
+            return Gpt2IO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
             return TextToImageIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7':
@@ -288,12 +291,9 @@ class FeedForwardIO(IOAdapter):
         return
 
 
-class TextToImageIO(IOAdapter):
+class TextPromtIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
-
-    def get_slice_input(self, *args, **kwargs):
-        return [self._prompts[0]] * self._batch_size
 
     def prepare_input(self, model, input_):
         try:
@@ -303,6 +303,19 @@ class TextToImageIO(IOAdapter):
         except Exception as ex:
             raise ValueError(f'Unable to read prompt file {input_[0]}. Exception occurred: {str(ex)}')
 
+    @abc.abstractmethod
+    def get_slice_input(self, result, log):
+        pass
+
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
+class TextToImageIO(TextPromtIO):
+    def get_slice_input(self, *args, **kwargs):
+        return [self._prompts[0]] * self._batch_size
+
     def process_output(self, result, log):
         count = 0
         for image in result:
@@ -310,6 +323,14 @@ class TextToImageIO(IOAdapter):
             image.save(out_path)
             log.info(f'Result image was saved to {out_path}')
             count += 1
+
+
+class Gpt2IO(TextPromtIO):
+    def get_slice_input(self, *args, **kwargs):
+        return self._prompts[0]
+
+    def process_output(self, result, log):
+        log.info(f'Generated result: \n{result} ... \n')
 
 
 class ClassificationIO(IOAdapter):
@@ -1921,6 +1942,7 @@ class YoloV3TFIO(YoloV3IO):
                 ]
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
+
         return predictions
 
 
