@@ -20,6 +20,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._number_top = getattr(args, 'number_top', None)
         self._threshold = getattr(args, 'threshold', None)
         self._color_map = getattr(args, 'color_map', None)
+        self._classes_color_map = []
+        self._labels_map = []
         self._io_model_wrapper = io_model_wrapper
         self._transformer = transformer
 
@@ -176,6 +178,23 @@ class IOAdapter(metaclass=abc.ABCMeta):
             slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 
+    def load_color_map(self, default_color_map_file):
+        if not self._color_map:
+            self._color_map = Path(__file__).parent / 'color_maps' / default_color_map_file
+        with open(self._color_map, 'r') as f:
+            for line in f:
+                self._classes_color_map.append([int(x) for x in line.split()])
+
+    def load_labels_map(self, default_labels_map_file):
+        if not self._labels:
+            self._labels = Path(__file__).parent / 'labels' / default_labels_map_file
+        file_extension = Path(self._labels).suffix
+        if file_extension == '.json':
+            self._labels_map = np.array(json.load(open(self._labels, 'r'))).tolist()
+        else:
+            with open(self._labels, 'r') as f:
+                self._labels_map = [line.strip() for line in f]
+
     @staticmethod
     def _not_valid_result(result):
         return result is None
@@ -257,6 +276,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3TFIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
             return TextToImageIO(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v7':
+            return YoloV7(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -299,23 +320,19 @@ class ClassificationIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+
+        self.load_labels_map('image_net_synset.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         log.info('Top {0} results:'.format(self._number_top))
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/image_net_synset.txt')
-        file_extension = Path(self._labels).suffix
-        if file_extension == '.json':
-            labels_map = np.array(json.load(open(self._labels, 'r'))).tolist()
-        else:
-            with open(self._labels, 'r') as f:
-                labels_map = [line.strip() for line in f]
+
         for batch, probs in enumerate(result):
             probs = np.squeeze(probs)
             top_ind = np.argsort(probs)[-self._number_top:][::-1]  # noqa: PLE1130
             log.info('Result for image {0}'.format(batch + 1))
             for id_ in top_ind:
-                det_label = labels_map[id_] if labels_map else '#{0}'.format(id_)
+                det_label = self._labels_map[id_] if self._labels_map else '#{0}'.format(id_)
                 log.info('\t{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
 
 
@@ -423,23 +440,20 @@ class SegmenatationIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+
+        self.load_color_map('color_map.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[1:]
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
-                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+                    classes_map[i, j, :] = self._classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
@@ -455,24 +469,22 @@ class AdasSegmenatationIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+
+        self.load_color_map('color_map.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[-2:]
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
+
         for batch, data in enumerate(result):
             data = np.squeeze(data)
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = int(data[i, j])
-                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
+                    classes_map[i, j, :] = self._classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
@@ -488,23 +500,20 @@ class RoadSegmenatationIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+
+        self.load_color_map('color_map_road_segmentation.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[2:]
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map_road_segmentation.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
                     pixel_class = np.argmax(data[i][j])
-                    classes_map[i, j, :] = classes_color_map[pixel_class]
+                    classes_map[i, j, :] = self._classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
             classes_map = cv2.resize(classes_map, (orig_w, orig_h))
@@ -801,18 +810,16 @@ class LicensePlateIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
+
+        self.load_labels_map('dictionary.txt')
+
         result = result[next(iter(result))]
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/dictionary.txt')
-        lexis = []
-        with open(self._labels, 'r') as f:
-            lexis = [line.strip() for line in f]
         for lex in result:
             s = ''
             for j in range(lex.shape[0]):
                 if lex[j] == -1:
                     break
-                s = s + str(lexis[int(lex[j])])
+                s = s + str(self._labels_map[int(lex[j])])
             log.info(f'Plate: {s}')
 
 
@@ -824,18 +831,11 @@ class InstanceSegmenatationIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names.txt')
-        labels_map = ['background']
-        with open(self._labels, 'r') as f:
-            for line in f:
-                labels_map.append(line.strip())
+
+        self.load_color_map('mscoco_color_map.txt')
+        self.load_labels_map('mscoco_names.txt')
+        self._labels_map.insert(0, 'background')
+
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         image = self._input['im_data'][0]
         boxes = result['boxes']
@@ -849,7 +849,7 @@ class InstanceSegmenatationIO(IOAdapter):
                 object_height = boxes[i][3] - boxes[i][1]
                 mask = masks[i][classes[i]]
                 label_on_image_point = (int(boxes[i][0] + object_width / 3), int(boxes[i][3] - object_height / 2))
-                label_on_image = '<' + labels_map[classes[i]] + '>'
+                label_on_image = '<' + self._labels_map[classes[i]] + '>'
                 labels_on_image.append((label_on_image, label_on_image_point))
                 for j in range(len(mask)):
                     for k in range(len(mask[j])):
@@ -860,7 +860,7 @@ class InstanceSegmenatationIO(IOAdapter):
                             y = int(boxes[i][1] + j * dh)
                             for c in range(dh):
                                 for t in range(dw):
-                                    image[y + c][x + t] = classes_color_map[classes[i] - 1]
+                                    image[y + c][x + t] = self._classes_color_map[classes[i] - 1]
         for i in range(len(labels_on_image)):
             image = cv2.putText(
                 cv2.UMat(image),
@@ -1538,10 +1538,9 @@ class ActionRecognitionDecoderIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/kinetics.txt')
-        with open(self._labels, 'r') as f:
-            labels_map = [line.strip() for line in f]
+
+        self.load_labels_map('kinetics.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for _, _ in enumerate(result):
@@ -1549,7 +1548,7 @@ class ActionRecognitionDecoderIO(IOAdapter):
             top_ind = np.argsort(probs)[-self._number_top:][::-1]  # noqa: PLE1130
             log.info('\nResult:')
             for id_ in top_ind:
-                det_label = labels_map[id_] if labels_map else f'#{id_}'
+                det_label = self._labels_map[id_] if self._labels_map else f'#{id_}'
                 log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa
 
 
@@ -1561,10 +1560,9 @@ class DriverActionRecognitionDecoderIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/driver_action_labels.txt')
-        with open(self._labels, 'r') as f:
-            labels_map = [line.strip() for line in f]
+
+        self.load_labels_map('driver_action_labels.txt')
+
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
         for _, data in enumerate(result):
@@ -1572,7 +1570,7 @@ class DriverActionRecognitionDecoderIO(IOAdapter):
             top_ind = np.argsort(probs)[::-1]
             log.info('\nResult:')
             for id_ in top_ind:
-                det_label = labels_map[id_] if labels_map else f'#{id_}'
+                det_label = self._labels_map[id_] if self._labels_map else f'#{id_}'
                 log.info('{:.7f} {}'.format(probs[id_], det_label))  # noqa
 
 
@@ -1584,18 +1582,9 @@ class MaskRCNNIO(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        if not self._color_map:
-            self._color_map = os.path.join(os.path.dirname(__file__), 'color_maps/mscoco_color_map_90.txt')
-        classes_color_map = []
-        with open(self._color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/mscoco_names_90.txt')
-        labels_map = []
-        with open(self._labels, 'r') as f:
-            for line in f:
-                labels_map.append(line.strip())
+
+        self.load_color_map('mscoco_color_map_90.txt')
+        self.load_labels_map('mscoco_names_90.txt')
 
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         if 'image_tensor' in self._input:
@@ -1627,7 +1616,7 @@ class MaskRCNNIO(IOAdapter):
 
                 class_id = int(detection_info[1]) - 1
                 mask = masks[idx][class_id]
-                color = classes_color_map[class_id]
+                color = self._classes_color_map[class_id]
 
                 object_width = abs(right - left)
                 object_height = abs(top - bottom)
@@ -1636,7 +1625,7 @@ class MaskRCNNIO(IOAdapter):
                 dh = int(object_height / mask.shape[-2])
 
                 label_on_image_point = (int(left + object_width / 3), int(bottom - object_height / 2))
-                label_on_image = '<' + labels_map[class_id] + '>'
+                label_on_image = '<' + self._labels_map[class_id] + '>'
                 labels_on_image.append((label_on_image, label_on_image_point))
 
                 for j in range(mask.shape[-2]):
@@ -1765,10 +1754,9 @@ class yolo(IOAdapter):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-        if not self._labels:
-            self._labels = os.path.join(os.path.dirname(__file__), 'labels/pascal_voc.txt')
-        with open(self._labels, 'r') as f:
-            labels_map = [line.strip() for line in f]
+
+        self.load_labels_map('pascal_voc.txt')
+
         anchors = self._get_anchors()
         shapes = self._get_shapes()
         input_layer_name = next(iter(self._input))
@@ -1799,7 +1787,7 @@ class yolo(IOAdapter):
                                 if prediction is not None:
                                     predictions += prediction
             valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
-            image = self.__print_detections(valid_detections, labels_map, cv2.UMat(image),
+            image = self.__print_detections(valid_detections, self._labels_map, cv2.UMat(image),
                                             scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
             cv2.imwrite(out_img, image)
@@ -1934,3 +1922,29 @@ class YoloV3TFIO(YoloV3IO):
                 prediction = [confidence, class_id, bbox]
                 predictions.append(prediction)
         return predictions
+
+
+class YoloV7(IOAdapter):
+    def process_output(self, result, log):
+        from configs.pytorch_configs.yolo_v7 import non_max_suppression, plot_one_box
+
+        self.load_color_map('mscoco_color_map.txt')
+        self.load_labels_map('mscoco_names.txt')
+
+        result = non_max_suppression(result)
+        input_layer_name = next(iter(self._input))
+        input_ = self._input[input_layer_name]
+        image = input_[0]
+        shapes = self._original_shapes[input_layer_name]
+        orig_h, orig_w = shapes[0]
+        image = cv2.resize(image, (orig_w, orig_h))
+
+        for det in result:
+            if len(det):
+                for *xyxy, conf, cls in reversed(det):
+                    label = f'{self._labels_map[int(cls)]} {conf:.2f}'
+                    plot_one_box(xyxy, image, label=label, color=self._classes_color_map[int(cls)], line_thickness=1)
+
+        out_img = os.path.join(os.path.dirname(__file__), 'out_detection.bmp')
+        cv2.imwrite(out_img, image)
+        log.info('Result image was saved to {0}'.format(out_img))

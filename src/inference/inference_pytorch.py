@@ -109,7 +109,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification', 'text-to-image'],
+                        choices=['feedforward', 'classification', 'yolo_v7', 'text-to-image'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -304,12 +304,14 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
         output = None
         time_infer = []
         if num_iterations == 1:
-            if task_type in ['classification', 'feedforward']:
+            if task_type in ['classification', 'feedforward', 'yolo_v7']:
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
 
             t0 = time()
             if task_type in ['classification', 'feedforward']:
                 output = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
+            elif task_type == 'yolo_v7':
+                output = model(*inputs)[0].to('cpu')
             elif task_type == 'text-to-image':
                 output = model(prompt=get_slice())
             t1 = time()
@@ -351,6 +353,8 @@ def prepare_output(result, output_names, task):
         return {output_names[0]: result.detach().numpy()}
     if task == 'text-to-image':
         return result.images
+    if task == 'yolo_v7':
+        return result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
