@@ -15,6 +15,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         self._transformed_input = None
         self._original_shapes = None
         self._batch_size = args.batch_size
+        self._prompts = []
         self._labels = getattr(args, 'labels', None)
         self._number_top = getattr(args, 'number_top', None)
         self._threshold = getattr(args, 'threshold', None)
@@ -254,6 +255,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
             return YoloV3TFIO(args, io_model_wrapper, transformer)
+        elif task == 'text-to-image':
+            return TextToImageIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -262,6 +265,30 @@ class FeedForwardIO(IOAdapter):
 
     def process_output(self, result, log):
         return
+
+
+class TextToImageIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def get_slice_input(self, *args, **kwargs):
+        return [self._prompts[0]] * self._batch_size
+
+    def prepare_input(self, model, input_):
+        try:
+            with open(input_[0], 'r') as prompt_file:
+                for line in prompt_file.readlines():
+                    self._prompts.append(line.strip())
+        except Exception as ex:
+            raise ValueError(f'Unable to read prompt file {input_[0]}. Exception occurred: {str(ex)}')
+
+    def process_output(self, result, log):
+        count = 0
+        for image in result:
+            out_path = Path(__file__).resolve().parent.joinpath(f'out_text_to_image_{count + 1}.png')
+            image.save(out_path)
+            log.info(f'Result image was saved to {out_path}')
+            count += 1
 
 
 class ClassificationIO(IOAdapter):

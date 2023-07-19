@@ -109,7 +109,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'text-to-image'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -272,7 +272,8 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
         raise ValueError(f'Model type {model_type} is not supported for inference')
 
     model.to(device)
-    model.eval()
+    if hasattr(model, 'eval'):
+        model.eval()
 
     if compile_backend:
         torch_version = get_torch_version()
@@ -298,21 +299,27 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
         return model
 
 
-def inference_pytorch(model, num_iterations, get_slice, input_names, inference_mode, device, test_duration):
+def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration):
     with torch.inference_mode(inference_mode):
-        predictions = None
+        output = None
         time_infer = []
         if num_iterations == 1:
-            inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+            if task_type in ['classification', 'feedforward']:
+                inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+
             t0 = time()
-            predictions = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
+            if task_type in ['classification', 'feedforward']:
+                output = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
+            elif task_type == 'text-to-image':
+                output = model(prompt=get_slice())
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
             time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
-                                                                                            input_names, model)
-    return predictions, time_infer
+                                                                                            input_names, model,
+                                                                                            task_type)
+    return output, time_infer
 
 
 @get_exec_time()
@@ -322,8 +329,12 @@ def infer_slice(device, inputs, model):
         torch.cuda.synchronize()
 
 
-def inference_iteration(device, get_slice, input_names, model):
-    inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+def inference_iteration(device, get_slice, input_names, model, task_type):
+    if task_type in ['classification', 'feedforward']:
+        inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+    elif task_type == 'text-to-image':
+        inputs = get_slice()
+
     if device.type == 'cuda':
         torch.cuda.synchronize()
     _, exec_time = infer_slice(device, inputs, model)
@@ -338,6 +349,8 @@ def prepare_output(result, output_names, task):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[0]: result.detach().numpy()}
+    if task == 'text-to-image':
+        return result.images
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -385,9 +398,10 @@ def main():
                                        shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,
                                        compile_backend=args.compile_with_backend)
 
-        for layer_name in args.input_names:
-            layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
-            log.info(f'Shape for input layer {layer_name}: {layer_shape}')
+        if args.task in ['classification', 'feedforward']:
+            for layer_name in args.input_names:
+                layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
+                log.info(f'Shape for input layer {layer_name}: {layer_shape}')
 
         log.info(f'Preparing input data {args.input}')
         io.prepare_input(compiled_model, args.input)
@@ -396,7 +410,7 @@ def main():
         result, inference_time = inference_pytorch(model=compiled_model, num_iterations=args.number_iter,
                                                    get_slice=io.get_slice_input, input_names=args.input_names,
                                                    inference_mode=args.inference_mode, device=device,
-                                                   test_duration=args.time)
+                                                   test_duration=args.time, task_type=args.task)
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
