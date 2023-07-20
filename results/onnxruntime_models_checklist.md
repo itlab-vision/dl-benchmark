@@ -6,7 +6,7 @@ Represented deep models are available in [ONNX Model Zoo][onnx].
 
 ### Image classification
 
-Model | Availability in ONNX Model Zoo (2023.03.06) | Availability in the validation table (C++ API using additional wrapper)|
+Model | Availability in ONNX Model Zoo (2023.03.06) | Availability in the validation table (C++ API using additional wrapper and Python API)|
 -|-|-|
 bvlcalexnet-12 | + | + |
 bvlcalexnet-12-int8 | + | + |
