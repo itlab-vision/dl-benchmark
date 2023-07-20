@@ -5,8 +5,8 @@ import os
 import subprocess
 import sys
 import onnxruntime as ort
-from io_model_wrapper import OnnxRuntimeModelWrapperCpp
-from transformer import OnnxRuntimeTransformerCpp
+from io_model_wrapper import ONNXIOModelWrapper
+from transformer import ONNXRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
 import logging as log
@@ -176,8 +176,8 @@ def main():
     try:
         log.info(f'Reading model {args.model_path}')
         model = ort.InferenceSession(args.model_path)
-        model_wrapper = OnnxRuntimeModelWrapperCpp(model)
-        model_data = OnnxRuntimeTransformerCpp(model)
+        model_wrapper = ONNXIOModelWrapper(args.shape, args.batch_size)
+        model_data = ONNXRuntimeTransformerCpp(model)
         io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
 
         log.info('Preparing input images for model')

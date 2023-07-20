@@ -264,7 +264,7 @@ class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
     pass
 
 
-class OnnxRuntimeTransformerCpp(Transformer):
+class ONNXRuntimeTransformerCpp(Transformer):
     def __init__(self, model):
         self._model = model
 
