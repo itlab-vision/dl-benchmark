@@ -251,15 +251,18 @@ def load_model_from_config(model_name, model_config, module, weights, device='cp
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
+    custom_compile_func = model_cls.compile_model if model_cls.use_custom_compile_step else None
+
     if weights:
         model(weights=weights)
-        return model()
+        return model(), custom_compile_func
 
     if model_cls.pretrained:
-        return model
+        return model, custom_compile_func
 
 
-def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, compile_backend):
+def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, compile_backend,
+                  custom_compile_func):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -280,7 +283,10 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
         if not re.match(r'(1.\d)\S+', torch_version):
             mode = 'default'
             log.info(f'Compile model with "{mode}" mode, "{compile_backend}" backend')
-            model = torch.compile(model, mode=mode, backend=compile_backend)
+            if custom_compile_func:
+                model = custom_compile_func(model=model, mode=mode, backend=compile_backend)
+            else:
+                model = torch.compile(model, mode=mode, backend=compile_backend)
         else:
             raise ValueError('Torch.Compile is only available for PyTorch 2.x versions. '
                              f'Current version: {torch_version}')
@@ -330,8 +336,11 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
 
 @get_exec_time()
-def infer_slice(device, inputs, model):
-    model(*inputs)
+def infer_slice(device, inputs, model, as_prompt=False):
+    if as_prompt:
+        model(prompt=inputs)
+    else:
+        model(*inputs)
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
@@ -345,7 +354,7 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
-    _, exec_time = infer_slice(device, inputs, model)
+    _, exec_time = infer_slice(device, inputs, model, task_type == 'text-to-image')
 
     return exec_time
 
@@ -392,6 +401,7 @@ def main():
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
         device = get_device_to_infer(args.device)
+        custom_compile_func = None
         if args.model is not None:
             model_type = 'scripted'
             model = load_model_from_file(args.model)
@@ -399,8 +409,11 @@ def main():
             model_type = 'baseline'
             model_config = get_model_config(args.model_name)
             if model_config and args.use_model_config:
-                model = load_model_from_config(model_name=args.model_name, model_config=model_config,
-                                               module=args.module, weights=args.weights, device=device)
+                model, custom_compile_func = load_model_from_config(model_name=args.model_name,
+                                                                    model_config=model_config,
+                                                                    module=args.module,
+                                                                    weights=args.weights,
+                                                                    device=device)
             else:
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
@@ -408,7 +421,8 @@ def main():
         compiled_model = compile_model(model=model, device=device, model_type=model_type,
                                        use_tensorrt=args.tensor_rt_precision is not None,
                                        shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,
-                                       compile_backend=args.compile_with_backend)
+                                       compile_backend=args.compile_with_backend,
+                                       custom_compile_func=custom_compile_func)
 
         if args.task in ['classification', 'feedforward']:
             for layer_name in args.input_names:

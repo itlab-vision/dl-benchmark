@@ -8,6 +8,7 @@ class ModelHandler(abc.ABC):
         self.weights = None
         self.module = None
         self.pretrained = False
+        self.use_custom_compile_step = False
 
     def set_model_name(self, model_name):
         if self.model_name is None:
@@ -19,4 +20,8 @@ class ModelHandler(abc.ABC):
 
     @abc.abstractmethod
     def create_model(self, **kwargs):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def compile_model(self, model, mode, backend, **kwargs):
         raise NotImplementedError
