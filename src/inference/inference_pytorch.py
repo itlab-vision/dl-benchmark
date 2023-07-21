@@ -323,7 +323,7 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                 output = model(*inputs)[0].to('cpu')
             elif task_type == 'gpt-2':
                 from configs.pytorch_configs.gpt_2 import gpt_text_generation
-                output = gpt_text_generation(gpt_model=model, input_promt=get_slice())
+                output = gpt_text_generation(gpt_model=model, input_promt=get_slice(), device=device)
 
             t1 = time()
             time_infer.append(t1 - t0)

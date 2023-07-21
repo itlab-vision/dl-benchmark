@@ -21,7 +21,3 @@ class ModelHandler(abc.ABC):
     @abc.abstractmethod
     def create_model(self, **kwargs):
         raise NotImplementedError
-
-    @abc.abstractmethod
-    def compile_model(self, model, mode, backend, **kwargs):
-        raise NotImplementedError

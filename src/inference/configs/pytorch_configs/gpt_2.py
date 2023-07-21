@@ -16,8 +16,8 @@ class Gpt2(ModelHandler):
         return GPT2LMHeadModel.from_pretrained('gpt2', pad_token_id=tokenizer.eos_token_id)
 
 
-def gpt_text_generation(gpt_model, input_promt):
-    input_ids = tokenizer.encode(input_promt, return_tensors='pt')
+def gpt_text_generation(gpt_model, input_promt, device):
+    input_ids = tokenizer.encode(input_promt, return_tensors='pt').to(device)
 
     # Basic Sampling decoding method
     sample_output = gpt_model.generate(
