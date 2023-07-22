@@ -1,0 +1,41 @@
+{
+    "cmd_options": {
+        "d": null,
+        "dtype": null,
+        "i": null,
+        "m": null,
+        "nireq": null,
+        "nthreads": null,
+        "save_report": "true",
+        "shape": null,
+        "t": null
+    },
+    "configurations_setup": {
+        "batch_size": null,
+        "duration": null,
+        "iterations_num": null,
+        "precision": null,
+        "target_device": null,
+        "tensors_num": null,
+        "threads_num": null
+    },
+    "execution_results": {
+        "execution_time": null,
+        "first_inference_time": null,
+        "iterations_num": null,
+        "latency_avg": null,
+        "latency_std": null,
+        "latency_max": null,
+        "latency_median": null,
+        "latency_min": null,
+        "read_network_time": null,
+        "throughput": null,
+        "batch_throughput": null
+    },
+    "framework_info": {
+        "backend": null,
+        "device": null,
+        "name": null,
+        "version": null
+    }
+}

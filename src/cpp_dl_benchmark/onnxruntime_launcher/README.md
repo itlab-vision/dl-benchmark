@@ -52,10 +52,18 @@ To build the tool you need to have an installation of [ONNX Runtime][onnx-runtim
     ```
 
 1. In the created directory run `cmake` command:
-
-    ```
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_LAUNCHER=ON -DBUILD_OPENCV_LAUNCHER=OFF -DBUILD_OPENCV_OV_LAUNCHER=OFF <dl-benchmark>/src/cpp_dl_benchmark
-    ```
+    - For ONNX Runtime with default CPU provider launcher:
+        ```
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+    - For ONNX Runtime with CUDA provider launcher:
+        ```
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_CUDA_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+    - For ONNX Runtime with TensorRT provider launcher:
+        ```
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONNXRUNTIME_TENSORRT_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        ```
 
 1. Build tool
 

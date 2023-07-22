@@ -108,12 +108,12 @@ public:
         }
     }
 
-    template<typename T>
+    template<typename T = void>
     T* get() {
         return reinterpret_cast<T*>(data);
     }
 
-    template<typename T>
+    template<typename T = void>
     T* get() const {
         return reinterpret_cast<T*>(data);
     }

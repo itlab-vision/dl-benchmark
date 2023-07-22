@@ -1,8 +1,9 @@
 import abc
 import os
 import sys
+import tarfile
+from io import BytesIO
 from pathlib import Path
-
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from cmd_handler import CMDHandler  # noqa: E402, PLC0411
@@ -40,8 +41,13 @@ class Executor(metaclass=abc.ABCMeta):
     def get_path_to_logs_folder(self):
         pass
 
-    @abc.abstractmethod
     def get_file_content(self, path):
+        self.copy_log_file(path)
+        with open(path) as file:
+            return file.read()
+
+    @abc.abstractmethod
+    def copy_log_file(self, path):
         pass
 
 
@@ -75,9 +81,8 @@ class HostExecutor(Executor):
         logs_folder.mkdir(exist_ok=True)
         return logs_folder
 
-    def get_file_content(self, path):
-        with open(path) as file:
-            return file.read()
+    def copy_log_file(self, *args):
+        pass
 
 
 class DockerExecutor(Executor):
@@ -93,7 +98,7 @@ class DockerExecutor(Executor):
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
         command_line = f'bash -c "source /root/.bashrc && {hardware_command}"'
-        output = self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
+        output = self.execute_command_in_container(command_line)
         if output[0] != 0:
             return 'None'
         hardware = [line.strip().split(': ') for line in output[-1].decode('utf-8').split('\n')[1:-1]]
@@ -105,11 +110,25 @@ class DockerExecutor(Executor):
         return hardware_info
 
     def execute_process(self, command_line, _):
+        command_line = command_line.replace('"', "'")
         command_line = f'bash -c "source /root/.bashrc && {command_line}"'
+        return self.execute_command_in_container(command_line)
+
+    def execute_command_in_container(self, command_line):
         return self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
 
     def get_path_to_logs_folder(self):
-        raise NotImplementedError()
+        log_path = Path('/tmp/')
+        return log_path
 
-    def get_file_content(self, path):
-        raise NotImplementedError()
+    def copy_log_file(self, path):
+        self.log.info(f'Copy json log from container to local file {path}')
+        file_json = self.container_dict[self.target_framework].get_archive(str(path))
+        stream, stat = file_json
+        file_obj = BytesIO()
+        for i in stream:
+            file_obj.write(i)
+        file_obj.seek(0)
+        tar = tarfile.open(mode='r', fileobj=file_obj)
+        log_dir = path.parent
+        tar.extractall(path=str(log_dir))

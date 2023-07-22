@@ -1,6 +1,8 @@
 import abc
 import json
+import os
 import platform
+from datetime import datetime
 from pathlib import Path
 
 
@@ -11,8 +13,25 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._executor = executor
         self._output = None
         self._status = None
+        self.timestamp = datetime.now().strftime('%d.%m.%y_%H:%M:%S')
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
-        self._report_path = None
+
+    @property
+    @abc.abstractmethod
+    def benchmark_app_name(self):
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def launcher_latency_units(self):
+        # use seconds or milliseconds as latency measuring units
+        raise NotImplementedError
+
+    @property
+    def report_path(self):
+        report_name = f'{self.benchmark_app_name}_{self._test.model.name}_{self.timestamp}.json'
+        report_path = Path(self._executor.get_path_to_logs_folder()) / report_name
+        return report_path
 
     @staticmethod
     def get_cmd_python_version():
@@ -54,7 +73,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             self.__log.info(f'End inference test on model : {self._test.model.name}')
         else:
             self.__log.warning(f'Inference test on model: {self._test.model.name} was ended with error. '
-                               'Process logs:')
+                               f'Process logs: {self._output}')
             self.__print_error()
             self.__save_failed_test_log()
 
@@ -66,29 +85,34 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         pass
 
     def get_json_report_content(self):
-        if self._report_path:
-            return json.loads(self._executor.get_file_content(self._report_path))
+        if self.report_path:
+            return json.loads(self._executor.get_file_content(self.report_path))
 
     def get_output_lines(self):
         return self._output
 
-    def get_performance_metrics_cpp(self):
+    def get_performance_metrics_from_json_report(self):
         if self._status != 0 or len(self._output) == 0:
-            return None, None, None
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
 
         report = self.get_json_report_content()
 
-        # calculate average time of single pass metric to align output with custom launchers
         MILLISECONDS_IN_SECOND = 1000
-        duration = float(report['execution_results']['execution_time'])
-        iter_count = float(report['execution_results']['iterations_num'])
-        average_time_of_single_pass = (round(duration / MILLISECONDS_IN_SECOND / iter_count, 3)
-                                       if None not in (duration, iter_count) else None)
-
         fps = float(report['execution_results']['throughput'])
-        latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 3)
-
-        return average_time_of_single_pass, fps, latency
+        reported_latency = report['execution_results'].get('latency_median', None)
+        latency = float(reported_latency) if reported_latency else 0.0
+        average_time_of_single_pass = float(report['execution_results']['latency_avg'])
+        reported_batch_fps = report['execution_results'].get('batch_throughput', None)
+        batch_fps = round(float(reported_batch_fps), 3) if reported_batch_fps else 0.0
+        if self.launcher_latency_units == 'milliseconds':
+            latency = round(latency / MILLISECONDS_IN_SECOND, 5)
+            average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
+        metrics = {}
+        metrics['average_time'] = average_time_of_single_pass
+        metrics['fps'] = fps
+        metrics['latency'] = latency
+        metrics['batch_fps'] = batch_fps
+        return metrics
 
     @abc.abstractmethod
     def _fill_command_line(self):
@@ -104,7 +128,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self._report_path} -t {time}'
+        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
 
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-d', self._test.indep_parameters.device)
@@ -117,6 +141,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
                                                             self._test.dep_parameters.thread_count)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nireq',
                                                             self._test.dep_parameters.inference_requests_count)
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-dtype',
+                                                            self._test.dep_parameters.input_type)
 
         command_line = f'{self._benchmark_path} {arguments}'
         return command_line
@@ -153,6 +179,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def __save_failed_test_log(self):
         log_filename = self.__make_log_filename()
         out = self._output
+        self.__log.info(f'Save failed test log to {log_filename}')
+
         with open(log_filename, 'w', encoding='utf-8') as file:
             for line in out:
                 file.write(line)
@@ -172,6 +200,12 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             test_settings.append(self._test.dep_parameters.runtime)
         if hasattr(self._test.dep_parameters, 'hint') and self._test.dep_parameters.hint:
             test_settings.append(self._test.dep_parameters.hint)
-        filename = '_'.join(test_settings)
+        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         filename += '.log'
-        return filename
+        file_root = Path(os.getcwd())
+        if not os.access(file_root, os.W_OK):
+            self.__log.warning(f'Current folder {file_root} not writable, save failed test log to /tmp')
+            file_root = Path('/tmp/failed_test_log')
+            file_root.mkdir(exist_ok=True)
+
+        return file_root / filename

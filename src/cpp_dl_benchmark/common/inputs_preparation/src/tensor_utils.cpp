@@ -21,7 +21,7 @@ bool TensorDescription::has_batch() const {
 
 bool TensorDescription::is_dynamic_batch() const {
     if (has_batch()) {
-        return shape[layout.find("N")] == -1;
+        return shape[layout.find("N")] == -1 || is_reshapable;
     }
     return false;
 }

@@ -1,6 +1,6 @@
 # CPP DL Benchmark
 
-The tool allows to measure deep learning models inference performance with various inference frameworks. This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app] as a reference and stick to its measurement methodology, thus provide consistent performance results.
+The tool allows to measure deep learning models inference performance with various inference frameworks. This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app] as a reference and stick to its measurement methodology, thus provides consistent performance results.
 
 ## Common prerequisites
 
@@ -17,6 +17,7 @@ The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
 
 1. [ONNX Runtime](onnxruntime_launcher/README.md)
 1. [OpenCV DNN](opencv_launcher/README.md)
+1. [TensorFlow Lite](tflite_launcher/README.md)
 
 ## Build
 

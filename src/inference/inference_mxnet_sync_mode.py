@@ -1,17 +1,21 @@
 import argparse
+import json
 import logging as log
 import os
 import sys
 import traceback
 import warnings
+from pathlib import Path
 from time import time
 
 import gluoncv
 import mxnet
 
 import postprocessing_data as pp
+from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
+from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
 
 
@@ -135,7 +139,13 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='path_save_model')
-
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'mxnet_sync_inference_report.json',
+                        dest='report_path')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
     args = parser.parse_args()
 
     return args
@@ -205,10 +215,9 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def inference_mxnet(net, num_iterations, get_slice, input_name):
+def inference_mxnet(net, num_iterations, get_slice, input_name, test_duration):
     predictions = None
     time_infer = []
-    slice_input = None
     if num_iterations == 1:
         mxnet.nd.waitall()
         t0 = time()
@@ -218,16 +227,22 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        for _ in range(num_iterations):
-            mxnet.nd.waitall()
-            t0 = time()
-            slice_input = get_slice()
-            net(slice_input[input_name]).softmax()
-            mxnet.nd.waitall()
-            t1 = time()
-            time_infer.append(t1 - t0)
-
+        time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
     return predictions, time_infer
+
+
+def inference_iteration(get_slice, input_name, net):
+    mxnet.nd.waitall()
+    slice_input = get_slice()
+    _, exec_time = infer_slice(input_name, net, slice_input)
+    return exec_time
+
+
+@get_exec_time()
+def infer_slice(input_name, net, slice_input):
+    res = net(slice_input[input_name]).softmax()
+    mxnet.nd.waitall()
+    return res
 
 
 def prepare_output(result, output_names, task):
@@ -248,6 +263,12 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='MxNet', version=mxnet.__version__)
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
+
     try:
         model_wrapper = MXNetIOModelWrapper(create_dict_for_modelwrapper(args))
         data_transformer = MXNetTransformer(create_dict_for_transformer(args))
@@ -273,11 +294,13 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,
-                                                 io.get_slice_input_mxnet, args.input_name)
+                                                 io.get_slice_input_mxnet, args.input_name, args.time)
 
         log.info('Computing performance metrics')
-        average_time, latency, fps = pp.calculate_performance_metrics_sync_mode(args.batch_size,
-                                                                                inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
+        report_writer.update_execution_results(**inference_result)
+        log.info(f'Write report to {args.report_path}')
+        report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
@@ -291,9 +314,8 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info('Performance results')
-            pp.log_performance_metrics_sync_mode(log, average_time, fps, latency)
-        else:
-            pp.print_performance_metrics_sync_mode(average_time, fps, latency)
+            log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)
