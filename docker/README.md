@@ -22,7 +22,13 @@
 
 ## Сборка образа и архивирование образа
 
-1. Cобрать образ.
+1. Cобрать базовый образ.
+
+   ```bash
+   docker build -t ubuntu_for_dli
+   ```
+
+1. Перейти в директорию с интересующим фреймворком и собрать образ.
 
    ```bash
    docker build -t <image_name>
@@ -51,7 +57,9 @@
 ## Пример последовательности команд для сбора образа OpenVINO и запуска бенчмарка
 
    ```bash
-   cd docker/OpenVINO_DLDT
+   cd docker/
+   docker build -t ubuntu_for_dli .
+   cd OpenVINO_DLDT/
    docker stop OpenVINO_DLDT
    docker rm OpenVINO_DLDT
    docker build -t dli_openvino:2022.2 .
