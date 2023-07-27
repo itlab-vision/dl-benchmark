@@ -72,8 +72,10 @@ if (BUILD_TFLITE_LAUNCHER)
                  SOURCES ${SOURCES}
                  HEADERS ${HEADERS}
                  INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                 DEPENDENCIES  ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
-                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex 
+                 DEPENDENCIES
+                    -Wl,-rpath-link,${TFLITE_BUILD_DIR} # workaround for custom RISC-V toolchains
+                    ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
+                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
                     ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
                  DEFINITIONS TFLITE_DEFAULT)
 endif()
@@ -83,8 +85,10 @@ if (BUILD_TFLITE_XNNPACK_LAUNCHER)
                  SOURCES ${SOURCES}
                  HEADERS ${HEADERS}
                  INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                 DEPENDENCIES ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
-                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex 
+                 DEPENDENCIES
+                    -Wl,-rpath-link,${TFLITE_BUILD_DIR} # workaround for custom RISC-V toolchains
+                    ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
+                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
                     ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
                  DEFINITIONS TFLITE_XNNPACK)
 endif()
