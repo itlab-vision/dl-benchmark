@@ -49,4 +49,4 @@ ENV PYTHONPATH="$OpenCV_INSTALL_DIR/python/python3/cv2/python-3.8${PYTHONPATH:+:
 #accuracy-check
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN /bin/bash -c 'source $INSTALL_DIR/setupvars.sh && \
-    accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
+    accuracy_check -c sample/opencv_sample_config.yml -m data/test_models -s sample'

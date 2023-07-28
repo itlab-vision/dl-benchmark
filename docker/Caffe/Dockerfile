@@ -11,11 +11,11 @@ ENV PATH /root/miniconda3/envs/caffe-env/bin:/root/miniconda3/bin:$PATH
 RUN echo "source activate caffe-env" > ~/.bashrc
 RUN export LD_LIBRARY_PATH=/root/miniconda3/envs/caffe-env/lib:${LD_LIBRARY_PATH}
 RUN conda config --add channels intel
-RUN /bin/bash -c "conda install -n caffe-env openvino-ie4py-ubuntu20"
-RUN /bin/bash -c "conda install -n caffe-env -y -c intel scikit-image"
+RUN /bin/bash -c "conda install -n caffe-env -y -c intel openvino-ie4py-ubuntu20=2022.1.0"
+RUN /bin/bash -c "conda install -n caffe-env -y -c intel scikit-image=0.17.2"
 RUN /bin/bash -c "conda install -n caffe-env -y -c intel caffe"
-RUN /bin/bash -c "conda install -n caffe-env -y -c anaconda libgcc-ng"
-RUN /bin/bash -c "conda install -n caffe-env -y -c defaults protobuf libprotobuf requests"
+RUN /bin/bash -c "conda install -n caffe-env -y -c anaconda libgcc-ng=11.2.0"
+RUN /bin/bash -c "conda install -n caffe-env -y -c defaults protobuf=3.17.2 libprotobuf=3.17.2 requests=2.27.1"
 
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN /bin/bash -c "python3 setup.py install_core"
