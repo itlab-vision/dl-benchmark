@@ -187,11 +187,12 @@ class OpenCVIOModelWrapper(IOModelWrapper):
 
 
 class PyTorchIOModelWrapper(IOModelWrapper):
-    def __init__(self, input_shapes, batch_size, tensor_rt_dtype, custom_input_type):
+    def __init__(self, input_shapes, batch_size, tensor_rt_dtype, custom_precision, custom_input_type):
         self._shapes = input_shapes
         self._batch = batch_size
         self._input_names = input_shapes.keys()
         self._tensor_rt_dtype = tensor_rt_dtype
+        self._custom_precision = custom_precision
         self._custom_input_type = custom_input_type
 
     def get_input_layer_names(self, model):
@@ -203,14 +204,19 @@ class PyTorchIOModelWrapper(IOModelWrapper):
 
     def get_input_layer_dtype(self, model, layer_name):
         from numpy import float32, float16
-        if self._tensor_rt_dtype:
+        if self._custom_input_type:
+            return self._custom_input_type
+        elif self._tensor_rt_dtype:
             import torch
             if self._tensor_rt_dtype in [torch.float, torch.float32]:
                 return float32
             elif self._tensor_rt_dtype in [torch.half, torch.float16]:
                 return float16
-        elif self._custom_input_type:
-            return self._custom_input_type
+        elif self._custom_precision:
+            if '32' in self._custom_precision:
+                return float32
+            elif '16' in self._custom_precision:
+                return float16
         return float32
 
 

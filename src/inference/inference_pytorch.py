@@ -140,6 +140,11 @@ def cli_argument_parser():
                         default=True,
                         type=bool,
                         dest='inference_mode')
+    parser.add_argument('--precision',
+                        help='Run model in selected precision',
+                        default=None,
+                        type=str,
+                        dest='precision')
     parser.add_argument('--tensor_rt_precision',
                         help='TensorRT precision FP16, FP32.'
                              ' Applicable only for hosts with NVIDIA GPU and pytorch built with TensorRT support',
@@ -241,13 +246,13 @@ def load_model_from_file(model_path):
     return model
 
 
-def load_model_from_config(model_name, model_config, module, weights, device='cpu'):
+def load_model_from_config(model_name, model_config, module, weights, device='cpu', precision='FP32'):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model(device=device)
+    model = model_cls.create_model(device=device, precision=precision)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
@@ -261,7 +266,7 @@ def load_model_from_config(model_name, model_config, module, weights, device='cp
         return model, custom_compile_func
 
 
-def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, compile_backend,
+def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, precision, compile_backend,
                   custom_compile_func):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
@@ -273,6 +278,9 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
 
     else:
         raise ValueError(f'Model type {model_type} is not supported for inference')
+
+    if precision == 'FP16' and hasattr(model, 'half'):
+        model.half()
 
     model.to(device)
     if hasattr(model, 'eval'):
@@ -390,9 +398,28 @@ def main():
                                              target_device=args.device)
 
     try:
+        if args.device == 'NVIDIA_GPU' and args.precision:
+            torch.backends.cudnn.benchmark = True
+            if args.precision == 'TF32':
+                log.info('Use the TensorFloat32 (TF32) tensor cores, available on new NVIDIA GPUs since Ampere')
+                torch.backends.cudnn.allow_tf32 = True
+                torch.backends.cuda.matmul.allow_tf32 = True
+            elif args.precision == 'FP32':
+                log.info('Disable TF32')
+                torch.backends.cudnn.allow_tf32 = False
+                torch.backends.cuda.matmul.allow_tf32 = False
+                log.info('Disable FP16 reduction')
+                torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
+                log.info('Disable BF16 reduction')
+                torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False
+            elif args.precision == 'FP16':
+                log.info('Enable FP16 reduction')
+                torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = True
+
         tensor_rt_dtype = get_tensor_rt_dtype(args.tensor_rt_precision)
         args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
-        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, tensor_rt_dtype, args.input_type)
+        model_wrapper = PyTorchIOModelWrapper(args.input_shapes, args.batch_size, tensor_rt_dtype,
+                                              args.precision, args.input_type)
 
         args.mean = prep.parse_input_arg(args.mean, args.input_names)
         args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
@@ -413,7 +440,8 @@ def main():
                                                                     model_config=model_config,
                                                                     module=args.module,
                                                                     weights=args.weights,
-                                                                    device=device)
+                                                                    device=device,
+                                                                    precision=args.precision)
             else:
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
@@ -421,6 +449,7 @@ def main():
         compiled_model = compile_model(model=model, device=device, model_type=model_type,
                                        use_tensorrt=args.tensor_rt_precision is not None,
                                        shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,
+                                       precision=args.precision,
                                        compile_backend=args.compile_with_backend,
                                        custom_compile_func=custom_compile_func)
 

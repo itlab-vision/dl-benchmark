@@ -106,10 +106,8 @@ class PyTorchProcess(ProcessHandler):
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--tensor_rt_precision', tensor_rt_precision)
 
-        compile_with_backend = self._test.dep_parameters.compile_with_backend
-        if compile_with_backend:
-            common_params = PyTorchProcess._add_argument_to_cmd_line(
-                common_params, '--compile_with_backend', compile_with_backend)
+        precision = self._test.model.precision
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)
 
         layout = self._test.dep_parameters.layout
         if layout:
@@ -119,6 +117,11 @@ class PyTorchProcess(ProcessHandler):
         if input_type:
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--input_type', input_type)
+
+        compile_with_backend = self._test.dep_parameters.compile_with_backend
+        if compile_with_backend:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--compile_with_backend', compile_with_backend)
 
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 

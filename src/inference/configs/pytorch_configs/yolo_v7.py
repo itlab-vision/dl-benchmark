@@ -33,7 +33,7 @@ class YoloV7(ModelHandler):
         if not self.weights.exists():
             subprocess.run(['wget', '-O', str(self.weights), weights_path])
 
-    def create_model(self, device):
+    def create_model(self, device, **kwargs):
         with prepend_to_path([str(self.model_dir)]):
             from models.experimental import attempt_load  # noqa: E402
             return attempt_load(self.weights, map_location=device)

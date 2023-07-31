@@ -10,10 +10,10 @@ class StableDiffusionV15(ModelHandler):
         self.pretrained = True
         self.use_custom_compile_step = True
 
-    def create_model(self, **kwargs):
+    def create_model(self, precision, **kwargs):
         return StableDiffusionPipeline.from_pretrained(
             'runwayml/stable-diffusion-v1-5',
-            torch_dtype=torch.float32,
+            torch_dtype=torch.float16 if precision == 'FP16' else torch.float32,
         )
 
     def compile_model(self, model, mode, backend, **kwargs):
