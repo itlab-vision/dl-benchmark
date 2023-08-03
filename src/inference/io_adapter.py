@@ -327,10 +327,11 @@ class TextToImageIO(TextPromtIO):
 
 class Gpt2IO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
-        return self._prompts[0]
+        return [self._prompts[0]] * self._batch_size
 
     def process_output(self, result, log):
-        log.info(f'Generated result: \n{result} ... \n')
+        output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
+        log.info(f'Generated results: \n{output_text}')
 
 
 class ClassificationIO(IOAdapter):

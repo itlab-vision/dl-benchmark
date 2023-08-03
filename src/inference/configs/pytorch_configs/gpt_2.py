@@ -5,6 +5,9 @@ from model_handler import ModelHandler
 
 MAX_TEXT_LEN = 70  # maximum number of words in output text
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+# the lines below are needed to make batch inference work correctly
+tokenizer.padding_side = 'left'
+tokenizer.pad_token = tokenizer.eos_token
 
 
 class Gpt2(ModelHandler):
@@ -16,17 +19,21 @@ class Gpt2(ModelHandler):
         return GPT2LMHeadModel.from_pretrained('gpt2', pad_token_id=tokenizer.eos_token_id)
 
 
-def gpt_text_generation(gpt_model, input_promt, device):
-    input_ids = tokenizer.encode(input_promt, return_tensors='pt').to(device)
+def tokenize(prompt):
+    return tokenizer(prompt, return_tensors='pt', padding=True)
 
-    # Basic Sampling decoding method
-    sample_output = gpt_model.generate(
-        input_ids,
+
+def generate(gpt_model, inputs, device):
+    return gpt_model.generate(
+        input_ids=inputs['input_ids'].to(device),
+        attention_mask=inputs['attention_mask'].to(device),
         do_sample=True,
         max_length=MAX_TEXT_LEN,
         top_k=0,
         temperature=0.8,
     )
-    decoded_output = tokenizer.decode(sample_output[0], skip_special_tokens=True)
 
-    return decoded_output
+
+def decode(outputs):
+    decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+    return decoded_outputs

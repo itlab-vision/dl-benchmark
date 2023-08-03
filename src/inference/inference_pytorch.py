@@ -5,6 +5,7 @@ import logging as log
 import re
 import sys
 import traceback
+from functools import partial
 from pathlib import Path
 from time import time
 
@@ -330,8 +331,8 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             elif task_type == 'yolo_v7':
                 output = model(*inputs)[0].to('cpu')
             elif task_type == 'gpt-2':
-                from configs.pytorch_configs.gpt_2 import gpt_text_generation
-                output = gpt_text_generation(gpt_model=model, input_promt=get_slice(), device=device)
+                from configs.pytorch_configs.gpt_2 import tokenize, generate, decode
+                output = decode(generate(gpt_model=model, inputs=tokenize(get_slice()), device=device))
 
             t1 = time()
             time_infer.append(t1 - t0)
@@ -344,9 +345,9 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
 
 @get_exec_time()
-def infer_slice(device, inputs, model, as_prompt=False):
-    if as_prompt:
-        model(prompt=inputs)
+def infer_slice(device, inputs, model, input_kwarg_name=None):
+    if input_kwarg_name:
+        model(**{input_kwarg_name: inputs})
     else:
         model(*inputs)
     if device.type == 'cuda':
@@ -355,14 +356,21 @@ def infer_slice(device, inputs, model, as_prompt=False):
 
 def inference_iteration(device, get_slice, input_names, model, task_type):
     inputs = None
+    input_kwarg_name = None
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-    elif task_type in ['gpt-2', 'text-to-image']:
+    elif task_type == 'gpt-2':
+        from configs.pytorch_configs.gpt_2 import tokenize, generate
+        inputs = tokenize(get_slice())
+        model = partial(generate, gpt_model=model, device=device)
+        input_kwarg_name = 'inputs'
+    elif task_type == 'text-to-image':
+        input_kwarg_name = 'prompt'
         inputs = get_slice()
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
-    _, exec_time = infer_slice(device, inputs, model, task_type == 'text-to-image')
+    _, exec_time = infer_slice(device, inputs, model, input_kwarg_name)
 
     return exec_time
 
