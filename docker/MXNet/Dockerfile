@@ -12,8 +12,12 @@ RUN pip3 install gluoncv[full]
 # Install MXNet
 ARG MXNET_VERSION=1.9.1
 RUN pip3 install mxnet==${MXNET_VERSION}
+RUN pip uninstall -y numpy && pip install numpy==1.23.1
 
 # Download Accuracy Checker
-WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN /bin/bash -c 'accuracy_check -c sample/sample_config.yml -m data/test_models -s sample'
 WORKDIR /tmp/
+COPY config.yml config.yml
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN /bin/bash -c 'accuracy_check -c /tmp/config.yml -m data/test_models -s sample'
+WORKDIR /tmp/
+RUN rm config.yml

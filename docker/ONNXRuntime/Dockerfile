@@ -43,10 +43,12 @@ RUN git clone https://github.com/microsoft/onnxruntime.git && \
         -Donnxruntime_BUILD_SHARED_LIB=ON \
         -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake && \ 
     make install -j$(nproc --all)
-RUN pip3 install onnxruntime==${ONNX_VERSION}
+RUN pip install onnxruntime==${ONNX_VERSION} && pip install onnx==${ONNX_VERSION}
 
 # accuracy-check
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-RUN accuracy_check -c sample/sample_config.yml -m data/test_models -s sample
+COPY config.yml config.yml
+RUN accuracy_check -c config.yml -m data/test_models -s sample
+RUN rm config.yml
 
 WORKDIR /tmp/
