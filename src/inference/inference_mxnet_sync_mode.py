@@ -10,6 +10,7 @@ from time import time
 
 import gluoncv
 import mxnet
+import numpy as np
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -55,7 +56,7 @@ def cli_argument_parser():
                              'W is an input tensor width,'
                              'H is an input tensor height,'
                              'C is an input tensor number of channels.',
-                        required=True,
+                        required=False,
                         type=int,
                         nargs=4,
                         dest='input_shape')
@@ -109,7 +110,8 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection', 
+                                 'segmentation', 'instance-segmentation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -146,6 +148,16 @@ def cli_argument_parser():
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
+    parser.add_argument('--threshold',
+                        help='Raw output without logs.',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     args = parser.parse_args()
 
     return args
@@ -222,7 +234,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name, test_duration):
         mxnet.nd.waitall()
         t0 = time()
         slice_input = get_slice()
-        predictions = net(slice_input[input_name]).softmax()
+        predictions = net(slice_input[input_name])
         mxnet.nd.waitall()
         t1 = time()
         time_infer.append(t1 - t0)
@@ -245,13 +257,28 @@ def infer_slice(input_name, net, slice_input):
     return res
 
 
-def prepare_output(result, output_names, task):
+def prepare_output(result, output_names, task, input_shape):
     if task == 'feedforward':
         return {}
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[0]: result.asnumpy()}
+    if task == 'detection':
+        box_ids, scores, bboxes = result
+        box_ids = (box_ids.asnumpy())[0]
+        scores = (scores.asnumpy())[0]
+        bboxes = (bboxes.asnumpy())[0]
+        tmp = np.concatenate([box_ids, scores, bboxes], axis=1)
+        num_of_images = np.zeros((tmp.shape[0], 1))
+        tmp = np.concatenate([num_of_images, tmp], axis=1)
+        tmp = np.expand_dims(tmp, axis=0)
+        tmp = np.expand_dims(tmp, axis=0)
+        return {output_names[0]: tmp}
+    if task == 'segmentation':
+        result = mxnet.nd.squeeze(mxnet.nd.argmax(result[0], 1)).asnumpy()
+        result = np.expand_dims(result, axis=0)
+        return {output_names[0]: result}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -306,7 +333,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    result = prepare_output(result, args.output_names, args.task)
+                    result = prepare_output(result, args.output_names, args.task, [args.batch_size] + args.input_shape[1:4])
 
                     log.info('Inference results')
                     io.process_output(result, log)
