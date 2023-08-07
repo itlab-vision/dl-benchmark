@@ -17,7 +17,7 @@ from transformer import TensorFlowTransformer
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.model_converters.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
-                                                    get_input_operation_name)  # noqa
+                                                    get_input_operation_name, restrisct_gpu_usage)  # noqa
 
 
 def cli_argument_parser():
@@ -244,6 +244,11 @@ def main():
     if args.device == 'CPU' and is_gpu_available():
         log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
                     f' tensorflow will use NVIDIA_GPU by default')
+
+    if args.device == 'NVIDIA_GPU' and is_gpu_available():
+        log.info('Restruct GPU usage to 1 GPU device')
+        restrisct_gpu_usage()
+
     input_name = args.input_name
     input_op_name = get_input_operation_name(input_name)
 
