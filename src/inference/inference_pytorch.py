@@ -260,8 +260,7 @@ def load_model_from_config(model_name, model_config, module, weights, device='cp
     custom_compile_func = model_cls.compile_model if model_cls.use_custom_compile_step else None
 
     if weights:
-        model(weights=weights)
-        return model(), custom_compile_func
+        return model(weights=weights), custom_compile_func
 
     if model_cls.pretrained:
         return model, custom_compile_func
