@@ -25,5 +25,6 @@ class ClipVitB32Text(ModelHandler):
         hf_hub_download(repo_id='openai/clip-vit-base-patch32', filename='config.json', local_dir=self.model_dir)
         hf_hub_download(repo_id='openai/clip-vit-base-patch32', filename='pytorch_model.bin', local_dir=self.model_dir)
 
-    def create_model(self, **kwargs):
-        return CLIPTextModelWithProjection.from_pretrained(self.model_dir)
+    def create_model(self, should_be_traced, **kwargs):
+        trace_args = self.get_traced_loading_flags() if should_be_traced else {}
+        return CLIPTextModelWithProjection.from_pretrained(self.model_dir, **trace_args)

@@ -8,5 +8,6 @@ class Wav2vec2Base(ModelHandler):
         self.weights = None
         self.pretrained = True
 
-    def create_model(self, **kwargs):
-        return Wav2Vec2ForCTC.from_pretrained('facebook/wav2vec2-base-960h')
+    def create_model(self, should_be_traced, **kwargs):
+        trace_args = self.get_traced_loading_flags() if should_be_traced else {}
+        return Wav2Vec2ForCTC.from_pretrained('facebook/wav2vec2-base-960h', **trace_args)

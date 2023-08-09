@@ -247,27 +247,29 @@ def load_model_from_file(model_path):
     return model
 
 
-def load_model_from_config(model_name, model_config, module, weights, device='cpu', precision='FP32'):
+def load_model_from_config(model_name, model_config, module, weights, device='cpu', precision='FP32',
+                           should_be_traced=False):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model(device=device, precision=precision)
+    model = model_cls.create_model(device=device, precision=precision, should_be_traced=should_be_traced)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
     custom_compile_func = model_cls.compile_model if model_cls.use_custom_compile_step else None
+    custom_trace_func = model_cls.trace_model if model_cls.use_custom_trace_step else None
 
     if weights:
-        return model(weights=weights), custom_compile_func
+        return model(weights=weights), custom_compile_func, custom_trace_func
 
     if model_cls.pretrained:
-        return model, custom_compile_func
+        return model, custom_compile_func, custom_trace_func
 
 
-def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dtype, precision, compile_backend,
-                  custom_compile_func):
+def compile_model(model, device, model_type, shapes, input_type, tensor_rt_dtype, precision, compile_backend,
+                  custom_compile_func, custom_trace_func):
     if model_type == 'baseline':
         log.info('Inference will be executed on baseline model')
     elif model_type == 'scripted':
@@ -275,15 +277,15 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
         model = torch.jit.script(model)
         if compile_backend:
             raise ValueError('Can`t use torch.compile() with scripted model')
-
     else:
         raise ValueError(f'Model type {model_type} is not supported for inference')
 
-    if precision == 'FP16' and hasattr(model, 'half'):
+    model.to(device)
+
+    if precision == 'FP16' and isinstance(model, torch.nn.Module):
         model.half()
 
-    model.to(device)
-    if hasattr(model, 'eval'):
+    if isinstance(model, torch.nn.Module):
         model.eval()
 
     if compile_backend:
@@ -299,10 +301,27 @@ def compile_model(model, device, model_type, use_tensorrt, shapes, tensor_rt_dty
             raise ValueError('Torch.Compile is only available for PyTorch 2.x versions. '
                              f'Current version: {torch_version}')
 
-    if use_tensorrt:
+    if tensor_rt_dtype is not None:
+        log.info(f'Run Torch-TensorRT with {tensor_rt_dtype} precision')
         if is_gpu_available():
+            if model_type == 'baseline':
+                log.info('Make traced model for Torch-TensorRT')
+                if custom_trace_func:
+                    model = custom_trace_func(model=model, device=device, shapes=shapes)
+                else:
+                    input_rand = [torch.rand(shapes[key]).to(device) for key in shapes]
+                    if input_type == 'int64':
+                        input_rand = [key.int() for key in input_rand]
+                    model = torch.jit.trace(model, input_rand)
+
+            if tensor_rt_dtype == torch.half and isinstance(model, torch.nn.Module):
+                model.half()
+
+            log.info('Make compiled model for Torch-TensorRT')
             import torch_tensorrt
-            inputs = [torch_tensorrt.Input(shapes[key], dtype=tensor_rt_dtype) for key in shapes]
+            inputs = [torch_tensorrt.Input(shapes[key],
+                                           dtype=tensor_rt_dtype if input_type != 'int64' else torch.int)
+                      for key in shapes]
             tensor_rt_ts_module = torch_tensorrt.compile(model, inputs=inputs,
                                                          truncate_long_and_double=True,
                                                          enabled_precisions=tensor_rt_dtype)
@@ -436,6 +455,7 @@ def main():
 
         device = get_device_to_infer(args.device)
         custom_compile_func = None
+        custom_trace_func = None
         if args.model is not None:
             model_type = 'scripted'
             model = load_model_from_file(args.model)
@@ -443,22 +463,25 @@ def main():
             model_type = 'baseline'
             model_config = get_model_config(args.model_name)
             if model_config and args.use_model_config:
-                model, custom_compile_func = load_model_from_config(model_name=args.model_name,
-                                                                    model_config=model_config,
-                                                                    module=args.module,
-                                                                    weights=args.weights,
-                                                                    device=device,
-                                                                    precision=args.precision)
+                model, custom_compile_func, custom_trace_func = load_model_from_config(
+                    model_name=args.model_name,
+                    model_config=model_config,
+                    module=args.module,
+                    weights=args.weights,
+                    device=device,
+                    precision=args.precision,
+                    should_be_traced=tensor_rt_dtype is not None)
             else:
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
 
         compiled_model = compile_model(model=model, device=device, model_type=model_type,
-                                       use_tensorrt=args.tensor_rt_precision is not None,
-                                       shapes=args.input_shapes, tensor_rt_dtype=tensor_rt_dtype,
+                                       shapes=args.input_shapes, input_type=args.input_type,
+                                       tensor_rt_dtype=tensor_rt_dtype,
                                        precision=args.precision,
                                        compile_backend=args.compile_with_backend,
-                                       custom_compile_func=custom_compile_func)
+                                       custom_compile_func=custom_compile_func,
+                                       custom_trace_func=custom_trace_func)
 
         if args.task in ['classification', 'feedforward']:
             for layer_name in args.input_names:

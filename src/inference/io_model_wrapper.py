@@ -204,14 +204,14 @@ class PyTorchIOModelWrapper(IOModelWrapper):
 
     def get_input_layer_dtype(self, model, layer_name):
         from numpy import float32, float16
-        if self._custom_input_type:
-            return self._custom_input_type
-        elif self._tensor_rt_dtype:
+        if self._tensor_rt_dtype:
             import torch
             if self._tensor_rt_dtype in [torch.float, torch.float32]:
                 return float32
             elif self._tensor_rt_dtype in [torch.half, torch.float16]:
                 return float16
+        elif self._custom_input_type:
+            return self._custom_input_type
         elif self._custom_precision:
             if '32' in self._custom_precision:
                 return float32

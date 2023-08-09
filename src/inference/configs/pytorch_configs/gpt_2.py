@@ -1,3 +1,4 @@
+import torch
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 from model_handler import ModelHandler
@@ -14,9 +15,18 @@ class Gpt2(ModelHandler):
     def set_model_weights(self, **kwargs):
         self.weights = None
         self.pretrained = True
+        self.use_custom_trace_step = True
 
-    def create_model(self, **kwargs):
-        return GPT2LMHeadModel.from_pretrained('gpt2', pad_token_id=tokenizer.eos_token_id)
+    def create_model(self, should_be_traced, **kwargs):
+        trace_args = self.get_traced_loading_flags() if should_be_traced else {}
+        no_cache_args = self.get_no_cache_flags()
+        return GPT2LMHeadModel.from_pretrained('gpt2', pad_token_id=tokenizer.eos_token_id,
+                                               **trace_args, **no_cache_args)
+
+    def trace_model(self, model, device, **kwargs):
+        tokens = tokenizer('Test', return_tensors='pt')['input_ids'].to(device)
+        traced_model = torch.jit.trace(model, tokens)
+        return traced_model
 
 
 def tokenize(prompt):

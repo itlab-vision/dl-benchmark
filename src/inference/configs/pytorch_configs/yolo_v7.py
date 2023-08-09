@@ -1,6 +1,8 @@
 import subprocess
 import sys
 from pathlib import Path
+import torch
+import torch.nn as nn
 
 from model_handler import ModelHandler
 
@@ -14,6 +16,7 @@ class YoloV7(ModelHandler):
         self.pretrained = True
         self.download_model_repo()
         self.download_model_weigths()
+        self.use_custom_trace_step = True
 
     def download_model_repo(self):
         self.model_dir = CONFIG_DIR.joinpath('pytorch_configs', self.model_name)
@@ -37,6 +40,23 @@ class YoloV7(ModelHandler):
         with prepend_to_path([str(self.model_dir)]):
             from models.experimental import attempt_load  # noqa: E402
             return attempt_load(self.weights, map_location=device)
+
+    def trace_model(self, model, device, shapes):
+        img = torch.randn(list(shapes.values())[0]).to(device)
+        with prepend_to_path([str(self.model_dir)]):
+            import models  # noqa: E402
+            from utils.activations import Hardswish, SiLU  # noqa: E402
+            for _, m in model.named_modules():
+                m._non_persistent_buffers_set = set()
+                if isinstance(m, models.common.Conv):
+                    if isinstance(m.act, nn.Hardswish):
+                        m.act = Hardswish()
+                    elif isinstance(m.act, nn.SiLU):
+                        m.act = SiLU()
+        model(img)
+
+        traced = torch.jit.trace(model, img, strict=False)
+        return traced
 
 
 def replace_unused_imports_in_repo(repo_dir: Path):
