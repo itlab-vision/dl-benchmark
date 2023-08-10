@@ -51,6 +51,7 @@ class TensorFlowProcess(ProcessHandler):
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--num_intra_threads', num_intra_threads)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        common_params = self._add_flag_to_cmd_line(common_params, '--restrisct_gpu_usage')
 
         command_line = f'{python} {path_to_tensorflow_script} {common_params}'
 

@@ -130,10 +130,15 @@ def cli_argument_parser():
                         type=Path,
                         default=Path(__file__).parent / 'tf_inference_report.json',
                         dest='report_path')
-    parser.add_argument('--time', required=False, default=0, type=int,
+    parser.add_argument('--time',
+                        required=False,
+                        default=0,
+                        type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
-
+    parser.add_argument('--restrisct_gpu_usage',
+                        action='store_true',
+                        help='Restrict TensorFlow to only use the first GPU')
     args = parser.parse_args()
 
     return args
@@ -238,16 +243,17 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
 
-    if args.device == 'NVIDIA_GPU' and not is_gpu_available():
-        raise AssertionError('NVIDIA_GPU device not found on hostmachine, unable to infer on NVIDIA_GPU')
+    if args.device == 'NVIDIA_GPU':
+        if is_gpu_available():
+            if args.restrisct_gpu_usage:
+                log.info('Restruct GPU usage to 1 GPU device')
+                restrisct_gpu_usage()
+        else:
+            raise AssertionError('NVIDIA_GPU device not found on hostmachine, unable to infer on NVIDIA_GPU')
 
     if args.device == 'CPU' and is_gpu_available():
         log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
                     f' tensorflow will use NVIDIA_GPU by default')
-
-    if args.device == 'NVIDIA_GPU' and is_gpu_available():
-        log.info('Restruct GPU usage to 1 GPU device')
-        restrisct_gpu_usage()
 
     input_name = args.input_name
     input_op_name = get_input_operation_name(input_name)
