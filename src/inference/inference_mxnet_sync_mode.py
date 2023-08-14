@@ -110,7 +110,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification', 'detection', 
+                        choices=['feedforward', 'classification', 'detection',
                                  'segmentation', 'instance-segmentation'],
                         default='feedforward',
                         type=str,
@@ -149,7 +149,7 @@ def cli_argument_parser():
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
     parser.add_argument('--threshold',
-                        help='Raw output without logs.',
+                        help='Probability threshold for detections filtering.',
                         default=0.5,
                         type=float,
                         dest='threshold')
@@ -223,6 +223,7 @@ def create_dict_for_modelwrapper(args):
     dictionary = {
         'input_name': args.input_name,
         'input_shape': [args.batch_size] + args.input_shape[1:4],
+        'model_name': args.model_name
     }
     return dictionary
 
@@ -257,7 +258,7 @@ def infer_slice(input_name, net, slice_input):
     return res
 
 
-def prepare_output(result, output_names, task, input_shape):
+def prepare_output(result, output_names, task, model_wrapper):
     if task == 'feedforward':
         return {}
     if (output_names is None) or len(output_names) == 0:
@@ -266,19 +267,31 @@ def prepare_output(result, output_names, task, input_shape):
         return {output_names[0]: result.asnumpy()}
     if task == 'detection':
         box_ids, scores, bboxes = result
+        print(box_ids.shape, scores.shape, bboxes.shape)
         box_ids = (box_ids.asnumpy())[0]
         scores = (scores.asnumpy())[0]
         bboxes = (bboxes.asnumpy())[0]
+
+        if model_wrapper.get_model_name_prefix() == 'center_net':
+            box_ids = np.expand_dims(box_ids, axis=1)
+            scores = np.expand_dims(scores, axis=1)
+
         tmp = np.concatenate([box_ids, scores, bboxes], axis=1)
         num_of_images = np.zeros((tmp.shape[0], 1))
         tmp = np.concatenate([num_of_images, tmp], axis=1)
         tmp = np.expand_dims(tmp, axis=0)
         tmp = np.expand_dims(tmp, axis=0)
+        tmp = model_wrapper.detection_output_processing(tmp)
         return {output_names[0]: tmp}
     if task == 'segmentation':
         result = mxnet.nd.squeeze(mxnet.nd.argmax(result[0], 1)).asnumpy()
         result = np.expand_dims(result, axis=0)
         return {output_names[0]: result}
+    if task == 'instance-segmentation':
+        ids, scores, bboxes, masks = [xx[0].asnumpy() for xx in result]
+        print(ids.shape, scores.shape, bboxes.shape, masks.shape)
+        print(bboxes)
+        return {'boxes': bboxes, 'scores': scores, 'classes': ids, 'raw_masks': masks}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -333,7 +346,8 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    result = prepare_output(result, args.output_names, args.task, [args.batch_size] + args.input_shape[1:4])
+                    result = prepare_output(result, args.output_names, args.task,
+                                            model_wrapper)
 
                     log.info('Inference results')
                     io.process_output(result, log)
