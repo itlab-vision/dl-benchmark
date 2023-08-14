@@ -264,10 +264,10 @@ def prepare_output(result, output_names, task, model_wrapper):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
+        result = model_wrapper.classification_output_processing(result)
         return {output_names[0]: result.asnumpy()}
     if task == 'detection':
         box_ids, scores, bboxes = result
-        print(box_ids.shape, scores.shape, bboxes.shape)
         box_ids = (box_ids.asnumpy())[0]
         scores = (scores.asnumpy())[0]
         bboxes = (bboxes.asnumpy())[0]
