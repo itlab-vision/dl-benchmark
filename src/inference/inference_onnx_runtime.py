@@ -80,7 +80,7 @@ def cli_argument_parser():
                         dest='number_top')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification'],
+                        choices=['classification', 'yolo_v7_onnx'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -220,6 +220,8 @@ def prepare_output(result, output_names, task, args):
         output_names = ['_output']
     if task == 'classification':
         return {output_names[0]: np.array(result).reshape(args.batch_size, -1)}
+    elif task == 'yolo_v7_onnx':
+        return result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 

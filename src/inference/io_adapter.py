@@ -281,6 +281,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return TextToImageIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7':
             return YoloV7(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v7_onnx':
+            return YoloV7ONNX(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -1971,3 +1973,35 @@ class YoloV7(IOAdapter):
         out_img = os.path.join(os.path.dirname(__file__), 'out_detection.bmp')
         cv2.imwrite(out_img, image)
         log.info('Result image was saved to {0}'.format(out_img))
+
+
+class YoloV7ONNX(IOAdapter):
+    def process_output(self, result, log):
+        self.load_color_map('mscoco_color_map.txt')
+        self.load_labels_map('mscoco_names.txt')
+
+        input_layer_name = next(iter(self._input))
+        input_ = self._input[input_layer_name]
+        shapes = self._original_shapes[input_layer_name]
+        ib = input_.shape[0]
+        b = len(result)
+        images = []
+        for i in range(b * ib):
+            orig_h, orig_w = shapes[i % ib]
+            image = input_[i % ib]
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+        for batch_detections in result:
+            for det in batch_detections:
+                batch, x_min, y_min, x_max, y_max, cls, _ = det.astype(int)
+                color = self._classes_color_map[cls]
+                label = f'{self._labels_map[cls]} {det[-1]:.2f}'
+                cv2.rectangle(images[batch], (x_min, y_min), (x_max, y_max), color, 1)
+                cv2.putText(images[batch], label, (x_min, y_min - 2), 0, 0.3, [225, 255, 255],
+                            thickness=1, lineType=cv2.LINE_AA)
+
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{0}.bmp'.format(count + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {0}'.format(out_img))
+            count += 1
