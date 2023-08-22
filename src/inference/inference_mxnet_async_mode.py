@@ -253,15 +253,14 @@ def prepare_output(result, output_names, task, model_wrapper):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
-        result = model_wrapper.classification_output_processing(result)
-        return {output_names[0]: result.asnumpy()}
+        return {output_names[0]: (result.softmax()).asnumpy()}
     if task == 'detection':
         box_ids, scores, bboxes = result
         box_ids = (box_ids.asnumpy())[0]
         scores = (scores.asnumpy())[0]
         bboxes = (bboxes.asnumpy())[0]
 
-        if model_wrapper.get_model_name_prefix() == 'center_net':
+        if 'center_net' in model_wrapper.get_model_name():
             box_ids = np.expand_dims(box_ids, axis=1)
             scores = np.expand_dims(scores, axis=1)
 
@@ -270,7 +269,11 @@ def prepare_output(result, output_names, task, model_wrapper):
         tmp = np.concatenate([num_of_images, tmp], axis=1)
         tmp = np.expand_dims(tmp, axis=0)
         tmp = np.expand_dims(tmp, axis=0)
-        tmp = model_wrapper.detection_output_processing(tmp)
+        input_shape = model_wrapper.get_input_layer_shape(model=None, layer_name=None)
+        tmp[:, :, :, 3] /= input_shape[2]
+        tmp[:, :, :, 4] /= input_shape[3]
+        tmp[:, :, :, 5] /= input_shape[2]
+        tmp[:, :, :, 6] /= input_shape[3]
         return {output_names[0]: tmp}
     if task == 'segmentation':
         result = mxnet.nd.squeeze(mxnet.nd.argmax(result[0], 1)).asnumpy()

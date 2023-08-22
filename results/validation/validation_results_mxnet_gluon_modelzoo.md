@@ -368,6 +368,9 @@ Image resolution: 640 x 480
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
 Bounding box (upper left anf bottom right corners)<br>
+TV (110, 41), (397, 304)<br>
+MOUSE (508, 337), (559, 374)<br>
+KEYBOARD (241, 342), (496, 461)<br>
 
 
  Model   | Python (latency mode, implementation) | Python (throughput mode, implementation) |
@@ -399,4 +402,4 @@ Bounding box (upper left anf bottom right corners)<br>
 [imagenet]: http://www.image-net.org
 [gluon_modelzoo_classification]: https://cv.gluon.ai/model_zoo/classification.html
 [ms_coco]: http://cocodataset.org
-[pascal_voc]: http://host.robots.ox.ac.uk/pascal/VOC/
+[pascal_voc]: http://host.robots.ox.ac.uk/pascal/VOC
