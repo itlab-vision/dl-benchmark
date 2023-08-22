@@ -118,15 +118,16 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def _fill_command_line_cpp(self):
         model = self._test.model.model
         weights = self._test.model.weight
-        dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
         time = int(self._test.indep_parameters.test_time_limit)
+        dataset_path = self._test.dataset.path if self._test.dataset else None
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
+        arguments += f' -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
 
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-i', dataset_path)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-d', self._test.indep_parameters.device)
 

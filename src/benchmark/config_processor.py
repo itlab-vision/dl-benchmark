@@ -69,12 +69,15 @@ class TestConfigParser:
     def parse_dataset(self, curr_test):
         dataset_tag = curr_test.getElementsByTagName('Dataset')[0]
 
-        name = dataset_tag.getElementsByTagName('Name')[0].firstChild.data.strip()
-        path = dataset_tag.getElementsByTagName('Path')[0].firstChild.data.strip()
+        try:
+            name = dataset_tag.getElementsByTagName('Name')[0].firstChild.data.strip()
+            path = dataset_tag.getElementsByTagName('Path')[0].firstChild.data.strip()
 
-        self._log.info(f'Dataset:\n\tName - {name}\n\tPath - {path}')
-
-        return Dataset(name=name, path=path)
+            self._log.info(f'Dataset:\n\tName - {name}\n\tPath - {path}')
+            return Dataset(name=name, path=path)
+        except AttributeError:
+            self._log.warning('No dataset provided. Dummy input will be used')
+            return None
 
     def parse_independent_parameters(self, curr_test):
         indep_parameters_tag = curr_test.getElementsByTagName('FrameworkIndependent')[0]

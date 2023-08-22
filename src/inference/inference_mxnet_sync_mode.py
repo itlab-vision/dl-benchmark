@@ -41,7 +41,7 @@ def cli_argument_parser():
                         dest='hybrid')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -289,8 +289,18 @@ def main():
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
-        log.info(f'Preparing input data {args.input}')
-        io.prepare_input(net, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(net, args.input)
+        else:
+            current_shape = model_wrapper.get_input_layer_shape(net, args.input_name)
+            transformed_shape = [
+                args.batch_size,
+                *io._transformer.get_shape_in_chw_order(current_shape, args.input_name[0]),
+            ]
+            custom_shapes = {args.input_name[0]: transformed_shape}
+            model_wrapper._input_shape = [transformed_shape]
+            io.fill_unset_inputs(net, log, custom_shapes)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = inference_mxnet(net, args.number_iter,

@@ -240,8 +240,10 @@ class ONNXIOModelWrapper(IOModelWrapper):
             for model_input in inputs_info:
                 if model_input.name == layer_name:
                     input_shape = model_input.shape
-
-        return [self._batch, *input_shape[1:]]
+        try:
+            return [self._batch, *input_shape[1:]]
+        except TypeError:
+            return [input_shape]
 
     def get_input_layer_dtype(self, model, layer_name):
         inputs_info = model.get_inputs()

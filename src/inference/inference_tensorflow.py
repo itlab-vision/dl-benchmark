@@ -30,7 +30,7 @@ def cli_argument_parser():
                         dest='model_path')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -283,9 +283,11 @@ def main():
     for layer in input_shapes:
         log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
 
-    log.info('Preparing input data')
-    io.prepare_input(graph, args.input)
-    io.fill_unset_inputs(graph, log)
+    if args.input:
+        log.info(f'Preparing input data: {args.input}')
+        io.prepare_input(graph, args.input)
+    else:
+        io.fill_unset_inputs(graph, log, custom_shapes=input_shapes)
 
     inputs_names = model_wrapper.get_input_layer_names(graph)
     log.info(f'Got input names {inputs_names}')

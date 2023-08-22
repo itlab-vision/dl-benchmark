@@ -61,7 +61,7 @@ def cli_argument_parser():
                         action='store_true')
     parser.add_argument('-i', '--input',
                         help='Path to input data',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -488,8 +488,11 @@ def main():
                 layer_shape = model_wrapper.get_input_layer_shape(args.model, layer_name)
                 log.info(f'Shape for input layer {layer_name}: {layer_shape}')
 
-        log.info(f'Preparing input data: {args.input}')
-        io.prepare_input(compiled_model, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(compiled_model, args.input)
+        else:
+            io.fill_unset_inputs(compiled_model, log)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_pytorch(model=compiled_model, num_iterations=args.number_iter,

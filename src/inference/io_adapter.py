@@ -12,7 +12,7 @@ import numpy as np
 class IOAdapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
-        self._transformed_input = None
+        self._transformed_input = {}
         self._original_shapes = None
         self._batch_size = args.batch_size
         self._prompts = []
@@ -95,9 +95,16 @@ class IOAdapter(metaclass=abc.ABCMeta):
 
         return data
 
-    def fill_unset_inputs(self, model, log):
+    def fill_unset_inputs(self, model, log, custom_shapes=None):
         all_inputs = self._io_model_wrapper.get_input_layer_names(model)
         unfilled_inputs = [name for name in all_inputs if name not in self._transformed_input]
+
+        wrapper_shapes = custom_shapes
+        if (hasattr(self._io_model_wrapper, '_inputs')):
+            wrapper_shapes = self._io_model_wrapper._inputs
+        elif (hasattr(self._io_model_wrapper, '_shapes')):
+            wrapper_shapes = self._io_model_wrapper._shapes
+        self._original_shapes = self._original_shapes or wrapper_shapes
         image_sizes = list(self._original_shapes.values())
 
         for i, input_name in enumerate(unfilled_inputs):
@@ -109,7 +116,6 @@ class IOAdapter(metaclass=abc.ABCMeta):
             else:
                 log.warning(f'Input {input_name} will be filled with random values')
                 input_value = self.__fill_random(input_shape, element_type)
-                input_value = self._transformer.transform_images(input_value, input_shape, element_type, input_name)
 
             self._transformed_input.update({input_name: itertools.cycle(input_value)})
 
@@ -123,11 +129,19 @@ class IOAdapter(metaclass=abc.ABCMeta):
 
     @staticmethod
     def __fill_random(input_shape, element_type):
-        rand_min, rand_max = (0, 1) if element_type == 'bool' else (np.iinfo(np.uint8).min, np.iinfo(np.uint8).max)
-        if np.dtype(element_type).kind in ['i', 'u', 'b']:
-            rand_max += 1
-        rs = np.random.RandomState(np.random.MT19937(np.random.SeedSequence(0)))
-        input_value = rs.uniform(rand_min, rand_max, input_shape)
+        if element_type == 'bool':
+            input_value = np.random.choice([False, True], size=input_shape)
+        elif np.issubdtype(element_type, np.integer):
+            dtype = np.dtype(element_type)
+            rand_min, rand_max = 0, np.iinfo(dtype).max
+            if dtype.kind in ['i', 'u']:
+                rand_max += 1
+            rs = np.random.RandomState(np.random.MT19937(np.random.SeedSequence(0)))
+            input_value = rs.uniform(rand_min, rand_max, size=input_shape).astype(dtype)
+        elif np.issubdtype(element_type, np.floating):
+            input_value = np.random.uniform(size=input_shape).astype(element_type)
+        else:
+            raise ValueError(f"Invalid data type '{element_type}'")
 
         return input_value
 
