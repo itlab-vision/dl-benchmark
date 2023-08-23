@@ -109,8 +109,8 @@ def cli_argument_parser():
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
                              'postprocessing (by default); classification - output'
-                             'is a vector of probabilities; gpt-2 - text generation.',
-                        choices=['feedforward', 'classification', 'text-to-image', 'yolo_v7', 'gpt-2'],
+                             'is a vector of probabilities; text-generation - predicted string.',
+                        choices=['feedforward', 'classification', 'text-to-image', 'yolo_v7', 'text-generation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -175,6 +175,9 @@ def cli_argument_parser():
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
+    parser.add_argument('--timeout_overhead', required=False, default=300, type=int,
+                        dest='timeout_overhead',
+                        help='Optional. Time in seconds added to "time" parameter to construct overall timeout.')
     args = parser.parse_args()
 
     return args
@@ -348,9 +351,11 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                 output = model(prompt=get_slice())
             elif task_type == 'yolo_v7':
                 output = model(*inputs)[0].to('cpu')
-            elif task_type == 'gpt-2':
-                from configs.pytorch_configs.gpt_2 import tokenize, generate, decode
-                output = decode(generate(gpt_model=model, inputs=tokenize(get_slice()), device=device))
+            elif task_type == 'text-generation':
+                from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate, decode
+                tokenizer = create_tokenizer(model.name_or_path)
+                inputs = tokenize(tokenizer, get_slice())
+                output = decode(tokenizer, generate(model=model, inputs=inputs, device=device))
 
             t1 = time()
             time_infer.append(t1 - t0)
@@ -377,10 +382,11 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
     input_kwarg_name = None
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-    elif task_type == 'gpt-2':
-        from configs.pytorch_configs.gpt_2 import tokenize, generate
-        inputs = tokenize(get_slice())
-        model = partial(generate, gpt_model=model, device=device)
+    elif task_type == 'text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate
+        tokenizer = create_tokenizer(model.name_or_path)
+        inputs = tokenize(tokenizer, get_slice())
+        model = partial(generate, model=model, device=device)
         input_kwarg_name = 'inputs'
     elif task_type == 'text-to-image':
         input_kwarg_name = 'prompt'
@@ -399,7 +405,7 @@ def prepare_output(result, output_names, task):
 
     if task == 'feedforward':
         return {}
-    elif task in ['gpt-2', 'yolo_v7']:
+    elif task in ['text-generation', 'yolo_v7']:
         return result
     elif task == 'text-to-image':
         return result.images
@@ -441,6 +447,9 @@ def main():
             elif args.precision == 'FP16':
                 log.info('Enable FP16 reduction')
                 torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = True
+            elif args.precision == 'BF16':
+                log.info('Enable BF16 reduction')
+                torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True
 
         tensor_rt_dtype = get_tensor_rt_dtype(args.tensor_rt_precision)
         args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)

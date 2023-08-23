@@ -63,7 +63,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         # add timeout overhead because time_limit in bechmark app applies for inference stage only
         # set None n case of test_time_limit is unset for backward compatibility
         configured_time_limit = self._test.indep_parameters.test_time_limit
-        timeout = configured_time_limit + 300 if configured_time_limit else None
+        configured_timeout_overhead = self._test.indep_parameters.timeout_overhead
+        timeout = configured_time_limit + configured_timeout_overhead if configured_time_limit else None
         self._status, self._output = self._executor.execute_process(command_line, timeout)
 
         if type(self._output) is not list:

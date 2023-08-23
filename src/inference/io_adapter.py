@@ -289,8 +289,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3IO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v3_tf':
             return YoloV3TFIO(args, io_model_wrapper, transformer)
-        elif task == 'gpt-2':
-            return Gpt2IO(args, io_model_wrapper, transformer)
+        elif task == 'text-generation':
+            return CausalLMIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
             return TextToImageIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7':
@@ -341,7 +341,7 @@ class TextToImageIO(TextPromtIO):
             count += 1
 
 
-class Gpt2IO(TextPromtIO):
+class CausalLMIO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
         return [self._prompts[0]] * self._batch_size
 

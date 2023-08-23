@@ -89,13 +89,19 @@ class TestConfigParser:
         device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data.strip()
         iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data.strip()
         test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)
+        timeout_overhead_element = indep_parameters_tag.getElementsByTagName('TimeoutOverhead')
+        if timeout_overhead_element:
+            timeout_overhead = int(timeout_overhead_element[0].firstChild.data)
+        else:
+            timeout_overhead = 300  # default value
 
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'
                        f'Batch size - {batch_size}\n\t'
                        f'Device - {device}\n\t'
                        f'Number of iterations - {iteration_count}\n\t'
-                       f'Time limit of test execution - {test_time_limit}')
+                       f'Time limit of test execution - {test_time_limit}\n\t'
+                       f'Timeout overhead - {timeout_overhead}')
 
         return FrameworkIndependentParameters(
             inference_framework=inference_framework,
@@ -103,6 +109,7 @@ class TestConfigParser:
             device=device,
             iterarion_count=iteration_count,
             test_time_limit=test_time_limit,
+            timeout_overhead=timeout_overhead,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):
