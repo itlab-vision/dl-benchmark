@@ -32,6 +32,10 @@ class ONNXRuntimePythonProcess(ProcessHandler):
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
 
+        task = self._test.model.task
+        if task and task.lower() != 'n/a':
+            common_params = self._add_optional_argument_to_cmd_line(common_params, '--task', task)
+
         time_limit = self._test.indep_parameters.test_time_limit
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
