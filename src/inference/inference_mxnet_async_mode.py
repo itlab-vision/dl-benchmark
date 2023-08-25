@@ -145,7 +145,7 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'mxnet_async_inference_report.json',
                         dest='report_path')
     parser.add_argument('--threshold',
-                        help='Probability threshold for detections filtering.',
+                        help='Probability threshold for detections filtering',
                         default=0.5,
                         type=float,
                         dest='threshold')

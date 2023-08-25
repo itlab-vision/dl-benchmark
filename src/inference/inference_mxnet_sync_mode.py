@@ -149,7 +149,7 @@ def cli_argument_parser():
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
     parser.add_argument('--threshold',
-                        help='Probability threshold for detections filtering.',
+                        help='Probability threshold for detections filtering',
                         default=0.5,
                         type=float,
                         dest='threshold')
