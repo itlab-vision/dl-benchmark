@@ -321,7 +321,85 @@ vgg19_bn |0.5504531 fireboat<br>0.1722970 liner, ocean liner<br>0.0720538 contai
 xception |0.9181097 water bottle<br>0.0309580 sandbar, sand bar<br>0.0148073 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0098892 seashore, coast, seacoast, sea-coast<br>0.0050070 lifeboat|
 senet_154 |0.4430478 beacon, lighthouse, beacon light, pharos<br>0.2592156 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0319326 lifeboat<br>0.0148673 seashore, coast, seacoast, sea-coast<br>0.0140872 submarine, pigboat, sub, U-boat|
 
+## Object detection
+
+### Test image #1
+
+Data source: [Pascal VOC][pascal_voc]
+
+Image resolution: 500 x 375
+
+
+<div style='float: center'>
+<img width="300" src="images\2011_002352.jpg">
+<img width="300" src="detection\out_yolo_detection.bmp">
+</div>
+
+Bounding boxes (upper left and bottom right corners):<br>
+AEROPLANE (127, 62), (251, 443)<br>
+
+Model | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+------|---------------------------------------|------------------------------------------|
+ssd_300_vgg16_atrous_voc | Bounding box:<br>AEROPLANE (34, 98), (258, 191) | Bounding box:<br>AEROPLANE (34, 98), (258, 191) |
+ssd_512_vgg16_atrous_voc | Bounding box:<br>AEROPLANE (52, 160), (450, 330) | Bounding box:<br>AEROPLANE (52, 160), (450, 330) |
+ssd_512_resnet50_v1_voc | Bounding box:<br>AEROPLANE (65, 175), (435, 329) | Bounding box:<br>AEROPLANE (65, 175), (435, 329) |
+ssd_512_mobilenet1.0_voc | Bounding box:<br>AEROPLANE (65, 170), (422, 334) | Bounding box:<br>AEROPLANE (65, 170), (422, 334) |
+faster_rcnn_resnet50_v1b_voc | Bounding box:<br>AEROPLANE (37, 168), (452, 329) | Bounding box:<br>AEROPLANE (37, 168), (452, 329) |
+yolo3_darknet53_voc | Bounding box:<br>AEROPLANE (36, 103), (274, 208) | Bounding box:<br>AEROPLANE (36, 103), (274, 208) |
+yolo3_mobilenet1.0_voc | Bounding box:<br>AEROPLANE (38, 102), (274, 208) | Bounding box:<br>AEROPLANE (38, 102), (274, 208) | 
+center_net_resnet18_v1b_voc | Bounding box:<br>AEROPLANE (70, 170), (445, 329) | Bounding box:<br>AEROPLANE (70, 170), (445, 329) |
+center_net_resnet18_v1b_dcnv2_voc | Bounding box:<br>AEROPLANE (55, 163), (444, 337) | Bounding box:<br>AEROPLANE (55, 163), (444, 337) |
+center_net_resnet50_v1b_voc | Bounding box:<br>AEROPLANE (51, 164), (448, 327) | Bounding box:<br>AEROPLANE (51, 164), (448, 327) |
+center_net_resnet50_v1b_dcnv2_voc | Bounding box:<br>AEROPLANE (55, 164), (444, 335) | Bounding box:<br>AEROPLANE (55, 164), (444, 335) |
+center_net_resnet101_v1b_voc | Bounding box:<br>AEROPLANE (48, 176), (444, 331) | Bounding box:<br>AEROPLANE (48, 176), (444, 331) |
+center_net_resnet101_v1b_dcnv2_voc | Bounding box:<br>AEROPLANE (62, 181), (444, 334) | Bounding box:<br>AEROPLANE (62, 181), (444, 334) |
+
+### Test image #2
+Data source: [MS COCO][ms_coco]
+
+Image resolution: 640 x 480
+
+
+<div style='float: center'>
+<img width="300" src="images\9.jpg">
+<div style='float: center'>
+</div>
+
+<img width="300" src="detection\faster_rcnn_out.bmp">
+</div>
+Bounding box (upper left anf bottom right corners)<br>
+TV (110, 41), (397, 304)<br>
+MOUSE (508, 337), (559, 374)<br>
+KEYBOARD (241, 342), (496, 461)<br>
+
+
+ Model   | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+ --------|---------------------------------------|----------------------------------------|
+ ssd_300_vgg16_atrous_coco | Bounding box:<br>KEYBOARD (106, 214), (229, 287); TV (48, 23), (184, 184) | Bounding box:<br>KEYBOARD (106, 214), (229, 287); TV (48, 23), (184, 184) |
+ ssd_512_vgg16_atrous_coco | Bounding box:<br>KEYBOARD (187, 365), (402, 489); TV (76, 35), (308, 316); MOUSE (404, 359), (448, 397) | Bounding box:<br>KEYBOARD (187, 365), (402, 489); TV (76, 35), (308, 316); MOUSE (404, 359), (448, 397) |
+ ssd_300_resnet34_v1b_coco | Bounding box:<br>KEYBOARD (108, 213), (236, 285); TV (36, 21), (187, 180); MOUSE (238, 210), (261, 233) | Bounding box:<br>KEYBOARD (108, 213), (236, 285); TV (36, 21), (187, 180); MOUSE (238, 210), (261, 233) |
+ ssd_512_resnet50_v1_coco | Bounding box:<br>KEYBOARD (184, 366), (399, 492); TV (77, 36), (317, 327); MOUSE (407, 359), (447, 397) | Bounding box:<br>KEYBOARD (184, 366), (399, 492); TV (77, 36), (317, 327); MOUSE (407, 359), (447, 397) |
+ ssd_512_mobilenet1.0_coco | Bounding box:<br>KEYBOARD (196, 365), (394, 489); TV (76, 33), (317, 320); MOUSE (408, 359), (446, 397) | Bounding box:<br>KEYBOARD (196, 365), (394, 489); TV (76, 33), (317, 320); MOUSE (408, 359), (446, 397) |
+ faster_rcnn_resnet50_v1b_coco | Bounding box:<br>KEYBOARD (286, 566), (631, 759); TV (124, 43), (526, 513); MOUSE (634, 560), (700, 621) | Bounding box:<br>KEYBOARD (286, 566), (631, 759); TV (124, 43), (526, 513); MOUSE (634, 560), (700, 621) |
+ faster_rcnn_resnet101_v1d_coco | Bounding box:<br>KEYBOARD (286, 567), (622, 759); TV (119, 58), (493, 489); MOUSE (635, 561), (699, 620); DINING TABLE (-2, 396), (820, 783) | Bounding box:<br>KEYBOARD (286, 567), (622, 759); TV (119, 58), (493, 489); MOUSE (635, 561), (699, 620); DINING TABLE (-2, 396), (820, 783) |
+ faster_rcnn_fpn_resnet50_v1b_coco | Bounding box:<br>KEYBOARD (280, 557), (634, 769); TV (108, 52), (507, 495); MOUSE (636, 561), (699, 620) | Bounding box:<br>KEYBOARD (280, 557), (634, 769); TV (108, 52), (507, 495); MOUSE (636, 561), (699, 620) |
+ faster_rcnn_fpn_resnet101_v1d_coco | Bounding box:<br>KEYBOARD (285, 568), (623, 766); TV (130, 52), (489, 513); MOUSE (635, 563), (698, 620); DINING TABLE (30, 340), (779, 792) | Bounding box:<br>KEYBOARD (285, 568), (623, 766); TV (130, 52), (489, 513); MOUSE (635, 563), (698, 620); DINING TABLE (30, 340), (779, 792) |
+ faster_rcnn_fpn_bn_resnet50_v1b_coco | ValueError: "faster_rcnn_fpn_bn_resnet50_v1b_coco" is not among the following model list | ValueError: "faster_rcnn_fpn_bn_resnet50_v1b_coco" is not among the following model list |
+ faster_rcnn_fpn_syncbn_resnest50_coco | Bounding box:<br>KEYBOARD (290, 568), (627, 771); TV (133, 66), (493, 488); MOUSE (634, 560), (700, 621) | Bounding box:<br>KEYBOARD (290, 568), (627, 771); TV (133, 66), (493, 488); MOUSE (634, 560), (700, 621) |
+ faster_rcnn_fpn_syncbn_resnest101_coco | Bounding box:<br>KEYBOARD (292, 570), (625, 768); TV (141, 62), (493, 492); MOUSE (634, 562), (698, 619) | Bounding box:<br>KEYBOARD (292, 570), (625, 768); TV (141, 62), (493, 492); MOUSE (634, 562), (698, 619) |
+ faster_rcnn_fpn_syncbn_resnest269_coco | Bounding box:<br>KEYBOARD (289, 569), (630, 768); TV (119, 61), (496, 493); MOUSE (634, 561), (699, 620) | Bounding box:<br>KEYBOARD (289, 569), (630, 768); TV (119, 61), (496, 493); MOUSE (634, 561), (699, 620) |
+ yolo3_darknet53_coco | Bounding box:<br>KEYBOARD (117, 227), (248, 304); TV (47, 23), (195, 196); MOUSE (254, 223), (279, 248) | Bounding box:<br>KEYBOARD (117, 227), (248, 304); TV (47, 23), (195, 196); MOUSE (254, 223), (279, 248) |
+ yolo3_mobilenet1.0_coco | Bounding box:<br>KEYBOARD (119, 225), (239, 304); TV (25, 19), (205, 196); MOUSE (252, 223), (278, 247) | Bounding box:<br>KEYBOARD (119, 225), (239, 304); TV (25, 19), (205, 196); MOUSE (252, 223), (278, 247) |
+ center_net_resnet18_v1b_coco | Bounding box:<br>KEYBOARD (187, 356), (401, 495); TV (96, 42), (307, 320); MOUSE (407, 360), (449, 395) | Bounding box:<br>KEYBOARD (187, 356), (401, 495); TV (96, 42), (307, 320); MOUSE (407, 360), (449, 395) |
+ center_net_resnet18_v1b_dcnv2_coco | Bounding box:<br>KEYBOARD (182, 362), (405, 490); TV (91, 23), (311, 324); MOUSE (406, 358), (448, 398) | Bounding box:<br>KEYBOARD (182, 362), (405, 490); TV (91, 23), (311, 324); MOUSE (406, 358), (448, 398) |
+ center_net_resnet50_v1b_coco | Bounding box:<br>KEYBOARD (185, 363), (401, 489); TV (85, 42), (311, 320); MOUSE (405, 358), (446, 397) | Bounding box:<br>KEYBOARD (185, 363), (401, 489); TV (85, 42), (311, 320); MOUSE (405, 358), (446, 397) |
+ center_net_resnet50_v1b_dcnv2_coco | Bounding box:<br>KEYBOARD (182, 363), (404, 488); TV (88, 34), (315, 321); MOUSE (405, 359), (448, 396) | Bounding box:<br>KEYBOARD (182, 363), (404, 488); TV (88, 34), (315, 321); MOUSE (405, 359), (448, 396) |
+ center_net_resnet101_v1b_coco | Bounding box:<br>KEYBOARD (184, 364), (401, 488); TV (87, 40), (316, 323); MOUSE (406, 359), (447, 395) | Bounding box:<br>KEYBOARD (184, 364), (401, 488); TV (87, 40), (316, 323); MOUSE (406, 359), (447, 395) |
+ center_net_resnet101_v1b_dcnv2_coco | Bounding box:<br>KEYBOARD (183, 362), (403, 496); TV (92, 43), (311, 328); MOUSE (406, 359), (445, 397) | Bounding box:<br>KEYBOARD (183, 362), (403, 496); TV (92, 43), (311, 328); MOUSE (406, 359), (445, 397) |
+
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
 [gluon_modelzoo_classification]: https://cv.gluon.ai/model_zoo/classification.html
+[ms_coco]: http://cocodataset.org
+[pascal_voc]: http://host.robots.ox.ac.uk/pascal/VOC
