@@ -292,8 +292,7 @@ def prepare_output(result, output_names, task, model_wrapper):
         return {output_names[0]: result}
     if task == 'instance-segmentation':
         ids, scores, bboxes, masks = [xx[0].asnumpy() for xx in result]
-        print(ids.shape, scores.shape, bboxes.shape, masks.shape)
-        print(masks, len(ids))
+        masks = np.transpose(masks, [1, 0, 2])
         return {'boxes': bboxes, 'scores': scores, 'classes': ids, 'raw_masks': masks}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')

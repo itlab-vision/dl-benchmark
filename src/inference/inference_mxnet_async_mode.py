@@ -279,6 +279,10 @@ def prepare_output(result, output_names, task, model_wrapper):
         result = mxnet.nd.squeeze(mxnet.nd.argmax(result[0], 1)).asnumpy()
         result = np.expand_dims(result, axis=0)
         return {output_names[0]: result}
+    if task == 'instance-segmentation':
+        ids, scores, bboxes, masks = [xx[0].asnumpy() for xx in result]
+        masks = np.transpose(masks, [1, 0, 2])
+        return {'boxes': bboxes, 'scores': scores, 'classes': ids, 'raw_masks': masks}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
