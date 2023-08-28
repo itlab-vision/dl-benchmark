@@ -343,6 +343,7 @@ Model | Python (latency mode, implementation) | Python (throughput mode, impleme
 ssd_300_vgg16_atrous_voc | Bounding box:<br>AEROPLANE (34, 98), (258, 191) | Bounding box:<br>AEROPLANE (34, 98), (258, 191) |
 ssd_512_vgg16_atrous_voc | Bounding box:<br>AEROPLANE (52, 160), (450, 330) | Bounding box:<br>AEROPLANE (52, 160), (450, 330) |
 ssd_512_resnet50_v1_voc | Bounding box:<br>AEROPLANE (65, 175), (435, 329) | Bounding box:<br>AEROPLANE (65, 175), (435, 329) |
+ssd_512_resnet101_v2_voc | ounding box:<br>AEROPLANE (50, 167), (428, 336) | Bounding box:<br>AEROPLANE (50, 167), (428, 336) |
 ssd_512_mobilenet1.0_voc | Bounding box:<br>AEROPLANE (65, 170), (422, 334) | Bounding box:<br>AEROPLANE (65, 170), (422, 334) |
 faster_rcnn_resnet50_v1b_voc | Bounding box:<br>AEROPLANE (37, 168), (452, 329) | Bounding box:<br>AEROPLANE (37, 168), (452, 329) |
 yolo3_darknet53_voc | Bounding box:<br>AEROPLANE (36, 103), (274, 208) | Bounding box:<br>AEROPLANE (36, 103), (274, 208) |
@@ -353,6 +354,8 @@ center_net_resnet50_v1b_voc | Bounding box:<br>AEROPLANE (51, 164), (448, 327) |
 center_net_resnet50_v1b_dcnv2_voc | Bounding box:<br>AEROPLANE (55, 164), (444, 335) | Bounding box:<br>AEROPLANE (55, 164), (444, 335) |
 center_net_resnet101_v1b_voc | Bounding box:<br>AEROPLANE (48, 176), (444, 331) | Bounding box:<br>AEROPLANE (48, 176), (444, 331) |
 center_net_resnet101_v1b_dcnv2_voc | Bounding box:<br>AEROPLANE (62, 181), (444, 334) | Bounding box:<br>AEROPLANE (62, 181), (444, 334) |
+center_net_mobilenetv3_large_duc_voc | Bounding box:<br>AEROPLANE (44, 164), (462, 327) | Bounding box:<br>AEROPLANE (44, 164), (462, 327) |
+center_net_mobilenetv3_small_duc_voc | Bounding box:<br>AEROPLANE (44, 159), (471, 332) | Bounding box:<br>AEROPLANE (44, 159), (471, 332) |
 
 ### Test image #2
 Data source: [MS COCO][ms_coco]
@@ -396,10 +399,70 @@ KEYBOARD (241, 342), (496, 461)<br>
  center_net_resnet50_v1b_dcnv2_coco | Bounding box:<br>KEYBOARD (182, 363), (404, 488); TV (88, 34), (315, 321); MOUSE (405, 359), (448, 396) | Bounding box:<br>KEYBOARD (182, 363), (404, 488); TV (88, 34), (315, 321); MOUSE (405, 359), (448, 396) |
  center_net_resnet101_v1b_coco | Bounding box:<br>KEYBOARD (184, 364), (401, 488); TV (87, 40), (316, 323); MOUSE (406, 359), (447, 395) | Bounding box:<br>KEYBOARD (184, 364), (401, 488); TV (87, 40), (316, 323); MOUSE (406, 359), (447, 395) |
  center_net_resnet101_v1b_dcnv2_coco | Bounding box:<br>KEYBOARD (183, 362), (403, 496); TV (92, 43), (311, 328); MOUSE (406, 359), (445, 397) | Bounding box:<br>KEYBOARD (183, 362), (403, 496); TV (92, 43), (311, 328); MOUSE (406, 359), (445, 397) |
+ center_net_mobilenetv3_large_duc_coco | Bounding box:<br>KEYBOARD (188, 369), (400, 491); MOUSE (406, 358), (448, 396) | Bounding box:<br>KEYBOARD (188, 369), (400, 491); MOUSE (406, 358), (448, 396) |
+ center_net_mobilenetv3_small_duc_coco | Bounding box:<br>MOUSE (405, 361), (446, 395) | Bounding box:<br>MOUSE (405, 361), (446, 395) |
 
+## Semantic segmentation
+
+### Test image #1
+
+Data source: [pascal_voc][pascal_voc]
+
+Image resolution: 500 x 375
+﻿
+
+<div style='float: center'>
+<img width="300" src="images\Sheep.jpg">
+</div>
+
+Segmented images are identical.
+
+
+ Model   | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+ --------|---------------------------------------|----------------------------------------|
+fcn_resnet101_voc | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\out_fcn_resnet101_voc_segmentation_sync.bmp"></img></div> | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\out_fcn_resnet101_voc_segmentation_async.bmp"></img></div> |
+
+### Test image #2
+
+Data source: [Cityscapes][cityscapes]
+
+Image resolution: 2048 x 1024
+﻿
+
+<div style='float: center'>
+<img width="300" src="images\berlin_000488_000019_leftImg8bit.png">
+</div>
+
+Segmented images are identical.
+
+
+ Model   | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+ --------|---------------------------------------|----------------------------------------|
+ danet_resnet50_citys | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\danet_resnet50_citys_out_segmentation_sync.bmp"></img></div> | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\danet_resnet50_citys_out_segmentation_async.bmp"></img></div> |
+ danet_resnet101_citys | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\danet_resnet101_citys_out_segmentation_sync.bmp"></img></div> | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\danet_resnet101_citys_out_segmentation_async.bmp"></img></div> |
+
+### Test image #3
+
+Data source: [MS COCO][ms_coco]
+
+Image resolution: 640 x 480
+
+
+<div style='float: center'>
+<img width="300" src="images\COCO_val2014_000000203438.jpg"></img>
+</div>
+<div style='float: center'>
+</div>
+
+Segmented images are identical.
+
+ Model   | Python (latency mode, implementation) | Python (throughput mode, implementation) |
+ --------|---------------------------------------|----------------------------------------|
+ fcn_resnet101_coco | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\fcn_resnet101_coco_out_segmentation_sync.bmp"></img></div> | <div style='float: center'><img width="150" src="semantic_segmentation\MXNet\fcn_resnet101_coco_out_segmentation_async.bmp"></img></div> |
 
 <!-- LINKS -->
 [imagenet]: http://www.image-net.org
 [gluon_modelzoo_classification]: https://cv.gluon.ai/model_zoo/classification.html
 [ms_coco]: http://cocodataset.org
 [pascal_voc]: http://host.robots.ox.ac.uk/pascal/VOC
+[cityscapes]: https://www.cityscapes-dataset.com
