@@ -29,6 +29,7 @@ ARG DEPENDENCIES="apt-utils \
                   libtool \
                   libprotobuf-dev \
                   libgl1-mesa-glx \
+                  nlohmann-json3-dev \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
