@@ -403,6 +403,8 @@
             <OutputName></OutputName>
             <ModelType></ModelType>
             <InferenceMode></InferenceMode>
+            <InterOpThreads></InterOpThreads>
+            <IntraOpThreads>2</IntraOpThreads>
         </FrameworkDependent>
     </Test>
     <Test>

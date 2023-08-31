@@ -251,6 +251,8 @@
             <ModelType></ModelType>
             <InferenceMode></InferenceMode>
             <TensorRTPrecision></TensorRTPrecision>
+            <InterOpThreads></InterOpThreads>
+            <IntraOpThreads></IntraOpThreads>
         </FrameworkDependent>
     </Test>
     <Test>
