@@ -77,7 +77,7 @@ if (BUILD_TFLITE_LAUNCHER)
                     ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
                     -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
                     ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
-                 DEFINITIONS TFLITE_DEFAULT)
+                 DEFINITIONS TFLITE_WITH_DEFAULT_BACKEND)
 endif()
 
 if (BUILD_TFLITE_XNNPACK_LAUNCHER)
@@ -90,5 +90,5 @@ if (BUILD_TFLITE_XNNPACK_LAUNCHER)
                     ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
                     -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
                     ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
-                 DEFINITIONS TFLITE_XNNPACK)
+                 DEFINITIONS TFLITE_WITH_XNNPACK_BACKEND)
 endif()

@@ -57,5 +57,5 @@ private:
     std::vector<std::vector<int>> output_shapes;
     std::vector<TfLiteType> output_data_precisions;
 
-    void run(const int input_idx);
+    void run(const int input_idx) override;
 };

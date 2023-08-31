@@ -76,9 +76,9 @@ std::string TFLiteLauncher::get_framework_version() const {
 }
 
 std::string TFLiteLauncher::get_backend_name() const {
-#ifdef TFLITE_DEFAULT
+#ifdef TFLITE_WITH_DEFAULT_BACKEND
     return "default";
-#elif TFLITE_XNNPACK
+#elif TFLITE_WITH_XNNPACK_BACKEND
     return "XNNPack";
 #endif
 }
@@ -89,7 +89,7 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
         throw std::runtime_error("Failed to read model " + model_file);
     }
 
-#ifdef TFLITE_XNNPACK
+#ifdef TFLITE_WITH_XNNPACK_BACKEND
     // XNNPACK engine used by TensorFlow Lite interpreter uses a single thread for inference by default.
     // https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/delegates/xnnpack/README.md#enable-xnnpack-via-bazel-build-flags-recommended-on-desktop
     resolver = std::make_unique<tflite::ops::builtin::BuiltinOpResolver>();
