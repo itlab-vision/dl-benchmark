@@ -101,7 +101,7 @@ class PyTorchProcess(ProcessHandler):
         if input_type:
             common_params = PyTorchProcess._add_argument_to_cmd_line(
                 common_params, '--input_type', input_type)
-    
+
         num_inter_threads = self._test.dep_parameters.num_inter_threads
         if num_inter_threads:
             common_params = PyTorchProcess._add_argument_to_cmd_line(
@@ -115,4 +115,3 @@ class PyTorchProcess(ProcessHandler):
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 
         return command_line
-

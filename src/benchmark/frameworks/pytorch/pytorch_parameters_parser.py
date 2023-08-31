@@ -54,7 +54,7 @@ class PyTorchParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_num_inter_threads_TAG):
             _num_inter_threads = dep_parameters_tag.getElementsByTagName(
                 CONFIG_FRAMEWORK_DEPENDENT_num_inter_threads_TAG)[0].firstChild
-        
+
         _num_intra_threads = None
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_num_intra_threads_TAG):
             _num_intra_threads = dep_parameters_tag.getElementsByTagName(
