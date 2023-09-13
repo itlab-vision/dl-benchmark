@@ -291,8 +291,10 @@ def main():
         if args.input:
             log.info('Preparing input data')
             io.prepare_input(inference_session, args.input)
-        else:
+        try:
             io.fill_unset_inputs(inference_session, log)
+        except AttributeError:
+            log.warning('Could not fill unset inputs')
 
         if args.task not in ['text-to-image']:
             if args.output_names is None:
