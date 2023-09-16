@@ -48,6 +48,7 @@ def cli_argument_parser():
                         dest='input')
     parser.add_argument('-in', '--input_names',
                         help='Names of the input tensors',
+                        required=True,
                         default=None,
                         type=prep.names_arg,
                         dest='input_names')
@@ -146,9 +147,34 @@ def cli_argument_parser():
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
+    parser.add_argument('--num_inter_threads',
+                        help='Number of threads used for parallelism between independent operations',
+                        default=None,
+                        type=int,
+                        dest='num_inter_threads')
+    parser.add_argument('--num_intra_threads',
+                        help='Number of threads used within an individual op for parallelism',
+                        default=None,
+                        type=int,
+                        dest='num_intra_threads')
     args = parser.parse_args()
 
     return args
+
+
+def set_thread_num(num_inter_threads, num_intra_threads):
+    def validate(num):
+        if num < 0:
+            raise ValueError(f'Incorrect thread count: {num}')
+
+    if num_inter_threads:
+        validate(num_inter_threads)
+        torch.set_num_interop_threads(num_inter_threads)
+        log.info(f'The number of threads for inter-op parallelism: {num_inter_threads}')
+    if num_intra_threads:
+        validate(num_intra_threads)
+        torch.set_num_threads(num_intra_threads)
+        log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
 
 
 def get_device_to_infer(device):
@@ -302,6 +328,7 @@ def main():
         else:
             model = load_model_from_module(args.model_name, args.module, args.weights)
 
+        set_thread_num(args.num_inter_threads, args.num_intra_threads)
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device, args.model_type,
                                        args.tensor_rt_precision is not None, args.input_shapes, tensor_rt_dtype)
