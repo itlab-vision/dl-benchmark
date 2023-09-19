@@ -56,7 +56,7 @@ def cli_argument_parser():
                              'W is an input tensor width,'
                              'H is an input tensor height,'
                              'C is an input tensor number of channels.',
-                        required=False,
+                        required=True,
                         type=int,
                         nargs=4,
                         dest='input_shape')
