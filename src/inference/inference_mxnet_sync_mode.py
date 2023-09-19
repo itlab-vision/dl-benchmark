@@ -17,7 +17,7 @@ from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
-from mxnet_aixiliary import prepare_output
+from mxnet_auxiliary import prepare_output
 
 
 def cli_argument_parser():
