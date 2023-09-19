@@ -5,6 +5,7 @@ import logging as log
 import os
 import warnings
 
+
 def prepare_output(result, output_names, task, model_wrapper):
     if task == 'feedforward':
         return {}

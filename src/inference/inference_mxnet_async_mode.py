@@ -13,7 +13,9 @@ from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
-from mxnet_auxiliary import *
+from mxnet_auxiliary import load_network_gluon, load_network_gluon_model_zoo, \
+                            get_device_to_infer, create_dict_for_modelwrapper, \
+                            create_dict_for_transformer, prepare_output
 
 
 def cli_argument_parser():
