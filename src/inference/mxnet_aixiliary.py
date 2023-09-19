@@ -1,6 +1,7 @@
 import numpy as np
 import mxnet
 
+
 def prepare_output(result, output_names, task, model_wrapper):
     if task == 'feedforward':
         return {}

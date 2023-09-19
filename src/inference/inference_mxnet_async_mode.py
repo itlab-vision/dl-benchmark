@@ -10,7 +10,6 @@ from time import time
 
 import gluoncv
 import mxnet
-import numpy as np
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
