@@ -3,10 +3,8 @@ import argparse
 import os
 import logging as log
 import mxnet
+import gluoncv
 from mxnet.contrib.quantization import *
-from inference_mxnet_sync_mode import load_network_gluon, \
-                                      load_network_gluon_model_zoo
-
 
 class QuantWrapper:
     def __init__(self, args):
@@ -15,19 +13,53 @@ class QuantWrapper:
         self._input_shape = args['input_shape']
         self._model_name = args['model_name']
         self._model_json = args['model_json']
+        self._input_name = args['input_name']
         self._weights = args['model_params']
+        self.quantized_net = None
     
-    def quant_gluon_model(self):
-        log.info('Load model as symbol block')
-        sym, arg_params, aux_params = mxnet.model.load_checkpoint(f'{self._model_name}/{self._model_name}', 0)
+    def quant_gluon_model(self, net, context):
+        data = mxnet.nd.ones([1, *self._input_shape])
+        quantized_net = quantize_net_v2(net, ctx=context, calib_mode=self._calib_mode,
+                                        quantized_dtype=self._quant_dtype, calib_data=data)
         log.info(f'Quantizing model {self._model_name}')
-        qsym, qarg_params, aux_params, _ = quantize_graph(sym=sym, arg_params=arg_params, 
-                                                          aux_params=aux_params,
-                                                          calib_mode=self._calib_mode,
-                                                          quantized_dtype=self._quant_dtype)
-        mxnet.model.save_checkpoint(f'{self._model_name}/quantized_{self._model_name}', 0, qsym, qarg_params, aux_params)
-        
+        self.quantized_net = quantized_net
 
+    def quant_network(self):
+        return self.quantized_net
+
+    def save_model_as_symbol_block(self):
+        self.quantized_net.hybridize(static_shape=True, static_alloc=True)
+        self.quantized_net.forward(mxnet.nd.zeros(self._input_shape))
+        self.quantized_net.export('alexnet/quantized_int8_alexnet')
+
+def load_network_gluon(model_json, model_params, context, input_name):
+    log.info(f'Deserializing network from file ({model_json}, {model_params})')
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
+            model_json, [input_name], model_params, ctx=context)
+    return deserialized_net
+
+def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
+    log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
+    net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
+
+    if save_model is True:
+        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
+        if path_save_model is None:
+            path_save_model = os.getcwd()
+        path_save_model = os.path.join(path_save_model, model_name)
+        if not os.path.exists(path_save_model):
+            os.mkdir(path_save_model)
+        gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
+                                   preprocess=None, layout='CHW', ctx=context)
+
+    log.info(f'Info about the network:\n{net}')
+
+    log.info(f'Hybridizing model for quantization: {hybrid}')
+    if hybrid is True:
+        net.hybridize()
+    return net
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -72,7 +104,7 @@ def cli_argument_parser():
                              'W is an input tensor width,'
                              'H is an input tensor height,'
                              'C is an input tensor number of channels.',
-                        required=False,
+                        required=True,
                         type=int,
                         nargs=4,
                         dest='input_shape')
@@ -87,6 +119,11 @@ def cli_argument_parser():
                         default='data',
                         type=str,
                         dest='input_name')
+    parser.add_argument('-b', '--batch_size',
+                        help='Batch size.',
+                        default=1,
+                        type=int,
+                        dest='batch_size')
     args = parser.parse_args()
 
     return args
@@ -107,10 +144,11 @@ def create_dict_for_quantwrapper(args):
     dictionary = {
         'calib_mode': args.calib_mode,
         'quant_dtype': args.quant_dtype,
-        'input_shape': args.input_shape,
+        'input_shape': [args.batch_size] + args.input_shape[1:4],
         'model_name': args.model_name,
         'model_json': args.model_json,
         'model_params': args.model_params,
+        'input_name': args.input_name
     }
     return dictionary
 
@@ -122,16 +160,19 @@ def main():
     )
     args = cli_argument_parser()
     context = get_device_to_quant(args.device)
+    quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
     if ((args.model_name is not None)
             and (args.model_json is None)
             and (args.model_params is None)):
-        quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
-        load_network_gluon_model_zoo(args.model_name, None, context,
-                                     save_model=True, path_save_model=None)
-        quant_wrapper.quant_gluon_model()
+        net = load_network_gluon_model_zoo(args.model_name, None, context,
+                                           save_model=True, path_save_model=None)
+        quant_wrapper.quant_gluon_model(net, context)
+        quant_wrapper.save_model_as_symbol_block()
     elif (args.model_json is not None) and (args.model_params is not None):
-        net = load_network_gluon(args.model_json, args.model_params, context,
-                                 args.input_name)
+        net = load_network_gluon(args.model_json, args.model_params,
+                                 context, args.input_name)
+        quant_wrapper.quant_gluon_model(net, context)
+        quant_wrapper.save_model_as_symbol_block()
     else:
         raise ValueError('Incorrect arguments.')
 
