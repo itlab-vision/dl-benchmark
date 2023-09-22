@@ -109,8 +109,10 @@ def cli_argument_parser():
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
                              'postprocessing (by default); classification - output'
-                             'is a vector of probabilities; text-generation - predicted string.',
-                        choices=['feedforward', 'classification', 'text-to-image', 'yolo_v7', 'text-generation'],
+                             'is a vector of probabilities; text-generation - predicted string;'
+                             'text-translation - translated string.',
+                        choices=['feedforward', 'classification', 'text-to-image',
+                                 'yolo_v7', 'text-generation', 'text-translation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -178,6 +180,9 @@ def cli_argument_parser():
     parser.add_argument('--timeout_overhead', required=False, default=300, type=int,
                         dest='timeout_overhead',
                         help='Optional. Time in seconds added to "time" parameter to construct overall timeout.')
+    parser.add_argument('--custom_models_links', required=False, default=None, type=str,
+                        dest='custom_models_links',
+                        help='Optional. Use custom models sources. Format: model_name_1[url],model_name_2[url]')
     args = parser.parse_args()
 
     return args
@@ -251,13 +256,14 @@ def load_model_from_file(model_path):
 
 
 def load_model_from_config(model_name, model_config, module, weights, device='cpu', precision='FP32',
-                           should_be_traced=False):
+                           should_be_traced=False, custom_models_links=None):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model(device=device, precision=precision, should_be_traced=should_be_traced)
+    model = model_cls.create_model(device=device, precision=precision, should_be_traced=should_be_traced,
+                                   custom_models_links=custom_models_links)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
@@ -356,6 +362,9 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                 tokenizer = create_tokenizer(model.name_or_path)
                 inputs = tokenize(tokenizer, get_slice())
                 output = decode(tokenizer, generate(model=model, inputs=inputs, device=device))
+            elif task_type == 'text-translation':
+                inputs = get_slice()
+                output = model.translate_batch(inputs)
 
             t1 = time()
             time_infer.append(t1 - t0)
@@ -368,11 +377,16 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
 
 @get_exec_time()
-def infer_slice(device, inputs, model, input_kwarg_name=None):
-    if input_kwarg_name:
-        model(**{input_kwarg_name: inputs})
+def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
+    if task_type in ['text-translation']:
+        infer_func = model.translate_batch
     else:
-        model(*inputs)
+        infer_func = model
+
+    if input_kwarg_name:
+        infer_func(**{input_kwarg_name: inputs})
+    else:
+        infer_func(*inputs)
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
@@ -391,10 +405,13 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
     elif task_type == 'text-to-image':
         input_kwarg_name = 'prompt'
         inputs = get_slice()
+    elif task_type == 'text-translation':
+        input_kwarg_name = 'txt'
+        inputs = get_slice()
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
-    _, exec_time = infer_slice(device, inputs, model, input_kwarg_name)
+    _, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
 
     return exec_time
 
@@ -405,7 +422,7 @@ def prepare_output(result, output_names, task):
 
     if task == 'feedforward':
         return {}
-    elif task in ['text-generation', 'yolo_v7']:
+    elif task in ['text-generation', 'yolo_v7', 'text-translation']:
         return result
     elif task == 'text-to-image':
         return result.images
@@ -471,6 +488,14 @@ def main():
         else:
             model_type = 'baseline'
             model_config = get_model_config(args.model_name)
+
+            custom_models_dict = {}
+            if args.custom_models_links:
+                for item in args.custom_models_links.split(','):
+                    model_url_parts = item.split('[')
+                    model = model_url_parts[0]
+                    url = '['.join(model_url_parts[1:])[:-1]
+                    custom_models_dict[model] = url
             if model_config and args.use_model_config:
                 model, custom_compile_func, custom_trace_func = load_model_from_config(
                     model_name=args.model_name,
@@ -479,18 +504,22 @@ def main():
                     weights=args.weights,
                     device=device,
                     precision=args.precision,
-                    should_be_traced=tensor_rt_dtype is not None)
+                    should_be_traced=tensor_rt_dtype is not None,
+                    custom_models_links=custom_models_dict)
             else:
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
 
-        compiled_model = compile_model(model=model, device=device, model_type=model_type,
-                                       shapes=args.input_shapes, input_type=args.input_type,
-                                       tensor_rt_dtype=tensor_rt_dtype,
-                                       precision=args.precision,
-                                       compile_backend=args.compile_with_backend,
-                                       custom_compile_func=custom_compile_func,
-                                       custom_trace_func=custom_trace_func)
+        if args.task not in ['text-translation']:
+            compiled_model = compile_model(model=model, device=device, model_type=model_type,
+                                           shapes=args.input_shapes, input_type=args.input_type,
+                                           tensor_rt_dtype=tensor_rt_dtype,
+                                           precision=args.precision,
+                                           compile_backend=args.compile_with_backend,
+                                           custom_compile_func=custom_compile_func,
+                                           custom_trace_func=custom_trace_func)
+        else:
+            compiled_model = model
 
         if args.task in ['classification', 'feedforward']:
             for layer_name in args.input_names:

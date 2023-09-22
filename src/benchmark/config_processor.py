@@ -56,7 +56,7 @@ class TestConfigParser:
         module = ''
         module_tag = model_tag.getElementsByTagName('Module')
         if module_tag and module_tag[0].firstChild:
-            module = model_tag.getElementsByTagName('Module')[0].firstChild.data
+            module = module_tag[0].firstChild.data
 
         self._log.info(f'Model:\n\tName - {model_name}\n\tTask - {task}\n\t'
                        f'Precision - {precision}\n\tSource framework - {source_framework}\n\t'
@@ -95,13 +95,19 @@ class TestConfigParser:
         else:
             timeout_overhead = 300  # default value
 
+        custom_models_links = ''
+        links_tag = indep_parameters_tag.getElementsByTagName('CustomModelsLinks')
+        if links_tag and links_tag[0].firstChild:
+            custom_models_links = links_tag[0].firstChild.data.strip()
+
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'
                        f'Batch size - {batch_size}\n\t'
                        f'Device - {device}\n\t'
                        f'Number of iterations - {iteration_count}\n\t'
                        f'Time limit of test execution - {test_time_limit}\n\t'
-                       f'Timeout overhead - {timeout_overhead}')
+                       f'Timeout overhead - {timeout_overhead}\n\t'
+                       f'Custom models links = {custom_models_links}')
 
         return FrameworkIndependentParameters(
             inference_framework=inference_framework,
@@ -110,6 +116,7 @@ class TestConfigParser:
             iterarion_count=iteration_count,
             test_time_limit=test_time_limit,
             timeout_overhead=timeout_overhead,
+            custom_models_links=custom_models_links,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):

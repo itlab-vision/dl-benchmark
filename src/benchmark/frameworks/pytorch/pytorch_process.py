@@ -69,6 +69,11 @@ class PyTorchProcess(ProcessHandler):
         output_name = self._test.dep_parameters.output_name
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--output_name', output_name)
 
+        custom_models_links = self._test.indep_parameters.custom_models_links
+        if custom_models_links and custom_models_links.lower() != 'n/a':
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(
+                common_params, '--custom_models_links', custom_models_links)
+
         device = self._test.indep_parameters.device
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--device', device)
 
