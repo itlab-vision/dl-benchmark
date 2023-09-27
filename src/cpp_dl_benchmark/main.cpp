@@ -6,7 +6,7 @@
 #include "opencv_launcher.hpp"
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
 #include "onnxruntime_launcher.hpp"
-#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND)
+#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
 #include "tflite_launcher.hpp"
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
 #include "pytorch_launcher.hpp"
@@ -123,6 +123,8 @@ void parse(int argc, char* argv[]) {
             "tflite"
 #elif TFLITE_WITH_XNNPACK_BACKEND
             "tflite_xnnpack"
+#elif TFLITE_WITH_GPU_DELEGATE
+            "tflite_gpu_delegate"
 #elif PYTORCH
             "pytorch"
 #elif PYTORCH_TENSORRT
@@ -217,7 +219,7 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
-#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND)
+#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);

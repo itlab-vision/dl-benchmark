@@ -80,6 +80,8 @@ std::string TFLiteLauncher::get_backend_name() const {
     return "default";
 #elif TFLITE_WITH_XNNPACK_BACKEND
     return "XNNPack";
+#elif TFLITE_WITH_GPU_DELEGATE
+    return "GPUDelegate";
 #endif
 }
 
@@ -107,6 +109,7 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
     }
     builder(&interpreter);
 
+#ifdef TFLITE_WITH_GPU_DELEGATE
     if (device == utils::Device::GPU) {
         auto gpu_options = TfLiteGpuDelegateOptionsV2Default();
         gpu_options.inference_preference = TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED;
@@ -116,9 +119,14 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
             throw std::runtime_error("Failed to apply GPU delegate.");
         }
     }
-    else if (device != utils::Device::CPU) {
+    else {
+        throw std::runtime_error(utils::get_device_str(device) + " device is not supported in GPU delegate!");
+    }
+#else
+    if (device != utils::Device::CPU) {
         throw std::runtime_error(utils::get_device_str(device) + " device is not supported!");
     }
+#endif
 }
 
 void TFLiteLauncher::fill_inputs_outputs_info() {

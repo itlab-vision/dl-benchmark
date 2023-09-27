@@ -1,6 +1,5 @@
-import numpy as np
 import cv2
-
+import numpy as np
 
 LAYER_LAYOUT_TO_IMAGE = {
     'NCHW': [0, 3, 1, 2],
@@ -94,7 +93,7 @@ class IntelCaffeTransformer(Transformer):
 
 
 class TensorFlowTransformer(Transformer):
-    def __init__(self, converting):
+    def __init__(self, converting: dict):
         self._converting = converting
 
     def get_shape_in_chw_order(self, shape, *args):
