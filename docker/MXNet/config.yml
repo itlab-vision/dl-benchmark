@@ -1,15 +1,14 @@
 models:
   - name: SampLeNet_example
     launchers:
-      - framework: tf
+      - framework: mxnet
         device: CPU
-        model:   samplenet.pb
+        model:   samplenet-0000.params
         adapter: classification
-        batch: 1
         inputs:
-          - type: INPUT
-            name: data
-            layout: NCHW
+        - name: 'data'
+          type: INPUT
+          shape: 3, 32, 32
 
     datasets:
       - name: sample_dataset
