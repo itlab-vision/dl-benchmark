@@ -25,7 +25,7 @@ def get_input_dicts(encodings_dict, device):
     for _ in range(num_layer):
         past.append(torch.empty(past_shape).type(torch.float32).to(device))
 
-    return input_ids, attention_mask, position_ids, past, batch_size, num_layer
+    return input_ids.to(device), attention_mask.to(device), position_ids.to(device), past, batch_size, num_layer
 
 
 def get_slice_inputs(input_ids, attention_mask, position_ids, past):
@@ -46,13 +46,15 @@ def batch_text_generation(tokenizer, device, encodings_dict, number_iter=MAX_TEX
     if not use_onnxruntime and torch_model is None:
         raise ValueError('onnxruntime session or pytorch model should exist!')
 
-    if use_onnxruntime:
-        device = torch.device(device.lower())
+    if device == 'CPU':
+        device = torch.device('cpu')
+    elif device == 'NVIDIA_GPU':
+        device = torch.device('cuda')
 
     input_ids, attention_mask, position_ids, past, batch_size, num_layer = get_input_dicts(encodings_dict, device)
 
     eos_token_id = tokenizer.eos_token_id
-    has_eos = torch.zeros(batch_size, dtype=torch.bool)
+    has_eos = torch.zeros(batch_size, dtype=torch.bool, device=device)
 
     all_token_ids = input_ids.clone()
 
@@ -66,8 +68,8 @@ def batch_text_generation(tokenizer, device, encodings_dict, number_iter=MAX_TEX
 
         next_token_logits = result[0][:, -1, :]
         if use_onnxruntime:
-            next_token_logits = torch.from_numpy(next_token_logits)
-        next_tokens = torch.argmax(next_token_logits, dim=-1)
+            next_token_logits = torch.from_numpy(next_token_logits).to(device)
+        next_tokens = torch.argmax(next_token_logits, dim=-1).to(device)
 
         # updates which sentences have not seen an <EOS> token so far
         # if one <EOS> token was seen the sentence is finished

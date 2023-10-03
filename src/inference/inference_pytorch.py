@@ -11,6 +11,11 @@ from time import time
 
 import torch
 
+try:
+    import torch_tensorrt
+except ImportError:
+    log.info('No torch_tensorrt module, it is ok')
+
 import postprocessing_data as pp
 import preprocessing_data as prep
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -317,7 +322,6 @@ def compile_model(model, device, model_type, shapes, input_type, tensor_rt_dtype
                 model.half()
 
             log.info('Make compiled model for Torch-TensorRT')
-            import torch_tensorrt
             inputs = [torch_tensorrt.Input(shapes[key],
                                            dtype=tensor_rt_dtype if input_type != 'int64' else torch.int)
                       for key in shapes]
