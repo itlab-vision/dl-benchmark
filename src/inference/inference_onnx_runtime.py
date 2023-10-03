@@ -44,12 +44,16 @@ def cli_argument_parser():
 
     parser.add_argument('-m', '--model',
                         help='Path to file with a trained model.',
-                        required=True,
                         type=str,
+                        required=True,
                         dest='model')
+    parser.add_argument('-mn', '--model_name',
+                        help='Name of model.',
+                        type=str,
+                        default=None,
+                        dest='model_name')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -80,7 +84,7 @@ def cli_argument_parser():
                         dest='number_top')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification', 'yolo_v7_onnx', 'text-to-image'],
+                        choices=['classification', 'yolo_v7_onnx', 'text-to-image', 'batch-text-generation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -179,12 +183,12 @@ def create_inference_session(model, task_type, execution_providers, device, sess
             log.warning('Cannot run with pipeline of providers, will use only first')
         provider_and_options = (execution_providers[0],
                                 ORT_EXECUTION_PROVIDERS_OPTIONS.get(execution_providers[0], {}))
-        pipe = OnnxStableDiffusionPipeline.from_pretrained(
+        pipeline = OnnxStableDiffusionPipeline.from_pretrained(
             model,
             provider=provider_and_options,
             sess_options=session_options,
         )
-        return pipe
+        return pipeline
     else:
         provider_options = []
         for provider in execution_providers:
@@ -201,51 +205,84 @@ def create_inference_session(model, task_type, execution_providers, device, sess
         return session
 
 
-def inference_onnx_runtime(session_or_pipe, task_type, output_names, number_iter, get_slice, test_duration):
+def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_names, number_iter,
+                           get_slice, test_duration, device):
     result = None
     time_infer = []
+
     if number_iter == 1:
-        slice_input = get_slice()
+        if task_type not in ['batch-text-generation']:
+            slice_input = get_slice()
+
         t0 = time()
+
         if task_type == 'text-to-image':
-            result = session_or_pipe(slice_input)
+            result = session_or_pipeline(slice_input)
+        elif task_type == 'batch-text-generation':
+            from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
+            from configs.onnx_configs.gpt_2 import batch_text_generation
+
+            tokenizer = create_tokenizer(model_name)
+            encodings_dict = tokenize(tokenizer, get_slice())
+            result = batch_text_generation(ort_session=session_or_pipeline, tokenizer=tokenizer, device=device,
+                                           output_names=output_names, encodings_dict=encodings_dict)
         else:
-            result = session_or_pipe.run(output_names, slice_input)
+            result = session_or_pipeline.run(output_names, slice_input)
+
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, output_names,
-                                                                                     session_or_pipe, task_type)
-
+        time_infer = loop_inference(number_iter,
+                                    test_duration)(inference_iteration)(get_slice, model_name, output_names,
+                                                                        session_or_pipeline, task_type, device)
     return result, time_infer
 
 
-def inference_iteration(get_slice, output_names, session, task_type):
+def inference_iteration(get_slice, model_name, output_names, session, task_type, device):
     inputs = get_slice()
-    _, exec_time = infer_slice(output_names, session, task_type, inputs)
+    _, exec_time = infer_slice(output_names, model_name, session, task_type, device, inputs)
+
     return exec_time
 
 
 @get_exec_time()
-def infer_slice(output_names, session_or_pipe, task_type, slice_input):
+def infer_slice(output_names, model_name, session_or_pipeline, task_type, device, slice_input):
     if task_type == 'text-to-image':
-        res = session_or_pipe(slice_input)
+        res = session_or_pipeline(slice_input)
+    elif task_type == 'batch-text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
+        from configs.onnx_configs.gpt_2 import batch_text_generation
+
+        tokenizer = create_tokenizer(model_name)
+        encodings_dict = tokenize(tokenizer, slice_input)
+
+        res = batch_text_generation(ort_session=session_or_pipeline, tokenizer=tokenizer, device=device,
+                                    output_names=output_names, encodings_dict=encodings_dict)
     else:
-        res = session_or_pipe.run(output_names, slice_input)
+        res = session_or_pipeline.run(output_names, slice_input)
+
     return res
 
 
-def prepare_output(result, output_names, task, args):
-    if task == 'feedforward':
-        return {}
+def prepare_output(result, output_names, model_name, task, args):
     if (output_names is None) or len(output_names) == 0:
         output_names = ['_output']
-    if task == 'classification':
+
+    if task == 'feedforward':
+        return {}
+    elif task == 'classification':
         return {output_names[0]: np.array(result).reshape(args.batch_size, -1)}
     elif task == 'yolo_v7_onnx':
         return result
     elif task == 'text-to-image':
         return result.images
+    elif task == 'batch-text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
+
+        tokenizer = create_tokenizer(model_name)
+        decoded_result = decode(tokenizer, result)
+
+        return decoded_result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -268,12 +305,16 @@ def main():
 
         log.info('Setting inference session options')
         sess_options = set_session_options(args.number_threads, args.execution_mode, args.num_inter_threads)
+
         log.info(f'Creating inference session:\n\t {args.model}')
         inference_session = create_inference_session(args.model, args.task, args.execution_providers,
                                                      args.device, sess_options)
 
         if args.task not in ['text-to-image']:
             args.input_names = model_wrapper.get_input_layer_names(inference_session)
+
+        if args.model_name is None:
+            args.model_name = Path(args.model).stem
 
         args.mean = prep.parse_input_arg(args.mean, args.input_names)
         args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
@@ -283,7 +324,7 @@ def main():
         data_transformer = ONNXRuntimeTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        if args.task not in ['text-to-image']:
+        if args.task not in ['text-to-image', 'batch-text-generation']:
             for layer_name in args.input_names:
                 layer_shape = model_wrapper.get_input_layer_shape(inference_session, layer_name)
                 log.info(f'Shape for input layer {layer_name}: {layer_shape}')
@@ -293,7 +334,7 @@ def main():
             io.prepare_input(inference_session, args.input)
         try:
             io.fill_unset_inputs(inference_session, log)
-        except AttributeError:
+        except Exception:
             log.warning('Could not fill unset inputs')
 
         if args.task not in ['text-to-image']:
@@ -303,7 +344,14 @@ def main():
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
         result, inference_time = inference_onnx_runtime(
-            inference_session, args.task, args.output_names, args.number_iter, io.get_slice_input, args.time)
+            session_or_pipeline=inference_session,
+            task_type=args.task,
+            model_name=args.model_name,
+            output_names=args.output_names,
+            number_iter=args.number_iter,
+            get_slice=io.get_slice_input,
+            test_duration=args.time,
+            device=args.device)
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
@@ -316,7 +364,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    result = prepare_output(result, args.output_names, args.task, args)
+                    result = prepare_output(result, args.output_names, args.model_name, args.task, args)
 
                     log.info('Inference results')
                     io.process_output(result, log)

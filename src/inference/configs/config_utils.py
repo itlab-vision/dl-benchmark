@@ -20,6 +20,16 @@ class prepend_to_path:
             sys.path = self._original_path
 
 
+def get_model_config(model_name: str, configs_path: Path):
+    model_config = None
+
+    for config in configs_path.iterdir():
+        if config.stem == model_name.replace('-', '_'):
+            model_config = config
+
+    return model_config
+
+
 def to_camel_case(text: str):
     s = text.replace('-', ' ').replace('_', ' ')
     s = s.split()

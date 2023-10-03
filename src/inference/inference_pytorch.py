@@ -17,21 +17,11 @@ from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
-from configs.config_utils import prepend_to_path, to_camel_case
+from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
 
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
-
-
-def get_model_config(model_name: str):
-    model_config = None
-
-    for config in Path(MODEL_CONFIGS_PATH).iterdir():
-        if config.stem == model_name.replace('-', '_'):
-            model_config = config
-
-    return model_config
 
 
 def cli_argument_parser():
@@ -112,7 +102,7 @@ def cli_argument_parser():
                              'is a vector of probabilities; text-generation - predicted string;'
                              'text-translation - translated string.',
                         choices=['feedforward', 'classification', 'text-to-image',
-                                 'yolo_v7', 'text-generation', 'text-translation'],
+                                 'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -345,6 +335,13 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
     with torch.inference_mode(inference_mode):
         output = None
         time_infer = []
+
+        if task_type in ['text-generation', 'batch-text-generation']:
+            from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
+
+            tokenizer = create_tokenizer(model.name_or_path)
+            encodings_dict = tokenize(tokenizer, get_slice())
+
         if num_iterations == 1:
             if task_type in ['classification', 'feedforward', 'yolo_v7']:
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -358,10 +355,14 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             elif task_type == 'yolo_v7':
                 output = model(*inputs)[0].to('cpu')
             elif task_type == 'text-generation':
-                from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate, decode
-                tokenizer = create_tokenizer(model.name_or_path)
-                inputs = tokenize(tokenizer, get_slice())
-                output = decode(tokenizer, generate(model=model, inputs=inputs, device=device))
+                from configs.pytorch_configs.causal_lm_base import generate, decode
+
+                output = decode(tokenizer, generate(model=model, inputs=encodings_dict, device=device))
+            elif task_type == 'batch-text-generation':
+                from configs.onnx_configs.gpt_2 import batch_text_generation
+
+                output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
+                                               encodings_dict=encodings_dict)
             elif task_type == 'text-translation':
                 inputs = get_slice()
                 output = model.translate_batch(inputs)
@@ -387,6 +388,7 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
         infer_func(**{input_kwarg_name: inputs})
     else:
         infer_func(*inputs)
+
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
@@ -394,14 +396,23 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
 def inference_iteration(device, get_slice, input_names, model, task_type):
     inputs = None
     input_kwarg_name = None
+
+    if task_type in ['text-generation', 'batch-text-generation']:
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate
+
+        tokenizer = create_tokenizer(model.name_or_path)
+        inputs = tokenize(tokenizer, get_slice())
+
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
     elif task_type == 'text-generation':
-        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate
-        tokenizer = create_tokenizer(model.name_or_path)
-        inputs = tokenize(tokenizer, get_slice())
         model = partial(generate, model=model, device=device)
         input_kwarg_name = 'inputs'
+    elif task_type == 'batch-text-generation':
+        from configs.onnx_configs.gpt_2 import batch_text_generation
+
+        model = partial(batch_text_generation, torch_model=model, tokenizer=tokenizer, device=device)
+        input_kwarg_name = 'encodings_dict'
     elif task_type == 'text-to-image':
         input_kwarg_name = 'prompt'
         inputs = get_slice()
@@ -411,12 +422,13 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
+
     _, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
 
     return exec_time
 
 
-def prepare_output(result, output_names, task):
+def prepare_output(result, model_name, output_names, task):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
 
@@ -424,6 +436,13 @@ def prepare_output(result, output_names, task):
         return {}
     elif task in ['text-generation', 'yolo_v7', 'text-translation']:
         return result
+    elif task == 'batch-text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
+
+        tokenizer = create_tokenizer(model_name)
+        decoded_result = decode(tokenizer, result)
+
+        return decoded_result
     elif task == 'text-to-image':
         return result.images
     elif task == 'classification':
@@ -487,7 +506,7 @@ def main():
             model = load_model_from_file(args.model)
         else:
             model_type = 'baseline'
-            model_config = get_model_config(args.model_name)
+            model_config = get_model_config(model_name=args.model_name, configs_path=MODEL_CONFIGS_PATH)
 
             custom_models_dict = {}
             if args.custom_models_links:
@@ -547,7 +566,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    result = prepare_output(result, args.output_names, args.task)
+                    result = prepare_output(result, compiled_model.name_or_path, args.output_names, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)

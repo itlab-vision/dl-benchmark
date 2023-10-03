@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from model_handler import ModelHandler
+from configs.pytorch_configs.model_handler import ModelHandler
 
 MAX_TEXT_LEN = 70  # maximum number of words in output text
 
@@ -17,17 +17,21 @@ class CausalLMBase(ModelHandler):
         self.use_custom_trace_step = True
 
     def create_model(self, should_be_traced, trust_remote_code=False, **kwargs):
-        trace_args = self.get_traced_loading_flags() if should_be_traced else {}
-        no_cache_args = self.get_no_cache_flags()
         tokenizer = create_tokenizer(self.model_name)
+
+        no_cache_args = self.get_no_cache_flags()
+        trace_args = self.get_traced_loading_flags() if should_be_traced else {}
+
         params = dict(pretrained_model_name_or_path=self.model_name,
                       pad_token_id=tokenizer.eos_token_id,
                       trust_remote_code=trust_remote_code,
                       **trace_args, **no_cache_args)
+
         if kwargs['precision'] == 'BF16':
             params.update({'torch_dtype': torch.bfloat16})
         elif kwargs['precision'] == 'FP16':
             params.update({'torch_dtype': torch.float16})
+
         return AutoModelForCausalLM.from_pretrained(**params)
 
     def trace_model(self, model, device, **kwargs):
