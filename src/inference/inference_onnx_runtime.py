@@ -67,6 +67,11 @@ def cli_argument_parser():
                         default='CPUExecutionProvider',
                         type=prep.names_arg,
                         dest='execution_providers')
+    parser.add_argument('--precision',
+                        help='Run model in selected precision',
+                        default=None,
+                        type=str,
+                        dest='precision')
     parser.add_argument('-b', '--batch_size',
                         help='Size of the processed pack',
                         default=1,
@@ -173,22 +178,20 @@ def set_session_options(number_threads, execution_mode, num_inter_threads):
     return sess_options
 
 
-def create_inference_session(model, task_type, execution_providers, device, session_options):
+def create_inference_session(model, task_type, execution_providers, device, precision, session_options):
     log.info(f'Setting device to {device}')
     log.info(f'Setting execution providers to {execution_providers}')
 
     if task_type == 'text-to-image':
-        from diffusers import OnnxStableDiffusionPipeline
+        from configs.onnx_configs.stable_diffusion import create_inference_session
         if len(execution_providers) > 1:
             log.warning('Cannot run with pipeline of providers, will use only first')
-        provider_and_options = (execution_providers[0],
-                                ORT_EXECUTION_PROVIDERS_OPTIONS.get(execution_providers[0], {}))
-        pipeline = OnnxStableDiffusionPipeline.from_pretrained(
-            model,
-            provider=provider_and_options,
-            sess_options=session_options,
-        )
-        return pipeline
+        provider_with_options = (execution_providers[0],
+                                 ORT_EXECUTION_PROVIDERS_OPTIONS.get(execution_providers[0], {}))
+        return create_inference_session(model,
+                                        provider_with_options=provider_with_options,
+                                        session_options=session_options,
+                                        precision=precision)
     else:
         provider_options = []
         for provider in execution_providers:
@@ -308,7 +311,7 @@ def main():
 
         log.info(f'Creating inference session:\n\t {args.model}')
         inference_session = create_inference_session(args.model, args.task, args.execution_providers,
-                                                     args.device, sess_options)
+                                                     args.device, args.precision, sess_options)
 
         if args.task not in ['text-to-image']:
             args.input_names = model_wrapper.get_input_layer_names(inference_session)

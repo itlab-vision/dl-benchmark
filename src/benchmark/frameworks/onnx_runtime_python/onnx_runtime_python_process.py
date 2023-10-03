@@ -71,6 +71,9 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         execution_mode = self._test.dep_parameters.execution_mode
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--execution_mode', execution_mode)
 
+        precision = self._test.model.precision
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)
+
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         command_line = f'{python} {path_to_onnx_script} {common_params}'
