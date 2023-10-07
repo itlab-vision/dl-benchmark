@@ -1,10 +1,11 @@
 import sys
 import argparse
-import os
 import logging as log
 import mxnet
-import gluoncv
 from mxnet.contrib.quantization import *
+from mxnet_auxiliary import (create_dict_for_quantwrapper, get_device_to_quant,
+                             load_network_gluon, load_network_gluon_model_zoo)
+
 
 class QuantWrapper:
     def __init__(self, args):
@@ -15,12 +16,14 @@ class QuantWrapper:
         self._model_json = args['model_json']
         self._input_name = args['input_name']
         self._weights = args['model_params']
+        self._quant_mode = args['quant_mode']
         self.quantized_net = None
-    
-    def quant_gluon_model(self, net, context):
-        data = mxnet.nd.ones([1, *self._input_shape])
+
+    def quant_gluon_model(self, net, context):    
+        data = [[mxnet.nd.ones([1, *self._input_shape])],]
         quantized_net = quantize_net_v2(net, ctx=context, calib_mode=self._calib_mode,
-                                        quantized_dtype=self._quant_dtype, calib_data=data)
+                                        quantized_dtype=self._quant_dtype, calib_data=data,
+                                        quantize_mode=self._quant_mode)
         log.info(f'Quantizing model {self._model_name}')
         self.quantized_net = quantized_net
 
@@ -28,38 +31,18 @@ class QuantWrapper:
         return self.quantized_net
 
     def save_model_as_symbol_block(self):
-        self.quantized_net.hybridize(static_shape=True, static_alloc=True)
-        self.quantized_net.forward(mxnet.nd.zeros(self._input_shape))
-        self.quantized_net.export('alexnet/quantized_int8_alexnet')
+        if self._model_name == None:
+            if not os.path.exists('quantized_model'):
+                os.mkdir('quantized_model')
+            self.quantized_net.export('quantized_model/quantized_model')
+        else:
+            name = self._model_name
+            dtype = self._quant_dtype
+            if not os.path.exists(name):
+                os.mkdir(name)
+            log.info(f'Saving {dtype} quantized model {name}') 
+            self.quantized_net.export(f'{name}/quantized_{dtype}_{name}')
 
-def load_network_gluon(model_json, model_params, context, input_name):
-    log.info(f'Deserializing network from file ({model_json}, {model_params})')
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
-            model_json, [input_name], model_params, ctx=context)
-    return deserialized_net
-
-def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
-    log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-    net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
-
-    if save_model is True:
-        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
-        if path_save_model is None:
-            path_save_model = os.getcwd()
-        path_save_model = os.path.join(path_save_model, model_name)
-        if not os.path.exists(path_save_model):
-            os.mkdir(path_save_model)
-        gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
-                                   preprocess=None, layout='CHW', ctx=context)
-
-    log.info(f'Info about the network:\n{net}')
-
-    log.info(f'Hybridizing model for quantization: {hybrid}')
-    if hybrid is True:
-        net.hybridize()
-    return net
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -95,9 +78,9 @@ def cli_argument_parser():
     parser.add_argument('-qdt', '--quant_dtype',
                         help='The quantized destination type for input data.'
                              'Currently support `int8`, `uint8`',
-                        default='int8',
+                        default='auto',
                         type=str,
-                        choices=['int8', 'uint8'],
+                        choices=['int8', 'uint8', 'auto'],
                         dest='quant_dtype')
     parser.add_argument('-is', '--input_shape',
                         help='Input shape BxWxHxC, B is a batch size,'
@@ -108,6 +91,16 @@ def cli_argument_parser():
                         type=int,
                         nargs=4,
                         dest='input_shape')
+    parser.add_argument('-qm', '--quantize_mode',
+                        help='The mode that quantization pass to apply.'
+                             'Support `full` and `smart`.'
+                             '`full` means quantize all operator if possible.'
+                             '`smart` means quantization pass will smartly'
+                             'choice which operator should be quantized.',
+                        default='full',
+                        type=str,
+                        choices=['full', 'smart'],
+                        dest='quant_mode')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
                              'NVIDIA_GPU (CPU by default)',
@@ -128,29 +121,6 @@ def cli_argument_parser():
 
     return args
 
-def get_device_to_quant(device):
-    log.info('Get device for quantization')
-    if device == 'CPU':
-        log.info(f'Quantization will be executed on {device}')
-        return mxnet.cpu()
-    elif device == 'NVIDIA_GPU':
-        log.info(f'Quantization will be executed on {device}')
-        return mxnet.gpu()
-    else:
-        log.info(f'The device {device} is not supported')
-        raise ValueError('The device is not supported')
-
-def create_dict_for_quantwrapper(args):
-    dictionary = {
-        'calib_mode': args.calib_mode,
-        'quant_dtype': args.quant_dtype,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_json': args.model_json,
-        'model_params': args.model_params,
-        'input_name': args.input_name
-    }
-    return dictionary
 
 def main():
     log.basicConfig(
@@ -165,16 +135,17 @@ def main():
             and (args.model_json is None)
             and (args.model_params is None)):
         net = load_network_gluon_model_zoo(args.model_name, None, context,
-                                           save_model=True, path_save_model=None)
-        quant_wrapper.quant_gluon_model(net, context)
-        quant_wrapper.save_model_as_symbol_block()
+                                           save_model=True, path_save_model=None,
+                                           task='quantization')
     elif (args.model_json is not None) and (args.model_params is not None):
         net = load_network_gluon(args.model_json, args.model_params,
                                  context, args.input_name)
-        quant_wrapper.quant_gluon_model(net, context)
-        quant_wrapper.save_model_as_symbol_block()
     else:
         raise ValueError('Incorrect arguments.')
+
+    quant_wrapper.quant_gluon_model(net, context)
+    quant_wrapper.save_model_as_symbol_block()
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

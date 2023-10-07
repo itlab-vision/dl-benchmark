@@ -55,6 +55,19 @@ def get_device_to_infer(device):
         raise ValueError('The device is not supported')
 
 
+def get_device_to_quant(device):
+    log.info('Get device for quantization')
+    if device == 'CPU':
+        log.info(f'Quantization will be executed on {device}')
+        return mxnet.cpu()
+    elif device == 'NVIDIA_GPU':
+        log.info(f'Quantization will be executed on {device}')
+        return mxnet.gpu()
+    else:
+        log.info(f'The device {device} is not supported')
+        raise ValueError('The device is not supported')
+
+
 def load_network_gluon(model_json, model_params, context, input_name):
     log.info(f'Deserializing network from file ({model_json}, {model_params})')
     with warnings.catch_warnings():
@@ -64,7 +77,9 @@ def load_network_gluon(model_json, model_params, context, input_name):
     return deserialized_net
 
 
-def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
+def load_network_gluon_model_zoo(model_name, hybrid, context, save_model,
+                                 path_save_model, task='inference'):
+    
     log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
@@ -77,12 +92,13 @@ def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_s
             os.mkdir(path_save_model)
         gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
                                    preprocess=None, layout='CHW', ctx=context)
+    
+    if task == 'inference':
+        log.info(f'Info about the network:\n{net}')
 
-    log.info(f'Info about the network:\n{net}')
-
-    log.info(f'Hybridizing model to accelerate inference: {hybrid}')
-    if hybrid is True:
-        net.hybridize()
+        log.info(f'Hybridizing model to accelerate inference: {hybrid}')
+        if hybrid is True:
+            net.hybridize()
     return net
 
 
@@ -94,6 +110,20 @@ def create_dict_for_transformer(args):
         'norm': args.norm,
         'input_shape': args.input_shape,
         'batch_size': args.batch_size,
+    }
+    return dictionary
+
+
+def create_dict_for_quantwrapper(args):
+    dictionary = {
+        'calib_mode': args.calib_mode,
+        'quant_dtype': args.quant_dtype,
+        'input_shape': [args.batch_size] + args.input_shape[1:4],
+        'model_name': args.model_name,
+        'model_json': args.model_json,
+        'model_params': args.model_params,
+        'input_name': args.input_name,
+        'quant_mode': args.quant_mode
     }
     return dictionary
 

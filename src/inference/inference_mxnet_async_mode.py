@@ -13,9 +13,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
+from quantization_mxnet import QuantWrapper
 from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
                              get_device_to_infer, create_dict_for_modelwrapper,
-                             create_dict_for_transformer, prepare_output)
+                             create_dict_for_transformer, prepare_output,
+                             create_dict_for_quantwrapper)
 
 
 def cli_argument_parser():
@@ -153,6 +155,47 @@ def cli_argument_parser():
                         type=str,
                         default=None,
                         dest='color_map')
+    parser.add_argument('-q', '--quantization',
+                        help='Quantization model for further inference.',
+                        action='store_true',
+                        dest='quantization')
+    parser.add_argument('-cm', '--calib_mode',
+                        help='If calib_mode=`none`, no calibration'
+                             'will be used and the thresholds for requantization'
+                             'after the corresponding layers will be calculated at'
+                             'runtime by calling min and max operators'
+                             'If calib_mode=`naive`, the min and max values of the layer'
+                             'outputs from a calibration dataset will be directly taken'
+                             'as the thresholds for quantization'
+                             'If calib_mode=`entropy`, the thresholds for quantization'
+                             'will be derived such that the KL divergence between the'
+                             'distributions of FP32 layer outputs and quantized layer'
+                             'outputs is minimized based upon the calibration dataset.',
+                        default='none',
+                        type=str,
+                        choices=['none', 'naive', 'entropy'],
+                        dest='calib_mode')
+    parser.add_argument('-qdt', '--quant_dtype',
+                        help='The quantized destination type for input data.'
+                             'Currently support `int8`, `uint8`',
+                        default='auto',
+                        type=str,
+                        choices=['int8', 'uint8', 'auto'],
+                        dest='quant_dtype')
+    parser.add_argument('-qm', '--quantize_mode',
+                        help='The mode that quantization pass to apply.'
+                             'Support `full` and `smart`.'
+                             '`full` means quantize all operator if possible.'
+                             '`smart` means quantization pass will smartly'
+                             'choice which operator should be quantized.',
+                        default=None,
+                        type=str,
+                        choices=['full', 'smart'],
+                        dest='quant_mode')
+    parser.add_argument('-sqm', '--save_quantized_model',
+                        help='Save quantized model.',
+                        action='store_true',
+                        dest='save_quantized_model')
 
     args = parser.parse_args()
 
@@ -201,6 +244,8 @@ def main():
 
         context = get_device_to_infer(args.device)
 
+        quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
+
         if ((args.model_name is not None)
                 and (args.model_json is None)
                 and (args.model_params is None)):
@@ -211,6 +256,14 @@ def main():
                                      args.input_name)
         else:
             raise ValueError('Incorrect arguments.')
+
+
+        if (args.quantization):
+            quant_wrapper.quant_gluon_model(net, context)
+            net = quant_wrapper.quantized_net
+        
+        if (args.save_quantized_model):
+            quant_wrapper.save_model_as_symbol_block()
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
