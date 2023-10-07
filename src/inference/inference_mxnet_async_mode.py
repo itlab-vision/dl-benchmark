@@ -257,11 +257,10 @@ def main():
         else:
             raise ValueError('Incorrect arguments.')
 
-
         if (args.quantization):
             quant_wrapper.quant_gluon_model(net, context)
             net = quant_wrapper.quantized_net
-        
+
         if (args.save_quantized_model):
             quant_wrapper.save_model_as_symbol_block()
 

@@ -32,7 +32,7 @@ class QuantWrapper:
         return self.quantized_net
 
     def save_model_as_symbol_block(self):
-        if self._model_name == None:
+        if self._model_name is None:
             if not os.path.exists('quantized_model'):
                 os.mkdir('quantized_model')
             self.quantized_net.export('quantized_model/quantized_model')
