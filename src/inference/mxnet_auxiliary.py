@@ -123,7 +123,7 @@ def create_dict_for_quantwrapper(args):
         'model_json': args.model_json,
         'model_params': args.model_params,
         'input_name': args.input_name,
-        'quant_mode': args.quant_mode
+        'quant_mode': args.quant_mode,
     }
     return dictionary
 

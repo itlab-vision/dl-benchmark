@@ -2,7 +2,8 @@ import sys
 import argparse
 import logging as log
 import mxnet
-from mxnet.contrib.quantization import *
+import os
+from mxnet.contrib.quantization import quantize_net_v2
 from mxnet_auxiliary import (create_dict_for_quantwrapper, get_device_to_quant,
                              load_network_gluon, load_network_gluon_model_zoo)
 
@@ -19,8 +20,8 @@ class QuantWrapper:
         self._quant_mode = args['quant_mode']
         self.quantized_net = None
 
-    def quant_gluon_model(self, net, context):    
-        data = [[mxnet.nd.ones([1, *self._input_shape])],]
+    def quant_gluon_model(self, net, context):
+        data = [[mxnet.nd.ones([1, *self._input_shape])]]
         quantized_net = quantize_net_v2(net, ctx=context, calib_mode=self._calib_mode,
                                         quantized_dtype=self._quant_dtype, calib_data=data,
                                         quantize_mode=self._quant_mode)
@@ -40,7 +41,7 @@ class QuantWrapper:
             dtype = self._quant_dtype
             if not os.path.exists(name):
                 os.mkdir(name)
-            log.info(f'Saving {dtype} quantized model {name}') 
+            log.info(f'Saving {dtype} quantized model {name}')
             self.quantized_net.export(f'{name}/quantized_{dtype}_{name}')
 
 
