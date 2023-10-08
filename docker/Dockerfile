@@ -59,7 +59,7 @@ RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 
 # Download DLI source code
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
+RUN git clone --recursive https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
 
 # accuracy-check
