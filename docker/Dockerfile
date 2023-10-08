@@ -29,6 +29,7 @@ ARG DEPENDENCIES="apt-utils \
                   libtool \
                   libprotobuf-dev \
                   libgl1-mesa-glx \
+                  nlohmann-json3-dev \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
@@ -58,7 +59,7 @@ RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
 
 # Download DLI source code
 WORKDIR /tmp/
-RUN git clone https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
+RUN git clone --recursive https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
     pip3 install docker PyYAML
 
 # accuracy-check
@@ -69,6 +70,6 @@ RUN wget -q https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 RUN tar xvf cifar-10-python.tar.gz -C sample
 
 # Download dataset if repository with dataset is set
+WORKDIR /tmp/
 ARG DATASET_DOWNLOAD_LINK
 RUN if [ -z "$DATASET_DOWNLOAD_LINK" ] ; then echo Argument DATASET_DOWNLOAD_LINK not provided ; else git clone $DATASET_DOWNLOAD_LINK ; fi
-WORKDIR /tmp/

@@ -13,18 +13,15 @@ RUN python3 ./open_model_zoo/tools/model_tools/downloader.py --list models.lst
 RUN rm models.lst
 
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-COPY config_tf2.yml config_tf2.yml
-COPY config_intel-tf.yml config_intel-tf.yml
 
 RUN if [ "$FRAMEWORK" = "intel-tensorflow" ] || [ -z "$FRAMEWORK" ] ; then \
         pip3 install intel-tensorflow==${TF_VERSION}; \
         python3 setup.py install_core; \
-        accuracy_check -c config_intel-tf.yml -m data/test_models -s sample; \
+        accuracy_check -c /tmp/dl-benchmark/docker/TensorFlow/config_intel-tf.yml -m data/test_models -s sample; \
     elif [ "$FRAMEWORK" = "tensorflow" ] ; then \
         pip3 install tensorflow==${TF_VERSION}; \
         python3 setup.py install_core; \
-        accuracy_check -c config_tf2.yml -m data/test_models -s sample; \
+        accuracy_check -c /tmp/dl-benchmark/docker/TensorFlow/config_tf2.yml -m data/test_models -s sample; \
     fi
-RUN rm config_tf2.yml && rm config_intel-tf.yml
 
 WORKDIR /tmp/
