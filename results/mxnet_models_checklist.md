@@ -111,124 +111,124 @@ xception|+|+|
 
 Model | Availability in OMZ (2023.02.24)| Availability in the validation table |
 -|-|-|
-custom_faster_rcnn_fpn|+|-|
-center_net_dla34_coco|+|-|
-center_net_dla34_dcnv2_coco|+|-|
-center_net_dla34_dcnv2_voc|+|-|
-center_net_dla34_voc|+|-|
-center_net_mobilenetv3_large_duc_coco|+|-|
-center_net_mobilenetv3_large_duc_voc|+|-|
-center_net_mobilenetv3_small_duc_coco|+|-|
-center_net_mobilenetv3_small_duc_voc|+|-|
-center_net_resnet101_v1b_coco|+|-|
-center_net_resnet101_v1b_dcnv2_coco|+|-|
-center_net_resnet101_v1b_dcnv2_voc|+|-|
-center_net_resnet101_v1b_voc|+|-|
-center_net_resnet18_v1b_coco|+|-|
-center_net_resnet18_v1b_dcnv2_coco|+|-|
-center_net_resnet18_v1b_dcnv2_voc|+|-|
-center_net_resnet18_v1b_voc|+|-|
-center_net_resnet50_v1b_coco|+|-|
-center_net_resnet50_v1b_dcnv2_coco|+|-|
-center_net_resnet50_v1b_dcnv2_voc|+|-|
-center_net_resnet50_v1b_voc|+|-|
-doublehead_rcnn_resnet50_v1b_voc|+|-|
+custom_faster_rcnn_fpn|+|TypeError: custom_faster_rcnn_fpn() missing 1 required positional argument: 'classes'|
+center_net_dla34_coco|+|Pretrained model for center_net_dla34_coco is not available.|
+center_net_dla34_dcnv2_coco|+|Pretrained model for center_net_dla34_dcnv2_coco is not available.|
+center_net_dla34_dcnv2_voc|+|Pretrained model for center_net_dla34_dcnv2_voc is not available.|
+center_net_dla34_voc|+|Pretrained model for center_net_dla34_voc is not available.|
+center_net_mobilenetv3_large_duc_coco|+|+|
+center_net_mobilenetv3_large_duc_voc|+|+|
+center_net_mobilenetv3_small_duc_coco|+|+|
+center_net_mobilenetv3_small_duc_voc|+|+|
+center_net_resnet101_v1b_coco|+|+|
+center_net_resnet101_v1b_dcnv2_coco|+|+|
+center_net_resnet101_v1b_dcnv2_voc|+|+|
+center_net_resnet101_v1b_voc|+|+|
+center_net_resnet18_v1b_coco|+|+|
+center_net_resnet18_v1b_dcnv2_coco|+|+|
+center_net_resnet18_v1b_dcnv2_voc|+|+|
+center_net_resnet18_v1b_voc|+|+|
+center_net_resnet50_v1b_coco|+|+|
+center_net_resnet50_v1b_dcnv2_coco|+|+|
+center_net_resnet50_v1b_dcnv2_voc|+|+|
+center_net_resnet50_v1b_voc|+|+|
+doublehead_rcnn_resnet50_v1b_voc|+|RuntimeError: Parameter 'doubleheadrcnn0_double_fc_dense0_weight' has not been initialized.|
 dla34|+|-|
-faster_rcnn_fpn_resnet101_v1d_coco|+|-|
-faster_rcnn_fpn_resnet50_v1b_coco|+|-|
-faster_rcnn_fpn_syncbn_resnest101_coco|+|-|
-faster_rcnn_fpn_syncbn_resnest269_coco|+|-|
-faster_rcnn_fpn_syncbn_resnest50_coco|+|-|
-faster_rcnn_fpn_syncbn_resnet101_v1d_coco|+|-|
-faster_rcnn_fpn_syncbn_resnet50_v1b_coco|+|-|
-faster_rcnn_resnet101_v1d_coco|+|-|
-faster_rcnn_resnet101_v1d_custom|+|-|
-faster_rcnn_resnet101_v1d_voc|+|-|
-faster_rcnn_resnet50_v1b_coco|+|-|
-faster_rcnn_resnet50_v1b_custom|+|-|
-faster_rcnn_resnet50_v1b_voc|+|-|
-ssd_300_mobilenet0.25_coco|+|-|
-ssd_300_mobilenet0.25_custom|+|-|
-ssd_300_mobilenet0.25_voc|+|-|
-ssd_300_mobilenet1.0_lite_coco|+|-|
-ssd_300_resnet34_v1b_coco|+|-|
-ssd_300_resnet34_v1b_custom|+|-|
-ssd_300_resnet34_v1b_voc|+|-|
-ssd_300_vgg16_atrous_coco|+|-|
-ssd_300_vgg16_atrous_custom|+|-|
-ssd_300_vgg16_atrous_voc|+|-|
+faster_rcnn_fpn_resnet101_v1d_coco|+|+|
+faster_rcnn_fpn_resnet50_v1b_coco|+|+|
+faster_rcnn_fpn_syncbn_resnest101_coco|+|+|
+faster_rcnn_fpn_syncbn_resnest269_coco|+|+|
+faster_rcnn_fpn_syncbn_resnest50_coco|+|+|
+faster_rcnn_fpn_syncbn_resnet101_v1d_coco|+|Pretrained model for faster_rcnn_fpn_syncbn_resnet101_v1d_coco is not available.|
+faster_rcnn_fpn_syncbn_resnet50_v1b_coco|+|Pretrained model for faster_rcnn_fpn_syncbn_resnet50_v1b_coco is not available.|
+faster_rcnn_resnet101_v1d_coco|+|+|
+faster_rcnn_resnet101_v1d_custom|+|TypeError: faster_rcnn_resnet101_v1d_custom() missing 1 required positional argument: 'classes'|
+faster_rcnn_resnet101_v1d_voc|+|Pretrained model for faster_rcnn_resnet101_v1d_voc is not available.|
+faster_rcnn_resnet50_v1b_coco|+|+|
+faster_rcnn_resnet50_v1b_custom|+|TypeError: faster_rcnn_resnet50_v1b_custom() missing 1 required positional argument: 'classes'|
+faster_rcnn_resnet50_v1b_voc|+|+|
+ssd_300_mobilenet0.25_coco|+|Pretrained model for ssd_300_mobilenet0.25_coco is not available.|
+ssd_300_mobilenet0.25_custom|+|TypeError: ssd_300_mobilenet0_25_custom() missing 1 required positional argument: 'classes'|
+ssd_300_mobilenet0.25_voc|+|Pretrained model for ssd_300_mobilenet0.25_voc is not available.|
+ssd_300_mobilenet1.0_lite_coco|+|Pretrained model for ssd_300_mobilenet1.0_coco is not available.|
+ssd_300_resnet34_v1b_coco|+|+|
+ssd_300_resnet34_v1b_custom|+|TypeError: ssd_300_resnet34_v1b_custom() missing 1 required positional argument: 'classes'|
+ssd_300_resnet34_v1b_voc|+|Pretrained model for ssd_300_resnet34_v1b_voc is not available.|
+ssd_300_vgg16_atrous_coco|+|+|
+ssd_300_vgg16_atrous_custom|+|TypeError: ssd_300_vgg16_atrous_custom() missing 1 required positional argument: 'classes'|
+ssd_300_vgg16_atrous_voc|+|+|
 ssd_300_vgg16_atrous_voc_int8|+|-|
-ssd_512_mobilenet1.0_coco|+|-|
-ssd_512_mobilenet1.0_custom|+|-|
-ssd_512_mobilenet1.0_voc|+|-|
+ssd_512_mobilenet1.0_coco|+|+|
+ssd_512_mobilenet1.0_custom|+|TypeError: ssd_512_mobilenet1_0_custom() missing 1 required positional argument: 'classes'|
+ssd_512_mobilenet1.0_voc|+|+|
 ssd_512_mobilenet1.0_voc_int8|+|-|
-ssd_512_resnet101_v2_voc|+|-|
-ssd_512_resnet152_v2_voc|+|-|
-ssd_512_resnet18_v1_coco|+|-|
-ssd_512_resnet18_v1_voc|+|-|
-ssd_512_resnet50_v1_coco|+|-|
-ssd_512_resnet50_v1_custom|+|-|
-ssd_512_resnet50_v1_voc|+|-|
+ssd_512_resnet101_v2_voc|+|+|
+ssd_512_resnet152_v2_voc|+|Pretrained model for ssd_512_resnet152_v2_voc is not available.|
+ssd_512_resnet18_v1_coco|+|Pretrained model for ssd_512_resnet18_v1_coco is not available.|
+ssd_512_resnet18_v1_voc|+|Pretrained model for ssd_512_resnet18_v1_voc is not available.|
+ssd_512_resnet50_v1_coco|+|+|
+ssd_512_resnet50_v1_custom|+|TypeError: ssd_512_resnet50_v1_custom() missing 1 required positional argument: 'classes'|
+ssd_512_resnet50_v1_voc|+|+|
 ssd_512_resnet50_v1_voc_int8|+|-|
-ssd_512_vgg16_atrous_coco|+|-|
-ssd_512_vgg16_atrous_custom|+|-|
-ssd_512_vgg16_atrous_voc|+|-|
+ssd_512_vgg16_atrous_coco|+|+|
+ssd_512_vgg16_atrous_custom|+|TypeError: ssd_512_vgg16_atrous_custom() missing 1 required positional argument: 'classes'|
+ssd_512_vgg16_atrous_voc|+|+|
 ssd_512_vgg16_atrous_voc_int8|+|-|
-yolo3_darknet53_coco|+|-|
-yolo3_darknet53_custom|+|-|
-yolo3_darknet53_voc|+|-|
-yolo3_mobilenet0.25_coco|+|-|
-yolo3_mobilenet0.25_custom|+|-|
-yolo3_mobilenet0.25_voc|+|-|
-yolo3_mobilenet1.0_coco|+|-|
-yolo3_mobilenet1.0_custom|+|-|
-yolo3_mobilenet1.0_voc|+|-|
+yolo3_darknet53_coco|+|+|
+yolo3_darknet53_custom|+|TypeError: yolo3_darknet53_custom() missing 1 required positional argument: 'classes'|
+yolo3_darknet53_voc|+|+|
+yolo3_mobilenet0.25_coco|+|Pretrained model for yolo3_mobilenet0.25_coco is not available.|
+yolo3_mobilenet0.25_custom|+|TypeError: yolo3_mobilenet0_25_custom() missing 1 required positional argument: 'classes'|
+yolo3_mobilenet0.25_voc|+|Pretrained model for yolo3_mobilenet0.25_voc is not available.|
+yolo3_mobilenet1.0_coco|+|+|
+yolo3_mobilenet1.0_custom|+|TypeError: yolo3_mobilenet1_0_custom() missing 1 required positional argument: 'classes'|
+yolo3_mobilenet1.0_voc|+|+|
 
 ### Semantic segmentation
 
 Model | Availability in OMZ (2023.02.24)| Availability in the validation table |
 -|-|-|
-danet_resnet101_citys|+|-|
-danet_resnet50_citys|+|-|
-deeplab_resnest101_ade|+|-|
-deeplab_resnest200_ade|+|-|
-deeplab_resnest269_ade|+|-|
-deeplab_resnest50_ade|+|-|
-deeplab_resnet101_ade|+|-|
-deeplab_resnet101_citys|+|-|
-deeplab_resnet101_coco|+|-|
+danet_resnet101_citys|+|+|
+danet_resnet50_citys|+|+|
+deeplab_resnest101_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnest200_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnest269_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnest50_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet101_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet101_citys|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet101_coco|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
 deeplab_resnet101_coco_int8|+|-|
-deeplab_resnet101_voc|+|-|
+deeplab_resnet101_voc|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
 deeplab_resnet101_voc_int8|+|-|
-deeplab_resnet152_coco|+|-|
-deeplab_resnet152_voc|+|-|
-deeplab_resnet50_ade|+|-|
-deeplab_resnet50_citys|+|-|
-deeplab_v3b_plus_wideresnet_citys|+|-|
-fastscnn_citys|+|-|
+deeplab_resnet152_coco|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet152_voc|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet50_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_resnet50_citys|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,256,60,60]|
+deeplab_v3b_plus_wideresnet_citys|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,60,60], got [1,256,80,80]|
+fastscnn_citys|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,16,16], got [1,32,32,32]|
 fcn_resnet101_ade|+|-|
-fcn_resnet101_coco|+|-|
+fcn_resnet101_coco|+|+|
 fcn_resnet101_coco_int8|+|-|
-fcn_resnet101_voc|+|-|
+fcn_resnet101_voc|+|+|
 fcn_resnet101_voc_int8|+|-|
 fcn_resnet50_ade|+|-|
-fcn_resnet50_voc|+|-|
-hrnet_w18_small_v1_s|+|-|
-hrnet_w18_small_v2_s|+|-|
-hrnet_w48_s|+|-|
-icnet_resnet50_citys|+|-|
-icnet_resnet50_mhpv1|+|-|
-nasnet_4_1056|+|-|
-nasnet_5_1538|+|-|
-nasnet_6_4032|+|-|
-nasnet_7_1920|+|-|
-psp_resnet101_ade|+|-|
-psp_resnet101_citys|+|-|
-psp_resnet101_coco|+|-|
+fcn_resnet50_voc|+|Pretrained model for fcn_resnet50_voc is not available.|
+hrnet_w18_small_v1_s|+|Pretrained model for hrnet_w18_small_v1_seg is not available.|
+hrnet_w18_small_v2_s|+|Pretrained model for hrnet_w18_small_v2_seg is not available.|
+hrnet_w48_s|+|Pretrained model for hrnet_w48_seg is not available.|
+icnet_resnet50_citys|+|MXNetError: Check failed: l == 1 || r == 1: operands could not be broadcast together with shapes [1,128,60,60] [1,128,64,64]|
+icnet_resnet50_mhpv1|+|MXNetError: Check failed: l == 1 || r == 1: operands could not be broadcast together with shapes [1,128,60,60] [1,128,64,64]|
+nasnet_4_1056|+|Pretrained model for nasnet_4_1056 is not available.|
+nasnet_5_1538|+|Pretrained model for nasnet_5_1538 is not available.|
+nasnet_6_4032|+|Pretrained model for nasnet_6_4032 is not available.|
+nasnet_7_1920|+|Pretrained model for nasnet_7_1920 is not available.|
+psp_resnet101_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,512,60,60]|
+psp_resnet101_citys|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,512,60,60]|
+psp_resnet101_coco|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,512,60,60]|
 psp_resnet101_coco_int8|+|-|
-psp_resnet101_voc|+|-|
+psp_resnet101_voc|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,512,60,60]|
 psp_resnet101_voc_int8|+|-|
-psp_resnet50_ade|+|-|
+psp_resnet50_ade|+|MXNetError: Check failed: shape_assign(&(*in_shape)[i], dshape): Incompatible input shape: expected [1,-1,64,64], got [1,512,60,60]|
 
 ### Instance segmentation
 

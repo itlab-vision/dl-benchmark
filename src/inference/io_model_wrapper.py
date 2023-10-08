@@ -158,6 +158,7 @@ class MXNetIOModelWrapper(IOModelWrapper):
         # model wrapper supports only one input (batch of images)
         self._input_names = [args['input_name']]
         self._input_shapes = [args['input_shape']]
+        self._model_name = args['model_name']
 
     def get_input_layer_names(self, model):
         return self._input_names
@@ -168,6 +169,9 @@ class MXNetIOModelWrapper(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         import numpy as np
         return np.float32
+
+    def get_model_name(self):
+        return self._model_name
 
 
 class OpenCVIOModelWrapper(IOModelWrapper):
