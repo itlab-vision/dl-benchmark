@@ -252,3 +252,7 @@ class ONNXIOModelWrapper(IOModelWrapper):
 
         from numpy import float32
         return float32
+
+
+class TVMIOModelWrapper(MXNetIOModelWrapper):
+    pass

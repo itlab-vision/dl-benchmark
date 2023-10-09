@@ -264,6 +264,10 @@ class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
     pass
 
 
+class TVMTransformer(MXNetTransformer):
+    pass
+
+
 class OnnxRuntimeTransformerCpp(Transformer):
     def __init__(self, model):
         self._model = model
