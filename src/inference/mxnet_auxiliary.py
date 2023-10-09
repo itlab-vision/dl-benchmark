@@ -42,26 +42,13 @@ def prepare_output(result, output_names, task, model_wrapper):
         raise ValueError(f'Unsupported task {task} to print inference results')
 
 
-def get_device_to_infer(device):
-    log.info('Get device for inference')
+def get_device(device, task):
+    log.info(f'Get device for {task}')
     if device == 'CPU':
-        log.info(f'Inference will be executed on {device}')
+        log.info(f'{task.title()} will be executed on {device}')
         return mxnet.cpu()
     elif device == 'NVIDIA_GPU':
-        log.info(f'Inference will be executed on {device}')
-        return mxnet.gpu()
-    else:
-        log.info(f'The device {device} is not supported')
-        raise ValueError('The device is not supported')
-
-
-def get_device_to_quant(device):
-    log.info('Get device for quantization')
-    if device == 'CPU':
-        log.info(f'Quantization will be executed on {device}')
-        return mxnet.cpu()
-    elif device == 'NVIDIA_GPU':
-        log.info(f'Quantization will be executed on {device}')
+        log.info(f'{task.title()} will be executed on {device}')
         return mxnet.gpu()
     else:
         log.info(f'The device {device} is not supported')

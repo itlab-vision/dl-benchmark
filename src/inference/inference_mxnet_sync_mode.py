@@ -16,7 +16,7 @@ from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
 from quantization_mxnet import QuantWrapper
 from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
-                             get_device_to_infer, create_dict_for_modelwrapper,
+                             get_device, create_dict_for_modelwrapper,
                              create_dict_for_transformer, prepare_output,
                              create_dict_for_quantwrapper)
 
@@ -253,7 +253,7 @@ def main():
         data_transformer = MXNetTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        context = get_device_to_infer(args.device)
+        context = get_device(args.device, 'inference')
 
         quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
 

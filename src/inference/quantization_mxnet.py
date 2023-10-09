@@ -4,7 +4,7 @@ import logging as log
 import mxnet
 import os
 from mxnet.contrib.quantization import quantize_net_v2
-from mxnet_auxiliary import (create_dict_for_quantwrapper, get_device_to_quant,
+from mxnet_auxiliary import (create_dict_for_quantwrapper, get_device,
                              load_network_gluon, load_network_gluon_model_zoo)
 
 
@@ -130,7 +130,7 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
-    context = get_device_to_quant(args.device)
+    context = get_device(args.device, 'quantization')
     quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
     if ((args.model_name is not None)
             and (args.model_json is None)
