@@ -5,7 +5,7 @@
 ### Image classification
 
 Model | Availability in OMZ (2023.03.10) | Availability in the validation table |
--|-|--------------------------------------|
+-|-|-|
 densenet-121|+-| + |
 googlenet-v1-tf|+-| + |
 googlenet-v2-tf|+-| + |
@@ -38,7 +38,7 @@ resnet-50-tf|+-| + |
 ### Image classification
 
 Model | Availability in TF hub (2023.03.10) | Availability in the validation table |
--|-|------------------------------------|
+-|-|-|
 lite-model_mobilenet_v1_100_224_fp32_1.tflite|+ ([link][mobilenet_v1_100_224_fp32_1])| + |
 lite-model_mobilenet_v2_100_224_fp32_1.tflite|+ ([link][mobilenet_v2_100_224_fp32_1])| + |
 lite-model_mobilenet_v3_small_100_224_fp32_1.tflite|+ ([link][mobilenet_v3_small_100_224_fp32_1])| + |
