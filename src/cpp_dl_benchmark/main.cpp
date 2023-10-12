@@ -84,6 +84,12 @@ constexpr char input_scale_msg[] =
     "src[255,255,255]";
 DEFINE_string(scale, "", input_scale_msg);
 
+constexpr char channel_swap_msg[] =
+    "switch the input channels order from BGR to RGB.\n"
+    "                                                      applicable only for models with image inputs.\n"
+    "                                                      image are uploaded in BGR format by default";
+DEFINE_bool(channel_swap, false, channel_swap_msg);
+
 constexpr char threads_num_msg[] = "number of threads to utilize.";
 DEFINE_uint32(nthreads, 0, threads_num_msg);
 
@@ -144,6 +150,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[--dtype <[FP32]>]                            " << dtype_msg
                   << "\n\t[--mean <R G B>]                              " << input_mean_msg
                   << "\n\t[--scale <R G B>]                             " << input_scale_msg
+                  << "\n\t[--channel_swap]                              " << channel_swap_msg
                   << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
                   << "\n\t[--nireq <NUMBER>]                            " << requests_num_msg
                   << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
@@ -273,7 +280,8 @@ int main(int argc, char* argv[]) {
                                                    FLAGS_shape,
                                                    FLAGS_mean,
                                                    FLAGS_scale,
-                                                   FLAGS_dtype);
+                                                   FLAGS_dtype,
+                                                   FLAGS_channel_swap);
 
         // determine batch size
         int batch_size = inputs::get_batch_size(inputs_info);
