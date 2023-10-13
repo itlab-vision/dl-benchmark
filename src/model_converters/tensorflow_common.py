@@ -212,3 +212,12 @@ def is_gpu_available():
 def get_input_operation_name(input_name):
     input_op_name = [ts.split(':')[0] for ts in input_name] if input_name is not None else None
     return input_op_name
+
+
+def restrisct_gpu_usage():
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        # Restrict TensorFlow to only use the first GPU
+        tf.config.set_visible_devices(gpus[0], 'GPU')
+        logical_gpus = tf.config.list_logical_devices('GPU')
+        print(len(gpus), 'Physical GPUs,', len(logical_gpus), 'Logical GPU')

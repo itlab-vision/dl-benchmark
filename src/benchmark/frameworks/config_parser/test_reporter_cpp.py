@@ -28,7 +28,7 @@ class CppTest(Test):
         report_res = {
             'task': self.model.task,
             'model': self.model.name,
-            'dataset': self.dataset.name,
+            'dataset': self.dataset.name if self.dataset else None,
             'source_framework': self.model.source_framework,
             'inference_framework': self.indep_parameters.inference_framework,
             'precision': self.model.precision,

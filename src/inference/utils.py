@@ -1,6 +1,10 @@
 from copy import copy
 
-from openvino.runtime import Core, Tensor, PartialShape
+try:
+    from openvino.runtime import Core, Tensor, PartialShape
+    _ov_runtime_supported = True
+except ImportError:
+    _ov_runtime_supported = False
 
 
 def create_model(core, model_xml, model_bin, log):
@@ -105,11 +109,15 @@ def set_property(core, devices, nthreads, nstreams, dump, mode):
 
 def create_core(path_to_extension, path_to_intel_gpu_config, device, nthreads, nstreams,
                 dump, mode, log):
-    log.info('Inference Engine initialization')
-    core = Core()
-    add_extension(core, path_to_extension, path_to_intel_gpu_config, device, log)
-    set_property(core, device, nthreads, nstreams, dump, mode)
-    return core
+    if _ov_runtime_supported:
+        log.info('Inference Engine initialization')
+        core = Core()
+        add_extension(core, path_to_extension, path_to_intel_gpu_config, device, log)
+        set_property(core, device, nthreads, nstreams, dump, mode)
+
+        return core
+    else:
+        raise Exception('Inference Engine is unavailable!')
 
 
 def compile_model(core, model, device, multi_priority):
@@ -145,15 +153,19 @@ def set_input_to_blobs(request, input_):
     model_inputs = request.model_inputs
     for layer_name, data in input_.items():
         found_tensor = False
-        for model_input in model_inputs:
-            if model_input.get_any_name() == layer_name:
-                if PartialShape(data.shape) != model_input.get_partial_shape():
-                    raise ValueError('Input data and input layer with name {0} has different shapes: '
-                                     '{1} and {2}'.format(layer_name, PartialShape(data.shape),
-                                                          model_input.get_partial_shape()))
-                new_tensor = Tensor(data)
-                request.set_tensor(model_input.get_any_name(), new_tensor)
-                found_tensor = True
+
+        if _ov_runtime_supported:
+            for model_input in model_inputs:
+                if model_input.get_any_name() == layer_name:
+                    if PartialShape(data.shape) != model_input.get_partial_shape():
+                        raise ValueError('Input data and input layer with name {0} has different shapes: '
+                                         '{1} and {2}'.format(layer_name, PartialShape(data.shape),
+                                                              model_input.get_partial_shape()))
+                    new_tensor = Tensor(data)
+                    request.set_tensor(model_input.get_any_name(), new_tensor)
+                    found_tensor = True
+        else:
+            raise Exception('Inference Engine is unavailable!')
 
         if not found_tensor:
             raise ValueError(f'No input layer with name {layer_name}')

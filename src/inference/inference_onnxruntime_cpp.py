@@ -5,8 +5,8 @@ import os
 import subprocess
 import sys
 import onnxruntime as ort
-from io_model_wrapper import OnnxRuntimeModelWrapperCpp
-from transformer import OnnxRuntimeTransformerCpp
+from io_model_wrapper import ONNXIOModelWrapperCpp
+from transformer import ONNXRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
 import logging as log
@@ -28,7 +28,7 @@ def cli_argument_parser():
                         dest='benchmark_path')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -176,12 +176,15 @@ def main():
     try:
         log.info(f'Reading model {args.model_path}')
         model = ort.InferenceSession(args.model_path)
-        model_wrapper = OnnxRuntimeModelWrapperCpp(model)
-        model_data = OnnxRuntimeTransformerCpp(model)
+        model_wrapper = ONNXIOModelWrapperCpp(model)
+        model_data = ONNXRuntimeTransformerCpp(model)
         io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
 
-        log.info('Preparing input images for model')
-        io.prepare_input(model, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(model, args.input)
+        else:
+            log.warning('Input data not provided. Using dummy input')
 
         if args.mean != '' and args.scale != '':
             log.info('Transform mean and std from RGB to BGR')

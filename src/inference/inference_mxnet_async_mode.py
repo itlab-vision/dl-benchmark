@@ -40,7 +40,7 @@ def cli_argument_parser():
                         dest='hybrid')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -125,7 +125,7 @@ def cli_argument_parser():
                         dest='raw_output')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
-                             'NVIDIA GPU (CPU by default)',
+                             'NVIDIA_GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')

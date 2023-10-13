@@ -7,6 +7,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from cmd_handler import CMDHandler  # noqa: E402, PLC0411
+from docker_handler import DockerHandler  # noqa: E402, PLC0411
 
 
 class Executor(metaclass=abc.ABCMeta):
@@ -89,8 +90,8 @@ class DockerExecutor(Executor):
     def __init__(self, log):
         super().__init__(log)
         import docker
-        client = docker.from_env()
-        self.container_dict = {cont.name: cont for cont in client.containers.list()}
+        self.client = docker.from_env()
+        self.container_dict = {cont.name: cont for cont in self.client.containers.list()}
 
     def get_path_to_inference_folder(self):
         return '/tmp/dl-benchmark/src/inference'
@@ -98,10 +99,12 @@ class DockerExecutor(Executor):
     def get_infrastructure(self):
         hardware_command = 'python3 /tmp/dl-benchmark/src/node_info/node_info.py'
         command_line = f'bash -c "source /root/.bashrc && {hardware_command}"'
-        output = self.execute_command_in_container(command_line)
-        if output[0] != 0:
+        docker_handler = DockerHandler(command_line, self.log, self.client,
+                                       self.container_dict[self.target_framework].id, False)
+        docker_handler.run()
+        if docker_handler.return_code != 0:
             return 'None'
-        hardware = [line.strip().split(': ') for line in output[-1].decode('utf-8').split('\n')[1:-1]]
+        hardware = [line.strip().split(': ') for line in docker_handler.output[1:-1]]
         hardware_info = ''
         for line in hardware:
             hardware_info += f'{line[0]}: {line[1]}, '
@@ -110,12 +113,10 @@ class DockerExecutor(Executor):
         return hardware_info
 
     def execute_process(self, command_line, _):
-        command_line = command_line.replace('"', "'")
-        command_line = f'bash -c "source /root/.bashrc && {command_line}"'
-        return self.execute_command_in_container(command_line)
-
-    def execute_command_in_container(self, command_line):
-        return self.container_dict[self.target_framework].exec_run(command_line, tty=True, privileged=True)
+        docker_handler = DockerHandler(command_line, self.log, self.client,
+                                       self.container_dict[self.target_framework].id)
+        docker_handler.run()
+        return docker_handler.return_code, docker_handler.output
 
     def get_path_to_logs_folder(self):
         log_path = Path('/tmp/')

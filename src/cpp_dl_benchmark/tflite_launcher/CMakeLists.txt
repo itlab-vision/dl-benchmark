@@ -72,10 +72,12 @@ if (BUILD_TFLITE_LAUNCHER)
                  SOURCES ${SOURCES}
                  HEADERS ${HEADERS}
                  INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                 DEPENDENCIES  ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
-                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex 
-                    ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
-                 DEFINITIONS TFLITE_DEFAULT)
+                 DEPENDENCIES
+                    -Wl,-rpath-link,${TFLITE_BUILD_DIR} # workaround for custom RISC-V toolchains
+                    ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
+                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
+                    ${TFLITE_FLEX_LIBRARY}  tflite_custom_ops
+                 DEFINITIONS TFLITE_WITH_DEFAULT_BACKEND)
 endif()
 
 if (BUILD_TFLITE_XNNPACK_LAUNCHER)
@@ -83,8 +85,23 @@ if (BUILD_TFLITE_XNNPACK_LAUNCHER)
                  SOURCES ${SOURCES}
                  HEADERS ${HEADERS}
                  INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                 DEPENDENCIES ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
-                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex 
+                 DEPENDENCIES
+                    -Wl,-rpath-link,${TFLITE_BUILD_DIR} # workaround for custom RISC-V toolchains
+                    ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
+                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
+                    ${TFLITE_FLEX_LIBRARY} tflite_custom_ops
+                 DEFINITIONS TFLITE_WITH_XNNPACK_BACKEND)
+endif()
+
+if (BUILD_TFLITE_GPU_LAUNCHER)
+    add_launcher(NAME tflite_gpu_delegate_benchmark
+                 SOURCES ${SOURCES}
+                 HEADERS ${HEADERS}
+                 INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                 DEPENDENCIES
+                    -Wl,-rpath-link,${TFLITE_BUILD_DIR} # workaround for custom RISC-V toolchains
+                    ${TFLITE_LIBRARY} ${TFLITE_C_LIBRARY}
+                    -Wl,--no-as-needed # Need --no-as-needed to link tensorflowlite_flex
                     ${TFLITE_FLEX_LIBRARY} ${TFLITE_GPU_LIBRARY} tflite_custom_ops
-                 DEFINITIONS TFLITE_XNNPACK)
+                 DEFINITIONS TFLITE_WITH_GPU_DELEGATE)
 endif()
