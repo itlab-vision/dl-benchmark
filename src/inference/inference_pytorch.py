@@ -62,6 +62,7 @@ def cli_argument_parser():
                         dest='input')
     parser.add_argument('-in', '--input_names',
                         help='Names of the input tensors',
+                        required=True,
                         default=None,
                         type=prep.names_arg,
                         dest='input_names')
@@ -178,9 +179,34 @@ def cli_argument_parser():
     parser.add_argument('--custom_models_links', required=False, default=None, type=str,
                         dest='custom_models_links',
                         help='Optional. Use custom models sources. Format: model_name_1[url],model_name_2[url]')
+    parser.add_argument('--num_inter_threads',
+                        help='Number of threads used for parallelism between independent operations',
+                        default=None,
+                        type=int,
+                        dest='num_inter_threads')
+    parser.add_argument('--num_intra_threads',
+                        help='Number of threads used within an individual op for parallelism',
+                        default=None,
+                        type=int,
+                        dest='num_intra_threads')
     args = parser.parse_args()
 
     return args
+
+
+def set_thread_num(num_inter_threads, num_intra_threads):
+    def validate(num):
+        if num < 0:
+            raise ValueError(f'Incorrect thread count: {num}')
+
+    if num_inter_threads:
+        validate(num_inter_threads)
+        torch.set_num_interop_threads(num_inter_threads)
+        log.info(f'The number of threads for inter-op parallelism: {num_inter_threads}')
+    if num_intra_threads:
+        validate(num_intra_threads)
+        torch.set_num_threads(num_intra_threads)
+        log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
 
 
 def get_device_to_infer(device):
@@ -195,7 +221,6 @@ def get_device_to_infer(device):
         return torch.device('cuda')
     else:
         log.info(f'The device {device} is not supported')
-
         raise ValueError('The device is not supported')
 
 
@@ -501,6 +526,8 @@ def main():
         args.layout = prep.parse_layout_arg(args.layout, args.input_names)
         data_transformer = PyTorchTransformer(prep.create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
+
+        set_thread_num(args.num_inter_threads, args.num_intra_threads)
 
         device = get_device_to_infer(args.device)
         custom_compile_func = None

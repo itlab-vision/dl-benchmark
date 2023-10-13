@@ -17,6 +17,8 @@ class PyTorchParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_COMPILE_WITH_BACKEND = 'CompileWithBackend'
         CONFIG_FRAMEWORK_DEPENDENT_LAYOUT = 'Layout'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_TYPE = 'InputType'
+        CONFIG_FRAMEWORK_DEPENDENT_num_inter_threads_TAG = 'InterOpThreads'
+        CONFIG_FRAMEWORK_DEPENDENT_num_intra_threads_TAG = 'IntraOpThreads'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -60,6 +62,16 @@ class PyTorchParametersParser(DependentParametersParser):
             _input_type = dep_parameters_tag.getElementsByTagName(
                 CONFIG_FRAMEWORK_DEPENDENT_INPUT_TYPE)[0].firstChild
 
+        _num_inter_threads = None
+        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_num_inter_threads_TAG):
+            _num_inter_threads = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_num_inter_threads_TAG)[0].firstChild
+
+        _num_intra_threads = None
+        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_num_intra_threads_TAG):
+            _num_intra_threads = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_num_intra_threads_TAG)[0].firstChild
+
         return PyTorchParameters(
             input_name=_input_name.data if _input_name else None,
             input_shape=_input_shape.data if _input_shape else None,
@@ -73,12 +85,15 @@ class PyTorchParametersParser(DependentParametersParser):
             compile_with_backend=_compile_with_backend.data if _compile_with_backend else None,
             layout=_layout.data if _layout else None,
             input_type=_input_type.data if _input_type else None,
+            num_inter_threads=_num_inter_threads.data if _num_inter_threads else None,
+            num_intra_threads=_num_intra_threads.data if _num_intra_threads else None,
         )
 
 
 class PyTorchParameters(FrameworkParameters):
     def __init__(self, input_name, input_shape, mean, input_scale, output_name, model_type, inference_mode,
-                 tensor_rt_precision, use_model_config, compile_with_backend, layout, input_type):
+                 tensor_rt_precision, use_model_config, compile_with_backend, layout, input_type, num_inter_threads,
+                 num_intra_threads):
         self.input_name = None
         self.input_shape = None
         self.mean = None
@@ -91,6 +106,8 @@ class PyTorchParameters(FrameworkParameters):
         self.compile_with_backend = None
         self.layout = None
         self.input_type = None
+        self.num_inter_threads = None
+        self.num_intra_threads = None
 
         if self._parameter_is_not_none(input_name):
             self.input_name = input_name
@@ -116,3 +133,7 @@ class PyTorchParameters(FrameworkParameters):
             self.layout = layout
         if self._parameter_is_not_none(input_type):
             self.input_type = input_type
+        if self._parameter_is_not_none(num_inter_threads):
+            self.num_inter_threads = num_inter_threads
+        if self._parameter_is_not_none(num_intra_threads):
+            self.num_intra_threads = num_intra_threads

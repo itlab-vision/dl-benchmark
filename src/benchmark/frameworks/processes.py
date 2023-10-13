@@ -13,7 +13,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._executor = executor
         self._output = None
         self._status = None
-        self.timestamp = datetime.now().strftime('%d.%m.%y_%H:%M:%S')
+        self.timestamp = datetime.now().strftime('%d.%m.%y_%H-%M-%S')
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
 
     @property

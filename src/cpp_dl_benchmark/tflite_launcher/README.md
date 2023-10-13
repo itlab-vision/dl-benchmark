@@ -33,13 +33,13 @@ git checkout v2.13.0
 
     - For aarch64 machine with cross-compilation:
 
-      Firstly, install cross-compile tools:
+        Firstly, install cross-compile tools:
 
         ```bash
         sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
         ```
 
-      Then, configure:
+        Then, configure:
 
         ```bash
         cmake -DCMAKE_BUILD_TYPE=Release \
@@ -55,7 +55,7 @@ git checkout v2.13.0
     cmake --build . -- -j$(nproc --all)
     ```
 
-   > **NOTE:**
+    > **NOTE:**
    > In case of cross-compilation, you might need to bring to target machine
    > besides `libtensorflow-lite.so` its dependencies (located in <tflite_build_dir>/_deps):
    > ```
@@ -66,7 +66,7 @@ git checkout v2.13.0
     >libpthreadpool.so
     >libXNNPACK.so
     >```
-   >And GPU delegate dependencies (located in <tflite_build_dir>/_deps/abseil-cpp-build/absl):
+    >And GPU delegate dependencies (located in <tflite_build_dir>/_deps/abseil-cpp-build/absl):
    >```
     >libabsl_base.so
     >libabsl_city.so
@@ -138,7 +138,7 @@ Second opiton is to build TF Lite with bazel.
     ```
 
 1. Build with `bazel`:
-   > Flex delegate could be built only with bazel
+    > Flex delegate could be built only with bazel
 
    For x86 Linux:
 
@@ -149,13 +149,13 @@ Second opiton is to build TF Lite with bazel.
     bazel build --config=monolithic -c opt //tensorflow/lite/delegates/flex:tensorflowlite_flex
     ```
 
-   Shared libraries are located at the following paths:
+    Shared libraries are located at the following paths:
 
     * `bazel-bin/tensorflow/lite/libtensorflowlite.so`
     * `bazel-bin/tensorflow/lite/c/libtensorflowlite_c.so`
     * `bazel-bin/tensorflow/lite/delegates/flex/libtensorflowlite_flex.so`
 
-   To build GPU delegate, make sure you have installed GPU drivers (e.g. for ubuntu 20.04 Intel GPU instruction could be
+    To build GPU delegate, make sure you have installed GPU drivers (e.g. for ubuntu 20.04 Intel GPU instruction could be
    found [here][gpu-drivers]).
 
    Then run build command:
@@ -163,7 +163,7 @@ Second opiton is to build TF Lite with bazel.
     ```bash
     bazel build  -c opt --copt=-DCL_DELEGATE_NO_GL --copt=-DMESA_EGL_NO_X11_HEADERS=1 --copt -DEGL_NO_X11=1 //tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
     ```
-   GPU delegate shared library is located at the following
+    GPU delegate shared library is located at the following
    path: `bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so`
 
    > To cross-build for `aarch64` linux platforms add `--config=elinux_aarch64` to the commands above. Flags that
@@ -203,7 +203,7 @@ so that cmake can find it during configuration step:
          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tflite-build-dir> <dl-benchmark>/src/cpp_dl_benchmark
          ```
 
-   Configuration with TF Lite bazel build:
+    Configuration with TF Lite bazel build:
     ```bash
     cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tensorflow-dir>/bazel-bin/tensorflow/lite <dl-benchmark>/src/cpp_dl_benchmark
     ```
@@ -223,7 +223,6 @@ TensorFlow Lite launcher supports models in `tflite` formats. Some models that r
 delegate.
 
 <!-- LINKS -->
-
 [tflite]: https://www.tensorflow.org/lite
 
 [gpu-drivers]: https://dgpu-docs.intel.com/installation-guides/ubuntu/ubuntu-focal.html

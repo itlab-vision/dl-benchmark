@@ -1,20 +1,20 @@
 import argparse
 import json
 import logging as log
-import os
 import sys
 import traceback
-import warnings
 from pathlib import Path
 from time import time
 
-import gluoncv
 import mxnet
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
+from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
+                             get_device_to_infer, create_dict_for_modelwrapper,
+                             create_dict_for_transformer, prepare_output)
 from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
 
@@ -109,7 +109,8 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection',
+                                 'segmentation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -146,73 +147,19 @@ def cli_argument_parser():
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
+    parser.add_argument('--threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     args = parser.parse_args()
 
     return args
-
-
-def get_device_to_infer(device):
-    log.info('Get device for inference')
-    if device == 'CPU':
-        log.info(f'Inference will be executed on {device}')
-        return mxnet.cpu()
-    elif device == 'NVIDIA_GPU':
-        log.info(f'Inference will be executed on {device}')
-        return mxnet.gpu()
-    else:
-        log.info(f'The device {device} is not supported')
-        raise ValueError('The device is not supported')
-
-
-def load_network_gluon(model_json, model_params, context, input_name):
-    log.info(f'Deserializing network from file ({model_json}, {model_params})')
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        deserialized_net = mxnet.gluon.nn.SymbolBlock.imports(
-            model_json, [input_name], model_params, ctx=context)
-    return deserialized_net
-
-
-def load_network_gluon_model_zoo(model_name, hybrid, context, save_model, path_save_model):
-    log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-    net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
-
-    if save_model is True:
-        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
-        if path_save_model is None:
-            path_save_model = os.getcwd()
-        path_save_model = os.path.join(path_save_model, model_name)
-        if not os.path.exists(path_save_model):
-            os.mkdir(path_save_model)
-        gluoncv.utils.export_block(os.path.join(path_save_model, model_name), net,
-                                   preprocess=None, layout='CHW', ctx=context)
-
-    log.info(f'Info about the network:\n{net}')
-
-    log.info(f'Hybridizing model to accelerate inference: {hybrid}')
-    if hybrid is True:
-        net.hybridize()
-    return net
-
-
-def create_dict_for_transformer(args):
-    dictionary = {
-        'channel_swap': args.channel_swap,
-        'mean': args.mean,
-        'std': args.std,
-        'norm': args.norm,
-        'input_shape': args.input_shape,
-        'batch_size': args.batch_size,
-    }
-    return dictionary
-
-
-def create_dict_for_modelwrapper(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-    }
-    return dictionary
 
 
 def inference_mxnet(net, num_iterations, get_slice, input_name, test_duration):
@@ -243,17 +190,6 @@ def infer_slice(input_name, net, slice_input):
     res = net(slice_input[input_name]).softmax()
     mxnet.nd.waitall()
     return res
-
-
-def prepare_output(result, output_names, task):
-    if task == 'feedforward':
-        return {}
-    if (output_names is None) or len(output_names) == 0:
-        raise ValueError('The number of output tensors does not match the number of corresponding output names')
-    if task == 'classification':
-        return {output_names[0]: result.asnumpy()}
-    else:
-        raise ValueError(f'Unsupported task {task} to print inference results')
 
 
 def main():
@@ -316,7 +252,8 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    result = prepare_output(result, args.output_names, args.task)
+                    result = prepare_output(result, args.output_names, args.task,
+                                            model_wrapper)
 
                     log.info('Inference results')
                     io.process_output(result, log)

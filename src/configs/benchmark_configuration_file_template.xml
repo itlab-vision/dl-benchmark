@@ -253,6 +253,8 @@
             <TensorRTPrecision></TensorRTPrecision>
             <UseModelConfig></UseModelConfig>
             <CompileWithBackend></CompileWithBackend>
+            <InterOpThreads></InterOpThreads>
+            <IntraOpThreads></IntraOpThreads>
         </FrameworkDependent>
     </Test>
     <Test>

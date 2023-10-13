@@ -48,7 +48,6 @@ class TestConfigParser:
         model_path = ''
         if model_tag.getElementsByTagName('ModelPath')[0].firstChild:
             model_path = model_tag.getElementsByTagName('ModelPath')[0].firstChild.data.strip()
-
         weights_path = ''
         if model_tag.getElementsByTagName('WeightsPath')[0].firstChild:
             weights_path = model_tag.getElementsByTagName('WeightsPath')[0].firstChild.data.strip()

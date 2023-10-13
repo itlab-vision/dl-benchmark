@@ -368,7 +368,6 @@ def main():
                 try:
                     log.info('Converting output tensor to print results')
                     result = prepare_output(result, args.output_names, args.model_name, args.task, args)
-
                     log.info('Inference results')
                     io.process_output(result, log)
                 except Exception as ex:
