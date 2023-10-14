@@ -6,10 +6,9 @@ import sys
 import traceback
 import warnings
 import mxnet
+
 from pathlib import Path
 from time import time
-
-import tvm
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -17,14 +16,15 @@ from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-from tvm_auxiliary import (TVMConverter, create_dict_for_converter,
-                           prepare_output)
+from tvm_auxiliary import (TVMConverter, create_dict_for_converter_mxnet,
+                           prepare_output, create_dict_for_modelwrapper,
+                           create_dict_for_transformer)
 
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
-                        help='Model name to download using packages from framework.',
+                        help='Model name to download using packages from GluonCV.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
@@ -41,10 +41,6 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
-    parser.add_argument('-f', '--framework',
-                        help='Model name to download using GluonCV package.',
-                        type=str,
-                        dest='framework')
     parser.add_argument('-ni', '--number_iter',
                         help='Number of inference iterations.',
                         default=1,
@@ -76,6 +72,9 @@ def cli_argument_parser():
                         default='data',
                         type=str,
                         dest='input_name')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
     parser.add_argument('-is', '--input_shape',
                         help='Input shape BxWxHxC, B is a batch size,'
                              'W is an input tensor width,'
@@ -119,37 +118,42 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--report_path',
+                        type=Path,
+                        default=Path(__file__).parent / 'tvm_inference_report.json',
+                        dest='report_path')
     args = parser.parse_args()
     return args
 
-def create_dict_for_transformer(args):
-    dictionary = {
-        'channel_swap': args.channel_swap,
-        'mean': args.mean,
-        'std': args.std,
-        'norm': args.norm,
-        'input_shape': args.input_shape,
-        'batch_size': args.batch_size,
-    }
-    return dictionary
 
-
-def create_dict_for_modelwrapper(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-    }
-    return dictionary
-
-
-def inference_tvm(module, num_of_iteration, input_name, get_slice):
-    if num_of_iteration == 1:
-        slice_input = get_slice() 
-        module.set_input(input_name, slice_input[input_name].asnumpy())
+def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
+    result = None
+    time_infer = []
+    if num_of_iterations == 1:
+        slice_input = get_slice()
+        t0 = time() 
+        module.set_input(input_name, slice_input[input_name])
         module.run()
         result = module.get_output(0)
-        return result
+        t1 = time()
+        time_infer.append(t1 - t0)
+    else:
+        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice, input_name, module)
+    return result, time_infer
+
+
+def inference_iteration(get_slice, input_name, module):
+    slice_input = get_slice()
+    _, exec_time = infer_slice(input_name, module, slice_input)
+    return exec_time
+
+
+@get_exec_time()
+def infer_slice(input_name, module, slice_input):
+    module.set_input(input_name, slice_input[input_name])
+    module.run()
+    res = module.get_output(0)
+    return res
 
 
 def main():
@@ -163,12 +167,17 @@ def main():
     wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
     transformer = TVMTransformer(create_dict_for_transformer(args))
     io = IOAdapter.get_io_adapter(args, wrapper, transformer)
-    converter = TVMConverter(create_dict_for_converter(args))
-    graph_module = converter.convert_model_from_framework()
+    converter = TVMConverter(create_dict_for_converter_mxnet(args))
+    graph_module = converter.convert_model_from_framework('mxnet')
     io.prepare_input(graph_module, args.input)
-    res = inference_tvm(graph_module, args.number_iter, args.input_name, io.get_slice_input_mxnet)
-    io.process_output(prepare_output(res, args.task, args.output_names), log)
-
+    result, infer_time = inference_tvm(graph_module, args.number_iter, args.input_name, io.get_slice_input, args.time)
+    if args.number_iter == 1:
+        io.process_output(prepare_output(result, args.task, args.output_names), log)
+    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
+    report_writer.update_execution_results(**inference_result)
+    report_writer.write_report(args.report_path)
+    log.info('Performance results')
+    log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
 
 
