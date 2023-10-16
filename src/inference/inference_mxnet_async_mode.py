@@ -188,7 +188,7 @@ def cli_argument_parser():
                              '`full` means quantize all operator if possible.'
                              '`smart` means quantization pass will smartly'
                              'choice which operator should be quantized.',
-                        default=None,
+                        default='full',
                         type=str,
                         choices=['full', 'smart'],
                         dest='quant_mode')
