@@ -379,7 +379,7 @@
         <Model>
             <Task>classification</Task>
             <Name>AlexNet</Name>
-            <Precision>FP32</Precision>
+            <Precision>INT8</Precision>
             <SourceFramework>MXNet</SourceFramework>
             <ModelPath></ModelPath>
             <WeightsPath></WeightsPath>
