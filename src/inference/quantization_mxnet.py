@@ -36,7 +36,7 @@ class QuantWrapper:
         if self._model_name is None:
             if not os.path.exists('quantized_model'):
                 os.mkdir('quantized_model')
-            log.info(f'Saving quantized model')
+            log.info('Saving quantized model')
             self.quantized_net.export('quantized_model/quantized_model')
         else:
             name = self._model_name
