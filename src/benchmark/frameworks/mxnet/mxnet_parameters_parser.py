@@ -45,7 +45,7 @@ class MXNetParametersParser(DependentParametersParser):
             mean=_mean.data if _mean else None,
             std=_std.data if _std else None,
             channel_swap=_channel_swap.data if _channel_swap else None,
-            quantization=_quantization.data if _quantization else None, 
+            quantization=_quantization.data if _quantization else None,
         )
 
 
