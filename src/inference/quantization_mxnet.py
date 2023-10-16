@@ -1,6 +1,7 @@
 import sys
 import argparse
 import logging as log
+import traceback
 import mxnet
 import os
 from mxnet.contrib.quantization import quantize_net_v2
@@ -35,6 +36,7 @@ class QuantWrapper:
         if self._model_name is None:
             if not os.path.exists('quantized_model'):
                 os.mkdir('quantized_model')
+            log.info(f'Saving quantized model')
             self.quantized_net.export('quantized_model/quantized_model')
         else:
             name = self._model_name
@@ -132,20 +134,25 @@ def main():
     args = cli_argument_parser()
     context = get_device(args.device, 'quantization')
     quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
-    if ((args.model_name is not None)
-            and (args.model_json is None)
-            and (args.model_params is None)):
-        net = load_network_gluon_model_zoo(args.model_name, None, context,
-                                           save_model=True, path_save_model=None,
-                                           task='quantization')
-    elif (args.model_json is not None) and (args.model_params is not None):
-        net = load_network_gluon(args.model_json, args.model_params,
-                                 context, args.input_name)
-    else:
-        raise ValueError('Incorrect arguments.')
+    try:
+        if ((args.model_name is not None)
+                and (args.model_json is None)
+                and (args.model_params is None)):
+            net = load_network_gluon_model_zoo(args.model_name, None, context,
+                                               save_model=True, path_save_model=None,
+                                               task='quantization')
+        elif (args.model_json is not None) and (args.model_params is not None):
+            net = load_network_gluon(args.model_json, args.model_params,
+                                     context, args.input_name)
+        else:
+            raise ValueError('Incorrect arguments.')
 
-    quant_wrapper.quant_gluon_model(net, context)
-    quant_wrapper.save_model_as_symbol_block()
+        quant_wrapper.quant_gluon_model(net, context)
+        quant_wrapper.save_model_as_symbol_block()
+
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':
