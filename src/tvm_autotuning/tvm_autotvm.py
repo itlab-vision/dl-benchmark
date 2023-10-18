@@ -36,7 +36,7 @@ def cli_argument_parser():
                             'xgb', 'xgb_knob', 'xgb_itervar', 'xgb_curve', 'xgb_rank',
                             'xgb_rank_knob', 'xgb_rank_itervar', 'xgb_rank_curve', 'xgb_rank_binary',
                             'xgb_rank_binary_knob', 'xgb_rank_binary_itervar', 'xgb_rank_binary_curve',
-                            'ga', 'random', 'gridsearch'
+                            'ga', 'random', 'gridsearch',
                         ],
                         default='xgb_rank',
                         type=str,
@@ -64,6 +64,11 @@ def cli_argument_parser():
                         help='Probability of mutation of a knob in a gene',
                         default=0.1,
                         type=float)
+    parser.add_argument('--range_idx',
+                        help='Probability of mutation of a knob in a gene',
+                        default=0.1,
+                        nargs='+',
+                        type=int)
     parser.add_argument('--repeat',
                         help='Path to an .log file with a trained model.',
                         default=10,
@@ -79,7 +84,7 @@ def cli_argument_parser():
     return args
 
 
-def create_tuner(task, tuner, plan_size, pop_size, elite_num, mutation_prob):
+def create_tuner(task, tuner, plan_size, pop_size, elite_num, mutation_prob, range_idx):
     if tuner == 'xgb':
         tuner_obj = XGBTuner(task, loss_type='reg', plan_size=plan_size)
     elif tuner == 'xgb_knob':
@@ -87,7 +92,7 @@ def create_tuner(task, tuner, plan_size, pop_size, elite_num, mutation_prob):
     elif tuner == 'xgb_itervar':
         tuner_obj = XGBTuner(task, loss_type='reg', feature_type='itervar', plan_size=plan_size)
     elif tuner == 'xgb_curve':
-        tuner_obj = XGBTuner(task, loss_type="reg", feature_type="curve", plan_size=plan_size)
+        tuner_obj = XGBTuner(task, loss_type='reg', feature_type='curve', plan_size=plan_size)
     elif tuner == 'xgb_rank':
         tuner_obj = XGBTuner(task, loss_type='rank', plan_size=plan_size)
     elif tuner == 'xgb_rank_knob':
@@ -109,7 +114,7 @@ def create_tuner(task, tuner, plan_size, pop_size, elite_num, mutation_prob):
     elif tuner == 'random':
         tuner_obj = RandomTuner(task)
     elif tuner == 'gridsearch':
-        tuner_obj = GridSearchTuner(task)
+        tuner_obj = GridSearchTuner(task, range_idx=range_idx)
     else:
         raise ValueError('Invalid tuner: ' + tuner)
 
@@ -129,9 +134,9 @@ def extract_tasks(mod, target, params, layer_names):
 
 
 def tasks_tuning(tasks, tuner_name, plan_size, pop_size, elite_num,
-                 mutation_prob, run_repeat, early_stopping, log_filename):
+                 mutation_prob, range_idx, run_repeat, early_stopping, log_filename):
     for task in tasks:
-        tuner_obj = create_tuner(task, tuner_name, plan_size, pop_size, elite_num, mutation_prob)
+        tuner_obj = create_tuner(task, tuner_name, plan_size, pop_size, elite_num, mutation_prob, range_idx)
         n_trial = len(task.config_space)
         tuner_obj.tune(
             n_trial=n_trial,
@@ -141,7 +146,6 @@ def tasks_tuning(tasks, tuner_name, plan_size, pop_size, elite_num,
             ),
             early_stopping=early_stopping,
             callbacks=[
-                autotvm.callback.progress_bar(n_trial),
                 autotvm.callback.log_to_file(log_filename),
             ],
         )
@@ -154,7 +158,7 @@ def main():
 
     tasks = extract_tasks(mod, args.target, params, args.layer_names)
     tasks_tuning(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
-                 args.mutation_prob, args.run_repeat, args.early_stopping, args.log_file)
+                 args.mutation_prob, args.range_idx, args.run_repeat, args.early_stopping, args.log_file)
 
 
 if __name__ == '__main__':

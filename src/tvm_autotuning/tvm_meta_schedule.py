@@ -11,7 +11,7 @@ class DLIMetaSchedule:
         assert (len(extracted_tasks) > 0)
 
         tasks, task_weights = ms.relay_integration.extracted_tasks_to_tune_contexts(
-            extracted_tasks, work_dir, strategy=strategy
+            extracted_tasks, work_dir, strategy=strategy,
         )
         return tasks, task_weights
 
@@ -32,5 +32,5 @@ class DLIMetaSchedule:
         )
 
     def run_tuning(self, mod, params, target, n_trials, work_dir):
-        tasks, task_weights = self.extract_tasks(mod, target, params, "evolutionary", work_dir)
+        tasks, task_weights = self.extract_tasks(mod, target, params, 'evolutionary', work_dir)
         self.tasks_tuning(tasks, task_weights, n_trials, work_dir)
