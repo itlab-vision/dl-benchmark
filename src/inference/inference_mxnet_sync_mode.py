@@ -180,7 +180,7 @@ def cli_argument_parser():
                         choices=['none', 'naive', 'entropy'],
                         dest='calib_mode')
     parser.add_argument('-qdt', '--quant_dtype',
-                        help='The quantized destination type for input data.'
+                        help='The quantized type of weights.'
                              'Currently support `int8`, `uint8`',
                         default='auto',
                         type=str,
@@ -189,7 +189,7 @@ def cli_argument_parser():
     parser.add_argument('-qm', '--quantize_mode',
                         help='The mode that quantization pass to apply.'
                              'Support `full` and `smart`.'
-                             '`full` means quantize all operator if possible.'
+                             '`full` means quantize all operators if possible.'
                              '`smart` means quantization pass will smartly'
                              'choice which operator should be quantized.',
                         default='full',
