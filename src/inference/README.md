@@ -726,28 +726,6 @@ python inference_pytorch.py --model_name <model_name> \
                             --batch_size <batch_size>
 ```
 
-**Запуск вывода в асинхронном режиме для модели, которая загружается из Gluon Model Zoo**
-
-```bash
-python inference_mxnet_async_mode.py --model_name <model_name> \
-                                     --input <path_to_data> \
-                                     --hybrid \
-                                     --input_name <input_name> \
-                                     --input_shape <input_shape> \
-                                     --norm --mean <mean> --std <std> \
-                                     --save_model --path_save_model <path_save_model>
-```
-
-**Запуск вывода в синхронном режиме для модели, которая загружается из файлов**
-
-```bash
-python inference_mxnet_sync_mode.py --model <file_name>.json \
-                                    --weights <file_name>.params \
-                                    --input_name <input_name> \
-                                    --input_shape <input_shape> \
-                                    --input <path_to_data> \
-                                    --labels <label_file>.json
-```
 
 ## Вывод глубоких моделей с использованием PyTorch (TorchVision)
 

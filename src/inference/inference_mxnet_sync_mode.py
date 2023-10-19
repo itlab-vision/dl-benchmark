@@ -187,7 +187,7 @@ def inference_iteration(get_slice, input_name, net):
 
 @get_exec_time()
 def infer_slice(input_name, net, slice_input):
-    res = net(slice_input[input_name]).softmax()
+    res = net(slice_input[input_name])
     mxnet.nd.waitall()
     return res
 

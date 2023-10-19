@@ -28,7 +28,7 @@ class PyTorchCppProcess(ProcessHandler):
             raise invalid_path_exception
 
         self._report_path = executor.get_path_to_logs_folder().joinpath(
-            f'pytorch_benchmark_{test.model.name}_{datetime.now().strftime("%d.%m.%y_%H:%M:%S")}.json')
+            f'pytorch_benchmark_{test.model.name}_{datetime.now().strftime("%d.%m.%y_%H-%M-%S")}.json')
 
     @staticmethod
     def create_process(test, executor, log, cpp_benchmarks_dir):
