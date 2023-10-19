@@ -880,7 +880,7 @@ python3 quantization_mxnet.py \
 ##### Запуск с моделями из [Gluon Model Zoo][gluon_modelzoo]
 ```bash
 python3 quantization_mxnet.py \
-        -mт <name_of_model> \
+        -mn <name_of_model> \
         -is <input_shape> \ 
 ```
 
