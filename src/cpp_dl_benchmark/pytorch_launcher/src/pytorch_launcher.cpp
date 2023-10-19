@@ -128,3 +128,23 @@ void PytorchLauncher::run(const int input_idx) {
         torch::cuda::synchronize();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 }
+
+void PytorchLauncher::dump_output() {
+    std::vector<std::pair<const float*, size_t>> tmp;
+    for (int i = 0; i < tensors.size(); i++) {
+        std::string name = "output" + std::to_string(i);
+        std::ofstream file(name);
+        const auto output_tensor = module.forward(tensors[i]).toTensor();
+        const auto result = output_tensor.data_ptr<float>();
+        const auto size = output_tensor.numel();
+        if (file.is_open()) {
+            for (int j = 0; j < size; j++) {
+                file << std::to_string(result[j]) << '\n';
+            }
+        }
+        else {
+            throw std::runtime_error("Something went wrong, can't open file");
+        }
+        file.close();
+    }
+}

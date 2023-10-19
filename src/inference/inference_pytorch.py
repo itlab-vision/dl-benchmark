@@ -484,7 +484,7 @@ def prepare_output(result, model, output_names, task):
 def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
+        level=log.DEBUG,
         stream=sys.stdout,
     )
     args = cli_argument_parser()
