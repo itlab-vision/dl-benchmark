@@ -16,6 +16,7 @@ class TVMProcess(ProcessHandler):
         framework = test.dep_parameters.framework
         if framework is None:
             framework = 'TVM'
+            return MXNet_TVMProcess(test, executor, log)
         else:
             framework = test.dep_parameters.framework.lower()
             if framework == 'mxnet':
