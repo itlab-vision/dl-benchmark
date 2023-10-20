@@ -344,6 +344,36 @@
     <Test>
         <Model>
             <Task>classification</Task>
+            <Name>AlexNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>MXNet</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
             <Name>mobilenet-v1-1.0-224-tf</Name>
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>

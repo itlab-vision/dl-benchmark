@@ -28,6 +28,16 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_STD_TAG)[0].firstChild
         _channel_swap = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        
+        return TVMParameters(
+            framework=_framework.data if _framework else None,
+            input_name=_input_name.data if _input_name else None,
+            input_shape=_input_shape.data if _input_shape else None,
+            normalize=_normalize.data if _normalize else None,
+            mean=_mean.data if _mean else None,
+            std=_std.data if _std else None,
+            channel_swap=_channel_swap.data if _channel_swap else None,
+        )
 
 
 class TVMParameters(FrameworkParameters):
