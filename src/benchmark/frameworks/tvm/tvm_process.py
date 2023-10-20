@@ -13,6 +13,7 @@ class TVMProcess(ProcessHandler):
 
     @staticmethod
     def create_process(test, executor, log):
+        framework = test.dep_parameters.framework
         if framework is None:
             framework = 'TVM'
         else:
