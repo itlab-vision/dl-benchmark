@@ -6,7 +6,7 @@ class DLIMetaSchedule:
     @staticmethod
     def extract_tasks(mod, target, params, strategy, work_dir):
         extracted_tasks = ms.relay_integration.extract_tasks(
-            mod, target, params
+            mod, target, params,
         )
         assert (len(extracted_tasks) > 0)
 

@@ -14,14 +14,14 @@ def cli_argument_parser():
                         help='Path to an .json file with a model.',
                         required=True,
                         type=str,
-                        dest='model_in_json')
+                        dest='model_json')
     parser.add_argument('-p', '--params',
                         help='Path to an .params file with a model parameters.',
                         required=True,
                         type=str,
-                        dest='params')
+                        dest='model_params')
     parser.add_argument('-t', '--target',
-                        help='target.',
+                        help='Target device information.',
                         required=True,
                         type=str)
     parser.add_argument('-l', '--log',
@@ -31,7 +31,7 @@ def cli_argument_parser():
                         type=str,
                         dest='log_file')
     parser.add_argument('--tuner',
-                        help='Tuner.',
+                        help='Method name for tuning the model.',
                         choices=[
                             'xgb', 'xgb_knob', 'xgb_itervar', 'xgb_curve', 'xgb_rank',
                             'xgb_rank_knob', 'xgb_rank_itervar', 'xgb_rank_curve', 'xgb_rank_binary',
@@ -69,11 +69,17 @@ def cli_argument_parser():
                         default=0.1,
                         nargs='+',
                         type=int)
+    parser.add_argument('--number',
+                        help='The number of times to run the generated code for taking average.'
+                             'We call these runs as one repeat of measurement.',
+                        default=4,
+                        type=int)
     parser.add_argument('--repeat',
-                        help='Path to an .log file with a trained model.',
-                        default=10,
-                        type=int,
-                        dest='run_repeat')
+                        help='The number of times to repeat the measurement.'
+                             'In total, the generated code will be run (1 + number x repeat) times,'
+                             'where the first one is warm up and will be discarded.',
+                        default=3,
+                        type=int)
     parser.add_argument('--early_stopping',
                         help='Early stop the tuning when not finding better configs in this number of trials.',
                         default=100,
@@ -121,7 +127,7 @@ def create_tuner(task, tuner, plan_size, pop_size, elite_num, mutation_prob, ran
     return tuner_obj
 
 
-def extract_tasks(mod, target, params, layer_names):
+def extract_tasks(mod, params, target, layer_names):
     if layer_names is not None:
         ops = [relay.op.get(layer_name) for layer_name in layer_names]
     else:
@@ -133,8 +139,8 @@ def extract_tasks(mod, target, params, layer_names):
     return tasks
 
 
-def tasks_tuning(tasks, tuner_name, plan_size, pop_size, elite_num,
-                 mutation_prob, range_idx, run_repeat, early_stopping, log_filename):
+def tune_tasks(tasks, tuner_name, plan_size, pop_size, elite_num,
+               mutation_prob, range_idx, number, repeat, early_stopping, log_filename):
     for task in tasks:
         tuner_obj = create_tuner(task, tuner_name, plan_size, pop_size, elite_num, mutation_prob, range_idx)
         n_trial = len(task.config_space)
@@ -142,7 +148,7 @@ def tasks_tuning(tasks, tuner_name, plan_size, pop_size, elite_num,
             n_trial=n_trial,
             measure_option=autotvm.measure_option(
                 builder=autotvm.LocalBuilder(),
-                runner=autotvm.LocalRunner(repeat=run_repeat),
+                runner=autotvm.LocalRunner(number=number, repeat=repeat),
             ),
             early_stopping=early_stopping,
             callbacks=[
@@ -153,12 +159,12 @@ def tasks_tuning(tasks, tuner_name, plan_size, pop_size, elite_num,
 
 def main():
     args = cli_argument_parser()
-    params = utils.load_params(args.params)
-    mod = utils.load_mod(args.model_in_json)
+    mod = utils.load_mod(args.model_json)
+    params = utils.load_params(args.model_params)
 
-    tasks = extract_tasks(mod, args.target, params, args.layer_names)
-    tasks_tuning(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
-                 args.mutation_prob, args.range_idx, args.run_repeat, args.early_stopping, args.log_file)
+    tasks = extract_tasks(mod, params, args.target, args.layer_names)
+    tune_tasks(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
+               args.mutation_prob, args.range_idx, args.repeat, args.early_stopping, args.log_file)
 
 
 if __name__ == '__main__':
