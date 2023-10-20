@@ -13,11 +13,14 @@ class TVMProcess(ProcessHandler):
 
     @staticmethod
     def create_process(test, executor, log):
-        framework = test.dep_parameters.framework.lower()
-        if framework == 'mxnet':
-            return MXNet_TVMProcess(test, executor, log)
+        if framework is None:
+            framework = 'TVM'
         else:
-            raise AssertionError(f'Unknown framework {framework}')
+            framework = test.dep_parameters.framework.lower()
+            if framework == 'mxnet':
+                return MXNet_TVMProcess(test, executor, log)
+            else:
+                raise AssertionError(f'Unknown framework {framework}')
 
     def get_performance_metrics(self):
         return self.get_performance_metrics_from_json_report()
