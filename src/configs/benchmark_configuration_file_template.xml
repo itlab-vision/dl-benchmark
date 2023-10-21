@@ -177,6 +177,7 @@
             <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
+            <Mode></Mode>
             <InputName></InputName>
             <InputShape></InputShape>
             <Hybridize></Hybridize>
@@ -184,6 +185,7 @@
             <Mean></Mean>
             <Std></Std>
             <ChannelSwap></ChannelSwap>
+            <Quantization></Quantization>
         </FrameworkDependent>
     </Test>
     <Test>
