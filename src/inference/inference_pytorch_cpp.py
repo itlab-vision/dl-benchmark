@@ -125,7 +125,7 @@ class PyTorchProcess():
             elif name == '-l':
                 if arg != '':
                     self._add_option('--dump_output')
-            elif arg != '':
+            elif arg != '' and arg is not None:
                 self._add_argument(name, arg)
 
     def execute(self):
@@ -134,22 +134,22 @@ class PyTorchProcess():
             log.error(traceback.format_exc())
             sys.exit(1)
 
-    def process_benchmark_output(self, list_of_names, tmp_dir):
-        list_of_names = list_of_names[::-1]
-        result = {'images': []}
-        for i, _ in enumerate(os.listdir(tmp_dir.name)):
-            out = np.loadtxt(f'output{i}')
-            result['images'].append(out)
-            os.remove(f'output{i}')
+    def process_benchmark_output(self, batch_size):
+        result = {}
+        # support models only with one output
+        name = 'output'
+        out = np.loadtxt(name)
+        result[name] = out.reshape(batch_size, -1)
+        os.remove(name)
         return result
 
 
-def save_model(model_path, model_name, compiled_model, input_shapes, dir):
+def save_model(model_path, model_name, compiled_model, input_shapes, save_dir):
     if model_path is not None:
         return model_path
     import torch
-    model_path = os.path.join(dir, model_name + ".pt")
-    log.info(f"Saving model to file {model_path}")
+    model_path = os.path.join(save_dir, model_name + '.pt')
+    log.info(f'Saving model to file {model_path}')
     traced_script_module = torch.jit.trace(compiled_model, [torch.rand(*input_shapes[layer]) for layer in input_shapes])
     traced_script_module.save(model_path)
     return model_path
@@ -157,12 +157,12 @@ def save_model(model_path, model_name, compiled_model, input_shapes, dir):
 
 def dict_to_string(input_params):
     def get_values(values):
-        values = ",".join(map(str, values)) if not isinstance(values, str) else values
-        return values if re.match('\[(.*?)\]', values) else f"[{values}]"
-    return ",".join(f"{layer_name}{get_values(input_params[layer_name])}" for layer_name in input_params)
+        values = ','.join(map(str, values)) if not isinstance(values, str) else values
+        return values if re.match(r'\[(.*?)\]', values) else f'[{values}]'
+    return ','.join(f'{layer_name}{get_values(input_params[layer_name])}' for layer_name in input_params)
 
 
-def create_dict_from_args_for_process(args, nireq):
+def create_dict_from_args_for_process(args):
     return {'-bch': args.benchmark_path,
             '-m': args.model,
             '-i': args.input,
@@ -172,15 +172,16 @@ def create_dict_from_args_for_process(args, nireq):
             '--layout': dict_to_string(args.layout),
             '-dtype': dict_to_string(args.input_type),
             '-l': args.labels,
-            '-nireq': nireq,
+            '-b': args.batch_size,
+            '-nireq': 1,
             '-niter': 1}
 
 
-def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path):
+def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path, input_names):
     os.chdir(tmp_dir)
+    img = io.get_slice_input()[input_names[0]]
     for i, name in enumerate(names_of_output):
-        for val in io.get_slice_input(i).values():
-            cv2.imwrite(name, val[0])
+        cv2.imwrite(name, img[i])
     os.chdir(cur_path)
 
 
@@ -239,17 +240,17 @@ def main():
         list_of_names = prepare_output_file_names(args.input)
 
         log.info('Preparing images for benchmark in temporary directory')
-        prepare_images_for_benchmark(io, tmp_input.name, list_of_names, cur_path)
+        prepare_images_for_benchmark(io, tmp_input.name, list_of_names, cur_path, args.input_names)
 
         args.input = tmp_input.name
 
         log.info('Initializing PyTorch process')
         proc = PyTorchProcess()
-        proc.create_command_line(create_dict_from_args_for_process(args, str(len(os.listdir(tmp_input.name)))))
+        proc.create_command_line(create_dict_from_args_for_process(args))
 
         log.info('PyTorch benchmark process:\n')
         proc.execute()
-        io.process_output(proc.process_benchmark_output(list_of_names, tmp_input), log)
+        io.process_output(proc.process_benchmark_output(args.batch_size), log)
 
     except Exception:
         log.error(traceback.format_exc())
