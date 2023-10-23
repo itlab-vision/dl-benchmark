@@ -45,12 +45,12 @@ def cli_argument_parser():
                         default=3)
 
     parser.add_argument('--space',
-                        default="post-order-apply",
+                        default='post-order-apply',
                         choices=['post-order-apply', 'union'],
                         type=str,
                         help='The space generator to use')
     parser.add_argument('--strategy',
-                        default="evolutionary",
+                        default='evolutionary',
                         choices=['replay-func', 'replay-trace', 'evolutionary'],
                         type=str,
                         help='The search strategy to use')
