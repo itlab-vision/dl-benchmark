@@ -1,4 +1,5 @@
 import argparse
+import logging as log
 import sys
 
 from tvm import autotvm, relay
@@ -132,7 +133,7 @@ def extract_tasks(mod, params, target, layer_names):
         ops = [relay.op.get(layer_name) for layer_name in layer_names]
     else:
         ops = None
-
+    log.info('Extracting tasks using autotvm')
     tasks = autotvm.task.extract_from_program(
         mod=mod, target=target, params=params, ops=ops,
     )
@@ -140,8 +141,11 @@ def extract_tasks(mod, params, target, layer_names):
 
 
 def tune_tasks(tasks, tuner_name, plan_size, pop_size, elite_num,
-               mutation_prob, range_idx, number, repeat, early_stopping, log_filename):
+               mutation_prob, range_idx, number, repeat, early_stopping, log_file):
+    log.info('Neural network tuning')
+
     for task in tasks:
+        log.info(f'Tuning task {task}')
         tuner_obj = create_tuner(task, tuner_name, plan_size, pop_size, elite_num, mutation_prob, range_idx)
         n_trial = len(task.config_space)
         tuner_obj.tune(
@@ -152,19 +156,26 @@ def tune_tasks(tasks, tuner_name, plan_size, pop_size, elite_num,
             ),
             early_stopping=early_stopping,
             callbacks=[
-                autotvm.callback.log_to_file(log_filename),
+                autotvm.callback.log_to_file(log_file),
             ],
         )
 
 
 def main():
+    log.basicConfig(
+        format='[ %(levelname)s ] %(message)s',
+        level=log.INFO,
+        stream=sys.stdout,
+    )
+    log.config.dictConfig({'version': 1, 'disable_existing_loggers': True})
+
     args = cli_argument_parser()
     mod = utils.load_mod(args.model_json)
     params = utils.load_params(args.model_params)
 
     tasks = extract_tasks(mod, params, args.target, args.layer_names)
     tune_tasks(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
-               args.mutation_prob, args.range_idx, args.repeat, args.early_stopping, args.log_file)
+               args.mutation_prob, args.range_idx, args.number, args.repeat, args.early_stopping, args.log_file)
 
 
 if __name__ == '__main__':
