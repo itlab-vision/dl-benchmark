@@ -130,7 +130,7 @@ def cli_argument_parser():
                         dest='device')
     parser.add_argument('--model_type',
                         help='Model type for inference',
-                        choices=['scripted', 'baseline'],
+                        choices=['scripted', 'baseline', None],
                         default=None,
                         type=str,
                         dest='model_type')
