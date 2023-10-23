@@ -21,7 +21,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_params')
     parser.add_argument('-t', '--target',
-                        help='Target device information.',
+                        help='Target device information, for example "llvm" for CPU.',
                         required=True,
                         type=str)
     parser.add_argument('-n', '--n_trials',

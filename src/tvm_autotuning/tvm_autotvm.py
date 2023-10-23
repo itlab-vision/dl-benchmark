@@ -22,7 +22,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_params')
     parser.add_argument('-t', '--target',
-                        help='Target device information.',
+                        help='Target device information, for example "llvm" for CPU.',
                         required=True,
                         type=str)
     parser.add_argument('-l', '--log',
@@ -166,7 +166,6 @@ def main():
         level=log.INFO,
         stream=sys.stdout,
     )
-    log.config.dictConfig({'version': 1, 'disable_existing_loggers': True})
 
     args = cli_argument_parser()
     mod = utils.load_mod(args.model_json)
