@@ -93,15 +93,15 @@ def cli_argument_parser():
                         nargs='?')
     parser.add_argument('--alpha',
                         type=float,
-                        help='The parameter used for \'gradient\' strategy',
+                        help='The parameter used for gradient strategy',
                         default=0.2)
     parser.add_argument('--beta',
                         type=float,
-                        help='The parameter used for \'gradient\' strategy',
+                        help='The parameter used for gradient strategy',
                         default=2)
     parser.add_argument('--backward_window_size',
                         type=int,
-                        help='The parameter used for \'gradient\' strategy',
+                        help='The parameter used for gradient strategy',
                         default=3)
 
     parser.add_argument('--number',
@@ -151,8 +151,8 @@ def extract_tasks(mod, params, target, num_cores, vector_unit_bytes,
     if any(hardware_param_list):
         log.info('setting arguments for HardwareParams')
 
-        if any([True for x in hardware_param_list if x is None]):
-            raise ValueError(f'All parameters for HardwareParams must be passed')
+        if any(True for x in hardware_param_list if x is None):
+            raise ValueError('All parameters for HardwareParams must be passed')
 
         hardware_params = auto_scheduler.HardwareParams(num_cores, vector_unit_bytes,
                                                         cache_line_bytes, max_shared_memory_per_block,

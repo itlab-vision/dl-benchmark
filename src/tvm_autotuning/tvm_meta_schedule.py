@@ -29,9 +29,9 @@ def cli_argument_parser():
                         help='The number of measurement trials.',
                         required=True,
                         type=int)
-    parser.add_argument("--max_trials_per_task",
+    parser.add_argument('--max_trials_per_task',
                         type=int,
-                        help="Maximum number of trials to run per task")
+                        help='Maximum number of trials to run per task')
     parser.add_argument('-w', '--work_dir',
                         help='Working directory for logging results.',
                         required=True,
@@ -75,25 +75,25 @@ def cli_argument_parser():
                         default=1,
                         type=int)
 
-    parser.add_argument("--num_trials_per_iter",
+    parser.add_argument('--num_trials_per_iter',
                         type=int,
                         default=64,
-                        help="Number of trials to run per iteration")
-    parser.add_argument("--database",
-                        default="json",
-                        choices=["json", "memory"],
+                        help='Number of trials to run per iteration')
+    parser.add_argument('--database',
+                        default='json',
+                        choices=['json', 'memory'],
                         type=str,
-                        help="The database")
-    parser.add_argument("--cost_model",
-                        default="xgb",
-                        choices=["xgb", "mlp", "random"],
+                        help='The database')
+    parser.add_argument('--cost_model',
+                        default='xgb',
+                        choices=['xgb', 'mlp', 'random'],
                         type=str,
-                        help="The cost model")
-    parser.add_argument("--task_scheduler",
-                        default="gradient",
-                        choices=["gradient", "round-robin"],
+                        help='The cost model')
+    parser.add_argument('--task_scheduler',
+                        default='gradient',
+                        choices=['gradient', 'round-robin'],
                         type=str,
-                        help="The task scheduler")
+                        help='The task scheduler')
 
     args = parser.parse_args()
 
@@ -103,7 +103,7 @@ def cli_argument_parser():
 def extract_tasks(mod, params, target, work_dir, opt_level, space, strategy, num_tuning_cores, seed):
     log.info('Extracting tasks using meta_schedule')
     extracted_tasks = ms.relay_integration.extract_tasks(
-        mod, target, params, opt_level=opt_level
+        mod, target, params, opt_level=opt_level,
     )
 
     tasks, task_weights = ms.relay_integration.extracted_tasks_to_tune_contexts(
