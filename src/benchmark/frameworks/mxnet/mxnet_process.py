@@ -36,8 +36,8 @@ class MXNetProcess(ProcessHandler):
                 and (model_params is None or model_params == '')):
             common_params = (f'-mn {name} -is {input_shape} '
                              f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
-        elif (name is None) and (model_json is not None) and (model_params is not None):
-            common_params = (f'-m {model_json} -w {model_params} '
+        elif (model_json is not None) and (model_params is not None):
+            common_params = (f'-m {model_json} -w {model_params} -i {dataset} '
                              f'-is {input_shape} -b {batch_size} -ni {iteration} '
                              f'--report_path {self.report_path}')
         else:
@@ -78,6 +78,11 @@ class MXNetProcess(ProcessHandler):
 
         common_params = MXNetProcess._add_argument_to_cmd_line(
             common_params, '--raw_output', 'true')
+
+        quantization = self._test.dep_parameters.quantization
+        if quantization == 'True':
+            common_params = MXNetProcess._add_flag_to_cmd_line(
+                common_params, '-q')
 
         return f'{common_params}'
 
