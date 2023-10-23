@@ -39,7 +39,7 @@ def cli_argument_parser():
                         type=str)
 
     parser.add_argument('--opt_level',
-                        help='The optimization level of the task extractions',
+                        help='The optimization level of the task extractions.',
                         type=int,
                         choices=[0, 1, 2, 3],
                         default=3)
@@ -48,19 +48,19 @@ def cli_argument_parser():
                         default='post-order-apply',
                         choices=['post-order-apply', 'union'],
                         type=str,
-                        help='The space generator to use')
+                        help='The space generator to use.')
     parser.add_argument('--strategy',
                         default='evolutionary',
                         choices=['replay-func', 'replay-trace', 'evolutionary'],
                         type=str,
-                        help='The search strategy to use')
+                        help='The search strategy to use.')
     parser.add_argument('--num_tuning_cores',
                         default='physical',
                         type=str,
-                        help='The number of CPU cores to use during tuning')
+                        help='The number of CPU cores to use during tuning.')
     parser.add_argument('--seed',
                         type=int,
-                        help='The random seed to use',
+                        help='The random seed to use.',
                         nargs='?')
 
     parser.add_argument('--number',
@@ -78,22 +78,22 @@ def cli_argument_parser():
     parser.add_argument('--num_trials_per_iter',
                         type=int,
                         default=64,
-                        help='Number of trials to run per iteration')
+                        help='Number of trials to run per iteration.')
     parser.add_argument('--database',
                         default='json',
                         choices=['json', 'memory'],
                         type=str,
-                        help='The database')
+                        help='The database.')
     parser.add_argument('--cost_model',
                         default='xgb',
                         choices=['xgb', 'mlp', 'random'],
                         type=str,
-                        help='The cost model')
+                        help='The cost model.')
     parser.add_argument('--task_scheduler',
                         default='gradient',
                         choices=['gradient', 'round-robin'],
                         type=str,
-                        help='The task scheduler')
+                        help='The task scheduler.')
 
     args = parser.parse_args()
 
@@ -101,7 +101,6 @@ def cli_argument_parser():
 
 
 def extract_tasks(mod, params, target, work_dir, opt_level, space, strategy, num_tuning_cores, seed):
-    log.info('Extracting tasks using meta_schedule')
     extracted_tasks = ms.relay_integration.extract_tasks(
         mod, target, params, opt_level=opt_level,
     )
@@ -115,8 +114,6 @@ def extract_tasks(mod, params, target, work_dir, opt_level, space, strategy, num
 def tune_tasks(tasks, task_weights, n_trials, work_dir,
                number, repeat, num_trials_per_iter, max_trials_per_task,
                database, cost_model, task_scheduler):
-    log.info('Neural network tuning')
-
     evaluator_config = ms.runner.config.EvaluatorConfig(number=number, repeat=repeat)
 
     ms.tune.tune_tasks(
@@ -150,10 +147,12 @@ def main():
         log.info('Creating a directory for the database')
         os.mkdir(args.work_dir)
 
+    log.info('Extracting tasks using meta_schedule')
     tasks, task_weights = extract_tasks(mod, params, args.target, args.work_dir,
                                         args.opt_level, args.space, args.strategy,
                                         args.num_tuning_cores, args.seed)
 
+    log.info('Neural network tuning')
     tune_tasks(tasks, task_weights, args.n_trials, args.work_dir,
                args.number, args.repeat, args.num_trials_per_iter, args.max_trials_per_task,
                args.database, args.cost_model, args.task_scheduler)

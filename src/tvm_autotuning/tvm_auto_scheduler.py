@@ -30,7 +30,7 @@ def cli_argument_parser():
                         type=int)
 
     parser.add_argument('-l', '--log',
-                        help='Path to file for logging optimization results.',
+                        help='Path to the file for logging optimization results.',
                         required=True,
                         default='auto-scheduler.log',
                         type=str,
@@ -71,7 +71,7 @@ def cli_argument_parser():
 
     parser.add_argument('--include_simple_tasks',
                         action='store_true',
-                        help='Whether to extract simple tasks that do not include complicated ops')
+                        help='Whether to extract simple tasks that do not include complicated ops.')
     parser.add_argument('--opt_level',
                         help='The optimization level of the task extractions',
                         type=int,
@@ -81,27 +81,27 @@ def cli_argument_parser():
     parser.add_argument('--strategy',
                         type=str,
                         choices=['round-robin', 'gradient'],
-                        help='The scheduling strategy',
+                        help='The scheduling strategy.',
                         default='round-robin')
     parser.add_argument('--load_model_file',
                         type=str,
-                        help='Load pre-trained optimization model from this file',
+                        help='Load pre-trained optimization model from this file.',
                         nargs='?')
     parser.add_argument('--load_log_file',
                         type=str,
-                        help='Load measurement records from this file',
+                        help='Load measurement records from this file.',
                         nargs='?')
     parser.add_argument('--alpha',
                         type=float,
-                        help='The parameter used for gradient strategy',
+                        help='The parameter used for gradient strategy.',
                         default=0.2)
     parser.add_argument('--beta',
                         type=float,
-                        help='The parameter used for gradient strategy',
+                        help='The parameter used for gradient strategy.',
                         default=2)
     parser.add_argument('--backward_window_size',
                         type=int,
-                        help='The parameter used for gradient strategy',
+                        help='The parameter used for gradient strategy.',
                         default=3)
 
     parser.add_argument('--number',
@@ -123,7 +123,7 @@ def cli_argument_parser():
                              '"sketch.random" for SketchPolicy + RandomModel.',
                         default='default')
     parser.add_argument('--search_policy_params',
-                        help='The parameters of the search policy',
+                        help='The parameters of the search policy.',
                         nargs='?')
     parser.add_argument('--adaptive_training',
                         action='store_true',
@@ -159,7 +159,6 @@ def extract_tasks(mod, params, target, num_cores, vector_unit_bytes,
                                                         max_local_memory_per_block, max_threads_per_block,
                                                         max_vthread_extent, warp_size)
 
-    log.info('Extracting tasks using auto_scheduler')
     tasks, task_weights = auto_scheduler.extract_tasks(mod, params, target, hardware_params=hardware_params,
                                                        include_simple_tasks=include_simple_tasks, opt_level=opt_level)
 
@@ -169,8 +168,6 @@ def extract_tasks(mod, params, target, num_cores, vector_unit_bytes,
 def tune_tasks(tasks, task_weights, n_trials, log_file, number, repeat, strategy,
                load_model_file, load_log_file, alpha, beta, backward_window_size,
                search_policy, search_policy_params, adaptive_training, per_task_early_stopping):
-    log.info('Neural network tuning')
-
     tuner = auto_scheduler.TaskScheduler(tasks, task_weights, strategy=strategy, load_model_file=load_model_file,
                                          load_log_file=load_log_file, alpha=alpha, beta=beta,
                                          backward_window_size=backward_window_size)
@@ -194,12 +191,14 @@ def main():
     mod = utils.load_mod(args.model_json)
     params = utils.load_params(args.model_params)
 
+    log.info('Extracting tasks using auto_scheduler')
     tasks, task_weights = extract_tasks(mod, params, args.target, args.num_cores, args.vector_unit_bytes,
                                         args.cache_line_bytes, args.max_shared_memory_per_block,
                                         args.max_local_memory_per_block, args.max_threads_per_block,
                                         args.max_vthread_extent, args.warp_size, args.include_simple_tasks,
                                         args.opt_level)
 
+    log.info('Neural network tuning')
     tune_tasks(tasks, task_weights, args.n_trials, args.log_file, args.number, args.repeat, args.strategy,
                args.load_model_file, args.load_log_file, args.alpha, args.beta, args.backward_window_size,
                args.search_policy, args.search_policy_params, args.adaptive_training, args.per_task_early_stopping)

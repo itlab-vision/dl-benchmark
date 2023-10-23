@@ -62,11 +62,11 @@ def cli_argument_parser():
                         default=3,
                         type=int)
     parser.add_argument('--mutation_prob',
-                        help='Probability of mutation of a knob in a gene',
+                        help='Probability of mutation of a knob in a gene.',
                         default=0.1,
                         type=float)
     parser.add_argument('--range_idx',
-                        help='Probability of mutation of a knob in a gene',
+                        help='Probability of mutation of a knob in a gene.',
                         default=0.1,
                         nargs='+',
                         type=int)
@@ -133,7 +133,7 @@ def extract_tasks(mod, params, target, layer_names):
         ops = [relay.op.get(layer_name) for layer_name in layer_names]
     else:
         ops = None
-    log.info('Extracting tasks using autotvm')
+
     tasks = autotvm.task.extract_from_program(
         mod=mod, target=target, params=params, ops=ops,
     )
@@ -142,7 +142,6 @@ def extract_tasks(mod, params, target, layer_names):
 
 def tune_tasks(tasks, tuner_name, plan_size, pop_size, elite_num,
                mutation_prob, range_idx, number, repeat, early_stopping, log_file):
-    log.info('Neural network tuning')
 
     for task in tasks:
         log.info(f'Tuning task {task}')
@@ -173,7 +172,10 @@ def main():
     mod = utils.load_mod(args.model_json)
     params = utils.load_params(args.model_params)
 
+    log.info('Extracting tasks using autotvm')
     tasks = extract_tasks(mod, params, args.target, args.layer_names)
+
+    log.info('Neural network tuning')
     tune_tasks(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
                args.mutation_prob, args.range_idx, args.number, args.repeat, args.early_stopping, args.log_file)
 
