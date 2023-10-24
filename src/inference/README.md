@@ -11,6 +11,7 @@
 1. MXNet.
 1. PyTorch.
 1. ONNX Runtime.
+1. DGL (PyTorch)
 
 ## Вывод глубоких моделей с использованием Inference Engine
 
@@ -810,6 +811,67 @@ inference_onnx_runtime.py
 python3 inference_onnx_runtime.py \
     -m <path_to_model>/<model_name>.onnx \
     -i <path_to_image>/<image_name>
+```
+
+## Вывод графовых глубоких моделей с использованием DGL (PyTorch)
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_dgl_pytorch.py
+```
+
+Обязательные аргументы:
+
+- `-mn / --model_name` - название модели.
+- `-mm / --module` - путь до Python модуля или относительный путь
+  до Python файла с архитектурой модели.
+- `-i / --input` - путь до графа (расширение файла `.bin`).
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.pt`.
+
+Опциональные аргументы:
+
+- `--report_path` - путь до отчета работы бенчмарка
+
+#### Примеры запуска
+
+**Запуск вывода для модели, которая загружается из TorchVision по умолчанию**
+
+```bash
+python inference_pytorch.py --model_name <model_name> \
+                            --input <path_to_data> \
+                            --input_name <input_name> \
+                            --input_shape <input_shape> \
+                            --mean <mean> --input_scale <scale> \
+                            --batch_size <batch_size>
+```
+
+**Запуск вывода для модели, которая загружается из файлов**
+
+```bash
+python inference_pytorch.py --model_name <model_name> \
+                            --model <file_name>.pt \
+                            --input_name <input_name> \
+                            --input_shape <input_shape> \
+                            --input <path_to_data> \
+                            --labels <label_file>.json \
+                            --batch_size <batch_size>
+```
+
+**Запуск вывода для модели, которая загружается из модуля и отдельного файла с весами**
+
+```bash
+python inference_pytorch.py --model_name <model_name> \
+                            --module <module_name> \
+                            --weights <file_name>.pth \
+                            --input_name <input_name> \
+                            --input_shape <input_shape> \
+                            --input <path_to_data> \
+                            --labels <label_file>.json \
+                            --batch_size <batch_size>
 ```
 
 <!-- LINKS -->
