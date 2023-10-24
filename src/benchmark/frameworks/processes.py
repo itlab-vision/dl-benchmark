@@ -199,7 +199,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             test_settings.append(self._test.dep_parameters.runtime)
         if hasattr(self._test.dep_parameters, 'hint') and self._test.dep_parameters.hint:
             test_settings.append(self._test.dep_parameters.hint)
-        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename += '.log'
         file_root = Path(os.getcwd())
         if not os.access(file_root, os.W_OK):
