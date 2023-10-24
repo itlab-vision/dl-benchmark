@@ -85,10 +85,19 @@ TensorBuffer create_tensor_from_image(const InputDescr& input_descr, int batch_s
         const auto& file_path = files[(start_index + b) % files.size()];
         logger::info << "\t\t" << file_path << logger::endl;
         cv::Mat img = read_image(file_path, height, width);
+
+        if (input_descr.channel_swap) {
+            logger::info << "\tConverting BGR image to format RGB" << logger::endl;
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+        }
+
         for (size_t w = 0; w < width; ++w) {
             for (size_t h = 0; h < height; ++h) {
                 for (size_t ch = 0; ch < channels; ++ch) {
-                    size_t offset = b * channels * width * height + (ch * width * height + h * width + w);
+                    size_t offset = b * channels * width * height +
+                                    (((tensor_descr.layout == "NCHW") || (tensor_descr.layout == "CHW"))
+                                         ? (ch * width * height + h * width + w)
+                                         : (h * width * channels + w * channels + ch));
                     tensor_data[offset] = (get_mat_value<T>(img, h, w, ch) - static_cast<T>(input_descr.mean[ch])) /
                                           static_cast<T>(input_descr.scale[ch]);
                 }
@@ -452,7 +461,8 @@ InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
                            const std::string& shape_string,
                            const std::string& mean_string,
                            const std::string& scale_string,
-                           const std::string& dtype_string) {
+                           const std::string& dtype_string,
+                           const bool channel_swap_bool) {
     // parse input layouts and input shapes
     std::map<std::string, std::string> input_layouts = args::parse_parameter_string(layout_string);
     std::map<std::string, std::vector<int>> input_shapes;
@@ -515,6 +525,7 @@ InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
     for (const auto& input : model_inputs) {
         InputDescr input_descr;
         input_descr.tensor_descr = input;
+        input_descr.channel_swap = channel_swap_bool;
         std::string name = input.name;
 
         fill_input_files(input_descr, input_files, name);

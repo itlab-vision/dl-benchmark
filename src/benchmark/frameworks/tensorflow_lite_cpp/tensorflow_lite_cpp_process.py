@@ -16,14 +16,18 @@ class TensorFlowLiteCppProcess(ProcessHandler):
             raise invalid_path_exception
 
         backend = self._test.dep_parameters.backend.upper()
-        supported_backends = ('DEFAULT', 'XNNPACK')
+        supported_backends = ('DEFAULT', 'XNNPACK', 'GPU_DELEGATE')
         if backend not in supported_backends:
             raise AssertionError(f'Unsupported backend: {backend}. Available backends: {supported_backends}')
 
         if backend == 'XNNPACK':
-            self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('tflite_xnnpack_benchmark')
+            benchmark_app_name = 'tflite_xnnpack_benchmark'
+        elif backend == 'GPU_DELEGATE':
+            benchmark_app_name = 'tflite_gpu_delegate_benchmark'
         else:
-            self._benchmark_path = Path(cpp_benchmarks_dir).joinpath('tflite_benchmark')
+            benchmark_app_name = 'tflite_benchmark'
+
+        self._benchmark_path = Path(cpp_benchmarks_dir).joinpath(benchmark_app_name)
 
         if not self._benchmark_path.is_file():
             raise invalid_path_exception

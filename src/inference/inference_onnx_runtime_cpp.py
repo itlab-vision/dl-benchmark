@@ -28,7 +28,7 @@ def cli_argument_parser():
                         dest='benchmark_path')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -180,8 +180,11 @@ def main():
         model_data = ONNXRuntimeTransformerCpp(model)
         io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
 
-        log.info('Preparing input images for model')
-        io.prepare_input(model, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(model, args.input)
+        else:
+            log.warning('Input data not provided. Using dummy input')
 
         if args.mean != '' and args.scale != '':
             log.info('Transform mean and std from RGB to BGR')

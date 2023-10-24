@@ -18,9 +18,12 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <numeric>
 #include <string>
 #include <vector>
+
+#include <nlohmann/json.hpp>
 
 namespace {
 const std::map<TfLiteType, utils::DataPrecision> tflite_dtype_to_precision_map{
@@ -76,10 +79,12 @@ std::string TFLiteLauncher::get_framework_version() const {
 }
 
 std::string TFLiteLauncher::get_backend_name() const {
-#ifdef TFLITE_DEFAULT
+#ifdef TFLITE_WITH_DEFAULT_BACKEND
     return "default";
-#elif TFLITE_XNNPACK
+#elif TFLITE_WITH_XNNPACK_BACKEND
     return "XNNPack";
+#elif TFLITE_WITH_GPU_DELEGATE
+    return "GPUDelegate";
 #endif
 }
 
@@ -89,7 +94,7 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
         throw std::runtime_error("Failed to read model " + model_file);
     }
 
-#ifdef TFLITE_XNNPACK
+#ifdef TFLITE_WITH_XNNPACK_BACKEND
     // XNNPACK engine used by TensorFlow Lite interpreter uses a single thread for inference by default.
     // https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/delegates/xnnpack/README.md#enable-xnnpack-via-bazel-build-flags-recommended-on-desktop
     resolver = std::make_unique<tflite::ops::builtin::BuiltinOpResolver>();
@@ -107,6 +112,7 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
     }
     builder(&interpreter);
 
+#ifdef TFLITE_WITH_GPU_DELEGATE
     if (device == utils::Device::GPU) {
         auto gpu_options = TfLiteGpuDelegateOptionsV2Default();
         gpu_options.inference_preference = TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED;
@@ -116,9 +122,14 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
             throw std::runtime_error("Failed to apply GPU delegate.");
         }
     }
-    else if (device != utils::Device::CPU) {
+    else {
+        throw std::runtime_error(utils::get_device_str(device) + " device is not supported in GPU delegate!");
+    }
+#else
+    if (device != utils::Device::CPU) {
         throw std::runtime_error(utils::get_device_str(device) + " device is not supported!");
     }
+#endif
 }
 
 void TFLiteLauncher::fill_inputs_outputs_info() {
@@ -192,4 +203,43 @@ void TFLiteLauncher::run(const int input_idx) {
     if (status != kTfLiteOk) {
         throw std::runtime_error("Failed invoke interpreter");
     }
+}
+
+void TFLiteLauncher::dump_output() {
+    auto jsonObjects = nlohmann::json::array();
+    std::string name = "output.json";
+    std::ofstream file(name);
+
+    run(0);
+
+    for (size_t i = 0; i < interpreter->outputs().size(); ++i) {
+        nlohmann::json js;
+        const TfLiteTensor* result = interpreter->output_tensor(i);
+        const float* raw_data = result->data.f;
+        const auto* dims = result->dims;
+        const std::vector<size_t> curr_output_shape(dims->data, dims->data + dims->size);
+
+        size_t size = std::accumulate(
+            curr_output_shape.begin(),
+            curr_output_shape.end(),
+            1,
+            std::multiplies<int>()
+        );
+
+        if (file.is_open()) {
+            js["output_name"] = output_names[i];
+            js["shape"] = curr_output_shape;
+            js["data"] = std::vector<float>(raw_data, raw_data + size);
+        }
+        else {
+            throw std::runtime_error("Something went wrong, can't open file");
+        }
+
+        jsonObjects.push_back(js);
+    }
+
+    file << std::setw(4) << jsonObjects << std::endl;
+    file.close();
+
+    reset_timers();
 }

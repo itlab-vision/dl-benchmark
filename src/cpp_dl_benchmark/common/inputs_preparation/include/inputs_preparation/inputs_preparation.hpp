@@ -15,6 +15,7 @@ struct InputDescr {
     std::vector<std::string> files;
     std::vector<float> mean = {0.f, 0.f, 0.f};
     std::vector<float> scale = {1.f, 1.f, 1.f};
+    bool channel_swap = false;
 };
 
 using InputsInfo = std::map<std::string, InputDescr>;
@@ -29,7 +30,8 @@ InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
                            const std::string& shape_string,
                            const std::string& mean_string,
                            const std::string& scale_string,
-                           const std::string& dtype_string);
+                           const std::string& dtype_string,
+                           const bool channel_swap_bool);
 
 std::vector<std::vector<TensorBuffer>> get_input_tensors(const InputsInfo& inputs_info,
                                                          int batch_size,

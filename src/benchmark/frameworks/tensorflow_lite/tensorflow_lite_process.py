@@ -22,7 +22,7 @@ class TensorFlowLiteProcess(ProcessHandler):
         python = ProcessHandler.get_cmd_python_version()
 
         model = self._test.model.model
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
@@ -30,42 +30,40 @@ class TensorFlowLiteProcess(ProcessHandler):
         common_params = (f'-m {model} -i {dataset} -b {batch} -d {device} -ni {iteration} '
                          f'--report_path {self.report_path}')
 
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
+
         time_limit = self._test.indep_parameters.test_time_limit
-        common_params = self._add_argument_to_cmd_line(common_params, '--time', time_limit)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
         channel_swap = self._test.dep_parameters.channel_swap
-        if channel_swap:
-            common_params = self._add_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--channel_swap', channel_swap)
+
         mean = self._test.dep_parameters.mean
-        if mean:
-            common_params = self._add_argument_to_cmd_line(common_params, '--mean', mean)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
+
         input_scale = self._test.dep_parameters.input_scale
-        if input_scale:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_scale', input_scale)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_scale', input_scale)
+
         input_shape = self._test.dep_parameters.input_shape
-        if input_shape:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_shapes', input_shape)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_shapes', input_shape)
+
         input_name = self._test.dep_parameters.input_name
-        if input_name:
-            common_params = self._add_argument_to_cmd_line(common_params, '--input_name', input_name)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_name', input_name)
+
         layout = self._test.dep_parameters.layout
-        if layout:
-            common_params = self._add_argument_to_cmd_line(common_params, '--layout', layout)
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--layout', layout)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         command_line = f'{python} {path_to_tensorflow_script} {common_params}'
 
         nthreads = self._test.dep_parameters.nthreads
-        if nthreads:
-            command_line = self._add_argument_to_cmd_line(command_line, '-nthreads', nthreads)
+        command_line = self._add_optional_argument_to_cmd_line(command_line, '-nthreads', nthreads)
 
         delegate = self._test.dep_parameters.delegate
-        if delegate:
-            command_line = self._add_argument_to_cmd_line(command_line, '--delegate_ext', delegate)
+        command_line = self._add_optional_argument_to_cmd_line(command_line, '--delegate_ext', delegate)
 
         delegate_options = self._test.dep_parameters.delegate_options
-        if delegate_options:
-            command_line = self._add_argument_to_cmd_line(command_line, '--delegate_options', delegate_options)
+        command_line = self._add_optional_argument_to_cmd_line(command_line, '--delegate_options', delegate_options)
 
         return command_line

@@ -51,7 +51,7 @@ def parse_layout_arg(values, input_names):
 
 def create_dict_for_transformer(args, default_layout='NCHW'):
     dictionary = {}
-    for name in args.input_names:
+    for name in args.input_names or []:
         if 'channel_swap' in args:
             channel_swap = args.channel_swap.get(name, None)
         else:

@@ -34,7 +34,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override{};
 
-    void dump_output() override{};
+    void dump_output() override;
 
 private:
     // Note that the model instance must outlive the
@@ -57,5 +57,5 @@ private:
     std::vector<std::vector<int>> output_shapes;
     std::vector<TfLiteType> output_data_precisions;
 
-    void run(const int input_idx);
+    void run(const int input_idx) override;
 };

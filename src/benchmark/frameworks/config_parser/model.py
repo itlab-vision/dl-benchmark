@@ -22,7 +22,8 @@ class Model:
         self.model = None
         self.weight = None
         self.precision = None
-        self.module = None
+        self.module = module
+
         if self._parameter_is_not_none(source_framework):
             self.source_framework = source_framework
         else:
@@ -43,7 +44,6 @@ class Model:
             self.precision = precision
         else:
             raise ValueError('Precision is required parameter.')
-        self.module = module
 
     @staticmethod
     def _parameter_is_not_none(parameter):
