@@ -440,7 +440,7 @@
     <Test>
         <Model>
             <Task>classification</Task>
-            <Name>AlexNet</Name>
+            <Name>alexnet</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
             <ModelPath></ModelPath>

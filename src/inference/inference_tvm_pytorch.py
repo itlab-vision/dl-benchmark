@@ -139,8 +139,8 @@ class PyTorchToTVMConverter(TVMConverter):
         model_name = self.args['model_name']
         module = 'torchvision.models'
         log.info('Get model from TorchVision')
-        pt_model = importlib.import_module(module).__getattribute__(model_name)
-        pt_model = pt_model(weights=True)
+        model = importlib.import_module(module).__getattribute__(model_name)
+        pt_model = model(weights=True)
         pt_model = pt_model.eval()
         input_shape = self.args['input_shape']
         input_data = torch.randn(input_shape)
