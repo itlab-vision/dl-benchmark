@@ -1,6 +1,7 @@
 from ..config_parser.dependent_parameters_parser import DependentParametersParser
 from ..config_parser.framework_parameters_parser import FrameworkParameters
 
+
 class TVMParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'

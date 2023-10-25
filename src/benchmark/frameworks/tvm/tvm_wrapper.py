@@ -3,6 +3,7 @@ from .tvm_test import TVMTest
 from ..framework_wrapper import FrameworkWrapper
 from ..known_frameworks import KnownFrameworks
 
+
 class TVMWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.tvm
 

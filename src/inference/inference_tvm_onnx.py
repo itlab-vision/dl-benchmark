@@ -134,10 +134,11 @@ class ONNXToTVMConverter(TVMConverter):
         model_path = self.args['model_path']
         model_onnx = onnx.load(model_path)
         shape_dict = {self.args['input_name']: self.args['input_shape']}
+        log.info('Creating graph module from ONNX model')
         model, params = tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
         with tvm.transform.PassContext(opt_level=3):
             lib = tvm.relay.build(model, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib["default"](dev))
+        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
         return module
 
 
@@ -187,12 +188,19 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
         graph_module = converter.get_graph_module()
+        log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
+        log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, infer_time = inference_tvm(graph_module, args.number_iter, args.input_name, io.get_slice_input, args.time)
         if args.number_iter == 1:
-            io.process_output(prepare_output(result, args.task, args.output_names), log)
+            log.info('Converting output tensor to print results')
+            res = prepare_output(result, args.task, args.output_names)
+            log.info('Inference results')
+            io.process_output(res, log)
+        log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)

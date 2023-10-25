@@ -147,3 +147,4 @@ class TVMProcessONNXFormat(TVMProcess):
         command_line = f'{python} {path_to_sync_script} {common_params}'
 
         return command_line
+
