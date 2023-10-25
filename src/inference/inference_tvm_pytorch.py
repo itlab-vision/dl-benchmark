@@ -3,14 +3,14 @@ import json
 import logging as log
 import sys
 import traceback
-import warnings
-import mxnet
+import torch
+import torchvision
 import tvm
-import gluoncv
 
 
 from pathlib import Path
 from time import time
+
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -26,15 +26,15 @@ from tvm_auxiliary import (TVMConverter, create_dict_for_converter_mxnet,
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
-                        help='Model name to download using packages from GluonCV.',
+                        help='Model name to download using packages from TorchVision.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model.',
+                        help='Path to an .pt file with a trained model.',
                         type=str,
                         dest='model_path')
     parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
+                        help='Path to an .pth file with a trained weights.',
                         type=str,
                         dest='model_params')
     parser.add_argument('-d', '--device',
@@ -128,47 +128,23 @@ def cli_argument_parser():
     return args
 
 
-class MXNetToTVMConverter(TVMConverter):
+class PyTorchToTVMConverter(TVMConverter):
     def __init__(self, args):
         super().__init__(args)
 
     def _get_device_for_framework(self):
-        device = self.args['device']
-        if device == 'CPU':
-            return mxnet.cpu()
-        elif device == 'NVIDIA_GPU':
-            return mxnet.gpu()
-        else:
-            log.info(f'The device {device} is not supported')
-            raise ValueError('The device is not supported')
-
-    def _get_mxnet_network(self):
-        model_name = self.args['model_name']
-        model_path = self.args['model_path']
-        weights = self.args['model_params']
-        context = self._get_device_for_framework()
-
-        if (model_name is not None and
-            (model_path is None) and (weights is None)):
-            log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-            net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
-            return net
-
-        elif ((model_path is not None) and (weights is not None)):
-            log.info(f'Deserializing network from file ({model_path}, {weights})')
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
-                net = mxnet.gluon.nn.SymbolBlock.imports(
-                    model_path, [self.args['input_name']], weights, ctx=context)
-            return net
-
-        else:
-            raise ValueError('Incorrect arguments.')
+        return super()._get_device_for_framework()
 
     def _convert_model_from_framework(self, target, dev):
-        net = self._get_mxnet_network()
-        shape_dict = {self.args['input_name']: self.args['input_shape']}
-        model, params = tvm.relay.frontend.from_mxnet(net, shape_dict)
+        model_name = self.args['model_name']
+        pt_model = getattr(torchvision.models, model_name)(pretrained=True)
+        pt_model = pt_model.eval()
+        input_shape = self.args['input_shape']
+        input_data = torch.randn(input_shape)
+        scripted_model = torch.jit.trace(pt_model, input_data).eval()
+        input_name = self.args['input_name']
+        shape_list = [(input_name, input_shape)]
+        model, params = tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
         with tvm.transform.PassContext(opt_level=3):
             lib = tvm.relay.build(model, target=target, params=params)
         module = tvm.contrib.graph_executor.GraphModule(lib["default"](dev))
@@ -221,7 +197,7 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
-        converter = MXNetToTVMConverter(create_dict_for_converter_mxnet(args))
+        converter = PyTorchToTVMConverter(create_dict_for_converter_mxnet(args))
         graph_module = converter.get_graph_module()
         io.prepare_input(graph_module, args.input)
         result, infer_time = inference_tvm(graph_module, args.number_iter, args.input_name, io.get_slice_input, args.time)
