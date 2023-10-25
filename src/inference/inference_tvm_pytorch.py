@@ -5,7 +5,6 @@ import sys
 import importlib
 import traceback
 import torch
-import torchvision
 import tvm
 
 
