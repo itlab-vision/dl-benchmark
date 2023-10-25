@@ -2,6 +2,7 @@ import argparse
 import json
 import logging as log
 import sys
+import importlib
 import traceback
 import torch
 import torchvision
@@ -137,9 +138,10 @@ class PyTorchToTVMConverter(TVMConverter):
 
     def _convert_model_from_framework(self, target, dev):
         model_name = self.args['model_name']
+        module = 'torchvision.models'
         log.info('Get model from TorchVision')
-        pt_model = torchvision.models.__getattribute__(model_name)
-        pt_model = pt_model(True)
+        pt_model = importlib.import_module(module).__getattribute__(model_name)
+        pt_model = pt_model(weights=True)
         pt_model = pt_model.eval()
         input_shape = self.args['input_shape']
         input_data = torch.randn(input_shape)
