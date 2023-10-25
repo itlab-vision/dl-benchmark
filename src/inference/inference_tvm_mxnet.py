@@ -148,8 +148,9 @@ class MXNetToTVMConverter(TVMConverter):
         weights = self.args['model_params']
         context = self._get_device_for_framework()
 
-        if (model_name is not None
-            and (model_path is None) and (weights is None)):
+        if ((model_name is not None)
+                and (model_path is None)
+                and (weights is None)):
             log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
             net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
             return net
