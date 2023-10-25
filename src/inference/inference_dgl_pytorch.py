@@ -72,7 +72,7 @@ def prepare_input(input_path: str) -> any:
     Returns:
         any: graph object in DGL format
     """
-    graph = dgl.data.utils.load_graphs(input_path)  # загрузили граф
+    graph = dgl.data.utils.load_graphs(input_path)  # load graph
     g = graph[0][0]
     return g
 
@@ -92,6 +92,17 @@ def compile_model(model: any) -> any:
 
 
 def inference_dgl_pytorch(model: any, num_iterations: int, input_graph: any, inference_mode: bool) -> (any, list):
+    """inference for DGL with PyTorch in Backend
+
+    Args:
+        model (any): PyTorch model
+        num_iterations (int): interations count (not support)
+        input_graph (any): graph object in DGL format
+        inference_mode (bool): inference_mode flag in Pytorch
+
+    Returns:
+        (any, list): (predictions, inference time list)
+    """
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
@@ -125,12 +136,15 @@ def load_model_from_file(model_path: str, module: str, model_name: str) -> any:
         any: PyTorch model
     """
     log.info(f'Loading model from path {model_path}')
+    log.info(f'Loading model from path {module}, {model_name}')
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
 
-    model_cls = getattr(importlib.import_module(module), model_name)
+    print(module.split("\\"))
+
+    model_cls = getattr(importlib.import_module(module, 'GCN'), model_name)
 
     import __main__
     setattr(__main__, model_name, model_cls)
@@ -146,6 +160,9 @@ def write_cmd_options_to_report(report_writer: ReportWriter, args: argparse.Name
         args (argparse.Namespace): cmd options
     """
     report_writer.update_cmd_options(m=args.module)
+    report_writer.update_cmd_options(i=args.input)
+
+    report_writer.update_configuration_setup(iterations_num=args.number_iter)
 
 
 def main() -> None:
@@ -155,7 +172,6 @@ def main() -> None:
         stream=sys.stdout,
     )
     args = cli_argument_parser()
-    print(vars(args))
     report_writer = ReportWriter()
     write_cmd_options_to_report(report_writer, args)
     report_writer.update_framework_info(name='DGL (PyTorch)', version=dgl.__version__)
@@ -178,8 +194,6 @@ def main() -> None:
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
-
-        print(result)
 
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 

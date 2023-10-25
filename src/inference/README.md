@@ -835,43 +835,21 @@ inference_dgl_pytorch.py
 Опциональные аргументы:
 
 - `--report_path` - путь до отчета работы бенчмарка
+- `-ni / --number_iter` - количество прямых проходов по сети. По умолчанию
+  выполняется один проход по сети.
+- `--inference_mode` - флаг оптимизированного режима прогонки модели
+  без хранения информации для тренировки модели.
+  По умолчанию данный режим включен.
 
 #### Примеры запуска
 
-**Запуск вывода для модели, которая загружается из TorchVision по умолчанию**
+**Запуск вывода для модели, которая загружается из файла и модуля**
 
 ```bash
-python inference_pytorch.py --model_name <model_name> \
-                            --input <path_to_data> \
-                            --input_name <input_name> \
-                            --input_shape <input_shape> \
-                            --mean <mean> --input_scale <scale> \
-                            --batch_size <batch_size>
-```
-
-**Запуск вывода для модели, которая загружается из файлов**
-
-```bash
-python inference_pytorch.py --model_name <model_name> \
-                            --model <file_name>.pt \
-                            --input_name <input_name> \
-                            --input_shape <input_shape> \
-                            --input <path_to_data> \
-                            --labels <label_file>.json \
-                            --batch_size <batch_size>
-```
-
-**Запуск вывода для модели, которая загружается из модуля и отдельного файла с весами**
-
-```bash
-python inference_pytorch.py --model_name <model_name> \
-                            --module <module_name> \
-                            --weights <file_name>.pth \
-                            --input_name <input_name> \
-                            --input_shape <input_shape> \
-                            --input <path_to_data> \
-                            --labels <label_file>.json \
-                            --batch_size <batch_size>
+python inference_dgl_pytorch.py --model_name <model_name> \
+                                --module <module_name> \
+                                --model <file_name>.pt \
+                                --input <path_to_data>
 ```
 
 <!-- LINKS -->
