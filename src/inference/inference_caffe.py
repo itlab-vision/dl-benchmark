@@ -30,7 +30,7 @@ def cli_argument_parser():
                         dest='model_caffemodel')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -210,7 +210,11 @@ def main():
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
 
         log.info('Prepare input data')
-        io.prepare_input(net, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(net, args.input)
+        else:
+            io.fill_unset_inputs(net, log)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
         result, inference_time = inference_caffe(net, args.number_iter, io.get_slice_input)

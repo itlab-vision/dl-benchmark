@@ -114,3 +114,6 @@ test/smoke_test/*.csv
 
 # temporary stuff
 logs/
+
+# from pytorch configs
+src/inference/configs/pytorch_configs/yolo-v7/

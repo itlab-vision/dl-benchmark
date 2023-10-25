@@ -14,16 +14,41 @@ log.basicConfig(
 )
 
 
+class MockMetadata:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+
+class MockExec:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+
+class MockDockerClienAPI:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def exec_create(self, *args, **kwargs):
+        return {'Id': MockExec()}
+
+    def exec_start(self, *args, **kwargs):
+        return ['test: test\ntest: test\ntest: test'.encode('utf-8')]
+
+    def exec_inspect(self, *args, **kwargs):
+        return {'ExitCode': MockMetadata()}
+
+
 class MockContainer:
     """A fake Docker API container object."""
 
     def __init__(self, *args, **kwargs):
         self.name = kwargs['name']
+        self.id = '1'
         self.args = args
         self.kwargs = kwargs
-
-    def exec_run(self, *args, **kwargs):    # noqa
-        return 0, 'test: test\ntest: test\ntest: test'.encode('utf-8')
 
 
 class MockContainersApi:
@@ -46,6 +71,7 @@ class MockDockerApi:
 
     def __init__(self, containers_names=None):
         self.containers = MockContainersApi(containers_names)
+        self.api = MockDockerClienAPI()
 
 
 def get_host_executor(mocker):
@@ -94,7 +120,7 @@ def test_execute_process(executor_instance, mocker):
         assert ex.execute_process(command_line='echo -n test | md5sum',
                                   timeout=999)[1][0] == '098f6bcd4621d373cade4e832627b4f6  -\n'
     else:
-        assert ex.execute_process(command_line='test docker', _=None) == (0, b'test: test\ntest: test\ntest: test')
+        assert ex.execute_process(command_line='test docker', _=None) == (0, ['test: test', 'test: test', 'test: test'])
 
 
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])

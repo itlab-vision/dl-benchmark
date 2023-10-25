@@ -27,21 +27,24 @@ class MXNetProcess(ProcessHandler):
         name = self._test.model.name
         model_json = self._test.model.model
         model_params = self._test.model.weight
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
         if ((name is not None)
                 and (model_json is None or model_json == '')
                 and (model_params is None or model_params == '')):
-            common_params = (f'-mn {name} -i {dataset} -is {input_shape} '
+            common_params = (f'-mn {name} -is {input_shape} '
                              f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
-        elif (name is None) and (model_json is not None) and (model_params is not None):
+        elif (model_json is not None) and (model_params is not None):
             common_params = (f'-m {model_json} -w {model_params} -i {dataset} '
                              f'-is {input_shape} -b {batch_size} -ni {iteration} '
                              f'--report_path {self.report_path}')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
+
+        common_params = MXNetProcess._add_optional_argument_to_cmd_line(
+            common_params, '-i', dataset)
 
         input_name = self._test.dep_parameters.input_name
         common_params = MXNetProcess._add_optional_argument_to_cmd_line(
@@ -75,6 +78,11 @@ class MXNetProcess(ProcessHandler):
 
         common_params = MXNetProcess._add_argument_to_cmd_line(
             common_params, '--raw_output', 'true')
+
+        quantization = self._test.dep_parameters.quantization
+        if quantization == 'True':
+            common_params = MXNetProcess._add_flag_to_cmd_line(
+                common_params, '-q')
 
         return f'{common_params}'
 
