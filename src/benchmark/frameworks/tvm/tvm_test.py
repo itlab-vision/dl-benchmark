@@ -6,7 +6,7 @@ from ..config_parser.test_reporter import Test
 class TVMTest(Test):
     def __init__(self, model, dataset, indep_parameters, dep_parameters):
         super().__init__(model, dataset, indep_parameters, dep_parameters)
-    
+ 
     def get_report(self, process):
         parameters = OrderedDict()
         parameters.update({'Device': self.indep_parameters.device})

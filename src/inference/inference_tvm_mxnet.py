@@ -148,8 +148,8 @@ class MXNetToTVMConverter(TVMConverter):
         weights = self.args['model_params']
         context = self._get_device_for_framework()
 
-        if (model_name is not None and
-            (model_path is None) and (weights is None)):
+        if (model_name is not None
+            and (model_path is None) and (weights is None)):
             log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
             net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
             return net
@@ -181,14 +181,16 @@ def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duratio
     time_infer = []
     if num_of_iterations == 1:
         slice_input = get_slice()
-        t0 = time() 
+        t0 = time()
         module.set_input(input_name, slice_input[input_name])
         module.run()
         result = module.get_output(0)
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice, input_name, module)
+        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
+                                                                                           input_name,
+                                                                                           module)
     return result, time_infer
 
 
@@ -228,7 +230,11 @@ def main():
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
-        result, infer_time = inference_tvm(graph_module, args.number_iter, args.input_name, io.get_slice_input, args.time)
+        result, infer_time = inference_tvm(graph_module,
+                                           args.number_iter,
+                                           args.input_name,
+                                           io.get_slice_input,
+                                           args.time)
         if args.number_iter == 1:
             log.info('Converting output tensor to print results')
             res = prepare_output(result, args.task, args.output_names)

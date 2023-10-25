@@ -265,7 +265,7 @@ class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
 class TVMTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
-    
+
     def __set_norm(self, image):
         std = np.array([self._converting['std'][0],
                         self._converting['std'][1],
@@ -278,7 +278,7 @@ class TVMTransformer(Transformer):
             image[:, :, i] -= mean[i]
             image[:, :, i] /= std[i]
         return image
-    
+
     def __set_channel_swap(self, image):
         if self._converting['channel_swap'] is not None:
             transposing_form = (self._converting['channel_swap'][0],
@@ -287,13 +287,13 @@ class TVMTransformer(Transformer):
             transposed_image = image.transpose(transposing_form)
             return transposed_image
         return image
-    
+
     def _transform(self, image, element_type):
         transformed_image = np.copy(image).astype(element_type)
         normalized_image = self.__set_norm(transformed_image)
         transposed_image = self.__set_channel_swap(normalized_image)
         return transposed_image
-    
+
     def transform_images(self, images, shape, element_type, input_name):
         dataset_size = images.shape[0]
         new_shape = [dataset_size] + shape[1:]

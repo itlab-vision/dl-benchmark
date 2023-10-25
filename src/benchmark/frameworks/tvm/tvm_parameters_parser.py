@@ -29,7 +29,7 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_STD_TAG)[0].firstChild
         _channel_swap = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
-        
+
         return TVMParameters(
             framework=_framework.data if _framework else None,
             input_name=_input_name.data if _input_name else None,

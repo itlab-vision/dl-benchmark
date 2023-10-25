@@ -8,7 +8,7 @@ class TVMProcess(ProcessHandler):
     launcher_latency_units = 'seconds'
 
     def __init__(self, test, executor, log):
-        super().__init__(test, executor, log)  
+        super().__init__(test, executor, log)
 
     @staticmethod
     def create_process(test, executor, log):
@@ -147,4 +147,3 @@ class TVMProcessONNXFormat(TVMProcess):
         command_line = f'{python} {path_to_sync_script} {common_params}'
 
         return command_line
-

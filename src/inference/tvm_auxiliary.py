@@ -18,7 +18,9 @@ class TVMConverter(metaclass=abc.ABCMeta):
         pass
 
     def _get_target_device(self):
-        if self.args['device'] == 'CPU':
+        device = self.args['device']
+        if device == 'CPU':
+            log.info(f'Inference will be executed on {device}')
             target = tvm.target.Target('llvm')
             dev = tvm.cpu(0)
         return target, dev
