@@ -1,6 +1,7 @@
 -r requirements.txt
 pytest
 pytest-mock
+pytest-html
 flake8==5.0.4
 flake8-broken-line
 flake8-bugbear

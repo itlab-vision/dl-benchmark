@@ -5,8 +5,8 @@ import os
 import subprocess
 import sys
 import onnxruntime as ort
-from io_model_wrapper import OnnxRuntimeModelWrapperCpp
-from transformer import OnnxRuntimeTransformerCpp
+from io_model_wrapper import ONNXIOModelWrapper
+from transformer import ONNXRuntimeTransformerCpp
 from io_adapter import IOAdapter
 import tempfile
 import logging as log
@@ -46,7 +46,7 @@ def cli_argument_parser():
                         dest='shape')
     parser.add_argument('-l', '--labels',
                         help='Path to labels.txt file',
-                        required=False,
+                        required=True,
                         default='',
                         type=str,
                         dest='labels')
@@ -120,7 +120,7 @@ class OnnxRuntimeProcess():
         list_of_names = list_of_names[::-1]
         result = {'images': []}
         for i, _ in enumerate(os.listdir(tmp_dir.name)):
-            out = np.loadtxt(f'output{i}')
+            out = np.loadtxt(f'output{i}', dtype=float)
             result['images'].append(out)
             os.remove(f'output{i}')
         return result
@@ -129,7 +129,7 @@ class OnnxRuntimeProcess():
 def std_transformer(std):
     std = ast.literal_eval(std)
     tmp = np.asarray(std)[::-1] * 255
-    return f'[{tmp[0]},{tmp[1]},{tmp[2]}]'
+    return f'[{round(tmp[0], 3)},{round(tmp[1], 3)},{round(tmp[2], 3)}]'
 
 
 def create_dict_from_args_for_process(args, nireq):
@@ -176,8 +176,8 @@ def main():
     try:
         log.info(f'Reading model {args.model_path}')
         model = ort.InferenceSession(args.model_path)
-        model_wrapper = OnnxRuntimeModelWrapperCpp(model)
-        model_data = OnnxRuntimeTransformerCpp(model)
+        model_wrapper = ONNXIOModelWrapper('', args.batch_size)
+        model_data = ONNXRuntimeTransformerCpp(model)
         io = IOAdapter.get_io_adapter(args, model_wrapper, model_data)
 
         log.info('Preparing input images for model')
@@ -194,7 +194,7 @@ def main():
         log.info('Preparing images for benchmark in temporary directory')
         prepare_images_for_benchmark(io, tmp.name, list_of_names, cur_path)
 
-        args.input = tmp.name
+        args.input = args.input[0]
 
         log.info('Initializing onnxruntime process')
         proc = OnnxRuntimeProcess()
