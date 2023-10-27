@@ -67,8 +67,8 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-Model | Parameters                                                                                        | Python API |
--|---------------------------------------------------------------------------------------------------|-|
+Model | Parameters                                                                                       | Python API |
+-|-|-|
 densenet-121| Mean: [123.675,116.28,103.53].<br>Input scale: [58.395,57.12,57.375].| 0.3022473 liner, ocean liner<br>0.1322417 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1194588 container ship, containership, container vessel<br>0.0795097 drilling platform, offshore rig<br>0.0723070 dock, dockage, docking facility|
 googlenet-v1-tf| Mean: [127.5, 127.5, 127.5].<br>Input scale: [127.5].|0.1235979 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br> 0.1017586 liner, ocean liner<br>0.0949444 drilling platform, offshore rig<br>0.0817947 container ship, containership, container vessel<br>0.0486889 fireboat|
 googlenet-v2-tf| Mean: [127.5, 127.5, 127.5].<br>Input scale: [127.5].|0.2662660 container ship, containership, container vessel<br>0.0966037 dock, dockage, docking facility<br> 0.0876837 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0488674 beacon, lighthouse, beacon light, pharos<br>0.0343599 drilling platform, offshore rig|
