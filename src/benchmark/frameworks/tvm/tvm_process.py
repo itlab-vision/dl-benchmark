@@ -90,8 +90,7 @@ class TVMProcessMXNetFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_script = Path.joinpath(self.inference_script_root,
-                                            'inference_tvm_mxnet.py')
+        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_mxnet.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
@@ -120,8 +119,7 @@ class TVMProcessPyTorchFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_script = Path.joinpath(self.inference_script_root,
-                                            'inference_tvm_pytorch.py')
+        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_pytorch.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
@@ -141,8 +139,7 @@ class TVMProcessONNXFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} '
-        path_to_script = Path.joinpath(self.inference_script_root,
-                                            'inference_tvm_onnx.py')
+        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_onnx.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
