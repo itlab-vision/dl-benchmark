@@ -2,12 +2,16 @@ import tvm
 import logging as log
 from scipy.special import softmax
 import abc
+from time import time
+
+import postprocessing_data as pp
+from inference_tools.loop_tools import loop_inference, get_exec_time
 
 
 class TVMConverter(metaclass=abc.ABCMeta):
     def __init__(self, args):
         self.args = args
-        self.net = None
+        self.graph = None
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -27,8 +31,8 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
-        module = self._convert_model_from_framework(target, dev)
-        return module
+        self.graph = self._convert_model_from_framework(target, dev)
+        return self.graph
 
 
 def create_dict_for_converter_mxnet(args):
@@ -39,6 +43,7 @@ def create_dict_for_converter_mxnet(args):
         'model_path': args.model_path,
         'model_params': args.model_params,
         'device': args.device,
+        'opt_level': args.opt_level,
     }
     return dictionary
 
@@ -50,6 +55,7 @@ def create_dict_for_converter_onnx(args):
         'model_name': args.model_name,
         'model_path': args.model_path,
         'device': args.device,
+        'opt_level': args.opt_level,
     }
     return dictionary
 
@@ -73,6 +79,38 @@ def create_dict_for_modelwrapper(args):
         'model_name': args.model_name,
     }
     return dictionary
+
+
+def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
+    result = None
+    time_infer = []
+    if num_of_iterations == 1:
+        slice_input = get_slice()
+        t0 = time()
+        module.set_input(input_name, slice_input[input_name])
+        module.run()
+        result = module.get_output(0)
+        t1 = time()
+        time_infer.append(t1 - t0)
+    else:
+        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
+                                                                                           input_name,
+                                                                                           module)
+    return result, time_infer
+
+
+def inference_iteration(get_slice, input_name, module):
+    slice_input = get_slice()
+    _, exec_time = infer_slice(input_name, module, slice_input)
+    return exec_time
+
+
+@get_exec_time()
+def infer_slice(input_name, module, slice_input):
+    module.set_input(input_name, slice_input[input_name])
+    module.run()
+    res = module.get_output(0)
+    return res
 
 
 def prepare_output(result, task, output_names):

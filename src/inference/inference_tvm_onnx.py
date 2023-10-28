@@ -8,18 +8,16 @@ import tvm
 
 
 from pathlib import Path
-from time import time
 
 
 import postprocessing_data as pp
-from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
 from tvm_auxiliary import (TVMConverter, create_dict_for_converter_onnx,
                            prepare_output, create_dict_for_modelwrapper,
-                           create_dict_for_transformer)
+                           create_dict_for_transformer, inference_tvm)
 
 
 def cli_argument_parser():
@@ -109,6 +107,16 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='batch_size')
+    parser.add_argument('-ol', '--opt_level',
+                        help='TVM optimization level for graph module.',
+                        default=0,
+                        type=int,
+                        dest='opt_level')
+    parser.add_argument('--raw_output',
+                        help='Raw output without logs.',
+                        default=False,
+                        type=bool,
+                        dest='raw_output')
     parser.add_argument('--channel_swap',
                         help='Parameter of channel swap (WxHxC to CxWxH by default).',
                         default=[2, 0, 1],
@@ -132,46 +140,15 @@ class ONNXToTVMConverter(TVMConverter):
 
     def _convert_model_from_framework(self, target, dev):
         model_path = self.args['model_path']
+        opt_lev = self.args['opt_level']
         model_onnx = onnx.load(model_path)
         shape_dict = {self.args['input_name']: self.args['input_shape']}
         log.info('Creating graph module from ONNX model')
         model, params = tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
-        with tvm.transform.PassContext(opt_level=3):
+        with tvm.transform.PassContext(opt_level=opt_lev):
             lib = tvm.relay.build(model, target=target, params=params)
         module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
         return module
-
-
-def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
-    result = None
-    time_infer = []
-    if num_of_iterations == 1:
-        slice_input = get_slice()
-        t0 = time()
-        module.set_input(input_name, slice_input[input_name])
-        module.run()
-        result = module.get_output(0)
-        t1 = time()
-        time_infer.append(t1 - t0)
-    else:
-        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
-                                                                                           input_name,
-                                                                                           module)
-    return result, time_infer
-
-
-def inference_iteration(get_slice, input_name, module):
-    slice_input = get_slice()
-    _, exec_time = infer_slice(input_name, module, slice_input)
-    return exec_time
-
-
-@get_exec_time()
-def infer_slice(input_name, module, slice_input):
-    module.set_input(input_name, slice_input[input_name])
-    module.run()
-    res = module.get_output(0)
-    return res
 
 
 def main():
@@ -201,11 +178,17 @@ def main():
                                            args.input_name,
                                            io.get_slice_input,
                                            args.time)
-        if args.number_iter == 1:
-            log.info('Converting output tensor to print results')
-            res = prepare_output(result, args.task, args.output_names)
-            log.info('Inference results')
-            io.process_output(res, log)
+
+        if not args.raw_output:
+            if args.number_iter == 1:
+                try:
+                    log.info('Converting output tensor to print results')
+                    res = prepare_output(result, args.task, args.output_names)
+                    log.info('Inference results')
+                    io.process_output(res, log)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)

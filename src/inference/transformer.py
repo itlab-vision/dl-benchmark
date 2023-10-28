@@ -267,17 +267,20 @@ class TVMTransformer(Transformer):
         self._converting = converting
 
     def __set_norm(self, image):
-        std = np.array([self._converting['std'][0],
-                        self._converting['std'][1],
-                        self._converting['std'][2]])
-        mean = np.array([self._converting['mean'][0],
-                         self._converting['mean'][1],
-                         self._converting['mean'][2]])
-        for i in range(image.shape[2]):
-            image[:, :, i] /= 255
-            image[:, :, i] -= mean[i]
-            image[:, :, i] /= std[i]
-        return image
+        if self._converting['norm']:
+            std = np.array([self._converting['std'][0],
+                            self._converting['std'][1],
+                            self._converting['std'][2]])
+            mean = np.array([self._converting['mean'][0],
+                             self._converting['mean'][1],
+                             self._converting['mean'][2]])
+            for i in range(image.shape[2]):
+                image[:, :, i] /= 255
+                image[:, :, i] -= mean[i]
+                image[:, :, i] /= std[i]
+            return image
+        else:
+            return image
 
     def __set_channel_swap(self, image):
         if self._converting['channel_swap'] is not None:

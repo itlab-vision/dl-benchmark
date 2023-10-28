@@ -10,6 +10,7 @@ class TVMParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
         CONFIG_FRAMEWORK_DEPENDENT_NORMALIZE_TAG = 'Normalize'
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
+        CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL = 'OptimizationLevel'
         CONFIG_FRAMEWORK_DEPENDENT_STD_TAG = 'Std'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
 
@@ -29,6 +30,8 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_STD_TAG)[0].firstChild
         _channel_swap = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _optimization_level = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL)[0].firstChild
 
         return TVMParameters(
             framework=_framework.data if _framework else None,
@@ -38,12 +41,13 @@ class TVMParametersParser(DependentParametersParser):
             mean=_mean.data if _mean else None,
             std=_std.data if _std else None,
             channel_swap=_channel_swap.data if _channel_swap else None,
+            optimization_level=_optimization_level.data if _optimization_level else None,
         )
 
 
 class TVMParameters(FrameworkParameters):
     def __init__(self, framework, input_name, input_shape,
-                 normalize, mean, std, channel_swap):
+                 normalize, mean, std, channel_swap, optimization_level):
         self.framework = None
         self.input_name = None
         self.input_shape = None
@@ -51,6 +55,7 @@ class TVMParameters(FrameworkParameters):
         self.mean = None
         self.std = None
         self.channel_swap = None
+        self.optimization_level = None
 
         if self._framework_is_correct(framework):
             self.framework = framework
@@ -66,6 +71,8 @@ class TVMParameters(FrameworkParameters):
             self.std = std
         if self._parameter_is_not_none(channel_swap):
             self.channel_swap = channel_swap
+        if self._parameter_is_not_none(optimization_level):
+            self.optimization_level = optimization_level
 
     @staticmethod
     def _framework_is_correct(framework):

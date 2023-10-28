@@ -12,6 +12,7 @@ class TVMTest(Test):
         parameters.update({'Device': self.indep_parameters.device})
         parameters.update({'Iteration count': self.indep_parameters.iteration})
         parameters.update({'Framework': self.dep_parameters.framework})
+        parameters.update({'Optimization level': self.dep_parameters.optimization_level})
         other_param = self._get_optional_parameters_string(parameters)
 
         report_res = {

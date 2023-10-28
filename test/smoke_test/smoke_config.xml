@@ -435,6 +435,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -465,6 +466,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -495,6 +497,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
     <Test>

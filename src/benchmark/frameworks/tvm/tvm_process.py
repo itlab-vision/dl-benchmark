@@ -36,9 +36,8 @@ class TVMProcess(ProcessHandler):
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
 
-        common_params = (f'-i {dataset} '
-                         f'-is {input_shape} -b {batch_size} -ni {iteration} '
-                         f'--report_path {self.report_path}')
+        common_params = (f'-i {dataset} -is {input_shape} -b {batch_size} '
+                         f'-ni {iteration} --report_path {self.report_path}')
 
         input_name = self._test.dep_parameters.input_name
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
@@ -65,6 +64,10 @@ class TVMProcess(ProcessHandler):
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--device', device)
 
+        opt_level = self._test.dep_parameters.optimization_level
+        common_params = TVMProcess._add_optional_argument_to_cmd_line(
+            common_params, '--opt_level', opt_level)
+
         return f'{common_params}'
 
 
@@ -87,13 +90,13 @@ class TVMProcessMXNetFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_sync_script = Path.joinpath(self.inference_script_root,
+        path_to_script = Path.joinpath(self.inference_script_root,
                                             'inference_tvm_mxnet.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_sync_script} {common_params}'
+        command_line = f'{python} {path_to_script} {common_params}'
 
         return command_line
 
@@ -117,13 +120,13 @@ class TVMProcessPyTorchFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_sync_script = Path.joinpath(self.inference_script_root,
+        path_to_script = Path.joinpath(self.inference_script_root,
                                             'inference_tvm_pytorch.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_sync_script} {common_params}'
+        command_line = f'{python} {path_to_script} {common_params}'
 
         return command_line
 
@@ -138,12 +141,12 @@ class TVMProcessONNXFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} '
-        path_to_sync_script = Path.joinpath(self.inference_script_root,
+        path_to_script = Path.joinpath(self.inference_script_root,
                                             'inference_tvm_onnx.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_sync_script} {common_params}'
+        command_line = f'{python} {path_to_script} {common_params}'
 
         return command_line
