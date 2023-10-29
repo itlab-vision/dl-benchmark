@@ -16,6 +16,7 @@ from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import PyTorchTransformer
+from dgl_pytorch_auxiliary import infer_slice, get_device_to_infer
 
 
 def cli_argument_parser():
@@ -177,19 +178,6 @@ def set_thread_num(num_inter_threads, num_intra_threads):
         log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
 
 
-def get_device_to_infer(device):
-    log.info('Get device for inference')
-    if device == 'CPU':
-        log.info(f'Inference will be executed on {device}')
-        return torch.device('cpu')
-    elif device == 'NVIDIA_GPU':
-        log.info(f'Inference will be executed on {device}')
-        return torch.device('cuda')
-    else:
-        log.info(f'The device {device} is not supported')
-        raise ValueError('The device is not supported')
-
-
 def is_gpu_available():
     return torch.cuda.is_available()
 
@@ -268,16 +256,9 @@ def inference_pytorch(model, num_iterations, get_slice, input_names, inference_m
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
-            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
-                                                                                            input_names, model)
+            inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
+            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model)
     return predictions, time_infer
-
-
-@get_exec_time()
-def infer_slice(device, inputs, model):
-    model(*inputs)
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
 
 
 def inference_iteration(device, get_slice, input_names, model):

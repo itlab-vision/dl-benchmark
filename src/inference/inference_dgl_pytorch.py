@@ -12,6 +12,8 @@ import dgl
 
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
+from inference_tools.loop_tools import loop_inference
+from dgl_pytorch_auxiliary import inference_iteration, get_device_to_infer
 
 
 def cli_argument_parser() -> argparse.Namespace:
@@ -31,6 +33,15 @@ def cli_argument_parser() -> argparse.Namespace:
                         default='torchvision.models',
                         type=str,
                         dest='module')
+    parser.add_argument('-d', '--device',
+                        help='Specify the target device to infer on CPU or '
+                             'NVIDIA_GPU (CPU by default)',
+                        default='CPU',
+                        type=str,
+                        dest='device')
+    parser.add_argument('--time', required=False, default=0, type=int,
+                        dest='time',
+                        help='Optional. Time in seconds to execute topology.')
     parser.add_argument('-mn', '--model_name',
                         help='Model name from the module.',
                         required=True,
@@ -77,7 +88,7 @@ def prepare_input(input_path: str) -> any:
     return g
 
 
-def compile_model(model: any) -> any:
+def compile_model(model: any, device) -> any:
     """prepare and compile model. Now compile not support
 
     Args:
@@ -86,12 +97,14 @@ def compile_model(model: any) -> any:
     Returns:
         any: PyTorch model
     """
-    # module.to(device)
+    model.to(device)
     model.eval()
     return model
 
 
-def inference_dgl_pytorch(model: any, num_iterations: int, input_graph: any, inference_mode: bool) -> (any, list):
+def inference_dgl_pytorch(
+    model: any, num_iterations: int, input_graph: any, 
+    inference_mode: bool, device: torch._C.device, test_duration: int) -> (any, list):
     """inference for DGL with PyTorch in Backend
 
     Args:
@@ -99,27 +112,27 @@ def inference_dgl_pytorch(model: any, num_iterations: int, input_graph: any, inf
         num_iterations (int): interations count (not support)
         input_graph (any): graph object in DGL format
         inference_mode (bool): inference_mode flag in Pytorch
+        device (torch._C.device): devic type for PyTorch
+        test_duration (int): time for inference (for loop inference)
 
     Returns:
         (any, list): (predictions, inference time list)
     """
+    features = input_graph.ndata["feat"]
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
         if num_iterations == 1:
-            features = input_graph.ndata["feat"]
             t0 = time()
             pred = model(input_graph, features).argmax(dim=1)
             correct = (pred[input_graph.ndata['test_mask']] == input_graph.ndata["label"][input_graph.ndata["test_mask"]]).sum()
-            acc = int(correct) / int(input_graph.ndata['test_mask'].sum())
-            predictions = acc
+            predictions = int(correct) / int(input_graph.ndata['test_mask'].sum())
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            pass
             # several decorator calls in order to use variables as decorator parameters
-            # time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
-                                                                                            # input_names, model)
+            inputs = [input_graph, features]
+            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model)
     return predictions, time_infer
 
 
@@ -128,6 +141,8 @@ def load_model_from_file(model_path: str, module: str, model_name: str) -> any:
 
     Args:
         model_path (str): path to file. Format .pt
+        module (str): module name of a model
+        model_name (str): model class name
 
     Raises:
         ValueError: The file type is not supported
@@ -136,13 +151,10 @@ def load_model_from_file(model_path: str, module: str, model_name: str) -> any:
         any: PyTorch model
     """
     log.info(f'Loading model from path {model_path}')
-    log.info(f'Loading model from path {module}, {model_name}')
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
-
-    print(module.split("\\"))
 
     model_cls = getattr(importlib.import_module(module, 'GCN'), model_name)
 
@@ -159,10 +171,25 @@ def write_cmd_options_to_report(report_writer: ReportWriter, args: argparse.Name
         report_writer (ReportWriter): report object
         args (argparse.Namespace): cmd options
     """
-    report_writer.update_cmd_options(m=args.module)
-    report_writer.update_cmd_options(i=args.input)
+    report_writer.update_cmd_options(
+        m=args.module,
+        i=args.input
+    )
 
-    report_writer.update_configuration_setup(iterations_num=args.number_iter)
+    report_writer.update_configuration_setup(
+        iterations_num=args.number_iter,
+        target_device=args.device,
+        duration=args.time
+    )
+
+    report_writer.update_framework_info(
+        name='DGL', 
+        version=dgl.__version__,
+        device=args.device,
+        backend='PyTorch'
+    )
+
+    report_writer.write_report(args.report_path)
 
 
 def main() -> None:
@@ -174,23 +201,22 @@ def main() -> None:
     args = cli_argument_parser()
     report_writer = ReportWriter()
     write_cmd_options_to_report(report_writer, args)
-    report_writer.update_framework_info(name='DGL (PyTorch)', version=dgl.__version__)
-    report_writer.write_report(args.report_path)
 
     try:
         model = load_model_from_file(args.model, args.module, args.model_name)
 
-        prepare_model = compile_model(model)
+        device = get_device_to_infer(args.device)
+        prepare_model = compile_model(model, device)
 
         log.info(f'Preparing input data {args.input}')
         input_data = prepare_input(args.input[0])
 
-        log.info(f'Starting inference (max {args.number_iter} iterations')
+        log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_dgl_pytorch(prepare_model, args.number_iter, 
-                                                       input_data, args.inference_mode)
+                                                       input_data, args.inference_mode, device, args.time)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(0, inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(1, inference_time)
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
