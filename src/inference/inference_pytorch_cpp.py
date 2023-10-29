@@ -8,6 +8,7 @@ import tempfile
 import logging as log
 import traceback
 import re
+import shutil
 
 import preprocessing_data as prep
 from io_adapter import IOAdapter
@@ -177,23 +178,12 @@ def create_dict_from_args_for_process(args):
             '-niter': 1}
 
 
-def prepare_images_for_benchmark(io, tmp_dir, names_of_output, cur_path, input_names):
-    os.chdir(tmp_dir)
-    img = io.get_slice_input()[input_names[0]]
-    for i, name in enumerate(names_of_output):
-        cv2.imwrite(name, img[i])
-    os.chdir(cur_path)
-
-
-def prepare_output_file_names(input_):
-    list_of_names = []
-    if os.path.isdir(input_[0]):
-        for entry in os.scandir(input_[0]):
-            if entry.is_file():
-                list_of_names.append(entry.name)
-    else:
-        list_of_names = [os.path.basename(path) for path in input_[0].split(',')]
-    return list_of_names
+def prepare_images_for_benchmark(input, tmp_dir):
+    if os.path.isdir(input[0]):
+        return input
+    for path in input[0].split(','):
+        shutil.copy2(path, tmp_dir)
+    return tmp_dir
 
 
 def main():
@@ -233,14 +223,11 @@ def main():
                                        custom_trace_func=None)
         args.model = save_model(args.model, args.model_name, compiled_model, args.input_shapes, tmp_model.name)
 
-        log.info('Preparing input images for the model')
+        log.info('Preparing input images for the model output processing')
         io.prepare_input(compiled_model, args.input)
 
-        log.info('Prepare output file names')
-        list_of_names = prepare_output_file_names(args.input)
-
         log.info('Preparing images for benchmark in temporary directory')
-        prepare_images_for_benchmark(io, tmp_input.name, list_of_names, cur_path, args.input_names)
+        prepare_images_for_benchmark(args.input, tmp_input.name)
 
         args.input = tmp_input.name
 
