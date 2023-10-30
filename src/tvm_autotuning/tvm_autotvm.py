@@ -31,6 +31,7 @@ def cli_argument_parser():
                         default='autotvm.log',
                         type=str,
                         dest='log_file')
+
     parser.add_argument('--tuner',
                         help='Method name for tuning the model.',
                         choices=[
@@ -70,6 +71,7 @@ def cli_argument_parser():
                         default=0.1,
                         nargs='+',
                         type=int)
+
     parser.add_argument('--number',
                         help='The number of times to run the generated code for taking average.'
                              'We call these runs as one repeat of measurement.',
@@ -135,7 +137,7 @@ def extract_tasks(mod, params, target, layer_names):
         ops = None
 
     tasks = autotvm.task.extract_from_program(
-        mod=mod, target=target, params=params, ops=ops,
+        mod=mod, params=params, target=target, ops=ops,
     )
     return tasks
 

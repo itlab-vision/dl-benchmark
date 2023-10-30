@@ -28,7 +28,6 @@ def cli_argument_parser():
                         help='The number of measurement trials.',
                         required=True,
                         type=int)
-
     parser.add_argument('-l', '--log',
                         help='Path to the file for logging optimization results.',
                         required=True,
@@ -68,40 +67,39 @@ def cli_argument_parser():
                         help='The thread numbers of a warp.',
                         nargs='?',
                         type=int)
-
     parser.add_argument('--include_simple_tasks',
-                        action='store_true',
-                        help='Whether to extract simple tasks that do not include complicated ops.')
+                        help='Whether to extract simple tasks that do not include complicated ops.',
+                        action='store_true')
     parser.add_argument('--opt_level',
                         help='The optimization level of the task extractions',
                         type=int,
-                        choices=[0, 1, 2, 3],
-                        default=3)
+                        choices=[0, 1, 2, 3, 4],
+                        default=2)
 
     parser.add_argument('--strategy',
+                        help='The scheduling strategy.',
                         type=str,
                         choices=['round-robin', 'gradient'],
-                        help='The scheduling strategy.',
                         default='round-robin')
     parser.add_argument('--load_model_file',
-                        type=str,
                         help='Load pre-trained optimization model from this file.',
+                        type=str,
                         nargs='?')
     parser.add_argument('--load_log_file',
-                        type=str,
                         help='Load measurement records from this file.',
+                        type=str,
                         nargs='?')
     parser.add_argument('--alpha',
-                        type=float,
                         help='The parameter used for gradient strategy.',
+                        type=float,
                         default=0.2)
     parser.add_argument('--beta',
-                        type=float,
                         help='The parameter used for gradient strategy.',
+                        type=float,
                         default=2)
     parser.add_argument('--backward_window_size',
-                        type=int,
                         help='The parameter used for gradient strategy.',
+                        type=int,
                         default=3)
 
     parser.add_argument('--number',
@@ -130,8 +128,8 @@ def cli_argument_parser():
                         help='Option used by XGBModel to reduce the model training frequency'
                              'when there are too many logs.')
     parser.add_argument('--per_task_early_stopping',
-                        type=int,
-                        help='Stop tuning a task early if getting no improvement after n measurements.')
+                        help='Stop tuning a task early if getting no improvement after n measurements.',
+                        type=int)
 
     args = parser.parse_args()
 
@@ -159,7 +157,8 @@ def extract_tasks(mod, params, target, num_cores, vector_unit_bytes,
                                                         max_local_memory_per_block, max_threads_per_block,
                                                         max_vthread_extent, warp_size)
 
-    tasks, task_weights = auto_scheduler.extract_tasks(mod, params, target, hardware_params=hardware_params,
+    tasks, task_weights = auto_scheduler.extract_tasks(mod=mod, params=params, target=target,
+                                                       hardware_params=hardware_params,
                                                        include_simple_tasks=include_simple_tasks, opt_level=opt_level)
 
     return tasks, task_weights

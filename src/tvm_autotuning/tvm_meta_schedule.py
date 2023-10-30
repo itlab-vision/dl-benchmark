@@ -30,8 +30,9 @@ def cli_argument_parser():
                         required=True,
                         type=int)
     parser.add_argument('--max_trials_per_task',
-                        type=int,
-                        help='Maximum number of trials to run per task')
+                        help='Maximum number of trials to run per task',
+                        required=True,
+                        type=int)
     parser.add_argument('-w', '--work_dir',
                         help='Working directory for logging results.',
                         required=True,
@@ -41,27 +42,27 @@ def cli_argument_parser():
     parser.add_argument('--opt_level',
                         help='The optimization level of the task extractions.',
                         type=int,
-                        choices=[0, 1, 2, 3],
-                        default=3)
+                        choices=[0, 1, 2, 3, 4],
+                        default=2)
 
     parser.add_argument('--space',
+                        help='The space generator to use.',
                         default='post-order-apply',
                         choices=['post-order-apply', 'union'],
-                        type=str,
-                        help='The space generator to use.')
+                        type=str)
     parser.add_argument('--strategy',
+                        help='The search strategy to use.',
                         default='evolutionary',
                         choices=['replay-func', 'replay-trace', 'evolutionary'],
-                        type=str,
-                        help='The search strategy to use.')
+                        type=str)
     parser.add_argument('--num_tuning_cores',
+                        help='The number of CPU cores to use during tuning.',
                         default='physical',
-                        type=str,
-                        help='The number of CPU cores to use during tuning.')
+                        type=str)
     parser.add_argument('--seed',
-                        type=int,
                         help='The random seed to use.',
-                        nargs='?')
+                        nargs='?',
+                        type=int)
 
     parser.add_argument('--number',
                         help='The number of times to run the generated code for taking average.'
@@ -76,24 +77,24 @@ def cli_argument_parser():
                         type=int)
 
     parser.add_argument('--num_trials_per_iter',
+                        help='Number of trials to run per iteration.',
                         type=int,
-                        default=64,
-                        help='Number of trials to run per iteration.')
+                        default=64,)
     parser.add_argument('--database',
+                        help='The database.',
                         default='json',
                         choices=['json', 'memory'],
-                        type=str,
-                        help='The database.')
+                        type=str)
     parser.add_argument('--cost_model',
+                        help='The cost model.',
                         default='xgb',
                         choices=['xgb', 'mlp', 'random'],
-                        type=str,
-                        help='The cost model.')
+                        type=str)
     parser.add_argument('--task_scheduler',
+                        help='The task scheduler.',
                         default='gradient',
                         choices=['gradient', 'round-robin'],
-                        type=str,
-                        help='The task scheduler.')
+                        type=str)
 
     args = parser.parse_args()
 
@@ -101,13 +102,13 @@ def cli_argument_parser():
 
 
 def extract_tasks(mod, params, target, work_dir, opt_level, space, strategy, num_tuning_cores, seed):
-    extracted_tasks = ms.relay_integration.extract_tasks(
-        mod, target, params, opt_level=opt_level,
-    )
+    extracted_tasks = ms.relay_integration.extract_tasks(mod=mod, params=params, target=target, opt_level=opt_level)
 
-    tasks, task_weights = ms.relay_integration.extracted_tasks_to_tune_contexts(
-        extracted_tasks, work_dir, space=space, strategy=strategy, num_tuning_cores=num_tuning_cores, seed=seed,
-    )
+    tasks, task_weights = ms.relay_integration.extracted_tasks_to_tune_contexts(extracted_tasks=extracted_tasks,
+                                                                                work_dir=work_dir,
+                                                                                space=space, strategy=strategy,
+                                                                                num_tuning_cores=num_tuning_cores,
+                                                                                seed=seed)
     return tasks, task_weights
 
 
@@ -128,7 +129,6 @@ def tune_tasks(tasks, task_weights, n_trials, work_dir,
         task_scheduler=task_scheduler,
         builder=ms.builder.LocalBuilder(),
         runner=ms.runner.LocalRunner(evaluator_config=evaluator_config),
-
     )
 
 
