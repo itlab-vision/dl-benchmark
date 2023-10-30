@@ -828,7 +828,6 @@ python3 inference_onnx_runtime.py \
     -i <path_to_image>/<image_name>
 ```
 
-
 ## Квантизация глубоких моделей с использованием MXNet
 
 #### Аргументы командной строки
@@ -888,7 +887,6 @@ python3 quantization_mxnet.py \
         -mn <name_of_model> \
         -is <input_shape> \ 
 ```
-
 
 ## Валидация вывода глубоких моделей с использованием C++ PyTorch (TorchVision)
 
