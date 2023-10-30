@@ -79,7 +79,7 @@ def cli_argument_parser():
     parser.add_argument('--num_trials_per_iter',
                         help='Number of trials to run per iteration.',
                         type=int,
-                        default=64,)
+                        default=64)
     parser.add_argument('--database',
                         help='The database.',
                         default='json',
