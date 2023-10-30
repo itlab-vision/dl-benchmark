@@ -13,6 +13,7 @@ class MXNetParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_STD_TAG = 'Std'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
+        CONFIG_FRAMEWORK_DEPENDENT_QUANTIZATION_TAG = 'Quantization'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -32,6 +33,8 @@ class MXNetParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_STD_TAG)[0].firstChild
         _channel_swap = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
+        _quantization = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_QUANTIZATION_TAG)[0].firstChild
 
         return MXNetParameters(
             mode=_mode.data if _mode else None,
@@ -42,12 +45,13 @@ class MXNetParametersParser(DependentParametersParser):
             mean=_mean.data if _mean else None,
             std=_std.data if _std else None,
             channel_swap=_channel_swap.data if _channel_swap else None,
+            quantization=_quantization.data if _quantization else None,
         )
 
 
 class MXNetParameters(FrameworkParameters):
     def __init__(self, mode, input_name, input_shape, hybridize, normalize,
-                 mean, std, channel_swap):
+                 mean, std, channel_swap, quantization):
         self.mode = None
         self.input_name = None
         self.input_shape = None
@@ -56,6 +60,7 @@ class MXNetParameters(FrameworkParameters):
         self.mean = None
         self.std = None
         self.channel_swap = None
+        self.quantization = None
 
         if self._mode_is_correct(mode):
             self.mode = mode
@@ -73,6 +78,8 @@ class MXNetParameters(FrameworkParameters):
             self.std = std
         if self._parameter_is_not_none(channel_swap):
             self.channel_swap = channel_swap
+        if self._parameter_is_not_none(quantization):
+            self.quantization = quantization
 
     @staticmethod
     def _mode_is_correct(mode):

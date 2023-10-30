@@ -12,11 +12,13 @@ import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
-from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
-                             get_device_to_infer, create_dict_for_modelwrapper,
-                             create_dict_for_transformer, prepare_output)
 from reporter.report_writer import ReportWriter
 from transformer import MXNetTransformer
+from quantization_mxnet import QuantWrapper
+from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
+                             get_device, create_dict_for_modelwrapper,
+                             create_dict_for_transformer, prepare_output,
+                             create_dict_for_quantwrapper)
 
 
 def cli_argument_parser():
@@ -157,6 +159,47 @@ def cli_argument_parser():
                         type=str,
                         default=None,
                         dest='color_map')
+    parser.add_argument('-q', '--quantization',
+                        help='Quantization model for further inference.',
+                        action='store_true',
+                        dest='quantization')
+    parser.add_argument('-cm', '--calib_mode',
+                        help='If calib_mode=`none`, no calibration'
+                             'will be used and the thresholds for requantization'
+                             'after the corresponding layers will be calculated at'
+                             'runtime by calling min and max operators'
+                             'If calib_mode=`naive`, the min and max values of the layer'
+                             'outputs from a calibration dataset will be directly taken'
+                             'as the thresholds for quantization'
+                             'If calib_mode=`entropy`, the thresholds for quantization'
+                             'will be derived such that the KL divergence between the'
+                             'distributions of FP32 layer outputs and quantized layer'
+                             'outputs is minimized based upon the calibration dataset.',
+                        default='none',
+                        type=str,
+                        choices=['none', 'naive', 'entropy'],
+                        dest='calib_mode')
+    parser.add_argument('-qdt', '--quant_dtype',
+                        help='The quantized type of weights.'
+                             'Currently support `int8`, `uint8`',
+                        default='auto',
+                        type=str,
+                        choices=['int8', 'uint8', 'auto'],
+                        dest='quant_dtype')
+    parser.add_argument('-qm', '--quantize_mode',
+                        help='The mode that quantization pass to apply.'
+                             'Support `full` and `smart`.'
+                             '`full` means quantize all operators if possible.'
+                             '`smart` means quantization pass will smartly'
+                             'choice which operator should be quantized.',
+                        default='full',
+                        type=str,
+                        choices=['full', 'smart'],
+                        dest='quant_mode')
+    parser.add_argument('-sqm', '--save_quantized_model',
+                        help='Save quantized model.',
+                        action='store_true',
+                        dest='save_quantized_model')
     args = parser.parse_args()
 
     return args
@@ -169,7 +212,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name, test_duration):
         mxnet.nd.waitall()
         t0 = time()
         slice_input = get_slice()
-        predictions = net(slice_input[input_name]).softmax()
+        predictions = net(slice_input[input_name])
         mxnet.nd.waitall()
         t1 = time()
         time_infer.append(t1 - t0)
@@ -187,7 +230,7 @@ def inference_iteration(get_slice, input_name, net):
 
 @get_exec_time()
 def infer_slice(input_name, net, slice_input):
-    res = net(slice_input[input_name]).softmax()
+    res = net(slice_input[input_name])
     mxnet.nd.waitall()
     return res
 
@@ -210,7 +253,9 @@ def main():
         data_transformer = MXNetTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        context = get_device_to_infer(args.device)
+        context = get_device(args.device, 'inference')
+
+        quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))
 
         if ((args.model_name is not None)
                 and (args.model_json is None)
@@ -222,6 +267,13 @@ def main():
                                      args.input_name)
         else:
             raise ValueError('Incorrect arguments.')
+
+        if (args.quantization):
+            quant_wrapper.quant_gluon_model(net, context)
+            net = quant_wrapper.quantized_net
+
+        if (args.save_quantized_model):
+            quant_wrapper.save_model_as_symbol_block()
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
 
