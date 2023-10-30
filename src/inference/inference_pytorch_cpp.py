@@ -1,4 +1,3 @@
-import cv2
 import argparse
 import numpy as np
 import os
@@ -178,10 +177,10 @@ def create_dict_from_args_for_process(args):
             '-niter': 1}
 
 
-def prepare_images_for_benchmark(input, tmp_dir):
-    if os.path.isdir(input[0]):
-        return input
-    for path in input[0].split(','):
+def prepare_images_for_benchmark(inputs, tmp_dir):
+    if os.path.isdir(inputs[0]):
+        return inputs
+    for path in inputs[0].split(','):
         shutil.copy2(path, tmp_dir)
     return tmp_dir
 
@@ -194,7 +193,6 @@ def main():
     )
     tmp_input = tempfile.TemporaryDirectory()
     tmp_model = tempfile.TemporaryDirectory()
-    cur_path = os.getcwd()
     args = cli_argument_parser()
     device = 'cpu'
     precision = 'FP32'
