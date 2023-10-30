@@ -888,7 +888,7 @@ python3 quantization_mxnet.py \
         -is <input_shape> \ 
 ```
 
-## Валидация вывода глубоких моделей с использованием C++ PyTorch (TorchVision)
+## Валидация вывода глубоких моделей с использованием PyTorch (C++ API)
 
 #### Аргументы командной строки
 
@@ -959,27 +959,27 @@ python inference_pytorch_cpp.py --module <module_name> \
 **Запуск вывода для модели, которая загружается из файлов**
 
 ```bash
-python inference_pytorch.py --model_name <model_name> \
-                            --model <file_name>.pt \
-                            --input_name <input_name> \
-                            --input_names <input_name> \
-                            --input_shapes <input_shape> \
-                            --mean <mean> --input_scale <scale> \
-                            --batch_size <batch_size> \
-                            --task classification
+python inference_pytorch_cpp.py --model_name <model_name> \
+                                --model <file_name>.pt \
+                                --input_name <input_name> \
+                                --input_names <input_name> \
+                                --input_shapes <input_shape> \
+                                --mean <mean> --input_scale <scale> \
+                                --batch_size <batch_size> \
+                                --task classification
 ```
 
 **Запуск вывода для модели, которая загружается из модуля и отдельного файла с весами**
 
 ```bash
-python inference_pytorch.py --model_name <model_name> \
-                            --module <module_name> \
-                            --weights <file_name>.pth \
-                            --input_names <input_name> \
-                            --input_shapes <input_shape> \
-                            --mean <mean> --input_scale <scale> \
-                            --batch_size <batch_size> \
-                            --task classification
+python inference_pytorch_cpp.py --model_name <model_name> \
+                                --module <module_name> \
+                                --weights <file_name>.pth \
+                                --input_names <input_name> \
+                                --input_shapes <input_shape> \
+                                --mean <mean> --input_scale <scale> \
+                                --batch_size <batch_size> \
+                                --task classification
 ```
 
 <!-- LINKS -->
