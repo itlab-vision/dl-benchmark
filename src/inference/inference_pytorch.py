@@ -62,7 +62,7 @@ def cli_argument_parser():
                         dest='input')
     parser.add_argument('-in', '--input_names',
                         help='Names of the input tensors',
-                        required=True,
+                        required=False,
                         default=None,
                         type=prep.names_arg,
                         dest='input_names')
