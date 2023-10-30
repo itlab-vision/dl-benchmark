@@ -32,7 +32,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 </div>
 
    Model             |  Python API  |  C++ API  |
----------------------|---------------------------|---------------------------|
+-|-|-|
 alexnet              |0.4499779 Granny Smith<br>0.0933098 dumbbell<br>0.0876729 ocarina, sweet potato<br>0.0628701 hair slide<br>0.0484683 bottlecap<br>|14.5664130 Granny Smith<br>12.9931420 dumbbell<br>12.9308280 ocarina, sweet potato<br>12.5982870 hair slide<br>12.3381250 bottlecap<br>|
 densenet121              |0.9523344 Granny Smith<br>0.0132273 orange<br>0.0125171 lemon<br>0.0027910 banana<br>0.0020333 piggy bank, penny bank<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
 densenet161              |0.9372966 Granny Smith<br>0.0082274 dumbbell<br>0.0056475 piggy bank, penny bank<br>0.0055374 ping-pong ball<br>0.0041915 pitcher, ewer<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
@@ -84,7 +84,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 </div>
 
    Model             |  Python API  |  C++ API  |
----------------------|---------------------------|---------------------------|
+-|-|-|
 alexnet              |0.9947648 junco, snowbird<br>0.0043087 chickadee<br>0.0002780 water ouzel, dipper<br>0.0002770 bulbul<br>0.0001244 brambling, Fringilla montifringilla<br>|25.8981840 junco, snowbird<br>20.4563180 chickadee<br>17.7155760 water ouzel, dipper<br>17.7121070 bulbul<br>16.9112110 brambling, Fringilla montifringilla<br>|
 densenet121              |0.9841599 junco, snowbird<br>0.0072199 chickadee<br>0.0034963 brambling, Fringilla montifringilla<br>0.0016226 water ouzel, dipper<br>0.0012858 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
 densenet161              |0.9932058 junco, snowbird<br>0.0015922 chickadee<br>0.0012295 brambling, Fringilla montifringilla<br>0.0011838 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0008891 goldfinch, Carduelis carduelis<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
@@ -136,7 +136,7 @@ Standard deviation: [0.229, 0.224, 0.225]
 </div>
 
    Model             |  Python API  |  C++ API  |
----------------------|---------------------------|---------------------------|
+-|-|-|
 alexnet              |0.3216888 container ship, containership, container vessel<br>0.1360615 drilling platform, offshore rig<br>0.1140690 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1057476 beacon, lighthouse, beacon light, pharos<br>0.0471225 liner, ocean liner<br>|15.0291600 container ship, containership, container vessel<br>14.1686840 drilling platform, offshore rig<br>13.9923790 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>13.9166300 beacon, lighthouse, beacon light, pharos<br>13.1083240 liner, ocean liner<br>|
 densenet121              |0.3022412 liner, ocean liner<br>0.1322481 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1194608 container ship, containership, container vessel<br>0.0795042 drilling platform, offshore rig<br>0.0723068 dock, dockage, docking facility<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
 densenet161              |0.4418393 lifeboat<br>0.1824290 liner, ocean liner<br>0.0596464 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0325273 submarine, pigboat, sub, U-boat<br>0.0298845 dock, dockage, docking facility<br>|[ ERROR ] The following operation failed in the TorchScript interpreter *|
