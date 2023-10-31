@@ -241,8 +241,6 @@ def get_tensor_rt_dtype(tensor_rt_precision):
             tensor_rt_dtype = torch.half
         else:
             raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
-        return tensor_rt_dtype
-
     return tensor_rt_dtype
 
 
@@ -457,7 +455,7 @@ def inference_iteration(device, get_slice, input_names, model, task_type):
     return exec_time
 
 
-def prepare_output(result, model_name, output_names, task):
+def prepare_output(result, model, output_names, task):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
 
@@ -468,7 +466,7 @@ def prepare_output(result, model_name, output_names, task):
     elif task == 'batch-text-generation':
         from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
 
-        tokenizer = create_tokenizer(model_name)
+        tokenizer = create_tokenizer(model.name_or_path)
         decoded_result = decode(tokenizer, result)
 
         return decoded_result
@@ -597,7 +595,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    result = prepare_output(result, compiled_model.name_or_path, args.output_names, args.task)
+                    result = prepare_output(result, compiled_model, args.output_names, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)
