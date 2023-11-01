@@ -2,12 +2,12 @@
 
 ## MMdnn models
 
-Model name|Destination framework|Validation result (source framework)|Validation result (source framework)|Conversion commandline|
+Model name|Destination framework|Inference result (source framework)|Inference result (destination framework)|Conversion commandline|
 -|-|-|-|-|
 Test|Test|Test|Test|Test|
 
 ## Open Model Zoo models
 
-Model name|Destination framework|Validation result (source framework)|Validation result (source framework)|Conversion commandline|
+Model name|Destination framework|Inference result (source framework)|Inference result (destination framework)|Conversion commandline|
 -|-|-|-|-|
 Test|Test|Test|Test|Test|
