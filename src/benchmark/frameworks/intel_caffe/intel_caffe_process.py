@@ -23,13 +23,15 @@ class IntelCaffeProcess(ProcessHandler):
 
         model_prototxt = self._test.model.model
         model_caffemodel = self._test.model.weight
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        common_params = (f'-m {model_prototxt} -w {model_caffemodel} -i {dataset} -b {batch} -d {device}'
+        common_params = (f'-m {model_prototxt} -w {model_caffemodel} -b {batch} -d {device}'
                          f' -ni {iteration} --report_path {self.report_path}')
+
+        common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
 
         channel_swap = self._test.dep_parameters.channel_swap
         common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--channel_swap',

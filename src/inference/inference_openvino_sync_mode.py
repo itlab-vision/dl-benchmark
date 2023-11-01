@@ -31,7 +31,7 @@ def cli_argument_parser():
                         help='Data for input layers in format:'
                              'input_layer_name:path_to_image1,path_to_image2..'
                              'or input_layer_name:path_to_folder_with_images',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -209,8 +209,11 @@ def main():
 
         utils.reshape_input(model, args.batch_size)
 
-        log.info('Prepare input data')
-        io.prepare_input(model, args.input)
+        if args.input:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(model, args.input)
+        else:
+            io.fill_unset_inputs(model, log)
 
         log.info('Create executable network')
         compiled_model = utils.compile_model(core, model, args.device, args.priority)

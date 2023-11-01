@@ -12,13 +12,16 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
     def _fill_command_line(self):
         model_xml = self._test.model.model
         model_bin = self._test.model.weight
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
 
-        command_line = (f'-m {model_xml} -w {model_bin} -i {dataset} -b {batch} -d {device}'
+        command_line = (f'-m {model_xml} -w {model_bin} -b {batch} -d {device}'
                         f' -ni {iteration} --report_path {self.report_path}')
+
+        if dataset:
+            command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-i', dataset)
 
         extension = self._test.dep_parameters.extension
         if extension:

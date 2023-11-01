@@ -32,7 +32,8 @@ def cli_argument_parser():
                         dest='model_path')
     parser.add_argument('-i', '--input',
                         help='Path to data',
-                        required=True,
+                        required=False,
+                        default=None,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -263,8 +264,11 @@ def main():
         for layer in input_shapes:
             log.info(f'Shape for input layer {layer}: {input_shapes[layer]}')
 
-        log.info('Preparing input data')
-        io.prepare_input(interpreter, args.input)
+        if args.input and args.input != ['None']:
+            log.info(f'Preparing input data: {args.input}')
+            io.prepare_input(interpreter, args.input)
+        else:
+            io.fill_unset_inputs(interpreter, log)
         reshape_model_input(model_wrapper, interpreter, log)
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
