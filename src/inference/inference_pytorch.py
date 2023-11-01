@@ -24,6 +24,7 @@ from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
+from dgl_pytorch_auxiliary import get_device_to_infer, infer_slice
 
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
@@ -209,21 +210,6 @@ def set_thread_num(num_inter_threads, num_intra_threads):
         log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
 
 
-def get_device_to_infer(device):
-    log.info('Get device for inference')
-    if device == 'CPU':
-        log.info(f'Inference will be executed on {device}')
-
-        return torch.device('cpu')
-    elif device == 'NVIDIA_GPU':
-        log.info(f'Inference will be executed on {device}')
-
-        return torch.device('cuda')
-    else:
-        log.info(f'The device {device} is not supported')
-        raise ValueError('The device is not supported')
-
-
 def is_gpu_available():
     return torch.cuda.is_available()
 
@@ -404,22 +390,6 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                                                                                             input_names, model,
                                                                                             task_type)
     return output, time_infer
-
-
-@get_exec_time()
-def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
-    if task_type in ['text-translation']:
-        infer_func = model.translate_batch
-    else:
-        infer_func = model
-
-    if input_kwarg_name:
-        infer_func(**{input_kwarg_name: inputs})
-    else:
-        infer_func(*inputs)
-
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
 
 
 def inference_iteration(device, get_slice, input_names, model, task_type):

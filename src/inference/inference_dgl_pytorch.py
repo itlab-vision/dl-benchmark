@@ -103,6 +103,13 @@ def inference_dgl_pytorch(model, num_iterations, input_graph, inference_mode, de
     return predictions, time_infer
 
 
+def inference_iteration(device, inputs, model):
+    if device.type == 'cuda':
+        torch.cuda.synchronize()
+    _, exec_time = infer_slice(device, inputs, model)
+    return exec_time
+
+
 def load_model_from_file(model_path, module, model_name) -> any:
     log.info(f'Loading model from path {model_path}')
     file_type = model_path.split('.')[-1]
