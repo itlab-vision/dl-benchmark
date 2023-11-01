@@ -48,6 +48,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('--raw_output',
+                        help='Raw output without logs.',
+                        default=False,
+                        type=bool,
+                        dest='raw_output')
     parser.add_argument('-ni', '--number_iter',
                         help='Number of inference iterations.',
                         default=1,
@@ -88,9 +93,7 @@ def inference_dgl_pytorch(model, num_iterations, input_graph, inference_mode, de
         time_infer = []
         if num_iterations == 1:
             t0 = time()
-            pred = model(input_graph, features).argmax(dim=1)
-            correct = (pred[input_graph.ndata['test_mask']] == input_graph.ndata["label"][input_graph.ndata["test_mask"]]).sum()
-            predictions = int(correct) / int(input_graph.ndata['test_mask'].sum())
+            predictions = model(input_graph, features).argmax(dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
@@ -113,6 +116,11 @@ def load_model_from_file(model_path, module, model_name) -> any:
     setattr(__main__, model_name, model_cls)
     model = torch.load(model_path)
     return model
+
+
+def prepare_output(result):
+    log.info('Converting output tensor to print results')
+    return {'output_result': result.detach().numpy()}
 
 
 def write_cmd_options_to_report(report_writer, args) -> None:
@@ -151,13 +159,13 @@ def main() -> None:
         model = load_model_from_file(args.model, args.module, args.model_name)
 
         device = get_device_to_infer(args.device)
-        prepare_model = compile_model(model, device)
+        compiled_model = compile_model(model, device)
 
         log.info(f'Preparing input data {args.input}')
         input_data = prepare_input(args.input[0])
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time = inference_dgl_pytorch(prepare_model, args.number_iter, 
+        result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter, 
                                                        input_data, args.inference_mode, device, args.time)
 
         log.info('Computing performance metrics')
@@ -167,6 +175,16 @@ def main() -> None:
         report_writer.write_report(args.report_path)
 
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
+
+        if not args.raw_output:
+            if args.number_iter == 1:
+                try:
+                    result = prepare_output(result)
+
+                    log.info('Inference results')
+                    log.info(result)
+                except Exception as ex:
+                    log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
     except Exception:
         log.error(traceback.format_exc())
