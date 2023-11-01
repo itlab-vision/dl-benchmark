@@ -16,12 +16,7 @@ from inference_tools.loop_tools import loop_inference
 from dgl_pytorch_auxiliary import inference_iteration, get_device_to_infer
 
 
-def cli_argument_parser() -> argparse.Namespace:
-    """Parsing all command line parameters
-
-    Returns:
-        argparse.Namespace: object for storing attributes
-    """
+def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', '--model',
@@ -74,50 +69,19 @@ def cli_argument_parser() -> argparse.Namespace:
     return args
 
 
-def prepare_input(input_path: str) -> any:
-    """Prepare input data to correct format
-
-    Args:
-        input_path (str): Path to input file
-
-    Returns:
-        any: graph object in DGL format
-    """
+def prepare_input(input_path):
     graph = dgl.data.utils.load_graphs(input_path)  # load graph
     g = graph[0][0]
     return g
 
 
-def compile_model(model: any, device) -> any:
-    """prepare and compile model. Now compile not support
-
-    Args:
-        module (any): PyTorch model
-
-    Returns:
-        any: PyTorch model
-    """
+def compile_model(model, device):
     model.to(device)
     model.eval()
     return model
 
 
-def inference_dgl_pytorch(
-    model: any, num_iterations: int, input_graph: any, 
-    inference_mode: bool, device: torch._C.device, test_duration: int) -> (any, list):
-    """inference for DGL with PyTorch in Backend
-
-    Args:
-        model (any): PyTorch model
-        num_iterations (int): interations count (not support)
-        input_graph (any): graph object in DGL format
-        inference_mode (bool): inference_mode flag in Pytorch
-        device (torch._C.device): devic type for PyTorch
-        test_duration (int): time for inference (for loop inference)
-
-    Returns:
-        (any, list): (predictions, inference time list)
-    """
+def inference_dgl_pytorch(model, num_iterations, input_graph, inference_mode, device, test_duration):
     features = input_graph.ndata["feat"]
     with torch.inference_mode(inference_mode):
         predictions = None
@@ -136,20 +100,7 @@ def inference_dgl_pytorch(
     return predictions, time_infer
 
 
-def load_model_from_file(model_path: str, module: str, model_name: str) -> any:
-    """Load model from file
-
-    Args:
-        model_path (str): path to file. Format .pt
-        module (str): module name of a model
-        model_name (str): model class name
-
-    Raises:
-        ValueError: The file type is not supported
-
-    Returns:
-        any: PyTorch model
-    """
+def load_model_from_file(model_path, module, model_name) -> any:
     log.info(f'Loading model from path {model_path}')
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
@@ -164,13 +115,7 @@ def load_model_from_file(model_path: str, module: str, model_name: str) -> any:
     return model
 
 
-def write_cmd_options_to_report(report_writer: ReportWriter, args: argparse.Namespace) -> None:
-    """Write cmd options to report
-
-    Args:
-        report_writer (ReportWriter): report object
-        args (argparse.Namespace): cmd options
-    """
+def write_cmd_options_to_report(report_writer, args) -> None:
     report_writer.update_cmd_options(
         m=args.module,
         i=args.input
