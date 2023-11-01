@@ -13,7 +13,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._executor = executor
         self._output = None
         self._status = None
-        self.timestamp = datetime.now().strftime('%d.%m.%y_%H:%M:%S')
+        self.timestamp = datetime.now().strftime('%d.%m.%y_%H-%M-%S')
         self.inference_script_root = Path(self._executor.get_path_to_inference_folder())
 
     @property
@@ -63,7 +63,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         # add timeout overhead because time_limit in bechmark app applies for inference stage only
         # set None n case of test_time_limit is unset for backward compatibility
         configured_time_limit = self._test.indep_parameters.test_time_limit
-        timeout = configured_time_limit + 300 if configured_time_limit else None
+        configured_timeout_overhead = self._test.indep_parameters.timeout_overhead
+        timeout = configured_time_limit + configured_timeout_overhead if configured_time_limit else None
         self._status, self._output = self._executor.execute_process(command_line, timeout)
 
         if type(self._output) is not list:
@@ -107,11 +108,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         if self.launcher_latency_units == 'milliseconds':
             latency = round(latency / MILLISECONDS_IN_SECOND, 5)
             average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
-        metrics = {}
-        metrics['average_time'] = average_time_of_single_pass
-        metrics['fps'] = fps
-        metrics['latency'] = latency
-        metrics['batch_fps'] = batch_fps
+        metrics = {'average_time': average_time_of_single_pass, 'fps': fps, 'latency': latency, 'batch_fps': batch_fps}
+
         return metrics
 
     @abc.abstractmethod
@@ -121,15 +119,16 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def _fill_command_line_cpp(self):
         model = self._test.model.model
         weights = self._test.model.weight
-        dataset = self._test.dataset.path
         iteration_count = self._test.indep_parameters.iteration
         time = int(self._test.indep_parameters.test_time_limit)
+        dataset_path = self._test.dataset.path if self._test.dataset else None
 
         arguments = f'-m {model}'
         if weights.lower() != 'none':
             arguments += f' -w {weights}'
-        arguments += f' -i {dataset} -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
+        arguments += f' -niter {iteration_count} -save_report -report_path {self.report_path} -t {time}'
 
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-i', dataset_path)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-b', self._test.indep_parameters.batch_size)
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-d', self._test.indep_parameters.device)
 
@@ -200,7 +199,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
             test_settings.append(self._test.dep_parameters.runtime)
         if hasattr(self._test.dep_parameters, 'hint') and self._test.dep_parameters.hint:
             test_settings.append(self._test.dep_parameters.hint)
-        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        filename = '_'.join(test_settings) + '_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename += '.log'
         file_root = Path(os.getcwd())
         if not os.access(file_root, os.W_OK):

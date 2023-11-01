@@ -308,6 +308,39 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Quantization></Quantization>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>AlexNet</Name>
+            <Precision>INT8</Precision>
+            <SourceFramework>MXNet</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>MXNet</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>Sync</Mode>
+            <InputName>data</InputName>
+            <InputShape>1 3 224 224</InputShape>
+            <Hybridize>True</Hybridize>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <Quantization>True</Quantization>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -339,6 +372,39 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Quantization></Quantization>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>AlexNet</Name>
+            <Precision>INT8</Precision>
+            <SourceFramework>MXNet</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>MXNet</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>Async</Mode>
+            <InputName>data</InputName>
+            <InputShape>1 3 224 224</InputShape>
+            <Hybridize>True</Hybridize>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <Quantization>True</Quantization>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -385,7 +451,7 @@
             <Module>torchvision.models</Module>
         </Model>
         <Dataset>
-            <Name>ImageNet</Name>
+            <Name>Data</Name>
             <Path>./black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
@@ -407,12 +473,44 @@
             <IntraOpThreads>2</IntraOpThreads>
         </FrameworkDependent>
     </Test>
+        <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>resnet-50-pytorch</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <InputShape>[1,3,224,224]</InputShape>
+            <Mean>[123.675,116.28,103.53]</Mean>
+            <InputScale>[58.395,57.12,57.375]</InputScale>
+            <OutputName>prob</OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
+            <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig>True</UseModelConfig>
+        </FrameworkDependent>
+    </Test>
     <Test>
         <Model>
             <Task>classification</Task>
             <Name>efficientnet-b0-pytorch</Name>
             <Precision>default</Precision>
-            <SourceFramework>pytorch</SourceFramework>
+            <SourceFramework>PyTorch</SourceFramework>
             <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet-b0.onnx</ModelPath>
             <WeightsPath>None</WeightsPath>
         </Model>
