@@ -13,7 +13,9 @@ import dgl
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
 from inference_tools.loop_tools import loop_inference
-from dgl_pytorch_auxiliary import inference_iteration, get_device_to_infer
+from dgl_pytorch_auxiliary import get_device_to_infer, infer_slice
+from io_model_wrapper import DGLPyTorchWrapper
+from io_graphs_adapter import IOGprahAdapter
 
 
 def cli_argument_parser():
@@ -63,6 +65,18 @@ def cli_argument_parser():
                         default=True,
                         type=bool,
                         dest='inference_mode')
+    parser.add_argument('-t', '--task',
+                        help='Task type determines the type of output processing '
+                             'method. Available values: node-classification.',
+                        choices=['node-classification'],
+                        default='node-classification',
+                        type=str,
+                        dest='task')
+    parser.add_argument('-b', '--batch_size',
+                        help='Batch size.',
+                        default=1,
+                        type=int,
+                        dest='batch_size')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'dgl_pytorch_inference_report.json',
@@ -110,7 +124,7 @@ def inference_iteration(device, inputs, model):
     return exec_time
 
 
-def load_model_from_file(model_path, module, model_name) -> any:
+def load_model_from_file(model_path, module, model_name):
     log.info(f'Loading model from path {model_path}')
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
@@ -130,7 +144,7 @@ def prepare_output(result):
     return {'output_result': result.detach().numpy()}
 
 
-def write_cmd_options_to_report(report_writer, args) -> None:
+def write_cmd_options_to_report(report_writer, args):
     report_writer.update_cmd_options(
         m=args.module,
         i=args.input
@@ -152,7 +166,7 @@ def write_cmd_options_to_report(report_writer, args) -> None:
     report_writer.write_report(args.report_path)
 
 
-def main() -> None:
+def main():
     log.basicConfig(
         format='[ %(levelname)s ] %(message)s',
         level=log.INFO,
@@ -164,9 +178,11 @@ def main() -> None:
 
     try:
         model = load_model_from_file(args.model, args.module, args.model_name)
-
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device)
+
+        model_wrapper = DGLPyTorchWrapper(compiled_model)
+        io = IOGprahAdapter.get_io_adapter(args, model_wrapper)
 
         log.info(f'Preparing input data {args.input}')
         input_data = prepare_input(args.input[0])
@@ -190,6 +206,7 @@ def main() -> None:
 
                     log.info('Inference results')
                     log.info(result)
+                    io.process_output(result, log)
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 

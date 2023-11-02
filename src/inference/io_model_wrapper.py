@@ -265,7 +265,7 @@ class ONNXIOModelWrapper(IOModelWrapper):
 class ONNXIOModelWrapperCpp(IOModelWrapper):
     def __init__(self, model):
         self._input_shape = model.get_inputs()[0].shape
-        self._input_name = model.get_inputs()[0].name
+        self._input_name = list(model.state_dict())[0]
 
     def get_input_layer_names(self, model):
         return self._input_name
@@ -276,3 +276,19 @@ class ONNXIOModelWrapperCpp(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         from numpy import float32
         return float32
+
+
+class DGLPyTorchWrapper(IOModelWrapper):
+    def __init__(self, model):
+        self._input_shape = next(model.parameters()).size()
+        self._input_name = list(model.state_dict())[0]
+        self._input_dtype = next(model.parameters()).dtype
+
+    def get_input_layer_names(self, model):
+        return self._input_name
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shape
+
+    def get_input_layer_dtype(self, model, layer_name):
+        return self._input_dtype
