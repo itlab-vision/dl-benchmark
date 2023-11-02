@@ -1,5 +1,13 @@
 # Сonversion validation
 
+## Test data
+
+### Image classification
+
+Data source: XXX
+Image resolution: 709 x 510
+Image: REF
+
 ## PyTorch models
 
 ### Models supported by MMdnn
