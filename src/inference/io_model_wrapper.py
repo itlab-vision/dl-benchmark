@@ -265,7 +265,7 @@ class ONNXIOModelWrapper(IOModelWrapper):
 class ONNXIOModelWrapperCpp(IOModelWrapper):
     def __init__(self, model):
         self._input_shape = model.get_inputs()[0].shape
-        self._input_name = list(model.state_dict())[0]
+        self._input_name = model.get_inputs()[0].name
 
     def get_input_layer_names(self, model):
         return self._input_name
