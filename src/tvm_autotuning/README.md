@@ -4,7 +4,9 @@
 
 ### Основная информация
 
-Директория содержит набор скриптов для запуска трех моделей оптимизации сетей из Apache TVM: autotvm, auto-scheduler, meta-schedule. Более подробное описание представлено в https://tvm.apache.org/docs/index.html
+Директория содержит набор скриптов для запуска трех моделей оптимизации
+сетей из Apache TVM: autotvm, auto-scheduler, meta-schedule. Более подробное
+описание представлено в https://tvm.apache.org/docs/index.html
 
 ## Использование скрипта
 
