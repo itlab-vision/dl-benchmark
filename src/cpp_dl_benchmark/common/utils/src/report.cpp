@@ -33,8 +33,13 @@ void Report::save() {
         }
     }
     std::ofstream out_stream(file_path);
-    out_stream << std::setw(4) << js << std::endl;
-    logger::info << "Saved report to " << file_path << logger::endl;
+    if (out_stream.is_open()) {
+        out_stream << std::setw(4) << js << std::endl;
+        logger::info << "Saved report to " << file_path << logger::endl;
+    }
+    else {
+        throw std::runtime_error("Something went wrong, can't open file: " + file_path.string());
+    }
 }
 
 void Report::add_record(Category type, const std::vector<Record>& records) {

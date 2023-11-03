@@ -194,6 +194,23 @@ class IOAdapter(metaclass=abc.ABCMeta):
             slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 
+    def get_result_filename(self, output_path, base_filename):
+        base_suffix = '.' + base_filename.split('.')[-1]
+        output_path_suffix = str(output_path)[-len(base_suffix):]
+
+        if output_path is None:
+            res_dir = Path(__file__).parent / '_validation' / 'results'
+            filename = str(res_dir / base_filename)
+        elif output_path_suffix == base_suffix:
+            res_dir = output_path.parent
+            filename = str(output_path)
+        else:
+            res_dir = output_path
+            filename = str(res_dir / base_filename)
+        res_dir.mkdir(parents=True, exist_ok=True)
+
+        return filename
+
     def load_color_map(self, default_color_map_file):
         if not self._color_map:
             self._color_map = Path(__file__).parent / 'color_maps' / default_color_map_file
@@ -2029,6 +2046,7 @@ class YoloV7ONNX(IOAdapter):
 class SegmentationTFLiteCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_segmentation.bmp')
 
     def set_image(self, input_image):
         self._image = cv2.imread(input_image[0])
@@ -2077,14 +2095,14 @@ class SegmentationTFLiteCppIO(IOAdapter):
 
         res += blured_contour
 
-        out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation.bmp')
-        cv2.imwrite(out_img, res)
-        log.info(f'Result image was saved to {out_img}')
+        cv2.imwrite(self.file_name, res)
+        log.info(f'Result image was saved to {self.file_name}')
 
 
 class FaceDetectionTFLiteCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_face_detection.bmp')
         self.net_width = 128.
         self.net_height = 128.
         self._base_repeats = 2
@@ -2112,11 +2130,13 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
         img -= 127.5
         img /= 127.5
-        input_path = Path(args.input[0])
-        bin_path = input_path.parent / (input_path.name[:-len(input_path.suffix)] + '.bin')
+
+        bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
         img.astype(np.float32).tofile(bin_path)
 
-        return ['./' + str(bin_path)]
+        return str(bin_path)
 
     def set_image(self, input_image):
         self._image = cv2.imread(input_image[0])
@@ -2255,6 +2275,5 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Right Eye Tragion: ({x}, {y})')
 
-            out_img = os.path.join(os.path.dirname(__file__), 'out_face_detection.bmp')
-            cv2.imwrite(out_img, self._image)
-            log.info('Result image was saved to {0}'.format(out_img))
+            cv2.imwrite(self.file_name, self._image)
+            log.info('Result image was saved to {0}'.format(self.file_name))

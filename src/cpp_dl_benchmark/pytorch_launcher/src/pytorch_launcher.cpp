@@ -96,7 +96,7 @@ void PytorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer
             input_shapes.resize(tensor_buffers[0].size());
         }
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
-            const auto& buffer = tensor_buffers[i][j];
+            auto& buffer = tensor_buffers[i][j];
             std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(
                 torch::from_blob(buffer.get(), shape, get_data_type(buffer.precision())).to(torch_device));
