@@ -17,7 +17,7 @@ from transformer import TensorFlowTransformer
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.model_converters.tf2tflite.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
-                                                    get_input_operation_name, restrisct_gpu_usage)  # noqa
+                                                              get_input_operation_name, restrisct_gpu_usage)  # noqa
 
 
 def cli_argument_parser():
