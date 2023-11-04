@@ -138,8 +138,7 @@ Data source: XXX
 
 Image resolution: XXX x XXX
 ﻿
-Bounding box (upper left anf bottom right corners):<br>
-(XX,XX), (XX,XX)
+Bounding box (upper left and bottom right corners): (XX,XX), (XX,XX)
 
 Model | Source Framework | Parameters | Python API (source format) | Python API (TVM format) |
 -|-|-|-|-|
@@ -151,8 +150,7 @@ Data source: XXX
 
 Image resolution: XXX x XXX
 ﻿
-Bounding box (upper left anf bottom right corners):<br>
-(XX,XX), (XX,XX)
+Bounding box (upper left and bottom right corners): (XX,XX), (XX,XX)
 
 Model | Source Framework | Parameters | Python API (source format) | Python API (TVM format) |
 -|-|-|-|-|
@@ -164,8 +162,7 @@ Data source: XXX
 
 Image resolution: XXX x XXX
 ﻿
-Bounding box (upper left anf bottom right corners):<br>
-(XX,XX), (XX,XX)
+Bounding box (upper left and bottom right corners): (XX,XX), (XX,XX)
 
 Model | Source Framework | Parameters | Python API (source format) | Python API (TVM format) |
 -|-|-|-|-|
