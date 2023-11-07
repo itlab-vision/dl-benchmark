@@ -17,6 +17,7 @@
 - [OpenCV][opencv].
 - [MXNet][mxnet].
 - [PyTorch][pytorch].
+- [TVM][tvm].
 
 ### Алгоритм работы скрипта
 
@@ -264,3 +265,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
 [pytorch]: https://pytorch.org
+[tvm]: https://tvm.apache.org
