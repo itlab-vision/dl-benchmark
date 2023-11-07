@@ -93,7 +93,8 @@ def cli_argument_parser():
                         dest='time_limit')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp'],
+                        choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp',
+                                 'face_recognition_tflite_cpp'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -117,6 +118,10 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='only_process_output')
+    parser.add_argument('--ref_input',
+                        help='Path to reference data',
+                        type=str,
+                        dest='ref_input')
 
     args = parser.parse_args()
 

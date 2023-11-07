@@ -319,6 +319,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_detection_tflite_cpp':
             return FaceDetectionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_recognition_tflite_cpp':
+            return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2277,3 +2279,47 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
 
             cv2.imwrite(self.file_name, self._image)
             log.info('Result image was saved to {0}'.format(self.file_name))
+
+
+class FaceRecognitionTFLiteCppIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_face_recognition.csv')
+        self.ref_path = args.ref_input
+        self.net_width = 112
+        self.net_height = 112
+
+    def convert_input_to_bin_file(self, args):
+        img = cv2.imread(args.input[0])
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
+        img = cv2.resize(img, (self.net_height, self.net_width))
+        img -= 127.5
+        img /= 127.5
+
+        bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
+        img.astype(np.float32).tofile(bin_path)
+
+        return str(bin_path)
+
+    def process_output(self, result, log):
+        result = result['embeddings'][0]
+        file = os.path.join(os.path.dirname(__file__), self.file_name)
+        with open(file, 'w'):
+            np.savetxt(
+                self.file_name,
+                result,
+                fmt='%1.7f',
+                delimiter=';',
+                header=f'1;{result.shape[0]}',
+                comments='',
+            )
+        log.info(f'Result was saved to {file}')
+
+        if self.ref_path is not None:
+            ref_vec = np.loadtxt(self.ref_path, dtype=str).flatten()
+            ref_vec = ref_vec[1:].astype(np.float32)
+            cos_sim = (result @ ref_vec) / (np.linalg.norm(result) * np.linalg.norm(ref_vec))
+            log.info(f'COSINE SIMILARITY: {cos_sim}')
