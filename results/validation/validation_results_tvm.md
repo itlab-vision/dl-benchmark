@@ -58,8 +58,8 @@ densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.1
 efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |33649.5468750 bow tie, bow-tie, bowtie<br>28028.8417969 cannon<br>20405.7363281 stole<br>20352.2265625 seat belt, seatbelt<br>19862.9375000 picket fence, paling |-|-|
 googlenet-v1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] |0.4689647 beacon, lighthouse, beacon light, pharos<br>0.1695168 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0433668 lifeboat<br>0.0310355 fireboat<br>0.0150613 dock, dockage, docking facility|-|-|
-resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |-|-|-|
-squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |0.4759621 liner, ocean liner<bf>0.1025402 breakwater, groin, groyne, mole, bulwark, seawall, jetty<bf>0.0690002 container ship, containership, container vessel<bf>0.0524496 dock, dockage, docking facility<bf>0.0473782 pirate, pirate ship |-|-|
+resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.4759621 liner, ocean liner<br>0.1025402 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0690002 container ship, containership, container vessel<br>0.0524496 dock, dockage, docking facility<br>0.0473782 pirate, pirate ship|-|-|
+squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 
 ## Object detection
 
