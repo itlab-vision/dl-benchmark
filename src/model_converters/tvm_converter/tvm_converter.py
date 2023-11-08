@@ -4,6 +4,7 @@ import importlib
 import abc
 import warnings
 
+
 class Converter(metaclass=abc.ABCMeta):
     def __init__(self, args):
         self.args = args
@@ -37,10 +38,10 @@ class Converter(metaclass=abc.ABCMeta):
     def save_tvm_model(self):
         model_name = self.args['model_name']
         log.info(f'Saving weights of the model {model_name}')
-        with open(f'{model_name}.params', "wb") as fo:
-            fo.write(tvm.relay.save_param_dict(self.params))    
+        with open(f'{model_name}.params', 'wb') as fo:
+            fo.write(tvm.relay.save_param_dict(self.params))
         log.info(f'Saving model {model_name}')
-        with open(f'{model_name}.json', "w") as fo:
+        with open(f'{model_name}.json', 'w') as fo:
             fo.write(tvm.ir.save_json(self.mod))
 
     def get_graph_module(self):
@@ -98,7 +99,6 @@ class PyTorchToTVMConverter(Converter):
                 model = model.eval()
                 scripted_model = torch.jit.trace(model, input_data).eval()
                 return scripted_model
-
 
     def _convert_model_from_framework(self, target, dev):
         input_shape = self.args['input_shape']
@@ -183,20 +183,18 @@ class TVMConverter(Converter):
     def _get_deserialized_tvm_model(self):
         model_path = self.args['model_path']
         model_params = self.args['model_params']
-        with open(model_params, "rb") as fo:
-            params = tvm.relay.load_param_dict(fo.read())    
+        with open(model_params, 'rb') as fo:
+            params = tvm.relay.load_param_dict(fo.read())
 
-        with open(model_path, "r") as fo:
+        with open(model_path, 'r') as fo:
             mod = fo.read()
 
         self.mod = tvm.ir.load_json(mod)
         self.params = params
         return self.mod, self.params
 
-
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
 
     def _convert_model_from_framework(self, target, dev):
         return self._get_deserialized_tvm_model()
-    

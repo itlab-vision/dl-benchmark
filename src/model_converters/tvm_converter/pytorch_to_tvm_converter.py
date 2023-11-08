@@ -1,11 +1,8 @@
 import argparse
-import json
 import logging as log
 import sys
-import importlib
 import traceback
 
-from pathlib import Path
 from tvm_converter import PyTorchToTVMConverter
 
 

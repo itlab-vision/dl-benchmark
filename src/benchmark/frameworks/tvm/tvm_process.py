@@ -167,7 +167,6 @@ class TVMProcessTVMFormat(TVMProcess):
         return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
-        name = self._test.model.name
         model_json = self._test.model.model
         model_params = self._test.model.weight
         common_params = (f'-m {model_json} -w {model_params} ')
