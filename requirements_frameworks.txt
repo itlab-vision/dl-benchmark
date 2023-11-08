@@ -2,3 +2,5 @@ openvino-dev[caffe,mxnet,tensorflow2,pytorch,onnx]==2022.3.0
 gluoncv
 torchvision
 onnxruntime
+dgl
+dglgo
