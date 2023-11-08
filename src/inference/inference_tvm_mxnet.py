@@ -19,7 +19,7 @@ from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            create_dict_for_transformer, inference_tvm)
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter
+from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter # noqa: E402
 
 
 def cli_argument_parser():
