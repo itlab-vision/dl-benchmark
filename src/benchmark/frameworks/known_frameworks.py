@@ -12,3 +12,4 @@ class KnownFrameworks:
     pytorch = 'PyTorch'
     pytorch_cpp = 'PyTorch Cpp'
     dgl_pytorch = 'Deep Graph Library (DGL, PyTorch-based)'
+    tvm = 'TVM'

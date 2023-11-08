@@ -7,8 +7,9 @@ from frameworks.mxnet.mxnet_parameters_parser import MXNetParametersParser
 from frameworks.opencv_dnn_python.opencv_dnn_python_parameters_parser import OpenCVDNNPythonParametersParser
 from frameworks.pytorch.pytorch_parameters_parser import PyTorchParametersParser
 from frameworks.onnx_runtime_python.onnx_runtime_python_parameters_parser import ONNXRuntimePythonParametersParser
-from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
+from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParserHEAD
 from frameworks.dgl_pytorch.dgl_pytorch_parametrs_parser import DGLPyTorchParametersParser
+from frameworks.tvm.tvm_parameters_parser import TVMParametersParser
 
 
 def get_parameters_parser(framework):
@@ -38,4 +39,6 @@ def get_parameters_parser(framework):
         return CppParametersParser()
     if framework == KnownFrameworks.dgl_pytorch:
         return DGLPyTorchParametersParser()
+    if framework == KnownFrameworks.tvm:
+        return TVMParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

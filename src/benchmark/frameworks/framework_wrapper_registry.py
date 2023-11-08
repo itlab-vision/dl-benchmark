@@ -10,6 +10,7 @@ from .tensorflow_lite.tensorflow_lite_wrapper import TensorFlowLiteWrapper
 from .tensorflow_lite_cpp.tensorflow_lite_cpp_wrapper import TensorFlowLiteCppWrapper
 from .opencv_dnn_python.opencv_dnn_python_wrapper import OpenCVDNNPythonWrapper
 from .mxnet.mxnet_wrapper import MXNetWrapper
+from .tvm.tvm_wrapper import TVMWrapper
 from .opencv_dnn_cpp.opencv_dnn_cpp_wrapper import OpenCVDNNCppWrapper
 from .pytorch.pytorch_wrapper import PyTorchWrapper
 from .pytorch_cpp.pytorch_cpp_wrapper import PyTorchCppWrapper
@@ -48,3 +49,4 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[PyTorchWrapper.framework_name] = PyTorchWrapper()
         self._framework_wrappers[PyTorchCppWrapper.framework_name] = PyTorchCppWrapper()
         self._framework_wrappers[DGLPyTorchWrapper.framework_name] = DGLPyTorchWrapper()
+        self._framework_wrappers[TVMWrapper.framework_name] = TVMWrapper()
