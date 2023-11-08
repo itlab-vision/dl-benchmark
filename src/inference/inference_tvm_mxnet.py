@@ -129,6 +129,11 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
+    parser.add_argument('--labels',
+                        help='Labels mapping file.',
+                        default=None,
+                        type=str,
+                        dest='labels')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
