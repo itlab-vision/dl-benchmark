@@ -39,7 +39,7 @@ densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.1
 efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |2070.9409180 can opener, tin opener<br>1669.3304443 strawberry<br>1631.1007080 packet<br>1586.7080078 bell pepper<br>1466.7904053 clog, geta, patten, sabot |-|-|
 googlenet-v1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] |0.9398882 junco, snowbird<br>0.0005928 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005351 chickadee<br>0.0005287 brambling, Fringilla montifringilla<br>0.0004131 house finch, linnet, Carpodacus mexicanus|-|-|
-resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.9805019 junco, snowbird<bf>0.0049154 goldfinch, Carduelis carduelis<bf>0.0039196 chickadee<bf>0.0038097 water ouzel, dipper<bf>0.0028983 brambling, Fringilla montifringilla |-|-|
+resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.9805019 junco, snowbird<br>0.0049154 goldfinch, Carduelis carduelis<br>0.0039196 chickadee<br>0.0038097 water ouzel, dipper<br>0.0028983 brambling, Fringilla montifringilla |-|-|
 squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 
 #### Test image #3
