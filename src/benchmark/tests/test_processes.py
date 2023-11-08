@@ -114,5 +114,6 @@ def test_get_openvino_benchmark_app_metrics(mocker):
     process.execute()
     assert process.get_performance_metrics() == {'average_time': 0.0372,
                                                  'batch_fps': 0.0,
+                                                 'latency_per_token': 0.0,
                                                  'fps': 26.88,
                                                  'latency': 0.07326}

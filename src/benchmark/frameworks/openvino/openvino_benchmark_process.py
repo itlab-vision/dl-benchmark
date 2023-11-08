@@ -44,7 +44,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
-            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None}
 
         # calculate average time of single pass metric to align output with custom launchers
         duration = self._get_benchmark_app_metric('Duration')
@@ -58,6 +58,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
             'fps': fps,
             'latency': latency,
             'batch_fps': 0.0,
+            'latency_per_token': 0.0,
         }
         return metrics
 
@@ -233,7 +234,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
-            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None}
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None}
 
         report = self.get_json_report_content()
 
@@ -251,6 +252,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
             'fps': fps,
             'latency': latency,
             'batch_fps': 0.0,
+            'latency_per_token': 0.0,
         }
         return metrics
 

@@ -27,6 +27,7 @@ class OutputHandler:
             'latency': 'Latency',
             'fps': 'FPS',
             'batch_fps': 'BATCH FPS',
+            'latency_per_token': 'Latency per token',
             'error_type': 'Error type',
         }
 
