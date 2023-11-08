@@ -3,10 +3,7 @@ import json
 import logging as log
 import sys
 import traceback
-import warnings
-import mxnet
 import tvm
-import gluoncv
 
 
 from pathlib import Path
@@ -17,9 +14,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-from tvm_auxiliary import (TVMConverter, create_dict_for_converter_mxnet,
+from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter
 
 
 def cli_argument_parser():
@@ -135,56 +134,6 @@ def cli_argument_parser():
                         dest='report_path')
     args = parser.parse_args()
     return args
-
-
-class MXNetToTVMConverter(TVMConverter):
-    def __init__(self, args):
-        super().__init__(args)
-
-    def _get_device_for_framework(self):
-        device = self.args['device']
-        if device == 'CPU':
-            return mxnet.cpu()
-        elif device == 'NVIDIA_GPU':
-            return mxnet.gpu()
-        else:
-            log.info(f'The device {device} is not supported')
-            raise ValueError('The device is not supported')
-
-    def _get_mxnet_network(self):
-        model_name = self.args['model_name']
-        model_path = self.args['model_path']
-        weights = self.args['model_params']
-        context = self._get_device_for_framework()
-
-        if ((model_name is not None)
-                and (model_path is None)
-                and (weights is None)):
-            log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-            net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
-            return net
-
-        elif ((model_path is not None) and (weights is not None)):
-            log.info(f'Deserializing network from file ({model_path}, {weights})')
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
-                net = mxnet.gluon.nn.SymbolBlock.imports(
-                    model_path, [self.args['input_name']], weights, ctx=context)
-            return net
-
-        else:
-            raise ValueError('Incorrect arguments.')
-
-    def _convert_model_from_framework(self, target, dev):
-        net = self._get_mxnet_network()
-        op_lev = self.args['opt_level']
-        shape_dict = {self.args['input_name']: self.args['input_shape']}
-        log.info('Creating graph module from MXNet model')
-        model, params = tvm.relay.frontend.from_mxnet(net, shape_dict)
-        with tvm.transform.PassContext(opt_level=op_lev):
-            lib = tvm.relay.build(model, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return module
 
 
 def main():

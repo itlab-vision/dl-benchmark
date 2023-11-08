@@ -3,7 +3,6 @@ import json
 import logging as log
 import sys
 import traceback
-import onnx
 import tvm
 
 
@@ -15,9 +14,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-from tvm_auxiliary import (TVMConverter, create_dict_for_converter_onnx,
+from tvm_auxiliary import (create_dict_for_converter_onnx,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.model_converters.tvm_converter.tvm_converter import ONNXToTVMConverter
 
 
 def cli_argument_parser():
@@ -129,26 +130,6 @@ def cli_argument_parser():
                         dest='report_path')
     args = parser.parse_args()
     return args
-
-
-class ONNXToTVMConverter(TVMConverter):
-    def __init__(self, args):
-        super().__init__(args)
-
-    def _get_device_for_framework(self):
-        return super()._get_device_for_framework()
-
-    def _convert_model_from_framework(self, target, dev):
-        model_path = self.args['model_path']
-        opt_lev = self.args['opt_level']
-        model_onnx = onnx.load(model_path)
-        shape_dict = {self.args['input_name']: self.args['input_shape']}
-        log.info('Creating graph module from ONNX model')
-        model, params = tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
-        with tvm.transform.PassContext(opt_level=opt_lev):
-            lib = tvm.relay.build(model, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return module
 
 
 def main():

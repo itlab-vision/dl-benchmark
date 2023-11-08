@@ -28,10 +28,18 @@ class TVMConverter(metaclass=abc.ABCMeta):
             dev = tvm.cpu(0)
         return target, dev
 
+    def get_tvm_model(self):
+        target, dev = self._get_target_device()
+        mod, params = self._convert_model_from_framework(target, dev)
+        return mod, params
+
     def get_graph_module(self):
         target, dev = self._get_target_device()
-        self.graph = self._convert_model_from_framework(target, dev)
-        return self.graph
+        mod, params = self._convert_model_from_framework(target, dev)
+        with tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            lib = tvm.relay.build(mod, target=target, params=params)
+        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+        return module
 
 
 def create_dict_for_converter_mxnet(args):
@@ -43,6 +51,24 @@ def create_dict_for_converter_mxnet(args):
         'model_params': args.model_params,
         'device': args.device,
         'opt_level': args.opt_level,
+    }
+    return dictionary
+
+
+def create_dict_for_converter_tvm(args):
+    return create_dict_for_converter_mxnet(args)
+
+
+def create_dict_for_converter_pytorch(args):
+    dictionary = {
+        'input_name': args.input_name,
+        'input_shape': [args.batch_size] + args.input_shape[1:4],
+        'model_name': args.model_name,
+        'model_path': args.model_path,
+        'model_params': args.model_params,
+        'device': args.device,
+        'opt_level': args.opt_level,
+        'module': args.module,
     }
     return dictionary
 

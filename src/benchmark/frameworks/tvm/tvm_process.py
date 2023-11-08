@@ -15,7 +15,7 @@ class TVMProcess(ProcessHandler):
         framework = test.dep_parameters.framework
         if framework is None:
             framework = 'TVM'
-            return TVMProcessMXNetFormat(test, executor, log)
+            return TVMProcessTVMFormat(test, executor, log)
         else:
             framework = test.dep_parameters.framework.lower()
             if framework == 'mxnet':
@@ -24,6 +24,8 @@ class TVMProcess(ProcessHandler):
                 return TVMProcessPyTorchFormat(test, executor, log)
             elif framework == 'onnx':
                 return TVMProcessONNXFormat(test, executor, log)
+            elif framework == 'tvm':
+                return TVMProcessTVMFormat(test, executor, log)
             else:
                 raise AssertionError(f'Unknown framework {framework}')
 
@@ -109,14 +111,22 @@ class TVMProcessPyTorchFormat(TVMProcess):
 
     def _fill_command_line(self):
         name = self._test.model.name
-        model_json = self._test.model.model
-        model_params = self._test.model.weight
+        model_pt = self._test.model.model
+        model_pth = self._test.model.weight
+        module = self._test.model.module
+        common_params = ''
+        if (module is not None and module != ''):
+            common_params += (f'-mm {module} ')
         if ((name is not None)
-                and (model_json is None or model_json == '')
-                and (model_params is None or model_params == '')):
-            common_params = (f'-mn {name} ')
-        elif (model_json is not None) and (model_params is not None):
-            common_params = (f'-m {model_json} -w {model_params} ')
+                and (model_pt is None or model_pt == '')
+                and (model_pth is None or model_pth == '')):
+            common_params += (f'-mn {name} ')
+        elif ((name is not None)
+                and (model_pt is None or model_pt == '')
+                and (model_pth is not None or model_pth != '')):
+            common_params += (f'-mn {name} -w {model_pth} ')
+        elif (model_pt is not None):
+            common_params += (f'-m {model_pt} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
         path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_pytorch.py')
@@ -140,6 +150,28 @@ class TVMProcessONNXFormat(TVMProcess):
         model = self._test.model.model
         common_params = f'-m {model} '
         path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_onnx.py')
+        python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params += super()._fill_command_line()
+        common_params += f' --time {time_limit}'
+        command_line = f'{python} {path_to_script} {common_params}'
+
+        return command_line
+
+
+class TVMProcessTVMFormat(TVMProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        return self.get_performance_metrics_from_json_report()
+
+    def _fill_command_line(self):
+        name = self._test.model.name
+        model_json = self._test.model.model
+        model_params = self._test.model.weight
+        common_params = (f'-m {model_json} -w {model_params} ')
+        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
