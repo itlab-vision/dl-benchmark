@@ -10,7 +10,7 @@ cd ../
 
 result_file="results_benchmark.csv"
 [ -f $result_file ] && rm $result_file
-smoke_config_file="my_tests.xml"
+smoke_config_file="smoke_config.xml"
 smoke_tests_count=$(grep -io '<Test>' "$smoke_config_file" | wc -l)
 
 python3 ../../src/benchmark/inference_benchmark.py -r $result_file --executor_type host_machine -c $smoke_config_file
