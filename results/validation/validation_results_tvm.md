@@ -16,11 +16,11 @@ Image resolution: 709 x 510
 
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
-densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.12,57.375] |0.9525882 Granny Smith<br>0.0132317 orange<br>0.0123400 lemon<br>0.0028143 banana<br>0.0020237 piggy bank, penny bank |-|-|
+densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.12,57.375] | 0.9525882 Granny Smith<br>0.0132317 orange<br>0.0123400 lemon<br>0.0028143 banana<br>0.0020237 piggy bank, penny bank |-|-|
 efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] | 10733.9218750 Granny Smith<br>9574.2392578 pomegranate<br>8067.0537109 hip, rose hip, rosehip<br>7369.9067383 brambling, Fringilla montifringilla<br>7041.4887695 ptarmigan |-|-|
 googlenet-v1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
-googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] |0.9935190 Granny Smith<br>0.0002230 Rhodesian ridgeback<br>0.0000956 pineapple, ananas<br>0.0000868 hair slide<br>0.0000775 banana |-|-|
-resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.9278084 Granny Smith<br>0.0129410 orange<br>0.0059574 lemon<br>0.0042141 necklace<br>0.0025712 banana |-|-|
+googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] | 0.9935190 Granny Smith<br>0.0002230 Rhodesian ridgeback<br>0.0000956 pineapple, ananas<br>0.0000868 hair slide<br>0.0000775 banana |-|-|
+resnet-50-pytorch | PyTorch | Source framework<br>Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375]<br><br>Inference framework<br>Mean: [0.485,0.456,0.406]<br>Std: [0.229, 0.224, 0.225] | 0.9278084 Granny Smith<br>0.0129410 orange<br>0.0059574 lemon<br>0.0042141 necklace<br>0.0025712 banana | 0.0135990 Granny Smith<br>0.0001897 orange<br>0.0000873 lemon<br>0.0000618 necklace<br>0.0000377 banana|-|
 squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 
 #### Test image #2
@@ -35,11 +35,11 @@ Image resolution: 500 x 500
 
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
-densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.12,57.375] |0.9847540 junco, snowbird<br>0.0068680 chickadee<br>0.0034511 brambling, Fringilla montifringilla<br>0.0015685 water ouzel, dipper<br>0.0012343 indigo bunting, indigo finch, indigo bird, Passerina cyanea |-|-|
-efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |2070.9409180 can opener, tin opener<br>1669.3304443 strawberry<br>1631.1007080 packet<br>1586.7080078 bell pepper<br>1466.7904053 clog, geta, patten, sabot |-|-|
+densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.12,57.375] | 0.9847540 junco, snowbird<br>0.0068680 chickadee<br>0.0034511 brambling, Fringilla montifringilla<br>0.0015685 water ouzel, dipper<br>0.0012343 indigo bunting, indigo finch, indigo bird, Passerina cyanea |-|-|
+efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] | 2070.9409180 can opener, tin opener<br>1669.3304443 strawberry<br>1631.1007080 packet<br>1586.7080078 bell pepper<br>1466.7904053 clog, geta, patten, sabot |-|-|
 googlenet-v1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
-googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] |0.9398882 junco, snowbird<br>0.0005928 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005351 chickadee<br>0.0005287 brambling, Fringilla montifringilla<br>0.0004131 house finch, linnet, Carpodacus mexicanus|-|-|
-resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.9805019 junco, snowbird<br>0.0049154 goldfinch, Carduelis carduelis<br>0.0039196 chickadee<br>0.0038097 water ouzel, dipper<br>0.0028983 brambling, Fringilla montifringilla |-|-|
+googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] | 0.9398882 junco, snowbird<br>0.0005928 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0005351 chickadee<br>0.0005287 brambling, Fringilla montifringilla<br>0.0004131 house finch, linnet, Carpodacus mexicanus|-|-|
+resnet-50-pytorch | PyTorch | Source framework<br>Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375]<br><br>Inference framework<br>Mean: [0.485,0.456,0.406]<br>Std: [0.229, 0.224, 0.225] | 0.9805019 junco, snowbird<br>0.0049154 goldfinch, Carduelis carduelis<br>0.0039196 chickadee<br>0.0038097 water ouzel, dipper<br>0.0028983 brambling, Fringilla montifringilla | 0.9474856 junco, snowbird<br>0.0047499 goldfinch, Carduelis carduelis<br>0.0037876 chickadee<br>0.0036815 water ouzel, dipper<br>0.0028008 brambling, Fringilla montifringilla |-|
 squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 
 #### Test image #3
@@ -55,10 +55,10 @@ Image resolution: 333 x 500
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
 densenet-121-tf | TensorFlow | Mean: [123.68,116.78,103.94]<br>Std: [58.395,57.12,57.375] | 0.3048036 liner, ocean liner<br>0.1327114 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.1180263 container ship, containership, container vessel<br>0.0794732 drilling platform, offshore rig<br>0.0718437 dock, dockage, docking facility |-|-|
-efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |33649.5468750 bow tie, bow-tie, bowtie<br>28028.8417969 cannon<br>20405.7363281 stole<br>20352.2265625 seat belt, seatbelt<br>19862.9375000 picket fence, paling |-|-|
+efficientnet-b0 | TensorFlow | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] | 33649.5468750 bow tie, bow-tie, bowtie<br>28028.8417969 cannon<br>20405.7363281 stole<br>20352.2265625 seat belt, seatbelt<br>19862.9375000 picket fence, paling |-|-|
 googlenet-v1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
-googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] |0.4689647 beacon, lighthouse, beacon light, pharos<br>0.1695168 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0433668 lifeboat<br>0.0310355 fireboat<br>0.0150613 dock, dockage, docking facility|-|-|
-resnet-50-pytorch | PyTorch | Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375] |0.4759621 liner, ocean liner<br>0.1025402 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0690002 container ship, containership, container vessel<br>0.0524496 dock, dockage, docking facility<br>0.0473782 pirate, pirate ship|-|-|
+googlenet-v4-tf | TensorFlow | Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] | 0.4689647 beacon, lighthouse, beacon light, pharos<br>0.1695168 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0433668 lifeboat<br>0.0310355 fireboat<br>0.0150613 dock, dockage, docking facility |-|-|
+resnet-50-pytorch | PyTorch | Source framework<br>Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375]<br><br>Inference framework<br>Mean: [0.485,0.456,0.406]<br>Std: [0.229, 0.224, 0.225] | 0.4759621 liner, ocean liner<br>0.1025402 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0690002 container ship, containership, container vessel<br>0.0524496 dock, dockage, docking facility<br>0.0473782 pirate, pirate ship| 0.0020742 liner, ocean liner<br>0.0004469 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.0003007 container ship, containership, container vessel<br>0.0002286 dock, dockage, docking facility<br>0.0002065 pirate, pirate ship |-|
 squeezenet1.1 | Caffe | Mean: [0.485,0.456,0.406]<br>Std: [0.229,0.224,0.225] |-|-|-|
 
 ## Object detection
