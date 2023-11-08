@@ -374,7 +374,6 @@ class ClassificationIO(IOAdapter):
                 log.info('\t{:.7f} {}'.format(probs[id_], det_label))  # noqa: P101
 
 
-
 class DetectionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
