@@ -129,6 +129,7 @@ class ONNXToTVMConverter(Converter):
 class MXNetToTVMConverter(Converter):
     def __init__(self, args):
         super().__init__(args)
+        self.framework = 'MXNet'
 
     def _get_device_for_framework(self):
         import mxnet

@@ -4,7 +4,7 @@ import logging as log
 import sys
 import traceback
 import tvm
-
+import mxnet  # noqa: F401
 
 from pathlib import Path
 
