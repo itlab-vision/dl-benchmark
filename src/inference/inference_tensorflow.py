@@ -314,7 +314,7 @@ def main():
 
                 log.info('Inference results')
                 io.process_output(result, log)
-            except (Exception as ex)
+            except (Exception as ex):
                 log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
     log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
