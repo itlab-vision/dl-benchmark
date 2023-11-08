@@ -135,7 +135,7 @@ class MXNetToTVMConverter(Converter):
         return super()._get_device_for_framework()
 
     def _get_mxnet_network(self):
-        import mxnet
+        #import mxnet
         import gluoncv
         #device = self.args['device']
         #if device == 'CPU':
@@ -154,13 +154,13 @@ class MXNetToTVMConverter(Converter):
             net = gluoncv.model_zoo.get_model(model_name, pretrained=True)
             return net
 
-        elif ((model_path is not None) and (weights is not None)):
-            log.info(f'Deserializing network from file ({model_path}, {weights})')
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
-                net = mxnet.gluon.nn.SymbolBlock.imports(
-                    model_path, [self.args['input_name']], weights, ctx=context)
-            return net
+        #elif ((model_path is not None) and (weights is not None)):
+        #    log.info(f'Deserializing network from file ({model_path}, {weights})')
+        #    with warnings.catch_warnings():
+        #        warnings.simplefilter('ignore')
+        #        net = mxnet.gluon.nn.SymbolBlock.imports(
+        #            model_path, [self.args['input_name']], weights)
+        #    return net
 
         else:
             raise ValueError('Incorrect arguments.')
