@@ -45,7 +45,7 @@ def calculate_average_fps(iter_number, batch_size, inference_time):
 
 def calculate_latency_per_token(latency, num_tokens):
     if not num_tokens:
-        return 0.0
+        return None
     return latency / num_tokens
 
 
@@ -69,7 +69,7 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
         'latency_std': round(latency_std, 5),
         'latency_max': round(max(inference_time), 5),
         'latency_min': round(min(inference_time), 5),
-        'latency_per_token': round(latency_per_token, 5),
+        'latency_per_token': round(latency_per_token, 5) if latency_per_token is not None else None,
         'num_tokens': num_tokens,
         'batch_throughput': round(batch_fps, 3),
         'throughput': round(average_fps, 3),

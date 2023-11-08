@@ -58,7 +58,7 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
             'fps': fps,
             'latency': latency,
             'batch_fps': 0.0,
-            'latency_per_token': 0.0,
+            'latency_per_token': 'N/A',
         }
         return metrics
 
@@ -252,7 +252,7 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
             'fps': fps,
             'latency': latency,
             'batch_fps': 0.0,
-            'latency_per_token': 0.0,
+            'latency_per_token': 'N/A',
         }
         return metrics
 
