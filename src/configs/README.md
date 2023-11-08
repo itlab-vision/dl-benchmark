@@ -645,6 +645,39 @@
 </Tests>
 ```
 
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Deep Graph Library (DGL, PyTorch-based)
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>node-classification</Task>
+      <Name>GCN</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>DGL (PyTorch)</SourceFramework>
+      <ModelPath>/mnt/datasets/model.pt</ModelPath>
+      <WeightsPath></WeightsPath>
+      <Module>model.GCN</Module>
+    </Model>
+    <Dataset>
+      <Name>Cora</Name>
+      <Path>/mnt/datasets/data.bin</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>10</IterationCount>
+      <TestTimeLimit>10</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <InferenceMode>True</InferenceMode>
+    </FrameworkDependent>
+  </Test>
+</Tests>
+```
+
 ## Заполнение файла конфигурации для скрипта оценки точности
 
 ### Правила заполнения

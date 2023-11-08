@@ -24,11 +24,13 @@ def cli_argument_parser():
     parser.add_argument('-m', '--model',
                         help='Path to PyTorch model with format .pt.',
                         type=str,
+                        required=True,
                         dest='model')
     parser.add_argument('-mm', '--module',
                         help='Path to module with model architecture.',
                         default='torchvision.models',
                         type=str,
+                        required=True,
                         dest='module')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '

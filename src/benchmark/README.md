@@ -17,6 +17,7 @@
 - [OpenCV][opencv].
 - [MXNet][mxnet].
 - [PyTorch][pytorch].
+- [Deep Graph Library (DGL, PyTorch-based)][dgl-pytorch]
 
 ### Алгоритм работы скрипта
 
@@ -109,10 +110,11 @@ Inference Engine предоставляет 2 программных интер�
 **Примечание:** в публикуемой html-таблице содержатся только показатели FPS (до 06.2023 в таблице содержались
 показатели Batch FPS).
 
-### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch и ONNX Runtime
+### Показатели производительности вывода для Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch, ONNX Runtime и Deep Graph Library (DGL, PyTorch-based)
 
 При оценке производительности вывода для Intel® Optimization for Caffe,
-Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch и ONNX Runtime
+Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch,
+ ONNX Runtime и Deep Graph Library (DGL, PyTorch-based)
 осуществляется последовательный и независимый запуск запросов.
 Запуск очередного запроса выполняется после завершения предыдущего.
 Для каждого запроса осуществляется замер времени его выполнения.
@@ -264,3 +266,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
 [pytorch]: https://pytorch.org
+[dgl-pytorch]: https://www.dgl.ai/
