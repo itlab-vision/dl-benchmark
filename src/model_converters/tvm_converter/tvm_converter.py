@@ -132,29 +132,26 @@ class MXNetToTVMConverter(Converter):
         self.framework = 'MXNet'
 
     def _get_device_for_framework(self):
-        import mxnet
-        device = self.args['device']
-        if device == 'CPU':
-            return mxnet.cpu()
-        elif device == 'NVIDIA_GPU':
-            return mxnet.gpu()
-        else:
-            log.info(f'The device {device} is not supported')
-            raise ValueError('The device is not supported')
+        return super()._get_device_for_framework()
 
     def _get_mxnet_network(self):
         import mxnet
         import gluoncv
+        #device = self.args['device']
+        #if device == 'CPU':
+        #    context = mxnet.cpu()
+        #elif device == 'NVIDIA_GPU':
+        #    context = mxnet.gpu()
+        
         model_name = self.args['model_name']
         model_path = self.args['model_path']
         weights = self.args['model_params']
-        context = self._get_device_for_framework()
 
         if ((model_name is not None)
                 and (model_path is None)
                 and (weights is None)):
             log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
-            net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
+            net = gluoncv.model_zoo.get_model(model_name, pretrained=True)
             return net
 
         elif ((model_path is not None) and (weights is not None)):
