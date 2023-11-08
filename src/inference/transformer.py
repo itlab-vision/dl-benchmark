@@ -112,9 +112,9 @@ class TensorFlowTransformer(Transformer):
 
     def __set_input_scale(self, image):
         if 'input_scale' in self._converting:
-            image[:, :, 0] /= self._converting['input_scale']
-            image[:, :, 1] /= self._converting['input_scale']
-            image[:, :, 2] /= self._converting['input_scale']
+            image[:, :, 0] /= self._converting['input_scale'][0]
+            image[:, :, 1] /= self._converting['input_scale'][1]
+            image[:, :, 2] /= self._converting['input_scale'][2]
 
     def _transform(self, image):
         transformed_image = np.copy(image).astype(np.float64)

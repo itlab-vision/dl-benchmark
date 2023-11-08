@@ -167,11 +167,14 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
+
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
         graph_module = converter.get_graph_module()
+
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
+
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, infer_time = inference_tvm(graph_module,
                                            args.number_iter,
@@ -184,6 +187,7 @@ def main():
                 try:
                     log.info('Converting output tensor to print results')
                     res = prepare_output(result, args.task, args.output_names)
+
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
@@ -193,7 +197,7 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)
-        log.info('Performance results')
+
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
     except Exception:
         log.error(traceback.format_exc())
