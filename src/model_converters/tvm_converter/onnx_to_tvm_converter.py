@@ -45,6 +45,7 @@ def cli_argument_parser():
     args = parser.parse_args()
     return args
 
+
 def create_dict_for_converter_onnx(args):
     dictionary = {
         'input_name': args.input_name,

@@ -149,7 +149,6 @@ def main():
     )
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    #report_writer.update_framework_info(name='TVM', version=tvm.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
@@ -159,6 +158,7 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         converter = MXNetToTVMConverter(create_dict_for_converter_mxnet(args))
+        report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
         graph_module = converter.get_graph_module()
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
@@ -183,7 +183,6 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)
-        log.info('Performance results')
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
     except Exception:
         log.error(traceback.format_exc())
