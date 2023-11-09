@@ -63,6 +63,7 @@ docker build -t ubuntu_for_dli .
 cd OpenVINO_DLDT/
 docker stop OpenVINO_DLDT
 docker rm OpenVINO_DLDT
+docker rmi dli_openvino:2022.2
 docker build -t dli_openvino:2022.2 .
 docker save dli_openvino:2022.2 > dli_openvino:2022.2.tar
 docker load < dli_openvino:2022.2.tar

@@ -112,10 +112,10 @@ For **the throughput mode**, performance metrics are provided below.
 **Note:** published tables contain only FPS indicators (until 06.2023
 the table contained Batch FPS indicators).
 
-### Metrics for Intel® Optimization for Caffe, Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch and ONNX Runtime
+### Metrics for Intel® Optimization for Caffe, Intel® Optimizations for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch and ONNX Runtime
 
 Inference performance evaluations for Intel® Optimization for Caffe,
-Intel® Optimization for TensorFlow, TensorFlow Lite, OpenCV, MXNet,
+Intel® Optimizations for TensorFlow, TensorFlow Lite, OpenCV, MXNet,
 PyTorch, and ONNX Runtime run queries sequentially and independently.
 The next request is infered after the completion of the previous one.
 For each request, its duration time is measured. The standard deviation
