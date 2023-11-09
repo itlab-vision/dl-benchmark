@@ -6,6 +6,7 @@ import sys
 import traceback
 from pathlib import Path
 from time import time
+import importlib.util
 
 import torch
 import dgl
@@ -31,7 +32,7 @@ def cli_argument_parser():
                         default='torchvision.models',
                         type=str,
                         required=True,
-                        dest='module')
+                        dest='module_path')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '
                              'NVIDIA_GPU (CPU by default)',
@@ -126,17 +127,20 @@ def inference_iteration(device, inputs, model):
     return exec_time
 
 
-def load_model_from_file(model_path, module, model_name):
+def load_model_from_file(model_path, module_path, model_name):
     log.info(f'Loading model from path {model_path}')
     file_type = model_path.split('.')[-1]
     supported_extensions = ['pt']
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
 
-    model_cls = getattr(importlib.import_module(module, 'GCN'), model_name)
+    spec = importlib.util.spec_from_file_location(model_name, module_path)
+    foo = importlib.util.module_from_spec(spec)
+    sys.modules[f"{model_name}"] = foo
+    spec.loader.exec_module(foo)
 
     import __main__
-    setattr(__main__, model_name, model_cls)
+    setattr(__main__, model_name, getattr(foo, model_name))
     model = torch.load(model_path)
     return model
 
@@ -148,7 +152,7 @@ def prepare_output(result):
 
 def write_cmd_options_to_report(report_writer, args):
     report_writer.update_cmd_options(
-        m=args.module,
+        m=args.module_path,
         i=args.input
     )
 
@@ -179,7 +183,7 @@ def main():
     write_cmd_options_to_report(report_writer, args)
 
     try:
-        model = load_model_from_file(args.model, args.module, args.model_name)
+        model = load_model_from_file(args.model, args.module_path, args.model_name)
         device = get_device_to_infer(args.device)
         compiled_model = compile_model(model, device)
 
