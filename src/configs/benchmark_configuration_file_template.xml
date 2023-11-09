@@ -177,6 +177,7 @@
             <TestTimeLimit></TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
+            <Mode></Mode>
             <InputName></InputName>
             <InputShape></InputShape>
             <Hybridize></Hybridize>
@@ -184,6 +185,7 @@
             <Mean></Mean>
             <Std></Std>
             <ChannelSwap></ChannelSwap>
+            <Quantization></Quantization>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -251,6 +253,8 @@
             <ModelType></ModelType>
             <InferenceMode></InferenceMode>
             <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig></UseModelConfig>
+            <CompileWithBackend></CompileWithBackend>
             <InterOpThreads></InterOpThreads>
             <IntraOpThreads></IntraOpThreads>
         </FrameworkDependent>
@@ -347,6 +351,37 @@
             <ThreadCount></ThreadCount>
             <Delegate></Delegate>
             <DelegateOptions></DelegateOptions>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Framework></Framework>
+            <Normalize></Normalize>
+            <Mean></Mean>
+            <Std></Std>
+            <ChannelSwap></ChannelSwap>
+            <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
 </Tests>

@@ -191,11 +191,12 @@ class OpenCVIOModelWrapper(IOModelWrapper):
 
 
 class PyTorchIOModelWrapper(IOModelWrapper):
-    def __init__(self, input_shapes, batch_size, tensor_rt_dtype, custom_input_type):
+    def __init__(self, input_shapes, batch_size, tensor_rt_dtype, custom_precision, custom_input_type):
         self._shapes = input_shapes
         self._batch = batch_size
         self._input_names = input_shapes.keys()
         self._tensor_rt_dtype = tensor_rt_dtype
+        self._custom_precision = custom_precision
         self._custom_input_type = custom_input_type
 
     def get_input_layer_names(self, model):
@@ -215,6 +216,11 @@ class PyTorchIOModelWrapper(IOModelWrapper):
                 return float16
         elif self._custom_input_type:
             return self._custom_input_type
+        elif self._custom_precision:
+            if '32' in self._custom_precision:
+                return float32
+            elif '16' in self._custom_precision:
+                return float16
         return float32
 
 
@@ -238,8 +244,10 @@ class ONNXIOModelWrapper(IOModelWrapper):
             for model_input in inputs_info:
                 if model_input.name == layer_name:
                     input_shape = model_input.shape
-
-        return [self._batch, *input_shape[1:]]
+        try:
+            return [self._batch, *input_shape[1:]]
+        except TypeError:
+            return [input_shape]
 
     def get_input_layer_dtype(self, model, layer_name):
         inputs_info = model.get_inputs()
@@ -250,5 +258,41 @@ class ONNXIOModelWrapper(IOModelWrapper):
                     dtype += '32'
                 return dtype
 
+        from numpy import float32
+        return float32
+
+
+class TVMIOModelWrapper(IOModelWrapper):
+    def __init__(self, args):
+        self._input_names = [args['input_name']]
+        self._input_shapes = [args['input_shape']]
+        self._model_name = args['model_name']
+
+    def get_input_layer_names(self, model):
+        return self._input_names
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shapes[0]
+
+    def get_input_layer_dtype(self, model, layer_name):
+        import numpy as np
+        return np.float32
+
+    def get_model_name(self):
+        return self._model_name
+
+
+class ONNXIOModelWrapperCpp(IOModelWrapper):
+    def __init__(self, model):
+        self._input_shape = model.get_inputs()[0].shape
+        self._input_name = model.get_inputs()[0].name
+
+    def get_input_layer_names(self, model):
+        return self._input_name
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shape
+
+    def get_input_layer_dtype(self, model, layer_name):
         from numpy import float32
         return float32

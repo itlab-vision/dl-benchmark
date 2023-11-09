@@ -16,6 +16,7 @@ option(BUILD_OPENCV_LAUNCHER "Build OpenCV launcher" OFF)
 option(BUILD_OPENCV_OV_LAUNCHER "Build OpenCV with OpenVINO backend launcher" OFF)
 option(BUILD_TFLITE_LAUNCHER "Build TensorFlow Lite with default CPU delegate launcher" OFF)
 option(BUILD_TFLITE_XNNPACK_LAUNCHER "Build TensorFlow Lite with XNNPack delegate launcher" OFF)
+option(BUILD_TFLITE_GPU_LAUNCHER "Build TensorFlow Lite with GPU Delegate launcher" OFF)
 option(BUILD_PYTORCH_LAUNCHER "Build PyTorch launcher" OFF)
 option(BUILD_PYTORCH_TENSORRT_LAUNCHER "Build PyTorch-TensorRT launcher" OFF)
 
@@ -80,6 +81,7 @@ if (BUILD_ALL_LAUNCHERS)
     set(BUILD_ONNXRUNTIME_TENSORRT_LAUNCHER "ON")
     set(BUILD_TFLITE_LAUNCHER "ON")
     set(BUILD_TFLITE_XNNPACK_LAUNCHER "ON")
+    set(BUILD_TFLITE_GPU_LAUNCHER "ON")
 endif()
 
 if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_OV_LAUNCHER)
@@ -90,7 +92,7 @@ if (BUILD_ONNXRUNTIME_LAUNCHER OR BUILD_ONNXRUNTIME_CUDA_LAUNCHER OR BUILD_ONNXR
     add_subdirectory(onnxruntime_launcher)
 endif()
 
-if (BUILD_TFLITE_LAUNCHER OR BUILD_TFLITE_XNNPACK_LAUNCHER)
+if (BUILD_TFLITE_LAUNCHER OR BUILD_TFLITE_XNNPACK_LAUNCHER OR BUILD_TFLITE_GPU_LAUNCHER)
     add_subdirectory(tflite_launcher)
 endif()
 

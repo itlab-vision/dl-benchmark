@@ -80,7 +80,7 @@ class OpenCVParameters(FrameworkParameters):
         if self._parameter_is_not_none(mean):
             self.mean = mean
         if self._parameter_is_not_none(std):
-            self.mean = std
+            self.std = std
         if self._parameter_is_not_none(swapRB):
             self.swapRB = swapRB
         if self._parameter_is_not_none(crop):

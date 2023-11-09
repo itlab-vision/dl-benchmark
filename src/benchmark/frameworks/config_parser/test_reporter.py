@@ -22,7 +22,7 @@ class Test(metaclass=abc.ABCMeta):
         report_res = {
             'task': self.model.task,
             'model': self.model.name,
-            'dataset': self.dataset.name,
+            'dataset': self.dataset.name if self.dataset else None,
             'source_framework': self.model.source_framework,
             'inference_framework': self.indep_parameters.inference_framework,
             'precision': self.model.precision,
@@ -73,6 +73,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['model_type'] = 'Model type'
         match_parameter_description['inference_mode'] = 'Inference mode'
         match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
+        match_parameter_description['compile_with_backend'] = 'Pytorch compile backend'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:

@@ -139,14 +139,16 @@ class OpenVINOBenchmarkPythonProcess(OpenVINOBenchmarkProcess):
 
     def _fill_command_line(self):
         model_xml = self._test.model.model
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time}'
+        arguments = f'-m {model_xml} -d {device} -niter {iteration} -t {time}'
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-i', dataset)
 
         arguments = self._add_batch_size_for_cmd_line(arguments, batch)
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
@@ -203,15 +205,17 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
     def _fill_command_line(self):
         model_xml = self._test.model.model
-        dataset = self._test.dataset.path
+        dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         frontend = self._test.dep_parameters.frontend
         time = int(self._test.indep_parameters.test_time_limit)
 
-        arguments = (f'-m {model_xml} -i {dataset} -d {device} -niter {iteration} -t {time} '
+        arguments = (f'-m {model_xml} -d {device} -niter {iteration} -t {time} '
                      f'-report_type "no_counters" -json_stats -report_folder {self.report_path.parent.absolute()}')
+
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-i', dataset)
 
         arguments = self._add_api_mode_for_cmd_line(arguments, self._api_mode)
         arguments = self._add_perf_hint_for_cmd_line(arguments, self._perf_hint)

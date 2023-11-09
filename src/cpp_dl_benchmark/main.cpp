@@ -6,7 +6,7 @@
 #include "opencv_launcher.hpp"
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
 #include "onnxruntime_launcher.hpp"
-#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
 #include "tflite_launcher.hpp"
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
 #include "pytorch_launcher.hpp"
@@ -84,6 +84,12 @@ constexpr char input_scale_msg[] =
     "src[255,255,255]";
 DEFINE_string(scale, "", input_scale_msg);
 
+constexpr char channel_swap_msg[] =
+    "switch the input channels order from BGR to RGB.\n"
+    "                                                      applicable only for models with image inputs.\n"
+    "                                                      image are uploaded in BGR format by default";
+DEFINE_bool(channel_swap, false, channel_swap_msg);
+
 constexpr char threads_num_msg[] = "number of threads to utilize.";
 DEFINE_uint32(nthreads, 0, threads_num_msg);
 
@@ -119,10 +125,12 @@ void parse(int argc, char* argv[]) {
             "onnxruntime_cuda"
 #elif ORT_TENSORRT
             "onnxruntime_tensorrt"
-#elif TFLITE_DEFAULT
+#elif TFLITE_WITH_DEFAULT_BACKEND
             "tflite"
-#elif TFLITE_XNNPACK
+#elif TFLITE_WITH_XNNPACK_BACKEND
             "tflite_xnnpack"
+#elif TFLITE_WITH_GPU_DELEGATE
+            "tflite_gpu_delegate"
 #elif PYTORCH
             "pytorch"
 #elif PYTORCH_TENSORRT
@@ -142,6 +150,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[--dtype <[FP32]>]                            " << dtype_msg
                   << "\n\t[--mean <R G B>]                              " << input_mean_msg
                   << "\n\t[--scale <R G B>]                             " << input_scale_msg
+                  << "\n\t[--channel_swap]                              " << channel_swap_msg
                   << "\n\t[--nthreads <NUMBER>]                         " << threads_num_msg
                   << "\n\t[--nireq <NUMBER>]                            " << requests_num_msg
                   << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
@@ -217,7 +226,7 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
         launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
-#elif defined(TFLITE_DEFAULT) || defined(TFLITE_XNNPACK)
+#elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
@@ -271,7 +280,8 @@ int main(int argc, char* argv[]) {
                                                    FLAGS_shape,
                                                    FLAGS_mean,
                                                    FLAGS_scale,
-                                                   FLAGS_dtype);
+                                                   FLAGS_dtype,
+                                                   FLAGS_channel_swap);
 
         // determine batch size
         int batch_size = inputs::get_batch_size(inputs_info);
