@@ -566,7 +566,7 @@
             <IntraOpThreads>2</IntraOpThreads>
         </FrameworkDependent>
     </Test>
-        <Test>
+    <Test>
         <Model>
             <Task>classification</Task>
             <Name>resnet-50-pytorch</Name>
