@@ -231,5 +231,5 @@ std::vector<Ort::Value> ONNXLauncher::run_for_output(const int input_idx) {
 }
 
 std::vector<OutputDescription> ONNXLauncher::get_output_description() {
-    throw std::logic_error("Method is not implemented"); // TODO: AI-8972
+    throw std::logic_error("Method is not implemented");  // TODO: AI-8972
 }

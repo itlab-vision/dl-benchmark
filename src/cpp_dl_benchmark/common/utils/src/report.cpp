@@ -2,6 +2,8 @@
 
 #include "utils/logger.hpp"
 
+#include <nlohmann/json.hpp>
+
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -9,8 +11,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <nlohmann/json.hpp>
 
 void Report::save() {
     nlohmann::json js;

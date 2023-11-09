@@ -42,13 +42,12 @@ public:
     }
 
     template<typename T = void>
-    TensorBuffer(size_t elements_count, const std::vector<int> shape,
-                 const utils::DataPrecision dp, const std::vector<T>& data_vec)
-        : data(new char[elements_count * elem_size(dp)]),
-          bytes_count(elements_count * elem_size(dp)),
-          elements_count(elements_count),
-          data_shape(shape),
-          data_precision(dp) {
+    TensorBuffer(size_t elements_count,
+                 const std::vector<int> shape,
+                 const utils::DataPrecision dp,
+                 const std::vector<T>& data_vec)
+        : data(new char[elements_count * elem_size(dp)]), bytes_count(elements_count * elem_size(dp)),
+          elements_count(elements_count), data_shape(shape), data_precision(dp) {
         memcpy(data, data_vec.data(), bytes_count);
     }
 
@@ -61,16 +60,12 @@ public:
     }
 
     TensorBuffer(const TensorBuffer& buf)
-        : data(new char[buf.bytes_count]),
-          bytes_count(buf.bytes_count),
-          elements_count(buf.elements_count),
-          data_shape(buf.data_shape),
-          data_precision(buf.data_precision) {
+        : data(new char[buf.bytes_count]), bytes_count(buf.bytes_count), elements_count(buf.elements_count),
+          data_shape(buf.data_shape), data_precision(buf.data_precision) {
         memcpy(data, buf.get(), bytes_count);
     }
 
-    TensorBuffer(TensorBuffer&& buf) noexcept
-        : TensorBuffer() {
+    TensorBuffer(TensorBuffer&& buf) noexcept : TensorBuffer() {
         swap(buf);
     }
 

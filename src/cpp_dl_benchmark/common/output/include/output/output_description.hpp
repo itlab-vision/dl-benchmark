@@ -1,16 +1,18 @@
 #pragma once
 
+#include "inputs_preparation/tensor_utils.hpp"
+
 #include <string>
 #include <vector>
-
-#include "inputs_preparation/tensor_utils.hpp"
 
 class OutputDescription {
 public:
     OutputDescription() {}
-    
-    OutputDescription(size_t count, const std::vector<int>& shape,
-                      const std::string& name, const std::vector<float>& data)
+
+    OutputDescription(size_t count,
+                      const std::vector<int>& shape,
+                      const std::string& name,
+                      const std::vector<float>& data)
         : output_name(name), tensor(count, shape, utils::DataPrecision::FP32, data) {}
 
     OutputDescription(const OutputDescription& output_descr)

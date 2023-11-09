@@ -48,8 +48,7 @@ public:
     int evaluate(int iterations_num, uint64_t time_limit_ns);
 
     virtual std::vector<OutputDescription> get_output_description() = 0;
-    void dump_output(const std::vector<OutputDescription>& outputs,
-                     const std::string& filename = "output.json");
+    void dump_output(const std::vector<OutputDescription>& outputs, const std::string& filename = "output.json");
 
     std::vector<double> get_latencies() const;
     double get_total_time_ms() const;

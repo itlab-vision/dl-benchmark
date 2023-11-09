@@ -3,7 +3,7 @@ set(TARGET_NAME "output")
 file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 
-add_library(${TARGET_NAME} INTERFACE)
+add_library(${TARGET_NAME} INTERFACE ${HEADERS} ${SOURCES})
 target_include_directories(${TARGET_NAME} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 check_code_style(NAME ${TARGET_NAME}

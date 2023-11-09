@@ -362,9 +362,8 @@ int main(int argc, char* argv[]) {
 
         if (FLAGS_dump_output) {
             std::vector<OutputDescription> output = launcher->get_output_description();
-            FLAGS_output_path.empty()
-                ? launcher->dump_output(output)
-                : launcher->dump_output(output, FLAGS_output_path);
+            FLAGS_output_path.empty() ? launcher->dump_output(output)
+                                      : launcher->dump_output(output, FLAGS_output_path);
         }
 
         // warm up before benhcmarking

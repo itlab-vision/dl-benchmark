@@ -5,10 +5,10 @@
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <numeric>
 #include <string>
-#include <fstream>
-#include <filesystem>
 
 std::vector<double> Launcher::get_latencies() const {
     return latencies;
@@ -40,8 +40,7 @@ int Launcher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     return iteration;
 }
 
-void Launcher::dump_output(const std::vector<OutputDescription>& outputs,
-                           const std::string& filename) {
+void Launcher::dump_output(const std::vector<OutputDescription>& outputs, const std::string& filename) {
     auto jsonObjects = nlohmann::json::array();
 
     for (auto& out : outputs) {

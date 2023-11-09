@@ -17,8 +17,8 @@
 
 #include <algorithm>
 #include <chrono>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -214,12 +214,7 @@ std::vector<OutputDescription> TFLiteLauncher::get_output_description() {
         const auto* dims = result->dims;
         const std::vector<int> curr_output_shape(dims->data, dims->data + dims->size);
 
-        size_t size = std::accumulate(
-            curr_output_shape.begin(),
-            curr_output_shape.end(),
-            1,
-            std::multiplies<int>()
-        );
+        size_t size = std::accumulate(curr_output_shape.begin(), curr_output_shape.end(), 1, std::multiplies<int>());
 
         const std::vector<float> data(raw_data, raw_data + size);
 
