@@ -46,7 +46,7 @@ def cli_argument_parser():
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
                         help='Number of top results',
-                        default=10,
+                        default=5,
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
@@ -89,8 +89,9 @@ def cli_argument_parser():
                         dest='mean')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
-                        default=1.0,
+                        default=[1, 1, 1],
                         type=float,
+                        nargs=3,
                         dest='input_scale')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
@@ -221,7 +222,8 @@ def main():
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
-        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
@@ -232,6 +234,7 @@ def main():
                     io.process_output(result, log)
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
     except Exception:

@@ -90,8 +90,9 @@ def cli_argument_parser():
                         dest='mean')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
-                        default=1.0,
+                        default=[1, 1, 1],
                         type=float,
+                        nargs=3,
                         dest='input_scale')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
@@ -160,6 +161,8 @@ def get_input_shape(io_model_wrapper, model):
 def prepare_output(result, outputs_name, task):
     if len(result) != len(outputs_name):
         raise ValueError('The number of output layers does not match the number of resulting tensors.')
+    if task in ['classification']:
+        result = [result[outputs_name[0]].numpy()]
     if task in ['yolo_tiny_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3_tf']:
         result = [res.transpose(0, 3, 1, 2) for res in result]
     elif task in ['detection']:
@@ -305,8 +308,14 @@ def main():
 
     if not args.raw_output:
         if args.number_iter == 1:
-            result = prepare_output(result, outputs_names, args.task)
-            io.process_output(result, log)
+            try:
+                log.info('Converting output tensor to process results')
+                result = prepare_output(result, outputs_names, args.task)
+
+                log.info('Inference results')
+                io.process_output(result, log)
+            except Exception as ex:
+                log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
     log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 

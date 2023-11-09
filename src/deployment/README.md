@@ -1,8 +1,8 @@
-# Развертывание инфраструктуры для запуска системы бенчмаркинга
+# Deployment of infrastructure to run benchmarking
 
-## Использование скрипта развертывания инфраструктуры
+## How to use
 
-Общий вид командной строки:
+Command line:
 
 ```bash
 python3 deploy.py \
@@ -11,35 +11,36 @@ python3 deploy.py \
     --machine_list <path_to_config> --project_folder <path_to_project_folder>
 ```
 
-Аргументы командной строки:
+Command line arguments:
 
-- `-s / --server_ip <server_ip>` - IP-адрес FTP-сервера,
-  на котором сохраняются образы контейнеров.
-- `-l / --server_login <user_login>` - логин для подключения к FTP-серверу.
-- `-p / --server_psw <user_psw>` - пароль для подключения к FTP-серверу.
-- `-i / --image_path <path_to_image>` - путь до docker-образа.
-- `-d / --upload_dir <folder_on_FTP>` - папка на FTP-сервере,
-  куда будет загружен образ.
-- `-n / --container_name <container_name>` - имя, с которым будет запущен
-  docker-контейнер.
-- `--machine_list <path_to_config>` - путь до конфигурационного файла
-  со списком вычислительных узлов.
-- `--project_folder <path_to_project_folder>` - путь до директории,
-  содержащей исходные коды проекта.
+- `-s / --server_ip <server_ip>` is an IP address of the FTP server where
+  the container images are stored.
+- `-l / --server_login <user_login>` is a login to connect to the FTP server.
+- `-p / --server_psw <user_psw>` is a password to connect to the FTP server.
+- `-i / --image_path <path_to_image>` is a path to the docker image.
+- `-d / --upload_dir <folder_on_FTP>` is a directory on the FTP server
+  where the docker image will be uploaded.
+- `-n / --container_name <container_name>` is the name with which the docker
+  container will be launched.
+- `--machine_list <path_to_config>` is a path to the configuration file
+  with the list of computing nodes.
+- `--project_folder <path_to_project_folder>` is a path to the directory
+  containing the project source codes.
 
 
-Примечание: если агрументы не переданы или переданы
-некорректно, скрипт аварийно завершит свою работу.
+**Note**: if arguments are not passed or passed incorrectly, the script
+will crash.
 
-## Логика работы скрипта развертывания
+## How it works
 
-1. Скрипт `deploy.py` копирует предоставленный docker-образ на FTP-сервер.
-1. Осуществляется проход по списку вычислительных узлов, параметры которых приведены
-   в конфигурационном файле `machine_list`, и запускается клиент `client.py`.
-1. `client.py` скачивает docker-образ с FTP-сервера, после этого
-   выполняет локальное развертывает docker-образа.
+1. The `deploy.py` script copies the provided docker image to the FTP server.
+1. It goes through the list of computing nodes, the parameters of which
+   are given in the configuration file `machine_list`, and the client
+   `client.py` is launched.
+1. `client.py` downloads the docker image from the FTP server, then performs
+   a local deployment of the docker image.
 
-## Результаты работы скрипта развертывания
+## Deployment script results
 
-Результатом работы скрипта будет запущенный docker-контейнер
-на каждой машине, указанной в конфигурационном файле `machine_list`.
+The result of the script will be a running Docker container on each
+machine specified in the `machine_list` configuration file.

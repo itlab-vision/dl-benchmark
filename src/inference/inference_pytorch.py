@@ -28,6 +28,9 @@ from transformer import PyTorchTransformer
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
 
+# from importlib import reload # noqa
+# reload(log) # noqa
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -591,12 +594,14 @@ def main():
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
         report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
+                    log.info('Converting output tensor to process results')
                     result = prepare_output(result, compiled_model, args.output_names, args.task)
 
                     log.info('Inference results')
