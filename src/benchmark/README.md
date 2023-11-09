@@ -17,6 +17,7 @@ the following frameworks:
 - [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
+- [TVM][tvm].
 
 ### Implemented algorithm
 
@@ -266,3 +267,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
 [pytorch]: https://pytorch.org
+[tvm]: https://tvm.apache.org

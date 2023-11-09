@@ -8,6 +8,7 @@ from frameworks.opencv_dnn_python.opencv_dnn_python_parameters_parser import Ope
 from frameworks.pytorch.pytorch_parameters_parser import PyTorchParametersParser
 from frameworks.onnx_runtime_python.onnx_runtime_python_parameters_parser import ONNXRuntimePythonParametersParser
 from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
+from frameworks.tvm.tvm_parameters_parser import TVMParametersParser
 
 
 def get_parameters_parser(framework):
@@ -35,4 +36,6 @@ def get_parameters_parser(framework):
         return PyTorchParametersParser()
     if framework == KnownFrameworks.pytorch_cpp:
         return CppParametersParser()
+    if framework == KnownFrameworks.tvm:
+        return TVMParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')
