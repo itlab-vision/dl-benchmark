@@ -3,7 +3,6 @@ import json
 import logging as log
 import sys
 import traceback
-import tvm
 
 
 from pathlib import Path
@@ -118,6 +117,11 @@ def cli_argument_parser():
                         default=0,
                         type=int,
                         dest='opt_level')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file.',
+                        default='image_net_labels.json',
+                        type=str,
+                        dest='labels')
     parser.add_argument('--channel_swap',
                         help='Parameter of channel swap (WxHxC to CxWxH by default).',
                         default=[2, 0, 1],
@@ -145,7 +149,7 @@ def main():
     )
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='TVM', version=tvm.__version__)
+    #report_writer.update_framework_info(name='TVM', version=tvm.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)

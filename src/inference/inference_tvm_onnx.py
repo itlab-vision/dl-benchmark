@@ -114,6 +114,11 @@ def cli_argument_parser():
                         default=0,
                         type=int,
                         dest='opt_level')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file.',
+                        default='image_net_labels.json',
+                        type=str,
+                        dest='labels')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,

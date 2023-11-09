@@ -76,9 +76,13 @@ def main():
         stream=sys.stdout,
     )
     args = cli_argument_parser()
-    converter = PyTorchToTVMConverter(create_dict_for_converter_pytorch(args))
-    converter.get_tvm_model()
-    converter.save_tvm_model()
+    try:
+        converter = PyTorchToTVMConverter(create_dict_for_converter_pytorch(args))
+        converter.get_tvm_model()
+        converter.save_tvm_model()
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':

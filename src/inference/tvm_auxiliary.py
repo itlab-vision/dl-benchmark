@@ -1,45 +1,10 @@
-import tvm
+#import tvm
 import logging as log
 from scipy.special import softmax
 import abc
 from time import time
 
 from inference_tools.loop_tools import loop_inference, get_exec_time
-
-
-class TVMConverter(metaclass=abc.ABCMeta):
-    def __init__(self, args):
-        self.args = args
-        self.graph = None
-
-    @abc.abstractmethod
-    def _get_device_for_framework(self):
-        pass
-
-    @abc.abstractmethod
-    def _convert_model_from_framework(self, target, dev):
-        pass
-
-    def _get_target_device(self):
-        device = self.args['device']
-        if device == 'CPU':
-            log.info(f'Inference will be executed on {device}')
-            target = tvm.target.Target('llvm')
-            dev = tvm.cpu(0)
-        return target, dev
-
-    def get_tvm_model(self):
-        target, dev = self._get_target_device()
-        mod, params = self._convert_model_from_framework(target, dev)
-        return mod, params
-
-    def get_graph_module(self):
-        target, dev = self._get_target_device()
-        mod, params = self._convert_model_from_framework(target, dev)
-        with tvm.transform.PassContext(opt_level=self.args['opt_level']):
-            lib = tvm.relay.build(mod, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return module
 
 
 def create_dict_for_converter_mxnet(args):
