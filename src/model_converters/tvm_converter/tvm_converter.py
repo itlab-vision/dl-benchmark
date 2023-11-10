@@ -205,10 +205,10 @@ class CaffeToTVMConverter(Converter):
         super().__init__(args)
         self.text_format = importlib.import_module('google.protobuf.text_format')
         self.framework = 'Caffe'
-    
+
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
-    
+
     def _convert_model_from_framework(self, target, dev):
         model_path = self.args['model_path']
         model_params = self.args['model_params']
@@ -222,7 +222,7 @@ class CaffeToTVMConverter(Converter):
 
         with open(model_params, 'rb') as f:
             init_net.ParseFromString(f.read())
-        
+
         model, params = self.tvm.relay.frontend.from_caffe(init_net,
                                                            predict_net,
                                                            shape_dict,
