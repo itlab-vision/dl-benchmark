@@ -17,7 +17,7 @@ from tvm_auxiliary import (create_dict_for_converter_pytorch,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.model_converters.tvm_converter.tvm_converter import PyTorchToTVMConverter  # noqa: E402
 
 

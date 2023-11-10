@@ -26,6 +26,8 @@ class TVMProcess(ProcessHandler):
                 return TVMProcessONNXFormat(test, executor, log)
             elif framework == 'tvm':
                 return TVMProcessTVMFormat(test, executor, log)
+            elif framework == 'caffe':
+                return TVMProcessCaffeFormat(test, executor, log)
             else:
                 raise AssertionError(f'Unknown framework {framework}')
 
@@ -150,6 +152,27 @@ class TVMProcessONNXFormat(TVMProcess):
         model = self._test.model.model
         common_params = f'-m {model} '
         path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_onnx.py')
+        python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params += super()._fill_command_line()
+        common_params += f' --time {time_limit}'
+        command_line = f'{python} {path_to_script} {common_params}'
+
+        return command_line
+
+
+class TVMProcessCaffeFormat(TVMProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        return self.get_performance_metrics_from_json_report()
+
+    def _fill_command_line(self):
+        model = self._test.model.model
+        weight = self._test.model.weight
+        common_params = f'-m {model} -w {weight} '
+        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_caffe.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
