@@ -33,6 +33,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <ChangePreprocessOptions></ChangePreprocessOptions>
+            <NumOutputTokensLLM></NumOutputTokensLLM>
         </FrameworkDependent>
     </Test>
     <Test>
