@@ -86,11 +86,16 @@ def cli_argument_parser():
                         type=str,
                         dest='background')
     parser.add_argument('--time',
-                        help='Time limit for inference in seconds',
+                        help='Optional. Time in seconds to execute topology.',
                         required=False,
                         type=int,
-                        default=60,
+                        default=0,
                         dest='time_limit')
+    parser.add_argument('-ni', '--number_iter',
+                        help='Number of inference iterations',
+                        default=1,
+                        type=int,
+                        dest='number_iter')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
                         choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp',
@@ -157,19 +162,18 @@ class TFLiteProcess():
     def process_benchmark_output(self, output_filename):
         result = {}
         with open(output_filename, 'r') as file:
-            for output in json.load(file):
+            for output in json.load(file)[0]:
                 layer_name = output['output_name']
                 shape = output['shape']
                 data = output['data']
                 result[layer_name] = np.reshape(data, shape)
         return result
 
-    def convert_output(self, result, io, args):
+    def prepare_orig_images(self, io, args):
         if args.task == 'face_detection_tflite_cpp' or args.task == 'segmentation_tflite_cpp':
             io.set_image(args.input)
         else:
             pass
-        return result
 
 
 def get_output_json_path(args):
@@ -180,6 +184,8 @@ def get_output_json_path(args):
 
 def create_dict_from_args_for_process(args, io):
     args_dict = {'-bch': args.benchmark_path,
+                 '--niter': args.number_iter,
+                 '-t': args.time_limit,
                  '-m': args.model_path,
                  '-d': args.device,
                  '-b': args.batch_size,
@@ -188,7 +194,7 @@ def create_dict_from_args_for_process(args, io):
     if not args.use_bin_input:
         args_dict['--mean'] = args.mean
         args_dict['--scale'] = args.input_scale
-        args_dict['--channel_swap'] = args.swap_channels
+        args_dict['--channel_swap'] = '' if not args.swap_channels else True
         args_dict['-i'] = args.input[0]
     else:
         log.info('Converting input to .bin')
@@ -249,10 +255,10 @@ def main():
             process.execute()
 
         log.info('Process benchmark output:\n')
-        output = process.process_benchmark_output(args.output_json_path)
+        result = process.process_benchmark_output(args.output_json_path)
 
         log.info('Process output using io_adapter:\n')
-        result = process.convert_output(output, io, args)
+        process.prepare_orig_images(io, args)
         io.process_output(result, log)
 
     except Exception:

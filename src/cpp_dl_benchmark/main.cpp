@@ -361,7 +361,7 @@ int main(int argc, char* argv[]) {
                       : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
 
         if (FLAGS_dump_output) {
-            std::vector<OutputDescription> output = launcher->get_output_description();
+            std::vector<OutputTensors> output = launcher->get_output_description();
             FLAGS_output_path.empty() ? launcher->dump_output(output)
                                       : launcher->dump_output(output, FLAGS_output_path);
         }

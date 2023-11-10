@@ -203,11 +203,12 @@ void TFLiteLauncher::run(const int input_idx) {
     }
 }
 
-std::vector<OutputDescription> TFLiteLauncher::get_output_description() {
+std::vector<OutputTensors> TFLiteLauncher::get_output_description() {
     run(0);
 
-    std::vector<OutputDescription> outputs;
+    std::vector<OutputTensors> outputs;
 
+    OutputTensors output;
     for (size_t i = 0; i < interpreter->outputs().size(); ++i) {
         const TfLiteTensor* result = interpreter->output_tensor(i);
         const float* raw_data = result->data.f;
@@ -218,8 +219,10 @@ std::vector<OutputDescription> TFLiteLauncher::get_output_description() {
 
         const std::vector<float> data(raw_data, raw_data + size);
 
-        outputs.push_back(OutputDescription(size, curr_output_shape, output_names[i], data));
+        output.emplace_back(size, curr_output_shape, output_names[i], data);
     }
+
+    outputs.push_back(output);
 
     return outputs;
 }

@@ -19,7 +19,7 @@ void Report::save() {
         file_path /= "benchmark_report.json";
     }
     if (file_path.has_parent_path() && !std::filesystem::exists(file_path.parent_path())) {
-        std::filesystem::create_directory(file_path.parent_path());
+        std::filesystem::create_directories(file_path.parent_path());
     }
 
     if (std::filesystem::exists(file_path)) {

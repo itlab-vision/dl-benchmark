@@ -32,7 +32,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override{};
 
-    std::vector<OutputDescription> get_output_description() override;
+    std::vector<OutputTensors> get_output_description() override;
 
 private:
     cv::dnn::Net net;

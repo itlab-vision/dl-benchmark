@@ -230,6 +230,23 @@ std::vector<Ort::Value> ONNXLauncher::run_for_output(const int input_idx) {
                         io.output_names.size());
 }
 
-std::vector<OutputDescription> ONNXLauncher::get_output_description() {
-    throw std::logic_error("Method is not implemented");  // TODO: AI-8972
+std::vector<OutputTensors> ONNXLauncher::get_output_description() {
+    std::vector<OutputTensors> outputs;
+
+    for (size_t idx = 0; idx < tensors.size(); ++idx) {
+        auto result = run_for_output(idx);
+        auto* raw_data = result[0].GetTensorData<float>();
+        auto size = result[0].GetTensorTypeAndShapeInfo().GetElementCount();
+
+        std::vector<int64_t> shape = result[0].GetTensorTypeAndShapeInfo().GetShape();
+        std::string name = std::string(io.output_names[0]);
+        std::vector<float> data(raw_data, raw_data + size);
+
+        std::vector<int> int_shape(shape.begin(), shape.end());
+        OutputTensors output({{size, int_shape, name, data}});
+
+        outputs.push_back(output);
+    }
+
+    return outputs;
 }

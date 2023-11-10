@@ -76,8 +76,7 @@ public:
     }
 
     TensorBuffer& operator=(TensorBuffer&& buf) {
-        TensorBuffer tb_copy(buf);
-        swap(tb_copy);
+        swap(buf);
         return *this;
     }
 

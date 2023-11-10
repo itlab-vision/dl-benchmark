@@ -40,24 +40,15 @@ int Launcher::evaluate(int iterations_num, uint64_t time_limit_ns) {
     return iteration;
 }
 
-void Launcher::dump_output(const std::vector<OutputDescription>& outputs, const std::string& filename) {
-    auto jsonObjects = nlohmann::json::array();
-
-    for (auto& out : outputs) {
-        nlohmann::json js;
-        js["output_name"] = out.name();
-        js["shape"] = out.shape();
-        js["data"] = out.data();
-
-        jsonObjects.push_back(js);
-    }
+void Launcher::dump_output(const std::vector<OutputTensors>& outputs, const std::string& filename) {
+    auto json_outputs = nlohmann::json::array();
 
     std::filesystem::path file_path(filename);
     if (!file_path.has_extension()) {
         file_path /= "output.json";
     }
     if (file_path.has_parent_path() && !std::filesystem::exists(file_path.parent_path())) {
-        std::filesystem::create_directory(file_path.parent_path());
+        std::filesystem::create_directories(file_path.parent_path());
     }
 
     if (std::filesystem::exists(file_path)) {
@@ -66,8 +57,23 @@ void Launcher::dump_output(const std::vector<OutputDescription>& outputs, const 
 
     std::ofstream file(file_path);
 
+    for (auto& output : outputs) {
+        auto json_layers = nlohmann::json::array();
+
+        for (auto& out_layer : output) {
+            nlohmann::json js;
+            js["output_name"] = out_layer.name();
+            js["shape"] = out_layer.shape();
+            js["data"] = out_layer.data();
+
+            json_layers.push_back(js);
+        }
+
+        json_outputs.push_back(json_layers);
+    }
+
     if (file.is_open()) {
-        file << std::setw(4) << jsonObjects << std::endl;
+        file << std::setw(4) << json_outputs << std::endl;
         logger::info << "Saved output to " << file_path << logger::endl;
     }
     else {
