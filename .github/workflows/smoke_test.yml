@@ -70,6 +70,7 @@ jobs:
           python -m pip install openvino-dev
           conda create -y --name caffe_env_3.7 python==3.7
           conda activate caffe_env_3.7 || true
+          conda install caffe
           cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
 
       - name: Upload Artifact
