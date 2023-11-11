@@ -2,6 +2,8 @@
 
 conda activate caffe_env_3.7
 
+conda install caffe
+
 . ./utils.sh
 
 omz_downloader --output_dir working_dir_smoke --cache_dir cache_dir_smoke --name=googlenet-v1

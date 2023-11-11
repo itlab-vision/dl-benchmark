@@ -62,9 +62,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install openvino-dev
           conda create -n caffe_env_3.7 python==3.7 -y
-          conda activate caffe_env_3.7
-          conda install caffe
-          conda deactivate
 
       - name: Run smoke test for inference benchmark
         run: cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
