@@ -42,3 +42,36 @@ jobs:
           name: results
           path: test/smoke_test/results*.csv
           retention-days: 1
+
+  smoke_test_caffe:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Setting up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+
+      - name: Setting up Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install openvino-dev
+          python -m pip install conda
+          conda install caffe
+
+      - name: Run smoke test for inference benchmark
+        run: cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: results
+          path: test/smoke_test/results*.csv
+          retention-days: 1
