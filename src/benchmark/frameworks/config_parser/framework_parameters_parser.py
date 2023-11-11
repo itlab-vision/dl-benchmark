@@ -31,7 +31,6 @@ class FrameworkParameters:
     def _input_scale_is_correct(self, input_scale):
         return self._check_three_float_values(input_scale)
 
-
     @staticmethod
     def _channel_swap_is_correct(channel_swap):
         set_check = {'0', '1', '2'}
