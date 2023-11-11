@@ -16,14 +16,21 @@ class FrameworkParameters:
                 return False
         return True
 
-    def _mean_is_correct(self, mean):
-        mean_check = mean.replace('[', '').replace(']', '').replace(',', ' ').split()
-        if len(mean_check) != 3:
+    def _check_three_float_values(self, value):
+        value_check = value.replace('[', '').replace(']', '').replace(',', ' ').split()
+        if len(value_check) != 3:
             return False
-        for i in mean_check:
+        for i in value_check:
             if not self._float_value_is_correct(i):
                 return False
         return True
+
+    def _mean_is_correct(self, mean):
+        return self._check_three_float_values(mean)
+
+    def _input_scale_is_correct(self, input_scale):
+        return self._check_three_float_values(input_scale)
+
 
     @staticmethod
     def _channel_swap_is_correct(channel_swap):
