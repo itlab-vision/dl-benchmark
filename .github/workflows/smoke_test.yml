@@ -70,7 +70,7 @@ jobs:
         run: cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: results
