@@ -62,7 +62,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install openvino-dev
-          python -m pip install conda
           conda install caffe
 
       - name: Run smoke test for inference benchmark
