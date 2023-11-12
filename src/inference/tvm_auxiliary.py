@@ -100,8 +100,12 @@ def infer_slice(input_name, module, slice_input):
     return res
 
 
-def prepare_output(result, task, output_names):
+def prepare_output(result, task, output_names, not_sftmax=False):
     if task == 'feedforward':
         return {}
     if task == 'classification':
-        return {output_names[0]: softmax(result.asnumpy())}
+        if not_sftmax:
+            result = result.asnumpy()
+        else:
+            result = softmax(result.asnumpy())
+        return {output_names[0]: result}

@@ -87,6 +87,10 @@ def cli_argument_parser():
                              'required normalization parameters).',
                         action='store_true',
                         dest='norm')
+    parser.add_argument('--not_softmax',
+                        help='Flag to do not use softmax function.',
+                        action='store_true',
+                        dest='not_softmax')
     parser.add_argument('--mean',
                         help='Mean values.',
                         default=[0, 0, 0],
@@ -170,7 +174,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names)
+                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
