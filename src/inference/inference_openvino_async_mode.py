@@ -190,11 +190,6 @@ def infer_async(compiled_model, number_iter, num_request, get_slice):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='OpenVINO')

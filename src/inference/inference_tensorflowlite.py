@@ -235,8 +235,6 @@ def prepare_output(result, output_names, task):
 
 
 def main():
-    log.basicConfig(format='[ %(levelname)s ] %(message)s',
-                    level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TF-Lite')

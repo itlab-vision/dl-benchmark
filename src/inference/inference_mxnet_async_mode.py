@@ -229,11 +229,6 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='MxNet', version=mxnet.__version__)

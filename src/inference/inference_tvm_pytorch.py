@@ -167,11 +167,6 @@ class PyTorchToTVMConverter(TVMConverter):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TVM', version=tvm.__version__)

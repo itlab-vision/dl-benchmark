@@ -295,11 +295,6 @@ def prepare_output(result, output_names, model_name, task, args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='OnnxRuntime', version=onnx_rt.__version__)

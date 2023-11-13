@@ -19,6 +19,7 @@ class ColorFormatter(log.Formatter):
 
     FORMATS = {
         log.DEBUG: grey + custom_format + reset,
+        log.INFO: custom_format,
         log.WARNING: yellow + custom_format + reset,
         log.ERROR: red + custom_format + reset,
         log.CRITICAL: bold_red + custom_format + reset,

@@ -171,11 +171,6 @@ def prepare_output_file_names(input_):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     tmp = tempfile.TemporaryDirectory()
     cur_path = os.getcwd()
     args = cli_argument_parser()

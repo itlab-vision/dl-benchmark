@@ -192,11 +192,6 @@ def prepare_images_for_benchmark(inputs, tmp_dir):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     tmp_input = tempfile.TemporaryDirectory()
     tmp_model = tempfile.TemporaryDirectory()
     args = cli_argument_parser()
