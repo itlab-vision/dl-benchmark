@@ -239,8 +239,6 @@ def create_dict_for_transformer(args):
 
 
 def main():
-    log.basicConfig(format='[ %(levelname)s ] %(message)s',
-                    level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TensorFlow', version=tf.__version__)
