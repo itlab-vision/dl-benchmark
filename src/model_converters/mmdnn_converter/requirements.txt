@@ -14,4 +14,4 @@ torch==1.5.1
 torchvision==0.2.1
 onnx==1.4.1
 onnx-tf==1.2.1
-mmdnn
+mmdnn==0.3.1
