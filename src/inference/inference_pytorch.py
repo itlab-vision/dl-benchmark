@@ -9,6 +9,9 @@ from functools import partial
 from pathlib import Path
 from time import time
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
 import torch
 
 try:
@@ -611,4 +614,5 @@ def main():
 
 
 if __name__ == '__main__':
+    configure_logger()
     sys.exit(main() or 0)
