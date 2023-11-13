@@ -9,7 +9,7 @@ from functools import partial
 from pathlib import Path
 from time import time
 
-sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
 
 import torch
@@ -485,11 +485,6 @@ def prepare_output(result, model, output_names, task):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='PyTorch', version=get_torch_version())
