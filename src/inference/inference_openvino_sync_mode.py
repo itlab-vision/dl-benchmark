@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
@@ -12,6 +11,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import OpenVINOTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():

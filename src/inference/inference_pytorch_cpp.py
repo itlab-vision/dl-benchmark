@@ -1,19 +1,24 @@
 import argparse
-import numpy as np
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
-import logging as log
 import traceback
-import re
-import shutil
+
+import numpy as np
 
 import preprocessing_data as prep
+from inference_pytorch import load_model_from_file, load_model_from_module, compile_model
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformerCpp
-from inference_pytorch import load_model_from_file, load_model_from_module, compile_model
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -159,6 +164,7 @@ def dict_to_string(input_params):
     def get_values(values):
         values = ','.join(map(str, values)) if not isinstance(values, str) else values
         return values if re.match(r'\[(.*?)\]', values) else f'[{values}]'
+
     return ','.join(f'{layer_name}{get_values(input_params[layer_name])}' for layer_name in input_params)
 
 

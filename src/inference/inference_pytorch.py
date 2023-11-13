@@ -28,6 +28,8 @@ from transformer import PyTorchTransformer
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
 
+log = configure_logger()
+
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
 
@@ -609,5 +611,4 @@ def main():
 
 
 if __name__ == '__main__':
-    configure_logger()
     sys.exit(main() or 0)

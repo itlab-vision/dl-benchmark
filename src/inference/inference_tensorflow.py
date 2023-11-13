@@ -19,6 +19,11 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.model_converters.tf2tflite.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
                                                               get_input_operation_name, restrisct_gpu_usage)  # noqa
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()

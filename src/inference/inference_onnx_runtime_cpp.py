@@ -1,17 +1,23 @@
-import cv2
 import argparse
-import numpy as np
+import ast
 import os
 import subprocess
 import sys
+import tempfile
+import traceback
+
+import cv2
+import numpy as np
 import onnxruntime as ort
+
+from io_adapter import IOAdapter
 from io_model_wrapper import ONNXIOModelWrapper
 from transformer import ONNXRuntimeTransformerCpp
-from io_adapter import IOAdapter
-import tempfile
-import logging as log
-import traceback
-import ast
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():

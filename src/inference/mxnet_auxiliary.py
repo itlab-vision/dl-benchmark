@@ -1,9 +1,14 @@
-import numpy as np
-import mxnet
-import gluoncv
-import logging as log
 import os
 import warnings
+
+import gluoncv
+import mxnet
+import numpy as np
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def prepare_output(result, output_names, task, model_wrapper):
@@ -66,7 +71,6 @@ def load_network_gluon(model_json, model_params, context, input_name):
 
 def load_network_gluon_model_zoo(model_name, hybrid, context, save_model,
                                  path_save_model, task='inference'):
-
     log.info(f'Loading network \"{model_name}\" from GluonCV model zoo')
     net = gluoncv.model_zoo.get_model(model_name, pretrained=True, ctx=context)
 
