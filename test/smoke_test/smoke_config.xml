@@ -566,7 +566,7 @@
             <IntraOpThreads>2</IntraOpThreads>
         </FrameworkDependent>
     </Test>
-        <Test>
+    <Test>
         <Model>
             <Task>classification</Task>
             <Name>resnet-50-pytorch</Name>
@@ -629,6 +629,31 @@
             <ThreadCount></ThreadCount>
             <InterThreadCount></InterThreadCount>
             <ExecutionMode></ExecutionMode>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+        <Task>node-classification</Task>
+        <Name>GCN</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>DGL (PyTorch)</SourceFramework>
+        <ModelPath>./working_dir_smoke/dgl/model.pt</ModelPath>
+        <WeightsPath></WeightsPath>
+        <Module>./working_dir_smoke/dgl/GCN.py</Module>
+        </Model>
+        <Dataset>
+        <Name>Cora</Name>
+        <Path>./default_graph.bin</Path>
+        </Dataset>
+        <FrameworkIndependent>
+        <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>10</IterationCount>
+        <TestTimeLimit>5</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+        <InferenceMode>True</InferenceMode>
         </FrameworkDependent>
     </Test>
 </Tests>
