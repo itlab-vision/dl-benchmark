@@ -49,7 +49,7 @@ class DGLPyTorchProcess(ProcessHandler):
         common_params = DGLPyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         inference_mode = self._test.dep_parameters.inference_mode
-        common_params = DGLPyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--inference_mode', 
+        common_params = DGLPyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--inference_mode',
                                                                              inference_mode)
 
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
