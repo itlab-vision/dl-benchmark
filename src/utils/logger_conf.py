@@ -4,7 +4,6 @@ import os
 import sys
 import time
 import traceback
-from functools import cache
 
 DEFAULT_FORMATTER = log.Formatter('[ %(levelname)s ] %(message)s')
 
@@ -41,7 +40,6 @@ def exception_hook(exc_type, message, stack):  # noqa
               f'{"".join(traceback.format_tb(stack))}')
 
 
-@cache
 def configure_logger(name='', level=log.INFO, use_default_formatter=False):
     """
     Modifies logging: allows writing to log file with colored messages

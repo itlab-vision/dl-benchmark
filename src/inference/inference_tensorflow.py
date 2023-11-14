@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 from pathlib import Path
 
