@@ -2,6 +2,7 @@ from pathlib import Path
 
 from ..processes import ProcessHandler
 
+
 class DGLPyTorchProcess(ProcessHandler):
     benchmark_app_name = 'dgl_pytorch_python_benchmark'
     launcher_latency_units = 'seconds'
@@ -24,7 +25,6 @@ class DGLPyTorchProcess(ProcessHandler):
         name = self._test.model.name
         model = self._test.model.model
         module = self._test.model.module
-        weights = self._test.model.weight
         dataset = self._test.dataset.path if self._test.dataset else None
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
@@ -49,8 +49,7 @@ class DGLPyTorchProcess(ProcessHandler):
         common_params = DGLPyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         inference_mode = self._test.dep_parameters.inference_mode
-        common_params = DGLPyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--inference_mode',
-                                                                          inference_mode)
+        common_params = DGLPyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--inference_mode', inference_mode)
 
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 

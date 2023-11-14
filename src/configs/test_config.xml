@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+ <Test>
+      <Model>
+      <Task>node-classification</Task>
+      <Name>GCN</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>DGL (PyTorch)</SourceFramework>
+      <ModelPath>C:/Users/Atikin/Desktop/Programming/data_for_dl_benchmark/model.pt</ModelPath>
+      <WeightsPath></WeightsPath>
+      <Module>C:/Users/Atikin/Desktop/Programming/data_for_dl_benchmark/model/GCN.py</Module>
+      </Model>
+      <Dataset>
+      <Name>Cora</Name>
+      <Path>C:/Users/Atikin/Desktop/Programming/data_for_dl_benchmark/default_graph.bin</Path>
+      </Dataset>
+      <FrameworkIndependent>
+      <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>10</IterationCount>
+      <TestTimeLimit>10</TestTimeLimit>
+      </FrameworkIndependent>
+      <FrameworkDependent>
+      <InferenceMode>True</InferenceMode>
+      </FrameworkDependent>
+    </Test>
+</Tests>

@@ -3,6 +3,7 @@ from ..config_parser.test_reporter import Test
 from ..framework_wrapper import FrameworkWrapper
 from ..known_frameworks import KnownFrameworks
 
+
 class DGLPyTorchWrapper(FrameworkWrapper):
     framework_name = KnownFrameworks.dgl_pytorch
 

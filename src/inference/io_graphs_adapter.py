@@ -23,7 +23,6 @@ class IOGprahAdapter(metaclass=abc.ABCMeta):
     def _not_valid_result(result):
         return result is None
 
-
     def load_labels_map(self, default_labels_map_file):
         if not self._labels:
             self._labels = Path(__file__).parent / 'labels' / default_labels_map_file
@@ -39,7 +38,7 @@ class NodeClassification(IOGprahAdapter):
     def __init__(self, args, io_model_wrapper):
         super().__init__(args, io_model_wrapper)
 
-    def process_output(self, result, log, labels_file = None):
+    def process_output(self, result, log, labels_file=None):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
@@ -49,16 +48,15 @@ class NodeClassification(IOGprahAdapter):
 
         result_layer_name = next(iter(result))
         result = result[result_layer_name]
-        
+
         data = {'Node ID': [], 'Type': []}
         for i, val in enumerate(result):
             data['Node ID'].append(i)
-            data['Type'].append(self._labels_map[val-1])
+            data['Type'].append(self._labels_map[val - 1])
 
         df = pd.DataFrame(data)
         df.set_index('Node ID')
         with open('out_graph_classification.csv', 'w+') as file:
             df.to_csv(file, sep='\t', encoding='utf-8')
-        
+
         log.info('Results save to out_graph_classification.csv')
-        

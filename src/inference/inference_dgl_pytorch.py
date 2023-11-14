@@ -104,7 +104,7 @@ def compile_model(model, device):
 
 
 def inference_dgl_pytorch(model, num_iterations, input_graph, inference_mode, device, test_duration):
-    features = input_graph.ndata["feat"]
+    features = input_graph.ndata['feat']
     with torch.inference_mode(inference_mode):
         predictions = None
         time_infer = []
@@ -136,7 +136,7 @@ def load_model_from_file(model_path, module_path, model_name):
 
     spec = importlib.util.spec_from_file_location(model_name, module_path)
     foo = importlib.util.module_from_spec(spec)
-    sys.modules[f"{model_name}"] = foo
+    sys.modules[f'{model_name}'] = foo
     spec.loader.exec_module(foo)
 
     import __main__
@@ -153,20 +153,20 @@ def prepare_output(result):
 def write_cmd_options_to_report(report_writer, args):
     report_writer.update_cmd_options(
         m=args.module_path,
-        i=args.input
+        i=args.input,
     )
 
     report_writer.update_configuration_setup(
         iterations_num=args.number_iter,
         target_device=args.device,
-        duration=args.time
+        duration=args.time,
     )
 
     report_writer.update_framework_info(
-        name='DGL', 
+        name='DGL',
         version=dgl.__version__,
         device=args.device,
-        backend='PyTorch'
+        backend='PyTorch',
     )
 
     report_writer.write_report(args.report_path)
@@ -194,7 +194,7 @@ def main():
         input_data = prepare_input(args.input[0])
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter, 
+        result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter,
                                                        input_data, args.inference_mode, device, args.time)
 
         log.info('Computing performance metrics')

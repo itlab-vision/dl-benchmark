@@ -18,7 +18,7 @@ except ImportError:
 
 import postprocessing_data as pp
 import preprocessing_data as prep
-from inference_tools.loop_tools import loop_inference, get_exec_time
+from inference_tools.loop_tools import loop_inference
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
