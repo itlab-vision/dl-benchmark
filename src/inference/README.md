@@ -1071,6 +1071,100 @@ python inference_dgl_pytorch.py --model_name <model_name> \
                                 --input <path_to_data>
 ```
 
+## Валидация вывода глубоких моделей с использованием PyTorch (C++ API)
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_pytorch_cpp.py
+```
+
+Обязательные аргументы:
+
+- `-bch / --benchmark_app` - путь до исполнительного файла с реализацией бенчмаркинга с помощью C++ PyTorch.
+- `-mn / --model_name` - название модели.
+- `-i / --input` - путь до изображения или директории
+  с изображениями (расширения файлов `.jpg`, `.png`,
+  `.bmp` и т.д.).
+- `-in / --input_names` - названия входов модели. Текущая реализация вывода
+  предусматривает наличие только одного входа.
+
+Опциональные аргументы:
+
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.pt`.
+- `-w / --weights` - путь до файла с весами в формате `.pth`.
+- `-mm / --module` - путь до Python модуля или относительный путь
+  до Python файла с архитектурой модели. По умолчанию, данный параметр
+  принимает значение `torchvision.models`, модуль с [моделями][torchvision_models], которые решают
+  задачу классификации.
+- `-t / --task` - название задачи. Текущая реализация поддерживает
+  решение задачи классификации. По умолчанию принимает значение
+  `feedforward`.
+- `-b / --batch_size` - количество изображений, которые будут обработаны
+  за один проход сети. По умолчанию равно `1`.
+- `--mean` - параметры для вычитания средних по каждому цветовому каналу изображения
+  в формате `input0[value0],input1[value1]`. По умолчанию `(0, 0, 0)`.
+- `--input_scale` - коэффициент масштабирования изображения в формате `input0[value0],input1[value1]`.
+  По умолчанию равен `1`.
+- `--layout` - формат входных тензоров в формате `input0(value0),input1(value1)`. По умолчанию `NHWC`.
+- `--input_shapes` - размеры входных тензоров в формате `input0[value0],input1[value1]`,
+  например `input[1,224,224,3]`, порядок размерностей должен соответсвовать формату входного тензора.
+  По умолчанию не установлен.
+- `-d / --device` - оборудование, на котором выполняется вывод сети.
+  Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
+  (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
+- `-l / --labels`- путь до файла в формате JSON с перечнем меток
+  при решении задачи. По умолчанию принимает значение
+  `image_net_labels.json`, что соответствует меткам набора данных
+  ImageNet.
+- `-nt / --number_top` - количество лучших результатов, выводимых
+  при решении задачи классификации. По умолчанию выводится `10` наилучших
+  результатов.
+
+#### Примеры запуска
+
+**Запуск вывода для модели, которая загружается из модуля**
+
+```bash
+python inference_pytorch_cpp.py --module <module_name> \
+                                --model_name <model_name> \
+                                --input <path_to_data> \
+                                --input_names <input_name> \
+                                --input_shapes <input_shape> \
+                                --mean <mean> --input_scale <scale> \
+                                --batch_size <batch_size> \
+                                --task classification
+```
+
+**Запуск вывода для модели, которая загружается из файлов**
+
+```bash
+python inference_pytorch_cpp.py --model_name <model_name> \
+                                --model <file_name>.pt \
+                                --input_name <input_name> \
+                                --input_names <input_name> \
+                                --input_shapes <input_shape> \
+                                --mean <mean> --input_scale <scale> \
+                                --batch_size <batch_size> \
+                                --task classification
+```
+
+**Запуск вывода для модели, которая загружается из модуля и отдельного файла с весами**
+
+```bash
+python inference_pytorch_cpp.py --model_name <model_name> \
+                                --module <module_name> \
+                                --weights <file_name>.pth \
+                                --input_names <input_name> \
+                                --input_shapes <input_shape> \
+                                --mean <mean> --input_scale <scale> \
+                                --batch_size <batch_size> \
+                                --task classification
+```
+
 <!-- LINKS -->
 
 [execution_providers]: https://onnxruntime.ai/docs/execution-providers

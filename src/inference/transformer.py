@@ -315,3 +315,15 @@ class OnnxRuntimeTransformerCpp(Transformer):
 
     def transform_images(self, images, shape, element_type, *args):
         return images
+
+
+class PyTorchTransformerCpp(Transformer):
+    def __init__(self):
+        pass
+
+    def get_shape_in_chw_order(self, shape, *args):
+        c, h, w = shape[1:]
+        return c, h, w
+
+    def transform_images(self, images, shape, element_type, *args):
+        return images
