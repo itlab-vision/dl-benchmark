@@ -4,8 +4,19 @@ import sys
 import traceback
 from pathlib import Path
 
+import postprocessing_data as pp
+import preprocessing_data as prep
+from inference_tools.loop_tools import get_exec_time
 from inference_tools.loop_tools import loop_inference
+from io_adapter import IOAdapter
+from io_model_wrapper import TensorFlowLiteIOModelWrapper
 from reporter.report_writer import ReportWriter
+from transformer import TensorFlowLiteTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 try:
     import tensorflow.lite as tflite
@@ -13,18 +24,6 @@ except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
 
     log.info('Using TFLite from tflite_runtime package')
-from inference_tools.loop_tools import get_exec_time
-
-import postprocessing_data as pp
-import preprocessing_data as prep
-from io_adapter import IOAdapter
-from io_model_wrapper import TensorFlowLiteIOModelWrapper
-from transformer import TensorFlowLiteTransformer
-
-sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
-from logger_conf import configure_logger  # noqa: E402
-
-log = configure_logger()
 
 
 def cli_argument_parser():
