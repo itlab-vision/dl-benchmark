@@ -1,23 +1,25 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
-import onnx
-import tvm
-
-
 from pathlib import Path
 
+import onnx
+import tvm
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
-from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
+from transformer import TVMTransformer
 from tvm_auxiliary import (TVMConverter, create_dict_for_converter_onnx,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -152,11 +154,6 @@ class ONNXToTVMConverter(TVMConverter):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TVM', version=tvm.__version__)
