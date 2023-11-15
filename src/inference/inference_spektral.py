@@ -40,6 +40,7 @@ TUDATASETS = ['tudataset_'+dst+'' for dst in ['AIDS', 'alchemy_full', 'aspirin',
               'reddit_threads', 'tumblr_ct1', 'tumblr_ct2', 'twitch_egos', 'TWITTER-Real-Graph-Partial', 
               'COLORS-3', 'SYNTHETIC', 'SYNTHETICnew', 'Synthie', 'TRIANGLES']]
 
+
 class CustomDataset(Dataset):
     def __init__(self, gpath, **kwargs):
         self.graph_path = gpath
@@ -82,8 +83,8 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'sp_inference_report.json',
                         dest='report_path')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or '
-                             'NVIDIA_GPU (CPU by default)',
+                        help='Specify the target device to infer on '
+                             '(Modern Tensorflow doesnt support anything but CPU)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -93,11 +94,17 @@ def cli_argument_parser():
                         type=bool,
                         dest='raw_output')
     parser.add_argument('--time',
+                        help='Time in seconds to execute topology.',
                         required=False,
                         default=0,
                         type=int,
-                        dest='time',
-                        help='Optional. Time in seconds to execute topology.')
+                        dest='time')
+    parser.add_argument('-t', '--task',
+                        help='Output processing method. Default: turn to Node-Feature table',
+                        choices=['node-classification', 'graph-classification'],
+                        default='node-classification',
+                        type=str,
+                        dest='task')
     args = parser.parse_args()
 
     return args
@@ -135,25 +142,26 @@ def prepare_input_loader(input_, batch_size):
 
     return input_loader
 
-def process_output(result):
-    _result = result.numpy()
-    __result = {'Node': []}
+def process_output(result, task):
+    if task == 'node-classification':
+        _result = result.numpy()
+        __result = {'Node': []}
 
-    for i in range(1, len(_result[0]) + 1):
-        __result['Feature ' + str(i)] = []
+        for i in range(1, len(_result[0]) + 1):
+            __result['Feature ' + str(i)] = []
 
-    for i in range(len(_result)):
-        __result['Node'].append(i)
-        for j in range(len(_result[0])):
-            __result['Feature ' + str(j + 1)].append(_result[i][j])
+        for i in range(len(_result)):
+            __result['Node'].append(i)
+            for j in range(len(_result[0])):
+                __result['Feature ' + str(j + 1)].append(_result[i][j])
 
-    f_result = pd.DataFrame(__result)
-    with open('out_processed.csv', 'w+') as file:
-        f_result.to_csv(file, sep=' ', encoding='utf-8')
+        f_result = pd.DataFrame(__result)
+        with open('out_processed.csv', 'w+') as file:
+            f_result.to_csv(file, sep=' ', encoding='utf-8')
 
-    log.info('Processed results saved to out_processed.csv')
+        log.info('Processed results saved to out_processed.csv')
 
-    return __result
+        return __result
 
 def model_load(model_path):
     log.info(f'Loading network files:\n\t {model_path}')
@@ -189,10 +197,16 @@ def infer_slice(model, slice_input):
     res = model(slice_input, training=False)
     return res
 
+
 def main():
     log.basicConfig(format='[ %(levelname)s ] %(message)s',
                     level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
+
+    if args.device != 'CPU':
+        log.warning("Modern Tensorflow required for Spektral doesn't support any devices but CPU. Device will be switched.")
+        args.device = 'CPU'
+
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='Spektral', version=spektral.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
@@ -215,7 +229,7 @@ def main():
         if args.number_iter == 1:
             log.info('Inference results:')
             log.info(result.numpy())
-            result = process_output(result)
+            result = process_output(result, args.task)
 
     log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 

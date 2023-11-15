@@ -23,15 +23,17 @@ class SpektralProcess(ProcessHandler):
 
         model = self._test.model.model
         dataset = self._test.dataset.path if self._test.dataset else None
-        batch = self._test.indep_parameters.batch_size
+        batch_size = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
 
-        common_params = (f'-m {model} -b {batch} -d {device} -ni {iteration} '
+        common_params = (f'-m {model} -b {batch_size} -ni {iteration} '
                          f'--report_path {self.report_path}')
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
+        
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '-d', device)
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
