@@ -1,12 +1,19 @@
-import sys
 import argparse
-import logging as log
-import traceback
-import mxnet
 import os
+import sys
+import traceback
+from pathlib import Path
+
+import mxnet
 from mxnet.contrib.quantization import quantize_net_v2
+
 from mxnet_auxiliary import (create_dict_for_quantwrapper, get_device,
                              load_network_gluon, load_network_gluon_model_zoo)
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 class QuantWrapper:
@@ -126,11 +133,6 @@ def cli_argument_parser():
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     context = get_device(args.device, 'quantization')
     quant_wrapper = QuantWrapper(create_dict_for_quantwrapper(args))

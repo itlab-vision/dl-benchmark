@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 from pathlib import Path
 
@@ -18,6 +17,11 @@ from transformer import TensorFlowTransformer
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.model_converters.tf2tflite.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
                                                               get_input_operation_name, restrisct_gpu_usage)  # noqa
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -234,8 +238,6 @@ def create_dict_for_transformer(args):
 
 
 def main():
-    log.basicConfig(format='[ %(levelname)s ] %(message)s',
-                    level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TensorFlow', version=tf.__version__)
