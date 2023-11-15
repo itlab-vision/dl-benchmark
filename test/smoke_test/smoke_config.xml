@@ -649,8 +649,8 @@
         <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
         <BatchSize>1</BatchSize>
         <Device>CPU</Device>
-        <IterationCount>10</IterationCount>
-        <TestTimeLimit>5</TestTimeLimit>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
         <InferenceMode>True</InferenceMode>
