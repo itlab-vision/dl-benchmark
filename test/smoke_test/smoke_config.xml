@@ -634,9 +634,11 @@
     <Test>
         <Model>
             <Task>node-classification</Task>
+            <Name>spektral-test-model</Name>
             <Precision>FP32</Precision>
             <SourceFramework>Spektral</SourceFramework>
             <ModelPath>./working_dir_smoke/spektral/model.keras</ModelPath>
+            <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name>Cora</Name>
