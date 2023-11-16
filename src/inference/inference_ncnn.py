@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging as log
 import sys
 from pathlib import Path
@@ -10,10 +9,9 @@ from reporter.report_writer import ReportWriter
 
 import cv2
 from ncnn.model_zoo import get_model
-from ncnn.utils import print_topk
-import numpy as np
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -90,6 +88,7 @@ def cli_argument_parser():
 
     return args
 
+
 def inference_ncnn(args, images, number_iter, get_slice, test_duration):
     result = None
     time_infer = []
@@ -103,16 +102,18 @@ def inference_ncnn(args, images, number_iter, get_slice, test_duration):
     log.info('Inference completed')
     return result, time_infer
 
+
 def inference_iteration(get_slice):
     slice_input = get_slice(images, 1)
     print(slice_input)
     _, exec_time = infer_slice(args, slice_input)
     return exec_time
 
+
 @get_exec_time()
 def infer_slice(args, slice_input):
     use_gpu = False
-    if args.device =='GPU':
+    if args.device == 'GPU':
         use_gpu = True
     net = get_model(args.model, num_threads=args.num_threads, use_gpu=use_gpu)
     res = dict()
@@ -121,6 +122,7 @@ def infer_slice(args, slice_input):
         cls_scores = net(image)
         res[slice_input[i]] = cls_scores
     return res
+
 
 if __name__ == '__main__':
     args = cli_argument_parser()
