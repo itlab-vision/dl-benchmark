@@ -363,7 +363,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 <img width="150" src="detection\ILSVRC2012_val_00018592.JPEG">
 </div>
-Bounding box (upper left anf bottom right corners):<br>
+Bounding box (upper left and bottom right corners):<br>
 (82,262), (269,376)
 
    Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
@@ -389,7 +389,7 @@ Input tensor: 600; 1024; 1
 
 <img width="300" src="detection\faster_rcnn_out.bmp">
 </div>
-Bounding box (upper left anf bottom right corners):<br>
+Bounding box (upper left and bottom right corners):<br>
 TV (110, 41), (397, 304)<br>
 MOUSE (508, 337), (559, 374)<br>
 KEYBOARD (241, 342), (496, 461)<br>
@@ -415,7 +415,7 @@ Image resolution: 640 x 427
 <img width="300" src="images\000000367818.jpg">
 <img width="300" src="detection\python_yolo_coco_000000367818.bmp">
 </div>
-Bounding box (upper left anf bottom right corners):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
+Bounding box (upper left and bottom right corners):<br>PERSON (86, 84), (394, 188)<br>HORSE (44, 108), (397, 565)<br>
 
    Model   |   C++ (latency mode, the OpenVINO sample)  |  C++ (throughput mode, the OpenVINO sample)  |  Python (latency mode, implementation)  |  Python (throughput mode, implementation)        |
 ---------------------|---------------------------|---------------------------|-----------------------------|------------------------------------|

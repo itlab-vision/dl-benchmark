@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
@@ -12,13 +11,18 @@ import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import MXNetIOModelWrapper
-from reporter.report_writer import ReportWriter
-from transformer import MXNetTransformer
-from quantization_mxnet import QuantWrapper
 from mxnet_auxiliary import (load_network_gluon, load_network_gluon_model_zoo,
                              get_device, create_dict_for_modelwrapper,
                              create_dict_for_transformer, prepare_output,
                              create_dict_for_quantwrapper)
+from quantization_mxnet import QuantWrapper
+from reporter.report_writer import ReportWriter
+from transformer import MXNetTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -236,14 +240,9 @@ def infer_slice(input_name, net, slice_input):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='MxNet', version=mxnet.__version__)
+    report_writer.update_framework_info(name='MXNet', version=mxnet.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
