@@ -2028,7 +2028,7 @@ class ncnn(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def get_slice_input(self, images, iteration):
-        return images[(iteration * self._batch_size) % len(images): 
+        return images[(iteration * self._batch_size) % len(images):
                       ((iteration + 1) * self._batch_size - 1) % len(images) + 1:]
 
     def process_output(self, result, log):

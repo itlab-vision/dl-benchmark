@@ -116,7 +116,7 @@ def infer_slice(args, slice_input):
     if args.device == 'GPU':
         use_gpu = True
     net = get_model(args.model, num_threads=args.num_threads, use_gpu=use_gpu)
-    res = dict()
+    res = {}
     for i in range(args.batch_size):
         image = cv2.imread(slice_input[i])
         cls_scores = net(image)
