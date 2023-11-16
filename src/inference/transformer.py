@@ -73,23 +73,31 @@ class IntelCaffeTransformer(Transformer):
 
     def __set_mean(self, image):
         if 'mean' in self._converting:
-            image[0] -= self._converting['mean'][0]
-            image[1] -= self._converting['mean'][1]
-            image[2] -= self._converting['mean'][2]
+            image[:, :, 0] -= self._converting['mean'][0]
+            image[:, :, 1] -= self._converting['mean'][1]
+            image[:, :, 2] -= self._converting['mean'][2]
 
     def __set_input_scale(self, image):
         if 'input_scale' in self._converting:
-            image[0] *= self._converting['input_scale']
-            image[1] *= self._converting['input_scale']
-            image[2] *= self._converting['input_scale']
+            image[:, :, 0] /= self._converting['input_scale'][0]
+            image[:, :, 1] /= self._converting['input_scale'][1]
+            image[:, :, 2] /= self._converting['input_scale'][2]
 
     def _transform(self, image):
-        transformed_image = np.copy(image)
-        transformed_image = transformed_image.transpose(1, 2, 0)
+        transformed_image = np.copy(image).astype(np.float32)
+        transformed_image = transformed_image.transpose(2, 0, 1)
         self.__set_channel_swap(transformed_image)
         self.__set_mean(transformed_image)
         self.__set_input_scale(transformed_image)
         return transformed_image
+
+    def transform_images(self, images, shape, element_type, *args):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size] + list(shape[1:])
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
+            transformed_images[i] = self._transform(images[i])
+        return transformed_images
 
 
 class TensorFlowTransformer(Transformer):
@@ -112,9 +120,9 @@ class TensorFlowTransformer(Transformer):
 
     def __set_input_scale(self, image):
         if 'input_scale' in self._converting:
-            image[:, :, 0] /= self._converting['input_scale']
-            image[:, :, 1] /= self._converting['input_scale']
-            image[:, :, 2] /= self._converting['input_scale']
+            image[:, :, 0] /= self._converting['input_scale'][0]
+            image[:, :, 1] /= self._converting['input_scale'][1]
+            image[:, :, 2] /= self._converting['input_scale'][2]
 
     def _transform(self, image):
         transformed_image = np.copy(image).astype(np.float64)
@@ -312,6 +320,18 @@ class OnnxRuntimeTransformerCpp(Transformer):
 
     def get_shape_in_chw_order(self, shape, *args):
         return shape[1:]
+
+    def transform_images(self, images, shape, element_type, *args):
+        return images
+
+
+class PyTorchTransformerCpp(Transformer):
+    def __init__(self):
+        pass
+
+    def get_shape_in_chw_order(self, shape, *args):
+        c, h, w = shape[1:]
+        return c, h, w
 
     def transform_images(self, images, shape, element_type, *args):
         return images

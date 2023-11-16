@@ -42,3 +42,40 @@ jobs:
           name: results
           path: test/smoke_test/results*.csv
           retention-days: 1
+
+  smoke_test_caffe:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Setting up miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          auto-update-conda: true
+          activate-environment: caffe_env_3.7
+          python-version: 3.7
+
+      - name: Setting up Python dependencies and Caffe
+        shell: bash -el {0}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install openvino-dev
+          conda install -y caffe
+
+      - name: Run smoke test for inference benchmark
+        shell: bash -el {0}
+        run: |
+          cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: results
+          path: test/smoke_test/results*.csv
+          retention-days: 1
