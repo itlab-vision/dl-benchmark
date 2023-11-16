@@ -21,7 +21,7 @@ efficientnet-b0 | TensorFlow | Source framework<br>Mean: [0.485,0.456,0.406]<br>
 googlenet-v1 | Caffe | Source framework<br>Mean: [104.0,117.0,123.0]<br><br>Inference framework<br>Mean: [0.408,0.459,0.482]<br>Std: None |  0.9979934 Granny Smith<br>0.0007394 bell pepper<br>0.0006985 candle, taper, wax light<br>0.0000942 tennis ball<br>0.0000636 cucumber, cuke |-|-|
 googlenet-v4-tf | TensorFlow | Source framework<br>Mean: [127.5,127.5,127.5]<br>Std: [127.5,127.5,127.5] | 0.9935190 Granny Smith<br>0.0002230 Rhodesian ridgeback<br>0.0000956 pineapple, ananas<br>0.0000868 hair slide<br>0.0000775 banana |-|-|
 resnet-50-pytorch | PyTorch | Source framework<br>Mean: [123.675,116.28,103.53]<br>Std: [58.395,57.12,57.375]<br><br>Inference framework<br>Mean: [0.485,0.456,0.406]<br>Std: [0.229, 0.224, 0.225] | 0.9278084 Granny Smith<br>0.0129410 orange<br>0.0059574 lemon<br>0.0042141 necklace<br>0.0025712 banana | 0.9278086 Granny Smith<br>0.0129410 orange<br>0.0059573 lemon<br>0.0042141 necklace<br>0.0025712 banana |-|
-squeezenet1.1 | Caffe | Source framework<br>Mean: [104.0,117.0,123.0]<br>Inference framework<br>Mean: [0.408,0.459,0.482]<br>Std: None | 0.9993550 Granny Smith<br>0.0004808 tennis ball<br>0.0000693 fig<br>0.0000318 lemon<br>0.0000192 piggy bank, penny bank |-|-|
+squeezenet1.1 | Caffe | Source framework<br>Mean: [104.0,117.0,123.0]<br><br>Inference framework<br>Mean: [0.408,0.459,0.482]<br>Std: None | 0.9993550 Granny Smith<br>0.0004808 tennis ball<br>0.0000693 fig<br>0.0000318 lemon<br>0.0000192 piggy bank, penny bank |-|-|
 
 #### Test image #2
 
