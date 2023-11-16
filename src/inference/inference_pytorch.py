@@ -28,9 +28,6 @@ from transformer import PyTorchTransformer
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
 
-# from importlib import reload # noqa
-# reload(log) # noqa
-
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
