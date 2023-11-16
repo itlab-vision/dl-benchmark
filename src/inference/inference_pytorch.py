@@ -591,12 +591,14 @@ def main():
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
         report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
+                    log.info('Converting output tensor to process results')
                     result = prepare_output(result, compiled_model, args.output_names, args.task)
 
                     log.info('Inference results')
