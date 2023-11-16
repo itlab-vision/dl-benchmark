@@ -3,7 +3,6 @@ FROM ubuntu_for_dli
 WORKDIR /root/
 ARG TFLITE_VERSION=2.10.0
 ARG TF_VERSION=2.13.0
-ARG FRAMEWORK
 RUN pip3 install --upgrade pip && \
     pip3 install opencv-python requests PyYAML docker
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
