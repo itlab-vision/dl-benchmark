@@ -671,17 +671,17 @@
       <Task>node-classification</Task>
       <Name>GCN</Name>
       <Precision>FP32</Precision>
-      <SourceFramework>DGL (PyTorch)</SourceFramework>
+      <SourceFramework>DGL PyTorch</SourceFramework>
       <ModelPath>/mnt/datasets/model.pt</ModelPath>
       <WeightsPath></WeightsPath>
-      <Module>model.GCN</Module>
+      <Module>model.py</Module>
     </Model>
     <Dataset>
       <Name>Cora</Name>
       <Path>/mnt/datasets/data.bin</Path>
     </Dataset>
     <FrameworkIndependent>
-      <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
+      <InferenceFramework>DGL PyTorch</InferenceFramework>
       <BatchSize>1</BatchSize>
       <Device>CPU</Device>
       <IterationCount>10</IterationCount>

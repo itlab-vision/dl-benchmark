@@ -646,7 +646,7 @@
         <Path>./default_graph.bin</Path>
         </Dataset>
         <FrameworkIndependent>
-        <InferenceFramework>Deep Graph Library (DGL, PyTorch-based)</InferenceFramework>
+        <InferenceFramework>DGL PyTorch</InferenceFramework>
         <BatchSize>1</BatchSize>
         <Device>CPU</Device>
         <IterationCount>5</IterationCount>
