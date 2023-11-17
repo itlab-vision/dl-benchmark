@@ -631,4 +631,27 @@
             <ExecutionMode></ExecutionMode>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task>node-classification</Task>
+            <Name>spektral-test-model</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Spektral</SourceFramework>
+            <ModelPath>./working_dir_smoke/spektral/model.keras</ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Cora</Name>
+            <Path>./test_graph.bin</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Spektral</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+        </FrameworkDependent>
+    </Test>
 </Tests>
