@@ -14,7 +14,7 @@ import dgl
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
 from inference_tools.loop_tools import loop_inference
-from dgl_pytorch_auxiliary import get_device_to_infer, infer_slice
+from pytorch_auxiliary import get_device_to_infer, infer_slice
 from io_model_wrapper import DGLPyTorchWrapper
 from io_graphs_adapter import IOGprahAdapter
 

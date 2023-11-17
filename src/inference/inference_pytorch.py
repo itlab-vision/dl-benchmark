@@ -24,7 +24,7 @@ from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
-from dgl_pytorch_auxiliary import get_device_to_infer, infer_slice
+from pytorch_auxiliary import get_device_to_infer, infer_slice
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
