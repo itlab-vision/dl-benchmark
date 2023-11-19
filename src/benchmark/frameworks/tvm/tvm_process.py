@@ -37,11 +37,13 @@ class TVMProcess(ProcessHandler):
     def _fill_command_line(self):
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
+        layout = self._test.dep_parameters.layout
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
 
         common_params = (f'-i {dataset} -is {input_shape} -b {batch_size} '
-                         f'-ni {iteration} --report_path {self.report_path}')
+                         f'-ni {iteration} --report_path {self.report_path} '
+                         f'--layout {layout} ')
 
         input_name = self._test.dep_parameters.input_name
         common_params = TVMProcess._add_optional_argument_to_cmd_line(

@@ -435,6 +435,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -466,6 +467,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -496,6 +498,7 @@
             <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
+            <Layout>NCHW</Layout>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
@@ -528,6 +531,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>

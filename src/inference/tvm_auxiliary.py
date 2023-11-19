@@ -1,10 +1,7 @@
 import sys
 from pathlib import Path
-
 from time import time
-
 from scipy.special import softmax
-
 from inference_tools.loop_tools import loop_inference, get_exec_time
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
@@ -64,6 +61,7 @@ def create_dict_for_transformer(args):
         'norm': args.norm,
         'input_shape': args.input_shape,
         'batch_size': args.batch_size,
+        'layout': args.layout,
     }
     return dictionary
 

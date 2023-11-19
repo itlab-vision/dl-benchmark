@@ -1,10 +1,15 @@
 import argparse
-import logging as log
 import sys
 import traceback
 
 
 from tvm_converter import MXNetToTVMConverter
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from utils.logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -65,11 +70,6 @@ def create_dict_for_converter_mxnet(args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     try:
         converter = MXNetToTVMConverter(create_dict_for_converter_mxnet(args))

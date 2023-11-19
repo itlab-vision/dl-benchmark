@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 import tvm
@@ -20,6 +19,11 @@ from tvm_auxiliary import (create_dict_for_converter_mxnet,
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.model_converters.tvm_converter.tvm_converter import TVMConverter  # noqa: E402
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -129,9 +133,14 @@ def cli_argument_parser():
                         default='image_net_labels.json',
                         type=str,
                         dest='labels')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
+                        help='Parameter of channel swap (RGB to BGR by default).',
+                        default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
@@ -149,11 +158,6 @@ def cli_argument_parser():
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TVM', version=tvm.__version__)

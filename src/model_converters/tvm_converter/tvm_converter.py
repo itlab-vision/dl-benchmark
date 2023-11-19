@@ -1,7 +1,13 @@
-import logging as log
 import importlib
 import abc
 import warnings
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 class Converter(metaclass=abc.ABCMeta):
@@ -114,14 +120,20 @@ class ONNXToTVMConverter(Converter):
         self.onnx = importlib.import_module('onnx')
         super().__init__(args)
         self.framework = 'ONNX'
+        self.model_onnx = None
 
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
 
+    def get_input_name(self):
+        return self.model_onnx.graph.input[0].name
+
     def _convert_model_from_framework(self, target, dev):
         model_path = self.args['model_path']
+        input_shape = self.args['input_shape']
         model_onnx = self.onnx.load(model_path)
-        shape_dict = {self.args['input_name']: self.args['input_shape']}
+        self.model_onnx = model_onnx
+        shape_dict = {model_onnx.graph.input[0].name: input_shape}
         model, params = self.tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
         return model, params
 

@@ -88,6 +88,11 @@ def cli_argument_parser():
                         type=int,
                         nargs=4,
                         dest='input_shape')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
     parser.add_argument('--norm',
                         help='Flag to normalize input images'
                              '(use --mean and --std arguments to set'
@@ -131,8 +136,8 @@ def cli_argument_parser():
                         type=str,
                         dest='labels')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
+                        help='Parameter of channel swap (RGB to BGR as default).',
+                        default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
@@ -141,11 +146,6 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
-    parser.add_argument('--labels',
-                        help='Labels mapping file.',
-                        default=None,
-                        type=str,
-                        dest='labels')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',

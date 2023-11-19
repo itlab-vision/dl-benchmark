@@ -6,7 +6,6 @@ import traceback
 
 from pathlib import Path
 
-import onnx
 import tvm
 
 import postprocessing_data as pp
@@ -130,22 +129,22 @@ def cli_argument_parser():
                         default='image_net_labels.json',
                         type=str,
                         dest='labels')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
                         type=bool,
                         dest='raw_output')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
+                        help='Parameter of channel swap (RGB to BGR as default).',
+                        default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
-    parser.add_argument('--labels',
-                        help='Labels mapping file.',
-                        default=None,
-                        type=str,
-                        dest='labels')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
@@ -162,13 +161,15 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
     try:
+        converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
+        graph_module = converter.get_graph_module()
+        args.input_name = converter.get_input_name()
+
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
-        graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
