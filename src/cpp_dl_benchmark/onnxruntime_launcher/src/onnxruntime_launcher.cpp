@@ -198,7 +198,7 @@ void ONNXLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&
     tensors.resize(tensor_buffers.size());
     for (int i = 0; i < tensor_buffers.size(); ++i) {
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
-            const auto& buffer = tensor_buffers[i][j];
+            auto& buffer = tensor_buffers[i][j];
             std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(Ort::Value::CreateTensor(memory_info,
                                                           buffer.get<void>(),
@@ -230,22 +230,23 @@ std::vector<Ort::Value> ONNXLauncher::run_for_output(const int input_idx) {
                         io.output_names.size());
 }
 
-void ONNXLauncher::dump_output() {
-    std::vector<std::pair<const float*, size_t>> tmp;
-    for (int i = 0; i < tensors.size(); i++) {
-        std::string name = "output" + std::to_string(i);
-        std::ofstream file(name);
-        auto result = run_for_output(i);
-        auto raw_data = result[0].GetTensorData<float>();
+std::vector<OutputTensors> ONNXLauncher::get_output_tensors() {
+    std::vector<OutputTensors> outputs;
+
+    for (size_t idx = 0; idx < tensors.size(); ++idx) {
+        auto result = run_for_output(idx);
+        auto* raw_data = result[0].GetTensorData<float>();
         auto size = result[0].GetTensorTypeAndShapeInfo().GetElementCount();
-        if (file.is_open()) {
-            for (int j = 0; j < size; j++) {
-                file << std::to_string(raw_data[j]) << '\n';
-            }
-        }
-        else {
-            throw std::runtime_error("Something went wrong, can't open file");
-        }
-        file.close();
+
+        std::vector<int64_t> shape = result[0].GetTensorTypeAndShapeInfo().GetShape();
+        std::string name = std::string(io.output_names[0]);
+        std::vector<float> data(raw_data, raw_data + size);
+
+        std::vector<int> int_shape(shape.begin(), shape.end());
+        OutputTensors output({{size, int_shape, name, data}});
+
+        outputs.push_back(output);
     }
+
+    return outputs;
 }

@@ -154,7 +154,6 @@ class PyTorchToTVMConverter(TVMConverter):
         model_name = self.args['model_name']
         opt_lev = self.args['opt_level']
         module = 'torchvision.models'
-
         log.info('Get model from TorchVision')
         model = importlib.import_module(module).__getattribute__(model_name)
         pt_model = model(weights=True)
@@ -164,7 +163,6 @@ class PyTorchToTVMConverter(TVMConverter):
         scripted_model = torch.jit.trace(pt_model, input_data).eval()
         input_name = self.args['input_name']
         shape_list = [(input_name, input_shape)]
-
         log.info('Creating graph module from PyTorch model')
         model, params = tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
         with tvm.transform.PassContext(opt_level=opt_lev):
@@ -204,7 +202,6 @@ def main():
                 try:
                     log.info('Converting output tensor to print results')
                     res = prepare_output(result, args.task, args.output_names)
-
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
@@ -214,7 +211,6 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)
-
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
     except Exception:
         log.error(traceback.format_exc())
