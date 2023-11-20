@@ -6,7 +6,6 @@ import traceback
 from pathlib import Path
 
 import numpy as np
-import tensorflow.lite as tflite
 
 from io_adapter import IOAdapter
 from io_model_wrapper import TFLiteIOModelWrapperCpp
