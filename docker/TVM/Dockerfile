@@ -15,9 +15,9 @@ RUN export LD_LIBRARY_PATH=/root/miniconda3/envs/tvm-env/lib:${LD_LIBRARY_PATH}
 RUN conda config --add channels intel
 
 # Installing dependencies
-RUN pip3 install pycocotools docker PyYAML
+RUN python3 -m pip install pycocotools docker PyYAML
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
-RUN pip3 install gluoncv[full]
+RUN python3 -m pip install gluoncv[full]
 RUN python3 -m pip install opencv-python
    
 # Installing Apache-TVM 
