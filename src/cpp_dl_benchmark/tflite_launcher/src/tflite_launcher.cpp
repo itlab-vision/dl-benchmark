@@ -203,7 +203,7 @@ void TFLiteLauncher::run(const int input_idx) {
     }
 }
 
-std::vector<OutputTensors> TFLiteLauncher::get_output_description() {
+std::vector<OutputTensors> TFLiteLauncher::get_output_tensors() {
     run(0);
 
     std::vector<OutputTensors> outputs;

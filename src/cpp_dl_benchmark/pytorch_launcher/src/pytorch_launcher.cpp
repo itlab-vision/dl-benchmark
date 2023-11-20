@@ -128,3 +128,24 @@ void PytorchLauncher::run(const int input_idx) {
         torch::cuda::synchronize();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 }
+
+std::vector<OutputTensors> PytorchLauncher::get_output_tensors() {
+    const auto out = module.forward(tensors[0]);
+    if (out.isTuple()) {
+        throw std::runtime_error("Output dumping is supported only for models with one output!");
+    }
+
+    OutputTensors output;
+    const auto result = out.toTensor();
+    auto* raw_data = result.data_ptr<float>();
+    auto size = result.numel();
+
+    auto shape = result.sizes();
+    std::string name = "output";
+    std::vector<float> data(raw_data, raw_data + size);
+
+    std::vector<int> int_shape(shape.begin(), shape.end());
+    output.emplace_back(static_cast<size_t>(size), int_shape, name, data);
+
+    return {output};
+}

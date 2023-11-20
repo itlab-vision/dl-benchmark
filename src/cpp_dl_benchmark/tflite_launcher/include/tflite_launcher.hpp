@@ -34,7 +34,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override{};
 
-    std::vector<OutputTensors> get_output_description() override;
+    std::vector<OutputTensors> get_output_tensors() override;
 
 private:
     // Note that the model instance must outlive the

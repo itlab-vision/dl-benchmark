@@ -16,7 +16,8 @@ Processor Graphics, Intel Movidius Neural Compute Stick).
 
 DLI supports inference using the following frameworks:
 
-- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit] (C++ and Python APIs).
+- [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit]
+  (C++ and Python APIs).
 - [Intel® Optimization for Caffe][intel-caffe] (Python API).
 - [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
 - [TensorFlow Lite][tensorflow-lite] (C++ and Python APIs).
@@ -24,6 +25,7 @@ DLI supports inference using the following frameworks:
 - [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
+- [TVM][tvm] (Python API)
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -56,8 +58,7 @@ Please consider citing the following papers.
    Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
    Performance analysis methodology of deep neural networks
    inference on the example of an image classification problem //
-   Russian Supercomputing Days (RSD-2023). - 2023. (Accepted,
-   In Russian)
+   Russian Supercomputing Days (RSD-2023). - 2023. (In Russian)
 
 ## Repo structure
 
@@ -69,6 +70,7 @@ Please consider citing the following papers.
 
 - `docker` directory contains Dockerfiles.
 
+  - `Dockerfile` is the main Dockerfile.
   - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
   - `MXNet` is a directory of Dockerfiles for MXNet.
@@ -76,6 +78,7 @@ Please consider citing the following papers.
   - `OpenCV` is a directory of Dockerfiles for OpenCV.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
+  - `PyTorch` is a directory of Dockerfiles for PyTorch.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
 
@@ -169,6 +172,16 @@ Please consider citing the following papers.
 
 - `test` contains smoke tests.
 
+- `requirements.txt` is a list of special requirements for the DLI
+  benchmark without inference frameworks.
+
+- `requirements_ci.txt` is a list of requirements for continuous
+  integration.
+
+- `requirements_frameworks.txt` is a list of requirements to check
+  inference of deep neural networks using different frameworks
+  using smoke tests.
+
 ## Documentation
 
 The latest documentation for the Deep Learning Inference
@@ -211,6 +224,7 @@ Report questions, issues and suggestions, using:
 [mxnet]: https://mxnet.apache.org
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
 [pytorch]: https://pytorch.org
+[tvm]: https://tvm.apache.org
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli

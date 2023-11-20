@@ -354,4 +354,35 @@
             <DelegateOptions></DelegateOptions>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Framework></Framework>
+            <Normalize></Normalize>
+            <Mean></Mean>
+            <Std></Std>
+            <ChannelSwap></ChannelSwap>
+            <OptimizationLevel></OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
 </Tests>

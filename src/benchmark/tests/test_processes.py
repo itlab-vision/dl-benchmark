@@ -7,6 +7,7 @@ from src.benchmark.frameworks.framework_wrapper_registry import FrameworkWrapper
 from src.benchmark.frameworks.intel_caffe.intel_caffe_process import IntelCaffeProcess
 from src.benchmark.frameworks.known_frameworks import KnownFrameworks
 from src.benchmark.frameworks.mxnet.mxnet_process import MXNetProcess
+from src.benchmark.frameworks.tvm.tvm_process import TVMProcess
 from src.benchmark.frameworks.onnx_runtime.onnx_runtime_process import OnnxRuntimeProcess
 from src.benchmark.frameworks.onnx_runtime_python.onnx_runtime_python_process import ONNXRuntimePythonProcess
 from src.benchmark.frameworks.opencv_dnn_cpp.opencv_dnn_cpp_process import OpenCVDNNCppProcess
@@ -75,6 +76,7 @@ def test_python_version(os, mocker):
                                                  ['MXNet', MXNetProcess],
                                                  ['OpenCV DNN Python', OpenCVDNNPythonProcess],
                                                  ['ONNX Runtime Python', ONNXRuntimePythonProcess],
+                                                 ['TVM', TVMProcess],
                                                  ])
 @pytest.mark.parametrize('complex_test', [['sync', 'handwritten', None, SyncOpenVINOProcess],
                                           ['async', 'handwritten', None, AsyncOpenVINOProcess],

@@ -230,7 +230,7 @@ std::vector<Ort::Value> ONNXLauncher::run_for_output(const int input_idx) {
                         io.output_names.size());
 }
 
-std::vector<OutputTensors> ONNXLauncher::get_output_description() {
+std::vector<OutputTensors> ONNXLauncher::get_output_tensors() {
     std::vector<OutputTensors> outputs;
 
     for (size_t idx = 0; idx < tensors.size(); ++idx) {

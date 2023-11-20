@@ -47,7 +47,7 @@ public:
     void warmup_inference();
     int evaluate(int iterations_num, uint64_t time_limit_ns);
 
-    virtual std::vector<OutputTensors> get_output_description() = 0;
+    virtual std::vector<OutputTensors> get_output_tensors() = 0;
     void dump_output(const std::vector<OutputTensors>& outputs, const std::string& filename = "output.json");
 
     std::vector<double> get_latencies() const;
