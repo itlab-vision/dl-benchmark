@@ -15,29 +15,31 @@ from inference_tools.loop_tools import loop_inference, get_exec_time
 from reporter.report_writer import ReportWriter
 
 
-TUDATASETS = ['tudataset_'+dst+'' for dst in ['AIDS', 'alchemy_full', 'aspirin', 'benzene', 'BZR',
+TUDATASETS = ['tudataset_' + dst for dst in [
+              'AIDS', 'alchemy_full', 'aspirin', 'benzene', 'BZR',
               'BZR_MD', 'COX2', 'COX2_MD', 'DHFR', 'DHFR_MD', 'ER_MD', 'ethanol', 'FRANKENSTEIN',
-              'malonaldehyde', 'MCF-7', 'MCF-7H', 'MOLT-4', 'MOLT-4H', 'Mutagenicity', 'MUTAG', 
-              'naphthalene', 'NCI1', 'NCI109', 'NCI-H23', 'NCI-H23H', 'OVCAR-8', 'OVCAR-8H', 
-              'P388', 'P388H', 'PC-3', 'PC-3H', 'PTC_FM', 'PTC_FR', 'PTC_MM', 'PTC_MR', 'QM9', 
-              'salicylic_acid', 'SF-295', 'SF-295H', 'SN12C', 'SN12CH', 'SW-620', 'SW-620H', 
-              'toluene', 'Tox21_AhR_training', 'Tox21_AhR_testing', 'Tox21_AhR_evaluation', 
-              'Tox21_AR_training', 'Tox21_AR_testing', 'Tox21_AR_evaluation', 'Tox21_AR-LBD_training', 
-              'Tox21_AR-LBD_testing', 'Tox21_AR-LBD_evaluation', 'Tox21_ARE_training', 'Tox21_ARE_testing', 
-              'Tox21_ARE_evaluation', 'Tox21_aromatase_training', 'Tox21_aromatase_testing', 'Tox21_aromatase_evaluation', 
-              'Tox21_ATAD5_training', 'Tox21_ATAD5_testing', 'Tox21_ATAD5_evaluation', 'Tox21_ER_training', 
-              'Tox21_ER_testing', 'Tox21_ER_evaluation', 'Tox21_ER-LBD_training', 'Tox21_ER-LBD_testing', 
-              'Tox21_ER-LBD_evaluation', 'Tox21_HSE_training', 'Tox21_HSE_testing', 'Tox21_HSE_evaluation', 
-              'Tox21_MMP_training', 'Tox21_MMP_testing', 'Tox21_MMP_evaluation', 'Tox21_p53_training', 
-              'Tox21_p53_testing', 'Tox21_p53_evaluation', 'Tox21_PPAR-gamma_training', 'Tox21_PPAR-gamma_testing', 
-              'Tox21_PPAR-gamma_evaluation', 'UACC257', 'UACC257H', 'uracil', 'Yeast', 'YeastH', 'ZINC_full', 
-              'ZINC_test', 'ZINC_train', 'ZINC_val', 'DD', 'ENZYMES', 'KKI', 'OHSU', 'Peking_1', 'PROTEINS', 
+              'malonaldehyde', 'MCF-7', 'MCF-7H', 'MOLT-4', 'MOLT-4H', 'Mutagenicity', 'MUTAG',
+              'naphthalene', 'NCI1', 'NCI109', 'NCI-H23', 'NCI-H23H', 'OVCAR-8', 'OVCAR-8H',
+              'P388', 'P388H', 'PC-3', 'PC-3H', 'PTC_FM', 'PTC_FR', 'PTC_MM', 'PTC_MR', 'QM9',
+              'salicylic_acid', 'SF-295', 'SF-295H', 'SN12C', 'SN12CH', 'SW-620', 'SW-620H',
+              'toluene', 'Tox21_AhR_training', 'Tox21_AhR_testing', 'Tox21_AhR_evaluation',
+              'Tox21_AR_training', 'Tox21_AR_testing', 'Tox21_AR_evaluation', 'Tox21_AR-LBD_training',
+              'Tox21_AR-LBD_testing', 'Tox21_AR-LBD_evaluation', 'Tox21_ARE_training', 'Tox21_ARE_testing',
+              'Tox21_ARE_evaluation', 'Tox21_aromatase_training', 'Tox21_aromatase_testing',
+              'Tox21_aromatase_evaluation', 'Tox21_ATAD5_training', 'Tox21_ATAD5_testing',
+              'Tox21_ATAD5_evaluation', 'Tox21_ER_training', 'Tox21_ER_testing', 'Tox21_ER_evaluation',
+              'Tox21_ER-LBD_training', 'Tox21_ER-LBD_testing', 'Tox21_ER-LBD_evaluation',
+              'Tox21_HSE_training', 'Tox21_HSE_testing', 'Tox21_HSE_evaluation', 'Tox21_MMP_training',
+              'Tox21_MMP_testing', 'Tox21_MMP_evaluation', 'Tox21_p53_training', 'Tox21_p53_testing',
+              'Tox21_p53_evaluation', 'Tox21_PPAR-gamma_training', 'Tox21_PPAR-gamma_testing',
+              'Tox21_PPAR-gamma_evaluation', 'UACC257', 'UACC257H', 'uracil', 'Yeast', 'YeastH', 'ZINC_full',
+              'ZINC_test', 'ZINC_train', 'ZINC_val', 'DD', 'ENZYMES', 'KKI', 'OHSU', 'Peking_1', 'PROTEINS',
               'PROTEINS_full', 'COIL-DEL', 'COIL-RAG', 'Cuneiform', 'Fingerprint', 'FIRSTMM_DB', 'Letter-high',
-              'Letter-low', 'Letter-med', 'MSRC_9', 'MSRC_21', 'MSRC_21C', 'COLLAB', 'dblp_ct1', 'dblp_ct2', 
-              'DBLP_v1', 'deezer_ego_nets', 'facebook_ct1', 'facebook_ct2', 'github_stargazers', 
-              'highschool_ct1', 'highschool_ct2', 'IMDB-BINARY', 'IMDB-MULTI', 'infectious_ct1', 
-              'infectious_ct2', 'mit_ct1', 'mit_ct2', 'REDDIT-BINARY', 'REDDIT-MULTI-5K', 'REDDIT-MULTI-12K', 
-              'reddit_threads', 'tumblr_ct1', 'tumblr_ct2', 'twitch_egos', 'TWITTER-Real-Graph-Partial', 
+              'Letter-low', 'Letter-med', 'MSRC_9', 'MSRC_21', 'MSRC_21C', 'COLLAB', 'dblp_ct1', 'dblp_ct2',
+              'DBLP_v1', 'deezer_ego_nets', 'facebook_ct1', 'facebook_ct2', 'github_stargazers',
+              'highschool_ct1', 'highschool_ct2', 'IMDB-BINARY', 'IMDB-MULTI', 'infectious_ct1',
+              'infectious_ct2', 'mit_ct1', 'mit_ct2', 'REDDIT-BINARY', 'REDDIT-MULTI-5K', 'REDDIT-MULTI-12K',
+              'reddit_threads', 'tumblr_ct1', 'tumblr_ct2', 'twitch_egos', 'TWITTER-Real-Graph-Partial',
               'COLORS-3', 'SYNTHETIC', 'SYNTHETICnew', 'Synthie', 'TRIANGLES']]
 
 
@@ -46,7 +48,7 @@ class CustomDataset(Dataset):
         self.graph_path = gpath
 
         super().__init__(**kwargs)
-    
+
     def download(self):
         pass
 
@@ -54,6 +56,7 @@ class CustomDataset(Dataset):
         output = []
         output.append(load_binary(self.graph_path))
         return output
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -109,9 +112,10 @@ def cli_argument_parser():
 
     return args
 
+
 def prepare_input_loader(input_, batch_size):
     file_type = str(input_).split('.')[-1]
-    if file_type != "bin":
+    if file_type != 'bin':
         if input_ in ['cora', 'citeseer', 'pubmed']:
             dataset = spektral.datasets.citation.Citation(input_)
         elif input_ in ['ppi', 'reddit']:
@@ -142,6 +146,7 @@ def prepare_input_loader(input_, batch_size):
 
     return input_loader
 
+
 def process_output(result, task):
     if task == 'node-classification':
         _result = result.numpy()
@@ -155,22 +160,21 @@ def process_output(result, task):
             for j in range(len(_result[0])):
                 __result['Feature ' + str(j + 1)].append(_result[i][j])
 
-        f_result = pd.DataFrame(__result)
-        with open('out_processed.csv', 'w+') as file:
-            f_result.to_csv(file, sep=' ', encoding='utf-8')
+        pd_result = pd.DataFrame(__result)
+        pd.set_option('display.max_rows', 20)
 
-        log.info('Processed results saved to out_processed.csv')
+        return pd_result
 
-        return __result
 
 def model_load(model_path):
     log.info(f'Loading network files:\n\t {model_path}')
     file_type = str(model_path).split('.')[-1]
     if file_type != 'keras':
         raise ValueError('Only .keras model save file type is supported.')
-    compiled_model = tf.keras.saving.load_model(model_path, compile = True)
+    compiled_model = tf.keras.saving.load_model(model_path, compile=True)
 
     return compiled_model
+
 
 def inference_spektral(model, number_iter, input_loader, test_duration):
     result = None
@@ -187,10 +191,12 @@ def inference_spektral(model, number_iter, input_loader, test_duration):
 
     return result, time_infer
 
+
 def inference_iteration(input_loader, model):
     slice_input, _ = input_loader.__next__()
     _, exec_time = infer_slice(model, slice_input)
     return exec_time
+
 
 @get_exec_time()
 def infer_slice(model, slice_input):
@@ -204,7 +210,7 @@ def main():
     args = cli_argument_parser()
 
     if args.device != 'CPU':
-        log.warning("Modern Tensorflow required for Spektral doesn't support any devices but CPU. Device will be switched.")
+        log.warning('Modern Tensorflow required for Spektral supports only CPU. Device will be switched.')
         args.device = 'CPU'
 
     report_writer = ReportWriter()
@@ -227,9 +233,8 @@ def main():
 
     if not args.raw_output:
         if args.number_iter == 1:
-            log.info('Inference results:')
-            log.info(result.numpy())
             result = process_output(result, args.task)
+            log.info(f'Inference results:\n{result}')
 
     log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
