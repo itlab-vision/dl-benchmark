@@ -33,8 +33,6 @@ class SpektralProcess(ProcessHandler):
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
 
-        common_params = self._add_optional_argument_to_cmd_line(common_params, '-d', device)
-
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
