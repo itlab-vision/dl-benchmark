@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
@@ -16,6 +15,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import ONNXIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import ONNXRuntimeTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 ORT_EXECUTION_MODE = {
     'ORT_SEQUENTIAL': onnx_rt.ExecutionMode.ORT_SEQUENTIAL,
@@ -291,11 +295,6 @@ def prepare_output(result, output_names, model_name, task, args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='OnnxRuntime', version=onnx_rt.__version__)

@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
@@ -13,6 +12,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import IntelCaffeIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import IntelCaffeTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -46,7 +50,7 @@ def cli_argument_parser():
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
                         help='Number of top results',
-                        default=10,
+                        default=5,
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
@@ -89,8 +93,9 @@ def cli_argument_parser():
                         dest='mean')
     parser.add_argument('--input_scale',
                         help='Parameter input scale',
-                        default=1.0,
+                        default=[1, 1, 1],
                         type=float,
+                        nargs=3,
                         dest='input_scale')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
@@ -179,11 +184,6 @@ def create_dict_for_transformer(args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='Caffe', version=caffe.__version__)
@@ -221,7 +221,8 @@ def main():
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
-        report_writer.update_execution_results(**inference_result, iterations_num=args.number_iter)
+        report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
@@ -232,6 +233,7 @@ def main():
                     io.process_output(result, log)
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
     except Exception:

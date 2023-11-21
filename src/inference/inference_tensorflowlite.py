@@ -1,25 +1,29 @@
 import argparse
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
 
+import postprocessing_data as pp
+import preprocessing_data as prep
+from inference_tools.loop_tools import get_exec_time
 from inference_tools.loop_tools import loop_inference
+from io_adapter import IOAdapter
+from io_model_wrapper import TensorFlowLiteIOModelWrapper
 from reporter.report_writer import ReportWriter
+from transformer import TensorFlowLiteTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 try:
     import tensorflow.lite as tflite
 except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
-    log.info('Using TFLite from tflite_runtime package')
-from inference_tools.loop_tools import get_exec_time
 
-import postprocessing_data as pp
-import preprocessing_data as prep
-from io_adapter import IOAdapter
-from io_model_wrapper import TensorFlowLiteIOModelWrapper
-from transformer import TensorFlowLiteTransformer
+    log.info('Using TFLite from tflite_runtime package')
 
 
 def cli_argument_parser():
@@ -230,8 +234,6 @@ def prepare_output(result, output_names, task):
 
 
 def main():
-    log.basicConfig(format='[ %(levelname)s ] %(message)s',
-                    level=log.INFO, stream=sys.stdout)
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='TF-Lite')
