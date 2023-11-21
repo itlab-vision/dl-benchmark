@@ -77,7 +77,11 @@ void PytorchLauncher::read(const std::string& model_file, const std::string& wei
     }
 
     torch::Device torch_device(device_type, 0);
-    module = torch::jit::load(model_file, torch_device);
+    try {
+        module = torch::jit::load(model_file, torch_device);
+    } catch (const c10::Error& e) {
+        throw std::runtime_error("Failed to read model " + model_file);
+    }
     module.eval();
 }
 

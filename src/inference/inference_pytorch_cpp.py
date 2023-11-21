@@ -196,7 +196,7 @@ def create_dict_from_args_for_process(args):
 
 def prepare_images_for_benchmark(inputs, tmp_dir):
     if os.path.isdir(inputs[0]):
-        return inputs
+        return inputs[0]
     for path in inputs[0].split(','):
         shutil.copy2(path, tmp_dir)
     return tmp_dir
@@ -242,9 +242,7 @@ def main():
         io.prepare_input(compiled_model, args.input)
 
         log.info('Preparing images for benchmark in temporary directory')
-        prepare_images_for_benchmark(args.input, tmp_input.name)
-
-        args.input = tmp_input.name
+        args.input = prepare_images_for_benchmark(args.input, tmp_input.name)
 
         log.info('Initializing PyTorch process')
         proc = PyTorchProcess()
