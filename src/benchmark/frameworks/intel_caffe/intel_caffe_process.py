@@ -38,6 +38,7 @@ class IntelCaffeProcess(ProcessHandler):
                                                                              channel_swap)
         mean = self._test.dep_parameters.mean
         common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--mean', mean)
+
         input_scale = self._test.dep_parameters.input_scale
         common_params = IntelCaffeProcess._add_optional_argument_to_cmd_line(common_params, '--input_scale',
                                                                              input_scale)

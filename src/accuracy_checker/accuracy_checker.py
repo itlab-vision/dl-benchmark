@@ -1,5 +1,4 @@
 import argparse
-import logging as log
 import sys
 from pathlib import Path
 
@@ -11,6 +10,8 @@ from process import ProcessHandler
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
+
+log = configure_logger()
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -104,7 +105,6 @@ def accuracy_check(executor_type, test_list, output_handler, log):
 
 
 if __name__ == '__main__':
-    configure_logger()
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()

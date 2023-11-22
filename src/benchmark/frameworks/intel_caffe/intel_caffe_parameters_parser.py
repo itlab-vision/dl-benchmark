@@ -52,10 +52,10 @@ class IntelCaffeParameters(FrameworkParameters):
             else:
                 raise ValueError('Mean can only take values: list of 3 float elements.')
         if self._parameter_is_not_none(input_scale):
-            if self._float_value_is_correct(input_scale):
+            if self._input_scale_is_correct(input_scale):
                 self.input_scale = input_scale
             else:
-                raise ValueError('Input scale can only take values: float greater than zero.')
+                raise ValueError('Input scale can only take values: list of 3 float elements.')
         if self._parameter_is_not_none(thread_count):
             if self._int_value_is_correct(thread_count):
                 self.nthreads = thread_count
