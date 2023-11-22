@@ -33,14 +33,13 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model.',
+                        help='Path to an .json file with a trained model or to an .lib file.',
                         type=str,
                         required=True,
                         dest='model_path')
     parser.add_argument('-w', '--weights',
                         help='Path to an .params file with a trained weights.',
                         type=str,
-                        required=True,
                         dest='model_params')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on CPU or '

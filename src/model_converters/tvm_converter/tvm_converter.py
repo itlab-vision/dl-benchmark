@@ -50,15 +50,23 @@ class Converter(metaclass=abc.ABCMeta):
         with open(f'{model_name}.json', 'w') as fo:
             fo.write(self.tvm.ir.save_json(self.mod))
 
+    def get_graph_module_from_lib(self, lib):
+        _, dev = self._get_target_device()
+        self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+        return self.graph
+
     def get_graph_module(self):
         target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
-        mod, params = self._convert_model_from_framework(target, dev)
+        model = self._convert_model_from_framework(target, dev)
         log.info(f'Creating graph module from {self.framework} model')
-        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
-            lib = self.tvm.relay.build(mod, target=target, params=params)
-        self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return self.graph
+        if len(model) == 2:
+            with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+                lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+            self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+            return self.graph
+        else:
+            return self.get_graph_module_from_lib(model[0])
 
 
 class PyTorchToTVMConverter(Converter):
@@ -204,11 +212,23 @@ class TVMConverter(Converter):
         self.params = params
         return self.mod, self.params
 
+    def _get_lib_format_tvm_model(self):
+        lib = self.tvm.runtime.load_module(self.args['model_path'])
+        return lib
+
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
 
     def _convert_model_from_framework(self, target, dev):
-        return self._get_deserialized_tvm_model()
+        model_name = self.args['model_path']
+        params = self.args['model_path']
+        file_type = model_name.split('.')[-1]
+        if (file_type == 'json' and params is not None):
+            return self._get_deserialized_tvm_model()
+        elif (file_type == 'so'):
+            return [self._get_lib_format_tvm_model()]
+        else:
+            raise ValueError('Wrong arguments.')
 
 
 class CaffeToTVMConverter(Converter):
