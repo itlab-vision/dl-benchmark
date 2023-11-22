@@ -2,7 +2,8 @@ import argparse
 import logging as log
 import sys
 
-from tvm import auto_scheduler
+import tvm
+from tvm import auto_scheduler, relay
 
 import utils
 
@@ -30,10 +31,14 @@ def cli_argument_parser():
                         type=int)
     parser.add_argument('-l', '--log',
                         help='Path to the file for logging optimization results.',
-                        required=True,
                         default='auto-scheduler.log',
                         type=str,
                         dest='log_file')
+    parser.add_argument('-o', '--output',
+                        help='Path to the file to save the model.',
+                        default='lib.so',
+                        type=str,
+                        dest='output_file')
 
     parser.add_argument('--num_cores',
                         help='The number of device cores.',
@@ -102,6 +107,11 @@ def cli_argument_parser():
                         type=int,
                         default=3)
 
+    parser.add_argument('--per_round',
+                        help='The number of measurement trials per round.',
+                        default=64,
+                        type=int)
+
     parser.add_argument('--number',
                         help='The number of times to run the generated code for taking average.'
                              'We call these runs as one repeat of measurement.',
@@ -164,7 +174,7 @@ def extract_tasks(mod, params, target, num_cores, vector_unit_bytes,
     return tasks, task_weights
 
 
-def tune_tasks(tasks, task_weights, n_trials, log_file, number, repeat, strategy,
+def tune_tasks(tasks, task_weights, n_trials, per_round, log_file, number, repeat, strategy,
                load_model_file, load_log_file, alpha, beta, backward_window_size,
                search_policy, search_policy_params, adaptive_training, per_task_early_stopping):
     tuner = auto_scheduler.TaskScheduler(tasks, task_weights, strategy=strategy, load_model_file=load_model_file,
@@ -172,7 +182,8 @@ def tune_tasks(tasks, task_weights, n_trials, log_file, number, repeat, strategy
                                          backward_window_size=backward_window_size)
     tune_option = auto_scheduler.TuningOptions(num_measure_trials=n_trials,
                                                runner=auto_scheduler.LocalRunner(number=number, repeat=repeat),
-                                               verbose=0,
+                                               verbose=1,
+                                               num_measures_per_round=per_round,
                                                measure_callbacks=[auto_scheduler.RecordToFile(log_file)])
 
     tuner.tune(tune_option, search_policy=search_policy, search_policy_params=search_policy_params,
@@ -198,9 +209,15 @@ def main():
                                         args.opt_level)
 
     log.info('Neural network tuning')
-    tune_tasks(tasks, task_weights, args.n_trials, args.log_file, args.number, args.repeat, args.strategy,
-               args.load_model_file, args.load_log_file, args.alpha, args.beta, args.backward_window_size,
-               args.search_policy, args.search_policy_params, args.adaptive_training, args.per_task_early_stopping)
+    tune_tasks(tasks, task_weights, args.n_trials, args.per_round, args.log_file, args.number, args.repeat,
+               args.strategy, args.load_model_file, args.load_log_file, args.alpha, args.beta,
+               args.backward_window_size, args.search_policy, args.search_policy_params, args.adaptive_training,
+               args.per_task_early_stopping)
+
+    with auto_scheduler.ApplyHistoryBest(args.log_file):
+        with tvm.transform.PassContext(opt_level=args.opt_level, config={"relay.backend.use_auto_scheduler": True}):
+            lib = relay.build(mod, target=args.target, params=params)
+    lib.export_library(args.output_file)
 
 
 if __name__ == '__main__':
