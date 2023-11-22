@@ -163,9 +163,9 @@ def main():
                args.database, args.cost_model, args.task_scheduler)
 
     database = ms.database.JSONDatabase(
-        f"{args.work_dir}/database_workload.json",
-        f"{args.work_dir}/database_tuning_record.json",
-        allow_missing=False
+        f'{args.work_dir}/database_workload.json',
+        f'{args.work_dir}/database_tuning_record.json',
+        allow_missing=False,
     )
     with tvm.transform.PassContext(opt_level=args.opt_level):
         lib = ms.relay_integration.compile_relay(database, mod, args.target, params)

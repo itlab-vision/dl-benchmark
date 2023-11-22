@@ -215,7 +215,7 @@ def main():
                args.per_task_early_stopping)
 
     with auto_scheduler.ApplyHistoryBest(args.log_file):
-        with tvm.transform.PassContext(opt_level=args.opt_level, config={"relay.backend.use_auto_scheduler": True}):
+        with tvm.transform.PassContext(opt_level=args.opt_level, config={'relay.backend.use_auto_scheduler': True}):
             lib = relay.build(mod, target=args.target, params=params)
     lib.export_library(args.output_file)
 
