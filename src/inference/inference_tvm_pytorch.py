@@ -26,7 +26,6 @@ from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
 
-
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
