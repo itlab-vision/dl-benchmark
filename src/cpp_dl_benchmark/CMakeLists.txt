@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 
 project(cpp_dl_benchmark CXX)
 
@@ -19,6 +19,7 @@ option(BUILD_TFLITE_XNNPACK_LAUNCHER "Build TensorFlow Lite with XNNPack delegat
 option(BUILD_TFLITE_GPU_LAUNCHER "Build TensorFlow Lite with GPU Delegate launcher" OFF)
 option(BUILD_PYTORCH_LAUNCHER "Build PyTorch launcher" OFF)
 option(BUILD_PYTORCH_TENSORRT_LAUNCHER "Build PyTorch-TensorRT launcher" OFF)
+option(BUILD_RKNN_LAUNCHER "Build RKNN launcher" OFF)
 
 include(CMakeParseArguments)
 
@@ -69,6 +70,7 @@ find_package(CMakeScripts REQUIRED
              NO_CMAKE_FIND_ROOT_PATH
              NO_DEFAULT_PATH)
 find_package(OpenCV REQUIRED core imgproc imgcodecs)
+find_package(nlohmann_json REQUIRED HINTS /usr/lib/cmake)
 
 add_subdirectory(common)
 add_subdirectory(thirdparty/gflags)
@@ -98,4 +100,8 @@ endif()
 
 if (BUILD_PYTORCH_LAUNCHER OR BUILD_PYTORCH_TENSORRT_LAUNCHER)
     add_subdirectory(pytorch_launcher)
+endif()
+
+if (BUILD_RKNN_LAUNCHER)
+    add_subdirectory(rknn_launcher)
 endif()
