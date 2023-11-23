@@ -27,7 +27,6 @@ from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
 
-
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
@@ -169,7 +168,6 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
-
 
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
