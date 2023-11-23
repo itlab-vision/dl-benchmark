@@ -186,6 +186,7 @@ def main():
                 try:
                     log.info('Converting output tensor to print results')
                     res = prepare_output(result, args.task, args.output_names, args.not_softmax)
+
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
