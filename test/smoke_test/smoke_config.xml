@@ -509,8 +509,8 @@
             <Name>efficientnet_b0</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>./working_dir_smoke/efficientnet_b0.json</ModelPath>
-            <WeightsPath>./working_dir_smoke/efficientnet_b0.params</WeightsPath>
+            <ModelPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
