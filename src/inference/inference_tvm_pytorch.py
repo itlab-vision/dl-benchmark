@@ -147,7 +147,7 @@ def cli_argument_parser():
                         type=bool,
                         dest='raw_output')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (RGB to BGR as default).',
+                        help='Parameter of channel swap (RGB to BGR by default).',
                         default=[2, 1, 0],
                         type=int,
                         nargs=3,

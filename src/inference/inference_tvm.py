@@ -33,7 +33,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model or to an .lib file.',
+                        help='Path to an .json file with a trained model or to an .so file.',
                         type=str,
                         required=True,
                         dest='model_path')
@@ -167,11 +167,14 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
+
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         converter = TVMConverter(create_dict_for_converter_mxnet(args))
         graph_module = converter.get_graph_module()
+
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
+
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, infer_time = inference_tvm(graph_module,
                                            args.number_iter,
@@ -184,6 +187,7 @@ def main():
                 try:
                     log.info('Converting output tensor to print results')
                     res = prepare_output(result, args.task, args.output_names, args.not_softmax)
+
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:

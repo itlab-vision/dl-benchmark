@@ -1,9 +1,12 @@
 import argparse
-import logging as log
 import sys
 import traceback
 
 from tvm_converter import CaffeToTVMConverter
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from utils.logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -46,6 +49,11 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('-op', '--output_dir',
+                        help='Path to save the model.',
+                        default=None,
+                        type=str,
+                        dest='output_dir')
     args = parser.parse_args()
     return args
 
@@ -59,16 +67,12 @@ def create_dict_for_converter_caffe(args):
         'model_params': args.model_params,
         'device': args.device,
         'opt_level': 0,
+        'output_dir': args.output_dir,
     }
     return dictionary
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     try:
         converter = CaffeToTVMConverter(create_dict_for_converter_caffe(args))

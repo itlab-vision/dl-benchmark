@@ -194,7 +194,14 @@ class TVMProcessTVMFormat(TVMProcess):
     def _fill_command_line(self):
         model_json = self._test.model.model
         model_params = self._test.model.weight
-        common_params = (f'-m {model_json} -w {model_params} ')
+
+        if model_json.split('.')[-1] == 'json':
+            common_params = (f'-m {model_json} -w {model_params} ')
+        elif model_json.split('.')[-1] == 'so':
+            common_params = (f'-m {model_json} ')
+        else:
+            raise ValueError('Wrong arguments.')
+
         path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit

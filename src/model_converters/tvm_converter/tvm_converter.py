@@ -2,6 +2,7 @@ import importlib
 import abc
 import warnings
 import sys
+import os
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent.joinpath('utils')))
@@ -43,11 +44,22 @@ class Converter(metaclass=abc.ABCMeta):
 
     def save_tvm_model(self):
         model_name = self.args['model_name']
+        path_save_model = self.args['output_dir']
+
+        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
+        if path_save_model is None:
+            path_save_model = os.getcwd()
+        path_save_model = os.path.join(path_save_model, model_name)
+
+        if not os.path.exists(path_save_model):
+            os.mkdir(path_save_model)
+
         log.info(f'Saving weights of the model {model_name}')
-        with open(f'{model_name}.params', 'wb') as fo:
+        with open(f'{path_save_model}/{model_name}.params', 'wb') as fo:
             fo.write(self.tvm.relay.save_param_dict(self.params))
+
         log.info(f'Saving model {model_name}')
-        with open(f'{model_name}.json', 'w') as fo:
+        with open(f'{path_save_model}/{model_name}.json', 'w') as fo:
             fo.write(self.tvm.ir.save_json(self.mod))
 
     def get_graph_module_from_lib(self, lib):
@@ -59,6 +71,7 @@ class Converter(metaclass=abc.ABCMeta):
         target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
         model = self._convert_model_from_framework(target, dev)
+
         log.info(f'Creating graph module from {self.framework} model')
         if len(model) == 2:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):

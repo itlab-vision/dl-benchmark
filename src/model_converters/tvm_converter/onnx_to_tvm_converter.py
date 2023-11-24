@@ -47,6 +47,11 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('-op', '--output_dir',
+                        help='Path to save the model.',
+                        default=None,
+                        type=str,
+                        dest='output_dir')
     args = parser.parse_args()
     return args
 
@@ -59,6 +64,7 @@ def create_dict_for_converter_onnx(args):
         'model_path': args.model_path,
         'device': args.device,
         'opt_level': 0,
+        'output_dir': args.output_dir,
     }
     return dictionary
 
