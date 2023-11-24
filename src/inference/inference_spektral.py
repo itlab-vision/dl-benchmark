@@ -13,7 +13,8 @@ from reporter.report_writer import ReportWriter
 from io_adapter_spektral import IOAdapter_Spektral
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
-from logger_conf import configure_logger
+from logger_conf import configure_logger   # noqa: E402
+
 
 log = configure_logger()
 
@@ -118,7 +119,7 @@ def main():
     io.prepare_input(args.input)
 
     result, inference_time = inference_spektral(model, args.number_iter, io.get_slice_input, args.time)
-    
+
     log.info('Computing performance metrics')
     inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
 

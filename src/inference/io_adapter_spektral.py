@@ -34,6 +34,7 @@ TUDATASETS = ['tudataset_' + dst for dst in [
               'reddit_threads', 'tumblr_ct1', 'tumblr_ct2', 'twitch_egos', 'TWITTER-Real-Graph-Partial',
               'COLORS-3', 'SYNTHETIC', 'SYNTHETICnew', 'Synthie', 'TRIANGLES']]
 
+
 class CustomDataset(spektral.data.Dataset):
     def __init__(self, gpath, **kwargs):
         self.graph_path = gpath
@@ -47,6 +48,7 @@ class CustomDataset(spektral.data.Dataset):
         output = []
         output.append(spektral.utils.io.load_binary(self.graph_path))
         return output
+
 
 class IOAdapter_Spektral(metaclass=abc.ABCMeta):
     def __init__(self, args):

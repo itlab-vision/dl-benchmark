@@ -24,7 +24,6 @@ class SpektralProcess(ProcessHandler):
         model = self._test.model.model
         dataset = self._test.dataset.path if self._test.dataset else None
         batch_size = self._test.indep_parameters.batch_size
-        device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
 
