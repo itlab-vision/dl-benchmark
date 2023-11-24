@@ -26,14 +26,12 @@ RUN python3 -m pip install apache-tvm==0.14.dev264
 # ARG
 ARG TORCH_VERSION=2.0.1
 ARG TORCHVISION_VERSION=0.15.2
-ARG TF_VERSION=2.14.0
 ARG TFLite_VERSION=2.14.0
 ARG MXNET_VERSION=1.9.1
 ARG ONNX_VERSION=1.15.0
 ARG CAFFE_VERSION=1.1.0
 
 ARG PyTorch
-ARG Tensorflow
 ARG TFLite
 ARG MXNet
 ARG ONNX
@@ -41,10 +39,6 @@ ARG CAFFE
 
 RUN if [ "${PyTorch}" = "true"  ]; then \
     python3 -m pip install torch==${TORCH_VERSION} torchvision==${TORCHVISION_VERSION}; \
-    fi
-
-RUN if [ "$Tensorflow" = "true" ]; then \
-    python3 -m pip install tensorflow==${TF_VERSION}; \
     fi
     
 RUN if [ "$TFLite" = "true" ]; then \
