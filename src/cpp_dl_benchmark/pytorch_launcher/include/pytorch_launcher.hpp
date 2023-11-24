@@ -32,7 +32,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override;
 
-    void dump_output() override{};
+    void dump_output() override;
 
 private:
     torch::jit::script::Module module;

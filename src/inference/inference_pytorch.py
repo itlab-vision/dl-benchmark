@@ -25,6 +25,11 @@ from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
+
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
 
@@ -482,11 +487,6 @@ def prepare_output(result, model, output_names, task):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='PyTorch', version=get_torch_version())
@@ -591,12 +591,14 @@ def main():
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
         report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
+                    log.info('Converting output tensor to process results')
                     result = prepare_output(result, compiled_model, args.output_names, args.task)
 
                     log.info('Inference results')

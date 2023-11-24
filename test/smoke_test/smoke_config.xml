@@ -410,6 +410,99 @@
     <Test>
         <Model>
             <Task>classification</Task>
+            <Name>AlexNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>MXNet</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <OptimizationLevel></OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>alexnet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>PyTorch</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <OptimizationLevel>2</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>efficientnet-b0</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet-b0.onnx</ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>ONNX</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <OptimizationLevel>3</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
             <Name>mobilenet-v1-1.0-224-tf</Name>
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
@@ -473,7 +566,7 @@
             <IntraOpThreads>2</IntraOpThreads>
         </FrameworkDependent>
     </Test>
-        <Test>
+    <Test>
         <Model>
             <Task>classification</Task>
             <Name>resnet-50-pytorch</Name>

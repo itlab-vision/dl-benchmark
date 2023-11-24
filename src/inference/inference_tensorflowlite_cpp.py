@@ -1,18 +1,21 @@
 import argparse
-import numpy as np
+import json
 import subprocess
 import sys
+import traceback
+from pathlib import Path
+
+import numpy as np
 import tensorflow.lite as tflite
+
+from io_adapter import IOAdapter
 from io_model_wrapper import TFLiteIOModelWrapperCpp
 from transformer import Transformer
-from io_adapter import IOAdapter
-from pathlib import Path
-import logging as log
-import traceback
-import json
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -187,7 +190,6 @@ def get_input_shape(io_model_wrapper, model):
 
 
 def main():
-    configure_logger()
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()

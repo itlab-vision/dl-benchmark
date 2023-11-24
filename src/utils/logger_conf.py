@@ -1,14 +1,14 @@
+import logging
+import logging as log
 import os
 import sys
-import traceback
 import time
-import logging as log
+import traceback
 
 DEFAULT_FORMATTER = log.Formatter('[ %(levelname)s ] %(message)s')
 
 
 class ColorFormatter(log.Formatter):
-
     grey = '\x1b[38;20m'
     yellow = '\x1b[33;20m'
     red = '\x1b[31;20m'
@@ -18,18 +18,19 @@ class ColorFormatter(log.Formatter):
 
     FORMATS = {
         log.DEBUG: grey + custom_format + reset,
+        log.INFO: custom_format,
         log.WARNING: yellow + custom_format + reset,
         log.ERROR: red + custom_format + reset,
         log.CRITICAL: bold_red + custom_format + reset,
     }
 
-    def format(self, record):   # noqa
+    def format(self, record):  # noqa
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = log.Formatter(log_fmt)
         return formatter.format(record)
 
 
-def exception_hook(exc_type, message, stack):   # noqa
+def exception_hook(exc_type, message, stack):  # noqa
     """
     Allows capturing uncaught exceptions to the log file.
     Usage: define sys.excepthook = exception_hook
@@ -54,16 +55,20 @@ def configure_logger(name='', level=log.INFO, use_default_formatter=False):
     if not os.path.exists('logs'):
         os.makedirs('logs')
 
+    logger = logging.getLogger('benchmark')
+    logger.setLevel(level)
+
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
     stream_handler = log.StreamHandler(stream=sys.stdout)
     stream_handler.setLevel(level)
     stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
 
     file_handler = log.FileHandler(log_path)
     file_handler.setLevel(level)
-    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
 
-    log.basicConfig(
-        level=level,
-        datefmt='%d/%m/%Y %I:%M:%S %p',
-        handlers=[stream_handler, file_handler],
-    )
+    logger.propagate = False
+    return logger
