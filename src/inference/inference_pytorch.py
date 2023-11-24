@@ -1,7 +1,6 @@
 import argparse
 import importlib
 import json
-import logging as log
 import re
 import sys
 import traceback
@@ -11,11 +10,6 @@ from time import time
 
 import torch
 
-try:
-    import torch_tensorrt
-except ImportError:
-    log.info('No torch_tensorrt module, it is ok')
-
 import postprocessing_data as pp
 import preprocessing_data as prep
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -24,6 +18,16 @@ from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
+
+try:
+    import torch_tensorrt
+except ImportError:
+    log.info('No torch_tensorrt module, it is ok')
 
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
@@ -486,11 +490,6 @@ def prepare_output(result, model, output_names, task):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     report_writer.update_framework_info(name='PyTorch', version=get_torch_version())
@@ -599,6 +598,7 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,
                                                                       num_tokens=num_tokens)
         report_writer.update_execution_results(**inference_result)
+
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 

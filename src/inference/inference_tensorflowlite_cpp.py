@@ -3,10 +3,9 @@ import subprocess
 import sys
 import traceback
 import json
-
 import numpy as np
+
 from pathlib import Path
-import logging as log
 
 from io_model_wrapper import TFLiteIOModelWrapperCpp
 from transformer import Transformer
@@ -18,8 +17,9 @@ except ModuleNotFoundError:
     import tflite_runtime.interpreter as tflite
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
-
 from logger_conf import configure_logger, exception_hook  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -226,7 +226,6 @@ def get_input_shape(io_model_wrapper, model):
 
 
 def main():
-    configure_logger()
     sys.excepthook = exception_hook
 
     args = cli_argument_parser()

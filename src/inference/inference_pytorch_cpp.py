@@ -4,7 +4,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import logging as log
 import traceback
 import re
 import shutil
@@ -16,6 +15,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformerCpp
 from inference_pytorch import load_model_from_file, load_model_from_module, compile_model
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -203,11 +207,6 @@ def prepare_images_for_benchmark(inputs, tmp_dir):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     tmp_input = tempfile.TemporaryDirectory()
     tmp_model = tempfile.TemporaryDirectory()
     args = cli_argument_parser()
