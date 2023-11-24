@@ -100,7 +100,7 @@ jobs:
           python -m pip install spektral
 
       - name: Run smoke test for inference benchmark
-        run: cd test/smoke_test && ./run_bench_smoke_test_spektral.sh
+        run: cd test/smoke_test && run_bench_smoke_test_spektral.sh
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -109,3 +109,4 @@ jobs:
           name: results
           path: test/smoke_test/results*.csv
           retention-days: 1
+
