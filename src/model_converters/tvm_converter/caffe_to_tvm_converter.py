@@ -51,6 +51,11 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('-op', '--output_dir',
                         help='Path to save the model.',
                         default=None,
@@ -70,6 +75,7 @@ def create_dict_for_converter_caffe(args):
         'device': args.device,
         'opt_level': 0,
         'output_dir': args.output_dir,
+        'target': args.target,
     }
     return dictionary
 

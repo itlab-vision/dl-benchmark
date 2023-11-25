@@ -137,6 +137,11 @@ def cli_argument_parser():
                         default='NHWC',
                         type=str,
                         dest='layout')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('--channel_swap',
                         help='Parameter of channel swap (RGB to BGR by default).',
                         default=[2, 1, 0],

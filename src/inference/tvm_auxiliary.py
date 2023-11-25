@@ -19,6 +19,7 @@ def create_dict_for_converter_mxnet(args):
         'model_params': args.model_params,
         'device': args.device,
         'opt_level': args.opt_level,
+        'target': args.target,
     }
     return dictionary
 
@@ -37,6 +38,7 @@ def create_dict_for_converter_pytorch(args):
         'device': args.device,
         'opt_level': args.opt_level,
         'module': args.module,
+        'target': args.target,
     }
     return dictionary
 
@@ -49,6 +51,7 @@ def create_dict_for_converter_onnx(args):
         'model_path': args.model_path,
         'device': args.device,
         'opt_level': args.opt_level,
+        'target': args.target,
     }
     return dictionary
 
@@ -116,3 +119,6 @@ def prepare_output(result, task, output_names, not_softmax=False):
         else:
             result = softmax(result.asnumpy())
         return {output_names[0]: result}
+    if task == 'detection':
+        print(result.asnumpy())
+        return {output_names[0]: result.asnumpy()}

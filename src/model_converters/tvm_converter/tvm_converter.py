@@ -30,10 +30,13 @@ class Converter(metaclass=abc.ABCMeta):
 
     def _get_target_device(self, task='Inference'):
         device = self.args['device']
+        target_str = self.args['target']
         if device == 'CPU':
             log.info(f'{task} will be executed on {device}')
-            target = self.tvm.target.Target('llvm')
+            target = self.tvm.target.Target(target_str)
             dev = self.tvm.cpu(0)
+        else:
+            raise ValueError('Another devices are not supported at this moment')
         return target, dev
 
     def get_tvm_model(self):

@@ -146,6 +146,11 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',

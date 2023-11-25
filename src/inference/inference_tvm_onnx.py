@@ -59,7 +59,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -144,6 +144,11 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',

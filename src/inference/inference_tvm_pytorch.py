@@ -152,6 +152,11 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
