@@ -4,13 +4,8 @@
 
 omz_downloader --output_dir working_dir_smoke --cache_dir cache_dir_smoke      --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch
 omz_converter  --output_dir working_dir_smoke --download_dir working_dir_smoke --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch --precisions FP32
-cd working_dir_smoke/
-python3 ../../../src/model_converters/tvm_converter/pytorch_to_tvm_converter.py \
-                                                                                -mn efficientnet_b0 \
-                                                                                -w public/efficientnet-b0-pytorch/efficientnet-b0.pth \
-                                                                                -is 1 3 224 224
-python3 ../../../src/model_converters/tvm_converter/mxnet_to_tvm_converter.py -mn alexnet -is 1 3 224 224
-cd ../
+
+. ./run_tvm_model_converters.sh
 
 result_file="results_benchmark.csv"
 [ -f $result_file ] && rm $result_file
