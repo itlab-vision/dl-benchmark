@@ -46,11 +46,11 @@ class Converter(metaclass=abc.ABCMeta):
         model_name = self.args['model_name']
         path_save_model = self.args['output_dir']
 
-        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if path_save_model is None:
             path_save_model = os.getcwd()
         path_save_model = os.path.join(path_save_model, model_name)
 
+        log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if not os.path.exists(path_save_model):
             os.mkdir(path_save_model)
 
