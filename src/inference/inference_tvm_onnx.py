@@ -59,7 +59,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification', 'detection'],
+                        choices=['feedforward', 'classification'],
                         default='feedforward',
                         type=str,
                         dest='task')

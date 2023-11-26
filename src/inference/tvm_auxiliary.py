@@ -119,6 +119,3 @@ def prepare_output(result, task, output_names, not_softmax=False):
         else:
             result = softmax(result.asnumpy())
         return {output_names[0]: result}
-    if task == 'detection':
-        print(result.asnumpy())
-        return {output_names[0]: result.asnumpy()}
