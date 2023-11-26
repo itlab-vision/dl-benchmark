@@ -6,12 +6,12 @@
 
 Model | Availability in OMZ (2023.11.04) | Availability in the validation table |
 -|-|-|
-resnet-50-pytorch|+|-|
-efficientnet-b0|+|-|
-densenet-121-tf|+|-|
-googlenet-v1|+|-|
-googlenet-v4-tf|+|-|
-squeezenet1.1|+|-|
+densenet-121-tf|+|+|
+efficientnet-b0|+|+|
+googlenet-v1|+|+|
+googlenet-v4-tf|+|+|
+resnet-50-pytorch|+|+|
+squeezenet1.1|+|+|
 
 ### Object detection
 
