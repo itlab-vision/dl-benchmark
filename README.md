@@ -18,8 +18,8 @@ DLI supports inference using the following frameworks:
 
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit]
   (C++ and Python APIs).
-- [Intel® Optimization for Caffe][intel-caffe] (Python API).
-- [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
+- [Caffe][caffe] (Python API).
+- [TensorFlow][tensorflow] (Python API).
 - [TensorFlow Lite][tensorflow-lite] (C++ and Python APIs).
 - [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
 - [MXNet][mxnet] (Python Gluon API).
@@ -227,8 +227,8 @@ Report questions, issues and suggestions, using:
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
-[intel-caffe]: https://github.com/intel/caffe
-[intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
+[caffe]: https://caffe.berkeleyvision.org
+[tensorflow]: https://www.tensorflow.org
 [tensorflow-lite]: https://www.tensorflow.org/lite
 [onnx-runtime]: https://onnxruntime.ai
 [onnx-runtime-github]: https://github.com/microsoft/onnxruntime
