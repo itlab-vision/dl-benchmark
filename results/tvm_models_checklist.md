@@ -1,4 +1,4 @@
-# Model validation and performance analysis status for TVM
+# Model validation and performance analysis status for Apache TVM
 
 ## Public models (Open Model Zoo)
 
