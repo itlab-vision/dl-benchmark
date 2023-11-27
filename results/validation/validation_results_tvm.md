@@ -1,4 +1,4 @@
-# Validation results for the models inferring using TVM
+# Validation results for the models inferring using Apache TVM
 
 ## Public models (Open Model Zoo)
 
