@@ -150,6 +150,7 @@ Please consider citing the following papers.
     using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
+  - `build_scripts` is a directory to build inference frameworks for different platforms.
   - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
