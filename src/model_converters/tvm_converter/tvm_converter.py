@@ -103,7 +103,7 @@ class PyTorchToTVMConverter(Converter):
         model = self.torch.load(model_path)
         model = model.eval()
         scripted_model = self.torch.jit.trace(model, input_data).eval()
-        return scripted_model 
+        return scripted_model
 
     def __get_model_from_module(self, model_name,
                                 input_shape, weights,
