@@ -662,7 +662,7 @@ python inference_mxnet_sync_mode.py --model <file_name>.json \
                                     --labels <label_file>.json
 ```
 
-## Вывод глубоких моделей с использованием PyTorch (TorchVision)
+## Вывод глубоких моделей с использованием PyTorch
 
 #### Аргументы командной строки
 
