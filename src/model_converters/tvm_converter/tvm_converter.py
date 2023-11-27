@@ -36,7 +36,7 @@ class Converter(metaclass=abc.ABCMeta):
             target = self.tvm.target.Target(target_str)
             dev = self.tvm.cpu(0)
         else:
-            raise ValueError('Another devices are not supported at this moment')
+            raise ValueError(f'Device {device} is not supported. Supported devices: CPU')
         return target, dev
 
     def get_tvm_model(self):
@@ -94,6 +94,38 @@ class PyTorchToTVMConverter(Converter):
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
 
+    def __get_model_from_path(self, model_path, input_shape):
+        log.info(f'Loading model from path {model_path}')
+        input_data = self.torch.randn(input_shape)
+        file_type = model_path.split('.')[-1]
+        supported_extensions = ['pt']
+        if file_type not in supported_extensions:
+            raise ValueError(f'The file type {file_type} is not supported')
+        model = self.torch.load(model_path)
+        model = model.eval()
+        scripted_model = self.torch.jit.trace(model, input_data).eval()
+        return scripted_model        
+
+    def __get_model_from_module(self, model_name,
+                                input_shape, weights,
+                                module, device):
+        log.info(f'Loading model {model_name} from module')
+        input_data = self.torch.randn(input_shape)
+        model_cls = importlib.import_module(module).__getattribute__(model_name)
+        if weights is None or weights == '':
+            log.info('Loading pretrained model')
+            model = model_cls(weights=True)
+            scripted_model = self.torch.jit.trace(model, input_data).eval()
+            return scripted_model
+        else:
+            log.info(f'Loading model with weights from file {weights}')
+            model = model_cls()
+            checkpoint = self.torch.load(weights, map_location=device.lower())
+            model.load_state_dict(checkpoint, strict=False)
+            model = model.eval()
+            scripted_model = self.torch.jit.trace(model, input_data).eval()
+            return scripted_model       
+
     def _get_pytorch_model(self):
         model_name = self.args['model_name']
         module = self.args['module']
@@ -101,34 +133,11 @@ class PyTorchToTVMConverter(Converter):
         input_shape = self.args['input_shape']
         weights = self.args['model_params']
         device = self.args['device']
-        input_data = self.torch.randn(input_shape)
         if model_path is not None:
-            log.info(f'Loading model from path {model_path}')
-            file_type = model_path.split('.')[-1]
-            supported_extensions = ['pt']
-            if file_type not in supported_extensions:
-                raise ValueError(f'The file type {file_type} is not supported')
-            model = self.torch.load(model_path)
-            model = model.eval()
-            scripted_model = self.torch.jit.trace(model, input_data).eval()
-            return scripted_model
+            return self.__get_model_from_path(model_path, input_shape)
         else:
-            log.info(f'Loading model {model_name} from module')
-            model_cls = importlib.import_module(module).__getattribute__(model_name)
-
-            if weights is None or weights == '':
-                log.info('Loading pretrained model')
-                model = model_cls(weights=True)
-                scripted_model = self.torch.jit.trace(model, input_data).eval()
-                return scripted_model
-            else:
-                log.info(f'Loading model with weights from file {weights}')
-                model = model_cls()
-                checkpoint = self.torch.load(weights, map_location=device.lower())
-                model.load_state_dict(checkpoint, strict=False)
-                model = model.eval()
-                scripted_model = self.torch.jit.trace(model, input_data).eval()
-                return scripted_model
+            return self.__get_model_from_module(model_name, input_shape,
+                                                weights, module, device)
 
     def _convert_model_from_framework(self, target, dev):
         input_shape = self.args['input_shape']
@@ -173,11 +182,8 @@ class MXNetToTVMConverter(Converter):
         device = self.args['device']
         if device == 'CPU':
             return self.mxnet.cpu()
-        elif device == 'NVIDIA_GPU':
-            return self.mxnet.gpu()
         else:
-            log.info(f'The device {device} is not supported')
-            raise ValueError('The device is not supported')
+            raise ValueError(f'Device {device} is not supported. Supported devices: CPU')
 
     def _get_mxnet_network(self):
         model_name = self.args['model_name']
@@ -194,10 +200,8 @@ class MXNetToTVMConverter(Converter):
 
         elif ((model_path is not None) and (weights is not None)):
             log.info(f'Deserializing network from file ({model_path}, {weights})')
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
-                net = self.mxnet.gluon.nn.SymbolBlock.imports(
-                    model_path, [self.args['input_name']], weights, ctx=context)
+            net = self.mxnet.gluon.nn.SymbolBlock.imports(
+                model_path, [self.args['input_name']], weights, ctx=context)
             return net
 
         else:

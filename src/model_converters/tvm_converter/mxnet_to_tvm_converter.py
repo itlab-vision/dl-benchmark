@@ -47,8 +47,7 @@ def cli_argument_parser():
                         type=str,
                         dest='input_name')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or '
-                             'NVIDIA_GPU (CPU by default)',
+                        help='Specify the target device to infer (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')

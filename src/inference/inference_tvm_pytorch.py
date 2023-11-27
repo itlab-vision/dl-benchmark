@@ -46,8 +46,7 @@ def cli_argument_parser():
                         type=str,
                         dest='module')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or '
-                             'NVIDIA_GPU (CPU by default)',
+                        help='Specify the target device to infer (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -86,9 +85,9 @@ def cli_argument_parser():
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,'
-                             'W is an input tensor width,'
+                        help='Input shape NxHxWxC, N is a batch size,'
                              'H is an input tensor height,'
+                             'W is an input tensor width,'
                              'C is an input tensor number of channels.',
                         required=True,
                         type=int,
