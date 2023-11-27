@@ -1,6 +1,6 @@
 import torch
-from transformers import AutoConfig, AutoModelForCausalLM
 
+from transformers import AutoConfig, AutoModelForCausalLM
 from causal_lm_base import CausalLMBase
 
 

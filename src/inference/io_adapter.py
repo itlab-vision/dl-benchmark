@@ -309,6 +309,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3TFIO(args, io_model_wrapper, transformer)
         elif task in ['text-generation', 'text-translation', 'batch-text-generation']:
             return CausalLMIO(args, io_model_wrapper, transformer)
+        elif task in ['named-entity-recognition']:
+            return BertNERIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
             return TextToImageIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7':
@@ -372,6 +374,16 @@ class CausalLMIO(TextPromtIO):
     def process_output(self, result, log):
         output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
         log.info(f'Generated results: \n{output_text}')
+
+
+class BertNERIO(CausalLMIO):
+    def process_output(self, result, log):
+        """
+        @result: zip(token, label)
+        """
+        log.info('Label | Token')
+        for token, label in result:
+            log.info(f'{label}\t{token}')
 
 
 class ClassificationIO(IOAdapter):
