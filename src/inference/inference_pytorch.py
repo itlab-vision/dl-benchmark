@@ -369,7 +369,9 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
     with torch.inference_mode(inference_mode):
         output = None
         time_infer = []
+
         num_tokens = None
+        tokenizer = None
 
         if task_type in ['text-generation', 'batch-text-generation']:
             from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize

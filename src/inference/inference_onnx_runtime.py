@@ -219,7 +219,9 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
                            get_slice, test_duration, device):
     result = None
     time_infer = []
+
     num_tokens = None
+    tokenizer = None
 
     if task_type in ['batch-text-generation']:
         from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
