@@ -29,7 +29,6 @@ def cli_argument_parser():
                         dest='model')
     parser.add_argument('-mm', '--module',
                         help='Path to module with model architecture.',
-                        default='torchvision.models',
                         type=str,
                         required=True,
                         dest='module_path')
@@ -63,11 +62,6 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='number_iter')
-    parser.add_argument('--inference_mode',
-                        help='Inference mode',
-                        default=True,
-                        type=bool,
-                        dest='inference_mode')
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: node-classification.',
@@ -103,9 +97,9 @@ def compile_model(model, device):
     return model
 
 
-def inference_dgl_pytorch(model, num_iterations, input_graph, inference_mode, device, test_duration):
+def inference_dgl_pytorch(model, num_iterations, input_graph, device, test_duration):
     features = input_graph.ndata['feat']
-    with torch.inference_mode(inference_mode):
+    with torch.inference_mode():
         predictions = None
         time_infer = []
         if num_iterations == 1:
@@ -134,6 +128,7 @@ def load_model_from_file(model_path, module_path, model_name):
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
 
+    log.info(f'load module from {module_path}')
     spec = importlib.util.spec_from_file_location(model_name, module_path)
     foo = importlib.util.module_from_spec(spec)
     sys.modules[f'{model_name}'] = foo
@@ -195,7 +190,7 @@ def main():
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter,
-                                                       input_data, args.inference_mode, device, args.time)
+                                                       input_data, device, args.time)
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(1, inference_time)
@@ -211,7 +206,6 @@ def main():
                     result = prepare_output(result)
 
                     log.info('Inference results')
-                    log.info(result)
                     io.process_output(result, log)
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))

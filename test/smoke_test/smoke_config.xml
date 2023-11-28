@@ -633,27 +633,26 @@
     </Test>
     <Test>
         <Model>
-        <Task>node-classification</Task>
-        <Name>GCN</Name>
-        <Precision>FP32</Precision>
-        <SourceFramework>DGL (PyTorch)</SourceFramework>
-        <ModelPath>./working_dir_smoke/dgl/model.pt</ModelPath>
-        <WeightsPath></WeightsPath>
-        <Module>./working_dir_smoke/dgl/GCN.py</Module>
+            <Task>node-classification</Task>
+            <Name>GCN</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>DGL (PyTorch)</SourceFramework>
+            <ModelPath>./working_dir_smoke/dgl/model.pt</ModelPath>
+            <WeightsPath></WeightsPath>
+            <Module>./working_dir_smoke/dgl/GCN.py</Module>
         </Model>
         <Dataset>
-        <Name>Cora</Name>
-        <Path>./default_graph.bin</Path>
+            <Name>Cora</Name>
+            <Path>./default_graph.bin</Path>
         </Dataset>
         <FrameworkIndependent>
-        <InferenceFramework>DGL PyTorch</InferenceFramework>
-        <BatchSize>1</BatchSize>
-        <Device>CPU</Device>
-        <IterationCount>5</IterationCount>
-        <TestTimeLimit>1</TestTimeLimit>
+            <InferenceFramework>DGL PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
         </FrameworkIndependent>
         <FrameworkDependent>
-        <InferenceMode>True</InferenceMode>
         </FrameworkDependent>
     </Test>
 </Tests>

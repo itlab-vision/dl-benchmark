@@ -18,6 +18,7 @@ the following frameworks:
 - [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
 - [TVM][tvm].
+- [Deep Graph Library][dgl-pytorch] (PyTorch-based).
 
 ### Implemented algorithm
 

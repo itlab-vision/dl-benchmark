@@ -688,7 +688,6 @@
       <TestTimeLimit>10</TestTimeLimit>
     </FrameworkIndependent>
     <FrameworkDependent>
-      <InferenceMode>True</InferenceMode>
     </FrameworkDependent>
   </Test>
 </Tests>
