@@ -174,6 +174,7 @@ Bounding boxes (upper left and bottom right corners):<br>
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
 yolo-v3-onnx | ONNX |-|-|-|-|
+ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
 ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
 
 **Note**: ssd_mobilenet_v2 is not available.
@@ -195,6 +196,7 @@ Bounding box (upper left and bottom right corners):<br>
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
 yolo-v3-onnx | ONNX |-|-|-|-|
+ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
 ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
 
 **Note**: ssd_mobilenet_v2 is not available.
@@ -216,6 +218,7 @@ Bounding box (upper left and bottom right corners):<br>PERSON (86, 84), (394, 18
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
 yolo-v3-onnx | ONNX |-|-|-|-|
+ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
 ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
 
 **Note**: ssd_mobilenet_v2 is not available.
