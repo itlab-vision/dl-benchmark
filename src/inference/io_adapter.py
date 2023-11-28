@@ -297,8 +297,6 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7_onnx':
             return YoloV7ONNX(args, io_model_wrapper, transformer)
-        elif task == 'ncnn_classification':
-            return ncnn(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2021,29 +2019,3 @@ class YoloV7ONNX(IOAdapter):
             cv2.imwrite(out_img, image)
             log.info('Result image was saved to {0}'.format(out_img))
             count += 1
-
-
-class ncnn(IOAdapter):
-    def __init__(self, args, io_model_wrapper, transformer):
-        super().__init__(args, io_model_wrapper, transformer)
-
-    def get_slice_input(self, images, iteration):
-        return images[(iteration * self._batch_size) % len(images):
-                      ((iteration + 1) * self._batch_size - 1) % len(images) + 1:]
-
-    def process_output(self, result, log):
-        if self._not_valid_result(result):
-            log.warning('Model output is processed only for the number iteration = 1')
-            return
-
-        self.load_labels_map('image_net_synset.txt')
-
-        result_layer_name = next(iter(result))
-        result = result[result_layer_name]
-        log.info('Top {0} results:'.format(self._number_top))
-
-        top_ind = np.argsort(result)[::-1][0:self._number_top]  # noqa: PLE1130
-        log.info('Result for image {0}'.format(result + 1))
-        for id_ in top_ind:
-            det_label = self._labels_map[id_] if self._labels_map else '#{0}'.format(id_)
-            log.info('\t{:.7f} {}'.format(result[id_], det_label))  # noqa: P101
