@@ -100,7 +100,7 @@ whether `Debug` or `Release`.
 
 ## Usage
 
-RKNN launcher supports models in `rknn` formats. Due to benchmark and `RKNN API` specifics, input data type should be provided explicitly from command line.
+RKNN launcher supports models in `rknn` formats. To obtain models in this format [RKNN Toolkit 2] must be used. It supports conversions from various frameworks (e.g. ONNX, TensorFlow Lite, PyTorch). Due to benchmark and `RKNN API` specifics, input data type should be provided explicitly from command line.
 For example, for images, it should be `U8``:
 ```
 ./rknn_benchmark -i img.jpg -m model.rknn --dtype [U8] --channel_swap --dump_output -niter 1
@@ -109,3 +109,4 @@ For example, for images, it should be `U8``:
 <!-- LINKS -->
 [rknn]: https://github.com/rockchip-linux/rknpu2
 [NDK]: https://developer.android.com/ndk/downloads
+[RKNN Toolkit 2]: https://github.com/rockchip-linux/rknn-toolkit2
