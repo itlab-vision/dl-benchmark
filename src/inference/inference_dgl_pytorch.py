@@ -1,7 +1,6 @@
 import argparse
 import importlib
 import json
-import logging as log
 import sys
 import traceback
 from pathlib import Path
@@ -206,7 +205,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    result = prepare_output(result,  args.task)
+                    result = prepare_output(result, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)
