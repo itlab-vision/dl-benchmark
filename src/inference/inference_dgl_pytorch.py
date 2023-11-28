@@ -145,9 +145,12 @@ def load_model_from_file(model_path, module_path, model_name):
     return model
 
 
-def prepare_output(result):
-    log.info('Converting output tensor to print results')
-    return {'output_result': result.detach().numpy()}
+def prepare_output(result, task):
+    if task == 'node-classification':
+        log.info('Converting output tensor to print results')
+        return {'output_result': result.detach().numpy()}
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
 
 
 def write_cmd_options_to_report(report_writer, args):
@@ -203,7 +206,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    result = prepare_output(result)
+                    result = prepare_output(result,  args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)
