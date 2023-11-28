@@ -3,8 +3,8 @@ import logging as log
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from src.model_converters.tensorflow_common import (load_model, convert_with_tensor_rt, is_gpu_available,  # noqa
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+from src.model_converters.tf2tflite.tensorflow_common import (load_model, convert_with_tensor_rt, is_gpu_available,  # noqa
                                                     get_input_operation_name)  # noqa
 
 

@@ -8,8 +8,8 @@ import onnx
 import tensorflow as tf
 from onnx_tf.backend import prepare
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from src.model_converters.tensorflow_common import load_model  # noqa
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+from src.model_converters.tf2tflite.tensorflow_common import load_model  # noqa
 
 
 def is_sequence(element):
