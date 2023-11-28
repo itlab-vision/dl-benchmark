@@ -18,6 +18,11 @@ from pytorch_auxiliary import get_device_to_infer, infer_slice
 from io_model_wrapper import DGLPyTorchWrapper
 from io_graphs_adapter import IOGprahAdapter
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -168,11 +173,6 @@ def write_cmd_options_to_report(report_writer, args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
     args = cli_argument_parser()
     report_writer = ReportWriter()
     write_cmd_options_to_report(report_writer, args)
