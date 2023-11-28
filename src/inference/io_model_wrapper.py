@@ -296,3 +296,48 @@ class ONNXIOModelWrapperCpp(IOModelWrapper):
     def get_input_layer_dtype(self, model, layer_name):
         from numpy import float32
         return float32
+
+
+class TFLiteIOModelWrapperCpp(IOModelWrapper):
+    def __init__(self, batch_size):
+        self._batch = batch_size
+
+    def get_input_layer_names(self, interpreter):
+        inputs = interpreter.get_input_details()
+        input_names = []
+        for input_ in inputs:
+            input_names.append(input_['name'])
+        return input_names
+
+    def get_input_layer_shape(self, interpreter, layer_name):
+        try:
+            inputs = interpreter.get_input_details()
+            for input_ in inputs:
+                if layer_name == input_['name']:
+                    shape = input_['shape']
+                    break
+        except Exception:
+            raise ValueError('Could not get the correct shape. '
+                             'Try setting the "input_shape" parameter manually.')
+        shape[0] = self._batch
+        if None in shape[1:]:
+            raise ValueError(f'Invalid shape {shape}. Try setting the "input_shape" parameter manually.')
+        return shape
+
+    @staticmethod
+    def get_outputs_layer_names(interpreter, outputs_names=None):
+        if outputs_names:
+            return outputs_names
+        outputs = interpreter.get_output_details()
+        output_names = []
+        for output_ in outputs:
+            output_names.append(output_['name'])
+        if not output_names:
+            raise ValueError('Output blobs in the graph cannot be found')
+        return output_names
+
+    def get_input_layer_dtype(self, interpreter, layer_name):
+        inputs = interpreter.get_input_details()
+        for input_ in inputs:
+            if layer_name == input_['name']:
+                return input_['dtype']

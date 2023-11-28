@@ -33,7 +33,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override{};
 
-    void dump_output() override;
+    std::vector<OutputTensors> get_output_tensors() override;
 
 private:
     struct IOInfo {

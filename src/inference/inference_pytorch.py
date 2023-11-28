@@ -67,7 +67,7 @@ def cli_argument_parser():
                         dest='input')
     parser.add_argument('-in', '--input_names',
                         help='Names of the input tensors',
-                        required=True,
+                        required=False,
                         default=None,
                         type=prep.names_arg,
                         dest='input_names')
@@ -246,8 +246,6 @@ def get_tensor_rt_dtype(tensor_rt_precision):
             tensor_rt_dtype = torch.half
         else:
             raise ValueError(f'Unknown TensorRT precision {tensor_rt_precision}')
-        return tensor_rt_dtype
-
     return tensor_rt_dtype
 
 
@@ -369,13 +367,19 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
     with torch.inference_mode(inference_mode):
         output = None
         time_infer = []
+        num_tokens = None
 
         if task_type in ['text-generation', 'batch-text-generation']:
             from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
 
             tokenizer = create_tokenizer(model.name_or_path)
             encodings_dict = tokenize(tokenizer, get_slice())
-
+            if task_type == 'text-generation':
+                from configs.pytorch_configs.causal_lm_base import MAX_TEXT_LEN
+                num_tokens = MAX_TEXT_LEN
+            elif task_type == 'batch-text-generation':
+                from configs.onnx_configs.gpt_2 import MAX_TEXT_LEN
+                num_tokens = MAX_TEXT_LEN
         if num_iterations == 1:
             if task_type in ['classification', 'feedforward', 'yolo_v7']:
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -408,7 +412,7 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
                                                                                             input_names, model,
                                                                                             task_type)
-    return output, time_infer
+    return output, time_infer, num_tokens
 
 
 @get_exec_time()
@@ -583,13 +587,17 @@ def main():
             io.fill_unset_inputs(compiled_model, log)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time = inference_pytorch(model=compiled_model, num_iterations=args.number_iter,
-                                                   get_slice=io.get_slice_input, input_names=args.input_names,
-                                                   inference_mode=args.inference_mode, device=device,
-                                                   test_duration=args.time, task_type=args.task)
+        result, inference_time, num_tokens = inference_pytorch(model=compiled_model,
+                                                               num_iterations=args.number_iter,
+                                                               get_slice=io.get_slice_input,
+                                                               input_names=args.input_names,
+                                                               inference_mode=args.inference_mode,
+                                                               device=device, test_duration=args.time,
+                                                               task_type=args.task)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,
+                                                                      num_tokens=num_tokens)
         report_writer.update_execution_results(**inference_result)
 
         log.info(f'Write report to {args.report_path}')

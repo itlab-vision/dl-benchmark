@@ -314,7 +314,7 @@ class TVMTransformer(Transformer):
         return transformed_images
 
 
-class OnnxRuntimeTransformerCpp(Transformer):
+class ONNXRuntimeTransformerCpp(Transformer):
     def __init__(self, model):
         self._model = model
 

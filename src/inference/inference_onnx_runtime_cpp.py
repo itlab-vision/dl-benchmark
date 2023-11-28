@@ -1,5 +1,6 @@
 import argparse
 import ast
+import json
 import os
 import subprocess
 import sys
@@ -92,6 +93,17 @@ def cli_argument_parser():
                         default=5,
                         type=int,
                         dest='number_top')
+    parser.add_argument('--swap_channels',
+                        help='Parameter channel swap',
+                        required=False,
+                        default=False,
+                        type=bool,
+                        dest='swap_channels')
+    parser.add_argument('--output_json_path',
+                        help='Path to save raw output of cpp_dl_benchmark',
+                        default=Path(__file__).parent / '_validation' / 'json_output' / 'output.json',
+                        type=Path,
+                        dest='output_json_path')
     args = parser.parse_args()
 
     return args
@@ -123,13 +135,14 @@ class OnnxRuntimeProcess():
             log.error(traceback.format_exc())
             sys.exit(1)
 
-    def process_benchmark_output(self, list_of_names, tmp_dir):
-        list_of_names = list_of_names[::-1]
+    def process_benchmark_output(self, output_filename):
         result = {'images': []}
-        for i, _ in enumerate(os.listdir(tmp_dir.name)):
-            out = np.loadtxt(f'output{i}', dtype=float)
-            result['images'].append(out)
-            os.remove(f'output{i}')
+        with open(output_filename, 'r') as file:
+            for outputs in json.load(file):
+                for layer in outputs:
+                    shape = layer['shape']
+                    data = layer['data']
+                    result['images'].append(np.reshape(data, shape))
         return result
 
 
@@ -148,6 +161,8 @@ def create_dict_from_args_for_process(args, nireq):
             '--scale': args.scale,
             '--mean': args.mean,
             '-l': args.labels,
+            '--channel_swap': '' if not args.swap_channels else True,
+            '--output_path': args.output_json_path,
             '-nireq': nireq,
             '-niter': args.niter}
 
@@ -207,7 +222,7 @@ def main():
 
         log.info('Onnxruntime benchmark process:\n')
         proc.execute()
-        res = proc.process_benchmark_output(list_of_names, tmp)
+        res = proc.process_benchmark_output(args.output_json_path)
         io.process_output(res, log)
 
     except Exception:

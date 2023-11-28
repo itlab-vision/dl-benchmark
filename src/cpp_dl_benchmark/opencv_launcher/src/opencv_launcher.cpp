@@ -121,7 +121,7 @@ void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&&
     }
 }
 
-void OCVLauncher::dump_output() {
+std::vector<OutputTensors> OCVLauncher::get_output_tensors() {
     throw std::logic_error("Method is not implemented");
 }
 

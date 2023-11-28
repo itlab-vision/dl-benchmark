@@ -6,11 +6,15 @@ import traceback
 from pathlib import Path
 
 import numpy as np
-import tensorflow.lite as tflite
 
 from io_adapter import IOAdapter
 from io_model_wrapper import TFLiteIOModelWrapperCpp
 from transformer import Transformer
+
+try:
+    import tensorflow.lite as tflite
+except ModuleNotFoundError:
+    import tflite_runtime.interpreter as tflite
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger, exception_hook  # noqa: E402
@@ -82,14 +86,20 @@ def cli_argument_parser():
                         type=str,
                         dest='background')
     parser.add_argument('--time',
-                        help='Time limit for inference in seconds',
+                        help='Optional. Time in seconds to execute topology.',
                         required=False,
                         type=int,
-                        default=60,
+                        default=0,
                         dest='time_limit')
+    parser.add_argument('-ni', '--number_iter',
+                        help='Number of inference iterations',
+                        default=1,
+                        type=int,
+                        dest='number_iter')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp'],
+                        choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp',
+                                 'face_recognition_tflite_cpp'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -99,6 +109,24 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='use_bin_input')
+    parser.add_argument('--output_json_path',
+                        help='Path to save raw output of cpp_dl_benchmark',
+                        type=Path,
+                        dest='output_json_path')
+    parser.add_argument('--output_path',
+                        help='Path to save processed output',
+                        type=Path,
+                        dest='output_path')
+    parser.add_argument('--only_process_output',
+                        help='Run without model execution',
+                        required=False,
+                        default=False,
+                        type=bool,
+                        dest='only_process_output')
+    parser.add_argument('--ref_input',
+                        help='Path to reference data',
+                        type=str,
+                        dest='ref_input')
 
     args = parser.parse_args()
 
@@ -131,40 +159,48 @@ class TFLiteProcess():
             log.error(traceback.format_exc())
             sys.exit(1)
 
-    def process_benchmark_output(self, output_filename='output.json'):
+    def process_benchmark_output(self, output_filename):
         result = {}
         with open(output_filename, 'r') as file:
-            for output in json.load(file):
+            for output in json.load(file)[0]:
                 layer_name = output['output_name']
                 shape = output['shape']
                 data = output['data']
                 result[layer_name] = np.reshape(data, shape)
         return result
 
-    def convert_output(self, result, io, args):
+    def prepare_orig_images(self, io, args):
         if args.task == 'face_detection_tflite_cpp' or args.task == 'segmentation_tflite_cpp':
             io.set_image(args.input)
         else:
             pass
-        return result
+
+
+def get_output_json_path(args):
+    if args.output_json_path is None:
+        return Path(__file__).parent / '_validation' / 'json_output' / 'output.json'
+    return Path(args.output_json_path)
 
 
 def create_dict_from_args_for_process(args, io):
     args_dict = {'-bch': args.benchmark_path,
+                 '--niter': args.number_iter,
+                 '-t': args.time_limit,
                  '-m': args.model_path,
                  '-d': args.device,
                  '-b': args.batch_size,
-                 '--shape': args.shape}
+                 '--shape': args.shape,
+                 '--output_path': args.output_json_path}
     if not args.use_bin_input:
         args_dict['--mean'] = args.mean
         args_dict['--scale'] = args.input_scale
-        args_dict['--channel_swap'] = args.swap_channels
+        args_dict['--channel_swap'] = '' if not args.swap_channels else True
         args_dict['-i'] = args.input[0]
     else:
         log.info('Converting input to .bin')
         bin_input = io.convert_input_to_bin_file(args)
         args_dict['--layout'] = args.layout
-        args_dict['-i'] = bin_input[0]
+        args_dict['-i'] = bin_input
     return args_dict
 
 
@@ -200,6 +236,7 @@ def main():
         model_wrapper = TFLiteIOModelWrapperCpp(args.batch_size)
 
         args.input_names = model_wrapper.get_input_layer_names(interpreter)
+        args.output_json_path = get_output_json_path(args)
 
         input_shapes = get_input_shape(model_wrapper, interpreter)
         for layer in input_shapes:
@@ -212,14 +249,15 @@ def main():
         process = TFLiteProcess()
         process.create_command_line(create_dict_from_args_for_process(args, io))
 
-        log.info('TFLite benchmark process:\n')
-        process.execute()
+        if not args.only_process_output:
+            log.info('TFLite benchmark process:\n')
+            process.execute()
 
         log.info('Process benchmark output:\n')
-        output = process.process_benchmark_output()
+        result = process.process_benchmark_output(args.output_json_path)
 
         log.info('Process output using io_adapter:\n')
-        result = process.convert_output(output, io, args)
+        process.prepare_orig_images(io, args)
         io.process_output(result, log)
 
     except Exception:
