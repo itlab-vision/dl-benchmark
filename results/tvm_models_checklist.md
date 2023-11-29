@@ -18,7 +18,7 @@ squeezenet1.1|+|+|
 Model | Availability in OMZ (2023.11.04) | Availability in the validation table |
 -|-|-|
 yolo-v3-onnx|+|-|
-ssd_mobilenet_v2|-|-|
+ssd_mobilenet_v1_coco|+|-|
 ssdlite_mobilenet_v2|+|-|
 
 ### Face localization

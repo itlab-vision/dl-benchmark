@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import re
 import shutil
@@ -109,6 +110,17 @@ def cli_argument_parser():
                         default='feedforward',
                         type=str,
                         dest='task')
+    parser.add_argument('--swap_channels',
+                        help='Parameter channel swap',
+                        required=False,
+                        default=False,
+                        type=bool,
+                        dest='swap_channels')
+    parser.add_argument('--output_json_path',
+                        help='Path to save raw output of cpp_dl_benchmark',
+                        default=Path(__file__).parent / '_validation' / 'json_output' / 'output.json',
+                        type=Path,
+                        dest='output_json_path')
     args = parser.parse_args()
 
     return args
@@ -140,13 +152,14 @@ class PyTorchProcess():
             log.error(traceback.format_exc())
             sys.exit(1)
 
-    def process_benchmark_output(self, batch_size):
+    def process_benchmark_output(self, output_filename):
         result = {}
-        # support models only with one output
-        name = 'output'
-        out = np.loadtxt(name)
-        result[name] = out.reshape(batch_size, -1)
-        os.remove(name)
+        with open(output_filename, 'r') as file:
+            name = 'output'
+            out = json.load(file)[0][0]
+            shape = out['shape']
+            data = out['data']
+            result[name] = np.reshape(data, shape)
         return result
 
 
@@ -165,7 +178,6 @@ def dict_to_string(input_params):
     def get_values(values):
         values = ','.join(map(str, values)) if not isinstance(values, str) else values
         return values if re.match(r'\[(.*?)\]', values) else f'[{values}]'
-
     return ','.join(f'{layer_name}{get_values(input_params[layer_name])}' for layer_name in input_params)
 
 
@@ -180,13 +192,15 @@ def create_dict_from_args_for_process(args):
             '-dtype': dict_to_string(args.input_type),
             '-l': args.labels,
             '-b': args.batch_size,
+            '--channel_swap': '' if not args.swap_channels else True,
+            '--output_path': args.output_json_path,
             '-nireq': 1,
             '-niter': 1}
 
 
 def prepare_images_for_benchmark(inputs, tmp_dir):
     if os.path.isdir(inputs[0]):
-        return inputs
+        return inputs[0]
     for path in inputs[0].split(','):
         shutil.copy2(path, tmp_dir)
     return tmp_dir
@@ -227,9 +241,7 @@ def main():
         io.prepare_input(compiled_model, args.input)
 
         log.info('Preparing images for benchmark in temporary directory')
-        prepare_images_for_benchmark(args.input, tmp_input.name)
-
-        args.input = tmp_input.name
+        args.input = prepare_images_for_benchmark(args.input, tmp_input.name)
 
         log.info('Initializing PyTorch process')
         proc = PyTorchProcess()
@@ -237,7 +249,7 @@ def main():
 
         log.info('PyTorch benchmark process:\n')
         proc.execute()
-        io.process_output(proc.process_benchmark_output(args.batch_size), log)
+        io.process_output(proc.process_benchmark_output(args.output_json_path), log)
 
     except Exception:
         log.error(traceback.format_exc())
