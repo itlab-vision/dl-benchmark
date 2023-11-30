@@ -113,6 +113,7 @@ class DockerExecutor(Executor):
         return hardware_info
 
     def execute_process(self, command_line, _):
+        command_line = f'bash -c "source /root/.bashrc && umask 0000 && {command_line}"'
         docker_handler = DockerHandler(command_line, self.log, self.client,
                                        self.container_dict[self.target_framework].id)
         docker_handler.run()
