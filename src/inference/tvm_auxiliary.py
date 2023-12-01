@@ -81,12 +81,13 @@ def create_dict_for_modelwrapper(args):
 def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
     result = None
     time_infer = []
+    num_of_outputs = module.get_num_outputs()
     if num_of_iterations == 1:
         slice_input = get_slice()
         t0 = time()
         module.set_input(input_name, slice_input[input_name])
         module.run()
-        result = module.get_output(0)
+        result = [module.get_output(i) for i in range(num_of_outputs)]
         t1 = time()
         time_infer.append(t1 - t0)
     else:
@@ -104,9 +105,10 @@ def inference_iteration(get_slice, input_name, module):
 
 @get_exec_time()
 def infer_slice(input_name, module, slice_input):
+    num_of_outputs = module.get_num_outputs()
     module.set_input(input_name, slice_input[input_name])
     module.run()
-    res = module.get_output(0)
+    res = [module.get_output(i) for i in range(num_of_outputs)]
     return res
 
 
@@ -115,7 +117,9 @@ def prepare_output(result, task, output_names, not_softmax=False):
         return {}
     if task == 'classification':
         if not_softmax:
-            result = result.asnumpy()
+            result = result[0].asnumpy()
         else:
-            result = softmax(result.asnumpy())
+            result = result[0].asnumpy()
+            for i in range(result.shape[0]):
+                result[i] = softmax(result[i])
         return {output_names[0]: result}
