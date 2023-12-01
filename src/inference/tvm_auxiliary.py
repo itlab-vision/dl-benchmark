@@ -1,10 +1,17 @@
-import tvm
-import logging as log
-from scipy.special import softmax
 import abc
+import sys
+from pathlib import Path
 from time import time
 
+import tvm
+from scipy.special import softmax
+
 from inference_tools.loop_tools import loop_inference, get_exec_time
+
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 
 class TVMConverter(metaclass=abc.ABCMeta):

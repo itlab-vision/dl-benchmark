@@ -1,15 +1,15 @@
 import argparse
+import json
 import subprocess
 import sys
 import traceback
-import json
-import numpy as np
-
 from pathlib import Path
 
+import numpy as np
+
+from io_adapter import IOAdapter
 from io_model_wrapper import TFLiteIOModelWrapperCpp
 from transformer import Transformer
-from io_adapter import IOAdapter
 
 try:
     import tensorflow.lite as tflite

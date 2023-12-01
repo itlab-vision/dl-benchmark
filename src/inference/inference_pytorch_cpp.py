@@ -1,21 +1,21 @@
 import argparse
-import numpy as np
+import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
 import traceback
-import re
-import shutil
-import json
-
 from pathlib import Path
 
+import numpy as np
+
 import preprocessing_data as prep
+from inference_pytorch import load_model_from_file, load_model_from_module, compile_model
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from transformer import PyTorchTransformerCpp
-from inference_pytorch import load_model_from_file, load_model_from_module, compile_model
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -145,7 +145,6 @@ class PyTorchProcess():
                     self._add_option('--dump_output')
             elif arg != '' and arg is not None:
                 self._add_argument(name, arg)
-        print(f'Command line: {self._command_line}')
 
     def execute(self):
         proc = subprocess.run(self._command_line, shell=True)
