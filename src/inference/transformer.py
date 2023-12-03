@@ -1,4 +1,6 @@
 import cv2
+import os
+import itertools
 import numpy as np
 
 LAYER_LAYOUT_TO_IMAGE = {
@@ -335,3 +337,19 @@ class PyTorchTransformerCpp(Transformer):
 
     def transform_images(self, images, shape, element_type, *args):
         return images
+
+
+class NcnnTransformer(Transformer):
+    def _transform(self, image, shape):
+        return image
+
+    def get_shape_in_chw_order(self, shape, *args):
+        return shape[3], shape[1], shape[2]
+
+    def transform_images(self, images, shape, element_type, *args):
+        dataset_size = images.shape[0]
+        new_shape = [dataset_size, shape[1], shape[2], shape[3]]
+        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
+        for i in range(dataset_size):
+            transformed_images[i] = self._transform(images[i], shape)
+        return transformed_images
