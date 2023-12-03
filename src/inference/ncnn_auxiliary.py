@@ -50,7 +50,8 @@ def process_output(io, number_iter, number_top, images_path, result, log):
         log.info('Top {0} results:'.format(number_top))
 
         top_ind = np.argsort(cls_scores)[::-1][0:number_top]  # noqa: PLE1130
-        log.info('Result for image {0}'.format(images_path_list[result_layer_index % total_images])) # noqa: S001
+        # https://github.com/gforcada/flake8-pep3101/issues/23
+        log.info('Result for image {0}'.format(images_path_list[result_layer_index % total_images]))  # noqa: S001
         for id_ in top_ind:
             det_label = io._labels_map[id_] if io._labels_map else '#{0}'.format(id_)
             log.info('\t{:.7f} {}'.format(cls_scores[id_], det_label))  # noqa: P101
