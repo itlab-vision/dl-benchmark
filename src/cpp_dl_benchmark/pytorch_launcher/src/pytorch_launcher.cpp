@@ -77,7 +77,11 @@ void PytorchLauncher::read(const std::string& model_file, const std::string& wei
     }
 
     torch::Device torch_device(device_type, 0);
-    module = torch::jit::load(model_file, torch_device);
+    try {
+        module = torch::jit::load(model_file, torch_device);
+    } catch (const c10::Error& e) {
+        throw std::runtime_error("Failed to read model " + model_file);
+    }
     module.eval();
 }
 
@@ -96,7 +100,7 @@ void PytorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer
             input_shapes.resize(tensor_buffers[0].size());
         }
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
-            const auto& buffer = tensor_buffers[i][j];
+            auto& buffer = tensor_buffers[i][j];
             std::vector<int64_t> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(
                 torch::from_blob(buffer.get(), shape, get_data_type(buffer.precision())).to(torch_device));
@@ -129,23 +133,23 @@ void PytorchLauncher::run(const int input_idx) {
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 }
 
-void PytorchLauncher::dump_output() {
-    const auto outputs = module.forward(tensors[0]);
-    if (outputs.isTuple()) {
+std::vector<OutputTensors> PytorchLauncher::get_output_tensors() {
+    const auto out = module.forward(tensors[0]);
+    if (out.isTuple()) {
         throw std::runtime_error("Output dumping is supported only for models with one output!");
     }
-    const std::string name = "output";
-    std::ofstream file(name);
-    const auto output_tensor = outputs.toTensor();
-    const auto result = output_tensor.data_ptr<float>();
-    const auto size = output_tensor.numel();
-    if (file.is_open()) {
-        for (int j = 0; j < size; j++) {
-            file << std::to_string(result[j]) << '\n';
-        }
-    }
-    else {
-        throw std::runtime_error("Something went wrong, can't open file");
-    }
-    file.close();
+
+    OutputTensors output;
+    const auto result = out.toTensor();
+    auto* raw_data = result.data_ptr<float>();
+    auto size = result.numel();
+
+    auto shape = result.sizes();
+    std::string name = "output";
+    std::vector<float> data(raw_data, raw_data + size);
+
+    std::vector<int> int_shape(shape.begin(), shape.end());
+    output.emplace_back(static_cast<size_t>(size), int_shape, name, data);
+
+    return {output};
 }

@@ -1,10 +1,11 @@
 #pragma once
+
+#include <nlohmann/json.hpp>
+
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <nlohmann/json.hpp>
 
 struct Record {
     std::string name;

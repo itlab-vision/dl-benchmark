@@ -56,7 +56,7 @@ macro(add_launcher)
 
     target_link_libraries(${LAUNCHER_NAME} PRIVATE
         opencv_core opencv_imgproc opencv_imgcodecs
-        common_launcher inputs_preparation utils
+        common_launcher inputs_preparation utils output
         ${LAUNCHER_DEPENDENCIES}
         gflags
     )

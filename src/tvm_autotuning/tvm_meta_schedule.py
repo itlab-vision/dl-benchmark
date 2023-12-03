@@ -3,6 +3,7 @@ import logging as log
 import os
 import sys
 
+import tvm
 from tvm import meta_schedule as ms
 
 import utils
@@ -35,9 +36,13 @@ def cli_argument_parser():
                         type=int)
     parser.add_argument('-w', '--work_dir',
                         help='Working directory for logging results.',
-                        required=True,
                         default='meta-scheduler',
                         type=str)
+    parser.add_argument('-o', '--output',
+                        help='Path to the file to save the model.',
+                        default='lib.so',
+                        type=str,
+                        dest='output_file')
 
     parser.add_argument('--opt_level',
                         help='The optimization level of the task extractions.',
@@ -156,6 +161,15 @@ def main():
     tune_tasks(tasks, task_weights, args.n_trials, args.work_dir,
                args.number, args.repeat, args.num_trials_per_iter, args.max_trials_per_task,
                args.database, args.cost_model, args.task_scheduler)
+
+    database = ms.database.JSONDatabase(
+        f'{args.work_dir}/database_workload.json',
+        f'{args.work_dir}/database_tuning_record.json',
+        allow_missing=False,
+    )
+    with tvm.transform.PassContext(opt_level=args.opt_level):
+        lib = ms.relay_integration.compile_relay(database, mod, args.target, params)
+    lib.export_library(args.output_file)
 
 
 if __name__ == '__main__':

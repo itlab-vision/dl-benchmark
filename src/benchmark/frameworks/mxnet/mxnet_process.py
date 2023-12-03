@@ -37,7 +37,7 @@ class MXNetProcess(ProcessHandler):
             common_params = (f'-mn {name} -is {input_shape} '
                              f'-b {batch_size} -ni {iteration} --report_path {self.report_path}')
         elif (model_json is not None) and (model_params is not None):
-            common_params = (f'-m {model_json} -w {model_params} -i {dataset} '
+            common_params = (f'-m {model_json} -w {model_params} '
                              f'-is {input_shape} -b {batch_size} -ni {iteration} '
                              f'--report_path {self.report_path}')
         else:
