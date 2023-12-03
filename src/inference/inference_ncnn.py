@@ -147,8 +147,8 @@ if __name__ == '__main__':
         report_writer = ReportWriter()
         report_writer.update_framework_info(name='ncnn')
         report_writer.update_configuration_setup(batch_size=args.batch_size,
-                                                iterations_num=args.number_iter,
-                                                target_device=args.device)
+                                                 iterations_num=args.number_iter,
+                                                 target_device=args.device)
 
         io.prepare_input(args.model, args.input)
         net = load_model(args.model, args.num_threads, args.device, args.task)

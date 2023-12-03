@@ -1,6 +1,4 @@
 import cv2
-import os
-import itertools
 import numpy as np
 
 LAYER_LAYOUT_TO_IMAGE = {
