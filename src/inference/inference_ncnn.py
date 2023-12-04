@@ -64,9 +64,9 @@ def cli_argument_parser():
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
-                        help='Task type. Default: classification.',
-                        choices=['classification'],
-                        default='classification',
+                        help='Task type. Default: feedforward.',
+                        choices=['feedforward', 'classification'],
+                        default='feedforward',
                         type=str,
                         dest='task')
     parser.add_argument('-ni', '--number_iter',
@@ -94,10 +94,10 @@ def cli_argument_parser():
                         default=0,
                         type=int,
                         dest='time',
-                        help='Optional. Time in seconds to execute topology.')
+                        help='Optional. Maximum test duration. 0 if no restrictions.')
     parser.add_argument('--report_path',
                         type=Path,
-                        default=Path(__file__).parent / 'ncnn_inference_report1.json',
+                        default=Path(__file__).parent / 'ncnn_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
 
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
-        if not args.raw_output:
+        if not args.raw_output and args.task == 'classification':
             process_output(io, args.number_iter, args.number_top, args.input, result, log)
 
     except Exception:

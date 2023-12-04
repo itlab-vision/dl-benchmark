@@ -16,7 +16,7 @@ def get_device(device, task):
     if device == 'CPU':
         log.info(f'{task.title()} will be executed on {device}')
         return False
-    elif device == 'GPU':
+    elif device == 'NVIDIA_GPU':
         log.info(f'{task.title()} will be executed on {device}')
         return True
     else:
