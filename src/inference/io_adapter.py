@@ -229,7 +229,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                 self._labels_map = [line.strip() for line in f]
 
     @staticmethod
-    def _not_valid_result(result):
+    def _is_result_invalid(result):
         return result is None
 
     @abc.abstractmethod
@@ -323,6 +323,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceDetectionTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_recognition_tflite_cpp':
             return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_mesh_tflite_cpp':
+            return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -391,7 +393,7 @@ class ClassificationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -415,7 +417,7 @@ class DetectionIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -471,7 +473,7 @@ class FaceDetectionIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -511,7 +513,7 @@ class SegmenatationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -540,7 +542,7 @@ class AdasSegmenatationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -571,7 +573,7 @@ class RoadSegmenatationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -600,7 +602,7 @@ class RecognitionFaceIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -636,7 +638,7 @@ class PersonAttributesIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -706,7 +708,7 @@ class AgeGenderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         layer_iter = iter(result)
@@ -725,7 +727,7 @@ class GazeIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -768,7 +770,7 @@ class HeadPoseIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -841,7 +843,7 @@ class PersonDetectionAslIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -881,7 +883,7 @@ class LicensePlateIO(IOAdapter):
         return slice_input
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -902,7 +904,7 @@ class InstanceSegmenatationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -957,7 +959,7 @@ class SingleImageSuperResolutionIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -979,7 +981,7 @@ class SpherefaceIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -1149,7 +1151,7 @@ class DetectionSSDOldFormat(DetectionSSD):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1227,7 +1229,7 @@ class DetectionSSDNewFormat(DetectionSSD):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1473,7 +1475,7 @@ class HumanPoseEstimationIO(IOAdapter):
         return frame
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         edges = [
@@ -1534,7 +1536,7 @@ class ActionRecognitionEncoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1559,7 +1561,7 @@ class DriverActionRecognitionEncoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1584,7 +1586,7 @@ class ReidentificationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1609,7 +1611,7 @@ class ActionRecognitionDecoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1631,7 +1633,7 @@ class DriverActionRecognitionDecoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1653,7 +1655,7 @@ class MaskRCNNIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1825,7 +1827,7 @@ class yolo(IOAdapter):
         return None
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -2066,7 +2068,7 @@ class SegmentationTFLiteCppIO(IOAdapter):
         self._image = cv2.imread(input_image[0])
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -2335,3 +2337,54 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
             ref_vec = ref_vec[1:].astype(np.float32)
             cos_sim = (result @ ref_vec) / (np.linalg.norm(result) * np.linalg.norm(ref_vec))
             log.info(f'COSINE SIMILARITY: {cos_sim}')
+
+
+class FaceMeshTFLiteCppIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_face_mesh.bmp')
+        self.net_width = 192
+        self.net_height = 192
+        self._result_layer_name = 'conv2d_21'
+
+        # landmarks indices from https://github.com/google/mediapipe/issues/1615#issuecomment-989818087
+        self._face = {
+            'face_oval': [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                          397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                          172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
+            'left_eye': [130, 7, 163, 144, 145, 153, 154, 155,
+                         133, 173, 56, 28, 27, 29, 30, 247],
+            'left_brow': [70, 63, 105, 66, 107, 55, 65, 52, 53, 46],
+            'right_eye': [362, 382, 381, 380, 374, 373, 373, 390, 249,
+                          359, 467, 260, 259, 257, 258, 286, 414, 463],
+            'right_brow': [336, 296, 334, 293, 300, 276, 283, 282, 295, 285],
+            'lips': [61, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+                     291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
+        }
+
+    def set_image(self, input_image):
+        self._image = cv2.imread(input_image[0])
+        self._orig_h, self._orig_w = self._image.shape[:-1]
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[self._result_layer_name][0]
+        mesh_3D = result[0][0].reshape((468, 3))
+        mesh_2D_proj = mesh_3D[:, :2]
+        landmark_points = []
+
+        for landmark_point in mesh_2D_proj:
+            landmark_points.append((int(landmark_point[0] * self._orig_w / self.net_width),
+                                    int(landmark_point[1] * self._orig_h / self.net_height)))
+
+        for landmark_point in landmark_points:
+            cv2.circle(self._image, landmark_point, radius=1, color=(235, 0, 125))
+
+        for points_idx in self._face.values():
+            points = np.array([landmark_points[idx] for idx in points_idx])
+            cv2.polylines(self._image, [points], True, color=(235, 225, 125), thickness=2)
+
+        cv2.imwrite(self.file_name, self._image)
+        log.info('Result image was saved to {0}'.format(self.file_name))
