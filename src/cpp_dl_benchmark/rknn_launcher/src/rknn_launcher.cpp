@@ -91,6 +91,8 @@ void RKNNLauncher::destroy_context() {
         }
         rknn_destroy(rknnContext);
     }
+    delete[] inputs;
+    delete[] outputs;
 }
 
 RKNNLauncher::~RKNNLauncher() {
@@ -131,7 +133,7 @@ void RKNNLauncher::read(const std::string& model_file, const std::string& weight
     int modelSize = f.tellg();
     f.seekg(0, std::ios::beg);
 
-    auto model = std::unique_ptr<unsigned char>(new unsigned char[modelSize]);
+    auto model = std::unique_ptr<unsigned char[]>(new unsigned char[modelSize]);
     if (!model) {
         std::string err_msg = "Failed to read model " + model_file;
         logger::err << err_msg << logger::endl;
