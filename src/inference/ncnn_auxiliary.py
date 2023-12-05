@@ -37,6 +37,8 @@ def get_images_names(images_path):
 
 
 def prepare_output(result, task):
+    if result is None:
+        return None
     if task == 'feedforward':
         return {}
     if task == 'classification':

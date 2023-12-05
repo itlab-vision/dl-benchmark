@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
         result, inference_time = inference_ncnn(net, args.number_iter, args.input_name,
                                                 args.input_shape[0], io.get_slice_input, args.time)
-
+        print(result)
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
