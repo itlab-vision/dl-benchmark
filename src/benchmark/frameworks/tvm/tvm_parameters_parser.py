@@ -84,7 +84,7 @@ class TVMParameters(FrameworkParameters):
     @staticmethod
     def _framework_is_correct(framework):
         correct_frameworks = ['mxnet', 'onnx', 'tvm',
-                              'pytorch', 'caffe']
+                              'pytorch', 'caffe', 'tflite']
         if framework.lower() in correct_frameworks:
             return True
         else:
