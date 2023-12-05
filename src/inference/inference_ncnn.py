@@ -9,7 +9,7 @@ from io_adapter import IOAdapter
 from io_model_wrapper import NcnnIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import NcnnTransformer
-from ncnn_auxiliary import (load_model, process_output)
+from ncnn_auxiliary import (load_model, prepare_output)
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -129,11 +129,11 @@ def inference_iteration(input_name, batch_size, net, get_slice):
 
 @get_exec_time()
 def infer_slice(input_name, batch_size, net, slice_input):
-    res = {}
+    res = []
     for i in range(batch_size):
         image = slice_input[input_name][i]
         cls_scores = net(image)
-        res[i] = cls_scores
+        res.append(cls_scores)
     return res
 
 
@@ -161,8 +161,9 @@ if __name__ == '__main__':
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
-        if not args.raw_output and args.task == 'classification':
-            process_output(io, args.number_iter, args.number_top, args.input, result, log)
+        if not args.raw_output:
+            result = prepare_output(result, args.task)
+            io.process_output(result, log)
 
     except Exception:
         log.error(traceback.format_exc())

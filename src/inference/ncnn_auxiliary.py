@@ -36,22 +36,10 @@ def get_images_names(images_path):
     return images_path_list
 
 
-def process_output(io, number_iter, number_top, images_path, result, log):
-    if number_iter != 1:
-        log.warning('Model output is processed only for the number iteration = 1')
-        return
-
-    log.info('Inference results')
-    images_path_list = get_images_names(images_path)
-    total_images = len(images_path_list)
-
-    io.load_labels_map('image_net_synset.txt')
-    for result_layer_index, cls_scores in result.items():
-        log.info('Top {0} results:'.format(number_top))
-
-        top_ind = np.argsort(cls_scores)[::-1][0:number_top]  # noqa: PLE1130
-        # https://github.com/gforcada/flake8-pep3101/issues/23
-        log.info('Result for image {0}'.format(images_path_list[result_layer_index % total_images]))  # noqa: S001
-        for id_ in top_ind:
-            det_label = io._labels_map[id_] if io._labels_map else '#{0}'.format(id_)
-            log.info('\t{:.7f} {}'.format(cls_scores[id_], det_label))  # noqa: P101
+def prepare_output(result, task):
+    if task == 'feedforward':
+        return {}
+    if task == 'classification':
+        return {'classification': np.array(result)}
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
