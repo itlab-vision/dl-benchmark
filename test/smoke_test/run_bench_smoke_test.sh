@@ -6,7 +6,7 @@ omz_downloader --output_dir working_dir_smoke --cache_dir cache_dir_smoke      -
 omz_converter  --output_dir working_dir_smoke --download_dir working_dir_smoke --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch --precisions FP32
 
 mkdir -p working_dir_smoke/dgl
-curl -o working_dir_smoke/dgl/model.pt https://raw.githubusercontent.com/itlab-vision/dgl/main/models/model.pt
+curl -o working_dir_smoke/dgl/gcn_model.pt https://raw.githubusercontent.com/itlab-vision/dgl/main/models/gcn_model.pt
 curl -o working_dir_smoke/dgl/GCN.py https://raw.githubusercontent.com/itlab-vision/dgl/main/models/GCN.py
 
 result_file="results_benchmark.csv"

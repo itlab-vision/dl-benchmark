@@ -701,7 +701,7 @@
             <Name>GCN</Name>
             <Precision>FP32</Precision>
             <SourceFramework>DGL (PyTorch)</SourceFramework>
-            <ModelPath>./working_dir_smoke/dgl/model.pt</ModelPath>
+            <ModelPath>./working_dir_smoke/dgl/gcn_model.pt</ModelPath>
             <WeightsPath></WeightsPath>
             <Module>./working_dir_smoke/dgl/GCN.py</Module>
         </Model>
