@@ -24,6 +24,7 @@ log = configure_logger()
 # list of io-adapters that require original images
 ADAPTERS_WITH_ORIG_IMAGES = [
     'segmentation_tflite_cpp',
+    'blaze_face_tflite_cpp',
     'face_detection_tflite_cpp',
     'face_mesh_tflite_cpp',
     'face_mesh_v2_tflite_cpp',

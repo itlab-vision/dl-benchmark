@@ -319,8 +319,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7ONNX(args, io_model_wrapper, transformer)
         elif task == 'segmentation_tflite_cpp':
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'blaze_face_tflite_cpp':
+            return BlazeFaceShortRangeTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_detection_tflite_cpp':
-            return FaceDetectionTFLiteCppIO(args, io_model_wrapper, transformer)
+            return FaceDetectionFullRangeTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_recognition_tflite_cpp':
             return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_tflite_cpp':
@@ -2121,29 +2123,39 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_detection.bmp')
-        self.net_width = 128.
-        self.net_height = 128.
-        self._base_repeats = 2
-        self._strides = (8, 16, 16, 16)
+
+    @abc.abstractmethod
+    def _get_net_shape(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_result_layer_names(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_anchors_parameters(self):
+        pass
 
     def convert_input_to_bin_file(self, args):
+        net_width, net_height = self._get_net_shape()
+
         img = cv2.imread(args.input[0])
 
         orig_width, orig_height = img.shape[1], img.shape[0]
-        scale = min(self.net_width / img.shape[1], self.net_height / img.shape[0])
+        scale = min(net_width / img.shape[1], net_height / img.shape[0])
         img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
 
-        dx = (int(self.net_width) - img.shape[1]) // 2
-        dy = (int(self.net_height) - img.shape[0]) // 2
+        dx = (int(net_width) - img.shape[1]) // 2
+        dy = (int(net_height) - img.shape[0]) // 2
 
         img = cv2.copyMakeBorder(img,
-                                 dy, int(int(self.net_height) - img.shape[0] - dy),
-                                 dx, int(int(self.net_width) - img.shape[1] - dx),
+                                 dy, int(int(net_height) - img.shape[0] - dy),
+                                 dx, int(int(net_width) - img.shape[1] - dx),
                                  cv2.BORDER_CONSTANT)
 
-        self.img_scale = min(self.net_width / orig_width, self.net_height / orig_height)
-        self.padding_x = (self.net_width - orig_width * self.img_scale) / 2
-        self.padding_y = (self.net_height - orig_height * self.img_scale) / 2
+        self.img_scale = min(net_width / orig_width, net_height / orig_height)
+        self.padding_x = (net_width - orig_width * self.img_scale) / 2
+        self.padding_y = (net_height - orig_height * self.img_scale) / 2
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
         img -= 127.5
@@ -2160,14 +2172,16 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         self._image = cv2.imread(input_image[0])
 
     def get_anchors(self):
+        net_width, net_height = self._get_net_shape()
+        base_repeats, strides = self._get_anchors_parameters()
         anchors = []
-        repeats = self._base_repeats
-        for idx, stride in enumerate(self._strides):
-            if (idx + 1 != len(self._strides)) and (stride == self._strides[idx + 1]):
-                repeats += self._base_repeats
+        repeats = base_repeats
+        for idx, stride in enumerate(strides):
+            if (idx + 1 != len(strides)) and (stride == strides[idx + 1]):
+                repeats += base_repeats
                 continue
-            feature_map_width = int(self.net_width) // stride
-            feature_map_height = int(self.net_height) // stride
+            feature_map_width = int(net_width) // stride
+            feature_map_height = int(net_height) // stride
             for y in range(feature_map_height):
                 center_y = (y + 0.5) / feature_map_height
                 for x in range(feature_map_width):
@@ -2177,17 +2191,20 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         return anchors
 
     def process_output(self, result, log):
+        classifier, regressor = self._get_result_layer_names()
+        net_width, net_height = self._get_net_shape()
+
         anchors = self.get_anchors()
         self._original_shapes = self._image.shape[:2]
 
-        probs = result['classificators'].flatten()
+        probs = result[classifier].flatten()
         probs = 1. / (1. + np.exp(-probs))
 
-        bboxes = np.zeros(shape=result['regressors'][0].shape, dtype=np.float32)
-        for i, bbox in enumerate(result['regressors'][0]):
+        bboxes = np.zeros(shape=result[regressor][0].shape, dtype=np.float32)
+        for i, bbox in enumerate(result[regressor][0]):
             for idx in range(0, bbox.shape[0] // 2):
-                bbox[2 * idx] = bbox[2 * idx] / self.net_width
-                bbox[2 * idx + 1] = bbox[2 * idx + 1] / self.net_height
+                bbox[2 * idx] = bbox[2 * idx] / net_width
+                bbox[2 * idx + 1] = bbox[2 * idx + 1] / net_height
                 if idx == 1:
                     continue
                 bbox[2 * idx] += anchors[i]['x']
@@ -2250,51 +2267,83 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         circle_width = 3
         for bbox in bboxes[indexes]:
             # face
-            xmin = int((bbox[0] * self.net_width - self.padding_x) / self.img_scale)
-            ymin = int((bbox[1] * self.net_height - self.padding_y) / self.img_scale)
-            xmax = int((bbox[2] * self.net_width - self.padding_x) / self.img_scale)
-            ymax = int((bbox[3] * self.net_height - self.padding_y) / self.img_scale)
+            xmin = int((bbox[0] * net_width - self.padding_x) / self.img_scale)
+            ymin = int((bbox[1] * net_height - self.padding_y) / self.img_scale)
+            xmax = int((bbox[2] * net_width - self.padding_x) / self.img_scale)
+            ymax = int((bbox[3] * net_height - self.padding_y) / self.img_scale)
             cv2.rectangle(self._image, (xmin, ymin), (xmax, ymax), color, 2)
             log.info(f'Face:\ttop left - ({xmin}, {ymin}),\tbottom right - ({xmax}, {ymax})')
 
             # left eye
-            x = int((bbox[4] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[5] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[4] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[5] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Left Eye: ({x}, {y})')
 
             # right eye
-            x = int((bbox[6] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[7] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[6] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[7] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Right Eye: ({x}, {y})')
 
             # nose tip
-            x = int((bbox[8] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[9] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[8] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[9] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Nose Tip: ({x}, {y})')
 
             # mouth
-            x = int((bbox[10] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[11] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[10] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[11] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Mouth: ({x}, {y})')
 
             # left eye tragion
-            x = int((bbox[12] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[13] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[12] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[13] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Left Eye Tragion: ({x}, {y})')
 
             # right eye tragion
-            x = int((bbox[14] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[15] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[14] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[15] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Right Eye Tragion: ({x}, {y})')
 
             cv2.imwrite(self.file_name, self._image)
             log.info('Result image was saved to {0}'.format(self.file_name))
+
+
+class BlazeFaceShortRangeTFLiteCppIO(FaceDetectionTFLiteCppIO):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (128., 128.)
+
+    def _get_result_layer_names(self):
+        return ('classificators', 'regressors')
+
+    def _get_anchors_parameters(self):
+        base_repeats = 2
+        strides = [8, 16, 16, 16]
+        return (base_repeats, strides)
+
+
+class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionTFLiteCppIO):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (192., 192.)
+
+    def _get_result_layer_names(self):
+        return ('reshaped_classifier_face_4', 'reshaped_regressor_face_4')
+
+    def _get_anchors_parameters(self):
+        base_repeats = 1
+        strides = [4]
+        return (base_repeats, strides)
 
 
 class FaceRecognitionTFLiteCppIO(IOAdapter):
