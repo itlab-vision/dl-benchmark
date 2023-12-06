@@ -1,21 +1,24 @@
 import argparse
-import importlib
 import json
 import sys
 import traceback
-from pathlib import Path
-
-import torch
 import tvm
 
+
+from pathlib import Path
+
 import postprocessing_data as pp
+from transformer import TVMTransformer
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from reporter.report_writer import ReportWriter
-from transformer import TVMTransformer
-from tvm_auxiliary import (TVMConverter, create_dict_for_converter_mxnet,
+
+from tvm_auxiliary import (create_dict_for_converter_pytorch,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from src.model_converters.tvm_converter.tvm_converter import PyTorchToTVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -37,9 +40,13 @@ def cli_argument_parser():
                         help='Path to an .pth file with a trained weights.',
                         type=str,
                         dest='model_params')
+    parser.add_argument('-mm', '--module',
+                        help='Module with model architecture.',
+                        default='torchvision.models',
+                        type=str,
+                        dest='module')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or '
-                             'NVIDIA_GPU (CPU by default)',
+                        help='Specify the target device to infer (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -78,20 +85,29 @@ def cli_argument_parser():
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,'
-                             'W is an input tensor width,'
+                        help='Input shape NxHxWxC, N is a batch size,'
                              'H is an input tensor height,'
+                             'W is an input tensor width,'
                              'C is an input tensor number of channels.',
                         required=True,
                         type=int,
                         nargs=4,
                         dest='input_shape')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
     parser.add_argument('--norm',
                         help='Flag to normalize input images'
                              '(use --mean and --std arguments to set'
                              'required normalization parameters).',
                         action='store_true',
                         dest='norm')
+    parser.add_argument('--not_softmax',
+                        help='Flag to do not use softmax function.',
+                        action='store_true',
+                        dest='not_softmax')
     parser.add_argument('--mean',
                         help='Mean values.',
                         default=[0, 0, 0],
@@ -119,58 +135,33 @@ def cli_argument_parser():
                         default=0,
                         type=int,
                         dest='opt_level')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file.',
+                        default='image_net_labels.json',
+                        type=str,
+                        dest='labels')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
                         type=bool,
                         dest='raw_output')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
+                        help='Parameter of channel swap (RGB to BGR by default).',
+                        default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
-    parser.add_argument('--labels',
-                        help='Labels mapping file.',
-                        default=None,
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
                         type=str,
-                        dest='labels')
+                        dest='target')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
     return args
-
-
-class PyTorchToTVMConverter(TVMConverter):
-    def __init__(self, args):
-        super().__init__(args)
-
-    def _get_device_for_framework(self):
-        return super()._get_device_for_framework()
-
-    def _convert_model_from_framework(self, target, dev):
-        model_name = self.args['model_name']
-        opt_lev = self.args['opt_level']
-        module = 'torchvision.models'
-
-        log.info('Get model from TorchVision')
-        model = importlib.import_module(module).__getattribute__(model_name)
-        pt_model = model(weights=True)
-        pt_model = pt_model.eval()
-        input_shape = self.args['input_shape']
-        input_data = torch.randn(input_shape)
-        scripted_model = torch.jit.trace(pt_model, input_data).eval()
-        input_name = self.args['input_name']
-        shape_list = [(input_name, input_shape)]
-
-        log.info('Creating graph module from PyTorch model')
-        model, params = tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
-        with tvm.transform.PassContext(opt_level=opt_lev):
-            lib = tvm.relay.build(model, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return module
 
 
 def main():
@@ -186,7 +177,7 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = PyTorchToTVMConverter(create_dict_for_converter_mxnet(args))
+        converter = PyTorchToTVMConverter(create_dict_for_converter_pytorch(args))
         graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
@@ -203,8 +194,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names)
-
+                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
@@ -214,7 +204,6 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)
-
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
     except Exception:
         log.error(traceback.format_exc())

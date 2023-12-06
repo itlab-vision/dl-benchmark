@@ -13,6 +13,7 @@ class TVMParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL = 'OptimizationLevel'
         CONFIG_FRAMEWORK_DEPENDENT_STD_TAG = 'Std'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
+        CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG = 'Layout'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -32,6 +33,8 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG)[0].firstChild
         _optimization_level = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL)[0].firstChild
+        _layout = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG)[0].firstChild
 
         return TVMParameters(
             framework=_framework.data if _framework else None,
@@ -42,12 +45,13 @@ class TVMParametersParser(DependentParametersParser):
             std=_std.data if _std else None,
             channel_swap=_channel_swap.data if _channel_swap else None,
             optimization_level=_optimization_level.data if _optimization_level else None,
+            layout=_layout.data if _layout else None,
         )
 
 
 class TVMParameters(FrameworkParameters):
     def __init__(self, framework, input_name, input_shape,
-                 normalize, mean, std, channel_swap, optimization_level):
+                 normalize, mean, std, channel_swap, optimization_level, layout):
         self.framework = None
         self.input_name = None
         self.input_shape = None
@@ -56,6 +60,7 @@ class TVMParameters(FrameworkParameters):
         self.std = None
         self.channel_swap = None
         self.optimization_level = None
+        self.layout = None
 
         if self._framework_is_correct(framework):
             self.framework = framework
@@ -73,11 +78,13 @@ class TVMParameters(FrameworkParameters):
             self.channel_swap = channel_swap
         if self._parameter_is_not_none(optimization_level):
             self.optimization_level = optimization_level
+        if self._parameter_is_not_none(layout):
+            self.layout = layout
 
     @staticmethod
     def _framework_is_correct(framework):
         correct_frameworks = ['mxnet', 'onnx', 'tvm',
-                              'tf', 'tflite', 'pytorch']
+                              'pytorch', 'caffe']
         if framework.lower() in correct_frameworks:
             return True
         else:

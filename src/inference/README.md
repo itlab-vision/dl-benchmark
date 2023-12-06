@@ -835,8 +835,10 @@ python3 inference_onnx_runtime.py \
 Название скриптов:
 
 ```bash
+inference_tvm.py
 inference_tvm_mxnet.py
 inference_tvm_pytorch.py
+inference_tvm_caffe.py
 inference_tvm_onnx.py
 ```
 
@@ -845,7 +847,7 @@ inference_tvm_onnx.py
 - `-i / --input` - путь до изображения или директории с изображениями
   (расширения файлов `.jpg`, `.png`, `.bmp` и т.д.).
 - `-is / --input_shape` - размеры входного тензора сети в формате
-  BxCxWxH, B - размер пачки, C - количество каналов изображений,
+  NxHxWxC, B - размер пачки, C - количество каналов изображений,
   W - ширина изображений, H - высота изображений.
 
 Опциональные аргументы:
@@ -853,6 +855,7 @@ inference_tvm_onnx.py
 - `-t / --task` - название задачи. Текущая реализация поддерживает
   решение задачи классификации. По умолчанию принимает значение
   `classification`.
+- `--layout` - формат входных тензоров. По умолчанию `NHWС`.
 - `-b / --batch_size` - количество изображений, которые будут обработаны
   за один проход сети. По умолчанию равно `1`.
 - `-in / --input_name` - название входа модели. По умолчанию модель
@@ -872,6 +875,9 @@ inference_tvm_onnx.py
   соответствует `(0, 1, 2)`), а большинство нейронных сетей принимают
   на вход изображения в формате RGB, поэтому по умолчанию порядок
   `(2, 1, 0)`.
+- `--target` - строка, необходимая для определения аппаратно-зависимых
+  оптимизаций. По умолчанию принимает значение `llvm`. Возможные варианты
+  можно посмотреть [здесь][tvm_target].
 - `-d / --device` - оборудование, на котором выполняется вывод сети.
   Поддерживается вывод на CPU (значение параметра `CPU`).
   По умолчанию принимает значение `CPU`.
@@ -918,6 +924,18 @@ inference_tvm_onnx.py
   в формате `.onnx`.
 - `-mn / --model_name` - имя модели.
 
+Аргументы, необходимые для инференса моделей Caffe с использованием Apache TVM:
+
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.prototxt`.
+- `-w / --weights` - путь до файла с весами в формате `.caffemodel`.
+
+Аргументы, необходимые для инференса моделей TVM с использованием Apache TVM:
+
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.json`.
+- `-w / --weights` - путь до файла с весами в формате `.params`.
+
 #### Примеры запуска
 
 ##### Запуск для MXNet
@@ -949,8 +967,36 @@ python3 inference_tvm_pytorch.py \
 ##### Запуск для ONNX Runtime
 
 ```bash
-python3 inference_tvm_pytorch.py \
+python3 inference_tvm_onnx.py \
     -m <path_to_model>/<model>.onnx \
+    -i <path_to_image>/<image_name> \
+    -ol <number> \
+    --input_shape <input_shape> \
+    --mean <mean> \
+    --std <std> \
+    --norm <norm>
+```
+
+##### Запуск для Caffe
+
+```bash
+python3 inference_tvm_caffe.py \
+    -m <path_to_model>/<model>.prototxt \
+    -w <path_to_weights>/<weights>.caffemodel
+    -i <path_to_image>/<image_name> \
+    -ol <number> \
+    --input_shape <input_shape> \
+    --mean <mean> \
+    --std <std> \
+    --norm <norm>
+```
+
+##### Запуск для TVM
+
+```bash
+python3 inference_tvm.py \
+    -m <path_to_model>/<model>.json \
+    -w <path_to_weights>/<weights>.params
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
@@ -1124,3 +1170,5 @@ python inference_pytorch_cpp.py --model_name <model_name> \
 [torchvision]: https://pytorch.org/vision/stable/models.html
 
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
+
+[tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html

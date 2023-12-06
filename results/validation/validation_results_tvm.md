@@ -87,11 +87,6 @@ We infer models using the following APIs:
           --inputs input:0 --outputs InceptionV4/Logits/Predictions:0
    ```
 
-1. Inference was executed on the batch size that equals 4 except
-   the `resnet-50-pytorch` model which was inferred on the batch size 1.
-   For this model confidences are different from the source framework
-   on the batch size 4, while the sequence of top-5 classes is the same.
-
 ### Image classification
 
 #### Test image #1
