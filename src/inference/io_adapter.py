@@ -325,6 +325,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_tflite_cpp':
             return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_mesh_v2_tflite_cpp':
+            return FaceMeshV2TFLiteCppIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2319,7 +2321,8 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
         return str(bin_path)
 
     def process_output(self, result, log):
-        result = result['embeddings'][0]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name][0]
         file = os.path.join(os.path.dirname(__file__), self.file_name)
         with open(file, 'w'):
             np.savetxt(
@@ -2339,16 +2342,65 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
             log.info(f'COSINE SIMILARITY: {cos_sim}')
 
 
-class FaceMeshTFLiteCppIO(IOAdapter):
+class FaceMesh(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_mesh.bmp')
-        self.net_width = 192
-        self.net_height = 192
-        self._result_layer_name = 'conv2d_21'
 
+    @abc.abstractmethod
+    def _get_net_shape(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_result_layer_name(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_landmarks_indices(self):
+        pass
+
+    def set_image(self, input_image):
+        self._image = cv2.imread(input_image[0])
+        self._orig_h, self._orig_w = self._image.shape[:-1]
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[self._get_result_layer_name()][0]
+        mesh_3D = result[0][0].reshape((-1, 3))
+        mesh_2D_proj = mesh_3D[:, :2]
+        landmark_points = []
+
+        net_width, net_height = self._get_net_shape()
+        for landmark_point in mesh_2D_proj:
+            landmark_points.append((int(landmark_point[0] * self._orig_w / net_width),
+                                    int(landmark_point[1] * self._orig_h / net_height)))
+
+        for landmark_point in landmark_points:
+            cv2.circle(self._image, landmark_point, radius=1, color=(235, 0, 125))
+
+        for points_idx in self._get_landmarks_indices().values():
+            points = np.array([landmark_points[idx] for idx in points_idx])
+            cv2.polylines(self._image, [points], True, color=(235, 225, 125), thickness=2)
+
+        cv2.imwrite(self.file_name, self._image)
+        log.info('Result image was saved to {0}'.format(self.file_name))
+
+
+class FaceMeshTFLiteCppIO(FaceMesh):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (192, 192)
+
+    def _get_result_layer_name(self):
+        return 'conv2d_21'
+
+    def _get_landmarks_indices(self):
         # landmarks indices from https://github.com/google/mediapipe/issues/1615#issuecomment-989818087
-        self._face = {
+        return {
             'face_oval': [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
                           397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
                           172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
@@ -2362,29 +2414,31 @@ class FaceMeshTFLiteCppIO(IOAdapter):
                      291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
         }
 
-    def set_image(self, input_image):
-        self._image = cv2.imread(input_image[0])
-        self._orig_h, self._orig_w = self._image.shape[:-1]
 
-    def process_output(self, result, log):
-        if self._is_result_invalid(result):
-            log.warning('Model output is processed only for the number iteration = 1')
-            return
-        result = result[self._result_layer_name][0]
-        mesh_3D = result[0][0].reshape((468, 3))
-        mesh_2D_proj = mesh_3D[:, :2]
-        landmark_points = []
+class FaceMeshV2TFLiteCppIO(FaceMesh):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
 
-        for landmark_point in mesh_2D_proj:
-            landmark_points.append((int(landmark_point[0] * self._orig_w / self.net_width),
-                                    int(landmark_point[1] * self._orig_h / self.net_height)))
+    def _get_net_shape(self):
+        return (256, 256)
 
-        for landmark_point in landmark_points:
-            cv2.circle(self._image, landmark_point, radius=1, color=(235, 0, 125))
+    def _get_result_layer_name(self):
+        return 'Identity'
 
-        for points_idx in self._face.values():
-            points = np.array([landmark_points[idx] for idx in points_idx])
-            cv2.polylines(self._image, [points], True, color=(235, 225, 125), thickness=2)
-
-        cv2.imwrite(self.file_name, self._image)
-        log.info('Result image was saved to {0}'.format(self.file_name))
+    def _get_landmarks_indices(self):
+        # landmarks indices from https://github.com/google/mediapipe/issues/1615#issuecomment-1112818663
+        return {
+            'face_oval': [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                          397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                          172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
+            'left_eye': [130, 7, 163, 144, 145, 153, 154, 155,
+                         133, 173, 56, 28, 27, 29, 30, 247],
+            'left_eye_iris': [469, 470, 471, 472],
+            'left_brow': [70, 63, 105, 66, 107, 55, 65, 52, 53, 46],
+            'right_eye': [362, 382, 381, 380, 374, 373, 373, 390, 249,
+                          359, 467, 260, 259, 257, 258, 286, 414, 463],
+            'right_eye_iris': [474, 475, 476, 477],
+            'right_brow': [336, 296, 334, 293, 300, 276, 283, 282, 295, 285],
+            'lips': [61, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+                     291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
+        }
