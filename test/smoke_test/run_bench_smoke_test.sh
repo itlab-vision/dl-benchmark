@@ -9,6 +9,8 @@ mkdir -p working_dir_smoke/dgl
 curl -o working_dir_smoke/dgl/gcn_model.pt https://raw.githubusercontent.com/itlab-vision/dgl/main/models/gcn_model.pt
 curl -o working_dir_smoke/dgl/GCN.py https://raw.githubusercontent.com/itlab-vision/dgl/main/models/GCN.py
 
+. ./run_tvm_model_converters.sh
+
 result_file="results_benchmark.csv"
 [ -f $result_file ] && rm $result_file
 smoke_config_file="smoke_config.xml"
