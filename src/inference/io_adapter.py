@@ -329,6 +329,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_v2_tflite_cpp':
             return FaceMeshV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'minifasnet_v2_tflite_cpp':
+            return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2491,3 +2493,35 @@ class FaceMeshV2TFLiteCppIO(FaceMesh):
             'lips': [61, 146, 91, 181, 84, 17, 314, 405, 321, 375,
                      291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
         }
+
+
+class MiniFASNetV2TFLiteCppIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_minifasnet.csv')
+        self._classes = ['fake2d image', 'real face', 'fake3d image']
+
+    def set_image(self, input_image):
+        self._image = cv2.imread(input_image[0])
+        self._orig_h, self._orig_w = self._image.shape[:-1]
+
+    def process_output(self, result, log):
+        result_layer_name = next(iter(result))
+        scores = result[result_layer_name][0]
+        probs = np.exp(scores) / np.sum(np.exp(scores))
+
+        with open(self.file_name, 'w'):
+            np.savetxt(
+                self.file_name,
+                [probs],
+                fmt='%1.7f',
+                delimiter=';',
+                header=';'.join(self._classes),
+                comments='',
+            )
+        log.info(f'Result was saved to {self.file_name}')
+
+        max_idx = np.argmax(probs)
+
+        log.info('Information for image:')
+        log.info(f'\t{self._classes[max_idx]} (score: {probs[max_idx]:.5f})')
