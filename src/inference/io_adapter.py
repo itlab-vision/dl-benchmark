@@ -319,8 +319,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7ONNX(args, io_model_wrapper, transformer)
         elif task == 'segmentation_tflite_cpp':
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'blaze_face_tflite_cpp':
-            return BlazeFaceShortRangeTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task in ['blaze_face_tflite_cpp', 'blaze_face_rknn']:
+            return BlazeFaceShortRangeCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_detection_tflite_cpp':
             return FaceDetectionFullRangeTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_recognition_tflite_cpp':
@@ -2121,7 +2121,7 @@ class SegmentationTFLiteCppIO(IOAdapter):
         log.info(f'Result image was saved to {self.file_name}')
 
 
-class FaceDetectionTFLiteCppIO(IOAdapter):
+class FaceDetectionCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_detection.bmp')
@@ -2138,7 +2138,7 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
     def _get_anchors_parameters(self):
         pass
 
-    def convert_input_to_bin_file(self, args):
+    def convert_input_to_bin_file(self, args, normalize=True, data_type=np.float32):
         net_width, net_height = self._get_net_shape()
 
         img = cv2.imread(args.input[0])
@@ -2159,14 +2159,15 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         self.padding_x = (net_width - orig_width * self.img_scale) / 2
         self.padding_y = (net_height - orig_height * self.img_scale) / 2
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
-        img -= 127.5
-        img /= 127.5
+        if normalize:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(data_type)
+            img -= 127.5
+            img /= 127.5
 
         bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
         bin_dir.mkdir(parents=True, exist_ok=True)
         bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
-        img.astype(np.float32).tofile(bin_path)
+        img.astype(data_type).tofile(bin_path)
 
         return str(bin_path)
 
@@ -2316,7 +2317,7 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(self.file_name))
 
 
-class BlazeFaceShortRangeTFLiteCppIO(FaceDetectionTFLiteCppIO):
+class BlazeFaceShortRangeCppIO(FaceDetectionCppIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -2332,7 +2333,7 @@ class BlazeFaceShortRangeTFLiteCppIO(FaceDetectionTFLiteCppIO):
         return (base_repeats, strides)
 
 
-class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionTFLiteCppIO):
+class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionCppIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
