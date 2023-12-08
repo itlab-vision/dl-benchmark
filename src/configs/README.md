@@ -664,6 +664,37 @@
 </Tests>
 ```
 
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Spektral
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>node-classification</Task>
+            <Name>citation-gcn</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Spektral</SourceFramework>
+            <ModelPath>./working_dir_smoke/spektral/model.keras</ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Cora</Name>
+            <Path>./test_graph.bin</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Spektral</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+        </FrameworkDependent>
+    </Test>
+</Tests>
+```
+
 ## Заполнение файла конфигурации для скрипта оценки точности
 
 ### Правила заполнения
