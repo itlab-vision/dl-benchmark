@@ -216,7 +216,15 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
                            get_slice, test_duration, device):
     result = None
     time_infer = []
+    num_tokens = None
 
+    if task_type == 'batch-text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
+        from configs.onnx_configs.gpt_2 import batch_text_generation, MAX_TEXT_LEN
+
+        tokenizer = create_tokenizer(model_name)
+        encodings_dict = tokenize(tokenizer, get_slice())
+        num_tokens = MAX_TEXT_LEN
     if number_iter == 1:
         if task_type not in ['batch-text-generation']:
             slice_input = get_slice()
@@ -226,11 +234,6 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
         if task_type == 'text-to-image':
             result = session_or_pipeline(slice_input)
         elif task_type == 'batch-text-generation':
-            from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
-            from configs.onnx_configs.gpt_2 import batch_text_generation
-
-            tokenizer = create_tokenizer(model_name)
-            encodings_dict = tokenize(tokenizer, get_slice())
             result = batch_text_generation(ort_session=session_or_pipeline, tokenizer=tokenizer, device=device,
                                            output_names=output_names, encodings_dict=encodings_dict)
         else:
@@ -242,7 +245,8 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
         time_infer = loop_inference(number_iter,
                                     test_duration)(inference_iteration)(get_slice, model_name, output_names,
                                                                         session_or_pipeline, task_type, device)
-    return result, time_infer
+
+    return result, time_infer, num_tokens
 
 
 def inference_iteration(get_slice, model_name, output_names, session, task_type, device):
@@ -345,7 +349,7 @@ def main():
                 args.output_names = [output.name for output in outputs]
 
         log.info(f'Starting inference ({args.number_iter} iterations)')
-        result, inference_time = inference_onnx_runtime(
+        result, inference_time, num_tokens = inference_onnx_runtime(
             session_or_pipeline=inference_session,
             task_type=args.task,
             model_name=args.model_name,
@@ -356,7 +360,8 @@ def main():
             device=args.device)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,
+                                                                      num_tokens=num_tokens)
 
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')

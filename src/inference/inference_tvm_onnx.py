@@ -2,19 +2,24 @@ import argparse
 import json
 import sys
 import traceback
+
+
 from pathlib import Path
 
-import onnx
 import tvm
 
 import postprocessing_data as pp
+from transformer import TVMTransformer
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from reporter.report_writer import ReportWriter
-from transformer import TVMTransformer
-from tvm_auxiliary import (TVMConverter, create_dict_for_converter_onnx,
+
+from tvm_auxiliary import (create_dict_for_converter_onnx,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from src.model_converters.tvm_converter.tvm_converter import ONNXToTVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -33,8 +38,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_path')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on CPU or '
-                             'NVIDIA_GPU (CPU by default)',
+                        help='Specify the target device to infer (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -73,9 +77,9 @@ def cli_argument_parser():
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,'
-                             'W is an input tensor width,'
+                        help='Input shape NxHxWxC, N is a batch size,'
                              'H is an input tensor height,'
+                             'W is an input tensor width,'
                              'C is an input tensor number of channels.',
                         required=True,
                         type=int,
@@ -87,6 +91,10 @@ def cli_argument_parser():
                              'required normalization parameters).',
                         action='store_true',
                         dest='norm')
+    parser.add_argument('--not_softmax',
+                        help='Flag to do not use softmax function.',
+                        action='store_true',
+                        dest='not_softmax')
     parser.add_argument('--mean',
                         help='Mean values.',
                         default=[0, 0, 0],
@@ -114,48 +122,38 @@ def cli_argument_parser():
                         default=0,
                         type=int,
                         dest='opt_level')
+    parser.add_argument('-l', '--labels',
+                        help='Labels mapping file.',
+                        default='image_net_labels.json',
+                        type=str,
+                        dest='labels')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
                         type=bool,
                         dest='raw_output')
     parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
-                        default=[2, 0, 1],
+                        help='Parameter of channel swap (RGB to BGR by default).',
+                        default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
-    parser.add_argument('--labels',
-                        help='Labels mapping file.',
-                        default=None,
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
                         type=str,
-                        dest='labels')
+                        dest='target')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
     return args
-
-
-class ONNXToTVMConverter(TVMConverter):
-    def __init__(self, args):
-        super().__init__(args)
-
-    def _get_device_for_framework(self):
-        return super()._get_device_for_framework()
-
-    def _convert_model_from_framework(self, target, dev):
-        model_path = self.args['model_path']
-        opt_lev = self.args['opt_level']
-        model_onnx = onnx.load(model_path)
-        shape_dict = {self.args['input_name']: self.args['input_shape']}
-        log.info('Creating graph module from ONNX model')
-        model, params = tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
-        with tvm.transform.PassContext(opt_level=opt_lev):
-            lib = tvm.relay.build(model, target=target, params=params)
-        module = tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
-        return module
 
 
 def main():
@@ -166,13 +164,14 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
     try:
+        converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
+        graph_module = converter.get_graph_module()
+        args.input_name = converter.get_input_name()
+
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
-
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
-        graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
@@ -188,7 +187,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names)
+                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
 
                     log.info('Inference results')
                     io.process_output(res, log)
@@ -199,7 +198,6 @@ def main():
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, infer_time)
         report_writer.update_execution_results(**inference_result)
         report_writer.write_report(args.report_path)
-
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
     except Exception:
         log.error(traceback.format_exc())

@@ -59,7 +59,9 @@ so that cmake can find it during configuration step:
     - For PyTorch with default settings:
 
         ```bash
-        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTORCH_LAUNCHER=ON <dl-benchmark>/src/cpp_dl_benchmark
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTORCH_LAUNCHER=ON \
+            -DTorch_DIR=<PyTorch_DIR>/share/cmake/Torch/ \
+            <dl-benchmark>/src/cpp_dl_benchmark
         ```
     - For Torch-TensorRT:
 

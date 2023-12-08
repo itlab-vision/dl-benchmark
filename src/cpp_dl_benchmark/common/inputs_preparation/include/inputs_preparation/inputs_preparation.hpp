@@ -10,7 +10,7 @@
 
 namespace inputs {
 
-struct InputDescr {
+struct InputDescription {
     TensorDescription tensor_descr;
     std::vector<std::string> files;
     std::vector<float> mean = {0.f, 0.f, 0.f};
@@ -18,7 +18,7 @@ struct InputDescr {
     bool channel_swap = false;
 };
 
-using InputsInfo = std::map<std::string, InputDescr>;
+using InputsInfo = std::map<std::string, InputDescription>;
 
 int get_batch_size(const InputsInfo& inputs_info);
 

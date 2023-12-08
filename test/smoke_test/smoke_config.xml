@@ -435,6 +435,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -466,6 +467,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -496,9 +498,74 @@
             <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
+            <Layout>NCHW</Layout>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>efficientnet_b0</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>TVM</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
+            <OptimizationLevel>3</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+    <Model>
+        <Task>classification</Task>
+        <Name>resnet50-tvm-optimized</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>TVM</SourceFramework>
+        <ModelPath>working_dir_smoke/resnet50/resnet50.so</ModelPath>
+        <WeightsPath></WeightsPath>
+    </Model>
+    <Dataset>
+        <Name>Data</Name>
+        <Path>./black_square.jpg</Path>
+    </Dataset>
+    <FrameworkIndependent>
+        <InferenceFramework>TVM</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+        <InputName>data</InputName>
+        <Framework>TVM</Framework>
+        <InputShape>1 3 224 224</InputShape>
+        <Normalize>False</Normalize>
+        <Mean>0.485 0.456 0.406</Mean>
+        <Std>0.229 0.224 0.225</Std>
+        <ChannelSwap></ChannelSwap>
+        <Layout>NCHW</Layout>
+        <OptimizationLevel>0</OptimizationLevel>
+    </FrameworkDependent>
     </Test>
     <Test>
         <Model>
@@ -564,6 +631,70 @@
             <InferenceMode></InferenceMode>
             <InterOpThreads></InterOpThreads>
             <IntraOpThreads>2</IntraOpThreads>
+        </FrameworkDependent>
+    </Test>
+        <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>resnet-50-pytorch</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <InputShape>[1,3,224,224]</InputShape>
+            <Mean>[123.675,116.28,103.53]</Mean>
+            <InputScale>[58.395,57.12,57.375]</InputScale>
+            <OutputName>prob</OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
+            <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig>True</UseModelConfig>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>resnet-50-pytorch</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <InputShape>[1,3,224,224]</InputShape>
+            <Mean>[123.675,116.28,103.53]</Mean>
+            <InputScale>[58.395,57.12,57.375]</InputScale>
+            <OutputName>prob</OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
+            <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig>True</UseModelConfig>
         </FrameworkDependent>
     </Test>
     <Test>

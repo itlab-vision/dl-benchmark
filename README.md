@@ -18,14 +18,14 @@ DLI supports inference using the following frameworks:
 
 - [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit]
   (C++ and Python APIs).
-- [Intel® Optimization for Caffe][intel-caffe] (Python API).
-- [Intel® Optimizations for TensorFlow][intel-tensorflow] (Python API).
+- [Caffe][caffe] (Python API).
+- [TensorFlow][tensorflow] (Python API).
 - [TensorFlow Lite][tensorflow-lite] (C++ and Python APIs).
 - [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
 - [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
-- [TVM][tvm] (Python API)
+- [Apache TVM][tvm] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -79,6 +79,7 @@ Please consider citing the following papers.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
   - `PyTorch` is a directory of Dockerfiles for PyTorch.
+  - `TVM` is a directory of Dockerfiles for Apache TVM.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
 
@@ -122,6 +123,9 @@ Please consider citing the following papers.
     - [`validation_results_tflite.md`](results/validation/validation_results_tflite.md)
       is a table that confirms correctness of inference implementation
       based on TensorFlow Lite for public models.
+    - [`validation_results_tvm.md`](results/validation/validation_results_tvm.md)
+      is a table that confirms correctness of inference implementation
+      based on Apache TVM for several public models.
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
@@ -137,6 +141,8 @@ Please consider citing the following papers.
     of deep models inferred by TensorFlow checked in the DLI benchmark.
   - [`tflite_models_checklist.md`](results/tflite_models_checklist.md) contains a list
     of deep models inferred by TensorFlow Lite checked in the DLI benchmark.
+  - [`tvm_models_checklist.md`](results/tvm_models_checklist.md) contains a list
+    of deep models inferred by Apache TVM checked in the DLI benchmark.
 
 - `src` directory contains benchmark sources.
 
@@ -144,6 +150,7 @@ Please consider citing the following papers.
     using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
+  - `build_scripts` is a directory to build inference frameworks for different platforms.
   - `config_maker`contains GUI-application to make configuration files
     of the benchmark components.
   - `configs` contains template configuration files.
@@ -168,6 +175,7 @@ Please consider citing the following papers.
     of Intel® Distribution of OpenVINO™ toolkit.
   - `remote_control` contains scripts to execute benchmark
     remotely.
+  - `tvm_autotuning` contains scripts to optimize Apache TVM models.
   - `utils` is a package of auxiliary utilities.
 
 - `test` contains smoke tests.
@@ -198,6 +206,10 @@ See the [DLI Wiki][dli-wiki-build] to get more information.
 
 See the [DLI Wiki][dli-wiki-deploy] to get more information.
 
+### How to infer deep models
+
+See the [DLI Wiki][dli-wiki-infer] to get more information.
+
 ### How to contribute
 
 See the [DLI Wiki][dli-wiki-contribute] to get more information.
@@ -216,8 +228,8 @@ Report questions, issues and suggestions, using:
 
 <!-- LINKS -->
 [openvino-toolkit]: https://software.intel.com/en-us/openvino-toolkit
-[intel-caffe]: https://github.com/intel/caffe
-[intel-tensorflow]: https://www.intel.com/content/www/us/en/developer/articles/guide/optimization-for-tensorflow-installation-guide.html
+[caffe]: https://caffe.berkeleyvision.org
+[tensorflow]: https://www.tensorflow.org
 [tensorflow-lite]: https://www.tensorflow.org/lite
 [onnx-runtime]: https://onnxruntime.ai
 [onnx-runtime-github]: https://github.com/microsoft/onnxruntime
@@ -236,5 +248,6 @@ Report questions, issues and suggestions, using:
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
 [dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
 [dli-wiki-deploy]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-deploy-and-run
+[dli-wiki-infer]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-infer-deep-models
 [dli-wiki-bench-results]: https://github.com/itlab-vision/dl-benchmark/wiki#benchmarking-results
 [dli-github-issues]: https://github.com/itlab-vision/dl-benchmark/issues
