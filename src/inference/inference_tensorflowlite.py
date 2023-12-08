@@ -232,36 +232,13 @@ def reshape_model_input(io_model_wrapper, model, log):
             model.resize_tensor_input(model_input['index'], shape)
 
 
-def prepare_output(result, output_names, task, color_map=None):
+def prepare_output(result, output_names, task):
     if (output_names is None) or (len(result) != len(output_names)):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[i]: result[i] for i in range(len(result))}
     if task =='segmentation':
-        #input_layer_name = next(iter(self._input))
-        #result_layer_name = next(iter(result))
-        result_layer_name = 0
-        result = result[result_layer_name]
-        #shapes = self._original_shapes[next(iter(self._original_shapes))]
-        c = 3
-        h, w = result.shape[1:]
-        if not color_map:
-            color_map = os.path.join(os.path.dirname(__file__), 'color_maps/color_map.txt')
-        classes_color_map = []
-        with open(color_map, 'r') as f:
-            for line in f:
-                classes_color_map.append([int(x) for x in line.split()])
-        for batch, data in enumerate(result):
-            classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
-            for i in range(h):
-                for j in range(w):
-                    pixel_class = int(data[i, j])
-                    classes_map[i, j, :] = classes_color_map[min(pixel_class, 20)]
-            out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
-            #orig_h, orig_w = shapes[batch % self._batch_size]
-            #classes_map = cv2.resize(classes_map, (orig_w, orig_h))
-            cv2.imwrite(out_img, classes_map)
-            log.info('Result image was saved to {0}'.format(out_img))
+        return result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -319,10 +296,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    if args.task == 'segmentation':
-                        result = prepare_output(result, args.output_names, args.task, color_map=args.color_map)
-                    elif args.task == 'classification':
-                        result = prepare_output(result, args.output_names, args.task)
+                    result = prepare_output(result, args.output_names, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)

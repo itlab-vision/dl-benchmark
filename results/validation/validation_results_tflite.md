@@ -212,8 +212,8 @@ Image resolution: 500 x 375
 <img width="300" src="images\Sheep.jpg">
 </div>
 
-   Model   | Python                                                                                                             |
----------------------|--------------------------------------------------------------------------------------------------------------------|
+Model | Python|
+-|-|
 deeplabv3| <div style='float: center'><img width="150" src="semantic_segmentation\sheep_segmentation_tflite.png"></img></div> |
 
 Color map:
