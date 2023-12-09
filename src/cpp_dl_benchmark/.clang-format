@@ -86,9 +86,7 @@ IncludeCategories:
   # 3rd party headers with extension
   - Regex:           '<onnxruntime*.h>'
     Priority:        3
-  - Regex:           '<rnnoise.h>'
-    Priority:        3
-  - Regex:           '<(gflags|opencv2|tensorflow)\/([A-Za-z0-9.\/-_])+>'
+  - Regex:           '<(gflags|nlohmann|opencv2|tensorflow|torch|torch_tensorrt)\/([A-Za-z0-9.\/-_])+>'
     Priority:        3
   # C system headers with extension
   - Regex:           '<([A-Za-z0-9.\/-_])+\.h>'

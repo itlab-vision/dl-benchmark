@@ -231,7 +231,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name):
 def main():
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='MxNet', version=mxnet.__version__)
+    report_writer.update_framework_info(name='MXNet', version=mxnet.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
