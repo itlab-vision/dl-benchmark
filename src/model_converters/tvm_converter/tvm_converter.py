@@ -291,7 +291,7 @@ class TensorFlowLiteToTVMConverter(Converter):
         return super()._get_device_for_framework()
 
     def _get_tf_model(self, model_path):
-        tflite_model_buf = open(model_path, "rb").read()
+        tflite_model_buf = open(model_path, 'rb').read()
         tflite_model = self.tflite.Model.GetRootAsModel(tflite_model_buf, 0)
         return tflite_model
 
