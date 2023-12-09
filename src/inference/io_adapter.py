@@ -498,12 +498,12 @@ class SegmenatationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def process_output(self, result, log, color_map="color_map.txt"):
+    def process_output(self, result, log):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
-        self.load_color_map(color_map)
+        self.load_color_map("color_map.txt")
 
         result_layer_name = 0
         result = result[result_layer_name]
