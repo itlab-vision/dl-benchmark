@@ -1,10 +1,10 @@
 import argparse
 import importlib
 import json
-import logging as log
 import re
 import sys
 import traceback
+
 from functools import partial
 from pathlib import Path
 from time import time
@@ -18,17 +18,24 @@ except ImportError:
 
 import postprocessing_data as pp
 import preprocessing_data as prep
+
+from transformer import PyTorchTransformer
+
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
-from transformer import PyTorchTransformer
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
+
+try:
+    import torch_tensorrt
+except ImportError:
+    log.info('No torch_tensorrt module, it is ok')
 
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
@@ -112,7 +119,7 @@ def cli_argument_parser():
                              'postprocessing (by default); classification - output'
                              'is a vector of probabilities; text-generation - predicted string;'
                              'text-translation - translated string.',
-                        choices=['feedforward', 'classification', 'text-to-image',
+                        choices=['feedforward', 'classification', 'text-to-image', 'named-entity-recognition',
                                  'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation'],
                         default='feedforward',
                         type=str,
@@ -367,19 +374,27 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
     with torch.inference_mode(inference_mode):
         output = None
         time_infer = []
+
         num_tokens = None
+        tokenizer = None
 
         if task_type in ['text-generation', 'batch-text-generation']:
             from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
 
             tokenizer = create_tokenizer(model.name_or_path)
             encodings_dict = tokenize(tokenizer, get_slice())
-            if task_type == 'text-generation':
+
+            if task_type in ['text-generation']:
                 from configs.pytorch_configs.causal_lm_base import MAX_TEXT_LEN
                 num_tokens = MAX_TEXT_LEN
-            elif task_type == 'batch-text-generation':
+            elif task_type in ['batch-text-generation']:
                 from configs.onnx_configs.gpt_2 import MAX_TEXT_LEN
                 num_tokens = MAX_TEXT_LEN
+        elif task_type in ['named-entity-recognition']:
+            from configs.pytorch_configs.bert_base_ner import create_tokenizer
+
+            tokenizer = create_tokenizer()
+
         if num_iterations == 1:
             if task_type in ['classification', 'feedforward', 'yolo_v7']:
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -388,30 +403,42 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
             if task_type in ['classification', 'feedforward']:
                 output = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
-            elif task_type == 'text-to-image':
+            elif task_type in ['text-to-image']:
                 output = model(prompt=get_slice())
-            elif task_type == 'yolo_v7':
+            elif task_type in ['yolo_v7']:
                 output = model(*inputs)[0].to('cpu')
-            elif task_type == 'text-generation':
+            elif task_type in ['text-translation']:
+                inputs = get_slice()
+                output = model.translate_batch(inputs)
+            elif task_type in ['named-entity-recognition']:
+                from configs.pytorch_configs.bert_base_ner import tokenize, decode
+
+                tokenized_sentence = tokenize(tokenizer, get_slice())['input_ids'].to(device)
+
+                model_output = model(tokenized_sentence)
+                tokens, label_indices = decode(tokenizer, tokenized_sentence, model_output)
+                num_tokens = len(tokens)
+
+                output = (tokens, label_indices)
+            elif task_type in ['text-generation']:
                 from configs.pytorch_configs.causal_lm_base import generate, decode
 
                 output = decode(tokenizer, generate(model=model, inputs=encodings_dict, device=device))
-            elif task_type == 'batch-text-generation':
-                from configs.onnx_configs.gpt_2 import batch_text_generation
+            elif task_type in ['batch-text-generation']:
+                from configs.onnx_configs.gpt_2 import batch_text_generation, decode
 
-                output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
-                                               encodings_dict=encodings_dict)
-            elif task_type == 'text-translation':
-                inputs = get_slice()
-                output = model.translate_batch(inputs)
+                model_output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
+                                                     encodings_dict=encodings_dict)
+                output = decode(tokenizer, model_output)
 
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
-            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
-                                                                                            input_names, model,
-                                                                                            task_type)
+            time_infer, num_tokens = loop_inference(num_iterations,
+                                                    test_duration)(inference_iteration)(device, get_slice,
+                                                                                        input_names, model, task_type,
+                                                                                        tokenizer)
     return output, time_infer, num_tokens
 
 
@@ -423,71 +450,85 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
         infer_func = model
 
     if input_kwarg_name:
-        infer_func(**{input_kwarg_name: inputs})
+        res = infer_func(**{input_kwarg_name: inputs})
     else:
-        infer_func(*inputs)
+        res = infer_func(*inputs)
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
+    return res
 
-def inference_iteration(device, get_slice, input_names, model, task_type):
+
+def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None):
     inputs = None
     input_kwarg_name = None
 
-    if task_type in ['text-generation', 'batch-text-generation']:
-        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate
+    num_tokens = None
 
-        tokenizer = create_tokenizer(model.name_or_path)
+    if task_type in ['text-generation', 'batch-text-generation']:
+        from configs.pytorch_configs.causal_lm_base import tokenize, generate
+
         inputs = tokenize(tokenizer, get_slice())
 
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-    elif task_type == 'text-generation':
+    elif task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import tokenize
+
+        inputs = tokenize(tokenizer, get_slice())['input_ids'].to(device)
+        input_kwarg_name = 'input_ids'
+    elif task_type in ['text-generation']:
         model = partial(generate, model=model, device=device)
         input_kwarg_name = 'inputs'
-    elif task_type == 'batch-text-generation':
+    elif task_type in ['batch-text-generation']:
         from configs.onnx_configs.gpt_2 import batch_text_generation
 
         model = partial(batch_text_generation, torch_model=model, tokenizer=tokenizer, device=device)
         input_kwarg_name = 'encodings_dict'
-    elif task_type == 'text-to-image':
+    elif task_type in ['text-to-image']:
         input_kwarg_name = 'prompt'
         inputs = get_slice()
-    elif task_type == 'text-translation':
+    elif task_type in ['text-translation']:
         input_kwarg_name = 'txt'
         inputs = get_slice()
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
-    _, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
+    res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
 
-    return exec_time
+    if task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import decode
+
+        tokens, _ = decode(tokenizer, inputs, res)
+        num_tokens = len(tokens)
+
+    return exec_time, num_tokens
 
 
-def prepare_output(result, model, output_names, task):
+def prepare_output(result, output_names, task_type):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
 
-    if task == 'feedforward':
+    if task_type in ['feedforward']:
         return {}
-    elif task in ['text-generation', 'yolo_v7', 'text-translation']:
+    elif task_type in ['text-generation', 'batch-text-generation', 'yolo_v7', 'text-translation']:
         return result
-    elif task == 'batch-text-generation':
-        from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
+    elif task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import get_decode_result
 
-        tokenizer = create_tokenizer(model.name_or_path)
-        decoded_result = decode(tokenizer, result)
+        tokens, label_indices = result
+        decoded_result = get_decode_result(tokens, label_indices)
 
         return decoded_result
-    elif task == 'text-to-image':
+    elif task_type in ['text-to-image']:
         return result.images
-    elif task == 'classification':
+    elif task_type in ['classification']:
         log.info('Converting output tensor to print results')
         return {output_names[0]: result.detach().numpy()}
     else:
-        raise ValueError(f'Unsupported task {task} to print inference results')
+        raise ValueError(f'Unsupported task {task_type} to print inference results')
 
 
 def main():
@@ -606,8 +647,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    log.info('Converting output tensor to process results')
-                    result = prepare_output(result, compiled_model, args.output_names, args.task)
+                    result = prepare_output(result, args.output_names, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)

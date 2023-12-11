@@ -341,3 +341,18 @@ class TFLiteIOModelWrapperCpp(IOModelWrapper):
         for input_ in inputs:
             if layer_name == input_['name']:
                 return input_['dtype']
+<<<<<<< HEAD
+=======
+
+
+class RknnIOModelWrapperCpp(IOModelWrapper):
+    def __init__(self, args):
+        self._input_shape = args.shape
+
+    def get_input_layer_shape(self):
+        return self._input_shape
+
+    def get_input_layer_dtype(self):
+        import numpy as np
+        return np.uint8
+>>>>>>> develop
