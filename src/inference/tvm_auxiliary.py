@@ -92,8 +92,8 @@ def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duratio
         time_infer.append(t1 - t0)
     else:
         time_infer, _ = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
-                                                                                           input_name,
-                                                                                           module)
+                                                                                              input_name,
+                                                                                              module)
     return result, time_infer
 
 
