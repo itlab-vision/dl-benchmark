@@ -55,7 +55,9 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def execute(self):
         command_line = self._fill_command_line()
         if command_line == '':
-            self.__log.error('Command line is empty')
+            errmsg = 'Command line is empty, nothing to execute'
+            self.__log.error(errmsg)
+            raise AssertionError(errmsg)
         self.__log.info(f'Start inference test on model: {self._test.model.name}')
         self.__log.info(f'Command line is: {command_line}')
         self._executor.set_target_framework(self._test.indep_parameters.inference_framework)
