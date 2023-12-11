@@ -11,11 +11,6 @@ from time import time
 
 import torch
 
-try:
-    import torch_tensorrt
-except ImportError:
-    log.info('No torch_tensorrt module, it is ok')
-
 import postprocessing_data as pp
 import preprocessing_data as prep
 
