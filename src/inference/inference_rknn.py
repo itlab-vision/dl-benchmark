@@ -2,7 +2,6 @@ import argparse
 import numpy as np
 import subprocess
 import sys
-import logging as log
 import traceback
 import json
 from pathlib import Path
@@ -11,6 +10,10 @@ from io_adapter import IOAdapter
 from io_model_wrapper import RknnIOModelWrapperCpp
 from transformer import Transformer
 
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
+from logger_conf import configure_logger  # noqa: E402
+
+log = configure_logger()
 
 # list of io-adapters that require original images
 ADAPTERS_WITH_ORIG_IMAGES = [
@@ -190,12 +193,6 @@ def get_output_json_path(args):
 
 
 def main():
-    log.basicConfig(
-        format='[ %(levelname)s ] %(message)s',
-        level=log.INFO,
-        stream=sys.stdout,
-    )
-
     args = cli_argument_parser()
     try:
         model_wrapper = RknnIOModelWrapperCpp(args)
