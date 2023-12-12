@@ -323,12 +323,12 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return BlazeFaceShortRangeCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_detection_tflite_cpp':
             return FaceDetectionFullRangeTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_recognition_tflite_cpp':
-            return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_recognition':
+            return FaceRecognitionCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_tflite_cpp':
             return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_mesh_v2_tflite_cpp':
-            return FaceMeshV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task in ['face_mesh_v2_tflite_cpp', 'face_mesh_v2_rknn']:
+            return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
 
@@ -2349,7 +2349,7 @@ class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionCppIO):
         return (base_repeats, strides)
 
 
-class FaceRecognitionTFLiteCppIO(IOAdapter):
+class FaceRecognitionCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_recognition.csv')
@@ -2357,18 +2357,19 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
         self.net_width = 112
         self.net_height = 112
 
-    def convert_input_to_bin_file(self, args):
+    def convert_input_to_bin_file(self, args, normalize=True, data_type=np.float32):
         img = cv2.imread(args.input[0])
-
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
         img = cv2.resize(img, (self.net_height, self.net_width))
-        img -= 127.5
-        img /= 127.5
+
+        if normalize:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(data_type)
+            img -= 127.5
+            img /= 127.5
 
         bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
         bin_dir.mkdir(parents=True, exist_ok=True)
         bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
-        img.astype(np.float32).tofile(bin_path)
+        img.astype(data_type).tofile(bin_path)
 
         return str(bin_path)
 
@@ -2467,7 +2468,7 @@ class FaceMeshTFLiteCppIO(FaceMesh):
         }
 
 
-class FaceMeshV2TFLiteCppIO(FaceMesh):
+class FaceMeshV2CppIO(FaceMesh):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 

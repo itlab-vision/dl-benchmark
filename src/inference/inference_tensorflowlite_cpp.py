@@ -108,7 +108,7 @@ def cli_argument_parser():
                         dest='number_iter')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['face_recognition_tflite_cpp'] + ADAPTERS_WITH_ORIG_IMAGES,
+                        choices=['face_recognition'] + ADAPTERS_WITH_ORIG_IMAGES,
                         default='feedforward',
                         type=str,
                         dest='task')
