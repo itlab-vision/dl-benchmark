@@ -319,15 +319,15 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7ONNX(args, io_model_wrapper, transformer)
         elif task == 'segmentation_tflite_cpp':
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task in ['blaze_face_tflite_cpp', 'blaze_face_rknn']:
+        elif task == 'blaze_face':
             return BlazeFaceShortRangeCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_detection_tflite_cpp':
-            return FaceDetectionFullRangeTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_detection':
+            return FaceDetectionFullRangeCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_recognition':
             return FaceRecognitionCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_tflite_cpp':
             return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task in ['face_mesh_v2_tflite_cpp', 'face_mesh_v2_rknn']:
+        elif task == 'face_mesh_v2':
             return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
@@ -2333,7 +2333,7 @@ class BlazeFaceShortRangeCppIO(FaceDetectionCppIO):
         return (base_repeats, strides)
 
 
-class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionCppIO):
+class FaceDetectionFullRangeCppIO(FaceDetectionCppIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 

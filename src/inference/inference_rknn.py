@@ -17,8 +17,9 @@ log = configure_logger()
 
 # list of io-adapters that require original images
 ADAPTERS_WITH_ORIG_IMAGES = [
-    'blaze_face_rknn',
-    'face_mesh_v2_rknn',
+    'blaze_face',
+    'face_mesh_v2',
+    'face_detection',
 ]
 
 
