@@ -28,7 +28,6 @@ class OutputPreparer:
         np = importlib.import_module('numpy')
         if self.framework == 'mxnet':
             box_ids, scores, bboxes = result
-            print(box_ids.shape, scores.shape, bboxes.shape)
             box_ids = (box_ids.asnumpy())[0]
             scores = (scores.asnumpy())[0]
             bboxes = (bboxes.asnumpy())[0]
