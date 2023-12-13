@@ -509,7 +509,7 @@
             <Name>mobilenet-v2-1.4-224</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>./working_dir_smoke/public/mobilenet-v2-1.4-224/mobilenet-v2-1.4-224.tflite</ModelPath>
+            <ModelPath>./working_dir_smoke/public/mobilenet-v2-1.4-224/mobilenet_v2_1.4_224.tflite</ModelPath>
             <WeightsPath></WeightsPath>
         </Model>
         <Dataset>

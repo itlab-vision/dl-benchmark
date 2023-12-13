@@ -14,7 +14,7 @@ log = configure_logger()
 class OutputPreparer:
     def __init__(self, framework):
         self.framework = framework
-    
+
     def classification_task(self, result, output_names, not_softmax):
         if not_softmax:
             result = result[0].asnumpy()
@@ -23,7 +23,7 @@ class OutputPreparer:
             for i in range(result.shape[0]):
                 result[i] = softmax(result[i])
         return {output_names[0]: result}
-    
+
     def detection_task(self, result, output_names, params):
         np = importlib.import_module('numpy')
         if self.framework == 'mxnet':
@@ -136,7 +136,7 @@ def create_dict_for_output_preparer(args):
         'input_shape': [args.batch_size] + args.input_shape[1:4],
         'model_name': args.model_name,
     }
-    return dictionary   
+    return dictionary
 
 
 def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
