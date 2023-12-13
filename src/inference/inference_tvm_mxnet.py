@@ -15,10 +15,7 @@ from transformer import TVMTransformer
 from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm,
-                           create_dict_for_output_preparer_mxnet)
-
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter  # noqa: E402
+                           create_dict_for_output_preparer)
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter  # noqa: E402
@@ -201,7 +198,7 @@ def main():
                                          args.output_names,
                                          args.not_softmax,
                                          framework='mxnet',
-                                         params=create_dict_for_converter_mxnet(args))
+                                         params=create_dict_for_output_preparer(args))
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:

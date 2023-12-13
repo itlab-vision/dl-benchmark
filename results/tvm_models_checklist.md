@@ -20,6 +20,10 @@ Model | Availability in OMZ (2023.11.04) | Availability in the validation table 
 yolo-v3-onnx|+|-|
 ssd_mobilenet_v1_coco|+|-|
 ssdlite_mobilenet_v2|+|-|
+ssd_512_resnet50_v1_coco|+ (from Gluon model zoo)|+|
+ssd_512_vgg16_atrous_voc|+ (from Gluon model zoo)|+|
+ssd_300_vgg16_atrous_voc|+ (from Gluon model zoo)|+|
+ssd_512_mobilenet1.0_coco|+ (from Gluon model zoo)|+|
 
 ### Face localization
 

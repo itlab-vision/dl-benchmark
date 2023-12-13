@@ -132,7 +132,7 @@ def create_dict_for_modelwrapper(args):
     return dictionary
 
 
-def create_dict_for_output_preparer_mxnet(args):
+def create_dict_for_output_preparer(args):
     dictionary = {
         'input_shape': [args.batch_size] + args.input_shape[1:4],
         'model_name': args.model_name,
