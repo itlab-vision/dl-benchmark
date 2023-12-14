@@ -503,7 +503,7 @@ class SegmenatationIO(IOAdapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
-        self.load_color_map("color_map.txt")
+        self.load_color_map('color_map.txt')
 
         result_layer_name = 0
         result = result[result_layer_name]
