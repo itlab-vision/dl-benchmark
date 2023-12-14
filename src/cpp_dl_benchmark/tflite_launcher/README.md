@@ -97,7 +97,6 @@ git checkout v2.13.0
     >libabsl_time.so
     >libabsl_time_zone.so
     >```
-
 >
 
 ### Bazel build
@@ -166,9 +165,13 @@ Second opiton is to build TF Lite with bazel.
     GPU delegate shared library is located at the following
    path: `bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so`
 
-   > To cross-build for `aarch64` linux platforms add `--config=elinux_aarch64` to the commands above. Flags that
-   disable OpenGL backend: `--copt=-DCL_DELEGATE_NO_GL --copt=-DMESA_EGL_NO_X11_HEADERS=1 --copt -DEGL_NO_X11=1` - could
-   be omitted.
+   > To cross-compile
+   > * for `aarch64` linux platforms add `--config=elinux_aarch64` to the commands above.
+   > * for `aarch64` android platforms add `--config=android_arm64` to the commands above.
+   >
+   > Flags that disable OpenGL backend: `--copt=-DCL_DELEGATE_NO_GL
+   > --copt=-DMESA_EGL_NO_X11_HEADERS=1 --copt -DEGL_NO_X11=1` - could
+   > be omitted.
 
 ## Build TensorFlow Lite Benchmark
 
@@ -191,22 +194,48 @@ so that cmake can find it during configuration step:
 
 1. In the created directory run `cmake` command:
 
-    - For TF Lite with default CPU delegate launcher:
+    There are several ways to configure project:
+
+    - For TF Lite with legacy CPU delegate launcher:
 
          ```bash
          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tflite-build-dir> <dl-benchmark>/src/cpp_dl_benchmark
          ```
 
-    - For TF Lite with XNNPack delegate launcher:
+    - For TF Lite with XNNPack delegate (tflite default) launcher pass `-DBUILD_TFLITE_XNNPACK_LAUNCHER=ON`
 
-         ```bash
-         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tflite-build-dir> <dl-benchmark>/src/cpp_dl_benchmark
-         ```
+    - For TF Lite with GPU delegate launcher pass`-D-DBUILD_TFLITE_GPU_LAUNCHER=ON`
 
-    Configuration with TF Lite bazel build:
-    ```bash
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tensorflow-dir>/bazel-bin/tensorflow/lite <dl-benchmark>/src/cpp_dl_benchmark
-    ```
+    - Configuration with TF Lite bazel build:
+        ```bash
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tensorflow-dir>/bazel-bin/tensorflow/lite <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+
+    Cross-compile for non-x86 platforms:
+
+    - aarch64 Linux:
+
+        ```bash
+        cmake -DCMAKE_TOOLCHAIN_FILE=<dl-benchmark>/src/cpp_dl_benchmark/cmake/aarch64_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON -DBUILD_TFLITE_GPU_LAUNCHER=ON -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> -DTFLITE_BUILD_DIR=<tensorflow-dir>/bazel-bin/tensorflow/lite <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+
+    - aarch64 Android:
+        ```bash
+        cmake -DDCMAKE_SYSTEM_PROCESSOR=aarch64,
+        -DANDROID_PLATFORM=31, # for Android 12
+        -DCMAKE_SYSTEM_VERSION=31,
+        -DANDROID_ABI=arm64-v8a,
+        -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a,
+        -DCMAKE_TOOLCHAIN_FILE=<android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake
+        -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON
+        -DBUILD_TFLITE_GPU_LAUNCHER=ON
+        -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir>
+        -DTFLITE_BUILD_DIR=<tensorflow-dir>/bazel-bin/tensorflow/lite
+        -Dnlohmann_json_DIR=<nlohmann_json_build>
+        <dl-benchmark>/src/cpp_dl_benchmark
+        ```
+        >This one requires nlohmann-json for Android, refer to [rknn launcher readme][nlohman-json-build] for build instructions.
 
 1. Build tool
 
@@ -226,3 +255,5 @@ delegate.
 [tflite]: https://www.tensorflow.org/lite
 
 [gpu-drivers]: https://dgpu-docs.intel.com/installation-guides/ubuntu/ubuntu-focal.html
+
+[nlohman-json-build]: ../rknn_launcher/README.md

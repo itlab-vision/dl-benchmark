@@ -17,14 +17,9 @@
 
 #include <algorithm>
 #include <chrono>
-#include <fstream>
-#include <iostream>
-#include <fstream>
 #include <numeric>
 #include <string>
 #include <vector>
-
-#include <nlohmann/json.hpp>
 
 namespace {
 const std::map<TfLiteType, utils::DataPrecision> tflite_dtype_to_precision_map{
