@@ -45,8 +45,7 @@ class PyTorchProcess(ProcessHandler):
 
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--module', module)
 
-        use_model_config = self._test.dep_parameters.use_model_config
-        if use_model_config:
+        if self._test.dep_parameters.use_model_config:
             common_params = PyTorchProcess._add_flag_to_cmd_line(common_params, '--use_model_config')
 
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--weights', weights)
