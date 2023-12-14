@@ -3,9 +3,6 @@ import json
 import sys
 import traceback
 from pathlib import Path
-import cv2
-import numpy as np
-import os
 
 import postprocessing_data as pp
 import preprocessing_data as prep
@@ -237,7 +234,7 @@ def prepare_output(result, output_names, task):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[i]: result[i] for i in range(len(result))}
-    if task =='segmentation':
+    if task == 'segmentation':
         return result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
