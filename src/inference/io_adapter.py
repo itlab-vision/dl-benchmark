@@ -505,7 +505,7 @@ class SegmenatationIO(IOAdapter):
 
         self.load_color_map('color_map.txt')
 
-        result_layer_name = 0
+        result_layer_name = next(iter(result))
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
