@@ -37,13 +37,16 @@ def cli_argument_parser():
                              'W is an input tensor width,'
                              'H is an input tensor height,'
                              'C is an input tensor number of channels.',
-                        default=[1, 256, 256, 3],
+                        default=[1, 687, 1000, 3],
                         type=int,
                         nargs=4,
                         dest='input_shape')
     parser.add_argument('-m', '--model',
                         help='Model name.',
-                        choices=['squeezenet', 'shufflenetv2'],
+                        choices=['squeezenet', 'shufflenetv2', 'faster_rcnn', 'rfcn',
+                                 'mobilenet_ssd', 'mobilenetv2_ssdlite', 'mobilenetv3_ssdlite',
+                                 'retinaface', 'squeezenet_ssd', 'mobilenet_yolov2',
+                                 'mobilenetv2_yolov3', 'yolov4_tiny', 'yolov5s', 'yolov8s'],
                         default='squeezenet',
                         type=str,
                         dest='model')
@@ -65,7 +68,8 @@ def cli_argument_parser():
                         dest='number_top')
     parser.add_argument('-t', '--task',
                         help='Task type. Default: feedforward.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification',
+                                 'detection', 'face-detection'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -95,6 +99,11 @@ def cli_argument_parser():
                         type=int,
                         dest='time',
                         help='Optional. Maximum test duration. 0 if no restrictions.')
+    parser.add_argument('--threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'ncnn_inference_report.json',
@@ -132,8 +141,8 @@ def infer_slice(input_name, batch_size, net, slice_input):
     res = []
     for i in range(batch_size):
         image = slice_input[input_name][i]
-        cls_scores = net(image)
-        res.append(cls_scores)
+        net_result = net(image)
+        res.append(net_result)
     return res
 
 
@@ -151,18 +160,18 @@ if __name__ == '__main__':
                                                  target_device=args.device)
 
         io.prepare_input(args.model, args.input)
-        net = load_model(args.model, args.num_threads, args.device, args.task)
+        net = load_model(args)
 
         result, inference_time = inference_ncnn(net, args.number_iter, args.input_name,
                                                 args.input_shape[0], io.get_slice_input, args.time)
-        print(result)
+
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
         if not args.raw_output:
-            result = prepare_output(result, args.task)
+            result = prepare_output(result, args.task, model_wrapper)
             io.process_output(result, log)
 
     except Exception:
