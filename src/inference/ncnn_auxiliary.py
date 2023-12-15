@@ -10,6 +10,24 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
+TASK_MAP = {
+    'classification': ['squeezenet', 'shufflenetv2'],
+    'detection': ['faster_rcnn', 'rfcn', 'mobilenet_ssd', 'mobilenetv2_ssdlite',
+                  'mobilenetv3_ssdlite', 'squeezenet_ssd', 'mobilenet_yolov2',
+                  'mobilenetv2_yolov3', 'yolov4_tiny', 'yolov5s', 'yolov8s'],
+    'face-detection': ['retinaface'],
+}
+
+
+def validate_task(model, task):
+    if task == 'feedforward':
+        return
+    elif model in TASK_MAP[task]:
+        return
+    else:
+        log.info(f'The model {model} is not supported for task {task}')
+        raise ValueError('The task is wrong for this model')
+
 
 def get_device(device, task):
     log.info(f'Get device for {task}')

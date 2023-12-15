@@ -9,7 +9,7 @@ from io_adapter import IOAdapter
 from io_model_wrapper import NcnnIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import NcnnTransformer
-from ncnn_auxiliary import (load_model, prepare_output)
+from ncnn_auxiliary import (load_model, prepare_output, validate_task)
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -27,6 +27,15 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('-m', '--model',
+                        help='Model name.',
+                        choices=['squeezenet', 'shufflenetv2', 'faster_rcnn', 'rfcn',
+                                 'mobilenet_ssd', 'mobilenetv2_ssdlite', 'mobilenetv3_ssdlite',
+                                 'retinaface', 'squeezenet_ssd', 'mobilenet_yolov2',
+                                 'mobilenetv2_yolov3', 'yolov4_tiny', 'yolov5s', 'yolov8s'],
+                        required=True,
+                        type=str,
+                        dest='model')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
                         default='data',
@@ -37,19 +46,10 @@ def cli_argument_parser():
                              'W is an input tensor width,'
                              'H is an input tensor height,'
                              'C is an input tensor number of channels.',
-                        default=[1, 687, 1000, 3],
+                        default=[1, 256, 256, 3],
                         type=int,
                         nargs=4,
                         dest='input_shape')
-    parser.add_argument('-m', '--model',
-                        help='Model name.',
-                        choices=['squeezenet', 'shufflenetv2', 'faster_rcnn', 'rfcn',
-                                 'mobilenet_ssd', 'mobilenetv2_ssdlite', 'mobilenetv3_ssdlite',
-                                 'retinaface', 'squeezenet_ssd', 'mobilenet_yolov2',
-                                 'mobilenetv2_yolov3', 'yolov4_tiny', 'yolov5s', 'yolov8s'],
-                        default='squeezenet',
-                        type=str,
-                        dest='model')
     parser.add_argument('-b', '--batch_size',
                         help='Size of the processed pack.'
                              'Should be the same as B in input_shape argument.',
@@ -63,7 +63,7 @@ def cli_argument_parser():
                         dest='labels')
     parser.add_argument('-nt', '--number_top',
                         help='Number of top results.',
-                        default=3,
+                        default=5,
                         type=int,
                         dest='number_top')
     parser.add_argument('-t', '--task',
@@ -158,6 +158,8 @@ if __name__ == '__main__':
         report_writer.update_configuration_setup(batch_size=args.batch_size,
                                                  iterations_num=args.number_iter,
                                                  target_device=args.device)
+
+        validate_task(args.model, args.task)
 
         io.prepare_input(args.model, args.input)
         net = load_model(args)
