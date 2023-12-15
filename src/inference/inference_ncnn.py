@@ -42,9 +42,9 @@ def cli_argument_parser():
                         type=str,
                         dest='input_name')
     parser.add_argument('-is', '--input_shape',
-                        help='Input shape BxWxHxC, B is a batch size,'
-                             'W is an input tensor width,'
+                        help='Input shape BxHxWxC, B is a batch size,'
                              'H is an input tensor height,'
+                             'W is an input tensor width,'
                              'C is an input tensor number of channels.',
                         default=[1, 256, 256, 3],
                         type=int,

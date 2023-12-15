@@ -88,10 +88,10 @@ def prepare_output(results, task, model_wrapper):
         tmp = np.expand_dims(tmp, axis=0)
         tmp = np.expand_dims(tmp, axis=0)
         input_shape = model_wrapper.get_input_layer_shape(model=None, layer_name=None)
-        tmp[:, :, :, 3] /= input_shape[1]
-        tmp[:, :, :, 4] /= input_shape[2]
-        tmp[:, :, :, 5] /= input_shape[1]
-        tmp[:, :, :, 6] /= input_shape[2]
+        tmp[:, :, :, 3] /= input_shape[2]
+        tmp[:, :, :, 4] /= input_shape[1]
+        tmp[:, :, :, 5] /= input_shape[2]
+        tmp[:, :, :, 6] /= input_shape[1]
         return {'detection': tmp}
     if task == 'face-detection':
         result = {
