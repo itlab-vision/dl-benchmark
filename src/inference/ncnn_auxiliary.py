@@ -78,7 +78,7 @@ def prepare_output(results, task, model_wrapper):
     if task == 'face-detection':
         result = {
             'labels': [],
-            'boxes': []
+            'boxes': [],
         }
         for i, face in enumerate(results[0]):
             result['labels'].append(i)
