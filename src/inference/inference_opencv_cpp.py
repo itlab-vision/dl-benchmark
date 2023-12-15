@@ -199,7 +199,7 @@ def create_dict_from_args_for_process(args, io):
                  '-b': args.batch_size,
                  '--shape': '[' + ','.join(str(k) for k in [1, *args.shape]) + ']',
                  '--output_path': args.output_json_path}
-    if not args.weights_path is None:
+    if args.weights_path is not None:
         args_dict['-w'] = args.weights_path
     args_dict['--mean'] = args.mean
     args_dict['--scale'] = args.input_scale
