@@ -8,7 +8,8 @@ RUN pip3 install --upgrade pip && \
 RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /tmp/
-COPY downloadmodels downloadmodels
+COPY downloadmodels.sh downloadmodels.sh
+COPY models.lst models.lst
 RUN python3 ./open_model_zoo/tools/model_tools/downloader.py --name mobilenet-v1-1.0-224-tf
 
 RUN pip3 install -r ./dl-benchmark/src/model_converters/requirements.txt
