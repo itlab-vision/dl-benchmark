@@ -2,24 +2,23 @@ import argparse
 import json
 import sys
 import traceback
+import tvm
 
 
 from pathlib import Path
 
-import tvm
 
 import postprocessing_data as pp
-from transformer import TVMTransformer
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
+from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-
-from tvm_auxiliary import (create_dict_for_converter_onnx,
+from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import ONNXToTVMConverter  # noqa: E402
+from src.model_converters.tvm_converter.tvm_converter import TVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -30,13 +29,18 @@ log = configure_logger()
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
-                        help='Name of model.',
+                        help='Model name.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .onnx file with a trained model.',
+                        help='Path to an .json file with a trained model or to an .so file.',
                         type=str,
+                        required=True,
                         dest='model_path')
+    parser.add_argument('-w', '--weights',
+                        help='Path to an .params file with a trained weights.',
+                        type=str,
+                        dest='model_params')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer (CPU by default)',
                         default='CPU',
@@ -132,22 +136,22 @@ def cli_argument_parser():
                         default='NHWC',
                         type=str,
                         dest='layout')
-    parser.add_argument('--raw_output',
-                        help='Raw output without logs.',
-                        default=False,
-                        type=bool,
-                        dest='raw_output')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('--channel_swap',
                         help='Parameter of channel swap (RGB to BGR by default).',
                         default=[2, 1, 0],
                         type=int,
                         nargs=3,
                         dest='channel_swap')
-    parser.add_argument('--target',
-                        help='Parameter for hardware-dependent optimizations.',
-                        default='llvm',
-                        type=str,
-                        dest='target')
+    parser.add_argument('--raw_output',
+                        help='Raw output without logs.',
+                        default=False,
+                        type=bool,
+                        dest='raw_output')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
@@ -164,14 +168,13 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
     try:
-        converter = ONNXToTVMConverter(create_dict_for_converter_onnx(args))
-        graph_module = converter.get_graph_module()
-        args.input_name = converter.get_input_name()
-
-        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
+
+        log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
+        converter = TVMConverter(create_dict_for_converter_mxnet(args))
+        graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
