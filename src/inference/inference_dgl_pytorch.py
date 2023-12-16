@@ -15,7 +15,7 @@ from reporter.report_writer import ReportWriter
 from inference_tools.loop_tools import loop_inference
 from pytorch_auxiliary import get_device_to_infer, infer_slice
 from io_model_wrapper import DGLPyTorchWrapper
-from io_graphs_adapter import IOGprahAdapter
+from io_graphs_adapter import IOGraphAdapter
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -69,8 +69,8 @@ def cli_argument_parser():
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: node-classification.',
-                        choices=['node-classification'],
-                        default='node-classification',
+                        choices=['feedforward', 'node-classification'],
+                        default='feedforward',
                         type=str,
                         dest='task')
     parser.add_argument('-b', '--batch_size',
@@ -145,7 +145,9 @@ def load_model_from_file(model_path, module_path, model_name):
 
 
 def prepare_output(result, task):
-    if task == 'node-classification':
+    if task == 'feedforward':
+        return {}
+    elif task == 'node-classification':
         log.info('Converting output tensor to print results')
         return {'output_result': result.detach().numpy()}
     else:
@@ -185,7 +187,7 @@ def main():
         compiled_model = compile_model(model, device)
 
         model_wrapper = DGLPyTorchWrapper(compiled_model)
-        io = IOGprahAdapter.get_io_adapter(args, model_wrapper)
+        io = IOGraphAdapter.get_io_adapter(args, model_wrapper)
 
         log.info(f'Preparing input data {args.input}')
         input_data = prepare_input(args.input[0])

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-class IOGprahAdapter(metaclass=abc.ABCMeta):
+class IOGraphAdapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper):
         self._batch_size = args.batch_size
         self._labels = getattr(args, 'labels', None)
@@ -18,6 +18,8 @@ class IOGprahAdapter(metaclass=abc.ABCMeta):
         task = args.task
         if task == 'node-classification':
             return NodeClassification(args, io_model_wrapper)
+        elif task == 'feedforward':
+            return FeedForwardIO(args, io_model_wrapper)
 
     @staticmethod
     def _not_valid_result(result):
@@ -34,11 +36,19 @@ class IOGprahAdapter(metaclass=abc.ABCMeta):
                 self._labels_map = [line.strip() for line in f]
 
 
-class NodeClassification(IOGprahAdapter):
+class FeedForwardIO(IOGraphAdapter):
     def __init__(self, args, io_model_wrapper):
         super().__init__(args, io_model_wrapper)
 
-    def process_output(self, result, log, labels_file=None):
+    def process_output(self, result, log):
+        return
+
+
+class NodeClassification(IOGraphAdapter):
+    def __init__(self, args, io_model_wrapper):
+        super().__init__(args, io_model_wrapper)
+
+    def process_output(self, result, log, filename='out_graph_classification.csv', labels_file=None):
         if self._not_valid_result(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
@@ -56,7 +66,7 @@ class NodeClassification(IOGprahAdapter):
 
         df = pd.DataFrame(data)
         df.set_index('Node ID')
-        with open('out_graph_classification.csv', 'w+') as file:
+        with open(filename, 'w+') as file:
             df.to_csv(file, sep='\t', encoding='utf-8')
 
-        log.info('Results save to out_graph_classification.csv')
+        log.info(f'Results save to {filename}')
