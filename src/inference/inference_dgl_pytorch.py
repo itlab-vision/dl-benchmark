@@ -132,7 +132,7 @@ def load_model_from_file(model_path, module_path, model_name):
     if file_type not in supported_extensions:
         raise ValueError(f'The file type {file_type} is not supported')
 
-    log.info(f'load module from {module_path}')
+    log.info(f'Load module from {module_path}')
     spec = importlib.util.spec_from_file_location(model_name, module_path)
     foo = importlib.util.module_from_spec(spec)
     sys.modules[f'{model_name}'] = foo
