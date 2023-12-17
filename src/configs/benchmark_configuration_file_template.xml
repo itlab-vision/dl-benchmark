@@ -33,6 +33,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <ChangePreprocessOptions></ChangePreprocessOptions>
+            <NumOutputTokensLLM></NumOutputTokensLLM>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -376,10 +377,11 @@
         <FrameworkDependent>
             <InputName></InputName>
             <InputShape></InputShape>
-            <Framework></Framework>
+            <Framework></Framework> <!--Принимает значения: caffe, onnx, pytorch, mxnet, tvm-->
             <Normalize></Normalize>
             <Mean></Mean>
             <Std></Std>
+            <Layout></Layout>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>

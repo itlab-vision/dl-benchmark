@@ -41,40 +41,42 @@ public:
         allocate(count, data_precision);
     }
 
-    TensorBuffer(const TensorBuffer& buf) = delete;
-    TensorBuffer& operator=(const TensorBuffer& buf) = delete;
+    template<typename T = void>
+    TensorBuffer(size_t elements_count,
+                 const std::vector<int> shape,
+                 const utils::DataPrecision dp,
+                 const std::vector<T>& data_vec)
+        : data(new char[elements_count * elem_size(dp)]), bytes_count(elements_count * elem_size(dp)),
+          elements_count(elements_count), data_shape(shape), data_precision(dp) {
+        memcpy(data, data_vec.data(), bytes_count);
+    }
 
-    TensorBuffer(TensorBuffer&& buf)
-        : data(buf.data), bytes_count(buf.bytes_count), elements_count(buf.elements_count), data_shape(buf.data_shape),
-          data_precision(buf.data_precision) {
-        buf.data = nullptr;
-        buf.bytes_count = -1;
-        buf.data_shape = {};
-        buf.elements_count = -1;
-        buf.data_precision = utils::DataPrecision::UNKNOWN;
+    void swap(TensorBuffer& other) noexcept {
+        std::swap(data, other.data);
+        std::swap(bytes_count, other.bytes_count);
+        std::swap(elements_count, other.elements_count);
+        std::swap(data_shape, other.data_shape);
+        std::swap(data_precision, other.data_precision);
+    }
+
+    TensorBuffer(const TensorBuffer& buf)
+        : data(new char[buf.bytes_count]), bytes_count(buf.bytes_count), elements_count(buf.elements_count),
+          data_shape(buf.data_shape), data_precision(buf.data_precision) {
+        memcpy(data, buf.get(), bytes_count);
+    }
+
+    TensorBuffer(TensorBuffer&& buf) noexcept : TensorBuffer() {
+        swap(buf);
+    }
+
+    TensorBuffer& operator=(const TensorBuffer& buf) {
+        TensorBuffer tb_copy(buf);
+        swap(tb_copy);
+        return *this;
     }
 
     TensorBuffer& operator=(TensorBuffer&& buf) {
-        if (this == &buf) {
-            return *this;
-        }
-
-        if (data) {
-            delete[] data;
-        }
-
-        data = buf.data;
-        bytes_count = buf.bytes_count;
-        elements_count = buf.elements_count;
-        data_shape = buf.data_shape;
-        data_precision = buf.data_precision;
-
-        buf.data = nullptr;
-        buf.data_precision = utils::DataPrecision::UNKNOWN;
-        buf.bytes_count = -1;
-        buf.data_shape = {};
-        buf.elements_count = -1;
-
+        swap(buf);
         return *this;
     }
 
@@ -114,7 +116,7 @@ public:
     }
 
     template<typename T = void>
-    T* get() const {
+    const T* get() const {
         return reinterpret_cast<T*>(data);
     }
 

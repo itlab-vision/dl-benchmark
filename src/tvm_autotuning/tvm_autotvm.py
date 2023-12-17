@@ -2,6 +2,7 @@ import argparse
 import logging as log
 import sys
 
+import tvm
 from tvm import autotvm, relay
 from tvm.autotvm.tuner import XGBTuner, GATuner, RandomTuner, GridSearchTuner
 
@@ -27,10 +28,20 @@ def cli_argument_parser():
                         type=str)
     parser.add_argument('-l', '--log',
                         help='Path to file for logging optimization results.',
-                        required=True,
                         default='autotvm.log',
                         type=str,
                         dest='log_file')
+    parser.add_argument('-o', '--output',
+                        help='Path to the file to save the model.',
+                        default='lib.so',
+                        type=str,
+                        dest='output_file')
+
+    parser.add_argument('--opt_level',
+                        help='The optimization level of the task extractions.',
+                        type=int,
+                        choices=[0, 1, 2, 3, 4],
+                        default=2)
 
     parser.add_argument('--tuner',
                         help='Method name for tuning the model.',
@@ -144,7 +155,6 @@ def extract_tasks(mod, params, target, layer_names):
 
 def tune_tasks(tasks, tuner_name, plan_size, pop_size, elite_num,
                mutation_prob, range_idx, number, repeat, early_stopping, log_file):
-
     for task in tasks:
         log.info(f'Tuning task {task}')
         tuner_obj = create_tuner(task, tuner_name, plan_size, pop_size, elite_num, mutation_prob, range_idx)
@@ -179,6 +189,11 @@ def main():
     log.info('Neural network tuning')
     tune_tasks(tasks, args.tuner_name, args.plan_size, args.pop_size, args.elite_num,
                args.mutation_prob, args.range_idx, args.number, args.repeat, args.early_stopping, args.log_file)
+
+    with autotvm.apply_history_best(args.log_file):
+        with tvm.transform.PassContext(opt_level=args.opt_level):
+            lib = relay.build(mod, target=args.target, params=params)
+    lib.export_library(args.output_file)
 
 
 if __name__ == '__main__':

@@ -274,47 +274,57 @@ class TVMTransformer(Transformer):
     def __init__(self, converting):
         self._converting = converting
 
-    def __set_norm(self, image):
-        if self._converting['norm']:
-            std = np.array([self._converting['std'][0],
-                            self._converting['std'][1],
-                            self._converting['std'][2]])
-            mean = np.array([self._converting['mean'][0],
-                             self._converting['mean'][1],
-                             self._converting['mean'][2]])
-            for i in range(image.shape[2]):
-                image[:, :, i] /= 255
-                image[:, :, i] -= mean[i]
-                image[:, :, i] /= std[i]
-            return image
-        else:
-            return image
+    def get_shape_in_chw_order(self, shape, input_name):
+        layout = self._converting['layout']
+        sort = np.argsort(LAYER_LAYOUT_TO_IMAGE[layout])
+        shape = np.array(shape)[sort]
+        chw = shape[1:]
+        if len(shape) in [4, 5]:
+            chw = shape[-1], shape[-3], shape[-2]
+        return chw
 
-    def __set_channel_swap(self, image):
-        if self._converting['channel_swap'] is not None:
-            transposing_form = (self._converting['channel_swap'][0],
-                                self._converting['channel_swap'][1],
-                                self._converting['channel_swap'][2])
-            transposed_image = image.transpose(transposing_form)
-            return transposed_image
+    def __set_channel_swap(self, image, input_name):
+        channel_swap = self._converting['channel_swap']
+        if channel_swap is not None:
+            image = image[:, :, :, channel_swap]
+
+    def __set_norm(self, image, input_name):
+        image /= [np.float32(255), np.float32(255), np.float32(255)]
+
+    def __set_mean(self, image, input_name):
+        mean = self._converting['mean']
+        if mean is not None:
+            image -= mean
+
+    def __set_input_scale(self, image, input_name):
+        input_scale = self._converting['std']
+        if input_scale is not None:
+            image /= input_scale
+
+    def __set_layout_order(self, image, input_name):
+        layout = self._converting['layout']
+        if layout is not None:
+            layout = LAYER_LAYOUT_TO_IMAGE[layout]
+            image = image.transpose(layout)
         return image
 
-    def _transform(self, image, element_type):
-        transformed_image = np.copy(image).astype(element_type)
-        normalized_image = self.__set_norm(transformed_image)
-        transposed_image = self.__set_channel_swap(normalized_image)
-        return transposed_image
+    def _transform(self, image, input_name):
+        transformed_image = np.copy(image).astype(np.float64)
+        self.__set_channel_swap(transformed_image, input_name)
+        if self._converting['norm']:
+            self.__set_norm(transformed_image, input_name)
+        self.__set_mean(transformed_image, input_name)
+        self.__set_input_scale(transformed_image, input_name)
+        transformed_image = self.__set_layout_order(transformed_image, input_name)
+        return transformed_image
 
     def transform_images(self, images, shape, element_type, input_name):
-        dataset_size = images.shape[0]
-        new_shape = [dataset_size] + shape[1:]
-        transformed_images = np.zeros(shape=new_shape, dtype=element_type)
-        for i in range(dataset_size):
-            transformed_images[i] = self._transform(images[i], element_type)
-        return transformed_images
+        transformed_images = np.zeros(shape=shape)
+        transformed_images = self._transform(images, input_name)
+        return transformed_images.astype(element_type)
 
 
-class OnnxRuntimeTransformerCpp(Transformer):
+class ONNXRuntimeTransformerCpp(Transformer):
     def __init__(self, model):
         self._model = model
 
