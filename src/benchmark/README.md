@@ -17,7 +17,7 @@ the following frameworks:
 - [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
-- [Apache TVM][tvm].
+- [Apache TVM][tvm] (Python API).
 
 ### Implemented algorithm
 
