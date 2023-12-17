@@ -15,9 +15,9 @@ the following frameworks:
 - [TensorFlow Lite][tensorflow-lite] (C++ and Python APIs).
 - [ONNX Runtime][onnx-runtime] (C++ and Python APIs).
 - [MXNet][mxnet] (Python Gluon API).
-- [OpenCV DNN][opencv-dnn] (C++ and Python APIs).
+- [OpenCV DNN][opencv] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
-- [TVM][tvm].
+- [Apache TVM][tvm].
 
 ### Implemented algorithm
 
