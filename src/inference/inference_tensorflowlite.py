@@ -235,7 +235,6 @@ def prepare_output(result, output_names, task):
     if task == 'classification':
         return {output_names[i]: result[i] for i in range(len(result))}
     if task == 'segmentation':
-
         return {0: result[0]}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
