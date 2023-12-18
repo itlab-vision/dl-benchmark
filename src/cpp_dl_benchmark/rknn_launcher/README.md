@@ -37,14 +37,11 @@ git checkout v1.4.0
 1. Build it with toolchain from Android NDK:
 
     ```bash
-    cmake -DCMAKE_BUILD_TYPE=Release
-    -DDCMAKE_SYSTEM_PROCESSOR=aarch64,
-    -DCMAKE_SYSTEM_VERSION=31,
-    -DANDROID_PLATFORM=31, # for Android 12
-    -DANDROID_ABI=arm64-v8a,
-    -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a,
-    -DCMAKE_TOOLCHAIN_FILE=<android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake
-    ..
+    cmake -DCMAKE_BUILD_TYPE=Release \
+        -DJSON_BuildTests=OFF \
+        -DCMAKE_INSTALL_PREFIX=install \
+        ..
+    cmake --install . 
     ```
 
 ## Build RKNN Benchmark
@@ -77,15 +74,15 @@ so that cmake can find it during configuration step:
     - For aarch64 Android:
 
         ```bash
-        cmake -DDCMAKE_SYSTEM_PROCESSOR=aarch64,
-        -DANDROID_PLATFORM=31, # for Android 12
-        -DCMAKE_SYSTEM_VERSION=31,
-        -DANDROID_ABI=arm64-v8a,
-        -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a,
-        -DCMAKE_TOOLCHAIN_FILE=<android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_RKNN_LAUNCHER=ON
-        -DRKNN_DIR=<rknpu2_dir>
-        -Dnlohmann_json_DIR=<nlohmann_json_build>
+        cmake -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+        -DANDROID_PLATFORM=31 \ # for Android 12
+        -DCMAKE_SYSTEM_VERSION=31 \
+        -DANDROID_ABI=arm64-v8a \
+        -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+        -DCMAKE_TOOLCHAIN_FILE=<android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_RKNN_LAUNCHER=ON \
+        -DRKNN_DIR=<rknpu2_dir> \
+        -Dnlohmann_json_DIR=<nlohmann_json_build> \
         <dl-benchmark>/src/cpp_dl_benchmark
         ```
 
