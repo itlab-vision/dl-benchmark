@@ -238,7 +238,7 @@ Report questions, issues and suggestions, using:
 [opencv-dnn]: https://docs.opencv.org/4.7.0/d2/d58/tutorial_table_of_content_dnn.html
 [pytorch]: https://pytorch.org
 [tvm]: https://tvm.apache.org
-[spektral]: https://graphneural.network/
+[spektral]: https://graphneural.network
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
