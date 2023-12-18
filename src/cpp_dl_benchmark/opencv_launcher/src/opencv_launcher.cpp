@@ -121,14 +121,34 @@ void OCVLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&&
     }
 }
 
-std::vector<OutputTensors> OCVLauncher::get_output_tensors() {
-    throw std::logic_error("Method is not implemented");
-}
-
 void OCVLauncher::run(const int input_idx) {
     net.setInput(blobs[input_idx]);
 
     infer_start_time = HighresClock::now();
     net.forward(output_blobs, output_names);
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
+}
+
+std::vector<OutputTensors> OCVLauncher::get_output_tensors() {
+    run(0);
+    reset_timers();
+
+    OutputTensors output;
+    for (size_t i = 0; i < output_names.size(); ++i) {
+        const std::vector<float> data(output_blobs[i].begin<float>(), output_blobs[i].end<float>());
+
+        int batch_size = output_blobs[i].size[0];
+        std::vector<int> shape;
+        if (output_shapes[i].size() == 0) {
+            shape = {batch_size, static_cast<int>(data.size()) / batch_size};
+        }
+        else {
+            shape = output_shapes[i];
+            shape[0] = batch_size;
+        }
+
+        output.emplace_back(data.size(), shape, output_names[i], data);
+    }
+
+    return {output};
 }
