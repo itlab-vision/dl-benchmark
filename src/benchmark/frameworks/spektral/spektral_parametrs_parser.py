@@ -11,6 +11,3 @@ class SpektralParametersParser(DependentParametersParser):
 class SpektralParameters(FrameworkParameters):
     def __init__(self):
         pass
-
-# Haven't found any necessary framework-dependent parameters for Spektral itself
-# TODO: Check if Tensorflow framework-dependent parameters affect Spektral behavior

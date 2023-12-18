@@ -7,7 +7,10 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import numpy as pd
 
+import spektral
+import spektral_auxiliary
 
 class IOAdapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
@@ -321,6 +324,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceDetectionTFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_recognition_tflite_cpp':
             return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'feedforward_spektral':
+            return FeedForward_SpektralIO(args, io_model_wrapper, transformer)
+        elif task == 'node-classification':
+            return NodeClassification_SpektralIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2323,3 +2330,118 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
             ref_vec = ref_vec[1:].astype(np.float32)
             cos_sim = (result @ ref_vec) / (np.linalg.norm(result) * np.linalg.norm(ref_vec))
             log.info(f'COSINE SIMILARITY: {cos_sim}')
+
+class FeedForward_SpektralIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self._loader = None
+
+    def prepare_input(self, model, input_):
+        self._input = input_
+        file_type = str(input_).split('.')[-1]
+
+        if file_type != 'bin':
+            if input_ in ['cora', 'citeseer', 'pubmed']:
+                dataset = spektral.datasets.citation.Citation(input_)
+            elif input_ in ['ppi', 'reddit']:
+                dataset = spektral.datasets.graphsage.GraphSage(input_)
+            elif input_ == 'dblp':
+                dataset = spektral.datasets.dblp.DBLP()
+            elif input_ == 'flickr':
+                dataset = spektral.datasets.flickr.Flickr()
+            elif input_ == 'qm7':
+                dataset = spektral.datasets.qm7.QM7()
+            elif input_ == 'qm9':
+                dataset = spektral.datasets.qm9.QM9()
+            elif input_ == 'mnist':
+                dataset = spektral.datasets.mnist.MNIST()
+            elif input_ in ['modelnet10', 'modelnet40']:
+                dataset = spektral.datasets.modelnet.ModelNet(input_[8:])
+            elif input_ in spektral_auxiliary.TUDATASETS:
+                dataset = spektral.datasets.TUDataset(input_[10:])
+            else:
+                raise ValueError('Attempt to import unsupported dataset.')
+        else:
+            dataset = spektral_auxiliary.CustomDataset(input_)
+
+        if self._batch_size == 1:
+            input_loader = spektral.data.SingleLoader(dataset)
+        else:
+            input_loader = spektral.data.BatchLoader(dataset, batch_size=self._batch_size)
+
+        self._loader = input_loader
+
+    def get_slice_input(self, *args, **kwargs):
+        slice_input, _ = self._loader.__next__()
+        return slice_input
+
+    def process_output(self, result, log):
+        return
+
+class NodeClassification_SpektralIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self._loader = None
+
+    def prepare_input(self, model, input_):
+        self._input = input_
+        file_type = str(input_).split('.')[-1]
+
+        if file_type != 'bin':
+            if input_ in ['cora', 'citeseer', 'pubmed']:
+                dataset = spektral.datasets.citation.Citation(input_)
+            elif input_ in ['ppi', 'reddit']:
+                dataset = spektral.datasets.graphsage.GraphSage(input_)
+            elif input_ == 'dblp':
+                dataset = spektral.datasets.dblp.DBLP()
+            elif input_ == 'flickr':
+                dataset = spektral.datasets.flickr.Flickr()
+            elif input_ == 'qm7':
+                dataset = spektral.datasets.qm7.QM7()
+            elif input_ == 'qm9':
+                dataset = spektral.datasets.qm9.QM9()
+            elif input_ == 'mnist':
+                dataset = spektral.datasets.mnist.MNIST()
+            elif input_ in ['modelnet10', 'modelnet40']:
+                dataset = spektral.datasets.modelnet.ModelNet(input_[8:])
+            elif input_ in spektral_auxiliary.TUDATASETS:
+                dataset = spektral.datasets.TUDataset(input_[10:])
+            else:
+                raise ValueError('Attempt to import unsupported dataset.')
+        else:
+            dataset = spektral_auxiliary.CustomDataset(input_)
+
+        if self._batch_size == 1:
+            input_loader = spektral.data.SingleLoader(dataset)
+        else:
+            input_loader = spektral.data.BatchLoader(dataset, batch_size=self._batch_size)
+
+        self._loader = input_loader
+
+    def get_slice_input(self, *args, **kwargs):
+        slice_input, _ = self._loader.__next__()
+        return slice_input
+
+    def process_output(self, result, log):
+        if self._not_valid_result(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+
+        self.load_labels_map('cora.txt')
+
+        _result = result.numpy()
+        __result = {'Node': []}
+
+        for i in range(len(self._labels_map)):
+            __result[self._labels_map[i]] = []
+
+        for i in range(len(_result)):
+            __result['Node'].append(i)
+            for j in range(len(self._labels_map)):
+                __result[self._labels_map[j]].append(_result[i][j])
+
+        pd_result = pd.DataFrame(__result)
+        file_name = os.path.join(os.path.dirname(__file__), 'node_classification_out.csv')
+        pd_result.to_csv(file_name, sep = ' ', columns = list(__result.keys()), index = False)
+
+        log.info(f'Result was saved to {file_name}')

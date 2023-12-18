@@ -10,7 +10,7 @@ import tensorflow as tf
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from reporter.report_writer import ReportWriter
-from io_adapter_spektral import IOAdapter_Spektral
+from io_adapter import IOAdapter
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger   # noqa: E402
@@ -58,9 +58,9 @@ def cli_argument_parser():
                         type=int,
                         dest='time')
     parser.add_argument('-t', '--task',
-                        help='Output processing method. Default: turn to Node-Feature table',
+                        help='Output processing method. Default: without postprocess',
                         choices=['node-classification'],
-                        default='node-classification',
+                        default='feedforward_spektral',
                         type=str,
                         dest='task')
     args = parser.parse_args()
@@ -76,6 +76,14 @@ def model_load(model_path):
     compiled_model = tf.keras.saving.load_model(model_path, compile=True)
 
     return compiled_model
+
+def prepare_output(result, model, output_names, task):
+    if task == 'feedforward':
+        return {}
+    elif task == 'node-classification':
+        return result
+    else:
+        raise ValueError(f'Unsupported task {task} to print inference results')
 
 
 def inference_spektral(model, number_iter, get_slice, test_duration):
@@ -114,9 +122,9 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device='CPU')
 
-    io = IOAdapter_Spektral.get_io_adapter(args)
+    io = IOAdapter.get_io_adapter(args, None, None)
     model = model_load(Path(args.model_path))
-    io.prepare_input(args.input)
+    io.prepare_input(model, args.input)
 
     result, inference_time = inference_spektral(model, args.number_iter, io.get_slice_input, args.time)
 
@@ -124,14 +132,18 @@ def main():
     inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
 
     report_writer.update_execution_results(**inference_result)
-    log.info(f'Wrote report to {args.report_path}')
+    log.info(f'Writing report to {args.report_path}')
     report_writer.write_report(args.report_path)
 
     if not args.raw_output:
         if args.number_iter == 1:
-            result = io.process_output(result, args.task)
-            pd.set_option('display.max_rows', 20)
-            log.info(f'Inference results:\n{result}')
+            try:
+                log.info('Converting output tensor to print results')
+                result = prepare_output(result, args.output_names, args.model_name, args.task, args)
+                log.info('Inference results')
+                io.process_output(result, log)
+            except Exception as ex:
+                log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
     log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
