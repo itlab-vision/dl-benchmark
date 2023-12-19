@@ -19,7 +19,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
         self.tvm_relay = importlib.import_module('tvm.relay')
-        self.graph_executor = importlib.import_module('tvm.relay.graph_executor')
+        self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -34,7 +34,10 @@ class Converter(metaclass=abc.ABCMeta):
         target_str = self.args['target']
         if device == 'CPU':
             log.info(f'{task} will be executed on {device}')
-            target = self.tvm.target.Target(target_str)
+            try:
+                target = self.tvm.target.Target(target_str)
+            except ImportError:
+                target = None
             dev = self.tvm.cpu(0)
         else:
             raise ValueError(f'Device {device} is not supported. Supported devices: CPU')
