@@ -13,7 +13,7 @@ Image resolution: 709 x 510
 <img width="150" src="images\ILSVRC2012_val_00000023.JPEG"></img>
 </div>
 
-   Model             |  Python API  |
+Model|Python API|
 ---------------------|---------------------------|
 squeezenet              |0.9628906 Granny Smith<br>0.0068016 lemon<br>0.0064964 fig<br>0.0046844 tennis ball<br>0.0038204 piggy bank, penny bank|
 shufflenetv2            |0.5396927 piggy bank, penny bank<br>0.0453512 saltshaker, salt shaker<br>0.0443007 whistle<br>0.0347720 ocarina, sweet potato<br>0.0286027 lemon|
@@ -29,7 +29,7 @@ Image resolution: 500 x 500
 <img width="150" src="images\ILSVRC2012_val_00000247.JPEG">
 </div>
 
-   Model             |  Python API  |
+Model|Python API|
 ---------------------|---------------------------|
 squeezenet           |0.9804688 junco, snowbird<br>0.0173798 chickadee<br>0.0005875 jay<br>0.0003612 indigo bunting, indigo finch, indigo bird, Passerina cyanea<br>0.0003293 brambling, Fringilla montifringilla|
 shufflenetv2         |0.9906778 junco, snowbird<br>0.0034630 brambling, Fringilla montifringilla<br>0.0023069 house finch, linnet, Carpodacus mexicanus<br>0.0017143 chickadee<br>0.0006609 goldfinch, Carduelis carduelis|
@@ -45,7 +45,7 @@ Image resolution: 333 x 500
 <img width="150" src="images\ILSVRC2012_val_00018592.JPEG">
 </div>
 
-   Model             |  Python API  |
+Model|Python API|
 ---------------------|---------------------------|
 squeezenet           |0.8725586 lifeboat<br>0.0500183 container ship, containership, container vessel<br>0.0284729 drilling platform, offshore rig<br>0.0120697 pirate, pirate ship<br>0.0110016 dock, dockage, docking facility|
 shufflenetv2         |0.2229400 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>0.2029892 liner, ocean liner<br>0.0577048 fireboat<br>0.0493575 dock, dockage, docking facility<br>0.0428826 container ship, containership, container vessel|
@@ -66,7 +66,7 @@ Image resolution: 500 x 500
 Bounding box (upper left and bottom right corners):<br>
 (117, 86), (365, 465)
 
-   Model              |      Python API     |
+Model|Python API|
 ----------------------|----------------------------------------|
 faster_rcnn           | Bounding box:<br>(58, 141), (359, 484) |
 rfcn                  | Bounding box:<br>(93, 99), (334, 445)  |
@@ -94,7 +94,7 @@ Image resolution: 333 x 500
 Bounding box (upper left and bottom right corners):<br>
 (82, 262), (269, 376)
 
-   Model              |      Python API     |
+Model|Python API|
 ----------------------|----------------------------------------|
 faster_rcnn           | Bounding box:<br>(58, 180), (282, 418) |
 rfcn                  | Bounding box:<br>(88, 138), (259, 381) |
@@ -122,7 +122,7 @@ Image resolution: 500 x 375
 Bounding box (upper left and bottom right corners):<br>
 (62, 127), (443, 251)
 
-   Model              |      Python API     |
+Model|Python API|
 ----------------------|----------------------------------------|
 faster_rcnn           | Bounding box:<br>(6, 94), (477, 257)   |
 rfcn                  | Bounding box:<br>(46, 102), (436, 252) |

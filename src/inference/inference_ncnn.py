@@ -145,8 +145,7 @@ def infer_slice(input_name, batch_size, net, slice_input):
         res.append(net_result)
     return res
 
-
-if __name__ == '__main__':
+def main():
     try:
         args = cli_argument_parser()
         model_wrapper = NcnnIOModelWrapper(args)
@@ -179,3 +178,7 @@ if __name__ == '__main__':
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    sys.exit(main() or 0)
