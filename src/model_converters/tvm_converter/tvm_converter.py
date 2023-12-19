@@ -18,6 +18,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.params = None
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
+        self.tvm_relay = importlib.import_module('tvm.relay')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -58,7 +59,7 @@ class Converter(metaclass=abc.ABCMeta):
 
         log.info(f'Saving weights of the model {model_name}')
         with open(f'{path_save_model}/{model_name}.params', 'wb') as fo:
-            fo.write(self.tvm.relay.save_param_dict(self.params))
+            fo.write(self.tvm_relay.save_param_dict(self.params))
 
         log.info(f'Saving model {model_name}')
         with open(f'{path_save_model}/{model_name}.json', 'w') as fo:
@@ -69,6 +70,15 @@ class Converter(metaclass=abc.ABCMeta):
         self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
 
+    def get_lib(self):
+        target, dev = self._get_target_device()
+        model = self._convert_model_from_framework(target, dev)
+
+        log.info(f'Model compilation')
+        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            lib = self.tvm_relay.build(model[0], target=target, params=model[1])
+        return lib
+
     def get_graph_module(self):
         target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
@@ -77,7 +87,7 @@ class Converter(metaclass=abc.ABCMeta):
         log.info(f'Creating graph module from {self.framework} model')
         if len(model) == 2:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
-                lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+                lib = self.tvm_relay.build(model[0], target=target, params=model[1])
             self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
             return self.graph
         else:
@@ -143,7 +153,7 @@ class PyTorchToTVMConverter(Converter):
         scripted_model = self._get_pytorch_model()
         input_name = self.args['input_name']
         shape_list = [(input_name, input_shape)]
-        model, params = self.tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
+        model, params = self.tvm_relay.frontend.from_pytorch(scripted_model, shape_list)
         return model, params
 
 
@@ -166,7 +176,7 @@ class ONNXToTVMConverter(Converter):
         model_onnx = self.onnx.load(model_path)
         self.model_onnx = model_onnx
         shape_dict = {model_onnx.graph.input[0].name: input_shape}
-        model, params = self.tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
+        model, params = self.tvm_relay.frontend.from_onnx(model_onnx, shape_dict)
         return model, params
 
 
@@ -209,7 +219,7 @@ class MXNetToTVMConverter(Converter):
     def _convert_model_from_framework(self, target, dev):
         net = self._get_mxnet_network()
         shape_dict = {self.args['input_name']: self.args['input_shape']}
-        model, params = self.tvm.relay.frontend.from_mxnet(net, shape_dict)
+        model, params = self.tvm_relay.frontend.from_mxnet(net, shape_dict)
         return model, params
 
 
@@ -222,7 +232,7 @@ class TVMConverter(Converter):
         model_path = self.args['model_path']
         model_params = self.args['model_params']
         with open(model_params, 'rb') as fo:
-            params = self.tvm.relay.load_param_dict(fo.read())
+            params = self.tvm_relay.load_param_dict(fo.read())
 
         with open(model_path, 'r') as fo:
             mod = fo.read()
@@ -240,11 +250,12 @@ class TVMConverter(Converter):
 
     def _convert_model_from_framework(self, target, dev):
         model_name = self.args['model_path']
-        params = self.args['model_path']
+        params = self.args['model_params']
+
         file_type = model_name.split('.')[-1]
-        if (file_type == 'json' and params is not None):
+        if file_type == 'json' and params is not None:
             return self._get_deserialized_tvm_model()
-        elif (file_type == 'so'):
+        elif file_type == 'so' or file_type == 'tar':
             return [self._get_lib_format_tvm_model()]
         else:
             raise ValueError('Wrong arguments.')
@@ -274,7 +285,7 @@ class CaffeToTVMConverter(Converter):
         with open(model_params, 'rb') as f:
             init_net.ParseFromString(f.read())
 
-        model, params = self.tvm.relay.frontend.from_caffe(init_net,
+        model, params = self.tvm_relay.frontend.from_caffe(init_net,
                                                            predict_net,
                                                            shape_dict,
                                                            dtype_dict)
