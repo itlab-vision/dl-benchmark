@@ -145,6 +145,7 @@ def infer_slice(input_name, batch_size, net, slice_input):
         res.append(net_result)
     return res
 
+
 def main():
     try:
         args = cli_argument_parser()
