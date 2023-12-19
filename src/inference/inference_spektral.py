@@ -3,14 +3,13 @@ import json
 import sys
 from pathlib import Path
 
-import pandas as pd
 import spektral
 import tensorflow as tf
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from reporter.report_writer import ReportWriter
-from io_adapter import IOAdapter
+import spektral_auxiliary
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger   # noqa: E402
@@ -122,7 +121,7 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device='CPU')
 
-    io = IOAdapter.get_io_adapter(args, None, None)
+    io = spektral_auxiliary.SpektralIO.get_io_adapter(args, None, None)
     model = model_load(Path(args.model_path))
     io.prepare_input(model, args.input)
 
