@@ -35,7 +35,7 @@ class Converter(metaclass=abc.ABCMeta):
             log.info(f'{task} will be executed on {device}')
             try:
                 target = self.tvm.target.Target(target_str)
-            except ImportError:
+            except AttributeError:
                 target = None
             dev = self.tvm.cpu(0)
         else:
