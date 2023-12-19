@@ -8,6 +8,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+
 class IOAdapter(metaclass=abc.ABCMeta):
     def __init__(self, args, io_model_wrapper, transformer):
         self._input = None
