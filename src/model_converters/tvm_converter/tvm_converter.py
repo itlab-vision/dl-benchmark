@@ -19,6 +19,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
         self.tvm_relay = importlib.import_module('tvm.relay')
+        self.graph_executor = importlib.import_module('tvm.relay.graph_executor')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -67,7 +68,7 @@ class Converter(metaclass=abc.ABCMeta):
 
     def get_graph_module_from_lib(self, lib):
         _, dev = self._get_target_device()
-        self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
 
     def get_lib(self):
@@ -88,7 +89,7 @@ class Converter(metaclass=abc.ABCMeta):
         if len(model) == 2:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
                 lib = self.tvm_relay.build(model[0], target=target, params=model[1])
-            self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+            self.graph = self.graph_executor.GraphModule(lib['default'](dev))
             return self.graph
         else:
             return self.get_graph_module_from_lib(model[0])
