@@ -13,3 +13,4 @@ class KnownFrameworks:
     pytorch_cpp = 'PyTorch Cpp'
     tvm = 'TVM'
     spektral = 'Spektral'
+    rknn = 'RKNN'
