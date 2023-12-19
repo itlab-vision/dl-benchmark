@@ -1,7 +1,10 @@
 import sys
 from pathlib import Path
 from time import time
-from scipy.special import softmax
+try:
+    from scipy.special import softmax
+except ImportError:
+    pass
 from inference_tools.loop_tools import loop_inference, get_exec_time
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
