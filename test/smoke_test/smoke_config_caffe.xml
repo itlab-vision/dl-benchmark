@@ -66,8 +66,8 @@
             <Name>googlenet-v1</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>./working_dir_smoke/googlenet-v1/googlenet-v1.json</ModelPath>
-            <WeightsPath>./working_dir_smoke/googlenet-v1/googlenet-v1.params</WeightsPath>
+            <ModelPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
