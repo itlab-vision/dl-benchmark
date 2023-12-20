@@ -77,7 +77,7 @@ class Converter(metaclass=abc.ABCMeta):
         target, dev = self._get_target_device()
         model = self._convert_model_from_framework(target, dev)
 
-        log.info(f'Model compilation')
+        log.info('Model compilation')
         with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
             lib = self.tvm.relay.build(model[0], target=target, params=model[1])
         return lib
