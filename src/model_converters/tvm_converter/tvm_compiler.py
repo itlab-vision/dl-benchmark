@@ -39,7 +39,7 @@ def cli_argument_parser():
     return args
 
 
-def create_dict_for_converter_pytorch(args):
+def create_dict_for_compilation(args):
     dictionary = {
         'model_path': args.model_json,
         'model_params': args.model_params,
@@ -53,7 +53,7 @@ def create_dict_for_converter_pytorch(args):
 def main():
     args = cli_argument_parser()
     try:
-        converter = TVMConverter(create_dict_for_converter_pytorch(args))
+        converter = TVMConverter(create_dict_for_compilation(args))
         lib = converter.get_lib()
         lib.export_library(args.lib_name)
     except Exception:
