@@ -66,7 +66,8 @@ We infer models using the following APIs:
                            --input_name data --mean 0.408 0.459 0.482
    ```
 
-1. TVM (Python API) to run on risc-v, we compiled the model on the host.
+1. TVM (Python API) to run on RISCV-V, we compiled the model on the host.
+
    ```bash
    cd model_converters/tvm_converter/
    python tvm_compiler.py -m googlenet-v1.json \
@@ -74,8 +75,9 @@ We infer models using the following APIs:
                           -t "llvm -mtriple=riscv64-unknown-linux-gnu -mcpu=generic-rv64 -mabi=lp64d -mattr=+64bit,+m,+a,+f,+d,+c" \
                           --opt_level 0 --lib_name googlenet-v1.tar
    ```
-   
+
    The model compiled into the archive was then launched on the device.
+
    ```bash
    cd model_converters/tvm_converter/
    python inference_tvm.py -is 1 3 224 224 -i ILSVRC2012_val_00000023.JPEG \
@@ -83,7 +85,7 @@ We infer models using the following APIs:
                            -b 1 -l labels/image_net_synset.txt -ol 0 -in data --layout NCHW \
                            --mean 0.408 0.459 0.482 --channel_swap 2 1 0 --not_softmax
    ```
-   
+
 **Notes**:
 
 1. TensorFlow models were converted to ONNX format using
