@@ -2,14 +2,17 @@ import argparse
 import json
 import sys
 import traceback
+import numpy as np
+
 from pathlib import Path
 from time import time
 
-import numpy as np
 from openvino.runtime import AsyncInferQueue
 
 import postprocessing_data as pp
-import utils
+from utils import (set_input_to_blobs, get_request_result, create_core, create_model,
+                   configure_model, get_input_shape, reshape_input, compile_model)
+
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
 from reporter.report_writer import ReportWriter
@@ -128,15 +131,13 @@ def cli_argument_parser():
                         choices=['classification', 'detection', 'segmentation', 'recognition-face',
                                  'person-attributes', 'age-gender', 'gaze', 'head-pose', 'person-detection-asl',
                                  'adas-segmentation', 'road-segmentation', 'license-plate', 'instance-segmentation',
-                                 'single-image-super-resolution', 'sphereface',
-                                 'person-detection-action-recognition-old',
-                                 'person-detection-action-recognition-new', 'person-detection-raisinghand-recognition',
-                                 'person-detection-action-recognition-teacher', 'human-pose-estimation',
-                                 'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
-                                 'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
-                                 'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco',
-                                 'yolo_v3', 'yolo_v3_tf',
-                                 ],
+                                 'single-image-super-resolution', 'sphereface', 'action-recognition-encoder',
+                                 'person-detection-action-recognition-old', 'person-detection-action-recognition-new',
+                                 'person-detection-raisinghand-recognition', 'human-pose-estimation',
+                                 'person-detection-action-recognition-teacher', 'driver-action-recognition-encoder',
+                                 'reidentification', 'driver-action-recognition-decoder', 'action-recognition-decoder',
+                                 'face-detection', 'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco',
+                                 'yolo_v2_tiny_coco', 'yolo_v3', 'yolo_v3_tf'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -174,13 +175,13 @@ def infer_async(compiled_model, number_iter, num_request, get_slice):
         if idle_id < 0:
             infer_queue.wait(num_requests=1)
             idle_id = infer_queue.get_idle_request_id()
-        utils.set_input_to_blobs(infer_queue[idle_id], get_slice())
+        set_input_to_blobs(infer_queue[idle_id], get_slice())
         infer_queue.start_async()
         iteration += 1
     infer_queue.wait_all()
     inference_time = time() - inference_time
     if number_iter == 1:
-        request_results = [utils.get_request_result(request) for request in infer_queue]
+        request_results = [get_request_result(request) for request in infer_queue]
         output_names = request_results[0].keys()
         result = dict.fromkeys(output_names, None)
         for key in result:
@@ -201,7 +202,7 @@ def main():
         model_wrapper = OpenVINOIOModelWrapper()
         data_transformer = OpenVINOTransformer()
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
-        core = utils.create_core(
+        core = create_core(
             args.extension,
             args.intel_gpu_config,
             args.device,
@@ -211,13 +212,13 @@ def main():
             'async',
             log,
         )
-        model = utils.create_model(core, args.model_xml, args.model_bin, log)
-        utils.configure_model(core, model, args.device, args.default_device, args.affinity)
-        input_shapes = utils.get_input_shape(model_wrapper, model)
+        model = create_model(core, args.model_xml, args.model_bin, log)
+        configure_model(core, model, args.device, args.default_device, args.affinity)
+        input_shapes = get_input_shape(model_wrapper, model)
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
 
-        utils.reshape_input(model, args.batch_size)
+        reshape_input(model, args.batch_size)
 
         if args.input:
             log.info(f'Preparing input data: {args.input}')
@@ -226,7 +227,7 @@ def main():
             io.fill_unset_inputs(model, log)
 
         log.info('Create executable network')
-        compiled_model = utils.compile_model(core, model, args.device, args.priority)
+        compiled_model = compile_model(core, model, args.device, args.priority)
 
         log.info('Runtime parameters')
         keys = core.get_property(args.device, 'SUPPORTED_PROPERTIES')

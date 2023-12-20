@@ -28,6 +28,8 @@
         "latency_max": null,
         "latency_median": null,
         "latency_min": null,
+        "latency_per_token": null,
+        "num_tokens": null,
         "read_network_time": null,
         "throughput": null,
         "batch_throughput": null

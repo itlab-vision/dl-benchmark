@@ -1,4 +1,5 @@
 #pragma once
+
 #include "common_launcher/launcher.hpp"
 #include "inputs_preparation/tensor_utils.hpp"
 #include "utils/logger.hpp"
@@ -32,7 +33,7 @@ public:
     void prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tensor_buffers) override;
     void compile() override;
 
-    void dump_output() override;
+    std::vector<OutputTensors> get_output_tensors() override;
 
 private:
     torch::jit::script::Module module;

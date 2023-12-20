@@ -47,7 +47,7 @@ const T get_mat_value(const cv::Mat& mat, size_t h, size_t w, size_t c) {
 };
 
 template<class T, class T2>
-TensorBuffer create_random_tensor(const InputDescr& input_descr,
+TensorBuffer create_random_tensor(const InputDescription& input_descr,
                                   T rand_min = std::numeric_limits<uint8_t>::min(),
                                   T rand_max = std::numeric_limits<uint8_t>::max()) {
     logger::info << "\t\tRandomly generated data" << logger::endl;
@@ -68,7 +68,7 @@ TensorBuffer create_random_tensor(const InputDescr& input_descr,
 }
 
 template<class T>
-TensorBuffer create_tensor_from_image(const InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_image(const InputDescription& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto& files = input_descr.files;
 
@@ -109,7 +109,7 @@ TensorBuffer create_tensor_from_image(const InputDescr& input_descr, int batch_s
 }
 
 template<class T>
-TensorBuffer create_image_info_tensor(const InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
+TensorBuffer create_image_info_tensor(const InputDescription& input_descr, const cv::Size& image_size, int batch_size) {
     auto tensor_descr = input_descr.tensor_descr;
 
     int64_t tensor_size =
@@ -137,7 +137,7 @@ TensorBuffer create_image_info_tensor(const InputDescr& input_descr, const cv::S
 }
 
 template<class T>
-TensorBuffer create_tensor_from_binary(const InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer create_tensor_from_binary(const InputDescription& input_descr, int batch_size, int start_index) {
     auto tensor_descr = input_descr.tensor_descr;
     const auto& files = input_descr.files;
 
@@ -181,7 +181,7 @@ TensorBuffer create_tensor_from_binary(const InputDescr& input_descr, int batch_
     return buff;
 }
 
-TensorBuffer get_tensor_from_image(const InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_image(const InputDescription& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP32) {
         return create_tensor_from_image<float>(input_descr, batch_size, start_index);
@@ -203,7 +203,7 @@ TensorBuffer get_tensor_from_image(const InputDescr& input_descr, int batch_size
                                 utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_image_info_tensor(const InputDescr& input_descr, const cv::Size& image_size, int batch_size) {
+TensorBuffer get_image_info_tensor(const InputDescription& input_descr, const cv::Size& image_size, int batch_size) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_image_info_tensor<short>(input_descr, image_size, batch_size);
@@ -222,7 +222,7 @@ TensorBuffer get_image_info_tensor(const InputDescr& input_descr, const cv::Size
                                 utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_tensor_from_binary(const InputDescr& input_descr, int batch_size, int start_index) {
+TensorBuffer get_tensor_from_binary(const InputDescription& input_descr, int batch_size, int start_index) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_tensor_from_binary<short>(input_descr, batch_size, start_index);
@@ -244,7 +244,7 @@ TensorBuffer get_tensor_from_binary(const InputDescr& input_descr, int batch_siz
                                 utils::get_data_precision_str(precision));
 }
 
-TensorBuffer get_random_tensor(const InputDescr& input_descr) {
+TensorBuffer get_random_tensor(const InputDescription& input_descr) {
     auto precision = input_descr.tensor_descr.data_precision;
     if (precision == utils::DataPrecision::FP16) {
         return create_random_tensor<short, short>(input_descr);
@@ -319,7 +319,7 @@ std::vector<std::vector<TensorBuffer>> get_input_tensors(const InputsInfo& input
     return tensors;
 }
 
-void fill_input_files(InputDescr& input_descr,
+void fill_input_files(InputDescription& input_descr,
                       const std::map<std::string, std::vector<std::string>>& input_files,
                       const std::string& name) {
     if (input_files.count(name) > 0) {
@@ -333,7 +333,7 @@ void fill_input_files(InputDescr& input_descr,
     }
 }
 
-void fill_shape(InputDescr& input_descr,
+void fill_shape(InputDescription& input_descr,
                 const std::map<std::string, std::vector<int>>& input_shapes,
                 const std::string& name,
                 bool is_dynamic_input) {
@@ -356,7 +356,7 @@ void fill_shape(InputDescr& input_descr,
     }
 }
 
-void fill_layout(InputDescr& input_descr,
+void fill_layout(InputDescription& input_descr,
                  const std::map<std::string, std::string>& input_layouts,
                  const std::string& name) {
     auto& tensor_descr = input_descr.tensor_descr;
@@ -380,7 +380,7 @@ void fill_layout(InputDescr& input_descr,
     }
 }
 
-void fill_data_type(InputDescr& input_descr,
+void fill_data_type(InputDescription& input_descr,
                     const std::map<std::string, utils::DataPrecision>& input_dtypes,
                     const std::string& name) {
     if (!input_dtypes.empty()) {
@@ -401,7 +401,7 @@ void fill_data_type(InputDescr& input_descr,
     }
 }
 
-void fill_mean_values(InputDescr& input_descr,
+void fill_mean_values(InputDescription& input_descr,
                       const std::map<std::string, std::vector<float>>& means,
                       const std::string& name) {
     auto& tensor_descr = input_descr.tensor_descr;
@@ -427,7 +427,7 @@ void fill_mean_values(InputDescr& input_descr,
     }
 }
 
-void fill_scale_values(InputDescr& input_descr,
+void fill_scale_values(InputDescription& input_descr,
                        const std::map<std::string, std::vector<float>>& scales,
                        const std::string& name) {
     auto& tensor_descr = input_descr.tensor_descr;
@@ -523,7 +523,7 @@ InputsInfo get_inputs_info(std::vector<TensorDescription> model_inputs,
 
     InputsInfo inputs_info;
     for (const auto& input : model_inputs) {
-        InputDescr input_descr;
+        InputDescription input_descr;
         input_descr.tensor_descr = input;
         input_descr.channel_swap = channel_swap_bool;
         std::string name = input.name;

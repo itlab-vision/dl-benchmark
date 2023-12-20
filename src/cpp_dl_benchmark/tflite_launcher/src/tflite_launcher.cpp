@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <fstream>
 #include <numeric>
@@ -205,41 +206,26 @@ void TFLiteLauncher::run(const int input_idx) {
     }
 }
 
-void TFLiteLauncher::dump_output() {
-    auto jsonObjects = nlohmann::json::array();
-    std::string name = "output.json";
-    std::ofstream file(name);
-
+std::vector<OutputTensors> TFLiteLauncher::get_output_tensors() {
     run(0);
 
+    std::vector<OutputTensors> outputs;
+
+    OutputTensors output;
     for (size_t i = 0; i < interpreter->outputs().size(); ++i) {
-        nlohmann::json js;
         const TfLiteTensor* result = interpreter->output_tensor(i);
         const float* raw_data = result->data.f;
         const auto* dims = result->dims;
-        const std::vector<size_t> curr_output_shape(dims->data, dims->data + dims->size);
+        const std::vector<int> curr_output_shape(dims->data, dims->data + dims->size);
 
-        size_t size = std::accumulate(
-            curr_output_shape.begin(),
-            curr_output_shape.end(),
-            1,
-            std::multiplies<int>()
-        );
+        size_t size = std::accumulate(curr_output_shape.begin(), curr_output_shape.end(), 1, std::multiplies<int>());
 
-        if (file.is_open()) {
-            js["output_name"] = output_names[i];
-            js["shape"] = curr_output_shape;
-            js["data"] = std::vector<float>(raw_data, raw_data + size);
-        }
-        else {
-            throw std::runtime_error("Something went wrong, can't open file");
-        }
+        const std::vector<float> data(raw_data, raw_data + size);
 
-        jsonObjects.push_back(js);
+        output.emplace_back(size, curr_output_shape, output_names[i], data);
     }
 
-    file << std::setw(4) << jsonObjects << std::endl;
-    file.close();
+    outputs.push_back(output);
 
-    reset_timers();
+    return outputs;
 }
