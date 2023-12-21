@@ -50,7 +50,6 @@ class Converter(metaclass=abc.ABCMeta):
 
         if path_save_model is None:
             path_save_model = os.getcwd()
-        path_save_model = os.path.join(path_save_model, model_name)
 
         log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if not os.path.exists(path_save_model):
@@ -88,7 +87,7 @@ class PyTorchToTVMConverter(Converter):
     def __init__(self, args):
         self.torch = importlib.import_module('torch')
         super().__init__(args)
-        self.framework = 'Pytorch'
+        self.framework = 'PyTorch'
 
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
