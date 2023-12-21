@@ -38,9 +38,9 @@ pip install openvino-dev
 pip install openvino-dev[caffe,tensorflow2,pytorch]
 pip install tensorflow==2.12.0
 pip install onnx==1.14.0
-pip install torch
+pip install torch==2.1.0
 pip install tf-keras
-pip install apache-tvm
+pip install apache-tvm==0.14.dev264
 pip install tf2onnx
 # dependencies for tf_converter.py
 pip install onnx-tf
