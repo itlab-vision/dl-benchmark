@@ -6,6 +6,7 @@ cd working_dir_smoke/
 python3 ../../../src/model_converters/tvm_converter/pytorch_to_tvm_converter.py \
                                                                             -mn efficientnet_b0 \
                                                                             -w public/efficientnet-b0-pytorch/efficientnet-b0.pth \
-                                                                            -is 1 3 224 224
+                                                                            -is 1 3 224 224 \
+                                                                            -op public/efficientnet-b0-pytorch/
 python3 ../../../src/model_converters/tvm_converter/mxnet_to_tvm_converter.py -mn alexnet -is 1 3 224 224
 cd ../
