@@ -12,7 +12,7 @@ COPY downloadmodels.sh downloadmodels.sh
 COPY models.lst models.lst
 RUN python3 ./open_model_zoo/tools/model_tools/downloader.py --name mobilenet-v1-1.0-224-tf
 
-RUN pip3 install -r ./dl-benchmark/src/model_converters/requirements.txt
+RUN pip3 install -r ./dl-benchmark/src/model_converters/tf2tflite/requirements.txt
 RUN pip3 install tensorflow==${TF_VERSION}
 RUN pip3 install tflite==${TFLITE_VERSION}
 RUN pip3 install --upgrade numpy==1.23.5
