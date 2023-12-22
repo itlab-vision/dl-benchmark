@@ -26,6 +26,7 @@ class TensorFlowProcess(ProcessHandler):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        raw_output = self._test.indep_parameters.raw_output
 
         common_params = (f'-m {model} -b {batch} -d {device} -ni {iteration} '
                          f'--report_path {self.report_path}')
@@ -59,7 +60,12 @@ class TensorFlowProcess(ProcessHandler):
         num_intra_threads = self._test.dep_parameters.num_intra_threads
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--num_intra_threads', num_intra_threads)
 
-        common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        task = self._test.model.task
+        if task and task.lower() != 'n/a':
+            common_params = self._add_optional_argument_to_cmd_line(common_params, '--task', task)
+
+        if raw_output:
+            common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
         common_params = self._add_flag_to_cmd_line(common_params, '--restrisct_gpu_usage')
 
         command_line = f'{python} {path_to_tensorflow_script} {common_params}'

@@ -19,6 +19,8 @@
             <Device></Device>
             <IterationCount></IterationCount>
             <TestTimeLimit></TestTimeLimit>
+            <!-- Следующие параметры могут отсутствовать -->
+            <RawOutput></RawOutput>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode></Mode>

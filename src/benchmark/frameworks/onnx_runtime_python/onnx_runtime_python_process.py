@@ -26,6 +26,7 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        raw_output = self._test.indep_parameters.raw_output
 
         common_params = (f'-m {model} -b {batch} -d {device} -ni {iteration} '
                          f'--report_path {self.report_path}')
@@ -74,7 +75,8 @@ class ONNXRuntimePythonProcess(ProcessHandler):
         precision = self._test.model.precision
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--precision', precision)
 
-        common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        if raw_output:
+            common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         command_line = f'{python} {path_to_onnx_script} {common_params}'
 

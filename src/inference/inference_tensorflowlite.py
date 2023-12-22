@@ -283,11 +283,13 @@ def main():
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
 
+        output_names = model_wrapper.get_outputs_layer_names(interpreter, args.output_names)
+
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    result = prepare_output(result, args.output_names, args.task)
+                    result = prepare_output(result, output_names, args.task)
 
                     log.info('Inference results')
                     io.process_output(result, log)

@@ -24,3 +24,35 @@ function check_results_file {
         fi
     fi
 }
+
+function check_classification() {
+    local output="$1"
+    local class_name="$2"
+    local model_name="$3"
+
+    local start_line=$(echo "$output" | grep -n "Start inference test on model: $model_name" | cut -d : -f 1)
+    local end_line=$(echo "$output" | grep -n "End inference test on model : $model_name" | cut -d : -f 1)
+
+    if [[ ! -z "$start_line" && ! -z "$end_line" ]]; then
+        local target_text=$(sed -n "${start_line},${end_line}p" <<< "$output")
+
+        if echo "$target_text" | grep -q "Result for image 1"; then
+            local top_result=$(echo "$target_text" | grep -A1 '\[ INFO \] Result for image 1' | tail -n 1)
+            
+            if echo "$top_result" | grep -q "$class_name"; then
+                echo "[$model_name] Classification passed"
+            else
+                echo "[$model_name] Classification failed. Predicted: $(echo $top_result | cut -d' ' -f4- | cut -d' ' -f2-); Actual: $class_name"
+                return_value=1
+            fi
+        else
+            echo "[$model_name] Failed: could not find classification results. Please, check if you set RawOutput to False in configuration."
+            return_value=1
+        fi
+    else
+        echo "Failed: could not find any runs for '$model_name'."
+        return_value=1
+    fi
+    
+    return $return_value
+}
