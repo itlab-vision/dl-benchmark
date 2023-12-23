@@ -436,6 +436,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -468,6 +469,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -500,6 +502,7 @@
             <Std>0.229 0.224 0.225</Std>
             <Layout>NCHW</Layout>
             <ChannelSwap></ChannelSwap>
+            <Target>llvm</Target>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -532,6 +535,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -564,6 +568,7 @@
         <Std>0.229 0.224 0.225</Std>
         <ChannelSwap></ChannelSwap>
         <Layout>NCHW</Layout>
+        <Target>llvm</Target>
         <OptimizationLevel>0</OptimizationLevel>
     </FrameworkDependent>
     </Test>
