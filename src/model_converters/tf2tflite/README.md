@@ -39,14 +39,15 @@ TF Converter supports model conversion to TF2 saved model format from frozen gra
 ## TF Converter usage
 
 ```sh
-python tf_converter.py --model_path <path/to/input/model> --tensor_rt_precision <precision>
+python tf_converter.py --model-path <path/to/input/model> --tensor_rt_precision <precision>
 ```
 
 ### TF converter parameters
 
-- `--model_path` is an absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
-- `--input_name` is a comma-separated names of the input layers.
-- `--output_names` is a comma-separated names of the output layers.
+- `--model-path` is an absolute path to model in TensorFlow (.pb or .meta files or saved model directory) or ONNX format.
+- `--input-names` is a comma-separated names of the input layers.
+- `--input-shapes` is a comma-separated shapes of the input blobs. Optional parameter, can be used to set desired shapes.
+- `--output-names` is a comma-separated names of the output layers.
 - `--saved_model_dir` is a path where tf2 saved model will be saved. Default <model-path.parent>/saved_model.
 - `--tensor_rt_precision` is a TensorRT precision FP16, FP32. If not defined, no TensorRT conversion will be applied.
   Applicable only for hosts with NVIDIA GPU and tensorflow built with TensorRT support.
