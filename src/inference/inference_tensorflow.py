@@ -214,7 +214,7 @@ def inference_tensorflow(model, number_iter, get_slice, test_duration):
         result, exec_time = infer_slice(model, slice_input)
         time_infer.append(exec_time)
     else:
-        time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model)
+        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model)
     log.info('Inference completed')
     return result, time_infer
 

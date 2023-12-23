@@ -14,7 +14,6 @@ from .tvm.tvm_wrapper import TVMWrapper
 from .opencv_dnn_cpp.opencv_dnn_cpp_wrapper import OpenCVDNNCppWrapper
 from .pytorch.pytorch_wrapper import PyTorchWrapper
 from .pytorch_cpp.pytorch_cpp_wrapper import PyTorchCppWrapper
-from .rknn.rknn_wrapper import RknnWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
@@ -49,4 +48,3 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[PyTorchWrapper.framework_name] = PyTorchWrapper()
         self._framework_wrappers[PyTorchCppWrapper.framework_name] = PyTorchCppWrapper()
         self._framework_wrappers[TVMWrapper.framework_name] = TVMWrapper()
-        self._framework_wrappers[RknnWrapper.framework_name] = RknnWrapper()

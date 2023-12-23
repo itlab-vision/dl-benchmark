@@ -190,8 +190,7 @@ def inference_tflite(interpreter, number_iter, get_slice, test_duration):
         input_info[model_input['name']] = (model_input['index'], model_input['dtype'], model_input['shape'])
     outputs = interpreter.get_output_details()
     if number_iter > 1:
-        time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
-                                                                                        input_info, interpreter)
+        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_info, interpreter)
     else:
         result, exec_time = inference_with_output(get_slice, input_info, interpreter, outputs)
         time_infer = [exec_time]

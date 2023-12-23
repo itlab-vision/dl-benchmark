@@ -77,16 +77,14 @@ ReflowComments:  true
 # includes ordering
 IncludeBlocks: Regroup
 IncludeCategories:
-  # Local headers
+  # Current project headers
   - Regex:           '"([A-Za-z0-9.\/-_])+"'
     Priority:        1
-  # Poject libraries headers
+  # OMZ headers
   - Regex:           '<(utils|monitors)\/([A-Za-z0-9.\/-_])+>'
     Priority:        2
   # 3rd party headers with extension
   - Regex:           '<onnxruntime*.h>'
-    Priority:        3
-  - Regex:           '<rknn_api.h>'
     Priority:        3
   - Regex:           '<(gflags|nlohmann|opencv2|tensorflow|torch|torch_tensorrt)\/([A-Za-z0-9.\/-_])+>'
     Priority:        3

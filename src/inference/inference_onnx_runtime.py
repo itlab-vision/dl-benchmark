@@ -2,7 +2,6 @@ import argparse
 import json
 import sys
 import traceback
-
 from pathlib import Path
 from time import time
 
@@ -11,7 +10,6 @@ import onnxruntime as onnx_rt
 
 import postprocessing_data as pp
 import preprocessing_data as prep
-
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import ONNXIOModelWrapper
@@ -95,8 +93,7 @@ def cli_argument_parser():
                         dest='number_top')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification', 'yolo_v7_onnx', 'text-to-image', 'batch-text-generation',
-                                 'named-entity-recognition'],
+                        choices=['classification', 'yolo_v7_onnx', 'text-to-image', 'batch-text-generation'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -189,7 +186,7 @@ def create_inference_session(model, task_type, execution_providers, device, prec
     log.info(f'Setting device to {device}')
     log.info(f'Setting execution providers to {execution_providers}')
 
-    if task_type in ['text-to-image']:
+    if task_type == 'text-to-image':
         from configs.onnx_configs.stable_diffusion import create_inference_session
         if len(execution_providers) > 1:
             log.warning('Cannot run with pipeline of providers, will use only first')
@@ -219,127 +216,86 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
                            get_slice, test_duration, device):
     result = None
     time_infer = []
-
     num_tokens = None
-    tokenizer = None
 
-    if task_type in ['batch-text-generation']:
+    if task_type == 'batch-text-generation':
         from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
         from configs.onnx_configs.gpt_2 import batch_text_generation, MAX_TEXT_LEN
 
         tokenizer = create_tokenizer(model_name)
         encodings_dict = tokenize(tokenizer, get_slice())
         num_tokens = MAX_TEXT_LEN
-    elif task_type in ['named-entity-recognition']:
-        from configs.pytorch_configs.bert_base_ner import create_tokenizer
-
-        tokenizer = create_tokenizer()
-
     if number_iter == 1:
         if task_type not in ['batch-text-generation']:
             slice_input = get_slice()
 
         t0 = time()
 
-        if task_type in ['text-to-image']:
+        if task_type == 'text-to-image':
             result = session_or_pipeline(slice_input)
-        elif task_type in ['batch-text-generation']:
+        elif task_type == 'batch-text-generation':
             result = batch_text_generation(ort_session=session_or_pipeline, tokenizer=tokenizer, device=device,
                                            output_names=output_names, encodings_dict=encodings_dict)
-        elif task_type in ['named-entity-recognition']:
-            from configs.pytorch_configs.bert_base_ner import tokenize
-            from configs.onnx_configs.bert_base_ner import get_slice_inputs, decode
-
-            tokenized_sentence = tokenize(tokenizer, slice_input)
-
-            model_output = session_or_pipeline.run(output_names, get_slice_inputs(tokenized_sentence))
-            tokens, label_indices = decode(tokenizer, tokenized_sentence, model_output)
-            num_tokens = len(tokens)
-
-            result = (tokens, label_indices)
         else:
             result = session_or_pipeline.run(output_names, slice_input)
 
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer, num_tokens = loop_inference(number_iter,
-                                                test_duration)(inference_iteration)(get_slice, model_name,
-                                                                                    output_names, session_or_pipeline,
-                                                                                    task_type, device, tokenizer)
+        time_infer = loop_inference(number_iter,
+                                    test_duration)(inference_iteration)(get_slice, model_name, output_names,
+                                                                        session_or_pipeline, task_type, device)
+
     return result, time_infer, num_tokens
 
 
-def inference_iteration(get_slice, model_name, output_names, session, task_type, device, tokenizer=None):
-    num_tokens = None
+def inference_iteration(get_slice, model_name, output_names, session, task_type, device):
     inputs = get_slice()
-    res, exec_time = infer_slice(output_names, model_name, session, task_type, device, inputs, tokenizer)
+    _, exec_time = infer_slice(output_names, model_name, session, task_type, device, inputs)
 
-    if isinstance(res, tuple):
-        _, num_tokens = res
-
-    return (exec_time, num_tokens)
+    return exec_time
 
 
 @get_exec_time()
-def infer_slice(output_names, model_name, session_or_pipeline, task_type, device, slice_input, tokenizer):
-    if task_type in ['text-to-image']:
+def infer_slice(output_names, model_name, session_or_pipeline, task_type, device, slice_input):
+    if task_type == 'text-to-image':
         res = session_or_pipeline(slice_input)
-    elif task_type in ['batch-text-generation']:
-        from configs.pytorch_configs.causal_lm_base import tokenize
+    elif task_type == 'batch-text-generation':
+        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
         from configs.onnx_configs.gpt_2 import batch_text_generation
 
+        tokenizer = create_tokenizer(model_name)
         encodings_dict = tokenize(tokenizer, slice_input)
 
         res = batch_text_generation(ort_session=session_or_pipeline, tokenizer=tokenizer, device=device,
                                     output_names=output_names, encodings_dict=encodings_dict)
-    elif task_type in ['named-entity-recognition']:
-        from configs.pytorch_configs.bert_base_ner import tokenize
-        from configs.onnx_configs.bert_base_ner import get_slice_inputs, decode
-
-        num_tokens = None
-
-        tokenized_sentence = tokenize(tokenizer, slice_input)
-        model_output = session_or_pipeline.run(output_names, get_slice_inputs(tokenized_sentence))
-
-        tokens, _ = decode(tokenizer, tokenized_sentence, model_output)
-        num_tokens = len(tokens)
-
-        res = (model_output, num_tokens)
     else:
         res = session_or_pipeline.run(output_names, slice_input)
 
     return res
 
 
-def prepare_output(result, output_names, model_name, task_type, args):
+def prepare_output(result, output_names, model_name, task, args):
     if (output_names is None) or len(output_names) == 0:
         output_names = ['_output']
 
-    if task_type in ['feedforward']:
+    if task == 'feedforward':
         return {}
-    elif task_type in ['classification']:
+    elif task == 'classification':
         return {output_names[0]: np.array(result).reshape(args.batch_size, -1)}
-    elif task_type in ['yolo_v7_onnx']:
+    elif task == 'yolo_v7_onnx':
         return result
-    elif task_type in ['text-to-image']:
+    elif task == 'text-to-image':
         return result.images
-    elif task_type in ['batch-text-generation']:
+    elif task == 'batch-text-generation':
         from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
 
         tokenizer = create_tokenizer(model_name)
         decoded_result = decode(tokenizer, result)
 
         return decoded_result
-    elif task_type in ['named-entity-recognition']:
-        from configs.pytorch_configs.bert_base_ner import get_decode_result
-
-        tokens, label_indices = result
-        decoded_result = get_decode_result(tokens, label_indices)
-
-        return decoded_result
     else:
-        raise ValueError(f'Unsupported task {task_type} to print inference results')
+        raise ValueError(f'Unsupported task {task} to print inference results')
 
 
 def main():

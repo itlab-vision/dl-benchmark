@@ -10,8 +10,6 @@
 #include "tflite_launcher.hpp"
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
 #include "pytorch_launcher.hpp"
-#elif RKNN
-#include "rknn_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -140,8 +138,6 @@ void parse(int argc, char* argv[]) {
             "pytorch"
 #elif PYTORCH_TENSORRT
             "pytorch_tensorrt"
-#elif RKNN
-            "rknn"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -238,18 +234,14 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
-#elif RKNN
-        launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads);
 #endif
-        auto framework_name = launcher->get_framework_name();
-        auto framework_version = launcher->get_framework_version();
-        auto backend_name = launcher->get_backend_name();
+
         if (FLAGS_save_report) {
             report = std::make_shared<Report>(FLAGS_report_path);
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", framework_name}});
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", framework_version}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", launcher->get_framework_name()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", launcher->get_framework_version()}});
             report->add_record(Report::Category::FRAMEWORK_INFO, {{"device", device}});
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", backend_name}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", launcher->get_backend_name()}});
         }
 
         logger::info << "Checking input files" << logger::endl;
@@ -265,8 +257,8 @@ int main(int argc, char* argv[]) {
         auto input_files = args::parse_input_files_arguments(gflags::GetArgvs());
 
         log_step();  // Loading framework
-        logger::info << framework_name << " " << framework_version << logger::endl;
-        logger::info << "\tEnabled backend: " << backend_name << logger::endl;
+        logger::info << launcher->get_framework_name() << " " << launcher->get_framework_version() << logger::endl;
+        logger::info << "\tEnabled backend: " << launcher->get_backend_name() << logger::endl;
 
         log_step();  // Reading model files
         logger::info << "Reading model " << FLAGS_m << logger::endl;

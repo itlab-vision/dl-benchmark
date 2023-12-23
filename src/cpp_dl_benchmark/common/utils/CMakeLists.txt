@@ -1,5 +1,7 @@
 set(TARGET_NAME "utils")
 
+find_package(nlohmann_json REQUIRED HINTS /usr/lib/cmake)
+
 file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 

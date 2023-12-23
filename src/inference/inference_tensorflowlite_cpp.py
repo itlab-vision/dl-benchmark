@@ -21,16 +21,6 @@ from logger_conf import configure_logger, exception_hook  # noqa: E402
 
 log = configure_logger()
 
-# list of io-adapters that require original images
-ADAPTERS_WITH_ORIG_IMAGES = [
-    'segmentation_tflite_cpp',
-    'blaze_face_tflite_cpp',
-    'face_detection_tflite_cpp',
-    'face_mesh_tflite_cpp',
-    'face_mesh_v2_tflite_cpp',
-    'minifasnet_v2_tflite_cpp',
-]
-
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -108,7 +98,8 @@ def cli_argument_parser():
                         dest='number_iter')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['face_recognition_tflite_cpp'] + ADAPTERS_WITH_ORIG_IMAGES,
+                        choices=['segmentation_tflite_cpp', 'face_detection_tflite_cpp',
+                                 'face_recognition_tflite_cpp'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -179,8 +170,10 @@ class TFLiteProcess():
         return result
 
     def prepare_orig_images(self, io, args):
-        if args.task in ADAPTERS_WITH_ORIG_IMAGES:
+        if args.task == 'face_detection_tflite_cpp' or args.task == 'segmentation_tflite_cpp':
             io.set_image(args.input)
+        else:
+            pass
 
 
 def get_output_json_path(args):

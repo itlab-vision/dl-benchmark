@@ -221,7 +221,7 @@ def inference_mxnet(net, num_iterations, get_slice, input_name, test_duration):
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer, _ = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
+        time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
     return predictions, time_infer
 
 
