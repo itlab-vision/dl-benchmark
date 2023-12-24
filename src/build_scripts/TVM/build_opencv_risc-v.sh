@@ -13,6 +13,6 @@ cmake -G "Unix Makefiles" \
       -DBUILD_NEW_PYTHON_SUPPORT=ON \
       ..
       
-make -j2
+make -j
 make install
 

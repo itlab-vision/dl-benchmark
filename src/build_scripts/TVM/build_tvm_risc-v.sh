@@ -10,4 +10,5 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
       -DCMAKE_CXX_COMPILER=g++ \
       ..
 
-make runtime -j2
+make runtime -j
+

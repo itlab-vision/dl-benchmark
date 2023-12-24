@@ -35,7 +35,7 @@ mkdir build
 cd build
 
 cmake -DUSE_LLVM=ON ..
-make -j8
+make -j
 
 cd ../python
 python setup.py install --user
