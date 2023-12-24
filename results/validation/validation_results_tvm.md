@@ -1,6 +1,6 @@
 # Validation results for the models inferring using Apache TVM
 
-## Public models (Open Model Zoo)
+## Public models
 
 We infer models using the following APIs:
 
@@ -188,11 +188,8 @@ Bounding boxes (upper left and bottom right corners):<br>
 
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
-yolo-v3-onnx | ONNX |-|-|-|-|
-ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
-ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
-
-**Note**: ssd_mobilenet_v2 is not available.
+ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) |
+ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | 
 
 ### Test image #2
 
@@ -210,11 +207,10 @@ Bounding box (upper left and bottom right corners):<br>
 
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
-yolo-v3-onnx | ONNX |-|-|-|-|
-ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
-ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
-
-**Note**: ssd_mobilenet_v2 is not available.
+ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br> BIRD (65, 94), (354, 486) | Bounding box:<br> BIRD (65, 94), (354, 486) | Bounding box:<br> BIRD (65, 94), (354, 486) |
+ssd_512_vgg16_atrous_voc | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (78, 107), (359, 452) | Bounding box:<br>BIRD (78, 107), (359, 452) | Bounding box:<br>BIRD (78, 107), (359, 452) |
+ssd_300_vgg16_atrous_voc | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (38, 56), (205, 272) | Bounding box:<br>BIRD (38, 56), (205, 272) | Bounding box:<br>BIRD (38, 56), (205, 272) |
+ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (86, 100), (347, 450) | Bounding box:<br>BIRD (86, 100), (347, 450) | Bounding box:<br>BIRD (86, 100), (347, 450) |
 
 ### Test image #3
 
@@ -232,54 +228,8 @@ Bounding box (upper left and bottom right corners):<br>PERSON (86, 84), (394, 18
 
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
-yolo-v3-onnx | ONNX |-|-|-|-|
-ssd_mobilenet_v1_coco| TensorFlow |-|-|-|-|
-ssdlite_mobilenet_v2 | TensorFlow |-|-|-|-|
-
-**Note**: ssd_mobilenet_v2 is not available.
-
-## Face localization
-
-### Test image #1
-
-Data source: [WIDER FACE Dataset][wider_face_dataset]
-
-Image resolution: 1024 x 768
-
-<div style='float: center'>
-<img width="300" src="images\Meeting_294.jpg">
-<img width="300" height="225" src="images\Meeting_294_bounding.bmp">
-</div>
-
-Bounding box (upper left and bottom right corners):<br>(170, 124), (235, 208)<br>(775, 133), (841, 226)<br>
-
-Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
--|-|-|-|-|-|
-retinaface-resnet50-pytorch |PyTorch |-|-|-|-|
-
-### Test image #2
-
-Data source: XXX
-
-Image resolution: XXX x XXX
-﻿
-Bounding box (upper left and bottom right corners): (XX,XX), (XX,XX)
-
-Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
--|-|-|-|-|-|
-retinaface-resnet50-pytorch |PyTorch |-|-|-|-|
-
-### Test image #3
-
-Data source: XXX
-
-Image resolution: XXX x XXX
-﻿
-Bounding box (upper left and bottom right corners): (XX,XX), (XX,XX)
-
-Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
--|-|-|-|-|-|
-retinaface-resnet50-pytorch |PyTorch |-|-|-|-|
+ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) |
+ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) |
 
 
 <!-- LINKS -->

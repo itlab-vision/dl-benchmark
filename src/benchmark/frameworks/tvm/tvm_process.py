@@ -28,6 +28,8 @@ class TVMProcess(ProcessHandler):
                 return TVMProcessTVMFormat(test, executor, log)
             elif framework == 'caffe':
                 return TVMProcessCaffeFormat(test, executor, log)
+            elif framework == 'tflite':
+                return TVMProcessTFLiteFormat(test, executor, log)
             else:
                 raise AssertionError(f'Unknown framework {framework}')
 
@@ -207,6 +209,27 @@ class TVMProcessTVMFormat(TVMProcess):
             raise ValueError('Wrong arguments.')
 
         path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm.py')
+        python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params += super()._fill_command_line()
+        common_params += f' --time {time_limit}'
+        command_line = f'{python} {path_to_script} {common_params}'
+
+        return command_line
+
+
+class TVMProcessTFLiteFormat(TVMProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        return self.get_performance_metrics_from_json_report()
+
+    def _fill_command_line(self):
+        model = self._test.model.model
+        common_params = f'-m {model} '
+        path_to_script = Path.joinpath(self.inference_script_root,
+                                       'inference_tvm_tensorflowlite.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()

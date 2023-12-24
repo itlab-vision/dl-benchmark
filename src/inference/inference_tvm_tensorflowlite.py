@@ -2,23 +2,20 @@ import argparse
 import json
 import sys
 import traceback
-
+import tvm
 
 from pathlib import Path
-
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
-from reporter.report_writer import ReportWriter
 from transformer import TVMTransformer
-from tvm_auxiliary import (create_dict_for_converter_mxnet,
-                           prepare_output, create_dict_for_modelwrapper,
+from reporter.report_writer import ReportWriter
+from tvm_auxiliary import (prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm,
-                           create_dict_for_output_preparer)
-
+                           create_dict_for_converter_tensorflowlite)
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import MXNetToTVMConverter  # noqa: E402
+from src.model_converters.tvm_converter.tvm_converter import TensorFlowLiteToTVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -29,19 +26,16 @@ log = configure_logger()
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mn', '--model_name',
-                        help='Model name to download using packages from GluonCV.',
+                        help='Name of model.',
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model.',
+                        help='Path to an .tflite file with a trained model.',
                         type=str,
                         dest='model_path')
-    parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
-                        type=str,
-                        dest='model_params')
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer (CPU by default)',
+                        help='Specify the target device to infer on CPU or '
+                             'NVIDIA_GPU (CPU by default)',
                         default='CPU',
                         type=str,
                         dest='device')
@@ -52,7 +46,7 @@ def cli_argument_parser():
                         dest='number_iter')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
-                        default='output0',
+                        default='out0',
                         type=str,
                         nargs='+',
                         dest='output_names')
@@ -61,7 +55,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification', 'detection'],
+                        choices=['feedforward', 'classification'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -73,7 +67,7 @@ def cli_argument_parser():
                         dest='input')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
-                        default='data',
+                        default=None,
                         type=str,
                         dest='input_name')
     parser.add_argument('--time', required=False, default=0, type=int,
@@ -88,26 +82,12 @@ def cli_argument_parser():
                         type=int,
                         nargs=4,
                         dest='input_shape')
-    parser.add_argument('--threshold',
-                        help='Probability threshold for detections filtering',
-                        default=0.5,
-                        type=float,
-                        dest='threshold')
-    parser.add_argument('--layout',
-                        help='Parameter input layout',
-                        default='NHWC',
-                        type=str,
-                        dest='layout')
     parser.add_argument('--norm',
                         help='Flag to normalize input images'
                              '(use --mean and --std arguments to set'
                              'required normalization parameters).',
                         action='store_true',
                         dest='norm')
-    parser.add_argument('--not_softmax',
-                        help='Flag to do not use softmax function.',
-                        action='store_true',
-                        dest='not_softmax')
     parser.add_argument('--mean',
                         help='Mean values.',
                         default=[0, 0, 0],
@@ -140,17 +120,22 @@ def cli_argument_parser():
                         default='image_net_labels.json',
                         type=str,
                         dest='labels')
-    parser.add_argument('--channel_swap',
-                        help='Parameter of channel swap (RGB to BGR by default).',
-                        default=[2, 1, 0],
-                        type=int,
-                        nargs=3,
-                        dest='channel_swap')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
                         type=bool,
                         dest='raw_output')
+    parser.add_argument('--layout',
+                        help='Parameter input layout',
+                        default='NHWC',
+                        type=str,
+                        dest='layout')
+    parser.add_argument('--channel_swap',
+                        help='Parameter of channel swap (WxHxC to CxWxH by default).',
+                        default=[2, 0, 1],
+                        type=int,
+                        nargs=3,
+                        dest='channel_swap')
     parser.add_argument('--target',
                         help='Parameter for hardware-dependent optimizations.',
                         default='llvm',
@@ -167,6 +152,7 @@ def cli_argument_parser():
 def main():
     args = cli_argument_parser()
     report_writer = ReportWriter()
+    report_writer.update_framework_info(name='TVM', version=tvm.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
@@ -174,15 +160,11 @@ def main():
         wrapper = TVMIOModelWrapper(create_dict_for_modelwrapper(args))
         transformer = TVMTransformer(create_dict_for_transformer(args))
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
-
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = MXNetToTVMConverter(create_dict_for_converter_mxnet(args))
-        report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
+        converter = TensorFlowLiteToTVMConverter(create_dict_for_converter_tensorflowlite(args))
         graph_module = converter.get_graph_module()
-
         log.info(f'Preparing input data: {args.input}')
         io.prepare_input(graph_module, args.input)
-
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, infer_time = inference_tvm(graph_module,
                                            args.number_iter,
@@ -194,11 +176,7 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task,
-                                         args.output_names,
-                                         args.not_softmax,
-                                         framework='mxnet',
-                                         params=create_dict_for_output_preparer(args))
+                    res = prepare_output(result, args.task, args.output_names, True)
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:
