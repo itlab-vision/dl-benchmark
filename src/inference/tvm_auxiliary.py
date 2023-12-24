@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 from time import time
-from scipy.special import softmax
 from inference_tools.loop_tools import loop_inference, get_exec_time
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
@@ -119,6 +118,7 @@ def prepare_output(result, task, output_names, not_softmax=False):
         if not_softmax:
             result = result[0].asnumpy()
         else:
+            from scipy.special import softmax
             result = result[0].asnumpy()
             for i in range(result.shape[0]):
                 result[i] = softmax(result[i])
