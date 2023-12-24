@@ -9,6 +9,8 @@
 На данный момент скрипт поддерживает полный список фреймворков,
 которые поддерживаются AccuracyChecker.
 
+Наряду с этим, для поддержки валидации моделей, запускаемых средствами TVM, можно использовать стороннее расширение AccuracyChecker, которое доступно по [ссылке][open-model-zoo-tvm]. Для запуска необходимо сначала установить python пакет `openvino-dev`, затем собрать приложение `accuracy_check` из репозитория командой `pip install <open_model_zoo_tvm_path>/tools/accuracy_checker/`.
+
 ### Алгоритм работы скрипта
 
 Скрипт принимает на вход конфигурации тестов. Описание конфигурации 
@@ -75,3 +77,4 @@ python3 accuracy_checker.py \
 [accuracy-checker]: https://docs.openvino.ai/latest/omz_tools_accuracy_checker.html
 [omz-ac-metrics]: https://github.com/openvinotoolkit/open_model_zoo/blob/2022.2.0/tools/accuracy_checker/openvino/tools/accuracy_checker/metrics/README.md
 [omz-ac-definitions]: https://github.com/openvinotoolkit/open_model_zoo/blob/2022.2.0/tools/accuracy_checker/dataset_definitions.yml
+[open-model-zoo-tvm]: https://github.com/FenixFly/open_model_zoo_tvm
