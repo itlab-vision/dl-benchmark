@@ -436,6 +436,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -468,6 +469,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -500,6 +502,7 @@
             <Std>0.229 0.224 0.225</Std>
             <Layout>NCHW</Layout>
             <ChannelSwap></ChannelSwap>
+            <Target>llvm</Target>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -541,8 +544,8 @@
             <Name>efficientnet_b0</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.json</ModelPath>
-            <WeightsPath>./working_dir_smoke/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+            <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet_b0.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -564,6 +567,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -573,7 +577,7 @@
         <Name>resnet50-tvm-optimized</Name>
         <Precision>FP32</Precision>
         <SourceFramework>TVM</SourceFramework>
-        <ModelPath>working_dir_smoke/resnet50/resnet50.so</ModelPath>
+        <ModelPath>./working_dir_smoke/resnet50/resnet50.so</ModelPath>
         <WeightsPath></WeightsPath>
     </Model>
     <Dataset>
@@ -596,6 +600,7 @@
         <Std>0.229 0.224 0.225</Std>
         <ChannelSwap></ChannelSwap>
         <Layout>NCHW</Layout>
+        <Target>llvm</Target>
         <OptimizationLevel>0</OptimizationLevel>
     </FrameworkDependent>
     </Test>

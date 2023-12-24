@@ -18,6 +18,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.params = None
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
+        self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -32,7 +33,10 @@ class Converter(metaclass=abc.ABCMeta):
         target_str = self.args['target']
         if device == 'CPU':
             log.info(f'{task} will be executed on {device}')
-            target = self.tvm.target.Target(target_str)
+            try:
+                target = self.tvm.target.Target(target_str)
+            except AttributeError:
+                target = None
             dev = self.tvm.cpu(0)
         else:
             raise ValueError(f'Device {device} is not supported. Supported devices: CPU')
@@ -50,7 +54,6 @@ class Converter(metaclass=abc.ABCMeta):
 
         if path_save_model is None:
             path_save_model = os.getcwd()
-        path_save_model = os.path.join(path_save_model, model_name)
 
         log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if not os.path.exists(path_save_model):
@@ -66,8 +69,17 @@ class Converter(metaclass=abc.ABCMeta):
 
     def get_graph_module_from_lib(self, lib):
         _, dev = self._get_target_device()
-        self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
+
+    def get_lib(self):
+        target, dev = self._get_target_device()
+        model = self._convert_model_from_framework(target, dev)
+
+        log.info('Model compilation')
+        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+        return lib
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -78,7 +90,7 @@ class Converter(metaclass=abc.ABCMeta):
         if len(model) == 2:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
                 lib = self.tvm.relay.build(model[0], target=target, params=model[1])
-            self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+            self.graph = self.graph_executor.GraphModule(lib['default'](dev))
             return self.graph
         else:
             return self.get_graph_module_from_lib(model[0])
@@ -88,7 +100,7 @@ class PyTorchToTVMConverter(Converter):
     def __init__(self, args):
         self.torch = importlib.import_module('torch')
         super().__init__(args)
-        self.framework = 'Pytorch'
+        self.framework = 'PyTorch'
 
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
@@ -240,11 +252,12 @@ class TVMConverter(Converter):
 
     def _convert_model_from_framework(self, target, dev):
         model_name = self.args['model_path']
-        params = self.args['model_path']
+        params = self.args['model_params']
+
         file_type = model_name.split('.')[-1]
-        if (file_type == 'json' and params is not None):
+        if file_type == 'json' and params is not None:
             return self._get_deserialized_tvm_model()
-        elif (file_type == 'so'):
+        elif file_type == 'so' or file_type == 'tar':
             return [self._get_lib_format_tvm_model()]
         else:
             raise ValueError('Wrong arguments.')

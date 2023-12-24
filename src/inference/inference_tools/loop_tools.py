@@ -9,15 +9,23 @@ def loop_inference(iter_count, test_duration):
             infer_duration = 0
             iteration = 1
             time_infer = []
+            num_tokens = None
+
             print(f'start inference max {iter_count} iterations or {test_duration} seconds')
+
             while (iteration <= iter_count) or (infer_duration < test_duration and test_duration > 0):
                 print('.', end='')
-                exec_time = inference_func(*args, **kwargs)
+                infer_res = inference_func(*args, **kwargs)
+                if isinstance(infer_res, tuple):
+                    exec_time, num_tokens = infer_res
+                else:
+                    exec_time = infer_res
                 time_infer.append(exec_time)
                 infer_duration = sum(time_infer)
                 iteration += 1
             print('')
-            return time_infer
+
+            return time_infer, num_tokens
 
         return f_loop_inference
 

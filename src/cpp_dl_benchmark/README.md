@@ -5,7 +5,7 @@ The tool allows to measure deep learning models inference performance with vario
 ## Common prerequisites
 
 The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
-1. CMake 3.13 or higher
+1. CMake 3.16 or higher
 1. GCC 9.4 or higher
 1. nlohmann-json library
 
@@ -18,6 +18,8 @@ The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
 1. [ONNX Runtime](onnxruntime_launcher/README.md)
 1. [OpenCV DNN](opencv_launcher/README.md)
 1. [TensorFlow Lite](tflite_launcher/README.md)
+1. [PyTorch](pytorch_launcher/README.md)
+1. [RKNN](rknn_launcher/README.md)
 
 ## Build
 
@@ -36,6 +38,9 @@ Options:
                                                       available formats
                                                           ONNX Runtime - .onnx
                                                           OpenCV - .xml, .onnx, .pb, .protoxt.
+                                                          TF Lite - .tflite,
+                                                          Pytorch - .pt
+                                                          RKNN - .rknn
         [-w <WEIGHTS FILE>]                           path to a model weights file.
                                                       available formats:
                                                           OpenCV - .caffemodel, .bin

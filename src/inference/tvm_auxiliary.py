@@ -2,7 +2,6 @@ import sys
 import importlib
 from pathlib import Path
 from time import time
-from scipy.special import softmax
 from inference_tools.loop_tools import loop_inference, get_exec_time
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
@@ -152,9 +151,9 @@ def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duratio
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
-                                                                                           input_name,
-                                                                                           module)
+        time_infer, _ = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
+                                                                                              input_name,
+                                                                                              module)
     return result, time_infer
 
 
