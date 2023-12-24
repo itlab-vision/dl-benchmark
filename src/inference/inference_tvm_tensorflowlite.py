@@ -30,7 +30,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .pb or .meta file with a trained model.',
+                        help='Path to an .tflite file with a trained model.',
                         type=str,
                         dest='model_path')
     parser.add_argument('-d', '--device',
