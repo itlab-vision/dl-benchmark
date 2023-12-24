@@ -534,6 +534,7 @@
             <Mean>127.5 127.5 127.5</Mean>
             <Std>127.5 127.5 127.5</Std>
             <Layout>NHWC</Layout>
+            <Target>llvm</Target>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
