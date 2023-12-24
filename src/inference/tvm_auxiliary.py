@@ -18,6 +18,7 @@ class OutputPreparer:
         if not_softmax:
             result = result[0].asnumpy()
         else:
+            from scipy.special import softmax
             result = result[0].asnumpy()
             for i in range(result.shape[0]):
                 result[i] = softmax(result[i])
