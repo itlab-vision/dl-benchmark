@@ -436,6 +436,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -468,6 +469,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -499,6 +501,40 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <Layout>NCHW</Layout>
+            <ChannelSwap></ChannelSwap>
+            <Target>llvm</Target>
+            <OptimizationLevel>3</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>mobilenet-v2-1.4-224</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/mobilenet-v2-1.4-224/mobilenet_v2_1.4_224.tflite</ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>input</InputName>
+            <Framework>tflite</Framework>
+            <InputShape>1 224 224 3</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>127.5 127.5 127.5</Mean>
+            <Std>127.5 127.5 127.5</Std>
+            <Layout>NHWC</Layout>
+            <Target>llvm</Target>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
@@ -532,6 +568,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -564,6 +601,7 @@
         <Std>0.229 0.224 0.225</Std>
         <ChannelSwap></ChannelSwap>
         <Layout>NCHW</Layout>
+        <Target>llvm</Target>
         <OptimizationLevel>0</OptimizationLevel>
     </FrameworkDependent>
     </Test>

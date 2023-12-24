@@ -18,6 +18,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.params = None
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
+        self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -32,7 +33,10 @@ class Converter(metaclass=abc.ABCMeta):
         target_str = self.args['target']
         if device == 'CPU':
             log.info(f'{task} will be executed on {device}')
-            target = self.tvm.target.Target(target_str)
+            try:
+                target = self.tvm.target.Target(target_str)
+            except AttributeError:
+                target = None
             dev = self.tvm.cpu(0)
         else:
             raise ValueError(f'Device {device} is not supported. Supported devices: CPU')
@@ -65,8 +69,17 @@ class Converter(metaclass=abc.ABCMeta):
 
     def get_graph_module_from_lib(self, lib):
         _, dev = self._get_target_device()
-        self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
+
+    def get_lib(self):
+        target, dev = self._get_target_device()
+        model = self._convert_model_from_framework(target, dev)
+
+        log.info('Model compilation')
+        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+        return lib
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -77,7 +90,7 @@ class Converter(metaclass=abc.ABCMeta):
         if len(model) == 2:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
                 lib = self.tvm.relay.build(model[0], target=target, params=model[1])
-            self.graph = self.tvm.contrib.graph_executor.GraphModule(lib['default'](dev))
+            self.graph = self.graph_executor.GraphModule(lib['default'](dev))
             return self.graph
         else:
             return self.get_graph_module_from_lib(model[0])
@@ -239,11 +252,12 @@ class TVMConverter(Converter):
 
     def _convert_model_from_framework(self, target, dev):
         model_name = self.args['model_path']
-        params = self.args['model_path']
+        params = self.args['model_params']
+
         file_type = model_name.split('.')[-1]
-        if (file_type == 'json' and params is not None):
+        if file_type == 'json' and params is not None:
             return self._get_deserialized_tvm_model()
-        elif (file_type == 'so'):
+        elif file_type == 'so' or file_type == 'tar':
             return [self._get_lib_format_tvm_model()]
         else:
             raise ValueError('Wrong arguments.')
@@ -277,4 +291,30 @@ class CaffeToTVMConverter(Converter):
                                                            predict_net,
                                                            shape_dict,
                                                            dtype_dict)
+        return model, params
+
+
+class TensorFlowLiteToTVMConverter(Converter):
+    def __init__(self, args):
+        self.tflite = importlib.import_module('tflite')
+        super().__init__(args)
+        self.framework = 'TFLite'
+
+    def _get_device_for_framework(self):
+        return super()._get_device_for_framework()
+
+    def _get_tf_model(self, model_path):
+        tflite_model_buf = open(model_path, 'rb').read()
+        tflite_model = self.tflite.Model.GetRootAsModel(tflite_model_buf, 0)
+        return tflite_model
+
+    def _convert_model_from_framework(self, target, dev):
+        model_path = self.args['model_path']
+        model_tf = self._get_tf_model(model_path)
+        shape_dict = {self.args['input_name']: self.args['input_shape']}
+        dtype = {self.args['input_name']: 'float32'}
+        log.info('Creating graph module from TensorFlow model')
+        model, params = self.tvm.relay.frontend.from_tflite(model_tf,
+                                                            shape_dict=shape_dict,
+                                                            dtype_dict=dtype)
         return model, params
