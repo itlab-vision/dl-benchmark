@@ -48,7 +48,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
+                        choices=['segmentation', 'classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
                                  'yolo_v2_tiny_coco', 'yolo_v3_tf', 'mask-rcnn'],
                         default='feedforward',
                         type=str,
@@ -83,6 +83,11 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='layout')
+    parser.add_argument('--color_map',
+                        help='Color mapping file',
+                        default=None,
+                        type=str,
+                        dest='color_map')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
                         default='CPU',
@@ -190,7 +195,8 @@ def inference_tflite(interpreter, number_iter, get_slice, test_duration):
         input_info[model_input['name']] = (model_input['index'], model_input['dtype'], model_input['shape'])
     outputs = interpreter.get_output_details()
     if number_iter > 1:
-        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_info, interpreter)
+        time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
+                                                                                        input_info, interpreter)
     else:
         result, exec_time = inference_with_output(get_slice, input_info, interpreter, outputs)
         time_infer = [exec_time]
@@ -229,6 +235,8 @@ def prepare_output(result, output_names, task):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[i]: result[i] for i in range(len(result))}
+    if task == 'segmentation':
+        return {0: result[0]}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 

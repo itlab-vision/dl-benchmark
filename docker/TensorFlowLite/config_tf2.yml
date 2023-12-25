@@ -1,0 +1,31 @@
+models:
+  - name: mobilenet-v1-1.0-224-tf
+    launchers:
+      - framework: tf_lite
+        device: CPU
+        model:   mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224.tflite
+        saved_model_dir: mobilenet-v1-1.0-224-tf/
+        adapter: classification
+        batch: 1
+
+    datasets:
+      - name: sample_dataset
+        data_source: sample_dataset/test
+        annotation_conversion:
+          converter: cifar
+          data_batch_file: cifar-10-batches-py/test_batch
+          convert_images: True
+          converted_images_dir: sample_dataset/test
+          num_classes: 10
+
+        preprocessing:
+          - type: resize
+            size: 224
+          - type: bgr_to_rgb
+          - type: normalization
+            mean: (127.5, 127.5, 127.5)
+            std: (127.5, 127.5, 127.5)
+
+        metrics:
+          - type: accuracy
+            top_k: 1

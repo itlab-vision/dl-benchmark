@@ -199,6 +199,28 @@ efficientnet_lite2_int8_2.tflite| Mean: [127.0, 127.0, 127.0].<br>Input scale: [
 efficientnet_lite3_int8_2.tflite| Mean: [127.0, 127.0, 127.0].<br>Input scale: [128.0].|47.0000000 beacon, lighthouse, beacon light, pharos<br>33.0000000 liner, ocean liner<br>15.0000000 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br>8.0000000 container ship, containership, container vessel<br>7.0000000 lifeboat|
 efficientnet_lite4_int8_2.tflite| Mean: [127.0, 127.0, 127.0].<br>Input scale: [128.0].|68.0000000 drilling platform, offshore rig<br>38.0000000 container ship, containership, container vessel<br>14.0000000 lifeboat<br>13.0000000 fireboat<br>12.0000000 dock, dockage, docking facility|
 
+## Semantic segmentation
+
+### Test image #4
+
+Data source: [PASCAL VOC 2012][PASCAL_VOC_2012]
+
+Image resolution: 500 x 375
+﻿
+
+<div style='float: center'>
+<img width="300" src="images\Sheep.jpg">
+</div>
+
+Model | Python API |
+-|-|
+deeplabv3| <div style='float: center'><img width="150" src="semantic_segmentation\sheep_segmentation_tflite.png"></img></div> |
+
+Color map:
+
+<div style='float: center'>
+<img width="300" src="semantic_segmentation\pascal_colormap.jpg">
+</div>
 
 ### Other tasks
 

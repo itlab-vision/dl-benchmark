@@ -3,4 +3,5 @@ gluoncv
 torchvision
 onnxruntime
 apache-tvm==0.14.dev170
+tflite
 spektral==1.3.0
