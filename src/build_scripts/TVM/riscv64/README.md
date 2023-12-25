@@ -1,4 +1,4 @@
-# build TVM Runtime on RISC-V
+# Build TVM Runtime on RISC-V
 
 We used system python 3.11.
 
@@ -6,6 +6,7 @@ We used system python 3.11.
 
     ```bash
     python3.11 -m venv <venv_dir>/py_venv/tvm_venv
+    source <venv_dir>/py_venv/tvm_venv/bin/activate
     ```
 
 1. Installing additional libraries
@@ -17,21 +18,20 @@ We used system python 3.11.
 
 1. Downloading and building apache-tvm runtime or you can run ```./build_tvm_risc-v.sh <tvm_dir>```
 
-```bash
-git clone --recursive https://github.com/apache/tvm
-cd tvm 
-mkdir build
-cd build
-cmake -DCMAKE_SYSTEM_NAME=Linux \
-      -DCMAKE_SYSTEM_VERSION=1 \
-      -DCMAKE_C_COMPILER=gcc \
-      -DCMAKE_CXX_COMPILER=g++ \
-      ..
+    ```bash
+    git clone --recursive https://github.com/apache/tvm
+    cd tvm 
+    mkdir build
+    cd build
+    cmake -DCMAKE_SYSTEM_NAME=Linux \
+          -DCMAKE_SYSTEM_VERSION=1 \
+          -DCMAKE_C_COMPILER=gcc \
+          -DCMAKE_CXX_COMPILER=g++ \
+          ..
+    make runtime -j
 
-make runtime -j
-
-cd ../..
-```
+    cd ../..
+    ```
 
 1. Downloading and building opencv or you can run ```./build_opencv_risc-v.sh <opencv_dir>```
 
@@ -45,9 +45,11 @@ cd ../..
           -DCMAKE_BUILD_TYPE=Release \
           -DBUILD_LIST=core,imgcodecs,python3 \
           -DBUILD_opencv_python3=ON \
-      -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
-      -DBUILD_NEW_PYTHON_SUPPORT=ON \
-      ..
+          -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+          -DBUILD_NEW_PYTHON_SUPPORT=ON \
+          ..
+    make -j
+    make install
     ```
 
 1. Before using the DLI benchmark, activate virtual environment and set paths for the tvm and opencv libraries.
@@ -59,3 +61,8 @@ cd ../..
     export TVM_HOME=<tvm_dir>/tvm/
     export PYTHONPATH=$TVM_HOME/python:${PYTHONPATH}
     ```
+    
+Note:
+
+Running ```make``` on risc-v with ```-j`` may cause problems, in which case it is recommended to set up ```-jn```, specifying the number of cores less than the number of physical cores
+    

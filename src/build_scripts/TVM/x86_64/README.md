@@ -1,4 +1,4 @@
-# build TVM on x86
+# Build TVM on x86
 
 First you need to install llvm, if they are not installed
 
