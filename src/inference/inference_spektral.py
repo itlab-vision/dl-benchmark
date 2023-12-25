@@ -76,6 +76,7 @@ def model_load(model_path):
 
     return compiled_model
 
+
 def prepare_output(result, model, output_names, task):
     if task == 'feedforward':
         return {}

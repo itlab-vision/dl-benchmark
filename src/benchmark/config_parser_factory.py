@@ -9,7 +9,7 @@ from frameworks.pytorch.pytorch_parameters_parser import PyTorchParametersParser
 from frameworks.onnx_runtime_python.onnx_runtime_python_parameters_parser import ONNXRuntimePythonParametersParser
 from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
 from frameworks.tvm.tvm_parameters_parser import TVMParametersParser
-from frameworks.spektral.spektral_parametrs_parser import SpektralParametersParser
+from frameworks.spektral.spektral_parameters_parser import SpektralParametersParser
 
 
 def get_parameters_parser(framework):

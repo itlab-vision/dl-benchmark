@@ -47,6 +47,7 @@ class CustomDataset(spektral.data.Dataset):
         output.append(spektral.utils.io.load_binary(self.graph_path))
         return output
 
+
 class SpektralIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -98,12 +99,14 @@ class SpektralIO(IOAdapter):
         slice_input, _ = self._loader.__next__()
         return slice_input
 
+
 class FeedForward_SpektralIO(SpektralIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
         return
+
 
 class NodeClassification_SpektralIO(SpektralIO):
     def __init__(self, args, io_model_wrapper, transformer):
@@ -129,6 +132,6 @@ class NodeClassification_SpektralIO(SpektralIO):
 
         pd_result = pd.DataFrame(__result)
         file_name = os.path.join(os.path.dirname(__file__), 'node_classification_out.csv')
-        pd_result.to_csv(file_name, sep = ' ', columns = list(__result.keys()), index = False)
+        pd_result.to_csv(file_name, sep=' ', columns=list(__result.keys()), index=False)
 
         log.info(f'Result was saved to {file_name}')
