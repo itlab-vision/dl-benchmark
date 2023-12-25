@@ -64,5 +64,5 @@ We used system python 3.11.
     
 Note:
 
-Running ```make``` on risc-v with ```-j`` may cause problems, in which case it is recommended to set up ```-jn```, specifying the number of cores less than the number of physical cores
+Running ```make``` on risc-v with ```-j``` may cause problems, in which case it is recommended to set up ```-jn```, specifying the number of cores less than the number of physical cores
     
