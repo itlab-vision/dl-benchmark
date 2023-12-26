@@ -29,6 +29,12 @@ resnet-50-tf|+-|+|
    `src/model_converters/tflite_converter.py` from `.pb`
    into `.tflite`.
 
+### Semantic segmentation
+
+Model | Availability in OMZ (2023.09.29)| Availability in the validation table |
+-|-|-|
+deeplabv3|+|+|
+
 ### Other tasks
 
 [TBD]
