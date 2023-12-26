@@ -841,6 +841,7 @@ inference_tvm_mxnet.py
 inference_tvm_pytorch.py
 inference_tvm_caffe.py
 inference_tvm_onnx.py
+inference_tvm_tensorflowlite.py
 ```
 
 Обязательные аргументы:
@@ -937,6 +938,12 @@ inference_tvm_onnx.py
   в формате `.json`.
 - `-w / --weights` - путь до файла с весами в формате `.params`.
 
+Аргументы, необходимые для инференса моделей TensorFlow Lite с использованием Apache TVM:
+
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.tflite`.
+- `-mn / --model_name` - имя модели.
+
 #### Примеры запуска
 
 ##### Запуск для MXNet
@@ -998,6 +1005,19 @@ python3 inference_tvm_caffe.py \
 python3 inference_tvm.py \
     -m <path_to_model>/<model>.json \
     -w <path_to_weights>/<weights>.params
+    -i <path_to_image>/<image_name> \
+    -ol <number> \
+    --input_shape <input_shape> \
+    --mean <mean> \
+    --std <std> \
+    --norm <norm>
+```
+
+##### Запуск для TensorFlow Lite
+
+```bash
+python3 inference_tvm_tensorflowlite.py \
+    -m <path_to_model>/<model>.tflite \
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
