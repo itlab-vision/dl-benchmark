@@ -20,6 +20,8 @@ class IOGraphAdapter(metaclass=abc.ABCMeta):
             return NodeClassification(args, io_model_wrapper)
         elif task == 'feedforward':
             return FeedForwardIO(args, io_model_wrapper)
+        else:
+            raise ValueError(f"Invalid task type '{task}'")
 
     @staticmethod
     def _not_valid_result(result):
