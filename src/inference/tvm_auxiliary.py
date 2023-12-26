@@ -1,5 +1,6 @@
 import sys
 import importlib
+import abc
 from pathlib import Path
 from time import time
 from inference_tools.loop_tools import loop_inference, get_exec_time
@@ -8,6 +9,84 @@ sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
+
+class InferenceHelper:
+    def __init__(self):
+        pass
+
+    @abc.abstractmethod
+    def _infer_slice(self, input_name, module, slice_input):
+        pass
+    
+    @staticmethod
+    def get_helper(vm):
+        if vm:
+            return InferenceVMApi()
+        else:
+            return InferenceRelayAPI()
+
+    @abc.abstractmethod
+    def _inference_tvm(self, module, input_name, slice_input):
+        pass
+
+    @get_exec_time()
+    def infer_slice(self, input_name, module, slice_input):
+        return self._infer_slice(input_name, module, slice_input)
+    
+    def inference_iteration(self, get_slice, input_name, module):
+        slice_input = get_slice()
+        _, exec_time = self.infer_slice(input_name, module, slice_input)
+        return exec_time
+    
+    def inference_tvm(self, module, num_of_iterations,
+                       input_name, get_slice, test_duration):
+        result = None
+        time_infer = []
+        if num_of_iterations == 1:
+            slice_input = get_slice()
+            t0 = time()
+            result = self._inference_tvm(module, input_name, slice_input)
+            t1 = time()
+            time_infer.append(t1 - t0)
+        else:
+            time_infer = loop_inference(num_of_iterations, test_duration)(self.inference_iteration)(get_slice,
+                                                                                                    input_name,
+                                                                                                    module)
+        return result, time_infer        
+
+
+class InferenceRelayAPI(InferenceHelper):
+    def __init__(self):
+        super().__init__()
+
+    def _infer_slice(self, input_name, module, slice_input):
+        num_of_outputs = module.get_num_outputs()
+        module.set_input(input_name, slice_input[input_name])
+        module.run()
+        res = [module.get_output(i) for i in range(num_of_outputs)]
+        return res
+
+    def _inference_tvm(self, module, input_name, slice_input):
+        num_of_outputs = module.get_num_outputs()
+        module.set_input(input_name, slice_input[input_name])
+        module.run()
+        return [module.get_output(i) for i in range(num_of_outputs)]     
+
+
+class InferenceVMApi(InferenceHelper):
+    def __init__(self):
+        super().__init__()
+
+    def _infer_slice(self, input_name, module, slice_input):
+        module.set_input('main', slice_input[input_name])
+        module.run()
+        res = module.get_outputs()
+        return res
+    
+    def _inference_tvm(self, module, input_name, slice_input):
+        module.set_input('main', slice_input[input_name])
+        module.run()
+        return module.get_outputs()
 
 
 class OutputPreparer:
@@ -78,6 +157,7 @@ def create_dict_for_converter_pytorch(args):
         'opt_level': args.opt_level,
         'module': args.module,
         'target': args.target,
+        'vm': args.vm,
     }
     return dictionary
 
@@ -139,38 +219,24 @@ def create_dict_for_output_preparer(args):
     return dictionary
 
 
-def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration):
-    result = None
-    time_infer = []
-    num_of_outputs = module.get_num_outputs()
-    if num_of_iterations == 1:
-        slice_input = get_slice()
-        t0 = time()
-        module.set_input(input_name, slice_input[input_name])
-        module.run()
-        result = [module.get_output(i) for i in range(num_of_outputs)]
-        t1 = time()
-        time_infer.append(t1 - t0)
-    else:
-        time_infer, _ = loop_inference(num_of_iterations, test_duration)(inference_iteration)(get_slice,
-                                                                                              input_name,
-                                                                                              module)
-    return result, time_infer
+def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, vm):
+    inference_helper = InferenceHelper.get_helper(vm)
+    return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
 
 
-def inference_iteration(get_slice, input_name, module):
-    slice_input = get_slice()
-    _, exec_time = infer_slice(input_name, module, slice_input)
-    return exec_time
-
-
-@get_exec_time()
-def infer_slice(input_name, module, slice_input):
-    num_of_outputs = module.get_num_outputs()
-    module.set_input(input_name, slice_input[input_name])
-    module.run()
-    res = [module.get_output(i) for i in range(num_of_outputs)]
-    return res
+#def inference_iteration(get_slice, input_name, module):
+#    slice_input = get_slice()
+#    _, exec_time = infer_slice(input_name, module, slice_input)
+#    return exec_time
+#
+#
+#@get_exec_time()
+#def infer_slice(input_name, module, slice_input):
+#    num_of_outputs = module.get_num_outputs()
+#    module.set_input(input_name, slice_input[input_name])
+#    module.run()
+#    res = [module.get_output(i) for i in range(num_of_outputs)]
+#    return res
 
 
 def prepare_output(result, task, output_names, not_softmax=False, framework='tvm', params=None):

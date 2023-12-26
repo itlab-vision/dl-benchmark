@@ -158,6 +158,10 @@ def cli_argument_parser():
                         default=0.5,
                         type=float,
                         dest='threshold')
+    parser.add_argument('-vm','--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm') 
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
@@ -195,7 +199,8 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:

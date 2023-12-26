@@ -81,6 +81,20 @@ class Converter(metaclass=abc.ABCMeta):
             lib = self.tvm.relay.build(model[0], target=target, params=model[1])
         return lib
 
+    def get_graph_module_from_vm(self, mod, params, target, dev):
+        rly_vm = self.tvm.relay.vm
+        vm = self.tvm.runtime.vm
+        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            executable = rly_vm.compile(mod, target=target, params=params)
+        des_vm = vm.VirtualMachine(executable, dev)
+        return des_vm
+
+    def get_graph_module_from_relay(self, mod, params, target, dev):
+        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+            lib = self.tvm.relay.build(mod, target=target, params=params)
+        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
+        return self.graph       
+
     def get_graph_module(self):
         target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
@@ -88,10 +102,10 @@ class Converter(metaclass=abc.ABCMeta):
 
         log.info(f'Creating graph module from {self.framework} model')
         if len(model) == 2:
-            with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
-                lib = self.tvm.relay.build(model[0], target=target, params=model[1])
-            self.graph = self.graph_executor.GraphModule(lib['default'](dev))
-            return self.graph
+            if self.args['vm']:
+                return self.get_graph_module_from_vm(model[0], model[1], target, dev)
+            else:
+                return self.get_graph_module_from_relay(model[0], model[1], target, dev)
         else:
             return self.get_graph_module_from_lib(model[0])
 
