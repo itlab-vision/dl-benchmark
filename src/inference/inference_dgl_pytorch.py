@@ -197,7 +197,7 @@ def main():
                                                        input_data, device, args.time)
 
         log.info('Computing performance metrics')
-        inference_result = pp.calculate_performance_metrics_sync_mode(1, inference_time)
+        inference_result = pp.calculate_performance_metrics_sync_mode(1, inference_time[0])
         report_writer.update_execution_results(**inference_result)
         log.info(f'Write report to {args.report_path}')
         report_writer.write_report(args.report_path)
