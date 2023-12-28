@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>googlenet-v1</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>./models_dir/public/googlenet-v1/googlenet-v1.prototxt</ModelPath>
+            <WeightsPath>./models_dir/public/googlenet-v1/googlenet-v1.caffemodel</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>Caffe</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean>104.0 117.0 123.0</Mean>
+            <InputScale></InputScale>
+            <ThreadCount></ThreadCount>
+            <KmpAffinity></KmpAffinity>
+        </FrameworkDependent>
+    </Test>
+</Tests>

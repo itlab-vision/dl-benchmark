@@ -106,11 +106,16 @@ venv.bak/
 .mypy_cache/
 
 # smoke test cache
-test/smoke_test/cache_dir_smoke/
-test/smoke_test/working_dir_smoke/
-test/smoke_test/datasets_smoke/
-test/smoke_test/*.pickle
-test/smoke_test/*.csv
+**/cache_dir
+**/models_dir
+**/datasets_smoke
+tests/smoke_test/*.pickle
+tests/smoke_test/*.csv
+**/logs
+**/res_dir
+tests/smoke_test/*.log
+tests/smoke_test/*.xml
+tests/smoke_test/*.html
 
 # temporary stuff
 logs/

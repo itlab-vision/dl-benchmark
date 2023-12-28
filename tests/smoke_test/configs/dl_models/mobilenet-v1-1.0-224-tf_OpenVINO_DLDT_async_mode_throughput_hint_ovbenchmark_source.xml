@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>mobilenet-v1-1.0-224-tf</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>tf</SourceFramework>
+            <ModelPath>./models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
+            <WeightsPath>./models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
+            </WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>async</Mode>
+            <CodeSource>ovbenchmark</CodeSource>
+            <Runtime>python</Runtime>
+            <Hint>throughput</Hint>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+</Tests>
