@@ -189,7 +189,8 @@ Bounding boxes (upper left and bottom right corners):<br>
 Model | Source Framework | Parameters | Python API (source framework) | Python API (TVM, source format) | Python API (TVM, TVM format) |
 -|-|-|-|-|-|
 ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) | Bounding box:<br>APPLE (261, 197), (421, 409); APPLE (50, 167), (168, 345); APPLE (213, 133), (315, 288); APPLE (309, 147), (443, 291); APPLE (177, 134), (440, 396); APPLE (134, 177), (298, 385) |
-ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | 
+ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) | Bounding box:<br>APPLE (280, 209), (422, 414); APPLE (54, 168), (165, 353); APPLE (137, 203), (263, 385); APPLE (215, 133), (316, 292) |
+maskrcnn_resnet50_fpn | PyTorch | - | - | Bounding box:<br>APPLE (30, 100), (99, 204); APPLE (160, 120), (250, 246); APPLE (126, 76), (185, 168); APPLE (182, 88), (257, 166) | Bounding box:<br>APPLE (30, 100), (99, 204); APPLE (160, 120), (250, 246); APPLE (126, 76), (185, 168); APPLE (182, 88), (257, 166) |
 
 ### Test image #2
 
@@ -211,6 +212,7 @@ ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.40
 ssd_512_vgg16_atrous_voc | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (78, 107), (359, 452) | Bounding box:<br>BIRD (78, 107), (359, 452) | Bounding box:<br>BIRD (78, 107), (359, 452) |
 ssd_300_vgg16_atrous_voc | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (38, 56), (205, 272) | Bounding box:<br>BIRD (38, 56), (205, 272) | Bounding box:<br>BIRD (38, 56), (205, 272) |
 ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>BIRD (86, 100), (347, 450) | Bounding box:<br>BIRD (86, 100), (347, 450) | Bounding box:<br>BIRD (86, 100), (347, 450) |
+maskrcnn_resnet50_fpn | PyTorch | - | - | Bounding box:<br>BIRD (40, 60), (204, 270) | Bounding box:<br>BIRD (40, 60), (204, 270) |
 
 ### Test image #3
 
@@ -230,6 +232,7 @@ Model | Source Framework | Parameters | Python API (source framework) | Python A
 -|-|-|-|-|-|
 ssd_512_resnet50_v1_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) | Bounding box:<br>PERSON (75, 96), (153, 478); HORSE (121, 58), (424, 454) |
 ssd_512_mobilenet1.0_coco | MXNet | Source framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225]<br><br>Inference framework<br>Mean: [0.485, 0.456, 0.406]<br>Std: [0.229, 0.224, 0.225] | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) | Bounding box:<br>PERSON (70, 89), (164, 470); HORSE (126, 57), (391, 469) |
+maskrcnn_resnet50_fpn | PyTorch | - | - | Bounding box:<br>PERSON (45, 50), (92, 282); HORSE (51, 41), (249, 263) | Bounding box:<br>PERSON (45, 50), (92, 282); HORSE (51, 41), (249, 263) |
 
 
 <!-- LINKS -->

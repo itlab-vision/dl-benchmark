@@ -105,7 +105,7 @@ class OutputPreparer:
 
     def detection_task(self, result, output_names, params):
         np = importlib.import_module('numpy')
-        if self.framework == 'mxnet':
+        if self.framework == 'mxnet' or 'ssd_' in params['model_name']:
             box_ids, scores, bboxes = result
             box_ids = (box_ids.asnumpy())[0]
             scores = (scores.asnumpy())[0]
@@ -126,6 +126,24 @@ class OutputPreparer:
             tmp[:, :, :, 5] /= input_shape[2]
             tmp[:, :, :, 6] /= input_shape[3]
             return {output_names[0]: tmp}
+        elif params['model_name'] == 'maskrcnn_resnet50_fpn':
+            bboxes, box_ids, scores, _ = result
+            box_ids = np.expand_dims((box_ids.asnumpy()), axis=1)
+            scores = np.expand_dims(scores.asnumpy(), axis=1)
+            bboxes = (bboxes.asnumpy())
+
+            tmp = np.concatenate([scores, box_ids, bboxes], axis=1)
+            num_of_images = np.zeros((tmp.shape[0], 1))
+            tmp = np.concatenate([num_of_images, tmp], axis=1)
+            tmp = np.expand_dims(tmp, axis=0)
+            tmp = np.expand_dims(tmp, axis=0)
+            input_shape = params['input_shape']
+            tmp[:, :, :, 3] /= input_shape[2]
+            tmp[:, :, :, 4] /= input_shape[3]
+            tmp[:, :, :, 5] /= input_shape[2]
+            tmp[:, :, :, 6] /= input_shape[3]
+
+            return {output_names[0]: tmp}                
 
 
 def create_dict_for_converter_mxnet(args):
@@ -138,6 +156,7 @@ def create_dict_for_converter_mxnet(args):
         'device': args.device,
         'opt_level': args.opt_level,
         'target': args.target,
+        'vm': args.vm,
     }
     return dictionary
 
@@ -222,21 +241,6 @@ def create_dict_for_output_preparer(args):
 def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, vm):
     inference_helper = InferenceHelper.get_helper(vm)
     return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
-
-
-#def inference_iteration(get_slice, input_name, module):
-#    slice_input = get_slice()
-#    _, exec_time = infer_slice(input_name, module, slice_input)
-#    return exec_time
-#
-#
-#@get_exec_time()
-#def infer_slice(input_name, module, slice_input):
-#    num_of_outputs = module.get_num_outputs()
-#    module.set_input(input_name, slice_input[input_name])
-#    module.run()
-#    res = [module.get_output(i) for i in range(num_of_outputs)]
-#    return res
 
 
 def prepare_output(result, task, output_names, not_softmax=False, framework='tvm', params=None):

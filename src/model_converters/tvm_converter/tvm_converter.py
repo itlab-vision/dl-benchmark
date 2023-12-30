@@ -16,6 +16,8 @@ class Converter(metaclass=abc.ABCMeta):
         self.graph = None
         self.mod = None
         self.params = None
+        self.mod_type = None
+        self.params_type = None
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
         self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
@@ -77,15 +79,44 @@ class Converter(metaclass=abc.ABCMeta):
         model = self._convert_model_from_framework(target, dev)
 
         log.info('Model compilation')
-        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
-            lib = self.tvm.relay.build(model[0], target=target, params=model[1])
-        return lib
+        if self.args['vm']:
+            rly_vm = self.tvm.relay.vm
+            with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+                executable = rly_vm.compile(model[0], target=target, params=model[1])
+            code, lib = executable.save()
+            return code, lib
+        else:
+            with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+                lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+            return [lib]
+
+    def export_lib(self):
+        path_save_lib = self.args['output_dir']
+        lib_name = self.args['lib_name']
+        if path_save_lib is None:
+            path_save_lib = os.getcwd()
+
+        log.info(f'Saving library of model \"{lib_name}\" to \"{path_save_lib}\"')
+        if not os.path.exists(path_save_lib):
+            os.mkdir(path_save_lib)
+
+        lib = self.get_lib()
+        if len(lib) == 1:
+            lib[0].export_library(f'{path_save_lib}/{lib_name}.so')
+        else:
+            lib[1].export_library(f'{path_save_lib}/{lib_name}.so')
+            with open(f'{path_save_lib}/{lib_name}.ro', 'wb') as fo:
+                fo.write(lib[0])
 
     def get_graph_module_from_vm(self, mod, params, target, dev):
         rly_vm = self.tvm.relay.vm
         vm = self.tvm.runtime.vm
-        with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
-            executable = rly_vm.compile(mod, target=target, params=params)
+        if self.mod_type == 'so' and self.params_type == 'ro':
+            print('here')
+            executable = vm.Executable.load_exec(params, mod)
+        else:
+            with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
+                executable = rly_vm.compile(mod, target=target, params=params)
         des_vm = vm.VirtualMachine(executable, dev)
         return des_vm
 
@@ -139,9 +170,19 @@ class PyTorchToTVMConverter(Converter):
         model_cls = importlib.import_module(module).__getattribute__(model_name)
         if weights is None or weights == '':
             log.info('Loading pretrained model')
-            model = model_cls(weights=True)
-            scripted_model = self.torch.jit.trace(model, input_data).eval()
-            return scripted_model
+            if self.args['model_name'] == 'maskrcnn_resnet50_fpn':
+                sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+                from src.inference.configs.tvm_configs.mask_rcnn_config import TraceWrapper, do_trace
+                model = TraceWrapper(model_cls(pretrained=True))
+                model.eval()
+                with self.torch.no_grad():
+                    out = model(input_data)
+                    script_module = do_trace(model, input_data)
+                return script_module
+            else:
+                model = model_cls(weights=True)
+                scripted_model = self.torch.jit.trace(model, input_data).eval()
+                return scripted_model
         else:
             log.info(f'Loading model with weights from file {weights}')
             model = model_cls()
@@ -264,15 +305,24 @@ class TVMConverter(Converter):
     def _get_device_for_framework(self):
         return super()._get_device_for_framework()
 
+    def _get_vm_format_tvm_model(self):
+        lib = self.tvm.runtime.load_module(self.args['model_path'])
+        code = bytearray(open(self.args['model_params'], 'rb').read())
+        return lib, code
+
     def _convert_model_from_framework(self, target, dev):
         model_name = self.args['model_path']
         params = self.args['model_params']
 
-        file_type = model_name.split('.')[-1]
-        if file_type == 'json' and params is not None:
+        self.mod_type = model_name.split('.')[-1]
+        self.params_type = params.split('.')[-1]
+        if self.mod_type == 'json' and self.params_type == 'params':
             return self._get_deserialized_tvm_model()
-        elif file_type == 'so' or file_type == 'tar':
+        elif ((self.mod_type == 'so' or self.mod_type == 'tar')
+              and self.params_type == None):
             return [self._get_lib_format_tvm_model()]
+        elif self.mod_type == 'so' and self.params_type == 'ro':
+            return self._get_vm_format_tvm_model()
         else:
             raise ValueError('Wrong arguments.')
 

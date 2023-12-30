@@ -101,7 +101,7 @@ def cli_argument_parser():
     parser.add_argument('-vm','--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
-                        dest='vm')    
+                        dest='vm')
     parser.add_argument('--norm',
                         help='Flag to normalize input images'
                              '(use --mean and --std arguments to set'

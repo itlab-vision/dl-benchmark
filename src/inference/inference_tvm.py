@@ -73,6 +73,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
                         default='data',
