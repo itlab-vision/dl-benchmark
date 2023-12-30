@@ -52,7 +52,7 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='number_iter')
-    parser.add_argument('-vm','--virtual_machine',
+    parser.add_argument('-vm', '--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
                         dest='vm')

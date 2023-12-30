@@ -2,6 +2,7 @@ import importlib
 
 torch = importlib.import_module('torch')
 
+
 def do_trace(model, inp):
     model_trace = torch.jit.trace(model, inp)
     model_trace.eval()

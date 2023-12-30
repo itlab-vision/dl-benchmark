@@ -10,6 +10,7 @@ from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
 
+
 class InferenceHelper:
     def __init__(self):
         pass
@@ -144,7 +145,7 @@ class OutputPreparer:
             tmp[:, :, :, 5] /= input_shape[2]
             tmp[:, :, :, 6] /= input_shape[3]
 
-            return {output_names[0]: tmp}   
+            return {output_names[0]: tmp}
 
 
 def create_dict_for_converter_mxnet(args):
