@@ -124,7 +124,7 @@ class Converter(metaclass=abc.ABCMeta):
         with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
             lib = self.tvm.relay.build(mod, target=target, params=params)
         self.graph = self.graph_executor.GraphModule(lib['default'](dev))
-        return self.graph 
+        return self.graph
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -319,7 +319,7 @@ class TVMConverter(Converter):
         if self.mod_type == 'json' and self.params_type == 'params':
             return self._get_deserialized_tvm_model()
         elif ((self.mod_type == 'so' or self.mod_type == 'tar')
-              and self.params_type == None):
+              and self.params_type is None):
             return [self._get_lib_format_tvm_model()]
         elif self.mod_type == 'so' and self.params_type == 'ro':
             return self._get_vm_format_tvm_model()

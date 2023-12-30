@@ -104,7 +104,7 @@ def cli_argument_parser():
                         default=0.5,
                         type=float,
                         dest='threshold')
-    parser.add_argument('-vm','--virtual_machine',
+    parser.add_argument('-vm', '--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
                         dest='vm')
