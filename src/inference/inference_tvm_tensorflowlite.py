@@ -44,6 +44,10 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='number_iter')
+    parser.add_argument('-vm','--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
                         default='out0',
@@ -141,6 +145,10 @@ def cli_argument_parser():
                         default='llvm',
                         type=str,
                         dest='target')
+    parser.add_argument('--not_softmax',
+                        help='Flag to do not use softmax function.',
+                        action='store_true',
+                        dest='not_softmax')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'tvm_inference_report.json',
@@ -170,13 +178,14 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names, True)
+                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:

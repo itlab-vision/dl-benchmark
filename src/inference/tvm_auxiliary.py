@@ -17,7 +17,7 @@ class InferenceHelper:
     @abc.abstractmethod
     def _infer_slice(self, input_name, module, slice_input):
         pass
-    
+
     @staticmethod
     def get_helper(vm):
         if vm:
@@ -32,14 +32,14 @@ class InferenceHelper:
     @get_exec_time()
     def infer_slice(self, input_name, module, slice_input):
         return self._infer_slice(input_name, module, slice_input)
-    
+
     def inference_iteration(self, get_slice, input_name, module):
         slice_input = get_slice()
         _, exec_time = self.infer_slice(input_name, module, slice_input)
         return exec_time
-    
+
     def inference_tvm(self, module, num_of_iterations,
-                       input_name, get_slice, test_duration):
+                      input_name, get_slice, test_duration):
         result = None
         time_infer = []
         if num_of_iterations == 1:
@@ -52,7 +52,7 @@ class InferenceHelper:
             time_infer = loop_inference(num_of_iterations, test_duration)(self.inference_iteration)(get_slice,
                                                                                                     input_name,
                                                                                                     module)
-        return result, time_infer        
+        return result, time_infer
 
 
 class InferenceRelayAPI(InferenceHelper):
@@ -70,7 +70,7 @@ class InferenceRelayAPI(InferenceHelper):
         num_of_outputs = module.get_num_outputs()
         module.set_input(input_name, slice_input[input_name])
         module.run()
-        return [module.get_output(i) for i in range(num_of_outputs)]     
+        return [module.get_output(i) for i in range(num_of_outputs)]
 
 
 class InferenceVMApi(InferenceHelper):
@@ -82,7 +82,7 @@ class InferenceVMApi(InferenceHelper):
         module.run()
         res = module.get_outputs()
         return res
-    
+
     def _inference_tvm(self, module, input_name, slice_input):
         module.set_input('main', slice_input[input_name])
         module.run()
@@ -127,6 +127,7 @@ class OutputPreparer:
             tmp[:, :, :, 6] /= input_shape[3]
             return {output_names[0]: tmp}
         elif params['model_name'] == 'maskrcnn_resnet50_fpn':
+            print('here')
             bboxes, box_ids, scores, _ = result
             box_ids = np.expand_dims((box_ids.asnumpy()), axis=1)
             scores = np.expand_dims(scores.asnumpy(), axis=1)
@@ -143,7 +144,7 @@ class OutputPreparer:
             tmp[:, :, :, 5] /= input_shape[2]
             tmp[:, :, :, 6] /= input_shape[3]
 
-            return {output_names[0]: tmp}                
+            return {output_names[0]: tmp}   
 
 
 def create_dict_for_converter_mxnet(args):
@@ -190,6 +191,7 @@ def create_dict_for_converter_onnx(args):
         'device': args.device,
         'opt_level': args.opt_level,
         'target': args.target,
+        'vm': args.vm,
     }
     return dictionary
 
@@ -217,6 +219,7 @@ def create_dict_for_converter_tensorflowlite(args):
         'opt_level': args.opt_level,
         'output_names': args.output_names,
         'target': args.target,
+        'vm': args.vm,
     }
     return dictionary
 

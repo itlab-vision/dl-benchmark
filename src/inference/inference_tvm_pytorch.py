@@ -15,7 +15,8 @@ from reporter.report_writer import ReportWriter
 
 from tvm_auxiliary import (create_dict_for_converter_pytorch,
                            prepare_output, create_dict_for_modelwrapper,
-                           create_dict_for_transformer, inference_tvm)
+                           create_dict_for_transformer, inference_tvm,
+                           create_dict_for_output_preparer)
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.model_converters.tvm_converter.tvm_converter import PyTorchToTVMConverter  # noqa: E402
@@ -66,7 +67,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -98,6 +99,11 @@ def cli_argument_parser():
                         default='NHWC',
                         type=str,
                         dest='layout')
+    parser.add_argument('--threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
     parser.add_argument('-vm','--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
@@ -199,7 +205,11 @@ def main():
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
+                    res = prepare_output(result, args.task,
+                                         args.output_names,
+                                         args.not_softmax,
+                                         framework='pytorch',
+                                         params=create_dict_for_output_preparer(args))
                     log.info('Inference results')
                     io.process_output(res, log)
                 except Exception as ex:

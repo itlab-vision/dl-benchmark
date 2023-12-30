@@ -124,7 +124,7 @@ class Converter(metaclass=abc.ABCMeta):
         with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
             lib = self.tvm.relay.build(mod, target=target, params=params)
         self.graph = self.graph_executor.GraphModule(lib['default'](dev))
-        return self.graph       
+        return self.graph 
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -176,7 +176,7 @@ class PyTorchToTVMConverter(Converter):
                 model = TraceWrapper(model_cls(pretrained=True))
                 model.eval()
                 with self.torch.no_grad():
-                    out = model(input_data)
+                    _ = model(input_data)
                     script_module = do_trace(model, input_data)
                 return script_module
             else:

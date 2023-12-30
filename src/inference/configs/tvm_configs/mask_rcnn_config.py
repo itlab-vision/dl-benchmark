@@ -9,9 +9,9 @@ def do_trace(model, inp):
 
 
 def dict_to_tuple(out_dict):
-    if "masks" in out_dict.keys():
-        return out_dict["boxes"], out_dict["scores"], out_dict["labels"], out_dict["masks"]
-    return out_dict["boxes"], out_dict["scores"], out_dict["labels"]
+    if 'masks' in out_dict.keys():
+        return out_dict['boxes'], out_dict['scores'], out_dict['labels'], out_dict['masks']
+    return out_dict['boxes'], out_dict['scores'], out_dict['labels']
 
 
 class TraceWrapper(torch.nn.Module):

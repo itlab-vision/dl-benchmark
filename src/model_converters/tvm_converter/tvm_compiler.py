@@ -31,7 +31,7 @@ def cli_argument_parser():
                         type=int,
                         choices=[0, 1, 2, 3, 4],
                         default=2)
-    parser.add_argument('-vm','--virtual_machine',
+    parser.add_argument('-vm', '--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
                         dest='vm')
