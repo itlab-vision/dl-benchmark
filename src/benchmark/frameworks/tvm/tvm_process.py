@@ -206,7 +206,7 @@ class TVMProcessTVMFormat(TVMProcess):
         model_json = self._test.model.model
         model_params = self._test.model.weight
 
-        if model_json.split('.')[-1] == 'json':
+        if model_json.split('.')[-1] == 'json' and model_params.split('.')[-1] == 'params':
             common_params = (f'-m {model_json} -w {model_params} ')
         elif model_json.split('.')[-1] == 'so' and model_params is None:
             common_params = (f'-m {model_json} ')
