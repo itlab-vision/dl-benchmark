@@ -580,7 +580,7 @@
     <Test>
         <Model>
             <Task>classification</Task>
-            <Name>efficientnet_b0</Name>
+            <Name>efficientnet_b0_vm</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
             <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
