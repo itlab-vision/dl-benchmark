@@ -59,7 +59,7 @@ class TVMProcess(ProcessHandler):
         vm = self._test.dep_parameters.vm
         if vm == 'True':
             common_params = TVMProcess._add_flag_to_cmd_line(
-                common_params, '-vm')         
+                common_params, '-vm')
 
         mean = self._test.dep_parameters.mean
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
@@ -210,7 +210,7 @@ class TVMProcessTVMFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         elif model_json.split('.')[-1] == 'so' and model_params is None:
             common_params = (f'-m {model_json} ')
-        elif model_json.split('.')[-1] == 'so' and model_params.split[-1] == 'ro':
+        elif model_json.split('.')[-1] == 'so' and model_params.split('.')[-1] == 'ro':
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise ValueError('Wrong arguments.')
