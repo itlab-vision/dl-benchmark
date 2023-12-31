@@ -58,6 +58,7 @@
             <ChannelSwap></ChannelSwap>
             <Target>llvm</Target>
             <Layout>NCHW</Layout>
+            <VirtualMachine>False</VirtualMachine>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -91,6 +92,7 @@
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>
     </Test>

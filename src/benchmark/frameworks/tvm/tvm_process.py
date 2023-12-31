@@ -59,7 +59,7 @@ class TVMProcess(ProcessHandler):
         vm = self._test.dep_parameters.vm
         if vm == 'True':
             common_params = TVMProcess._add_flag_to_cmd_line(
-                common_params, '-vm')            
+                common_params, '-vm')         
 
         mean = self._test.dep_parameters.mean
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
