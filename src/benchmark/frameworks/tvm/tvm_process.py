@@ -206,11 +206,17 @@ class TVMProcessTVMFormat(TVMProcess):
         model_json = self._test.model.model
         model_params = self._test.model.weight
 
-        if model_json.split('.')[-1] == 'json' and model_params.split('.')[-1] == 'params':
+        model_type = model_json.split('.')[-1]
+        if model_params is not None and model_params != '':
+            params_type = model_params.split('.')[-1]
+        else:
+            params_type = None
+
+        if model_type == 'json' and params_type == 'params':
             common_params = (f'-m {model_json} -w {model_params} ')
-        elif model_json.split('.')[-1] == 'so' and model_params is None:
+        elif model_type == 'so' and params_type is None:
             common_params = (f'-m {model_json} ')
-        elif model_json.split('.')[-1] == 'so' and model_params.split('.')[-1] == 'ro':
+        elif model_type == 'so' and params_type == 'ro':
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise ValueError('Wrong arguments.')

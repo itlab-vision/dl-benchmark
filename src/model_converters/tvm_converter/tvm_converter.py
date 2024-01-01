@@ -112,7 +112,6 @@ class Converter(metaclass=abc.ABCMeta):
         rly_vm = self.tvm.relay.vm
         vm = self.tvm.runtime.vm
         if self.mod_type == 'so' and self.params_type == 'ro':
-            print('here')
             executable = vm.Executable.load_exec(params, mod)
         else:
             with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
@@ -315,7 +314,12 @@ class TVMConverter(Converter):
         params = self.args['model_params']
 
         self.mod_type = model_name.split('.')[-1]
-        self.params_type = params.split('.')[-1]
+
+        if params is not None and params != '':
+            self.params_type = params.split('.')[-1]
+        else:
+            self.params_type = None
+
         if self.mod_type == 'json' and self.params_type == 'params':
             return self._get_deserialized_tvm_model()
         elif ((self.mod_type == 'so' or self.mod_type == 'tar')
