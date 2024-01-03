@@ -1,43 +1,46 @@
 # Build TVM on x86
 
-First you need to install llvm, if they are not installed
+1. First you need to install llvm, if it is not installed.
 
-```bash
-sudo apt update && sudo apt upgrade
-sudo apt install gcc g++ llvm cmake
-```
+   ```bash
+   sudo apt update && sudo apt upgrade
+   sudo apt install gcc g++ llvm cmake
+   ```
 
-We used anaconda3 to run it. We have created separate dependencies for Python 3.8
+1. We used Anaconda3 to run TVM. We have created separate virtual environment for Python 3.8.
 
-```bash
-conda create --no-default-packages -n tvm_src -y python=3.8
-conda activate tvm_src
-```
+   ```bash
+   conda create --no-default-packages -n tvm_src -y python=3.8
+   conda activate tvm_src
+   ```
 
-Installing additional libraries to run benchmarking
-```bash
-pip install numpy opencv-python scipy
-```
+1. Installing additional libraries to run the DLI benchmark.
 
-Installing additional libraries for building TVM
-```bash
-conda install -c conda-forge -y gcc=12.1.0
-conda install -c conda-forge -y gxx_linux-64
+   ```bash
+   pip install numpy opencv-python scipy
+   ```
 
-pip install traitlets==5.9.0 decorator attrs typing-extensions psutil scipy pybind11 
-```
+1. Installing additional libraries for building TVM.
 
-Downloading and building apache-tvm or you can run ```./build_tvm_x86.sh <tvm_dir>```
-```bash
-git clone --recursive https://github.com/apache/tvm tvm
-cd tvm
-mkdir build
-cd build
+   ```bash
+   conda install -c conda-forge -y gcc=12.1.0
+   conda install -c conda-forge -y gxx_linux-64
 
-cmake -DUSE_LLVM=ON ..
-make -j
+   pip install traitlets==5.9.0 decorator attrs typing-extensions psutil scipy pybind11 
+   ```
 
-cd ../python
-python setup.py install --user
-```
+1. Downloading and building Apache TVM or you can run ```./build_tvm_x86.sh <tvm_dir>```.
+
+   ```bash
+   git clone --recursive https://github.com/apache/tvm tvm
+   cd tvm
+   mkdir build
+   cd build
+
+   cmake -DUSE_LLVM=ON ..
+   make -j
+
+   cd ../python
+   python setup.py install --user
+   ```
 
