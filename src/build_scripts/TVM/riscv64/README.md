@@ -1,6 +1,6 @@
 # Build TVM Runtime on RISC-V
 
-We used system python 3.11.
+We used system Python 3.11.
 
 1. Creating virtual environment.
 
@@ -9,14 +9,14 @@ We used system python 3.11.
     source <venv_dir>/py_venv/tvm_venv/bin/activate
     ```
 
-1. Installing additional libraries
+1. Installing additional libraries.
 
     ```bash
     pip install -U pip setuptools
     pip install six wheel numpy
     ```
 
-1. Downloading and building apache-tvm runtime or you can run ```./build_tvm_risc-v.sh <tvm_dir>```
+1. Downloading and building Apache TVM runtime or you can run ```./build_tvm_risc-v.sh <tvm_dir>```.
 
     ```bash
     git clone --recursive https://github.com/apache/tvm
@@ -33,7 +33,7 @@ We used system python 3.11.
     cd ../..
     ```
 
-1. Downloading and building opencv or you can run ```./build_opencv_risc-v.sh <opencv_dir>```
+1. Downloading and building OpenCV or you can run ```./build_opencv_risc-v.sh <opencv_dir>```.
 
     ```bash
     git clone --depth 1 https://github.com/opencv/opencv/
@@ -52,7 +52,7 @@ We used system python 3.11.
     make install
     ```
 
-1. Before using the DLI benchmark, activate virtual environment and set paths for the tvm and opencv libraries.
+1. Before using the DLI benchmark, activate virtual environment and set paths for the Apache TVM and OpenCV libraries.
 
     ```bash
     source <venv_dir>/py_venv/tvm_venv/bin/activate
@@ -62,7 +62,5 @@ We used system python 3.11.
     export PYTHONPATH=$TVM_HOME/python:${PYTHONPATH}
     ```
     
-Note:
-
-Running ```make``` on risc-v with ```-j``` may cause problems, in which case it is recommended to set up ```-jn```, specifying the number of cores less than the number of physical cores
-    
+**Note:** running ```make``` on risc-v with ```-j``` may cause problems, in which case it is recommended to set up ```-jn```,
+specifying the number of cores less than the number of physical cores.
