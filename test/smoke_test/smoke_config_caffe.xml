@@ -34,8 +34,8 @@
             <Name>googlenet-v1</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>working_dir_smoke/public/googlenet-v1/googlenet-v1.prototxt</ModelPath>
-            <WeightsPath>working_dir_smoke/public/googlenet-v1/googlenet-v1.caffemodel</WeightsPath>
+            <ModelPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.prototxt</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.caffemodel</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -56,6 +56,7 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
+            <Target>llvm</Target>
             <Layout>NCHW</Layout>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>
@@ -66,8 +67,8 @@
             <Name>googlenet-v1</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>working_dir_smoke/googlenet-v1/googlenet-v1.json</ModelPath>
-            <WeightsPath>working_dir_smoke/googlenet-v1/googlenet-v1.params</WeightsPath>
+            <ModelPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/googlenet-v1/googlenet-v1.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -89,6 +90,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>
     </Test>

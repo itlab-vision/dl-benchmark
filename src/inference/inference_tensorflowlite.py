@@ -48,7 +48,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
+                        choices=['segmentation', 'classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
                                  'yolo_v2_tiny_coco', 'yolo_v3_tf', 'mask-rcnn'],
                         default='feedforward',
                         type=str,
@@ -83,6 +83,11 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='layout')
+    parser.add_argument('--color_map',
+                        help='Color mapping file',
+                        default=None,
+                        type=str,
+                        dest='color_map')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer on (CPU by default)',
                         default='CPU',
@@ -230,6 +235,8 @@ def prepare_output(result, output_names, task):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
         return {output_names[i]: result[i] for i in range(len(result))}
+    if task == 'segmentation':
+        return {0: result[0]}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 

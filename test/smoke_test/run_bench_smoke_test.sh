@@ -2,8 +2,8 @@
 
 . ./utils.sh
 
-omz_downloader --output_dir working_dir_smoke --cache_dir cache_dir_smoke      --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch
-omz_converter  --output_dir working_dir_smoke --download_dir working_dir_smoke --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch --precisions FP32
+omz_downloader --output_dir working_dir_smoke --cache_dir cache_dir_smoke      --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch,mobilenet-v2-1.4-224
+omz_converter  --output_dir working_dir_smoke --download_dir working_dir_smoke --name=mobilenet-v1-1.0-224-tf,efficientnet-b0-pytorch,mobilenet-v2-1.4-224 --precisions FP32
 
 . ./run_tvm_model_converters.sh
 
