@@ -1,0 +1,127 @@
+import pytest
+
+from collections import namedtuple
+from pathlib import Path
+
+from tests.smoke_test.utils import execute_process
+from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
+                                       check_used_mark, download_models, convert_models)
+
+SMOKE_CONFIGS_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'dl_models')
+
+TORCH_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
+                                    'src/model_converters/tvm_converter/pytorch_to_tvm_converter.py')
+MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
+                                    'src/model_converters/tvm_converter/mxnet_to_tvm_converter.py')
+CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
+                                    'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
+
+DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'efficientnet-b0-pytorch', 'googlenet-v1']
+
+
+def pytest_addoption(parser):
+    parser.addoption('--models',
+                     nargs='+',
+                     default=None,
+                     required=False,
+                     help='Space-separated list of models to launch benchmark on them')
+    parser.addoption('--config_dir',
+                     type=Path,
+                     default=None,
+                     required=False,
+                     help='Path to models config dir')
+    parser.addoption('--openvino_cpp_benchmark_dir',
+                     type=Path,
+                     default=None,
+                     required=False,
+                     help='Path to the folder with pre-built OpenVINO C++ Benchmark App')
+    parser.addoption('--cpp_benchmarks_dir',
+                     type=Path,
+                     dest='cpp_benchmarks_dir',
+                     default=None,
+                     required=False,
+                     help='Path to the folder with pre-built C++ Benchmark apps')
+
+
+@pytest.fixture(scope='session')
+def openvino_cpp_benchmark_dir(pytestconfig):
+    """Fixture function for command-line option."""
+    return pytestconfig.getoption('openvino_cpp_benchmark_dir')
+
+
+@pytest.fixture(scope='session')
+def cpp_benchmarks_dir(pytestconfig):
+    """Fixture function for command-line option."""
+    return pytestconfig.getoption('cpp_benchmarks_dir')
+
+
+@pytest.fixture(scope='session')
+def overrided_models(pytestconfig):
+    """Fixture function for command-line option."""
+    return pytestconfig.getoption('models')
+
+
+def download_resnet50(output_dir: Path = OUTPUT_DIR):
+    resnet_dir = Path(output_dir, 'resnet50')
+    resnet_so_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
+                      'models/classification/resnet50-tvm-optimized/resnet50.so')
+    command_line_resnet_download = f'mkdir -p {resnet_dir} && '
+    command_line_resnet_download += f'curl -o {resnet_dir}/resnet50.so {resnet_so_link}'
+    execute_process(command_line=command_line_resnet_download, log=log)
+
+
+def convert_tvm_models(use_caffe: bool = False):
+    pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
+                                f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
+                                '-is 1 3 224 224')
+    mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {MXNET_TVM_CONVERTER} -mn alexnet -is 1 3 224 224')
+    caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {CAFFE_TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
+                              f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
+                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel')
+
+    execute_process(command_line=pytorch_to_tvm_converter, log=log)
+    execute_process(command_line=mxnet_to_tvm_converter, log=log)
+
+    if use_caffe:
+        execute_process(command_line=caffe_to_tvm_converter, log=log)
+
+
+@pytest.fixture(scope='session', autouse=True)
+def prepare_dl_models(request, overrided_models):
+    enabled_models = overrided_models if overrided_models else DL_MODELS
+
+    download_models(models_list=enabled_models)
+    convert_models(models_list=enabled_models)
+
+    if not overrided_models:
+        download_resnet50()
+        convert_tvm_models(use_caffe=check_used_mark(request, 'caffe'))
+
+
+def pytest_generate_tests(metafunc):
+    param_list = []
+    id_list = []
+
+    smoke_test_params = namedtuple('SmokeDLTestParams', 'config_path, config_name, model_name, classification_check')
+
+    overrided_config_dir = metafunc.config.getoption('config_dir')
+    smoke_configs_dir = overrided_config_dir if overrided_config_dir else SMOKE_CONFIGS_DIR_PATH
+
+    for config_file in smoke_configs_dir.iterdir():
+        config_name = config_file.stem
+        config_naming_list = config_name.split('_')
+
+        params = {'config_path': config_file, 'config_name': config_name, 'model_name': config_naming_list[0],
+                  'classification_check': False}
+        if 'classification' in config_naming_list:
+            params.update({'classification_check': True})
+
+        param_list.append(smoke_test_params(**params))
+        id_list.append(config_file.stem)
+
+    # Mark Caffe tests
+    for i, test_param in enumerate(param_list):
+        if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM_TVM']:
+            param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
+
+    metafunc.parametrize('test_configuration', param_list, ids=id_list)

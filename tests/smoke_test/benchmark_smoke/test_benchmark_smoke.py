@@ -1,7 +1,8 @@
 from pathlib import Path
-from conftest import SCRIPT_DIR, RES_DIR, log
 
-from utils import execute_process
+from tests.smoke_test.conftest import SCRIPT_DIR, RES_DIR, log
+
+from tests.smoke_test.utils import execute_process
 
 INFERENCE_BENCHMARK = Path(SCRIPT_DIR, '../../src/benchmark/inference_benchmark.py')
 
@@ -26,10 +27,15 @@ def check_classification(output: list, model_name: str):
                         f'Actual: {classification_top_res[model_name]}')
 
 
-def run_single_dl_model(test_configuration):
+def test_smoke_dl_models(test_configuration, openvino_cpp_benchmark_dir, cpp_benchmarks_dir):
     result_file = Path(RES_DIR, f'{test_configuration.config_name}.csv')
-    command_line = (f'python3 {INFERENCE_BENCHMARK} -r {result_file} --executor_type host_machine '
-                    f'-c {test_configuration.config_path}')
+    command_line = (f'python3 {INFERENCE_BENCHMARK} --result {result_file} --executor_type host_machine '
+                    f'--config {test_configuration.config_path}')
+    if openvino_cpp_benchmark_dir:
+        command_line += f' --openvino_cpp_benchmark_dir {openvino_cpp_benchmark_dir}'
+    if cpp_benchmarks_dir:
+        command_line += f' --cpp_benchmarks_dir {cpp_benchmarks_dir}'
+
     status, output = execute_process(command_line=command_line, log=log)
 
     if test_configuration.classification_check:
@@ -39,7 +45,3 @@ def run_single_dl_model(test_configuration):
         log.info(f'Success inference test on config file : {test_configuration.config_name}')
     else:
         raise Exception(f'Inference test on config file : {test_configuration.config_name} was ended with error')
-
-
-def test_smoke_dl_models(test_configuration):
-    run_single_dl_model(test_configuration)

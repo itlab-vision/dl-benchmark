@@ -6,12 +6,12 @@
             <Name>mobilenet-v1-1.0-224-tf</Name>
             <Precision>default</Precision>
             <SourceFramework>tf</SourceFramework>
-            <ModelPath>./models_dir/public/mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224.tflite</ModelPath>
+            <ModelPath>../models_dir/public/mobilenet-v1-1.0-224-tf/mobilenet_v1_1.0_224.tflite</ModelPath>
             <WeightsPath>None</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>TensorFlowLite</InferenceFramework>

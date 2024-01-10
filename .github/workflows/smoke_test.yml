@@ -34,14 +34,14 @@ jobs:
           cd tests/smoke_test && python -m pytest test_benchmark_smoke.py -m="not caffe"
 
       - name: Run smoke tests for accuracy checker
-        run: cd tests/smoke_test && ./run_ac_smoke_test.sh
+        run: cd tests/smoke_test && && python -m pytest test_ac_smoke.py
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: results
-          path: tests/**/*.csv
+          path: tests/**/res_dir/*.csv
           retention-days: 1
 
   smoke_test_caffe:
@@ -80,5 +80,5 @@ jobs:
         if: always()
         with:
           name: results
-          path: test/**/res_dir/*.csv
+          path: tests/**/res_dir/*.csv
           retention-days: 1

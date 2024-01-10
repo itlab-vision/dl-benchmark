@@ -11,7 +11,7 @@
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>TVM</InferenceFramework>

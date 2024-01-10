@@ -6,12 +6,12 @@
             <Name>efficientnet-b0-pytorch</Name>
             <Precision>default</Precision>
             <SourceFramework>PyTorch</SourceFramework>
-            <ModelPath>./models_dir/public/efficientnet-b0-pytorch/efficientnet-b0.onnx</ModelPath>
+            <ModelPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet-b0.onnx</ModelPath>
             <WeightsPath>None</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>ONNX Runtime Python</InferenceFramework>

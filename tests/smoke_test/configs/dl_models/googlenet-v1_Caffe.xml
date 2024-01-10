@@ -6,12 +6,12 @@
             <Name>googlenet-v1</Name>
             <Precision>FP32</Precision>
             <SourceFramework>Caffe</SourceFramework>
-            <ModelPath>./models_dir/public/googlenet-v1/googlenet-v1.prototxt</ModelPath>
-            <WeightsPath>./models_dir/public/googlenet-v1/googlenet-v1.caffemodel</WeightsPath>
+            <ModelPath>../models_dir/public/googlenet-v1/googlenet-v1.prototxt</ModelPath>
+            <WeightsPath>../models_dir/public/googlenet-v1/googlenet-v1.caffemodel</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>Caffe</InferenceFramework>

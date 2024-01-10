@@ -6,12 +6,12 @@
             <Name>resnet50-tvm-optimized</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>./models_dir/resnet50/resnet50.so</ModelPath>
+            <ModelPath>../models_dir/resnet50/resnet50.so</ModelPath>
             <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>TVM</InferenceFramework>

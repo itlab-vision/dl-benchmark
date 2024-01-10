@@ -11,7 +11,7 @@
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./classification_images/player.jpg</Path>
+            <Path>../test_images/classification_images/player.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>PyTorch</InferenceFramework>

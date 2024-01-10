@@ -108,14 +108,15 @@ venv.bak/
 # smoke test cache
 **/cache_dir
 **/models_dir
-**/datasets_smoke
+tests/smoke_test/ac_smoke/datasets_smoke
 tests/smoke_test/*.pickle
 tests/smoke_test/*.csv
+src/accuracy_checker/*.csv
 **/logs
 **/res_dir
-tests/smoke_test/*.log
-tests/smoke_test/*.xml
-tests/smoke_test/*.html
+tests/smoke_test/**/*.log
+tests/smoke_test/**/*.xml
+tests/smoke_test/**/*.html
 
 # temporary stuff
 logs/

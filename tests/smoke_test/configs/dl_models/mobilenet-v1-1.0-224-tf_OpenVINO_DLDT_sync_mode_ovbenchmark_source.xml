@@ -6,13 +6,13 @@
             <Name>mobilenet-v1-1.0-224-tf</Name>
             <Precision>FP32</Precision>
             <SourceFramework>tf</SourceFramework>
-            <ModelPath>./models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
-            <WeightsPath>./models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
+            <ModelPath>../models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.xml</ModelPath>
+            <WeightsPath>../models_dir/public/mobilenet-v1-1.0-224-tf/FP32/mobilenet-v1-1.0-224-tf.bin
             </WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
-            <Path>./black_square.jpg</Path>
+            <Path>../test_images/black_square.jpg</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>

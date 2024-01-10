@@ -6,12 +6,12 @@
             <Name>Sphereface</Name>
             <Precision>FP32</Precision>
             <SourceFramework>caffe</SourceFramework>
-            <Directory>./working_dir_smoke/public/Sphereface/FP32</Directory>
+            <Directory>./models_dir/public/Sphereface/FP32</Directory>
         </Model>
         <Parameters>
             <Device>CPU</Device>
             <InferenceFramework>OpenVINO DLDT</InferenceFramework>
-            <Config>./smoke_accuracy-check.yml</Config>
+            <Config>./configs/ac_models/models.yml</Config>
         </Parameters>
     </Test>
 </Tests>
