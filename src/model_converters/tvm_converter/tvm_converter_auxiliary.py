@@ -88,8 +88,8 @@ class Converter(metaclass=abc.ABCMeta):
         return self.graph
 
     def get_lib(self):
-        target, dev = self._get_target_device()
-        model = self._convert_model_from_framework(target, dev)
+        target, _ = self._get_target_device()
+        model = self._convert_model_from_framework()
 
         log.info('Model compilation')
         with self.tvm.transform.PassContext(opt_level=self.args['opt_level']):
@@ -99,7 +99,7 @@ class Converter(metaclass=abc.ABCMeta):
     def get_graph_module(self):
         target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
-        model = self._convert_model_from_framework(target, dev)
+        model = self._convert_model_from_framework()
 
         log.info(f'Creating graph module from {self.framework} model')
         if len(model) == 2:
