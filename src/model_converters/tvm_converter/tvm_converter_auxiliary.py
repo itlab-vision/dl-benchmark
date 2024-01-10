@@ -27,7 +27,7 @@ class Converter(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def _convert_model_from_framework(self):
         pass
-    
+
     @staticmethod
     def get_converter(args):
         framework = args['framework'].lower()
@@ -59,7 +59,6 @@ class Converter(metaclass=abc.ABCMeta):
         return target, dev
 
     def get_tvm_model(self):
-        #target, dev = self._get_target_device()
         log.info(f'Get TVM model from {self.framework} model')
         self.mod, self.params = self._convert_model_from_framework()
         return self.mod, self.params
