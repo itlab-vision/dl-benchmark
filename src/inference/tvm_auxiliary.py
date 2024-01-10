@@ -128,7 +128,6 @@ class OutputPreparer:
             tmp[:, :, :, 6] /= input_shape[3]
             return {output_names[0]: tmp}
         elif params['model_name'] == 'maskrcnn_resnet50_fpn':
-            print('here')
             bboxes, box_ids, scores, _ = result
             box_ids = np.expand_dims((box_ids.asnumpy()), axis=1)
             scores = np.expand_dims(scores.asnumpy(), axis=1)
@@ -146,6 +145,8 @@ class OutputPreparer:
             tmp[:, :, :, 6] /= input_shape[3]
 
             return {output_names[0]: tmp}
+        else:
+            raise ValueError('Output processing is not supported for this model')
 
 
 def create_dict_for_converter_mxnet(args):

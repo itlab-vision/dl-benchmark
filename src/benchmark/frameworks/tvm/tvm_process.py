@@ -214,7 +214,7 @@ class TVMProcessTVMFormat(TVMProcess):
 
         if model_type == 'json' and params_type == 'params':
             common_params = (f'-m {model_json} -w {model_params} ')
-        elif model_type == 'so' and params_type is None:
+        elif (model_type == 'so' or model_type == 'tar') and params_type is None:
             common_params = (f'-m {model_json} ')
         elif model_type == 'so' and params_type == 'ro':
             common_params = (f'-m {model_json} -w {model_params} ')
