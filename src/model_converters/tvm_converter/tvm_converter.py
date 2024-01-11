@@ -313,7 +313,7 @@ class TensorFlowLiteToTVMConverter(Converter):
         model_tf = self._get_tf_model(model_path)
         shape_dict = {self.args['input_name']: self.args['input_shape']}
         dtype = {self.args['input_name']: 'float32'}
-        log.info('Creating graph module from TensorFlow model')
+        log.info('Creating graph module from TensorFlow Lite model')
         model, params = self.tvm.relay.frontend.from_tflite(model_tf,
                                                             shape_dict=shape_dict,
                                                             dtype_dict=dtype)
