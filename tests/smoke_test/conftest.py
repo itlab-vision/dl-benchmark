@@ -30,6 +30,11 @@ def convert_models(models_list: list, output_dir: Path = OUTPUT_DIR, precisions:
         execute_process(command_line=command_line, log=log)
 
 
+def download_file(link, out_dir, filename):
+    cmd = f'mkdir -p {out_dir} && curl -o {out_dir}/{filename} {link}'
+    execute_process(command_line=cmd, log=log)
+
+
 def check_used_mark(request, mark_name: str):
     used_marks = []
     used_marks.extend([instance.own_markers[0] for instance in request.node.items if instance.own_markers])

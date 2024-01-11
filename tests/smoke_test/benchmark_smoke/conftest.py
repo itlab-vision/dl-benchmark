@@ -5,7 +5,7 @@ from pathlib import Path
 
 from tests.smoke_test.utils import execute_process
 from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
-                                       check_used_mark, download_models, convert_models)
+                                       check_used_mark, download_models, download_file, convert_models)
 
 SMOKE_CONFIGS_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'dl_models')
 
@@ -16,7 +16,8 @@ MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
 CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
 
-DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'efficientnet-b0-pytorch', 'googlenet-v1']
+DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'efficientnet-b0-pytorch', 'googlenet-v1',
+             'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
 
 
 def pytest_addoption(parser):
@@ -65,9 +66,18 @@ def download_resnet50(output_dir: Path = OUTPUT_DIR):
     resnet_dir = Path(output_dir, 'resnet50')
     resnet_so_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
                       'models/classification/resnet50-tvm-optimized/resnet50.so')
-    command_line_resnet_download = f'mkdir -p {resnet_dir} && '
-    command_line_resnet_download += f'curl -o {resnet_dir}/resnet50.so {resnet_so_link}'
-    execute_process(command_line=command_line_resnet_download, log=log)
+    download_file(resnet_so_link, resnet_dir, 'resnet50.so')
+
+
+def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
+    instance_seg_dir = Path(output_dir, 'instance-segmentation-security-0083')
+    instance_seg_link = ('https://storage.openvinotoolkit.org/repositories/open_model_zoo/2021.2/'
+                         'models_bin/2/instance-segmentation-security-0083/FP32/')
+    model_link = instance_seg_link + 'instance-segmentation-security-0083.xml'
+    weights_link = instance_seg_link + 'instance-segmentation-security-0083.bin'
+
+    download_file(model_link, instance_seg_dir, 'instance-segmentation-security-0083.xml')
+    download_file(weights_link, instance_seg_dir, 'instance-segmentation-security-0083.bin')
 
 
 def convert_tvm_models(use_caffe: bool = False):
@@ -93,9 +103,11 @@ def prepare_dl_models(request, overrided_models):
     download_models(models_list=enabled_models)
     convert_models(models_list=enabled_models)
 
-    if not overrided_models:
+    if overrided_models is None or 'resnet50-tvm' in overrided_models:
         download_resnet50()
         convert_tvm_models(use_caffe=check_used_mark(request, 'caffe'))
+    if overrided_models is None or 'instance-segmentation-security-0083' in overrided_models:
+        download_old_instance_segmentation()
 
 
 def pytest_generate_tests(metafunc):
@@ -105,16 +117,21 @@ def pytest_generate_tests(metafunc):
     smoke_test_params = namedtuple('SmokeDLTestParams', 'config_path, config_name, model_name, classification_check')
 
     overrided_config_dir = metafunc.config.getoption('config_dir')
+    overrided_models = metafunc.config.getoption('models')
     smoke_configs_dir = overrided_config_dir if overrided_config_dir else SMOKE_CONFIGS_DIR_PATH
 
     for config_file in smoke_configs_dir.iterdir():
         config_name = config_file.stem
         config_naming_list = config_name.split('_')
+        model_name = config_naming_list[0]
 
-        params = {'config_path': config_file, 'config_name': config_name, 'model_name': config_naming_list[0],
+        params = {'config_path': config_file, 'config_name': config_name, 'model_name': model_name,
                   'classification_check': False}
         if 'classification' in config_naming_list:
             params.update({'classification_check': True})
+
+        if overrided_models and model_name not in overrided_models:
+            continue
 
         param_list.append(smoke_test_params(**params))
         id_list.append(config_file.stem)

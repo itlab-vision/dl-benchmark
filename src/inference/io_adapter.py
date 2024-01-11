@@ -248,11 +248,11 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'face-detection':
             return FaceDetectionIO(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return SegmenatationIO(args, io_model_wrapper, transformer)
+            return SegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
-            return AdasSegmenatationIO(args, io_model_wrapper, transformer)
+            return AdasSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'road-segmentation':
-            return RoadSegmenatationIO(args, io_model_wrapper, transformer)
+            return RoadSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
             return RecognitionFaceIO(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
@@ -268,7 +268,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'license-plate':
             return LicensePlateIO(args, io_model_wrapper, transformer)
         elif task == 'instance-segmentation':
-            return InstanceSegmenatationIO(args, io_model_wrapper, transformer)
+            return InstanceSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
             return SingleImageSuperResolutionIO(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
@@ -514,7 +514,7 @@ class FaceDetectionIO(IOAdapter):
         log.info('Result image was saved to {0}'.format(out_img))
 
 
-class SegmenatationIO(IOAdapter):
+class SegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -529,12 +529,12 @@ class SegmenatationIO(IOAdapter):
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[1:]
+        h, w = result.shape[2:]
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
-                    pixel_class = int(data[i, j])
+                    pixel_class = int(data[:, i, j])
                     classes_map[i, j, :] = self._classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
@@ -543,7 +543,7 @@ class SegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class AdasSegmenatationIO(IOAdapter):
+class AdasSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -574,7 +574,7 @@ class AdasSegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class RoadSegmenatationIO(IOAdapter):
+class RoadSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -590,11 +590,12 @@ class RoadSegmenatationIO(IOAdapter):
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[2:]
+
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
-                    pixel_class = np.argmax(data[i][j])
+                    pixel_class = np.argmax(data[:, i, j])
                     classes_map[i, j, :] = self._classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
@@ -905,7 +906,7 @@ class LicensePlateIO(IOAdapter):
             log.info(f'Plate: {s}')
 
 
-class InstanceSegmenatationIO(IOAdapter):
+class InstanceSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
