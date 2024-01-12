@@ -1,6 +1,10 @@
 openvino-dev[caffe,mxnet,tensorflow2,pytorch,onnx]==2023.2.0
 gluoncv
+
+# gluoncv require torch>=1.4.0,<2.0.0
+torch==1.13.1+cu117
 torchvision
+
 onnxruntime
 apache-tvm==0.14.dev170
 tflite
