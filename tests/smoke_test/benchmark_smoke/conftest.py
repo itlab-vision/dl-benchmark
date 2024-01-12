@@ -16,8 +16,8 @@ MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
 CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
 
-DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'efficientnet-b0-pytorch', 'googlenet-v1',
-             'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
+             'googlenet-v1', 'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
 
 
 def pytest_addoption(parser):
@@ -83,11 +83,12 @@ def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
 def convert_tvm_models(use_caffe: bool = False):
     pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
-                                '-is 1 3 224 224')
+                                f'-is 1 3 224 224 -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
     mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {MXNET_TVM_CONVERTER} -mn alexnet -is 1 3 224 224')
     caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {CAFFE_TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
-                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel')
+                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel'
+                              f'-op {OUTPUT_DIR}/public/googlenet-v1/')
 
     execute_process(command_line=pytorch_to_tvm_converter, log=log)
     execute_process(command_line=mxnet_to_tvm_converter, log=log)

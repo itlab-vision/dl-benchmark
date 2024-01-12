@@ -115,7 +115,7 @@ src/accuracy_checker/*.csv
 **/logs
 **/res_dir
 tests/smoke_test/**/*.log
-tests/smoke_test/**/*.xml
+tests/smoke_test/**/junit.xml
 tests/smoke_test/**/*.html
 
 # temporary stuff
