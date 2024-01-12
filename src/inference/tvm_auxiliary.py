@@ -48,6 +48,7 @@ class OutputPreparer:
             tmp[:, :, :, 4] /= input_shape[3]
             tmp[:, :, :, 5] /= input_shape[2]
             tmp[:, :, :, 6] /= input_shape[3]
+
             return {output_names[0]: tmp}
 
 
@@ -172,6 +173,7 @@ def infer_slice(input_name, module, slice_input):
     module.set_input(input_name, slice_input[input_name])
     module.run()
     res = [module.get_output(i) for i in range(num_of_outputs)]
+
     return res
 
 
