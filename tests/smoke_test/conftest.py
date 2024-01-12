@@ -17,9 +17,11 @@ RES_DIR = Path(SCRIPT_DIR, 'res_dir')
 log.basicConfig(level='INFO', format=' %(levelname)-8s - %(message)s')
 
 
-def download_models(models_list: list, output_dir: Path = OUTPUT_DIR, cache_dir: Path = CACHE_DIR):
+def download_models(models_list: list, output_dir: Path = OUTPUT_DIR, cache_dir: Path = CACHE_DIR,
+                    precisions: str = 'FP32'):
     for model_name in models_list:
-        command_line = f'omz_downloader --output_dir {output_dir} --cache_dir {cache_dir} --name={model_name}'
+        command_line = (f'omz_downloader --output_dir {output_dir} --cache_dir {cache_dir} '
+                        f'--name={model_name} --precisions {precisions}')
         execute_process(command_line=command_line, log=log)
 
 

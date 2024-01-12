@@ -6,8 +6,8 @@
             <Name>instance-segmentation-security-0083</Name>
             <Precision>FP32</Precision>
             <SourceFramework>openvino</SourceFramework>
-            <ModelPath>../models_dir/intel/instance-segmentation-security-0083/instance-segmentation-security-0083.xml</ModelPath>
-            <WeightsPath>../models_dir/intel/instance-segmentation-security-0083/instance-segmentation-security-0083.bin</WeightsPath>
+            <ModelPath>../models_dir/instance-segmentation-security-0083/instance-segmentation-security-0083.xml</ModelPath>
+            <WeightsPath>../models_dir/instance-segmentation-security-0083/instance-segmentation-security-0083.bin</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
