@@ -88,7 +88,7 @@ def convert_models_to_tvm(use_caffe: bool = False):
     mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {MXNET_TVM_CONVERTER} -mn alexnet -is 1 3 224 224')
     caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {CAFFE_TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
-                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel'
+                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
                               f'-op {OUTPUT_DIR}/public/googlenet-v1/')
 
     if use_caffe:
@@ -106,9 +106,9 @@ def prepare_dl_models(request, overrided_models):
     enabled_models = overrided_models if overrided_models else models_per_mark
 
     download_models(models_list=enabled_models)
-    convert_models(models_list=enabled_models)
 
     if not use_caffe:
+        convert_models(models_list=enabled_models)
         download_resnet50()
 
     convert_models_to_tvm(use_caffe)
