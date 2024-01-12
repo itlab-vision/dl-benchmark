@@ -110,8 +110,11 @@ def prepare_dl_models(request, overrided_models):
     if not use_caffe:
         convert_models(models_list=enabled_models)
 
-        download_resnet50()
-        download_old_instance_segmentation()
+        if 'resnet50-tvm' in enabled_models:
+            download_resnet50()
+
+        if 'instance-segmentation-security-0083' in enabled_models:
+            download_old_instance_segmentation()
 
     convert_models_to_tvm(use_caffe)
 
