@@ -6,8 +6,8 @@
             <Name>googlenet-v1</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>../models_dir/googlenet-v1/googlenet-v1.json</ModelPath>
-            <WeightsPath>../models_dir/googlenet-v1/googlenet-v1.params</WeightsPath>
+            <ModelPath>../models_dir/public/googlenet-v1/googlenet-v1.json</ModelPath>
+            <WeightsPath>../models_dir/public/googlenet-v1/googlenet-v1.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>

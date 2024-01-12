@@ -6,8 +6,8 @@
             <Name>efficientnet_b0</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>../models_dir/efficientnet_b0/efficientnet_b0.json</ModelPath>
-            <WeightsPath>../models_dir/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+            <ModelPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
+            <WeightsPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
