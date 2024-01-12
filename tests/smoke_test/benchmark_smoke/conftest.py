@@ -17,7 +17,8 @@ CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
-             'googlenet-v1', 'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+             'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+DL_CAFFE_MODELS = ['googlenet-v1']
 
 
 def pytest_addoption(parser):
@@ -80,7 +81,7 @@ def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
     download_file(weights_link, instance_seg_dir, 'instance-segmentation-security-0083.bin')
 
 
-def convert_tvm_models(use_caffe: bool = False):
+def convert_models_to_tvm(use_caffe: bool = False):
     pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
                                 f'-is 1 3 224 224 -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
@@ -90,24 +91,29 @@ def convert_tvm_models(use_caffe: bool = False):
                               f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel'
                               f'-op {OUTPUT_DIR}/public/googlenet-v1/')
 
-    execute_process(command_line=pytorch_to_tvm_converter, log=log)
-    execute_process(command_line=mxnet_to_tvm_converter, log=log)
-
     if use_caffe:
         execute_process(command_line=caffe_to_tvm_converter, log=log)
+    else:
+        execute_process(command_line=pytorch_to_tvm_converter, log=log)
+        execute_process(command_line=mxnet_to_tvm_converter, log=log)
 
 
 @pytest.fixture(scope='session', autouse=True)
 def prepare_dl_models(request, overrided_models):
-    enabled_models = overrided_models if overrided_models else DL_MODELS
+    use_caffe = check_used_mark(request, 'caffe')
+
+    models_per_mark = DL_CAFFE_MODELS if use_caffe else DL_MODELS
+    enabled_models = overrided_models if overrided_models else models_per_mark
 
     download_models(models_list=enabled_models)
     convert_models(models_list=enabled_models)
 
-    if overrided_models is None or 'resnet50-tvm' in overrided_models:
+    if not use_caffe:
         download_resnet50()
-        convert_tvm_models(use_caffe=check_used_mark(request, 'caffe'))
-    if overrided_models is None or 'instance-segmentation-security-0083' in overrided_models:
+
+    convert_models_to_tvm(use_caffe)
+
+    if 'instance-segmentation-security-0083' in enabled_models:
         download_old_instance_segmentation()
 
 

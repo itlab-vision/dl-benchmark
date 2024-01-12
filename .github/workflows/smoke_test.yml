@@ -41,7 +41,7 @@ jobs:
           retention-days: 1
 
       - name: Run smoke tests for accuracy checker
-        run: cd tests/smoke_test/ac_smoke && && python -m pytest test_ac_smoke.py
+        run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
 
       - name: Upload accuracy artifacts
         uses: actions/upload-artifact@v3
