@@ -1,6 +1,9 @@
 # RKNN Benchmark
 
-The tool allows to measure deep learning models inference performance on Rockchip NPU with [RKNN API][RKNN]. For measurements you'll need a Rockchip device with NPU on board. RKNPU2 supports next platforms:
+The tool allows to measure deep learning models inference performance
+on Rockchip NPU with [RKNN API][RKNN].
+For measurements you'll need a Rockchip device with NPU on board.
+RKNPU2 supports next platforms:
 * RK3566/RK3568
 * RK3588/RK3588S
 * RV1103/RV1106
@@ -46,8 +49,8 @@ git checkout v1.4.0
 
 ## Build RKNN Benchmark
 
-Set `OpenCV_DIR` environment variable pointing to OpenCV folder with `OpenCVConfig.cmake`
-so that cmake can find it during configuration step:
+Set `OpenCV_DIR` environment variable pointing to OpenCV folder with
+`OpenCVConfig.cmake` so that cmake can find it during configuration step:
 
 1. Clone repository and update submodules:
 
@@ -68,7 +71,10 @@ so that cmake can find it during configuration step:
     - For aarch64 Linux:
 
         ```bash
-        cmake -DCMAKE_TOOLCHAIN_FILE=<dl-benchmark>/src/cpp_dl_benchmark/cmake/aarch64_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_RKNN_LAUNCHER=ON -DRKNN_DIR=<rknpu2_dir> <dl-benchmark>/src/cpp_dl_benchmark
+        cmake -DCMAKE_TOOLCHAIN_FILE=
+        <dl-benchmark>/src/cpp_dl_benchmark/cmake/aarch64_toolchain.cmake \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_RKNN_LAUNCHER=ON \
+        -DRKNN_DIR=<rknpu2_dir> <dl-benchmark>/src/cpp_dl_benchmark
         ```
 
     - For aarch64 Android:
@@ -79,7 +85,8 @@ so that cmake can find it during configuration step:
         -DCMAKE_SYSTEM_VERSION=31 \
         -DANDROID_ABI=arm64-v8a \
         -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
-        -DCMAKE_TOOLCHAIN_FILE=<android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake \
+        -DCMAKE_TOOLCHAIN_FILE=
+        <android-ndk-path>/<ndk-version>/build/cmake/android.toolchain.cmake \
         -DCMAKE_BUILD_TYPE=Release -DBUILD_RKNN_LAUNCHER=ON \
         -DRKNN_DIR=<rknpu2_dir> \
         -Dnlohmann_json_DIR=<nlohmann_json_build> \
@@ -92,14 +99,19 @@ so that cmake can find it during configuration step:
     cmake --build . -- -j$(nproc --all)
     ```
 
-Application binaries will be placed into `<path_to_build_directory>/<BUILD_TYPE>/bin` directory, where `BUILD_TYPE`
+Application binaries will be placed into
+`<path_to_build_directory>/<BUILD_TYPE>/bin` directory, where `BUILD_TYPE`
 whether `Debug` or `Release`.
 
 ## Usage
 
-Bring the benchmark application and it's dependencies to an Android device with Rockchip NPU on board. The device must be rooted, i.e. either `adb root` or `su` command in the `adb shell` must work. To achieve this follow next steps:
+Bring the benchmark application and it's dependencies to an Android
+device with Rockchip NPU on board. The device must be rooted,
+i.e. either `adb root` or `su` command in the `adb shell` must work.
+To achieve this follow next steps:
 
-1. Push application binaries, models and test data into the `/data` folder on the device
+1. Push application binaries, models and test data into the
+   `/data` folder on the device
 
     ```
     adb push <app data> /data
@@ -111,7 +123,8 @@ Bring the benchmark application and it's dependencies to an Android device with 
     export LD_LIBRARY_PATH=<path to folder with required .so files>
     ```
 
-    In case of RKNN benchmark, it is necessary to set the `LD_LIBRARY_PATH` to the location with `librknnrt.so` library.
+    In case of RKNN benchmark, it is necessary to set the
+    `LD_LIBRARY_PATH` to the location with `librknnrt.so` library.
 
 1. Grant execution permission to the application:
 
@@ -123,11 +136,17 @@ Bring the benchmark application and it's dependencies to an Android device with 
 
 1. Run benchmark application.
 
-    RKNN launcher supports models in `rknn` formats. To obtain models in this format [RKNN Toolkit 2] must be used. It supports conversions from various frameworks (e.g. ONNX, TensorFlow Lite, PyTorch). Due to benchmark and `RKNN API` specifics, input data type should be provided explicitly from command line.
+    RKNN launcher supports models in `rknn` formats.
+    To obtain models in this format [RKNN Toolkit 2] must be used.
+    It supports conversions from various frameworks
+    (e.g. ONNX, TensorFlow Lite, PyTorch).
+    Due to benchmark and `RKNN API` specifics,
+    input data type should be provided explicitly from command line.
     For example, for images, it should be `U8``:
 
     ```
-    ./rknn_benchmark -i img.jpg -m model.rknn --dtype [U8] --channel_swap --dump_output -niter 1
+    ./rknn_benchmark -i img.jpg -m model.rknn --dtype [U8] \
+    --channel_swap --dump_output -niter 1
     ```
 
 <!-- LINKS -->

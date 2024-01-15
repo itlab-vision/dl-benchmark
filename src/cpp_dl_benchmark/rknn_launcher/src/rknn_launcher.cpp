@@ -122,10 +122,6 @@ void RKNNLauncher::read(const std::string& model_file, const std::string& weight
     std::ifstream f(model_file, std::ios::binary | std::ios::ate);
     if (!f.is_open()) {
         std::string err_msg = "Can't open " + model_file;
-        // We need to log errors for Android, because uncaught exceptions cause segfault there.
-        // I don't find a way to turn on exceptions catch feature properly on Android, though
-        // documentation states it's possible.
-        // TODO: @i.vikhrev try with newer ndk.
         logger::err << err_msg << logger::endl;
         throw std::runtime_error(err_msg);
     }
@@ -159,11 +155,6 @@ void RKNNLauncher::read(const std::string& model_file, const std::string& weight
     auto core_mask = ncores_to_rknn_core_mask_map.at(nthreads);
     ret_code = rknn_set_core_mask(rknnContext, core_mask);
     check_throw_error(ret_code, "rknn_set_core_mask failed");
-
-    // rknn allows to set number of cores for batch execution
-    // TODO: enable if we would measure models with batch
-    // ret_code = rknn_set_batch_core_num(rknnContext, nthreads);
-    // check_throw_error(ret_code, "rknn_set_batch_core_num failed");
 }
 
 void RKNNLauncher::fill_inputs_outputs_info() {
