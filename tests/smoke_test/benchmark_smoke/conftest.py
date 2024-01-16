@@ -17,7 +17,7 @@ CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
-             'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
 DL_CAFFE_MODELS = ['googlenet-v1']
 
 
