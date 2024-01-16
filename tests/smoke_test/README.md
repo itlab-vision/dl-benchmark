@@ -5,7 +5,7 @@
 
 1. Run benchmark smoke tests using the following command:
 
-   ```
+   ```bash
    cd test/smoke_test/benchmark_smoke
    python -m pytest -k=test_benchmark_smoke
    ```
@@ -19,7 +19,7 @@
 
 1. Run accuracy tests using the following command:
 
-   ```
+   ```bash
    cd test/smoke_test/ac_smoke
    python -m pytest -k=test_ac_smoke
    ```

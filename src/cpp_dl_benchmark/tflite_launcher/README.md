@@ -229,6 +229,7 @@ with `OpenCVConfig.cmake` so that cmake can find it during configuration step:
     `-D-DBUILD_TFLITE_GPU_LAUNCHER=ON`
 
     - Configuration with TF Lite bazel build:
+
         ```bash
         cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TFLITE_XNNPACK_LAUNCHER=ON \
         -DTENSORFLOW_SRC_DIR=<tensorflow-src-dir> \
@@ -251,6 +252,7 @@ with `OpenCVConfig.cmake` so that cmake can find it during configuration step:
         ```
 
     - aarch64 Android:
+
         ```bash
         cmake -DDCMAKE_SYSTEM_PROCESSOR=aarch64 \
         -DANDROID_PLATFORM=31 \ # for Android 12
@@ -287,8 +289,6 @@ Some models that require flex delegate may not work on gpu delegate.
 
 <!-- LINKS -->
 [tflite]: https://www.tensorflow.org/lite
-
 [gpu-drivers]: 
 https://dgpu-docs.intel.com/installation-guides/ubuntu/ubuntu-focal.html
-
 [nlohman-json-build]: ../rknn_launcher/README.md
