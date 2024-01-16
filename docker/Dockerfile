@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 USER root
 WORKDIR /
 
@@ -15,18 +15,9 @@ ARG DEPENDENCIES="apt-utils \
                   autoconf \
                   ca-certificates \
                   sudo \
-                  vim \
-                  automake \
                   build-essential \
-                  cpio \
                   curl \
-                  dialog \
-                  gnupg2 \
-                  libdrm2 \
-                  libglib2.0-0 \
                   lsb-release \
-                  libgtk-3-0 \
-                  libtool \
                   libprotobuf-dev \
                   libgl1-mesa-glx \
                   nlohmann-json3-dev \
@@ -34,23 +25,16 @@ ARG DEPENDENCIES="apt-utils \
                   python3-setuptools \
                   python3-dev \
                   python3-venv \
-                  pciutils \
-                  libpython3.8 \
-                  udev \
-                  unzip \
+                  libpython3.10 \
                   wget \
-                  git \
-                  ninja-build \
-                  ffmpeg \
-                  libsm6 \
-                  libxext6"
+                  git"
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 # Install openvino
 RUN pip3 install --upgrade pip
-ARG OV_SHORT_VERSION=2022.3.1
+ARG OV_SHORT_VERSION=2023.0.2
 RUN pip3 install openvino==${OV_SHORT_VERSION}
 
 # Install openvino-dev
