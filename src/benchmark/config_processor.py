@@ -103,10 +103,16 @@ class TestConfigParser:
         if links_tag and links_tag[0].firstChild:
             custom_models_links = links_tag[0].firstChild.data.strip()
 
+        num_devices_element = indep_parameters_tag.getElementsByTagName('DevicesNumber')
+        num_devices = 1
+        if num_devices_element:
+            num_devices = int(num_devices_element[0].firstChild.data.strip())
+
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'
                        f'Batch size - {batch_size}\n\t'
                        f'Device - {device}\n\t'
+                       f'Devices number - {num_devices}\n\t'
                        f'Number of iterations - {iteration_count}\n\t'
                        f'Time limit of test execution - {test_time_limit}\n\t'
                        f'Timeout overhead - {timeout_overhead}\n\t'
@@ -117,6 +123,7 @@ class TestConfigParser:
             inference_framework=inference_framework,
             batch_size=batch_size,
             device=device,
+            num_devices=num_devices,
             iterarion_count=iteration_count,
             test_time_limit=test_time_limit,
             timeout_overhead=timeout_overhead,
