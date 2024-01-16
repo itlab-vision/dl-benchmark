@@ -664,6 +664,46 @@
 </Tests>
 ```
 
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Apache TVM Python API
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Test>
+    <Model>
+        <Task>classification</Task>
+        <Name>efficientnet_b0</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>TVM</SourceFramework>
+        <ModelPath>./working_dir/efficientnet_b0/efficientnet_b0.json</ModelPath>
+        <WeightsPath>./working_dir/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+    </Model>
+    <Dataset>
+        <Name>Data</Name>
+        <Path>./black_square.jpg</Path>
+    </Dataset>
+    <FrameworkIndependent>
+        <InferenceFramework>TVM</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+        <InputName>data</InputName>
+        <Framework>TVM</Framework>
+        <InputShape>1 3 224 224</InputShape>
+        <Normalize>True</Normalize>
+        <Mean>0.485 0.456 0.406</Mean>
+        <Std>0.229 0.224 0.225</Std>
+        <ChannelSwap></ChannelSwap>
+        <Layout>NCHW</Layout>
+        <Target>llvm</Target>
+        <VirtualMachine>True</VirtualMachine>
+        <OptimizationLevel>3</OptimizationLevel>
+    </FrameworkDependent>
+</Test>
+```
+
 ## Заполнение файла конфигурации для скрипта оценки точности
 
 ### Правила заполнения

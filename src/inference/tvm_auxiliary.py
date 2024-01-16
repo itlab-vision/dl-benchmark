@@ -116,35 +116,35 @@ class OutputPreparer:
                 box_ids = np.expand_dims(box_ids, axis=1)
                 scores = np.expand_dims(scores, axis=1)
 
-            tmp = np.concatenate([box_ids, scores, bboxes], axis=1)
-            num_of_images = np.zeros((tmp.shape[0], 1))
-            tmp = np.concatenate([num_of_images, tmp], axis=1)
-            tmp = np.expand_dims(tmp, axis=0)
-            tmp = np.expand_dims(tmp, axis=0)
+            detection_res = np.concatenate([box_ids, scores, bboxes], axis=1)
+            num_of_images = np.zeros((detection_res.shape[0], 1))
+            detection_res = np.concatenate([num_of_images, detection_res], axis=1)
+            detection_res = np.expand_dims(detection_res, axis=0)
+            detection_res = np.expand_dims(detection_res, axis=0)
             input_shape = params['input_shape']
-            tmp[:, :, :, 3] /= input_shape[2]
-            tmp[:, :, :, 4] /= input_shape[3]
-            tmp[:, :, :, 5] /= input_shape[2]
-            tmp[:, :, :, 6] /= input_shape[3]
-            return {output_names[0]: tmp}
+            detection_res[:, :, :, 3] /= input_shape[2]
+            detection_res[:, :, :, 4] /= input_shape[3]
+            detection_res[:, :, :, 5] /= input_shape[2]
+            detection_res[:, :, :, 6] /= input_shape[3]
+            return {output_names[0]: detection_res}
         elif params['model_name'] == 'maskrcnn_resnet50_fpn':
             bboxes, box_ids, scores, _ = result
             box_ids = np.expand_dims((box_ids.asnumpy()), axis=1)
             scores = np.expand_dims(scores.asnumpy(), axis=1)
             bboxes = (bboxes.asnumpy())
 
-            tmp = np.concatenate([scores, box_ids, bboxes], axis=1)
-            num_of_images = np.zeros((tmp.shape[0], 1))
-            tmp = np.concatenate([num_of_images, tmp], axis=1)
-            tmp = np.expand_dims(tmp, axis=0)
-            tmp = np.expand_dims(tmp, axis=0)
+            detection_res = np.concatenate([scores, box_ids, bboxes], axis=1)
+            num_of_images = np.zeros((detection_res.shape[0], 1))
+            detection_res = np.concatenate([num_of_images, detection_res], axis=1)
+            detection_res = np.expand_dims(detection_res, axis=0)
+            detection_res = np.expand_dims(detection_res, axis=0)
             input_shape = params['input_shape']
-            tmp[:, :, :, 3] /= input_shape[2]
-            tmp[:, :, :, 4] /= input_shape[3]
-            tmp[:, :, :, 5] /= input_shape[2]
-            tmp[:, :, :, 6] /= input_shape[3]
+            detection_res[:, :, :, 3] /= input_shape[2]
+            detection_res[:, :, :, 4] /= input_shape[3]
+            detection_res[:, :, :, 5] /= input_shape[2]
+            detection_res[:, :, :, 6] /= input_shape[3]
 
-            return {output_names[0]: tmp}
+            return {output_names[0]: detection_res}
         else:
             raise ValueError('Output processing is not supported for this model')
 
