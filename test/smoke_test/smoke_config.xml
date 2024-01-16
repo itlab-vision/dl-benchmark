@@ -436,6 +436,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
+            <VirtualMachine>False</VirtualMachine>
             <Target>llvm</Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
@@ -470,6 +471,7 @@
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <OptimizationLevel>2</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -503,6 +505,7 @@
             <Layout>NCHW</Layout>
             <ChannelSwap></ChannelSwap>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -535,6 +538,7 @@
             <Std>127.5 127.5 127.5</Std>
             <Layout>NHWC</Layout>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
@@ -569,6 +573,41 @@
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
+            <OptimizationLevel>3</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>efficientnet_b0_vm</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
+            <WeightsPath>./working_dir_smoke/public/efficientnet-b0-pytorch/efficientnet_b0.params</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>./black_square.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>TVM</Framework>
+            <InputShape>1 3 224 224</InputShape>
+            <Normalize>True</Normalize>
+            <Mean>0.485 0.456 0.406</Mean>
+            <Std>0.229 0.224 0.225</Std>
+            <ChannelSwap></ChannelSwap>
+            <Layout>NCHW</Layout>
+            <Target>llvm</Target>
+            <VirtualMachine>True</VirtualMachine>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
@@ -602,7 +641,42 @@
         <ChannelSwap></ChannelSwap>
         <Layout>NCHW</Layout>
         <Target>llvm</Target>
+        <VirtualMachine>False</VirtualMachine>
         <OptimizationLevel>0</OptimizationLevel>
+    </FrameworkDependent>
+    </Test>
+    <Test>
+    <Model>
+        <Task>classification</Task>
+        <Name>alexnet_vm</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>TVM</SourceFramework>
+        <ModelPath>./working_dir_smoke/alexnet_vm.so</ModelPath>
+        <WeightsPath>./working_dir_smoke/alexnet_vm.ro</WeightsPath>
+    </Model>
+    <Dataset>
+        <Name>Data</Name>
+        <Path>./black_square.jpg</Path>
+    </Dataset>
+    <FrameworkIndependent>
+        <InferenceFramework>TVM</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+        <InputName>data</InputName>
+        <Framework>TVM</Framework>
+        <InputShape>1 3 224 224</InputShape>
+        <Normalize>False</Normalize>
+        <Mean>0.485 0.456 0.406</Mean>
+        <Std>0.229 0.224 0.225</Std>
+        <ChannelSwap></ChannelSwap>
+        <Layout>NCHW</Layout>
+        <Target>llvm</Target>
+        <VirtualMachine>True</VirtualMachine>
+        <OptimizationLevel>2</OptimizationLevel>
     </FrameworkDependent>
     </Test>
     <Test>

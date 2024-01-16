@@ -9,4 +9,5 @@ python3 ../../../src/model_converters/tvm_converter/pytorch_to_tvm_converter.py 
                                                                             -is 1 3 224 224 \
                                                                             -op public/efficientnet-b0-pytorch/
 python3 ../../../src/model_converters/tvm_converter/mxnet_to_tvm_converter.py -mn alexnet -is 1 3 224 224
+python3 ../../../src/model_converters/tvm_converter/tvm_compiler.py -m alexnet.json -p alexnet.params -t llvm --lib_name alexnet_vm -vm
 cd ../
