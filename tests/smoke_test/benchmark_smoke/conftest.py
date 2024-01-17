@@ -15,6 +15,7 @@ MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/mxnet_to_tvm_converter.py')
 CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
+TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
              'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
@@ -90,12 +91,15 @@ def convert_models_to_tvm(use_caffe: bool = False):
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
                               f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
                               f'-op {OUTPUT_DIR}/public/googlenet-v1/')
+    tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
+                    '-p alexnet.params -t llvm --lib_name alexnet_vm -vm')
 
     if use_caffe:
         execute_process(command_line=caffe_to_tvm_converter, log=log)
     else:
         execute_process(command_line=pytorch_to_tvm_converter, log=log)
         execute_process(command_line=mxnet_to_tvm_converter, log=log)
+        execute_process(command_line=tvm_compiler, log=log)
 
 
 @pytest.fixture(scope='session', autouse=True)

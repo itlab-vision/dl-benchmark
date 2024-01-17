@@ -29,6 +29,7 @@
             <Std>0.229 0.224 0.225</Std>
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>

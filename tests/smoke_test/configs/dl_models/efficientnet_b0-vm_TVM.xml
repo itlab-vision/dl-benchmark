@@ -3,11 +3,11 @@
     <Test>
         <Model>
             <Task>classification</Task>
-            <Name>alexnet</Name>
+            <Name>efficientnet_b0_vm</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath></ModelPath>
-            <WeightsPath></WeightsPath>
+            <ModelPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
+            <WeightsPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -22,7 +22,7 @@
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName>data</InputName>
-            <Framework>PyTorch</Framework>
+            <Framework>TVM</Framework>
             <InputShape>1 3 224 224</InputShape>
             <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
@@ -30,8 +30,8 @@
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
-            <VirtualMachine>False</VirtualMachine>
-            <OptimizationLevel>2</OptimizationLevel>
+            <VirtualMachine>True</VirtualMachine>
+            <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
 </Tests>

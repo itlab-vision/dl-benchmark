@@ -30,6 +30,7 @@
             <ChannelSwap></ChannelSwap>
             <Target>llvm</Target>
             <Layout>NCHW</Layout>
+            <VirtualMachine>False</VirtualMachine>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
