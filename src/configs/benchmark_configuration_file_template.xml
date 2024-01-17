@@ -19,6 +19,8 @@
             <Device></Device>
             <IterationCount></IterationCount>
             <TestTimeLimit></TestTimeLimit>
+            <!-- Следующие параметры могут отсутствовать -->
+            <RawOutput></RawOutput>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode></Mode>
@@ -33,7 +35,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <ChangePreprocessOptions></ChangePreprocessOptions>
-            <NumOutputTokensLLM></NumOutputTokensLLM>
+            <UseLatencyPerTokenLLM></UseLatencyPerTokenLLM>
         </FrameworkDependent>
     </Test>
     <Test>

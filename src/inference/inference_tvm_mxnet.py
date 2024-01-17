@@ -3,9 +3,7 @@ import json
 import sys
 import traceback
 
-
 from pathlib import Path
-
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -165,6 +163,7 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
+
     return args
 
 

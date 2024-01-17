@@ -1,18 +1,19 @@
 file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 
-find_path(TENSORFLOW_SRC_DIR "tensorflow/lite/interpreter.h")
+find_path(TENSORFLOW_SRC_DIR "tensorflow/lite/interpreter.h" CMAKE_FIND_ROOT_PATH_BOTH)
 
 # If the file in a directory is found the result is stored in the variable and the search will not be repeated unless the variable is cleared.
 # If nothing is found, the result will be <VAR>-NOTFOUND.
 unset(TFLITE_LIB_FOUND CACHE)
 
+#default name for tflite lib built with cmake
 set(TFLITE_LIB_NAME "libtensorflow-lite.so")
-find_path(TFLITE_LIB_FOUND ${TFLITE_LIB_NAME} HINT ${TFLITE_BUILD_DIR})
+find_path(TFLITE_LIB_FOUND ${TFLITE_LIB_NAME} HINT ${TFLITE_BUILD_DIR} CMAKE_FIND_ROOT_PATH_BOTH)
 if(TFLITE_LIB_FOUND STREQUAL TFLITE_LIB_FOUND-NOTFOUND)
     # bazel build has another name for tflite lib
     set(TFLITE_LIB_NAME "libtensorflowlite.so")
-    find_path(TFLITE_LIB_FOUND ${TFLITE_LIB_NAME} HINT ${TFLITE_BUILD_DIR})
+    find_path(TFLITE_LIB_FOUND ${TFLITE_LIB_NAME} HINT ${TFLITE_BUILD_DIR} CMAKE_FIND_ROOT_PATH_BOTH)
     if(TFLITE_LIB_FOUND STREQUAL TFLITE_LIB_FOUND-NOTFOUND)
         message(SEND_ERROR "Couldn't find libtensorflowlite.so or libtensorflow-lite.so")
     endif()
