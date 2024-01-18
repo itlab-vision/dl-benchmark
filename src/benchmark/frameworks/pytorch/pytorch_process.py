@@ -77,10 +77,10 @@ class PyTorchProcess(ProcessHandler):
         device = self._test.indep_parameters.device
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--device', device)
 
-        num_devices = self._test.indep_parameters.num_devices
-        if num_devices:
-            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--num_devices',
-                                                                              num_devices)
+        num_gpu_devices = self._test.indep_parameters.num_gpu_devices
+        if num_gpu_devices:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--num_gpu_devices',
+                                                                              num_gpu_devices)
 
         if raw_output:
             common_params = PyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')

@@ -135,11 +135,11 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
-    parser.add_argument('-nd', '--num_devices',
+    parser.add_argument('-nd', '--num_gpu_devices',
                         help='Number of devices to infer on',
-                        default=1,
+                        default=None,
                         type=int,
-                        dest='num_devices')
+                        dest='num_gpu_devices')
     parser.add_argument('--model_type',
                         help='Model type for inference',
                         choices=['scripted', 'baseline', None],
@@ -285,14 +285,14 @@ def load_model_from_file(model_path):
     return model
 
 
-def load_model_from_config(model_name, model_config, module, weights, device='cpu', num_devices=1, precision='FP32',
-                           should_be_traced=False, custom_models_links=None):
+def load_model_from_config(model_name, model_config, module, weights, device='cpu', num_gpu_devices=None,
+                           precision='FP32', should_be_traced=False, custom_models_links=None):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model(device=device, num_devices=num_devices, precision=precision,
+    model = model_cls.create_model(device=device, num_gpu_devices=num_gpu_devices, precision=precision,
                                    should_be_traced=should_be_traced, custom_models_links=custom_models_links)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
@@ -598,7 +598,7 @@ def main():
                     module=args.module,
                     weights=args.weights,
                     device=device,
-                    num_devices=args.num_devices,
+                    num_gpu_devices=args.num_gpu_devices,
                     precision=args.precision,
                     should_be_traced=tensor_rt_dtype is not None,
                     custom_models_links=custom_models_dict)
@@ -606,7 +606,7 @@ def main():
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
 
-        if args.task not in ['text-translation'] and args.num_devices == 1:
+        if args.task not in ['text-translation'] and (args.num_gpu_devices is None or args.num_gpu_devices == 1):
             compiled_model = compile_model(model=model, device=device, model_type=model_type,
                                            shapes=args.input_shapes, input_type=args.input_type,
                                            tensor_rt_dtype=tensor_rt_dtype,

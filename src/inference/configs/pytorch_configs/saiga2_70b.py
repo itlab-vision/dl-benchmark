@@ -21,13 +21,13 @@ class Saiga270b(CausalLMBase):
     def download_model_weigths(self, custom_models_links, precision='FP16'):
         self.model_dir = f'{custom_models_links["models_dir"]}/saiga2_70b/safetensors/{precision}/'
 
-    def set_devices(self, device='cuda', num_devices=2):
-        log.info(f'Using {num_devices} GPUs')
-        os.environ['CUDA_VISIBLE_DEVICES'] = ','.join(map(str, range(num_devices)))
+    def set_devices(self, num_gpu_devices=2):
+        log.info(f'Using {num_gpu_devices} GPUs')
+        os.environ['CUDA_VISIBLE_DEVICES'] = ','.join(map(str, range(num_gpu_devices)))
 
-    def create_model(self, custom_models_links, precision='FP16', device='cuda', num_devices=2, **kwargs):
+    def create_model(self, custom_models_links, precision='FP16', num_gpu_devices=2, **kwargs):
         self.download_model_weigths(custom_models_links, precision)
-        self.set_devices(device, num_devices)
+        self.set_devices(num_gpu_devices)
         self.saiga_config = GenerationConfig.from_pretrained(self.model_dir)
         self.saiga_model = AutoModelForCausalLM.from_pretrained(
             self.model_dir,
