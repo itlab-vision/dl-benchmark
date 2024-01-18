@@ -529,12 +529,12 @@ class SegmentationIO(IOAdapter):
         result = result[result_layer_name]
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
-        h, w = result.shape[2:]
+        h, w = result.shape[1:]
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
-                    pixel_class = int(data[:, i, j])
+                    pixel_class = int(data[i, j])
                     classes_map[i, j, :] = self._classes_color_map[min(pixel_class, 20)]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]

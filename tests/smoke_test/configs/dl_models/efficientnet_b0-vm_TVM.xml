@@ -3,11 +3,11 @@
     <Test>
         <Model>
             <Task>classification</Task>
-            <Name>googlenet-v1</Name>
+            <Name>efficientnet_b0_vm</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>../models_dir/googlenet-v1/googlenet-v1.json</ModelPath>
-            <WeightsPath>../models_dir/googlenet-v1/googlenet-v1.params</WeightsPath>
+            <ModelPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.json</ModelPath>
+            <WeightsPath>../models_dir/public/efficientnet-b0-pytorch/efficientnet_b0.params</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -24,12 +24,14 @@
             <InputName>data</InputName>
             <Framework>TVM</Framework>
             <InputShape>1 3 224 224</InputShape>
-            <Normalize>False</Normalize>
+            <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
-            <OptimizationLevel>0</OptimizationLevel>
+            <Target>llvm</Target>
+            <VirtualMachine>True</VirtualMachine>
+            <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
 </Tests>

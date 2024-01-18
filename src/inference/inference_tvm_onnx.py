@@ -3,7 +3,6 @@ import json
 import sys
 import traceback
 
-
 from pathlib import Path
 
 import tvm
@@ -47,6 +46,10 @@ def cli_argument_parser():
                         default=1,
                         type=int,
                         dest='number_iter')
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--output_names',
                         help='Name of the output tensors.',
                         default='output0',
@@ -181,7 +184,8 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:

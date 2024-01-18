@@ -3,11 +3,11 @@
     <Test>
         <Model>
             <Task>segmentation</Task>
-            <Name>pspnet-pytorch</Name>
+            <Name>deeplabv3</Name>
             <Precision>FP32</Precision>
             <SourceFramework>openvino</SourceFramework>
-            <ModelPath>../models_dir/public/pspnet-pytorch/FP32/pspnet-pytorch.xml</ModelPath>
-            <WeightsPath>../models_dir/public/pspnet-pytorch/FP32/pspnet-pytorch.bin</WeightsPath>
+            <ModelPath>../models_dir/public/deeplabv3/FP32/deeplabv3.xml</ModelPath>
+            <WeightsPath>../models_dir/public/deeplabv3/FP32/deeplabv3.bin</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>

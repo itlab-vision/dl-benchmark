@@ -13,7 +13,8 @@ from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
 from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            prepare_output, create_dict_for_modelwrapper,
-                           create_dict_for_transformer, inference_tvm)
+                           create_dict_for_transformer, inference_tvm,
+                           create_dict_for_output_preparer)
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.model_converters.tvm_converter.tvm_converter import TVMConverter  # noqa: E402
@@ -60,7 +61,7 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -70,6 +71,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
                         default='data',
@@ -134,6 +140,11 @@ def cli_argument_parser():
                         default='NHWC',
                         type=str,
                         dest='layout')
+    parser.add_argument('--framework',
+                        help='Model source framework.',
+                        default='tvm',
+                        type=str,
+                        dest='framework')
     parser.add_argument('--target',
                         help='Parameter for hardware-dependent optimizations.',
                         default='llvm',
@@ -145,6 +156,15 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
@@ -183,13 +203,18 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
+                    res = prepare_output(result, args.task,
+                                         args.output_names,
+                                         args.not_softmax,
+                                         framework=args.framework,
+                                         params=create_dict_for_output_preparer(args))
 
                     log.info('Inference results')
                     io.process_output(res, log)

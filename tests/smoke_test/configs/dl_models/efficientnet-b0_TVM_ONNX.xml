@@ -28,6 +28,8 @@
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <Layout>NCHW</Layout>
+            <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>

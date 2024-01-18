@@ -3,10 +3,10 @@
     <Test>
         <Model>
             <Task>classification</Task>
-            <Name>resnet50-tvm-optimized</Name>
+            <Name>AlexNet</Name>
             <Precision>FP32</Precision>
             <SourceFramework>TVM</SourceFramework>
-            <ModelPath>../models_dir/resnet50/resnet50.so</ModelPath>
+            <ModelPath></ModelPath>
             <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
@@ -22,14 +22,16 @@
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName>data</InputName>
-            <Framework>TVM</Framework>
+            <Framework>MXNet</Framework>
             <InputShape>1 3 224 224</InputShape>
-            <Normalize>False</Normalize>
+            <Normalize>True</Normalize>
             <Mean>0.485 0.456 0.406</Mean>
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
-            <OptimizationLevel>0</OptimizationLevel>
+            <Target>llvm</Target>
+            <VirtualMachine>False</VirtualMachine>
+            <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
 </Tests>

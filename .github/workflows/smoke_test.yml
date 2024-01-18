@@ -21,7 +21,7 @@ jobs:
       - name: Setting up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
 
       - name: Setting up Python dependencies
         run: |
@@ -30,18 +30,25 @@ jobs:
           python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke tests for inference benchmark
-        run: |
-          cd tests/smoke_test && python -m pytest test_benchmark_smoke.py -m="not caffe"
+        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="not caffe"
 
-      - name: Run smoke tests for accuracy checker
-        run: cd tests/smoke_test && && python -m pytest test_ac_smoke.py
-
-      - name: Upload Artifacts
+      - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: results
-          path: tests/**/res_dir/*.csv
+          name: benchmark_report
+          path: tests/smoke_test/benchmark_smoke/report.html
+          retention-days: 1
+
+      - name: Run smoke tests for accuracy checker
+        run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
+
+      - name: Upload accuracy artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: accuracy_report
+          path: tests/smoke_test/ac_smoke/report.html
           retention-days: 1
 
   smoke_test_caffe:
@@ -73,12 +80,12 @@ jobs:
       - name: Run smoke test for inference benchmark
         shell: bash -el {0}
         run: |
-          cd tests/smoke_test && python -m pytest test_benchmark_smoke.py -m="caffe"
+          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe"
 
-      - name: Upload Artifacts
+      - name: Upload benchmark caffe artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: results
-          path: tests/**/res_dir/*.csv
+          name: benchmark_caffe_results
+          path: tests/smoke_test/benchmark_smoke/report.html
           retention-days: 1

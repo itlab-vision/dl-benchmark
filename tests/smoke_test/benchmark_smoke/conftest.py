@@ -15,9 +15,11 @@ MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/mxnet_to_tvm_converter.py')
 CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
                                     'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
+TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
-             'googlenet-v1', 'pspnet-pytorch', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+DL_CAFFE_MODELS = ['googlenet-v1']
 
 
 def pytest_addoption(parser):
@@ -80,35 +82,47 @@ def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
     download_file(weights_link, instance_seg_dir, 'instance-segmentation-security-0083.bin')
 
 
-def convert_tvm_models(use_caffe: bool = False):
+def convert_models_to_tvm(use_caffe: bool = False):
     pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
                                 f'-is 1 3 224 224 -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
     mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {MXNET_TVM_CONVERTER} -mn alexnet -is 1 3 224 224')
     caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {CAFFE_TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
-                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel'
+                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
                               f'-op {OUTPUT_DIR}/public/googlenet-v1/')
-
-    execute_process(command_line=pytorch_to_tvm_converter, log=log)
-    execute_process(command_line=mxnet_to_tvm_converter, log=log)
+    tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
+                    '-p alexnet.params -t llvm --lib_name alexnet_vm -vm')
 
     if use_caffe:
         execute_process(command_line=caffe_to_tvm_converter, log=log)
+    else:
+        try:
+            import tvm  # noqa: F401
+
+            execute_process(command_line=pytorch_to_tvm_converter, log=log)
+            execute_process(command_line=mxnet_to_tvm_converter, log=log)
+            execute_process(command_line=tvm_compiler, log=log)
+        except ImportError:
+            log.info('No tvm module found, skip tvm converters')
 
 
 @pytest.fixture(scope='session', autouse=True)
 def prepare_dl_models(request, overrided_models):
-    enabled_models = overrided_models if overrided_models else DL_MODELS
+    use_caffe = check_used_mark(request, 'caffe')
+
+    models_per_mark = DL_CAFFE_MODELS if use_caffe else DL_MODELS
+    enabled_models = overrided_models if overrided_models else models_per_mark
 
     download_models(models_list=enabled_models)
-    convert_models(models_list=enabled_models)
 
-    if overrided_models is None or 'resnet50-tvm' in overrided_models:
+    if not use_caffe:
+        convert_models(models_list=enabled_models)
+
         download_resnet50()
-        convert_tvm_models(use_caffe=check_used_mark(request, 'caffe'))
-    if overrided_models is None or 'instance-segmentation-security-0083' in overrided_models:
         download_old_instance_segmentation()
+
+    convert_models_to_tvm(use_caffe)
 
 
 def pytest_generate_tests(metafunc):
@@ -139,7 +153,7 @@ def pytest_generate_tests(metafunc):
 
     # Mark Caffe tests
     for i, test_param in enumerate(param_list):
-        if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM_TVM']:
+        if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM']:
             param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
 
     metafunc.parametrize('test_configuration', param_list, ids=id_list)
