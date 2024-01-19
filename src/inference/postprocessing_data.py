@@ -27,6 +27,10 @@ def calculate_average_time(time):
 
 
 def calculate_latency(time):
+    """
+    Calculate latency and standard deviation from list of times taken for each inference operation
+    :param time: list of times taken for each inference operation
+    """
     time.sort()
     latency_std = np.std(time)
     latency = np.median(time)
@@ -43,10 +47,15 @@ def calculate_average_fps(iter_number, batch_size, inference_time):
     return iter_number * batch_size / inference_time
 
 
-def calculate_latency_per_token(latency, num_tokens):
+def calculate_latency_per_token(inference_time, num_tokens):
+    """
+    Calculate latency per token list for each iteration
+    :param inferency_time: list of times taken for each inference operation
+    :param num_tokens: list of the number of tokens generated in each inference operation
+    """
     if not num_tokens:
         return None
-    return latency / num_tokens
+    return list(map(lambda x, y: x / y, inference_time, num_tokens))
 
 
 def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infer_time=0.0, num_tokens=None):
@@ -59,7 +68,11 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
     latency, latency_std = calculate_latency(inference_time)
     batch_fps = calculate_batch_fps(batch_size, latency)
     average_fps = calculate_average_fps(iterations_num, batch_size, sum(inference_time))
-    latency_per_token = calculate_latency_per_token(latency, num_tokens)
+    latency_per_token_median = None
+    if num_tokens is not None:
+        latencies_per_token = calculate_latency_per_token(inference_time, num_tokens)
+        latencies_per_token = three_sigma_rule(latencies_per_token)
+        latency_per_token_median = np.median(latencies_per_token)
     inference_result = {
         'iterations_num': iterations_num,
         'execution_time': round(execution_time, 3),
@@ -69,8 +82,10 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
         'latency_std': round(latency_std, 5),
         'latency_max': round(max(inference_time), 5),
         'latency_min': round(min(inference_time), 5),
-        'latency_per_token': round(latency_per_token, 5) if latency_per_token is not None else None,
-        'num_tokens': num_tokens,
+        'latency_per_token': round(latency_per_token_median, 5) if latency_per_token_median is not None else None,
+        'num_tokens': np.median(num_tokens),
+        'min_num_tokens': min(num_tokens),
+        'max_num_tokens': max(num_tokens),
         'batch_throughput': round(batch_fps, 3),
         'throughput': round(average_fps, 3),
     }

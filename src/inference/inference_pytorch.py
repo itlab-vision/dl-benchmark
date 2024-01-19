@@ -375,7 +375,7 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
         output = None
         time_infer = []
 
-        num_tokens = None
+        num_tokens = []
         tokenizer = None
 
         if task_type in ['text-generation', 'batch-text-generation']:
@@ -386,10 +386,10 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
             if task_type in ['text-generation']:
                 from configs.pytorch_configs.causal_lm_base import MAX_TEXT_LEN
-                num_tokens = MAX_TEXT_LEN
+                num_tokens.append(MAX_TEXT_LEN)
             elif task_type in ['batch-text-generation']:
                 from configs.onnx_configs.gpt_2 import MAX_TEXT_LEN
-                num_tokens = MAX_TEXT_LEN
+                num_tokens.append(MAX_TEXT_LEN)
         elif task_type in ['named-entity-recognition']:
             from configs.pytorch_configs.bert_base_ner import create_tokenizer
 
@@ -417,7 +417,7 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
                 model_output = model(tokenized_sentence)
                 tokens, label_indices = decode(tokenizer, tokenized_sentence, model_output)
-                num_tokens = len(tokens)
+                num_tokens.append(len(tokens))
 
                 output = (tokens, label_indices)
             elif task_type in ['text-generation']:
@@ -470,6 +470,7 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
         from configs.pytorch_configs.causal_lm_base import tokenize, generate
 
         inputs = tokenize(tokenizer, get_slice())
+        log.debug(f'Encoded input tokens: {inputs["input_ids"].size(1)}')
 
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -497,6 +498,10 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
         torch.cuda.synchronize()
 
     res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
+
+    if task_type in ['text-generation']:
+        num_tokens = res.numel()
+        log.debug(f'Generated tokens num: {num_tokens}')
 
     if task_type in ['named-entity-recognition']:
         from configs.pytorch_configs.bert_base_ner import decode
