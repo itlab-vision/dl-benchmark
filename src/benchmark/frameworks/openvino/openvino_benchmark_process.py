@@ -108,6 +108,8 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nstreams', nstreams)
         nthreads = self._test.dep_parameters.nthreads
         arguments = self._add_optional_argument_to_cmd_line(arguments, '-nthreads', nthreads)
+        arguments += ' -pc'
+        arguments = self._add_optional_argument_to_cmd_line(arguments, '-pcsort', 'simple_sort')
 
         return arguments
 
