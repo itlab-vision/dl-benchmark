@@ -3,9 +3,7 @@ import json
 import sys
 import traceback
 
-
 from pathlib import Path
-
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -76,6 +74,10 @@ def cli_argument_parser():
                         default='data',
                         type=str,
                         dest='input_name')
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
@@ -161,6 +163,7 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
+
     return args
 
 
@@ -188,7 +191,8 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:

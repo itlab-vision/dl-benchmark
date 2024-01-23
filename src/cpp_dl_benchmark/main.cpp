@@ -52,7 +52,7 @@ constexpr char device_msg[] =
     "target device to infer on. Avalaibale devices depends on the framework:\n"
     "                                                          ONNX Runtime: CPU, CUDA (CUDA EP)\n"
     "                                                          OpenCV: CPU, GPU";
-DEFINE_string(d, "CPU", device_msg);
+DEFINE_string(d, "", device_msg);
 
 constexpr char batch_size_msg[] = "batch size value. If not provided, batch size value is determined from the model";
 DEFINE_uint32(b, 0, batch_size_msg);
@@ -222,10 +222,15 @@ int main(int argc, char* argv[]) {
 
         std::string device = FLAGS_d;
         if (device.empty()) {
-#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT)
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT) || defined(PYTORCH) ||                        \
+    defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND)
             device = "CPU";
-#elif defined(ORT_CUDA) || defined(ORT_TENSORRT)
+#elif defined(TFLITE_WITH_GPU_DELEGATE)
+            device = "GPU";
+#elif defined(ORT_CUDA) || defined(ORT_TENSORRT) || defined(PYTORCH_TENSORRT)
             device = "NVIDIA_GPU";
+#elif defined(RKNN)
+            device = "NPU";
 #endif
             logger::info << "Device wasn't specified. Default will be used: " << device << logger::endl;
         }

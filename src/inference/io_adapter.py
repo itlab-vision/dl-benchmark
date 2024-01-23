@@ -248,11 +248,11 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'face-detection':
             return FaceDetectionIO(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return SegmenatationIO(args, io_model_wrapper, transformer)
+            return SegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
-            return AdasSegmenatationIO(args, io_model_wrapper, transformer)
+            return AdasSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'road-segmentation':
-            return RoadSegmenatationIO(args, io_model_wrapper, transformer)
+            return RoadSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
             return RecognitionFaceIO(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
@@ -268,7 +268,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'license-plate':
             return LicensePlateIO(args, io_model_wrapper, transformer)
         elif task == 'instance-segmentation':
-            return InstanceSegmenatationIO(args, io_model_wrapper, transformer)
+            return InstanceSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
             return SingleImageSuperResolutionIO(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
@@ -319,16 +319,16 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7ONNX(args, io_model_wrapper, transformer)
         elif task == 'segmentation_tflite_cpp':
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task in ['blaze_face_tflite_cpp', 'blaze_face_rknn']:
+        elif task == 'blaze_face':
             return BlazeFaceShortRangeCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_detection_tflite_cpp':
-            return FaceDetectionFullRangeTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_recognition_tflite_cpp':
-            return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_detection':
+            return FaceDetectionFullRangeCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_recognition':
+            return FaceRecognitionCppIO(args, io_model_wrapper, transformer)
         elif task == 'face_mesh_tflite_cpp':
             return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_mesh_v2_tflite_cpp':
-            return FaceMeshV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_mesh_v2':
+            return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
 
@@ -514,7 +514,7 @@ class FaceDetectionIO(IOAdapter):
         log.info('Result image was saved to {0}'.format(out_img))
 
 
-class SegmenatationIO(IOAdapter):
+class SegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -543,7 +543,7 @@ class SegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class AdasSegmenatationIO(IOAdapter):
+class AdasSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -574,7 +574,7 @@ class AdasSegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class RoadSegmenatationIO(IOAdapter):
+class RoadSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -590,11 +590,12 @@ class RoadSegmenatationIO(IOAdapter):
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[2:]
+
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
-                    pixel_class = np.argmax(data[i][j])
+                    pixel_class = np.argmax(data[:, i, j])
                     classes_map[i, j, :] = self._classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
@@ -905,7 +906,7 @@ class LicensePlateIO(IOAdapter):
             log.info(f'Plate: {s}')
 
 
-class InstanceSegmenatationIO(IOAdapter):
+class InstanceSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -2333,7 +2334,7 @@ class BlazeFaceShortRangeCppIO(FaceDetectionCppIO):
         return (base_repeats, strides)
 
 
-class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionCppIO):
+class FaceDetectionFullRangeCppIO(FaceDetectionCppIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
@@ -2349,7 +2350,7 @@ class FaceDetectionFullRangeTFLiteCppIO(FaceDetectionCppIO):
         return (base_repeats, strides)
 
 
-class FaceRecognitionTFLiteCppIO(IOAdapter):
+class FaceRecognitionCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_recognition.csv')
@@ -2357,18 +2358,19 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
         self.net_width = 112
         self.net_height = 112
 
-    def convert_input_to_bin_file(self, args):
+    def convert_input_to_bin_file(self, args, normalize=True, data_type=np.float32):
         img = cv2.imread(args.input[0])
-
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
         img = cv2.resize(img, (self.net_height, self.net_width))
-        img -= 127.5
-        img /= 127.5
+
+        if normalize:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(data_type)
+            img -= 127.5
+            img /= 127.5
 
         bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
         bin_dir.mkdir(parents=True, exist_ok=True)
         bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
-        img.astype(np.float32).tofile(bin_path)
+        img.astype(data_type).tofile(bin_path)
 
         return str(bin_path)
 
@@ -2467,7 +2469,7 @@ class FaceMeshTFLiteCppIO(FaceMesh):
         }
 
 
-class FaceMeshV2TFLiteCppIO(FaceMesh):
+class FaceMeshV2CppIO(FaceMesh):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
