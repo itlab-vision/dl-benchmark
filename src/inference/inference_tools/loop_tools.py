@@ -18,7 +18,7 @@ def loop_inference(iter_count, test_duration):
                 infer_res = inference_func(*args, **kwargs)
                 if isinstance(infer_res, tuple):
                     exec_time, iter_tokens = infer_res
-                    if exec_time > 0:
+                    if exec_time > 0 and iter_tokens is not None:
                         num_tokens.append(iter_tokens)
                 else:
                     exec_time = infer_res

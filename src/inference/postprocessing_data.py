@@ -69,7 +69,7 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
     batch_fps = calculate_batch_fps(batch_size, latency)
     average_fps = calculate_average_fps(iterations_num, batch_size, sum(inference_time))
     latency_per_token_median = None
-    if num_tokens is not None:
+    if num_tokens:
         latencies_per_token = calculate_latency_per_token(inference_time, num_tokens)
         latencies_per_token = three_sigma_rule(latencies_per_token)
         latency_per_token_median = np.median(latencies_per_token)
@@ -83,9 +83,9 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
         'latency_max': round(max(inference_time), 5),
         'latency_min': round(min(inference_time), 5),
         'latency_per_token': round(latency_per_token_median, 5) if latency_per_token_median is not None else None,
-        'num_tokens': np.median(num_tokens),
-        'min_num_tokens': min(num_tokens),
-        'max_num_tokens': max(num_tokens),
+        'num_tokens': np.median(num_tokens) if num_tokens else None,
+        'min_num_tokens': min(num_tokens) if num_tokens else None,
+        'max_num_tokens': max(num_tokens) if num_tokens else None,
         'batch_throughput': round(batch_fps, 3),
         'throughput': round(average_fps, 3),
     }
