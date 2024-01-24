@@ -18,7 +18,7 @@ from tvm_auxiliary import (create_dict_for_converter_mxnet,
                            create_dict_for_transformer, inference_tvm)
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter_auxiliary import CaffeToTVMConverter  # noqa: E402
+from src.model_converters.tvm_converter.tvm_auxiliary.caffe_format import CaffeToTVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
