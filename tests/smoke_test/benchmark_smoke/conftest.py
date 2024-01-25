@@ -9,8 +9,7 @@ from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
 
 SMOKE_CONFIGS_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'dl_models')
 
-TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/tvm_converter.py')
+TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
 
 TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
