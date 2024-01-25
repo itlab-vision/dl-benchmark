@@ -1,7 +1,7 @@
 import importlib
 from pathlib import Path
 
-Converter = importlib.import_module('src.model_converters.tvm_converter.tvm_auxiliary.converter').Converter
+Converter = importlib.import_module('converter').Converter
 
 
 class TVMConverter(Converter):

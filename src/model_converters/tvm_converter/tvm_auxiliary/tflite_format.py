@@ -1,6 +1,6 @@
 import importlib
 
-Converter = importlib.import_module('src.model_converters.tvm_converter.tvm_auxiliary.converter').Converter
+Converter = importlib.import_module('converter').Converter
 
 
 class TensorFlowLiteToTVMConverter(Converter):

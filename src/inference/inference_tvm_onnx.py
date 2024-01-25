@@ -18,8 +18,10 @@ from tvm_auxiliary import (create_dict_for_converter_onnx,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm)
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_auxiliary.onnx_format import ONNXToTVMConverter  # noqa: E402
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('model_converters',
+                                                                 'tvm_converter',
+                                                                 'tvm_auxiliary')))
+from onnx_format import ONNXToTVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402

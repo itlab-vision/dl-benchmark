@@ -2,7 +2,8 @@ import argparse
 import sys
 import traceback
 from pathlib import Path
-from tvm_auxiliary.converter import Converter
+sys.path.append(str(Path(__file__).resolve().parent.joinpath('tvm_auxiliary')))
+from converter import Converter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from utils.logger_conf import configure_logger  # noqa: E402

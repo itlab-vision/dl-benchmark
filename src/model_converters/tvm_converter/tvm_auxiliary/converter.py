@@ -9,8 +9,6 @@ from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
 
-PATH_TO_CONVERTER_CLASSES = 'src.model_converters.tvm_converter.tvm_auxiliary'
-
 
 class Converter(metaclass=abc.ABCMeta):
     def __init__(self, args):
@@ -31,22 +29,22 @@ class Converter(metaclass=abc.ABCMeta):
     def get_converter(args):
         framework = args['framework'].lower()
         if framework == 'pytorch':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.pytorch_format')
+            converter = importlib.import_module('pytorch_format')
             return converter.PyTorchToTVMConverter(args)
         elif framework == 'onnx':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.onnx_format')
+            converter = importlib.import_module('onnx_format')
             return converter.ONNXToTVMConverter(args)
         elif framework == 'mxnet':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.mxnet_format')
+            converter = importlib.import_module('mxnet_format')
             return converter.MXNetToTVMConverter(args)
         elif framework == 'tflite':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.tflite_format')
+            converter = importlib.import_module('tflite_format')
             return converter.TensorFlowLiteToTVMConverter(args)
         elif framework == 'caffe':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.caffe_format')
+            converter = importlib.import_module('caffe_format')
             return converter.CaffeToTVMConverter(args)
         elif framework == 'tvm':
-            converter = importlib.import_module(f'{PATH_TO_CONVERTER_CLASSES}.tvm_format')
+            converter = importlib.import_module('tvm_format')
             return converter.TVMConverter(args)
 
     def _get_target_device(self, task='Inference'):
