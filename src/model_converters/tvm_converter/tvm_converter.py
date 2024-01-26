@@ -22,6 +22,7 @@ class Converter(metaclass=abc.ABCMeta):
         self.framework = 'tvm'
         self.tvm = importlib.import_module('tvm')
         self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
+        self.relay = importlib.import_module('tvm.relay')
 
     @abc.abstractmethod
     def _get_device_for_framework(self):
@@ -289,7 +290,7 @@ class TVMConverter(Converter):
         model_path = self.args['model_path']
         model_params = self.args['model_params']
         with open(model_params, 'rb') as fo:
-            params = self.tvm.relay.load_param_dict(fo.read())
+            params = self.relay.load_param_dict(fo.read())
 
         with open(model_path, 'r') as fo:
             mod = fo.read()
