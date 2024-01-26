@@ -106,7 +106,7 @@ class Converter(metaclass=abc.ABCMeta):
         if len(lib) == 1:
             lib[0].export_library(f'{path_save_lib}/{lib_name}')
         else:
-            lib[1].export_library(f'{path_save_lib}/{lib_name}.so')
+            lib[1].export_library(f'{path_save_lib}/{lib_name}')
             with open(f'{path_save_lib}/{lib_name}.ro', 'wb') as fo:
                 fo.write(lib[0])
 
