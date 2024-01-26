@@ -28,6 +28,7 @@ class OutputHandler:
             'fps': 'FPS',
             'batch_fps': 'BATCH FPS',
             'latency_per_token': 'Latency per token',
+            'num_tokens': 'Median tokens num',
             'error_type': 'Error type',
         }
 
@@ -48,7 +49,7 @@ class OutputHandler:
         else:
             report['input_shape'] = 'Undefined'
             report['status'] = 'Failed'
-            report['average_time'], report['fps'], report['latency'] = None, None, None
+            report['average_time'], report['fps'], report['latency'], report['num_tokens'] = None, None, None, None
             report['error_type'] = Status.INFERENCE_EXCEPTION.name
         report['hardware'] = executor.get_infrastructure()
         return report

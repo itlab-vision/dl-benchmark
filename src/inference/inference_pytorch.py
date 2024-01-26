@@ -293,7 +293,8 @@ def load_model_from_config(model_name, model_config, module, weights, device='cp
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
     model = model_cls.create_model(device=device, num_gpu_devices=num_gpu_devices, precision=precision,
-                                   should_be_traced=should_be_traced, custom_models_links=custom_models_links)
+                                   should_be_traced=should_be_traced, custom_models_links=custom_models_links,
+                                   log=log)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
@@ -370,13 +371,34 @@ def compile_model(model, device, model_type, shapes, input_type, tensor_rt_dtype
         return model
 
 
-def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration):
+def get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2):
+    """
+    LLM's output is shaped like [batch_size, MAX_TEXT_LEN].
+    However, when batch_size > 1, every output of the model which is less
+    than MAX_TEXT_LENGTH is extended by dot tokens to meet the shape of [1, MAX_TEXT_LEN]
+    """
+    num_tokens = []
+    lengths = []
+    for i in range(generated_output.shape[0]):
+        length = 1  # All model-generated sentences have dot at the end
+        for j in range(generated_output.shape[1]):
+            if generated_output[i][j] != dot_token:
+                length += 1
+        lengths.append(length - input_size)
+    num_tokens.extend(lengths)
+    return num_tokens
+
+
+def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration,
+                      batch_size):
     with torch.inference_mode(inference_mode):
         output = None
         time_infer = []
 
         num_tokens = []
         tokenizer = None
+
+        input_size = 0
 
         if task_type in ['text-generation', 'batch-text-generation']:
             from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
@@ -385,8 +407,8 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             encodings_dict = tokenize(tokenizer, get_slice())
 
             if task_type in ['text-generation']:
-                from configs.pytorch_configs.causal_lm_base import MAX_TEXT_LEN
-                num_tokens.append(MAX_TEXT_LEN)
+                input_size = encodings_dict['input_ids'].size(1)
+                log.debug(f'Encoded input tokens: {input_size}')
             elif task_type in ['batch-text-generation']:
                 from configs.onnx_configs.gpt_2 import MAX_TEXT_LEN
                 num_tokens.append(MAX_TEXT_LEN)
@@ -423,7 +445,10 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             elif task_type in ['text-generation']:
                 from configs.pytorch_configs.causal_lm_base import generate, decode
 
-                output = decode(tokenizer, generate(model=model, inputs=encodings_dict, device=device))
+                generated_output = generate(model=model, inputs=encodings_dict, device=device, tokenizer=tokenizer)
+                output = decode(tokenizer, generated_output)
+                num_tokens.extend(get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2))
+                log.info(f'Generated tokens num: {num_tokens}')
             elif task_type in ['batch-text-generation']:
                 from configs.onnx_configs.gpt_2 import batch_text_generation, decode
 
@@ -438,19 +463,19 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             time_infer, num_tokens = loop_inference(num_iterations,
                                                     test_duration)(inference_iteration)(device, get_slice,
                                                                                         input_names, model, task_type,
-                                                                                        tokenizer)
+                                                                                        tokenizer, input_size)
     return output, time_infer, num_tokens
 
 
 @get_exec_time()
-def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
+def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None, tokenizer=None):
     if task_type in ['text-translation']:
         infer_func = model.translate_batch
     else:
         infer_func = model
 
     if input_kwarg_name:
-        res = infer_func(**{input_kwarg_name: inputs})
+        res = infer_func(**{input_kwarg_name: inputs}, tokenizer=tokenizer)
     else:
         res = infer_func(*inputs)
 
@@ -460,7 +485,7 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
     return res
 
 
-def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None):
+def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None, input_size=0):
     inputs = None
     input_kwarg_name = None
 
@@ -470,7 +495,6 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
         from configs.pytorch_configs.causal_lm_base import tokenize, generate
 
         inputs = tokenize(tokenizer, get_slice())
-        log.debug(f'Encoded input tokens: {inputs["input_ids"].size(1)}')
 
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -497,10 +521,10 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
-    res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
+    res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type, tokenizer)
 
     if task_type in ['text-generation']:
-        num_tokens = res.numel()
+        num_tokens = get_meaning_tokens_from_batch(res, input_size, dot_token=2)
         log.debug(f'Generated tokens num: {num_tokens}')
 
     if task_type in ['named-entity-recognition']:
@@ -640,7 +664,8 @@ def main():
                                                                input_names=args.input_names,
                                                                inference_mode=args.inference_mode,
                                                                device=device, test_duration=args.time,
-                                                               task_type=args.task)
+                                                               task_type=args.task,
+                                                               batch_size=args.batch_size)
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,

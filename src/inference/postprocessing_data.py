@@ -55,6 +55,7 @@ def calculate_latency_per_token(inference_time, num_tokens):
     """
     if not num_tokens:
         return None
+    assert len(inference_time) == len(num_tokens), 'Inference time length != num_tokens length'
     return list(map(lambda x, y: x / y, inference_time, num_tokens))
 
 

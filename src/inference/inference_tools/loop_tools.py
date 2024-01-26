@@ -19,7 +19,11 @@ def loop_inference(iter_count, test_duration):
                 if isinstance(infer_res, tuple):
                     exec_time, iter_tokens = infer_res
                     if exec_time > 0 and iter_tokens is not None:
-                        num_tokens.append(iter_tokens)
+                        if isinstance(iter_tokens, list):
+                            # for batch > 1
+                            num_tokens.append(sum(iter_tokens))
+                        else:
+                            num_tokens.append(iter_tokens)
                 else:
                     exec_time = infer_res
                 if exec_time > 0:

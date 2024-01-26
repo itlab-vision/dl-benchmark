@@ -96,7 +96,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
 
     def get_performance_metrics_from_json_report(self):
         if self._status != 0 or len(self._output) == 0:
-            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None}
+            return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None,
+                    'num_tokens': None}
 
         report = self.get_json_report_content()
 
@@ -108,12 +109,13 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         reported_batch_fps = report['execution_results'].get('batch_throughput', None)
         batch_fps = round(float(reported_batch_fps), 3) if reported_batch_fps else 0.0
         reported_latency_per_token = report['execution_results'].get('latency_per_token', None)
+        num_tokens = report['execution_results'].get('num_tokens', 'N/A')
         latency_per_token = round(float(reported_latency_per_token), 3) if reported_latency_per_token else 'N/A'
         if self.launcher_latency_units == 'milliseconds':
             latency = round(latency / MILLISECONDS_IN_SECOND, 5)
             average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
         metrics = {'average_time': average_time_of_single_pass, 'fps': fps, 'latency': latency, 'batch_fps': batch_fps,
-                   'latency_per_token': latency_per_token}
+                   'latency_per_token': latency_per_token, 'num_tokens': num_tokens}
 
         return metrics
 
