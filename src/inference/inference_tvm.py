@@ -33,11 +33,11 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model or to an .so file.',
+                        help='Path to an .json, .tflite, .onnx, .pt, .prototxt, .so file with a trained model.',
                         type=str,
                         dest='model_path')
     parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
+                        help='Path to an .params, .caffemodel, .pth, .ro file with a trained weights.',
                         type=str,
                         dest='model_params')
     parser.add_argument('-mm', '--module',
