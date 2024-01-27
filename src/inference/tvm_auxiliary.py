@@ -151,7 +151,7 @@ class OutputPreparer:
             raise ValueError('Output processing is not supported for this model')
 
 
-def create_dict_for_converter_mxnet(args):
+def create_dict_for_converter(args):
     dictionary = {
         'input_name': args.input_name,
         'input_shape': [args.batch_size] + args.input_shape[1:4],
@@ -161,41 +161,9 @@ def create_dict_for_converter_mxnet(args):
         'device': args.device,
         'opt_level': args.opt_level,
         'target': args.target,
-        'vm': args.vm,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_tvm(args):
-    return create_dict_for_converter_mxnet(args)
-
-
-def create_dict_for_converter_pytorch(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'model_params': args.model_params,
-        'device': args.device,
-        'opt_level': args.opt_level,
         'module': args.module,
-        'target': args.target,
         'vm': args.vm,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_onnx(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'device': args.device,
-        'opt_level': args.opt_level,
-        'target': args.target,
-        'vm': args.vm,
+        'framework': args.framework,
     }
     return dictionary
 
@@ -209,21 +177,6 @@ def create_dict_for_transformer(args):
         'input_shape': args.input_shape,
         'batch_size': args.batch_size,
         'layout': args.layout,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_tensorflowlite(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'device': args.device,
-        'opt_level': args.opt_level,
-        'output_names': args.output_names,
-        'target': args.target,
-        'vm': args.vm,
     }
     return dictionary
 
