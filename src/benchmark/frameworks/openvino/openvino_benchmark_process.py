@@ -53,18 +53,20 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
                                        if None not in (duration, iter_count) else None)
         fps = self._get_benchmark_app_metric('Throughput')
         latency = round(self._get_benchmark_app_metric('Median') / 1000, 5)
-        latency_per_token = 'N/A'
-        if self._test.dep_parameters.num_output_tokens:
-            num_tokens = self._test.dep_parameters.num_output_tokens
-            latency_per_token = round(latency / num_tokens, 5)
 
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,
-            'latency': latency,
             'batch_fps': 0.0,
-            'latency_per_token': latency_per_token,
         }
+
+        if self._test.dep_parameters.use_latency_per_token:
+            metrics.update({'latency_per_token': latency,
+                            'latency': 'N/A'})
+        else:
+            metrics.update({'latency_per_token': 'N/A',
+                            'latency': latency})
+
         return metrics
 
     def _get_benchmark_app_metric(self, metric_name):
@@ -252,17 +254,20 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
         fps = round(float(report['execution_results']['throughput']), 3)
         latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 5)
-        latency_per_token = 'N/A'
-        if self._test.dep_parameters.num_output_tokens:
-            num_tokens = self._test.dep_parameters.num_output_tokens
-            latency_per_token = round(latency / num_tokens, 5)
+
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,
-            'latency': latency,
             'batch_fps': 0.0,
-            'latency_per_token': latency_per_token,
         }
+
+        if self._test.dep_parameters.use_latency_per_token:
+            metrics.update({'latency_per_token': latency,
+                            'latency': 'N/A'})
+        else:
+            metrics.update({'latency_per_token': 'N/A',
+                            'latency': latency})
+
         return metrics
 
     def extract_inference_param(self, key):

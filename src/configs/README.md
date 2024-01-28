@@ -52,6 +52,7 @@
 - Устройство, на котором будет запущен вывод, описывается внутри тега `Device`.
 - Количество итераций цикла тестирования описывается внутри тега `IterationCount`.
 - Максимальное время выполнения теста в минутах описывается внутри тега `TestTimeLimit`.
+- Вывод результатов инференса при числе итераций, равном 1, осуществляется отключением raw_output (False) внутри тега `RawOutput`.
 
 Заполнение информации о параметрах теста, зависящих от используемого
 для вывода фреймворка:
@@ -96,9 +97,8 @@
     и используется версия OpenVINO >= 2023.0.0; может отсуствовать. 
     Дает возможность переименования некоторых опций препроцессинга,
     так как список аргументов коммандной строки benchmark_app может отличаться для разных версий OpenVINO.
-  - `NumOutputTokensLLM`- тег, необязательный для заполнения; может отсуствовать.
-    Задает длину последовательности токенов на выходе больших языковых моделей (LLM) для расчета метрики
-    latency per token.
+  - `UseLatencyPerTokenLLM`- тег, необязательный для заполнения; может отсуствовать.
+    Переопределяет метрику Latency для языковых моделей на метрику Latency per Token.
 
 - Набор тегов для тестирования вывода средствами Intel Optimization for Caffe:
 
@@ -662,6 +662,46 @@
     </FrameworkDependent>
   </Test>
 </Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Apache TVM Python API
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Test>
+    <Model>
+        <Task>classification</Task>
+        <Name>efficientnet_b0</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>TVM</SourceFramework>
+        <ModelPath>./working_dir/efficientnet_b0/efficientnet_b0.json</ModelPath>
+        <WeightsPath>./working_dir/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+    </Model>
+    <Dataset>
+        <Name>Data</Name>
+        <Path>./black_square.jpg</Path>
+    </Dataset>
+    <FrameworkIndependent>
+        <InferenceFramework>TVM</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+        <InputName>data</InputName>
+        <Framework>TVM</Framework>
+        <InputShape>1 3 224 224</InputShape>
+        <Normalize>True</Normalize>
+        <Mean>0.485 0.456 0.406</Mean>
+        <Std>0.229 0.224 0.225</Std>
+        <ChannelSwap></ChannelSwap>
+        <Layout>NCHW</Layout>
+        <Target>llvm</Target>
+        <VirtualMachine>True</VirtualMachine>
+        <OptimizationLevel>3</OptimizationLevel>
+    </FrameworkDependent>
+</Test>
 ```
 
 ## Заполнение файла конфигурации для скрипта оценки точности
