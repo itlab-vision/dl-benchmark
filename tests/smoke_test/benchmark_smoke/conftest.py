@@ -92,7 +92,7 @@ def convert_models_to_tvm(use_caffe: bool = False):
                               f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
                               f'-op {OUTPUT_DIR}/public/googlenet-v1/')
     tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
-                    '-p alexnet.params -t llvm --lib_name alexnet_vm -vm')
+                    '-p alexnet.params -t llvm --lib_name alexnet_vm.so -vm')
 
     if use_caffe:
         execute_process(command_line=caffe_to_tvm_converter, log=log)
