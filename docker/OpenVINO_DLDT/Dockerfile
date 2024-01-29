@@ -18,8 +18,15 @@ RUN echo y | ./install_openvino_dependencies.sh
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
 # Configure for GPU
-RUN sudo apt-get install -y -qq --no-install-recommends intel-opencl-icd
-RUN usermod -a -G video,users,render root
+RUN sudo apt install -y gpg-agent
+RUN wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | \ 
+    sudo gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] \
+    https://repositories.intel.com/gpu/ubuntu jammy unified" | \
+    sudo tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+RUN sudo apt-get update -y
+RUN sudo apt-get install -y -qq ocl-icd-libopencl1 intel-opencl-icd intel-level-zero-gpu level-zero
+RUN usermod -a -G video,users root
 
 # Test Accuracy Checker
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
