@@ -107,7 +107,8 @@ class Converter(metaclass=abc.ABCMeta):
             lib[0].export_library(f'{path_save_lib}/{lib_name}')
         else:
             lib[1].export_library(f'{path_save_lib}/{lib_name}')
-            lib_name = Path(lib_name).suffix[:-1]
+            lib_name = Path(lib_name).with_suffix('')
+
             with open(f'{path_save_lib}/{lib_name}.ro', 'wb') as fo:
                 fo.write(lib[0])
 
