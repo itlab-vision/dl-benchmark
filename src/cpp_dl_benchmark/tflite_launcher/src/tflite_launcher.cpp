@@ -7,7 +7,6 @@
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
-#include <nlohmann/json.hpp>
 #include <tensorflow/lite/c/c_api.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 #include <tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h>
