@@ -1033,7 +1033,7 @@ python3 inference_tvm.py \
     --mean <mean> \
     --std <std> \
     --norm <norm> \
-    -f 'tvm'
+    -f 'tflite'
 ```
 
 ## Квантизация глубоких моделей с использованием MXNet
