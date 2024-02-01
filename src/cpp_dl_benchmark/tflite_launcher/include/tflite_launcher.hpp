@@ -4,7 +4,6 @@
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
-#include <tensorflow/lite/delegates/gpu/delegate.h>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/model.h>

@@ -61,12 +61,15 @@ TFLiteLauncher::TFLiteLauncher(const int nthreads, const int fps, const std::str
     : Launcher(nthreads, fps, device) {}
 
 TFLiteLauncher::~TFLiteLauncher() {
+#ifdef TFLITE_WITH_GPU_DELEGATE
     if (gpu_delegate != nullptr) {
         TfLiteGpuDelegateV2Delete(gpu_delegate);
     }
+#elif TFLITE_WITH_XNNPACK_BACKEND
     if (xnnpack_delegate != nullptr) {
         TfLiteXNNPackDelegateDelete(xnnpack_delegate);
     }
+#endif
 }
 std::string TFLiteLauncher::get_framework_name() const {
     return "TFLite";
