@@ -18,7 +18,7 @@
 
 class TFLiteLauncher : public Launcher {
 public:
-    TFLiteLauncher(const int nthreads, const std::string& device);
+    TFLiteLauncher(const int nthreads, const int fps, const std::string& device);
     virtual ~TFLiteLauncher();
 
     std::string get_framework_name() const override;

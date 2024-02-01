@@ -45,11 +45,11 @@ torch::Dtype get_data_type(utils::DataPrecision precision) {
 }
 }  // namespace
 
-PytorchLauncher::PytorchLauncher(int nthreads, const std::string& device) : Launcher(nthreads, device) {
+PytorchLauncher::PytorchLauncher(const int nthreads, const int fps, const std::string& device) : Launcher(nthreads, fps, device) {
     if (nthreads > 0) {
         torch::set_num_threads(nthreads);
     }
-    nthreads = torch::get_num_threads();
+    this->nthreads = torch::get_num_threads();
 }
 
 PytorchLauncher::~PytorchLauncher() {}

@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <limits>
 #include <map>
 #include <memory>
 #include <string>
@@ -16,8 +17,15 @@ using HighresClock = std::chrono::high_resolution_clock;
 using IOTensorsInfo = std::pair<std::vector<TensorDescription>, std::vector<TensorDescription>>;
 
 class Launcher {
+private:
+    float target_frame_latency;
+    float fpsToFrameLatency(int fps) {
+        return fps != 0 ? utils::sec_to_ms(1.f / fps) : 0;
+    };
+
 protected:
     int nthreads;
+
     utils::Device device;
 
     std::vector<std::vector<TensorBuffer>> tensor_buffers;
@@ -25,12 +33,14 @@ protected:
     // time stamps for individual inference
     HighresClock::time_point infer_start_time;
     std::vector<double> latencies;
+    double total_time;
 
     virtual void run(const int input_idx) = 0;
 
 public:
-    Launcher(const int nthreads, const std::string& device)
-        : nthreads(nthreads), device(utils::get_device_from_str(device)){};
+    Launcher(const int nthreads, const int fps, const std::string& device)
+        : nthreads(nthreads), target_frame_latency(fpsToFrameLatency(fps)),
+          device(utils::get_device_from_str(device)){};
     virtual ~Launcher() {}
 
     virtual std::string get_framework_name() const = 0;

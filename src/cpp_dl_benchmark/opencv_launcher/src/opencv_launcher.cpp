@@ -18,7 +18,7 @@
 
 using MatShape = cv::dnn::CV__DNN_INLINE_NS::MatShape;
 
-OCVLauncher::OCVLauncher(const int nthreads, const std::string& device) : Launcher(nthreads, device) {
+OCVLauncher::OCVLauncher(const int nthreads, const int fps, const std::string& device) : Launcher(nthreads, fps, device) {
     if (nthreads > 0) {
         cv::setNumThreads(nthreads);
     }

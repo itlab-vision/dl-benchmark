@@ -31,14 +31,17 @@ DEFINE_bool(h, false, help_msg);
 
 constexpr char model_msg[] =
     "path to a file with a trained model or a config file.\n"
-    "                                                      available formats\n"
+    "                                                      available formats (depends on benchmark build):\n"
     "                                                          ONNX Runtime - .onnx\n"
-    "                                                          OpenCV - .xml, .onnx, .pb, .protoxt.";
+    "                                                          OpenCV - .xml, .onnx, .pb, .protoxt\n"
+    "                                                          TF Lite - .tflite\n"
+    "                                                          Pytorch - .pt\n"
+    "                                                          RKNN - .rknn";
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
-                               "                          available formats:\n"
-                               "                          OpenCV - .caffemodel, .bin";
+                               "                                                      available formats:\n"
+                               "                                                          OpenCV - .caffemodel, .bin";
 DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =
@@ -104,6 +107,10 @@ DEFINE_uint32(niter, 0, iterations_num_msg);
 constexpr char time_msg[] = "time limit for inference in seconds";
 DEFINE_uint32(t, 0, time_msg);
 
+constexpr char fps_msg[] = "fps limit for inference; if actual model inference is faster than the desired fps, "
+                           "it slows down with a condvar wait_for call.";
+DEFINE_uint32(fps, 0, fps_msg);
+
 constexpr char save_report_msg[] = "save report in JSON format.";
 DEFINE_bool(save_report, false, save_report_msg);
 
@@ -162,6 +169,7 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[--nireq <NUMBER>]                            " << requests_num_msg
                   << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
                   << "\n\t[-t <NUMBER>]                                 " << time_msg
+                  << "\n\t[--fps <NUMBER>]                              " << fps_msg
                   << "\n\t[--save_report]                               " << save_report_msg
                   << "\n\t[--report_path <PATH>]                        " << report_path_msg
                   << "\n\t[--dump_output]                               " << dump_output_msg
@@ -236,15 +244,15 @@ int main(int argc, char* argv[]) {
         }
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
-        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
-        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
-        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
-        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif RKNN
-        launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads);
+        launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads, FLAGS_fps);
 #endif
         auto framework_name = launcher->get_framework_name();
         auto framework_version = launcher->get_framework_version();
@@ -368,10 +376,17 @@ int main(int argc, char* argv[]) {
         launcher->prepare_input_tensors(std::move(tensors_buffers));
         launcher->compile();
 
-        log_step(std::to_string(num_requests) + " inference requests, limits: " +
-                 (num_iterations > 0
-                      ? std::to_string(num_iterations) + " iterations"
-                      : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
+        std::string step_msg = std::to_string(num_requests) + " inference requests, limits: ";
+        if (num_iterations > 0) {
+            step_msg += std::to_string(num_iterations) + " iterations";
+        }
+        else {
+            step_msg += utils::format_double(utils::sec_to_ms(time_limit_sec)) + " ms";
+        }
+        if (FLAGS_fps > 0) {
+            step_msg += ", fps: " + std::to_string(FLAGS_fps);
+        }
+        log_step(step_msg);  // Measuring model performance
 
         if (FLAGS_dump_output) {
             std::vector<OutputTensors> output = launcher->get_output_tensors();
@@ -401,6 +416,11 @@ int main(int argc, char* argv[]) {
         logger::info << "\tMin:     " << utils::format_double(metrics.latency.min) << " ms" << logger::endl;
         logger::info << "\tMax:     " << utils::format_double(metrics.latency.max) << " ms" << logger::endl;
         logger::info << "Throughput: " << utils::format_double(metrics.fps) << " FPS" << logger::endl;
+
+        if (FLAGS_fps > 0) {
+            float fps = 1000 * launcher->get_latencies().size() / total_time;
+            logger::info << "Throughput was limited to: " << utils::format_double(fps) << " FPS" << logger::endl;
+        }
 
         if (report) {
             report->add_record(Report::Category::EXECUTION_RESULTS,

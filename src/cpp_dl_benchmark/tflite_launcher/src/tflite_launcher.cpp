@@ -7,6 +7,7 @@
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
+#include <nlohmann/json.hpp>
 #include <tensorflow/lite/c/c_api.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 #include <tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h>
@@ -20,8 +21,6 @@
 #include <numeric>
 #include <string>
 #include <vector>
-
-#include <nlohmann/json.hpp>
 
 namespace {
 const std::map<TfLiteType, utils::DataPrecision> tflite_dtype_to_precision_map{
@@ -58,7 +57,8 @@ TfLiteType get_tflite_data_type(utils::DataPrecision precision) {
 }
 }  // namespace
 
-TFLiteLauncher::TFLiteLauncher(const int nthreads, const std::string& device) : Launcher(nthreads, device) {}
+TFLiteLauncher::TFLiteLauncher(const int nthreads, const int fps, const std::string& device)
+    : Launcher(nthreads, fps, device) {}
 
 TFLiteLauncher::~TFLiteLauncher() {
     if (gpu_delegate != nullptr) {
