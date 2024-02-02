@@ -12,16 +12,16 @@ log = configure_logger()
 
 class TVMConverter(metaclass=abc.ABCMeta):
     def __init__(self, args):
-        self.model_name = args['model_name']
-        self.model_path = args['model_path']
-        self.model_params = args['model_params']
-        self.input_name = args['input_name']
-        self.input_shape = args['input_shape']
-        self.device = args['device']
-        self.opt_level = args['opt_level']
-        self.target_str = args['target']
-        self.module = args['module']
-        self.vm = args['vm']
+        self.model_name = args.get('model_name', None)
+        self.model_path = args.get('model_path', None)
+        self.model_params = args.get('model_params', None)
+        self.input_name = args.get('input_name', None)
+        self.input_shape = args.get('input_shape', None)
+        self.device = args.get('device', None)
+        self.opt_level = args.get('opt_level', None)
+        self.target_str = args.get('target', None)
+        self.module = args.get('module', None)
+        self.vm = args.get('vm', None)
 
         self.output_dir = args.get('output_dir', None)
         self.lib_name = args.get('lib_name', None)
