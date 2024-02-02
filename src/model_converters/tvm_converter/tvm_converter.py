@@ -3,7 +3,7 @@ import sys
 import traceback
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.joinpath('tvm_auxiliary')))
-from converter import Converter  # noqa: E402
+from converter import TVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from utils.logger_conf import configure_logger  # noqa: E402
@@ -40,11 +40,11 @@ def cli_argument_parser():
                         type=int,
                         nargs=4,
                         dest='input_shape')
-    parser.add_argument('-f', '--framework',
+    parser.add_argument('-f', '--source_framework',
                         help='Source model framework',
                         default='tvm',
                         type=str,
-                        dest='framework')
+                        dest='source_framework')
     parser.add_argument('-b', '--batch_size',
                         help='Batch size.',
                         default=1,
@@ -79,7 +79,7 @@ def create_dict_for_converter(args):
         'device': args.device,
         'module': args.module,
         'output_dir': args.output_dir,
-        'framework': args.framework,
+        'source_framework': args.source_framework,
     }
     return dictionary
 
@@ -87,7 +87,7 @@ def create_dict_for_converter(args):
 def main():
     args = cli_argument_parser()
     try:
-        converter = Converter.get_converter(create_dict_for_converter(args))
+        converter = TVMConverter.get_converter(create_dict_for_converter(args))
         converter.get_tvm_model()
         converter.save_tvm_model()
     except Exception:

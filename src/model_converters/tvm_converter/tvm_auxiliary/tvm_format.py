@@ -1,21 +1,20 @@
-import importlib
 from pathlib import Path
+from converter import TVMConverter
 
-Converter = importlib.import_module('converter').Converter
 
-
-class TVMConverter(Converter):
+class TVMConverterTVMFormat(TVMConverter):
     def __init__(self, args):
         super().__init__(args)
-        self.framework = 'TVM'
+
+    @property
+    def source_framework(self):
+        return super().source_framework
 
     def _get_deserialized_tvm_model(self):
-        model_path = self.args['model_path']
-        model_params = self.args['model_params']
-        with open(model_params, 'rb') as fo:
+        with open(self.model_params, 'rb') as fo:
             params = self.tvm.relay.load_param_dict(fo.read())
 
-        with open(model_path, 'r') as fo:
+        with open(self.model_path, 'r') as fo:
             mod = fo.read()
 
         self.mod = self.tvm.ir.load_json(mod)
@@ -23,22 +22,19 @@ class TVMConverter(Converter):
         return self.mod, self.params
 
     def _get_lib_format_tvm_model(self):
-        lib = self.tvm.runtime.load_module(self.args['model_path'])
+        lib = self.tvm.runtime.load_module(self.model_path)
         return lib
 
     def _get_vm_format_tvm_model(self):
-        lib = self.tvm.runtime.load_module(self.args['model_path'])
-        code = bytearray(open(self.args['model_params'], 'rb').read())
+        lib = self.tvm.runtime.load_module(self.model_path)
+        code = bytearray(open(self.model_params, 'rb').read())
         return lib, code
 
     def _convert_model_from_framework(self):
-        model_name = self.args['model_path']
-        params = self.args['model_params']
+        self.mod_type = Path(self.model_path).suffix[1:]
 
-        self.mod_type = Path(model_name).suffix[1:]
-
-        if params is not None and params != '':
-            self.params_type = Path(params).suffix[1:]
+        if self.model_params is not None and self.model_params != '':
+            self.params_type = Path(self.model_params).suffix[1:]
         else:
             self.params_type = None
 

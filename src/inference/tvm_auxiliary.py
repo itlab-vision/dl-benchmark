@@ -163,7 +163,7 @@ def create_dict_for_converter(args):
         'target': args.target,
         'module': args.module,
         'vm': args.vm,
-        'framework': args.framework,
+        'source_framework': args.source_framework,
     }
     return dictionary
 

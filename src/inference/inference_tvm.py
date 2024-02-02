@@ -18,7 +18,7 @@ from tvm_auxiliary import (create_dict_for_converter,
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('model_converters',
                                                                  'tvm_converter',
                                                                  'tvm_auxiliary')))
-from converter import Converter  # noqa: E402
+from converter import TVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -61,11 +61,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='output_names')
-    parser.add_argument('-f', '--framework',
+    parser.add_argument('-f', '--source_framework',
                         help='Source model framework',
                         default='tvm',
                         type=str,
-                        dest='framework')
+                        dest='source_framework')
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
@@ -196,7 +196,7 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = Converter.get_converter(create_dict_for_converter(args))
+        converter = TVMConverter.get_converter(create_dict_for_converter(args))
         report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
         graph_module = converter.get_graph_module()
 
