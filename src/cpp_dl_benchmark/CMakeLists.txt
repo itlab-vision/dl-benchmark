@@ -62,6 +62,10 @@ macro(add_launcher)
         gflags
     )
 
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_link_libraries(${LAUNCHER_NAME} PRIVATE pthread)
+    endif()
+
     target_compile_definitions(${LAUNCHER_NAME} PRIVATE ${LAUNCHER_DEFINITIONS})
 endmacro()
 
