@@ -93,8 +93,8 @@ class InferenceVMApi(InferenceHelper):
 
 
 class OutputPreparer:
-    def __init__(self, framework):
-        self.framework = framework
+    def __init__(self, source_framework):
+        self.source_framework = source_framework
 
     def classification_task(self, result, output_names, not_softmax):
         if not_softmax:
@@ -108,7 +108,7 @@ class OutputPreparer:
 
     def detection_task(self, result, output_names, params):
         np = importlib.import_module('numpy')
-        if self.framework == 'mxnet' or 'ssd_' in params['model_name']:
+        if self.source_framework == 'mxnet' or 'ssd_' in params['model_name']:
             box_ids, scores, bboxes = result
             box_ids = (box_ids.asnumpy())[0]
             scores = (scores.asnumpy())[0]
@@ -203,8 +203,8 @@ def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duratio
     return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
 
 
-def prepare_output(result, task, output_names, not_softmax=False, framework='tvm', params=None):
-    preparer = OutputPreparer(framework)
+def prepare_output(result, task, output_names, not_softmax=False, source_framework='tvm', params=None):
+    preparer = OutputPreparer(source_framework)
     if task == 'feedforward':
         return {}
     if task == 'classification':
