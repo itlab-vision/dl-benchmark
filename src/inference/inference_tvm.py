@@ -218,7 +218,7 @@ def main():
                     res = prepare_output(result, args.task,
                                          args.output_names,
                                          args.not_softmax,
-                                         framework=args.framework,
+                                         framework=args.source_framework,
                                          params=create_dict_for_output_preparer(args))
 
                     log.info('Inference results')
