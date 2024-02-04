@@ -31,19 +31,13 @@ class TVMConverterTVMFormat(TVMConverter):
         return lib, code
 
     def _convert_model_from_framework(self):
-        self.mod_type = Path(self.model_path).suffix[1:]
-
-        if self.model_params is not None and self.model_params != '':
-            self.params_type = Path(self.model_params).suffix[1:]
-        else:
-            self.params_type = None
-
         if self.mod_type == 'json' and self.params_type == 'params':
             return self._get_deserialized_tvm_model()
         elif ((self.mod_type == 'so' or self.mod_type == 'tar')
               and self.params_type is None):
             return [self._get_lib_format_tvm_model()]
-        elif self.mod_type == 'so' and self.params_type == 'ro':
+        elif ((self.mod_type == 'so' or self.mod_type == 'tar')
+              and self.params_type == 'ro'):
             return self._get_vm_format_tvm_model()
         else:
             raise ValueError('Wrong arguments.')

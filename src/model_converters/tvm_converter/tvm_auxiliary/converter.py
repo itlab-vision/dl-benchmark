@@ -26,12 +26,21 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.output_dir = args.get('output_dir', None)
         self.lib_name = args.get('lib_name', None)
 
+        self.mod_type = self.get_file_type(self.model_path)
+        self.params_type = self.get_file_type(self.model_params)
+
         self.graph = None
         self.mod = None
         self.params = None
         self.log = log
         self.tvm = importlib.import_module('tvm')
         self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
+
+    def get_file_type(self, file_path):
+        if file_path is not None:
+            return Path(file_path).suffix[1:]
+        else:
+            return None
 
     @abc.abstractmethod
     def _convert_model_from_framework(self):
