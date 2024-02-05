@@ -11,13 +11,15 @@ from io_model_wrapper import RknnIOModelWrapperCpp
 from transformer import Transformer
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
-from logger_conf import configure_logger  # noqa: E402
+from logger_conf import configure_logger, exception_hook  # noqa: E402
 
 log = configure_logger()
 
 # list of io-adapters that require original images
 ADAPTERS_WITH_ORIG_IMAGES = [
-    'blaze_face_rknn',
+    'blaze_face',
+    'face_mesh_v2',
+    'face_detection',
 ]
 
 
@@ -81,7 +83,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['face_recognition_tflite_cpp'] + ADAPTERS_WITH_ORIG_IMAGES,
+                        choices=['face_recognition'] + ADAPTERS_WITH_ORIG_IMAGES,
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -193,6 +195,7 @@ def get_output_json_path(args):
 
 
 def main():
+    sys.excepthook = exception_hook
     args = cli_argument_parser()
     try:
         model_wrapper = RknnIOModelWrapperCpp(args)

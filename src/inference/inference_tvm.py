@@ -4,9 +4,7 @@ import sys
 import traceback
 import tvm
 
-
 from pathlib import Path
-
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
@@ -73,6 +71,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
                         default='data',
@@ -158,6 +161,10 @@ def cli_argument_parser():
                         default=0.5,
                         type=float,
                         dest='threshold')
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
@@ -168,6 +175,7 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
+
     return args
 
 
@@ -195,7 +203,8 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:

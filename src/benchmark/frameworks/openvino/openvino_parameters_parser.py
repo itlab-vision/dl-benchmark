@@ -22,7 +22,7 @@ class OpenVINOParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG = 'InputScale'
         CONFIG_FRAMEWORK_DEPENDENT_CHANGE_PREPROC_OPTIONS_TAG = 'ChangePreprocessOptions'
-        CONFIG_FRAMEWORK_DEPENDENT_NUM_OUTPUT_TOKENS_LLM_TAG = 'NumOutputTokensLLM'
+        CONFIG_FRAMEWORK_DEPENDENT_USE_LATENCY_PER_TOKEN_LLM_TAG = 'UseLatencyPerTokenLLM'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -68,10 +68,10 @@ class OpenVINOParametersParser(DependentParametersParser):
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG):
             _input_scale = dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_SCALE_TAG)[0].firstChild
 
-        _num_output_tokens = None
-        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_NUM_OUTPUT_TOKENS_LLM_TAG):
-            _num_output_tokens = dep_parameters_tag.getElementsByTagName(
-                CONFIG_FRAMEWORK_DEPENDENT_NUM_OUTPUT_TOKENS_LLM_TAG)[0].firstChild
+        _use_latency_per_token = None
+        if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_USE_LATENCY_PER_TOKEN_LLM_TAG):
+            _use_latency_per_token = dep_parameters_tag.getElementsByTagName(
+                CONFIG_FRAMEWORK_DEPENDENT_USE_LATENCY_PER_TOKEN_LLM_TAG)[0].firstChild
 
         _change_preproc_options = None
         if dep_parameters_tag.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_CHANGE_PREPROC_OPTIONS_TAG):
@@ -94,14 +94,14 @@ class OpenVINOParametersParser(DependentParametersParser):
             mean=_mean.data if _mean else None,
             input_scale=_input_scale.data if _input_scale else None,
             change_preproc_options=_change_preproc_options.data if _change_preproc_options else None,
-            num_output_tokens=_num_output_tokens.data if _num_output_tokens else None,
+            use_latency_per_token=_use_latency_per_token.data if _use_latency_per_token else None,
         )
 
 
 class OpenVINOParameters(FrameworkParameters):
     def __init__(self, mode, code_source, runtime, hint, frontend, extension,
                  infer_request_count, async_request_count, thread_count, stream_count,
-                 shape, layout, mean, input_scale, change_preproc_options, num_output_tokens):
+                 shape, layout, mean, input_scale, change_preproc_options, use_latency_per_token):
         self.mode = None
         self.code_source = None
         self.runtime = None
@@ -117,7 +117,7 @@ class OpenVINOParameters(FrameworkParameters):
         self.mean = None
         self.input_scale = None
         self.change_preproc_options = None
-        self.num_output_tokens = None
+        self.use_latency_per_token = None
 
         if self._mode_is_correct(mode):
             self.mode = mode.title()
@@ -193,11 +193,8 @@ class OpenVINOParameters(FrameworkParameters):
                 else:
                     self.change_preproc_options = change_preproc_options
 
-        if num_output_tokens is not None:
-            if self._int_value_is_correct(num_output_tokens):
-                self.num_output_tokens = int(num_output_tokens)
-            else:
-                raise ValueError('NumOutputTokensLLM can only take values: integer greater than zero.')
+        if self._parameter_is_not_none(use_latency_per_token):
+            self.use_latency_per_token = use_latency_per_token
 
     @staticmethod
     def _mode_is_correct(mode):
