@@ -133,7 +133,7 @@ def cli_argument_parser():
                         dest='color_map')
     parser.add_argument('--prob_threshold',
                         help='Probability threshold for detections filtering',
-                        default=0.5,
+                        default=0.3,
                         type=float,
                         dest='threshold')
     parser.add_argument('-mi', '--mininfer',

@@ -33,7 +33,7 @@ def convert_models(models_list: list, output_dir: Path = OUTPUT_DIR, precisions:
 
 
 def download_file(link, out_dir, filename):
-    cmd = f'mkdir -p {out_dir} && curl -o {out_dir}/{filename} {link}'
+    cmd = f'mkdir -p {out_dir} && curl -L -o {out_dir}/{filename} {link}'
     execute_process(command_line=cmd, log=log)
 
 

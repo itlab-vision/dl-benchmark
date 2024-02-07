@@ -18,7 +18,11 @@ CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
 TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
-             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
+             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001', 'efficientdet-d0-tf',
+             'face-detection-0206', 'person-detection-asl-0001', 'person-detection-action-recognition-0005',
+             'person-detection-action-recognition-0006', 'person-detection-raisinghand-recognition-0001',
+             'person-detection-action-recognition-teacher-0002', 'yolo-v2-ava-0001', 'yolo-v2-tiny-ava-0001',
+             'yolo-v2-tf', 'yolo-v3-tf']
 DL_CAFFE_MODELS = ['googlenet-v1']
 
 
@@ -82,6 +86,26 @@ def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
     download_file(weights_link, instance_seg_dir, 'instance-segmentation-security-0083.bin')
 
 
+def download_yolov2_tiny_tf(output_dir: Path = OUTPUT_DIR):
+    yolov2_tiny_tf_dir = Path(output_dir, 'yolo-v2-tiny-tf')
+    model_link = ('https://storage.openvinotoolkit.org/repositories/open_model_zoo/public/2024.0/'
+                  'yolo-v2-tiny-tf/yolo-v2-tiny.pb')
+    download_file(model_link, yolov2_tiny_tf_dir, 'yolo-v2-tiny.pb')
+
+
+def download_yolov7_onnx(output_dir: Path = OUTPUT_DIR):
+    yolov7_onnx_dir = Path(output_dir, 'yolo-v7-onnx')
+    model_link = 'https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-nms-640.onnx'
+    download_file(model_link, yolov7_onnx_dir, 'yolo-v7.onnx')
+
+
+def download_facedet_full(output_dir: Path = OUTPUT_DIR):
+    facedet_full_dir = Path(output_dir, 'face-detection-fr')
+    model_link = ('https://github.com/patlevin/face-detection-tflite/blob/main/fdlite/data/'
+                  'face_detection_full_range.tflite')
+    download_file(model_link, facedet_full_dir, 'face_detection_full_range.tflite')
+
+
 def convert_models_to_tvm(use_caffe: bool = False):
     pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
@@ -121,6 +145,9 @@ def prepare_dl_models(request, overrided_models):
 
         download_resnet50()
         download_old_instance_segmentation()
+        download_yolov2_tiny_tf()
+        download_yolov7_onnx()
+        download_facedet_full()
 
     convert_models_to_tvm(use_caffe)
 
