@@ -35,7 +35,7 @@ class MockDockerClienAPI:
         return {'Id': MockExec()}
 
     def exec_start(self, *args, **kwargs):
-        return ['test: test\ntest: test\ntest: test'.encode('utf-8')]
+        return ['test: test'.encode('utf-8')]
 
     def exec_inspect(self, *args, **kwargs):
         return {'ExitCode': MockMetadata()}
