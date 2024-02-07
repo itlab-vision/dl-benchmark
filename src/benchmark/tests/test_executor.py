@@ -120,7 +120,7 @@ def test_execute_process(executor_instance, mocker):
         assert ex.execute_process(command_line='echo -n test | md5sum',
                                   timeout=999)[1][0] == '098f6bcd4621d373cade4e832627b4f6  -\n'
     else:
-        assert ex.execute_process(command_line='test docker', _=None) == (0, ['test: test', 'test: test', 'test: test'])
+        assert ex.execute_process(command_line='test docker', _=None) == (0, ['test: test'])
 
 
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])
