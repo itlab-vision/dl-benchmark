@@ -39,7 +39,7 @@ ARG DEPENDENCIES="apt-utils \
                   wget \
                   git \
                   ninja-build \
-                  ffmpeg "
+                  ffmpeg"
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
