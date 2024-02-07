@@ -15,10 +15,18 @@ ARG DEPENDENCIES="apt-utils \
                   autoconf \
                   ca-certificates \
                   sudo \
+                  automake \
                   build-essential \
+                  cpio \
                   curl \
+                  dialog \
+                  gnupg2 \
+                  libdrm2 \
+                  libglib2.0-0 \
                   lsb-release \
+                  libtool \
                   libprotobuf-dev \
+                  ninja-build \
                   libgl1-mesa-glx \
                   nlohmann-json3-dev \
                   python3-pip \
@@ -26,8 +34,12 @@ ARG DEPENDENCIES="apt-utils \
                   python3-dev \
                   python3-venv \
                   libpython3.10 \
+                  udev \
+                  unzip \
                   wget \
-                  git"
+                  git \
+                  ninja-build \
+                  ffmpeg "
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
