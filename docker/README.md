@@ -27,14 +27,14 @@
    ```bash
    docker build -t ubuntu_for_dli [--build-arg DLI_BRANCH="<tag>"] \ 
        [--build-arg DATASET_DOWNLOAD_LINK="https://<github_user>:<user_gpg_key>@github.com/<repo>.git"] \
-       <dockerfile_parent_dir>
+       <dockerfile_dir>
    ```
 
 1. Go to the directory with the framework of interest
    and build the image.
 
    ```bash
-   docker build -t <image_name> <dockerfile_parent_dir>
+   docker build -t <image_name> <dockerfile_dir>
    ```
 
 1. Save the docker image to the archive.
