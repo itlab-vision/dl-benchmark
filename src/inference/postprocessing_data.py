@@ -1,12 +1,15 @@
 import numpy as np
 
 
-def delete_incorrect_time(time, min_correct_time):
+def delete_incorrect_time(time, num_tokens, min_correct_time):
     valid_time = []
+    valid_tokens = []
     for i in range(len(time)):
         if time[i] >= min_correct_time:
             valid_time.append(time[i])
-    return valid_time
+            if num_tokens:
+                valid_tokens.append(num_tokens[i])
+    return valid_time, valid_tokens
 
 
 def three_sigma_rule(time):
@@ -63,17 +66,20 @@ def calculate_performance_metrics_sync_mode(batch_size, inference_time, min_infe
     first_inference_time = inference_time[0]
     iterations_num = len(inference_time)
     execution_time = sum(inference_time)
-    inference_time = delete_incorrect_time(inference_time, min_infer_time)
+    latency_per_token_median = None
+
+    inference_time, num_tokens = delete_incorrect_time(inference_time, num_tokens, min_infer_time)
+    if num_tokens:
+        latencies_per_token = calculate_latency_per_token(inference_time, num_tokens)
+        latencies_per_token = three_sigma_rule(latencies_per_token)
+        latency_per_token_median = np.median(latencies_per_token)
+
     inference_time = three_sigma_rule(inference_time)
     average_time = calculate_average_time(inference_time)
     latency, latency_std = calculate_latency(inference_time)
     batch_fps = calculate_batch_fps(batch_size, latency)
     average_fps = calculate_average_fps(iterations_num, batch_size, sum(inference_time))
-    latency_per_token_median = None
-    if num_tokens:
-        latencies_per_token = calculate_latency_per_token(inference_time, num_tokens)
-        latencies_per_token = three_sigma_rule(latencies_per_token)
-        latency_per_token_median = np.median(latencies_per_token)
+
     inference_result = {
         'iterations_num': iterations_num,
         'execution_time': round(execution_time, 3),

@@ -109,8 +109,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         reported_batch_fps = report['execution_results'].get('batch_throughput', None)
         batch_fps = round(float(reported_batch_fps), 3) if reported_batch_fps else 0.0
         reported_latency_per_token = report['execution_results'].get('latency_per_token', None)
-        num_tokens = report['execution_results'].get('num_tokens', 'N/A')
         latency_per_token = round(float(reported_latency_per_token), 3) if reported_latency_per_token else 'N/A'
+        num_tokens = report['execution_results'].get('num_tokens', None) or 'N/A'
         if self.launcher_latency_units == 'milliseconds':
             latency = round(latency / MILLISECONDS_IN_SECOND, 5)
             average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)

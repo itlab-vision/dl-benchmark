@@ -475,7 +475,10 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None, to
         infer_func = model
 
     if input_kwarg_name:
-        res = infer_func(**{input_kwarg_name: inputs}, tokenizer=tokenizer)
+        params = {input_kwarg_name: inputs}
+        if tokenizer and task_type not in ['named-entity-recognition']:
+            params['tokenizer'] = tokenizer
+        res = infer_func(**params)
     else:
         res = infer_func(*inputs)
 
