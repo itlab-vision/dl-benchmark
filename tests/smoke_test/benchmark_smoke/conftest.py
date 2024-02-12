@@ -67,7 +67,7 @@ def overrided_models(pytestconfig):
 def download_resnet50(output_dir: Path = OUTPUT_DIR):
     resnet_dir = Path(output_dir, 'resnet50')
     resnet_so_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
-                      'models/classification/resnet50-tvm-optimized/resnet50.so')
+                      'tvm/models/classification/resnet50-tvm-optimized/resnet50.so')
     download_file(resnet_so_link, resnet_dir, 'resnet50.so')
 
 
