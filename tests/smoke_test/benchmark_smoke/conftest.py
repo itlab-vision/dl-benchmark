@@ -37,6 +37,11 @@ def pytest_addoption(parser):
                      default=None,
                      required=False,
                      help='Path to models config dir')
+    parser.addoption('--res_dir',
+                     type=Path,
+                     default=Path(SCRIPT_DIR, 'res_dir'),
+                     required=False,
+                     help='Path to dir to save results (*.csv)')
     parser.addoption('--openvino_cpp_benchmark_dir',
                      type=Path,
                      default=None,
@@ -60,6 +65,12 @@ def openvino_cpp_benchmark_dir(pytestconfig):
 def cpp_benchmarks_dir(pytestconfig):
     """Fixture function for command-line option."""
     return pytestconfig.getoption('cpp_benchmarks_dir')
+
+
+@pytest.fixture(scope='session')
+def res_dir(pytestconfig):
+    """Fixture function for command-line option."""
+    return pytestconfig.getoption('res_dir')
 
 
 @pytest.fixture(scope='session')
