@@ -5,6 +5,7 @@ WORKDIR /tmp/
 RUN pip3 install --upgrade pip
 ARG CMAKE_VERSION=3.24
 RUN pip3 install cmake==${CMAKE_VERSION}
+RUN apt-get update && apt-get install ninja-build
 
 # Install OpenCV
 ARG OCV_VERSION=4.7.0

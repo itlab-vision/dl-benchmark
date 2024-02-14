@@ -104,7 +104,8 @@ class DockerExecutor(Executor):
         docker_handler.run()
         if docker_handler.return_code != 0:
             return 'None'
-        hardware = [line.strip().split(': ') for line in docker_handler.output[1:-1]]
+        hardware = [line.strip().split(': ') for line in docker_handler.output[:]]
+        hardware = [pair for pair in hardware if len(pair) == 2]
         hardware_info = ''
         for line in hardware:
             hardware_info += f'{line[0]}: {line[1]}, '

@@ -100,7 +100,7 @@ def main():
               f'-v /dev:/dev '
               f'-v {args.model_path}:/media/models '
               f'-v {args.dataset_path}:/media/datasets '
-              f'--network=host {image_name.split(".")[0]}')
+              f'--network=host {os.path.splitext(image_name)[0]}')
 
 
 if __name__ == '__main__':
