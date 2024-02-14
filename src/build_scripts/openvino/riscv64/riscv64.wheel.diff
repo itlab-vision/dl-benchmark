@@ -1,0 +1,13 @@
+diff --git a/src/bindings/python/wheel/setup.py b/src/bindings/python/wheel/setup.py
+index 4b05691221..53cb888ba4 100644
+--- a/src/bindings/python/wheel/setup.py
++++ b/src/bindings/python/wheel/setup.py
+@@ -38,6 +38,8 @@ elif machine == "arm" or machine == "armv7l":
+     ARCH = "arm"
+ elif machine == "aarch64" or machine == "arm64" or machine == "ARM64":
+     ARCH = "arm64"
++elif machine == "riscv64":
++    ARCH = "riscv64"
+ 
+ # The following variables can be defined in environment or .env file
+ SCRIPT_DIR = Path(__file__).resolve().parents[0]
