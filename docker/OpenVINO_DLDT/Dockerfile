@@ -13,7 +13,6 @@ RUN sudo mkdir /opt/intel && \
 # Install OpenVINO dependencies
 ENV INSTALL_DIR /opt/intel/openvino_2023/
 WORKDIR $INSTALL_DIR/install_dependencies
-RUN ls
 RUN echo y | ./install_openvino_dependencies.sh
 RUN cat /root/.bashrc > tmp && echo 'source $INSTALL_DIR/setupvars.sh' > /root/.bashrc
 
