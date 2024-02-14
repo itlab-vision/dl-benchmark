@@ -19,7 +19,7 @@ RUN dpkg --add-architecture riscv64 && \
 RUN python3 -m pip install --upgrade pip && python3 -m pip install cmake
 
 # Clone openvino
-RUN git clone https://github.com/openvinotoolkit/openvino.git --branch 2023.2.0
+RUN git clone https://github.com/openvinotoolkit/openvino.git --branch 2023.3.0
 WORKDIR /openvino
 RUN git submodule update --init \
         ./thirdparty/pugixml \
@@ -37,6 +37,10 @@ RUN git submodule update --init \
 
 # Copy CMake toolchain
 COPY riscv64.toolchain.cmake ./cmake/toolchains/custom_riscv64.toolchain.cmake
+
+# Add RISC-V support to Python Wheel
+COPY riscv64.wheel.diff ./riscv64.wheel.diff
+RUN git apply ./riscv64.wheel.diff
 
 ## Build OpenVINO
 RUN python3 -m pip install -r ./src/bindings/python/wheel/requirements-dev.txt
