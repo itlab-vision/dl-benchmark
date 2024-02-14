@@ -61,7 +61,7 @@ class Converter(metaclass=abc.ABCMeta):
 
         log.info(f'Saving model \"{model_name}\" to \"{path_save_model}\"')
         if not os.path.exists(path_save_model):
-            os.mkdir(path_save_model)
+            os.makedirs(path_save_model)
 
         log.info(f'Saving weights of the model {model_name}')
         with open(f'{path_save_model}/{model_name}.params', 'wb') as fo:
@@ -175,7 +175,7 @@ class PyTorchToTVMConverter(Converter):
             log.info('Loading pretrained model')
             if self.args['model_name'] == 'maskrcnn_resnet50_fpn':
                 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-                from src.inference.configs.tvm_configs.mask_rcnn_config import TraceWrapper, do_trace
+                from inference.configs.tvm_configs.mask_rcnn_config import TraceWrapper, do_trace
                 model = TraceWrapper(model_cls(pretrained=True))
                 model.eval()
                 with self.torch.no_grad():
