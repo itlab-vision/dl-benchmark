@@ -1,7 +1,8 @@
 #!/bin/bash
 
 
-WORK_DIR="/home/itmm/Documents/kustikova_v/origin-valentina"
+#WORK_DIR="/home/itmm/Documents/kustikova_v/origin-valentina"
+WORK_DIR="/home/vanya/projects"
 cd "${WORK_DIR}"
 
 OMZ_DIR="${WORK_DIR}/public"
@@ -23,7 +24,7 @@ conda create --name tvm_convert_python3.7 python=3.7 -y
 echo "Activating virtual environment..."
 conda activate tvm_convert_python3.7
 echo "Installing packages..."
-pip install openvino-dev
+pip install openvino-dev==2022.3.0
 pip install apache-tvm
 conda install -y caffe
 echo "Deactivating virtual environment..."
@@ -34,17 +35,17 @@ conda create --name tvm_convert_python3.9 python=3.9 -y
 echo "Activating virtual environment..."
 conda activate tvm_convert_python3.9
 echo "Installing packages..."
-pip install openvino-dev[caffe,tensorflow2,pytorch]
+pip install openvino-dev[caffe,tensorflow2,pytorch]==2022.3.0
 pip install tensorflow==2.12.0
 pip install onnx==1.14.0
 pip install torch==2.1.0
-pip install tf-keras
+pip install tf-keras==2.15.0
 pip install apache-tvm==0.14.dev264
-pip install tf2onnx
+pip install tf2onnx==1.16.0
 # dependencies for tf_converter.py
-pip install onnx-tf
-pip install tensorflow-addons
-pip install tensorflow-probability
+pip install onnx-tf==1.10.0
+pip install tensorflow-addons==0.22.0
+pip install tensorflow-probability==0.22.0
 echo "Deactivating virtual environment..."
 conda deactivate
 
