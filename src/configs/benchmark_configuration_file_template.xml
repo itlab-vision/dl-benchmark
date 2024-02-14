@@ -19,6 +19,8 @@
             <Device></Device>
             <IterationCount></IterationCount>
             <TestTimeLimit></TestTimeLimit>
+            <!-- Следующие параметры могут отсутствовать -->
+            <RawOutput></RawOutput>
         </FrameworkIndependent>
         <FrameworkDependent>
             <Mode></Mode>
@@ -33,7 +35,7 @@
             <Mean></Mean>
             <InputScale></InputScale>
             <ChangePreprocessOptions></ChangePreprocessOptions>
-            <NumOutputTokensLLM></NumOutputTokensLLM>
+            <UseLatencyPerTokenLLM></UseLatencyPerTokenLLM>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -377,12 +379,14 @@
         <FrameworkDependent>
             <InputName></InputName>
             <InputShape></InputShape>
-            <Framework></Framework> <!--Принимает значения: caffe, onnx, pytorch, mxnet, tvm-->
+            <Framework></Framework> <!--Принимает значения: caffe, onnx, pytorch, mxnet, tvm, tflite-->
             <Normalize></Normalize>
             <Mean></Mean>
             <Std></Std>
             <Layout></Layout>
             <ChannelSwap></ChannelSwap>
+            <VirtualMachine></VirtualMachine>
+            <Target></Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>

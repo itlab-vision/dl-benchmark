@@ -21,26 +21,34 @@ jobs:
       - name: Setting up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
 
       - name: Setting up Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements_ci.txt
           python -m pip install -r requirements_frameworks.txt
 
-      - name: Run smoke test for inference benchmark
-        run: cd test/smoke_test && ./run_bench_smoke_test.sh
+      - name: Run smoke tests for inference benchmark
+        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="not caffe"
 
-      - name: Run smoke test for accuracy checker
-        run: cd test/smoke_test && ./run_ac_smoke_test.sh
-
-      - name: Upload Artifact
+      - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: results
-          path: test/smoke_test/results*.csv
+          name: benchmark_report
+          path: tests/smoke_test/benchmark_smoke/report.html
+          retention-days: 1
+
+      - name: Run smoke tests for accuracy checker
+        run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
+
+      - name: Upload accuracy artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: accuracy_report
+          path: tests/smoke_test/ac_smoke/report.html
           retention-days: 1
 
   smoke_test_caffe:
@@ -64,6 +72,7 @@ jobs:
         shell: bash -el {0}
         run: |
           python -m pip install --upgrade pip
+          python -m pip install -r requirements_ci.txt
           python -m pip install openvino-dev
           python -m pip install apache-tvm
           conda install -y caffe
@@ -71,14 +80,14 @@ jobs:
       - name: Run smoke test for inference benchmark
         shell: bash -el {0}
         run: |
-          cd test/smoke_test && ./run_bench_smoke_test_caffe.sh
+          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe"
 
-      - name: Upload Artifact
+      - name: Upload benchmark caffe artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: results
-          path: test/smoke_test/results*.csv
+          name: benchmark_caffe_results
+          path: tests/smoke_test/benchmark_smoke/report.html
           retention-days: 1
 
   smoke_test_spectral:

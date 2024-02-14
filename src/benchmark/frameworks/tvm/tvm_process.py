@@ -56,6 +56,11 @@ class TVMProcess(ProcessHandler):
             common_params = TVMProcess._add_flag_to_cmd_line(
                 common_params, '--norm')
 
+        vm = self._test.dep_parameters.vm
+        if vm == 'True':
+            common_params = TVMProcess._add_flag_to_cmd_line(
+                common_params, '-vm')
+
         mean = self._test.dep_parameters.mean
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--mean', mean)
@@ -201,10 +206,18 @@ class TVMProcessTVMFormat(TVMProcess):
         model_json = self._test.model.model
         model_params = self._test.model.weight
 
-        if model_json.split('.')[-1] == 'json':
+        model_type = model_json.split('.')[-1]
+        if model_params is not None and model_params != '':
+            params_type = model_params.split('.')[-1]
+        else:
+            params_type = None
+
+        if model_type == 'json' and params_type == 'params':
             common_params = (f'-m {model_json} -w {model_params} ')
-        elif model_json.split('.')[-1] == 'so':
+        elif (model_type == 'so' or model_type == 'tar') and params_type is None:
             common_params = (f'-m {model_json} ')
+        elif model_type == 'so' and params_type == 'ro':
+            common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise ValueError('Wrong arguments.')
 
