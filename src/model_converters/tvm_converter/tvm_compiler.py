@@ -2,7 +2,8 @@ import argparse
 import sys
 import traceback
 from pathlib import Path
-from tvm_converter import TVMConverter
+sys.path.append(str(Path(__file__).resolve().parent.joinpath('tvm_auxiliary')))
+from tvm_format import TVMConverterTVMFormat  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from utils.logger_conf import configure_logger  # noqa: E402
@@ -65,7 +66,7 @@ def create_dict_for_compilation(args):
 def main():
     args = cli_argument_parser()
     try:
-        converter = TVMConverter(create_dict_for_compilation(args))
+        converter = TVMConverterTVMFormat(create_dict_for_compilation(args))
         converter.export_lib()
     except Exception:
         log.error(traceback.format_exc())

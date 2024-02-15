@@ -132,23 +132,25 @@ for model_idx in ${!model_names[@]}; do
     for batch in  ${batch_sizes[@]}; do
         command_line=()
         if [ "${src_frameworks[$model_idx]}" = "caffe" ]; then
-            command_line=("python ${TVM_CONVERTER_DIR}/caffe_to_tvm_converter.py"
+            command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
                           "-mn ${model_names[$model_idx]}"
                           "-m ${src_models[$model_idx]}.prototxt"
                           "-w ${src_models[$model_idx]}.caffemodel"
                           "-is ${batch} ${input_shapes[$model_idx]}"
                           "-b ${batch}"
+                          "-f caffe"
                           "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
             echo -e "\t${command_line[@]}"
             conda activate tvm_convert_python3.7
             ${command_line[@]}
             conda deactivate
         elif [ "${src_frameworks[$model_idx]}" = "onnx" ]; then
-            command_line=("python ${TVM_CONVERTER_DIR}/onnx_to_tvm_converter.py"
+            command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
                           "-mn ${model_names[$model_idx]}"
                           "-m ${src_models[$model_idx]}"
                           "-is ${batch} ${input_shapes[$model_idx]}"
                           "-b ${batch}"
+                          "-f onnx"
                           "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
             echo -e "\t${command_line[@]}"
             conda activate tvm_convert_python3.9
@@ -156,18 +158,20 @@ for model_idx in ${!model_names[@]}; do
             conda deactivate
         elif [ "${src_frameworks[$model_idx]}" = "pytorch" ]; then
             if [ "${model_names[$model_idx]}" = "resnet-50-pytorch" ]; then
-                command_line=("python ${TVM_CONVERTER_DIR}/pytorch_to_tvm_converter.py"
+                command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
                               "-mn resnet50"
                               "-w ${src_models[$model_idx]}"
                               "-is ${batch} ${input_shapes[$model_idx]}"
                               "-b ${batch}"
+                              "-f pytorch"
                               "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
             else
-                command_line=("python ${TVM_CONVERTER_DIR}/pytorch_to_tvm_converter.py"
+                command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
                               "-mn ${model_names[$model_idx]}"
                               "-m ${src_models[$model_idx]}"
                               "-is ${batch} ${input_shapes[$model_idx]}"
                               "-b ${batch}"
+                              "-f pytorch"
                               "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
             fi
             echo -e "\t${command_line[@]}"
