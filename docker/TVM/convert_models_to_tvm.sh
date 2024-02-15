@@ -35,10 +35,8 @@ conda create --name tvm_convert_python3.9 python=3.9 -y
 echo "Activating virtual environment..."
 conda activate tvm_convert_python3.9
 echo "Installing packages..."
-pip install openvino-dev[caffe,tensorflow2,pytorch]==2022.3.0
+pip install openvino-dev[caffe,tensorflow2,pytorch,onnx]==2023.3.0
 pip install tensorflow==2.12.0
-pip install onnx==1.14.0
-pip install torch==2.1.0
 pip install tf-keras==2.15.0
 pip install apache-tvm==0.14.dev264
 pip install tf2onnx==1.16.0
@@ -55,6 +53,10 @@ echo "Activating virtual environment..."
 conda activate tvm_convert_mxnet_python3.9
 echo "Installing packages..."
 pip install mxnet==1.9.1
+pip install gluoncv[full]
+pip install openvino-dev==2023.3.0
+pip uninstall -y numpy
+pip install numpy==1.23.1
 pip install apache-tvm==0.14.dev264
 echo "Deactivating virtual environment..."
 conda deactivate
