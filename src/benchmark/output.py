@@ -29,6 +29,9 @@ class OutputHandler:
             'batch_fps': 'BATCH FPS',
             'latency_per_token': 'Latency per token',
             'num_tokens': 'Median tokens num',
+            'audio_len_avg': 'Average audio length',
+            'audio_sampling_rate': 'Audio sampling rate (Hz)',
+            'latency_per_second': 'Latency per second',
             'error_type': 'Error type',
         }
 

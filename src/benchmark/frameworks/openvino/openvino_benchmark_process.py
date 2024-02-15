@@ -45,7 +45,8 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
             return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None,
-                    'num_tokens': None}
+                    'num_tokens': None, 'audio_len_avg': None, 'audio_sampling_rate': None,
+                    'latency_per_second': None}
 
         # calculate average time of single pass metric to align output with custom launchers
         duration = self._get_benchmark_app_metric('Duration')
@@ -54,13 +55,20 @@ class OpenVINOBenchmarkProcess(OpenVINOProcess):
                                        if None not in (duration, iter_count) else None)
         fps = self._get_benchmark_app_metric('Throughput')
         latency = round(self._get_benchmark_app_metric('Median') / 1000, 5)
+
         num_tokens = 'N/A'
+        audio_len_avg = 'N/A'
+        audio_sampling_rate = 'N/A'
+        latency_per_second = 'N/A'
 
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,
             'batch_fps': 0.0,
             'num_tokens': num_tokens,
+            'audio_len_avg': audio_len_avg,
+            'audio_sampling_rate': audio_sampling_rate,
+            'latency_per_second': latency_per_second,
         }
 
         if self._test.dep_parameters.use_latency_per_token:
@@ -245,7 +253,8 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
     def get_performance_metrics(self):
         if self._status != 0 or len(self._output) == 0:
             return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None,
-                    'num_tokens': None}
+                    'num_tokens': None, 'audio_len_avg': None, 'audio_sampling_rate': None,
+                    'latency_per_second': None}
 
         report = self.get_json_report_content()
 
@@ -258,13 +267,20 @@ class OpenVINOBenchmarkCppProcess(OpenVINOBenchmarkProcess):
 
         fps = round(float(report['execution_results']['throughput']), 3)
         latency = round(float(report['execution_results']['latency_median']) / MILLISECONDS_IN_SECOND, 5)
+
         num_tokens = report['execution_results'].get('num_tokens', 'N/A')
+        audio_len_avg = report['execution_results'].get('num_tokens', 'N/A')
+        audio_sampling_rate = report['execution_results'].get('audio_sampling_rate', 'N/A')
+        latency_per_second = report['execution_results'].get('latency_per_second', 'N/A')
 
         metrics = {
             'average_time': average_time_of_single_pass,
             'fps': fps,
             'batch_fps': 0.0,
             'num_tokens': num_tokens,
+            'audio_len_avg': audio_len_avg,
+            'audio_sampling_rate': audio_sampling_rate,
+            'latency_per_second': latency_per_second,
         }
 
         if self._test.dep_parameters.use_latency_per_token:

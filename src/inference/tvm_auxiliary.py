@@ -52,9 +52,10 @@ class InferenceHelper:
             t1 = time()
             time_infer.append(t1 - t0)
         else:
-            time_infer, _ = loop_inference(num_of_iterations, test_duration)(self.inference_iteration)(get_slice,
-                                                                                                       input_name,
-                                                                                                       module)
+            loop_results = loop_inference(num_of_iterations, test_duration)(self.inference_iteration)(get_slice,
+                                                                                                      input_name,
+                                                                                                      module)
+            time_infer = loop_results['time_infer']
         return result, time_infer
 
 

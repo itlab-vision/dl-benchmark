@@ -309,6 +309,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3TFIO(args, io_model_wrapper, transformer)
         elif task in ['text-generation', 'text-translation', 'batch-text-generation']:
             return CausalLMIO(args, io_model_wrapper, transformer)
+        elif task in ['speech-to-text']:
+            return Speech2SequenceIO(args, io_model_wrapper, transformer)
         elif task in ['named-entity-recognition']:
             return BertNERIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
@@ -362,6 +364,35 @@ class TextPromtIO(IOAdapter):
         pass
 
 
+class AudioIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.audio_data = None
+        self.sampling_rate = None
+        self.audio_length = None
+
+    def prepare_input(self, model, input_):
+        """
+        Set self.audio_data and self.audio_length from audio file.
+        Warning: currently supports only single-channel audios.
+        """
+        import torchaudio
+        try:
+            waveform, self.sampling_rate = torchaudio.load(input_[0])
+            self.audio_data = waveform[0]
+            self.audio_length = len(self.audio_data) / self.sampling_rate
+        except Exception as ex:
+            raise ValueError(f'Unable to read audio file {input_[0]}. Exception occurred: {str(ex)}')
+
+    @abc.abstractmethod
+    def get_slice_input(self, result, log):
+        pass
+
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
 class TextToImageIO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
         return [self._prompts[0]] * self._batch_size
@@ -378,6 +409,16 @@ class TextToImageIO(TextPromtIO):
 class CausalLMIO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
         return [self._prompts[0]] * self._batch_size
+
+    def process_output(self, result, log):
+        output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
+        log.info(f'Generated results: \n{output_text}')
+
+
+class Speech2SequenceIO(AudioIO):
+    def get_slice_input(self, *args, **kwargs):
+        # TODO: add batch input based on self._batch_size
+        return self.audio_data, self.sampling_rate, self.audio_length
 
     def process_output(self, result, log):
         output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])

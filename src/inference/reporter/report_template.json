@@ -32,6 +32,9 @@
         "num_tokens": null,
         "min_num_tokens": null,
         "max_num_tokens": null,
+        "audio_len_avg": null,
+        "audio_sampling_rate": null,
+        "latency_per_second": null,
         "read_network_time": null,
         "throughput": null,
         "batch_throughput": null

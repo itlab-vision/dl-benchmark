@@ -119,4 +119,7 @@ def test_get_openvino_benchmark_app_metrics(mocker):
                                                  'latency_per_token': 'N/A',
                                                  'fps': 26.88,
                                                  'latency': 0.07326,
-                                                 'num_tokens': 'N/A'}
+                                                 'num_tokens': 'N/A',
+                                                 'audio_len_avg': 'N/A',
+                                                 'audio_sampling_rate': 'N/A',
+                                                 'latency_per_second': 'N/A'}

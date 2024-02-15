@@ -94,28 +94,41 @@ class ProcessHandler(metaclass=abc.ABCMeta):
     def get_output_lines(self):
         return self._output
 
+    @staticmethod
+    def get_reported_optional_value(report, param_name, value_type=float, to_round=True,
+                                    round_precision=3, default_value='N/A'):
+        reported_value = report['execution_results'].get(param_name, None)
+        value = value_type(reported_value) if reported_value else default_value
+        if to_round and value != default_value:
+            return round(value, round_precision)
+        return value
+
     def get_performance_metrics_from_json_report(self):
         if self._status != 0 or len(self._output) == 0:
             return {'average_time': None, 'fps': None, 'latency': None, 'batch_fps': None, 'latency_per_token': None,
-                    'num_tokens': None}
+                    'num_tokens': None, 'audio_len_avg': None, 'audio_sampling_rate': None,
+                    'latency_per_second': None}
 
         report = self.get_json_report_content()
 
         MILLISECONDS_IN_SECOND = 1000
         fps = float(report['execution_results']['throughput'])
-        reported_latency = report['execution_results'].get('latency_median', None)
-        latency = float(reported_latency) if reported_latency else 0.0
+        latency = self.get_reported_optional_value(report, 'latency_median', default_value=0.0)
         average_time_of_single_pass = float(report['execution_results']['latency_avg'])
-        reported_batch_fps = report['execution_results'].get('batch_throughput', None)
-        batch_fps = round(float(reported_batch_fps), 3) if reported_batch_fps else 0.0
-        reported_latency_per_token = report['execution_results'].get('latency_per_token', None)
-        latency_per_token = round(float(reported_latency_per_token), 3) if reported_latency_per_token else 'N/A'
-        num_tokens = report['execution_results'].get('num_tokens', None) or 'N/A'
+        batch_fps = self.get_reported_optional_value(report, 'batch_throughput', default_value=0.0)
+        latency_per_token = self.get_reported_optional_value(report, 'latency_per_token')
+        num_tokens = self.get_reported_optional_value(report, 'num_tokens')
+        audio_len_avg = self.get_reported_optional_value(report, 'audio_len_avg')
+        latency_per_second = self.get_reported_optional_value(report, 'latency_per_second')
+        audio_sampling_rate = self.get_reported_optional_value(report, 'audio_sampling_rate')
+
         if self.launcher_latency_units == 'milliseconds':
             latency = round(latency / MILLISECONDS_IN_SECOND, 5)
             average_time_of_single_pass = round(average_time_of_single_pass / MILLISECONDS_IN_SECOND, 5)
+
         metrics = {'average_time': average_time_of_single_pass, 'fps': fps, 'latency': latency, 'batch_fps': batch_fps,
-                   'latency_per_token': latency_per_token, 'num_tokens': num_tokens}
+                   'latency_per_token': latency_per_token, 'num_tokens': num_tokens, 'audio_len_avg': audio_len_avg,
+                   'latency_per_second': latency_per_second, 'audio_sampling_rate': audio_sampling_rate}
 
         return metrics
 

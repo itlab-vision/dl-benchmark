@@ -113,9 +113,11 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default); classification - output'
                              'is a vector of probabilities; text-generation - predicted string;'
-                             'text-translation - translated string.',
+                             'text-translation - translated string; speech-to-text - '
+                             'output is a recognized text.',
                         choices=['feedforward', 'classification', 'text-to-image', 'named-entity-recognition',
-                                 'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation'],
+                                 'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation',
+                                 'speech-to-text'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -389,14 +391,16 @@ def get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2):
     return num_tokens
 
 
-def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration,
-                      batch_size):
+def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration):
     with torch.inference_mode(inference_mode):
         output = None
+        audio_sampling_rate = None
         time_infer = []
-
         num_tokens = []
+        audios_lengths = []
+
         tokenizer = None
+        processor = None
 
         input_size = 0
 
@@ -416,6 +420,14 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
             from configs.pytorch_configs.bert_base_ner import create_tokenizer
 
             tokenizer = create_tokenizer()
+        elif task_type in ['speech-to-text']:
+            from configs.pytorch_configs.speech_to_sequence_base import create_processor, process_audio
+
+            processor = create_processor(model)
+            waveform, sampling_rate, audio_length = get_slice()
+            audios_lengths.append(audio_length)
+            encodings_dict = process_audio(processor, waveform, sampling_rate)
+            audio_sampling_rate = processor.feature_extractor.sampling_rate
 
         if num_iterations == 1:
             if task_type in ['classification', 'feedforward', 'yolo_v7']:
@@ -455,16 +467,27 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
                 model_output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
                                                      encodings_dict=encodings_dict)
                 output = decode(tokenizer, model_output)
+            elif task_type in ['speech-to-text']:
+                from configs.pytorch_configs.speech_to_sequence_base import generate, decode
+
+                generated_output = generate(model=model, inputs=encodings_dict, device=device, processor=processor)
+                output = decode(processor, generated_output)
+                num_tokens.extend(get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2))
+                log.info(f'Generated tokens num: {num_tokens}')
 
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
-            time_infer, num_tokens = loop_inference(num_iterations,
-                                                    test_duration)(inference_iteration)(device, get_slice,
-                                                                                        input_names, model, task_type,
-                                                                                        tokenizer, input_size)
-    return output, time_infer, num_tokens
+            loop_results = loop_inference(num_iterations,
+                                          test_duration)(inference_iteration)(device, get_slice, input_names, model,
+                                                                              task_type, tokenizer, processor,
+                                                                              input_size)
+            time_infer = loop_results['time_infer']
+            num_tokens = loop_results['num_tokens']
+            audios_lengths = loop_results['audios_lengths']
+            audio_sampling_rate = loop_results['audio_sampling_rate']
+    return output, time_infer, num_tokens, audios_lengths, audio_sampling_rate
 
 
 @get_exec_time()
@@ -488,11 +511,14 @@ def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None, to
     return res
 
 
-def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None, input_size=0):
+def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None,
+                        processor=None, input_size=0):
     inputs = None
     input_kwarg_name = None
 
-    num_tokens = None
+    iter_tokens = None
+    audio_length = None
+    audio_sampling_rate = None
 
     if task_type in ['text-generation', 'batch-text-generation']:
         from configs.pytorch_configs.causal_lm_base import tokenize, generate
@@ -508,6 +534,14 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
         input_kwarg_name = 'input_ids'
     elif task_type in ['text-generation']:
         model = partial(generate, model=model, device=device)
+        input_kwarg_name = 'inputs'
+    elif task_type in ['speech-to-text']:
+        from configs.pytorch_configs.speech_to_sequence_base import process_audio, generate
+
+        waveform, sampling_rate, audio_length = get_slice()
+        inputs = process_audio(processor, waveform, sampling_rate)
+        audio_sampling_rate = processor.feature_extractor.sampling_rate
+        model = partial(generate, model=model, device=device, processor=processor)
         input_kwarg_name = 'inputs'
     elif task_type in ['batch-text-generation']:
         from configs.onnx_configs.gpt_2 import batch_text_generation
@@ -526,17 +560,18 @@ def inference_iteration(device, get_slice, input_names, model, task_type, tokeni
 
     res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type, tokenizer)
 
-    if task_type in ['text-generation']:
-        num_tokens = get_meaning_tokens_from_batch(res, input_size, dot_token=2)
-        log.debug(f'Generated tokens num: {num_tokens}')
+    if task_type in ['text-generation', 'speech-to-text']:
+        iter_tokens = get_meaning_tokens_from_batch(res, input_size, dot_token=2)
+        log.debug(f'Generated tokens num: {iter_tokens}')
 
     if task_type in ['named-entity-recognition']:
         from configs.pytorch_configs.bert_base_ner import decode
 
         tokens, _ = decode(tokenizer, inputs, res)
-        num_tokens = len(tokens)
+        iter_tokens = len(tokens)
 
-    return exec_time, num_tokens
+    return {'exec_time': exec_time, 'iter_tokens': iter_tokens, 'audio_length': audio_length,
+            'audio_sampling_rate': audio_sampling_rate}
 
 
 def prepare_output(result, output_names, task_type):
@@ -545,7 +580,7 @@ def prepare_output(result, output_names, task_type):
 
     if task_type in ['feedforward']:
         return {}
-    elif task_type in ['text-generation', 'batch-text-generation', 'yolo_v7', 'text-translation']:
+    elif task_type in ['text-generation', 'batch-text-generation', 'yolo_v7', 'text-translation', 'speech-to-text']:
         return result
     elif task_type in ['named-entity-recognition']:
         from configs.pytorch_configs.bert_base_ner import get_decode_result
@@ -661,18 +696,21 @@ def main():
             io.fill_unset_inputs(compiled_model, log)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time, num_tokens = inference_pytorch(model=compiled_model,
-                                                               num_iterations=args.number_iter,
-                                                               get_slice=io.get_slice_input,
-                                                               input_names=args.input_names,
-                                                               inference_mode=args.inference_mode,
-                                                               device=device, test_duration=args.time,
-                                                               task_type=args.task,
-                                                               batch_size=args.batch_size)
+        result, inference_time, num_tokens, audios_lengths, audio_sampling_rate = inference_pytorch(
+            model=compiled_model,
+            num_iterations=args.number_iter,
+            get_slice=io.get_slice_input,
+            input_names=args.input_names,
+            inference_mode=args.inference_mode,
+            device=device, test_duration=args.time,
+            task_type=args.task,
+        )
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,
-                                                                      num_tokens=num_tokens)
+                                                                      num_tokens=num_tokens,
+                                                                      audios_lengths=audios_lengths,
+                                                                      audio_sampling_rate=audio_sampling_rate)
         report_writer.update_execution_results(**inference_result)
 
         log.info(f'Write report to {args.report_path}')
