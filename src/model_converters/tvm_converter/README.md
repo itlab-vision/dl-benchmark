@@ -28,22 +28,22 @@ This script converts model from `<source_framework>` to the TVM format.
 
 ### TVM converter parameters
 
-- `-mn/--model_name` is a model name.
-- `-m/--model` is a path to an `.json`, `.onnx`, `.pt`, `.prototxt` file
+- `-mn / --model_name` is a model name.
+- `-m / --model` is a path to an `.json`, `.onnx`, `.pt`, `.prototxt` file
   with a trained model.
-- `-w/--weights` is a path to an `.params`, `.caffemodel`, `.pth` file
+- `-w / --weights` is a path to an `.params`, `.caffemodel`, `.pth` file
   with a trained weights.
-- `-mm/--module`is a module with the model architecture. It is used
+- `-mm / --module`is a module with the model architecture. It is used
   for PyTorch models and equals `torchvision.models` by default.
-- `-is/--input_shape` is an input shape in the format BxWxHxC, where
+- `-is / --input_shape` is an input shape in the format BxWxHxC, where
   B is a batch size, W is an input tensor width, H is an input tensor
   height, C is an input tensor number of channels.
-- `-f/--source_framework` is a source framework where the model was trained.
-- `-b/--batch_size` is a batch size. It equals 1 by default.
-- `-in/--input_name` is an input name. It equals `data` by default.
-- `-d/--device` is a target device for inference. It equals `CPU`
+- `-f / --source_framework` is a source framework where the model was trained.
+- `-b / --batch_size` is a batch size. It equals 1 by default.
+- `-in / --input_name` is an input name. It equals `data` by default.
+- `-d / --device` is a target device for inference. It equals `CPU`
   by default.
-- `-op/--output_dir` is path to save the model.
+- `-op / --output_dir` is path to save the model.
 
 ### Examples of usage
 
@@ -76,13 +76,13 @@ This script compiles model from `.json`+`.params` to the `.ro` format.
 
 ### TVM compiler parameters
 
-- `-m/--mod` is a path to an `.json` file with a model.
-- `-p/--params` is a path to an `.params` file with a model parameters.
-- `-t/--target` is target device information, for example `llvm` for CPU.
+- `-m / --mod` is a path to an `.json` file with a model.
+- `-p / --params` is a path to an `.params` file with a model parameters.
+- `-t / --target` is target device information, for example `llvm` for CPU.
 - `--opt_level` is the optimization level of the task extractions.
-- `-vm/--virtual_machine` is a flag to use VirtualMachine API.
+- `-vm / --virtual_machine` is a flag to use VirtualMachine API.
 - `--lib_name` is a file name to save compiled model.
-- `-op/--output_dir` is a path to save the model.
+- `-op / --output_dir` is a path to save the model.
 
 ### Examples of usage
 
