@@ -29,9 +29,9 @@ This script converts model from `<source_framework>` to the TVM format.
 ### TVM converter parameters
 
 - `-mn/--model_name` is a model name.
-- `-m/--model` is a path to an .json, .onnx, .pt, .prototxt file
+- `-m/--model` is a path to an `.json`, `.onnx`, `.pt`, `.prototxt` file
   with a trained model.
-- `-w/--weights` is a path to an .params, .caffemodel, .pth file
+- `-w/--weights` is a path to an `.params`, `.caffemodel`, `.pth` file
   with a trained weights.
 - `-mm/--module`is a module with the model architecture. It is used
   for PyTorch models and equals `torchvision.models` by default.
@@ -64,20 +64,20 @@ Basic usage of the script:
 
 ```sh
 tvm_compiler.py --mod <model> \
-                 --params <parameters> \
-                 --target <target> \
-                 --opt_level <opt_level> \
-                 --virtual_machine <virtual_machine> \
-                 --lib_name <lib_name> \
-                 --output_dir <output_dir>
+                --params <parameters> \
+                --target <target> \
+                --opt_level <opt_level> \
+                --virtual_machine <virtual_machine> \
+                --lib_name <lib_name> \
+                --output_dir <output_dir>
 ```
 
 This script compiles model from `.json`+`.params` to the `.ro` format.
 
 ### TVM compiler parameters
 
-- `-m/--mod` is a path to an .json file with a model.
-- `-p/--params` is a path to an .params file with a model parameters.
+- `-m/--mod` is a path to an `.json` file with a model.
+- `-p/--params` is a path to an `.params` file with a model parameters.
 - `-t/--target` is target device information, for example `llvm` for CPU.
 - `--opt_level` is the optimization level of the task extractions.
 - `-vm/--virtual_machine` is a flag to use VirtualMachine API.
