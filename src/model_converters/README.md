@@ -12,14 +12,14 @@
 ## An overview of existing model converters
 
 | from/to | MXNet | Caffe | PyTorch | TensorFlow 1 | TensorFlow 2 | ONNX | PaddlePaddle |
-|-|-|-|-|-|-|-|-|-|-|
-| MXNet   |-| [MMdnn][mmdnn]<br> [MXNet2Caffe][mxnet2caffe]<br> [MXNetToCaffeConverter][mxnettocaffeconverter] | [MMdnn][mmdnn] (through ONNX) | [MMdnn][mmdnn]<br>[gluon2pytorch][gluon2pytorch] | [MMdnn][mmdnn] |-| [MMdnn][mmdnn]<br> [MXNet tools][mxnet2onnx] |-|
+|-|-|-|-|-|-|-|-|
+| MXNet   |-| [MMdnn][mmdnn]<br> [MXNet2Caffe][mxnet2caffe]<br> [MXNetToCaffeConverter][mxnettocaffeconverter] | [MMdnn][mmdnn]<br>[gluon2pytorch][gluon2pytorch]| [MMdnn][mmdnn] (through ONNX) |-| [MMdnn][mmdnn]<br> [MXNet tools][mxnet2onnx] |-|
 | Caffe   |-|-|-|-|-|-|-|
-| PyTorch |-|-|-|-|-|-|-|-|-|
-| TensorFlow 1 |-|-|-|-|-|-|-|-|-|
-| TensorFlow 2 |-|-|-|-|-|-|-|-|-|
-|ONNX     |-|-|-|-|-|-|-|-|-|
-| PaddlePaddle |-|-|-|-|-|-|-|-|-|
+| PyTorch |-|-|-|-|-|-|-|
+| TensorFlow 1 |-|-|-|-|-|-|-|
+| TensorFlow 2 |-|-|-|-|-|-|-|
+|ONNX     |-|-|-|-|-|-|-|
+| PaddlePaddle |-|-|-|-|-|-|-|
 
 
 <!-- LINKS -->
