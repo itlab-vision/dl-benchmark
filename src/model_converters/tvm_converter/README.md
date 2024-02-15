@@ -5,7 +5,8 @@ from Caffe, ONNX, MXNet, PyTorch and TensorFlow Lite
 formats.
 
 TVM compiler supports compilation from `.json`/`.params` format
-to the `.ro` format.
+to the `.so` format for the Relay API or to the `.so`/`.ro` format
+for the VirtualMachine API.
 
 ## TVM converter usage
 
@@ -72,7 +73,8 @@ tvm_compiler.py --mod <model> \
                 --output_dir <output_dir>
 ```
 
-This script compiles model from `.json`+`.params` to the `.ro` format.
+This script compiles model from `.json`+`.params` to the `.so` format
+for the Relay API or to the `.so`+`.ro` format for the VirtualMachine API.
 
 ### TVM compiler parameters
 
@@ -80,7 +82,7 @@ This script compiles model from `.json`+`.params` to the `.ro` format.
 - `-p / --params` is a path to an `.params` file with a model parameters.
 - `-t / --target` is target device information, for example `llvm` for CPU.
 - `--opt_level` is the optimization level of the task extractions.
-- `-vm / --virtual_machine` is a flag to use VirtualMachine API.
+- `-vm / --virtual_machine` is a flag to use the VirtualMachine API.
 - `--lib_name` is a file name to save compiled model.
 - `-op / --output_dir` is a path to save the model.
 
@@ -88,10 +90,10 @@ This script compiles model from `.json`+`.params` to the `.ro` format.
 
 ```sh
 python3 ./tvm_compiler.py -m efficientnet-b0.json -p efficientnet-b0.params \
-                          -t llvm --opt_level 2 --lib_name efficientnet-b0.ro
+                          -t llvm --opt_level 2 --lib_name efficientnet-b0.so
 ```
 
 ```sh
 python3 ./tvm_compiler.py -m resnet50.json -p resnet50.params \
-                          -t llvm --opt_level 1 --lib_name resnet50.ro
+                          -t llvm --opt_level 1 --lib_name resnet50.so
 ```
