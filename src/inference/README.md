@@ -956,7 +956,7 @@ inference_rknn.py
 
 Обязательные аргументы:
 
-- `-bch / --benchmark_app` - путь до RKNN бенчмарка
+- `-bch / --benchmark_app` - путь до RKNN бенчмарка.
 - `-i / --input` - путь до входных данных
   (расширения файлов `.bin`, `.jpg`, `.png`, `.bmp` и т.д.).
 
