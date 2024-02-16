@@ -1,6 +1,6 @@
-#include "custom_ops.hpp"
+#include "custom_ops/custom_ops.hpp"
 
-#include "selfie_segmetation_custom_ops.hpp"
+#include "custom_ops/selfie_segmetation_custom_ops.hpp"
 
 namespace tflite_ops {
 void RegisterSelectedOps(::tflite::MutableOpResolver* resolver) {

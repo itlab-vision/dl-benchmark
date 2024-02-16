@@ -1,7 +1,10 @@
+// Implementation is inspired by:
+// https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/tools/benchmark/profiling_listener.h
+
 #include "tflite_launcher.hpp"
 
 #include "common_launcher/launcher.hpp"
-#include "custom_ops.hpp"
+#include "custom_ops/custom_ops.hpp"
 #include "inputs_preparation/inputs_preparation.hpp"
 #include "utils/args_handler.hpp"
 #include "utils/logger.hpp"
@@ -56,8 +59,13 @@ TfLiteType get_tflite_data_type(utils::DataPrecision precision) {
 }
 }  // namespace
 
-TFLiteLauncher::TFLiteLauncher(const int nthreads, const int fps, const std::string& device)
-    : Launcher(nthreads, fps, device) {}
+TFLiteLauncher::TFLiteLauncher(const int nthreads,
+                               const int fps,
+                               const std::string& device,
+                               bool enableProfiling,
+                               const std::string& profilingReportFilePath)
+    : Launcher(nthreads, fps, device), enableProfiling(enableProfiling),
+      profilingReportFilePath(profilingReportFilePath) {}
 
 TFLiteLauncher::~TFLiteLauncher() {
 #ifdef TFLITE_WITH_GPU_DELEGATE
@@ -70,6 +78,7 @@ TFLiteLauncher::~TFLiteLauncher() {
     }
 #endif
 }
+
 std::string TFLiteLauncher::get_framework_name() const {
     return "TFLite";
 }
@@ -130,6 +139,10 @@ void TFLiteLauncher::read(const std::string& model_file, const std::string& weig
         throw std::runtime_error(utils::get_device_str(device) + " device is not supported!");
     }
 #endif
+
+    if (enableProfiling) {
+        profiler = std::make_unique<TFLiteProfiler>(interpreter.get(), profilingReportFilePath);
+    }
 }
 
 void TFLiteLauncher::fill_inputs_outputs_info() {
@@ -185,6 +198,24 @@ void TFLiteLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>
     }
 }
 
+void TFLiteLauncher::onEvaluationStart() {
+    if (profiler) {
+        profiler->reset();
+    }
+}
+
+void TFLiteLauncher::onSingleRunStart() {
+    if (profiler) {
+        profiler->start();
+    }
+}
+
+void TFLiteLauncher::onSingleRunEnd() {
+    if (profiler) {
+        profiler->stop();
+    }
+}
+
 void TFLiteLauncher::run(const int input_idx) {
     auto& tbuffers = tensor_buffers[input_idx];
     for (size_t i = 0; i < interpreter->inputs().size(); ++i) {
@@ -196,12 +227,20 @@ void TFLiteLauncher::run(const int input_idx) {
         }
     }
 
+    onSingleRunStart();
     infer_start_time = HighresClock::now();
     auto status = interpreter->Invoke();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
+    onSingleRunEnd();
 
     if (status != kTfLiteOk) {
         throw std::runtime_error("Failed invoke interpreter");
+    }
+}
+
+void TFLiteLauncher::onEvaluationEnd() {
+    if (profiler) {
+        profiler->dump_output();
     }
 }
 

@@ -35,6 +35,8 @@ protected:
     std::vector<double> latencies;
     double total_time;
 
+    virtual void onEvaluationStart(){};
+    virtual void onEvaluationEnd(){};
     virtual void run(const int input_idx) = 0;
 
 public:

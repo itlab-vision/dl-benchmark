@@ -27,6 +27,7 @@ void Launcher::reset_timers() {
 }
 
 void Launcher::warmup_inference() {
+    onEvaluationStart();
     run(0);
 }
 
@@ -47,6 +48,7 @@ int Launcher::evaluate(int iterations_num, uint64_t time_limit_ns) {
         uptime = std::chrono::duration_cast<ns>(HighresClock::now() - start_time);
     }
     total_time = utils::ns_to_ms(uptime);
+    onEvaluationEnd();
 
     return iteration;
 }
