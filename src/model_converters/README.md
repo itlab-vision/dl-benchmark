@@ -18,7 +18,7 @@
 | PyTorch | [MMdnn][mmdnn] | [MMdnn][mmdnn]<br> [brocolli][brocolli]<br> [pytorch2caffe][pytorch2caffe] |-| [MMdnn][mmdnn] | [pytorch2keras][pytorch2keras]<br> [pytorch-tf][pytorch-tf] | [OpenCV AI (model converter)][opencv-ai-model_converter]<br> [brocolli][brocolli] | [paddle-cppt][paddle-cppt] |
 | TensorFlow 1 | [MMdnn][mmdnn] | [MMdnn][mmdnn]<br> [tf_to_pytorch_model][tf_to_pytorch_model] | [MMdnn][mmdnn] |-| [TensorFlow Guide][tf-guide] |-|-|
 | TensorFlow 2 |-| [NN tools][nn_tools] |-|-|-| [tensorflow-onnx][tensorflow-onnx] | [X2Paddle][X2Paddle] |
-| ONNX     |-|-|[onnx2torch][onnx2torch]|-|-|-| [X2Paddle][X2Paddle] |
+| ONNX     | [ONNX to MXNet guide][onnx2mxnet-guide] |-| [onnx2torch][onnx2torch] | [onnx-tensorflow][onnx-tensorflow] | [ONNX to TensorFlow2 Guide][onnx-tf]|-| [X2Paddle][X2Paddle] |
 | PaddlePaddle |-|-|-|-|-|-|-|
 
 
@@ -46,3 +46,7 @@
 [tf-guide]: https://www.tensorflow.org/guide/migrate/upgrade?hl=ru
 [opencv-ai-model_converter]: https://github.com/opencv-ai/model_converter
 [paddle-cppt]: https://github.com/wj-Mcat/paddle-cppt?ysclid=lnut6o3o6v87337456
+[onnx2mxnet-guide]: https://mxnet.apache.org/versions/1.7/api/python/docs/tutorials/packages/onnx/inference_on_onnx_model.html
+[onnx-tensorflow]: https://github.com/onnx/onnx-tensorflow
+[onnx-tf]: https://lindevs.com/convert-onnx-format-to-tensorflow-2-model
+
