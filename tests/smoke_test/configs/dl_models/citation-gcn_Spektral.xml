@@ -11,7 +11,7 @@
         </Model>
         <Dataset>
             <Name>Cora</Name>
-            <Path>./test_images/test_graph.bin</Path>
+            <Path>../test_images/test_graph.bin</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>Spektral</InferenceFramework>
