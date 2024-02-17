@@ -390,4 +390,37 @@
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework>rknn</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>RKNN</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device>NPU</Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+            <TimeoutOverhead></TimeoutOverhead>
+            <CustomModelsLinks></CustomModelsLinks>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap><ChannelSwap/>
+            <InputShape><InputShape/>
+            <Layout><Layout/>
+            <Mean></Mean>
+            <InputScale><InputScale/>
+            <ThreadCount><ThreadCount/>
+            <InferenceRequestsCount></InferenceRequestsCount>
+            <InputType>[U8]</InputType>
+        </FrameworkDependent>
+    </Test>
 </Tests>

@@ -9,12 +9,8 @@ from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
 
 SMOKE_CONFIGS_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'dl_models')
 
-TORCH_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/pytorch_to_tvm_converter.py')
-MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/mxnet_to_tvm_converter.py')
-CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
+TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
+
 TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
@@ -83,14 +79,14 @@ def download_old_instance_segmentation(output_dir: Path = OUTPUT_DIR):
 
 
 def convert_models_to_tvm(use_caffe: bool = False):
-    pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TORCH_TVM_CONVERTER} -mn efficientnet_b0 '
+    pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
-                                f'-is 1 3 224 224 -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
-    mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {MXNET_TVM_CONVERTER} -mn alexnet -is 1 3 224 224')
-    caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {CAFFE_TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
+                                f'-is 1 3 224 224 -f pytorch -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
+    mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn alexnet -is 1 3 224 224 -f mxnet')
+    caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
                               f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
-                              f'-op {OUTPUT_DIR}/public/googlenet-v1/')
+                              f'-op {OUTPUT_DIR}/public/googlenet-v1/ -f caffe')
     tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
                     '-p alexnet.params -t llvm --lib_name alexnet_vm.so -vm')
 
