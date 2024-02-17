@@ -18,7 +18,7 @@ def get_cpu_name():
             cpuname = core.get_property('CPU', 'FULL_DEVICE_NAME')
         del core
 
-    return cpuname
+    return cpuname.strip()
 
 
 def get_gpu_name():
