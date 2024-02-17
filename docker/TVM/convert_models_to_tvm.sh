@@ -161,10 +161,11 @@ for model_idx in ${!model_names[@]}; do
             ${command_line[@]}
             conda deactivate
         elif [ "${src_frameworks[$model_idx]}" = "mxnet" ]; then
-            command_line=("python ${TVM_CONVERTER_DIR}/mxnet_to_tvm_converter.py"
+            command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
                           "-mn ${model_names[$model_idx]}"
                           "-is ${batch} ${input_shapes[$model_idx]}"
                           "-b ${batch}"
+                          "-f mxnet"
                           "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
             echo -e "\t${command_line[@]}"
             conda activate tvm_convert_mxnet_python3.9
@@ -198,10 +199,11 @@ done
 
 echo "Converting maskrcnn-resnet50-fpn to the TVM format..."
 
-command_line=("python ${TVM_CONVERTER_DIR}/pytorch_to_tvm_converter.py"
+command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
               "-mn maskrcnn_resnet50_fpn"
               "-mm torchvision.models.detection"
               "-is 1 3 300 300"
+              "-f pytorch"
               "-b 1"
               "-op ${OUTPUT_DIR}/maskrcnn_resnet50_fpn/batch_size1")
 echo -e "\t${command_line[@]}"
