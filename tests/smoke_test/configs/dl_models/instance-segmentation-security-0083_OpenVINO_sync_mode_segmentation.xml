@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>instance-segmentation</Task>
+            <Name>instance-segmentation-security-0083</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>openvino</SourceFramework>
+            <ModelPath>../models_dir/instance-segmentation-security-0083/instance-segmentation-security-0083.xml</ModelPath>
+            <WeightsPath>../models_dir/instance-segmentation-security-0083/instance-segmentation-security-0083.bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>im_data:../test_images/segmentation_images/horse.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>sync</Mode>
+            <Runtime>python</Runtime>
+            <CodeSource></CodeSource>
+            <Hint>latency</Hint>
+            <Frontend></Frontend>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <InferenceRequestsCount></InferenceRequestsCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <ChangePreprocessOptions></ChangePreprocessOptions>
+        </FrameworkDependent>
+    </Test>
+</Tests>

@@ -3,13 +3,14 @@ from .framework_parameters_parser import FrameworkParameters
 
 class FrameworkIndependentParameters(FrameworkParameters):
     def __init__(self, inference_framework, batch_size, device, iterarion_count, test_time_limit, timeout_overhead,
-                 custom_models_links=None):
+                 custom_models_links=None, raw_output=True):
         self.inference_framework = None
         self.batch_size = None
         self.device = None
         self.iteration = None
         self.test_time_limit = None
         self.custom_models_links = custom_models_links
+        self.raw_output = raw_output
         if self._parameter_is_not_none(inference_framework):
             self.inference_framework = inference_framework
         else:

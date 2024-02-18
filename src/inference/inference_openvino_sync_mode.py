@@ -237,7 +237,6 @@ def main():
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
-            log.info('Performance results')
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
         del model

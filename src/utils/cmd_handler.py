@@ -4,7 +4,10 @@ import subprocess
 import threading
 import sys
 
-from constants import Status
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[0]))
+from constants import Status  # noqa: E402, PLC0411
 
 
 class CMDHandler(metaclass=abc.ABCMeta):

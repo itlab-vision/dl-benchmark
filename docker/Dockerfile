@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 USER root
 WORKDIR /
 
@@ -15,7 +15,6 @@ ARG DEPENDENCIES="apt-utils \
                   autoconf \
                   ca-certificates \
                   sudo \
-                  vim \
                   automake \
                   build-essential \
                   cpio \
@@ -25,42 +24,39 @@ ARG DEPENDENCIES="apt-utils \
                   libdrm2 \
                   libglib2.0-0 \
                   lsb-release \
-                  libgtk-3-0 \
                   libtool \
                   libprotobuf-dev \
+                  ninja-build \
                   libgl1-mesa-glx \
                   nlohmann-json3-dev \
                   python3-pip \
                   python3-setuptools \
                   python3-dev \
                   python3-venv \
-                  pciutils \
-                  libpython3.8 \
+                  libpython3.10 \
                   udev \
                   unzip \
                   wget \
                   git \
                   ninja-build \
-                  ffmpeg \
-                  libsm6 \
-                  libxext6"
+                  ffmpeg"
 RUN apt-get update && \
     apt-get install -y -qq --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 # Install openvino
 RUN pip3 install --upgrade pip
-ARG OV_SHORT_VERSION=2022.3.1
+ARG OV_SHORT_VERSION=2023.0.2
 RUN pip3 install openvino==${OV_SHORT_VERSION}
 
 # Install openvino-dev
 WORKDIR /tmp/
-RUN pip3 install openvino-dev==${OV_SHORT_VERSION}
+RUN pip3 install openvino-dev==${OV_SHORT_VERSION} docker PyYAML
 
 # Download DLI source code
 WORKDIR /tmp/
-RUN git clone --recursive https://github.com/itlab-vision/dl-benchmark.git --depth 1 && \
-    pip3 install docker PyYAML
+ARG DLI_BRANCH="master"
+RUN git clone --recursive https://github.com/itlab-vision/dl-benchmark.git --branch ${DLI_BRANCH} --single-branch --depth 1
 
 # accuracy-check
 WORKDIR /tmp/
