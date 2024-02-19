@@ -720,7 +720,6 @@ def main():
             if args.number_iter == 1:
                 try:
                     result = prepare_output(result, args.output_names, args.task)
-
                     log.info('Inference results')
                     io.process_output(result, log)
                 except Exception as ex:
