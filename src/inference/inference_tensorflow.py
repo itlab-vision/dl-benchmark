@@ -315,7 +315,7 @@ def main():
                 log.info('Converting output tensor to process results')
                 result = prepare_output(result, outputs_names, args.task)
                 log.info('Inference results')
-                io.process_output(result, log)
+    log.info('Inference results')            io.process_output(result, log)
             except Exception as ex:
                 log.warning('Error when printing inference results. {0}'.format(str(ex)))
 

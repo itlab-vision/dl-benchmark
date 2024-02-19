@@ -266,6 +266,24 @@
     для случая машины с NVIDIA GPU и PyTorch, построенного с поддержкой TensorRT.
     Возможные значения: FP16, FP32. По умолчанию не установлен.
 
+- Набор тегов для тестирования вывода средствами RKNN:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного изображения.
+    По умолчанию будет установлен NCHW.
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
+    не установлен и выбирается фреймворком автоматически.
+  - `ThreadCount` - опциональный тег. Описывает максимальное количество физических
+    потоков для выполнения вывода.
+  - `InputType` - тег, необязательный для заполнения. Определяет формат входных данных
+    (в виде `[U8]` или `input1[U8],input2[U8]`)
+
 - Набор тегов для тестирования вывода средсвами MXNet Python API:
 
   - `Mode` - тег, обязательный для заполнения. Описывает режим вывода.
@@ -702,6 +720,46 @@
         <OptimizationLevel>3</OptimizationLevel>
     </FrameworkDependent>
 </Test>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами RKNN C++ API
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+  <Test>
+      <Model>
+          <Task>N/A</Task>
+          <Name>blaze_face_short_range</Name>
+          <Precision>FP16</Precision>
+          <SourceFramework>rknn</SourceFramework>
+          <ModelPath>./working_dir/blaze_face_short_range/blaze_face_short_range.rknn</ModelPath>
+          <WeightsPath>none</WeightsPath>
+      </Model>
+      <Dataset>
+          <Name>Wider_face</Name>
+          <Path>/datasets/wider_face</Path>
+      </Dataset>
+      <FrameworkIndependent>
+          <InferenceFramework>RKNN</InferenceFramework>
+          <BatchSize></BatchSize>
+          <Device>NPU</Device>
+          <GPUDevicesNumber></GPUDevicesNumber>
+          <IterationCount>10</IterationCount>
+          <TestTimeLimit>60</TestTimeLimit>
+          <TimeoutOverhead>300</TimeoutOverhead>
+          <CustomModelsLinks>None</CustomModelsLinks>
+      </FrameworkIndependent>
+      <FrameworkDependent>
+          <ChannelSwap></ChannelSwap>
+          <InputShape></InputShape>
+          <Layout></Layout>
+          <Mean></Mean>
+          <InputScale></InputScale>
+          <ThreadCount></ThreadCount>
+          <InferenceRequestsCount>10</InferenceRequestsCount>
+          <InputType>[U8]</InputType>
+      </FrameworkDependent>
+  </Test>
 ```
 
 ## Заполнение файла конфигурации для скрипта оценки точности

@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include <nlohmann/json.hpp>
+
 namespace {
 const std::map<TfLiteType, utils::DataPrecision> tflite_dtype_to_precision_map{
     {kTfLiteFloat16, utils::DataPrecision::FP16},

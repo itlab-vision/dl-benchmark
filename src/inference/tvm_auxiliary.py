@@ -94,8 +94,8 @@ class InferenceVMApi(InferenceHelper):
 
 
 class OutputPreparer:
-    def __init__(self, framework):
-        self.framework = framework
+    def __init__(self, source_framework):
+        self.source_framework = source_framework
 
     def classification_task(self, result, output_names, not_softmax):
         if not_softmax:
@@ -109,7 +109,7 @@ class OutputPreparer:
 
     def detection_task(self, result, output_names, params):
         np = importlib.import_module('numpy')
-        if self.framework == 'mxnet' or 'ssd_' in params['model_name']:
+        if self.source_framework == 'mxnet' or 'ssd_' in params['model_name']:
             box_ids, scores, bboxes = result
             box_ids = (box_ids.asnumpy())[0]
             scores = (scores.asnumpy())[0]
@@ -152,7 +152,7 @@ class OutputPreparer:
             raise ValueError('Output processing is not supported for this model')
 
 
-def create_dict_for_converter_mxnet(args):
+def create_dict_for_converter(args):
     dictionary = {
         'input_name': args.input_name,
         'input_shape': [args.batch_size] + args.input_shape[1:4],
@@ -162,41 +162,9 @@ def create_dict_for_converter_mxnet(args):
         'device': args.device,
         'opt_level': args.opt_level,
         'target': args.target,
-        'vm': args.vm,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_tvm(args):
-    return create_dict_for_converter_mxnet(args)
-
-
-def create_dict_for_converter_pytorch(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'model_params': args.model_params,
-        'device': args.device,
-        'opt_level': args.opt_level,
         'module': args.module,
-        'target': args.target,
         'vm': args.vm,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_onnx(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'device': args.device,
-        'opt_level': args.opt_level,
-        'target': args.target,
-        'vm': args.vm,
+        'source_framework': args.source_framework,
     }
     return dictionary
 
@@ -210,21 +178,6 @@ def create_dict_for_transformer(args):
         'input_shape': args.input_shape,
         'batch_size': args.batch_size,
         'layout': args.layout,
-    }
-    return dictionary
-
-
-def create_dict_for_converter_tensorflowlite(args):
-    dictionary = {
-        'input_name': args.input_name,
-        'input_shape': [args.batch_size] + args.input_shape[1:4],
-        'model_name': args.model_name,
-        'model_path': args.model_path,
-        'device': args.device,
-        'opt_level': args.opt_level,
-        'output_names': args.output_names,
-        'target': args.target,
-        'vm': args.vm,
     }
     return dictionary
 
@@ -251,8 +204,8 @@ def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duratio
     return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
 
 
-def prepare_output(result, task, output_names, not_softmax=False, framework='tvm', params=None):
-    preparer = OutputPreparer(framework)
+def prepare_output(result, task, output_names, not_softmax=False, source_framework='tvm', params=None):
+    preparer = OutputPreparer(source_framework)
     if task == 'feedforward':
         return {}
     if task == 'classification':

@@ -2,7 +2,6 @@ import argparse
 import json
 import sys
 import traceback
-import tvm
 
 from pathlib import Path
 
@@ -11,13 +10,15 @@ from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-from tvm_auxiliary import (create_dict_for_converter_mxnet,
+from tvm_auxiliary import (create_dict_for_converter,
                            prepare_output, create_dict_for_modelwrapper,
                            create_dict_for_transformer, inference_tvm,
                            create_dict_for_output_preparer)
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import TVMConverter  # noqa: E402
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('model_converters',
+                                                                 'tvm_converter',
+                                                                 'tvm_auxiliary')))
+from converter import TVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -32,14 +33,18 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model or to an .so file.',
+                        help='Path to an .json, .tflite, .onnx, .pt, .prototxt, .so file with a trained model.',
                         type=str,
-                        required=True,
                         dest='model_path')
     parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
+                        help='Path to an .params, .caffemodel, .pth, .ro file with a trained weights.',
                         type=str,
                         dest='model_params')
+    parser.add_argument('-mm', '--module',
+                        help='Module with model architecture.',
+                        default='torchvision.models',
+                        type=str,
+                        dest='module')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer (CPU by default)',
                         default='CPU',
@@ -56,6 +61,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='output_names')
+    parser.add_argument('-f', '--source_framework',
+                        help='Source model framework',
+                        default='tvm',
+                        type=str,
+                        dest='source_framework')
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
@@ -140,11 +150,6 @@ def cli_argument_parser():
                         default='NHWC',
                         type=str,
                         dest='layout')
-    parser.add_argument('--framework',
-                        help='Model source framework.',
-                        default='tvm',
-                        type=str,
-                        dest='framework')
     parser.add_argument('--target',
                         help='Parameter for hardware-dependent optimizations.',
                         default='llvm',
@@ -182,7 +187,6 @@ def cli_argument_parser():
 def main():
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='TVM', version=tvm.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
@@ -192,7 +196,8 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = TVMConverter(create_dict_for_converter_mxnet(args))
+        converter = TVMConverter.get_converter(create_dict_for_converter(args))
+        report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
         graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
@@ -213,7 +218,7 @@ def main():
                     res = prepare_output(result, args.task,
                                          args.output_names,
                                          args.not_softmax,
-                                         framework=args.framework,
+                                         source_framework=args.source_framework,
                                          params=create_dict_for_output_preparer(args))
 
                     log.info('Inference results')

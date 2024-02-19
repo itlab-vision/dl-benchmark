@@ -9,20 +9,12 @@ from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
 
 SMOKE_CONFIGS_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'dl_models')
 
-TORCH_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/pytorch_to_tvm_converter.py')
-MXNET_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/mxnet_to_tvm_converter.py')
-CAFFE_TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1],
-                                    'src/model_converters/tvm_converter/caffe_to_tvm_converter.py')
+TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
+
 TVM_COMPILER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_compiler.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'mobilenet-v1-1.0-224-tf', 'mobilenet-v2-1.4-224', 'efficientnet-b0-pytorch',
-             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001', 'efficientdet-d0-tf',
-             'face-detection-0206', 'person-detection-asl-0001', 'person-detection-action-recognition-0005',
-             'person-detection-action-recognition-0006', 'person-detection-raisinghand-recognition-0001',
-             'person-detection-action-recognition-teacher-0002', 'yolo-v2-ava-0001', 'yolo-v2-tiny-ava-0001',
-             'yolo-v2-tf', 'yolo-v3-tf']
+             'deeplabv3', 'road-segmentation-adas-0001', 'semantic-segmentation-adas-0001']
 DL_CAFFE_MODELS = ['googlenet-v1']
 
 

@@ -372,7 +372,6 @@ def compile_model(model, device, model_type, shapes, input_type, tensor_rt_dtype
     else:
         return model
 
-
 def get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2):
     """
     LLM's output is shaped like [batch_size, MAX_TEXT_LEN].

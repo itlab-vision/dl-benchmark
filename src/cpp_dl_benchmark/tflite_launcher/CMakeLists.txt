@@ -68,7 +68,7 @@ if (TENSORFLOW_SRC_DIR AND TFLITE_BUILD_DIR)
 
     set(TFLITE_SOURCE_DIR ${TENSORFLOW_SRC_DIR}/tensorflow/lite)
 
-    set(PROFILING_SOURCES 
+    set(PROFILING_SOURCES
         ${TSL_DIR}/tsl/util/stats_calculator.cc
         ${TFLITE_SOURCE_DIR}/profiling/memory_info.cc
         ${TFLITE_SOURCE_DIR}/profiling/memory_usage_monitor.cc
@@ -80,7 +80,7 @@ if (TENSORFLOW_SRC_DIR AND TFLITE_BUILD_DIR)
         ${TFLITE_SOURCE_DIR}/profiling/telemetry/telemetry.cc
         ${TFLITE_SOURCE_DIR}/profiling/time.cc
     )
-    if(EXISTS ${TFLITE_SOURCE_DIR}/profiling/profile_buffer.cc) 
+    if(EXISTS ${TFLITE_SOURCE_DIR}/profiling/profile_buffer.cc)
         list(APPEND PROFILING_SOURCES ${TFLITE_SOURCE_DIR}/profiling/profile_buffer.cc)
     endif()
 
