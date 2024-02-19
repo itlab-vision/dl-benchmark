@@ -113,11 +113,11 @@ def convert_models_to_tvm(use_caffe: bool = False):
     pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn efficientnet_b0 '
                                 f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
                                 f'-is 1 3 224 224 -f pytorch -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
-    mxnet_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn alexnet -is 1 3 224 224 -f mxnet')
+    mxnet_to_tvm_converter = f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn alexnet -is 1 3 224 224 -f mxnet'
     caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
                               f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
                               f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
-                               f'-op {OUTPUT_DIR}/public/googlenet-v1/ -f caffe')
+                              f'-op {OUTPUT_DIR}/public/googlenet-v1/ -f caffe')
     tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
                     '-p alexnet.params -t llvm --lib_name alexnet_vm.so -vm')
 
