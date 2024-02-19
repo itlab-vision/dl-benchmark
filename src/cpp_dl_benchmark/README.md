@@ -5,9 +5,10 @@ The tool allows to measure deep learning models inference performance with vario
 ## Common prerequisites
 
 The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
-1. CMake 3.16 or higher
+1. CMake 3.22 or higher
 1. GCC 9.4 or higher
 1. nlohmann-json library
+1. OpenCV 4.7.0 or higher (required for loading and pre-processing input images)
 
     ```
     sudo apt install nlohmann-json3-dev
