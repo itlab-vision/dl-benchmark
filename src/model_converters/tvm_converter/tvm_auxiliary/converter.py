@@ -96,7 +96,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Saving model \"{self.model_name}\" to \"{self.output_dir}\"')
         if not os.path.exists(self.output_dir):
-            os.mkdir(self.output_dir)
+            os.makedirs(self.output_dir)
 
         self.log.info(f'Saving weights of the model {self.model_name}')
         with open(f'{self.output_dir}/{self.model_name}.params', 'wb') as fo:
