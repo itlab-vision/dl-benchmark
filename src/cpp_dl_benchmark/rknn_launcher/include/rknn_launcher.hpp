@@ -16,7 +16,7 @@
 
 class RKNNLauncher : public Launcher {
 public:
-    RKNNLauncher(const std::string& model_file = "", const int nthreads = -1);
+    RKNNLauncher(const std::string& model_file = "", const int nthreads = -1, const int fps = 0);
     virtual ~RKNNLauncher();
 
     std::string get_framework_name() const override;

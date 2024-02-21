@@ -309,6 +309,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3TFIO(args, io_model_wrapper, transformer)
         elif task in ['text-generation', 'text-translation', 'batch-text-generation']:
             return CausalLMIO(args, io_model_wrapper, transformer)
+        elif task in ['speech-to-text']:
+            return Speech2SequenceIO(args, io_model_wrapper, transformer)
         elif task in ['named-entity-recognition']:
             return BertNERIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
@@ -362,6 +364,35 @@ class TextPromtIO(IOAdapter):
         pass
 
 
+class AudioIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.audio_data = None
+        self.sampling_rate = None
+        self.audio_length = None
+
+    def prepare_input(self, model, input_):
+        """
+        Set self.audio_data and self.audio_length from audio file.
+        Warning: currently supports only single-channel audios.
+        """
+        import torchaudio
+        try:
+            waveform, self.sampling_rate = torchaudio.load(input_[0])
+            self.audio_data = waveform[0]
+            self.audio_length = len(self.audio_data) / self.sampling_rate
+        except Exception as ex:
+            raise ValueError(f'Unable to read audio file {input_[0]}. Exception occurred: {str(ex)}')
+
+    @abc.abstractmethod
+    def get_slice_input(self, result, log):
+        pass
+
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
 class TextToImageIO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
         return [self._prompts[0]] * self._batch_size
@@ -378,6 +409,16 @@ class TextToImageIO(TextPromtIO):
 class CausalLMIO(TextPromtIO):
     def get_slice_input(self, *args, **kwargs):
         return [self._prompts[0]] * self._batch_size
+
+    def process_output(self, result, log):
+        output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
+        log.info(f'Generated results: \n{output_text}')
+
+
+class Speech2SequenceIO(AudioIO):
+    def get_slice_input(self, *args, **kwargs):
+        # TODO: add batch input based on self._batch_size
+        return self.audio_data, self.sampling_rate, self.audio_length
 
     def process_output(self, result, log):
         output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
@@ -478,7 +519,7 @@ class FaceDetectionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def process_output(self, result, log):
+    def process_output(self, result, log, face_label=0):
         if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
@@ -486,8 +527,8 @@ class FaceDetectionIO(IOAdapter):
         labels = result['labels']
         count_of_detected_faces = 0
         for i, label in enumerate(labels):
-            if label == -1:
-                count_of_detected_faces = i
+            if label == face_label:
+                count_of_detected_faces = max(1, i)
                 break
         boxes = result['boxes'][:count_of_detected_faces]
         input_ = self._input[input_layer_name]
@@ -855,7 +896,7 @@ class PersonDetectionAslIO(IOAdapter):
             return
         input_layer_name = next(iter(self._input))
         input_ = self._input[input_layer_name]
-        result = result['17701/Split.0']
+        result = result['boxes']
         _, h, w, c = input_.shape
         images = np.ndarray(shape=(1, h, w, c))
         images[0] = input_[0]
@@ -1262,7 +1303,7 @@ class DetectionSSDNewFormat(DetectionSSD):
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
-            action_blobs = np.ndarray(shape=(4, 6, 25, 43))
+            action_blobs = np.ndarray(shape=(4, 25, 43, 6))
             for i in range(4):
                 action_blobs[i] = result[f'ActionNet/action_heads/out_head_2_anchor_{i + 1}'][batch]
             detections = []
@@ -1838,8 +1879,6 @@ class yolo(IOAdapter):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
-        self.load_labels_map('pascal_voc.txt')
-
         anchors = self._get_anchors()
         shapes = self._get_shapes()
         input_layer_name = next(iter(self._input))
@@ -1864,7 +1903,7 @@ class yolo(IOAdapter):
                 for cx in range(dy):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
-                            if detection[4] >= 0.5:
+                            if detection[4] >= self._threshold:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
@@ -1880,6 +1919,7 @@ class yolo(IOAdapter):
 class YoloV2VocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('pascal_voc.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1897,6 +1937,7 @@ class YoloV2VocIO(yolo):
 class YoloTinyVocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('pascal_voc.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1914,6 +1955,7 @@ class YoloTinyVocIO(yolo):
 class YoloV2CocoIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1931,6 +1973,7 @@ class YoloV2CocoIO(yolo):
 class YoloV2TinyCocoIO(YoloV2CocoIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1942,6 +1985,7 @@ class YoloV2TinyCocoIO(YoloV2CocoIO):
 class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
@@ -1984,6 +2028,7 @@ class YoloV3IO(yolo):
 class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
@@ -2009,7 +2054,7 @@ class YoloV3TFIO(YoloV3IO):
 
 
 class YoloV7(IOAdapter):
-    def process_output(self, result, log):
+    def process_output(self, result, log, threshold=0.5):
         from configs.pytorch_configs.yolo_v7 import non_max_suppression, plot_one_box
 
         self.load_color_map('mscoco_color_map.txt')
@@ -2026,8 +2071,10 @@ class YoloV7(IOAdapter):
         for det in result:
             if len(det):
                 for *xyxy, conf, cls in reversed(det):
-                    label = f'{self._labels_map[int(cls)]} {conf:.2f}'
-                    plot_one_box(xyxy, image, label=label, color=self._classes_color_map[int(cls)], line_thickness=1)
+                    if conf >= threshold:
+                        label = f'{self._labels_map[int(cls)]} {conf:.2f}'
+                        plot_one_box(xyxy, image, label=label, color=self._classes_color_map[int(cls)],
+                                     line_thickness=1)
 
         out_img = os.path.join(os.path.dirname(__file__), 'out_detection.bmp')
         cv2.imwrite(out_img, image)

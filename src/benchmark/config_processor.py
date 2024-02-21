@@ -103,10 +103,16 @@ class TestConfigParser:
         if links_tag and links_tag[0].firstChild:
             custom_models_links = links_tag[0].firstChild.data.strip()
 
+        num_gpu_devices_element = indep_parameters_tag.getElementsByTagName('GPUDevicesNumber')
+        num_gpu_devices = None
+        if num_gpu_devices_element and num_gpu_devices_element[0].firstChild:
+            num_gpu_devices = int(num_gpu_devices_element[0].firstChild.data.strip())
+
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'
                        f'Batch size - {batch_size}\n\t'
                        f'Device - {device}\n\t'
+                       f'GPU devices number - {num_gpu_devices}\n\t'
                        f'Number of iterations - {iteration_count}\n\t'
                        f'Time limit of test execution - {test_time_limit}\n\t'
                        f'Timeout overhead - {timeout_overhead}\n\t'
@@ -117,6 +123,7 @@ class TestConfigParser:
             inference_framework=inference_framework,
             batch_size=batch_size,
             device=device,
+            num_gpu_devices=num_gpu_devices,
             iterarion_count=iteration_count,
             test_time_limit=test_time_limit,
             timeout_overhead=timeout_overhead,

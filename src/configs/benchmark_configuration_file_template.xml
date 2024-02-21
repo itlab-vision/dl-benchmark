@@ -395,6 +395,40 @@
             <Task></Task>
             <Name></Name>
             <Precision></Precision>
+            <SourceFramework>TVM</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <Framework></Framework> <!--Принимает значения: caffe, onnx, pytorch, mxnet, tvm, tflite-->
+            <Normalize></Normalize>
+            <Mean></Mean>
+            <Std></Std>
+            <Layout></Layout>
+            <ChannelSwap></ChannelSwap>
+            <VirtualMachine></VirtualMachine>
+            <Target></Target>
+            <OptimizationLevel></OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
             <SourceFramework>rknn</SourceFramework>
             <ModelPath></ModelPath>
             <WeightsPath></WeightsPath>

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 project(cpp_dl_benchmark CXX)
 
@@ -61,6 +61,10 @@ macro(add_launcher)
         ${LAUNCHER_DEPENDENCIES}
         gflags
     )
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_link_libraries(${LAUNCHER_NAME} PRIVATE pthread)
+    endif()
 
     target_compile_definitions(${LAUNCHER_NAME} PRIVATE ${LAUNCHER_DEFINITIONS})
 endmacro()

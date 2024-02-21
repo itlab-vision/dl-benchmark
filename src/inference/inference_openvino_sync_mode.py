@@ -133,7 +133,7 @@ def cli_argument_parser():
                         dest='color_map')
     parser.add_argument('--prob_threshold',
                         help='Probability threshold for detections filtering',
-                        default=0.5,
+                        default=0.3,
                         type=float,
                         dest='threshold')
     parser.add_argument('-mi', '--mininfer',
@@ -162,7 +162,8 @@ def cli_argument_parser():
 def infer_sync(compiled_model, number_iter, get_slice, test_duration):
     request = compiled_model.create_infer_request()
     result = None
-    time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, request)
+    loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, request)
+    time_infer = loop_results['time_infer']
     if number_iter == 1:
         result = get_request_result(request)
     return result, time_infer
