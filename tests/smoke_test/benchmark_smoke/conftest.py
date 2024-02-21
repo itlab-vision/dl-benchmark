@@ -64,6 +64,12 @@ def overrided_models(pytestconfig):
     return pytestconfig.getoption('models')
 
 
+def download_citation_gcn(output_dir: Path = OUTPUT_DIR):
+    citation_gcn_dir = Path(output_dir, 'citation-gcn')
+    citation_gcn_link = ('https://raw.githubusercontent.com/ArchiMikael/spektral/main/citation-gcn.keras')
+    download_file(citation_gcn_link, citation_gcn_dir, 'citation-gcn.keras')
+
+
 def download_resnet50(output_dir: Path = OUTPUT_DIR):
     resnet_dir = Path(output_dir, 'resnet50')
     resnet_so_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
@@ -105,19 +111,23 @@ def convert_models_to_tvm(use_caffe: bool = False):
 @pytest.fixture(scope='session', autouse=True)
 def prepare_dl_models(request, overrided_models):
     use_caffe = check_used_mark(request, 'caffe')
+    use_spektral = check_used_mark(request, 'spektral')
 
     models_per_mark = DL_CAFFE_MODELS if use_caffe else DL_MODELS
     enabled_models = overrided_models if overrided_models else models_per_mark
 
-    download_models(models_list=enabled_models)
+    if not use_spektral:
+        download_models(models_list=enabled_models)
 
-    if not use_caffe:
-        convert_models(models_list=enabled_models)
+        if not use_caffe:
+            convert_models(models_list=enabled_models)
 
-        download_resnet50()
-        download_old_instance_segmentation()
+            download_resnet50()
+            download_old_instance_segmentation()
 
-    convert_models_to_tvm(use_caffe)
+        convert_models_to_tvm(use_caffe)
+    else:
+        download_citation_gcn()
 
 
 def pytest_generate_tests(metafunc):
@@ -150,5 +160,7 @@ def pytest_generate_tests(metafunc):
     for i, test_param in enumerate(param_list):
         if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM']:
             param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
+        if test_param.config_name in ['citation-gcn_Spektral']:
+            param_list[i] = pytest.param(test_param, marks=pytest.mark.spektral)
 
     metafunc.parametrize('test_configuration', param_list, ids=id_list)
