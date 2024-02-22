@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>yolo_v7</Task>
+            <Name>yolo-v7</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PyTorch</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>../test_images/detection_images/coco_plane.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <InputShape>[1,3,640,640]</InputShape>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <OutputName>prob</OutputName>
+            <ModelType></ModelType>
+            <InferenceMode></InferenceMode>
+            <TensorRTPrecision></TensorRTPrecision>
+            <UseModelConfig>True</UseModelConfig>
+        </FrameworkDependent>
+    </Test>
+</Tests>

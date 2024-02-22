@@ -12,7 +12,6 @@ from tests.smoke_test.utils import create_empty_folder, execute_process  # noqa:
 SCRIPT_DIR = Path(__file__).parent
 OUTPUT_DIR = Path(SCRIPT_DIR, 'models_dir')
 CACHE_DIR = Path(SCRIPT_DIR, 'cache_dir')
-RES_DIR = Path(SCRIPT_DIR, 'res_dir')
 
 log.basicConfig(level='INFO', format=' %(levelname)-8s - %(message)s')
 
@@ -33,7 +32,7 @@ def convert_models(models_list: list, output_dir: Path = OUTPUT_DIR, precisions:
 
 
 def download_file(link, out_dir, filename):
-    cmd = f'mkdir -p {out_dir} && curl -o {out_dir}/{filename} {link}'
+    cmd = f'mkdir -p {out_dir} && curl -L -o {out_dir}/{filename} {link}'
     execute_process(command_line=cmd, log=log)
 
 
@@ -48,6 +47,6 @@ def check_used_mark(request, mark_name: str):
 
 
 @pytest.fixture(scope='session', autouse=True)
-def prepare_folders():
+def prepare_folders(res_dir):
     """ Setup fixture """
-    create_empty_folder(RES_DIR, log=log)
+    create_empty_folder(res_dir, log=log)

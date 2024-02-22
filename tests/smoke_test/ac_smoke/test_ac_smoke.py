@@ -1,14 +1,14 @@
 from pathlib import Path
 
-from tests.smoke_test.conftest import SCRIPT_DIR, RES_DIR, log
+from tests.smoke_test.conftest import SCRIPT_DIR, log
 from tests.smoke_test.ac_smoke.conftest import AC_SMOKE_FOLDER
 from tests.smoke_test.utils import execute_process
 
 AC_CHECKER = Path(SCRIPT_DIR, '../../src/accuracy_checker/accuracy_checker.py')
 
 
-def test_smoke_ac_models(test_configuration):
-    result_file = Path(RES_DIR, f'{test_configuration.config_name}.csv')
+def test_smoke_ac_models(test_configuration, res_dir):
+    result_file = Path(res_dir, f'{test_configuration.config_name}.csv')
     _, omz_root = execute_process(command_line='python3 -c "import openvino.model_zoo as omz; print(omz.__path__[0])"',
                                   log=log)
     dataset_definitions = Path(omz_root[0].strip()).joinpath('data', 'dataset_definitions.yml')

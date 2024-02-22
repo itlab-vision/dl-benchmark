@@ -12,6 +12,7 @@
 1. PyTorch.
 1. ONNX Runtime.
 1. Apache TVM.
+1. RKNN.
 1. Spektral.
 
 ## Вывод глубоких моделей с использованием Inference Engine
@@ -833,15 +834,10 @@ python3 inference_onnx_runtime.py \
 
 #### Аргументы командной строки
 
-Название скриптов:
+Название скрипта:
 
 ```bash
 inference_tvm.py
-inference_tvm_mxnet.py
-inference_tvm_pytorch.py
-inference_tvm_caffe.py
-inference_tvm_onnx.py
-inference_tvm_tensorflowlite.py
 ```
 
 Обязательные аргументы:
@@ -863,6 +859,10 @@ inference_tvm_tensorflowlite.py
 - `-in / --input_name` - название входа модели. По умолчанию модель
   имеет один вход с названием `data`. Текущая реализация вывода
   предусматривает наличие только одного входа.
+- `-f / --framework` - фреймворк исходной модели. На данный момент
+  поддерживаются модели следующих фреймворков: ONNX Runtime (`onnx`), 
+  TensorFlowLite (`tflite`), Caffe (`caffe`), PyTorch (`pytorch`),
+  MXNet (`mxnet`) и Apache TVM (`tvm`). 
 - `--norm` - флаг необходимости нормировки изображений.
   Среднее и среднеквадратическое отклонение, которые принимаются
   на вход указываются в следующих двух аргументах.
@@ -908,6 +908,7 @@ inference_tvm_tensorflowlite.py
 - `-mn / --model_name` - название модели, если модель
   загружается из [Gluon Model Zoo][gluon_modelzoo].
   При таком варианте запуска модель загружается из сети Интернет.
+- `-f / --framework` - данный аргумент должен принимать значение `mxnet`.
 
 Аргументы, необходимые для инференса моделей PyTorch с использованием Apache TVM:
 
@@ -919,76 +920,123 @@ inference_tvm_tensorflowlite.py
   принимает значение `torchvision.models`, модуль с [моделями][torchvision_models], которые решают
   задачу классификации.
 - `-mn / --model_name` - имя модели.
+- `-f / --framework` - данный аргумент должен принимать значение `pytorch`.
 
 Аргументы, необходимые для инференса моделей ONNX Runtime с использованием Apache TVM:
 
 - `-m / --model` - путь до описания архитектуры модели
   в формате `.onnx`.
 - `-mn / --model_name` - имя модели.
+- `-f / --framework` - данный аргумент должен принимать значение `onnx`.
 
 Аргументы, необходимые для инференса моделей Caffe с использованием Apache TVM:
 
 - `-m / --model` - путь до описания архитектуры модели
   в формате `.prototxt`.
 - `-w / --weights` - путь до файла с весами в формате `.caffemodel`.
+- `-f / --framework` - данный аргумент должен принимать значение `caffe`.
 
 Аргументы, необходимые для инференса моделей TVM с использованием Apache TVM:
 
 - `-m / --model` - путь до описания архитектуры модели
   в формате `.json`.
 - `-w / --weights` - путь до файла с весами в формате `.params`.
+- `-f / --framework` - данный аргумент должен принимать значение `tvm`.
 
 Аргументы, необходимые для инференса моделей TensorFlow Lite с использованием Apache TVM:
 
 - `-m / --model` - путь до описания архитектуры модели
   в формате `.tflite`.
 - `-mn / --model_name` - имя модели.
+- `-f / --framework` - данный аргумент должен принимать значение `tflite`.
+
+## Вывод глубоких моделей с использованием RKNN
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_rknn.py
+```
+
+Обязательные аргументы:
+
+- `-bch / --benchmark_app` - путь до RKNN бенчмарка.
+- `-i / --input` - путь до входных данных
+  (расширения файлов `.bin`, `.jpg`, `.png`, `.bmp` и т.д.).
+
+Опциональные аргументы:
+
+- `-m / --model` - путь до файла модели
+  (расширение файла `.rknn`).
+- `-w / --weights` - путь до файла с весами.
+- `-b / --batch_size` - количество изображений, которые будут обработаны
+  за один проход сети. По умолчанию равно `1`.
+- `--input_scale` - коэффициент масштабирования изображения.
+  По умолчанию равен `1.0`.
+- `--input_shape` - размеры входного тензора в формате <[N,C,H,W]>.
+- `--dtype` - тип данных входа сети. Пример: "input1[U8],input2[U8]" или только "[U8]"'.
+  По умолчанию `[U8]`.
+- `--input_scale` - параметры для масштабирования изображения в формате `<[R,G,B]>`.
+- `--mean` - параметры для вычитания средних по каждому цветовому каналу изображения в формате `<[R,G,B]>`.
+- `-t / --task` - название задачи. По умолчанию принимает значение `without postprocess`.
+- `--swap_channels` - параметр переключения каналов. По умолчанию принимает значение `False`.
+- `--background` - путь к фоновому изображению.
+- `--output_path` - путь для сохранения обработанных выходных данных.
+- `--only_process_output` - запуск без выполнения модели.
+- `--output_json_path` - путь для сохранения необработанных выходных данных cpp_dl_benchmark.
+- `--ref_input` - путь к референсным данным.
+- `--use_bin_input` - использование бинарных данных для входа. По умолчанию принимает значение `False`.
 
 #### Примеры запуска
 
 ##### Запуск для MXNet
 
 ```bash
-python3 inference_tvm_mxnet.py \
+python3 inference_tvm.py \
     -mn <name_of_model> \
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'mxnet'
 ```
 
 ##### Запуск для PyTorch
 
 ```bash
-python3 inference_tvm_pytorch.py \
+python3 inference_tvm.py \
     -mn <name_of_model> \
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'pytorch'
 ```
 
 ##### Запуск для ONNX Runtime
 
 ```bash
-python3 inference_tvm_onnx.py \
+python3 inference_tvm.py \
     -m <path_to_model>/<model>.onnx \
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'onnx'
 ```
 
 ##### Запуск для Caffe
 
 ```bash
-python3 inference_tvm_caffe.py \
+python3 inference_tvm.py \
     -m <path_to_model>/<model>.prototxt \
     -w <path_to_weights>/<weights>.caffemodel
     -i <path_to_image>/<image_name> \
@@ -996,7 +1044,8 @@ python3 inference_tvm_caffe.py \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'caffe'
 ```
 
 ##### Запуск для TVM
@@ -1010,20 +1059,37 @@ python3 inference_tvm.py \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'tvm'
 ```
 
 ##### Запуск для TensorFlow Lite
 
 ```bash
-python3 inference_tvm_tensorflowlite.py \
+python3 inference_tvm.py \
     -m <path_to_model>/<model>.tflite \
     -i <path_to_image>/<image_name> \
     -ol <number> \
     --input_shape <input_shape> \
     --mean <mean> \
     --std <std> \
-    --norm <norm>
+    --norm <norm> \
+    -f 'tflite'
+```
+
+##### Запуск для RKNN
+
+```bash
+python3 inference_rknn.py \
+    -bch <benchmark_path> \
+    -m <path_to_model> \
+    -d <device NPU> \
+    -b <batch size> \
+    -i <path_to_input> \
+    --shape <input_shape> \
+    --layout <layout> \
+    --dtype <data_type> \
+    --output_path <output_json_path>
 ```
 
 ## Вывод глубоких моделей с использованием Spektral

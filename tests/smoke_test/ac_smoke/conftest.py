@@ -13,6 +13,20 @@ SMOKE_CONFIGS_DIR_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'ac_models')
 AC_MODELS = ['Sphereface']
 
 
+def pytest_addoption(parser):
+    parser.addoption('--res_dir',
+                     type=Path,
+                     default=Path(SCRIPT_DIR, 'res_dir'),
+                     required=False,
+                     help='Path to dir to save results (*.csv)')
+
+
+@pytest.fixture(scope='session')
+def res_dir(pytestconfig):
+    """Fixture function for command-line option."""
+    return pytestconfig.getoption('res_dir')
+
+
 @pytest.fixture(scope='session', autouse=True)
 def prepare_ac_models():
     download_models(models_list=AC_MODELS)

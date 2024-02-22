@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tests.smoke_test.conftest import SCRIPT_DIR, RES_DIR, log
+from tests.smoke_test.conftest import SCRIPT_DIR, log
 
 from tests.smoke_test.utils import execute_process
 
@@ -27,8 +27,8 @@ def check_classification(output: list, model_name: str):
                         f'Actual: {classification_top_res[model_name]}')
 
 
-def test_smoke_dl_models(test_configuration, openvino_cpp_benchmark_dir, cpp_benchmarks_dir):
-    result_file = Path(RES_DIR, f'{test_configuration.config_name}.csv')
+def test_smoke_dl_models(test_configuration, res_dir, openvino_cpp_benchmark_dir, cpp_benchmarks_dir):
+    result_file = Path(res_dir, f'{test_configuration.config_name}.csv')
     command_line = (f'python3 {INFERENCE_BENCHMARK} --result {result_file} --executor_type host_machine '
                     f'--config {test_configuration.config_path}')
     if openvino_cpp_benchmark_dir:

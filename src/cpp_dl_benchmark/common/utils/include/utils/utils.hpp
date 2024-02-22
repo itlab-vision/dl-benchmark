@@ -87,6 +87,10 @@ static inline uint64_t sec_to_ms(uint32_t duration) {
     return duration * 1000LL;
 }
 
+static inline float sec_to_ms(float duration) {
+    return duration * 1000;
+}
+
 static inline uint64_t sec_to_ns(uint32_t duration) {
     return duration * 1000000000LL;
 }
