@@ -17,7 +17,7 @@ using HighresClock = std::chrono::high_resolution_clock;
 
 class ONNXLauncher : public Launcher {
 public:
-    ONNXLauncher(const int nthreads, const std::string& device) : Launcher(nthreads, device){};
+    ONNXLauncher(const int nthreads, const int fps, const std::string& device) : Launcher(nthreads, fps, device){};
     virtual ~ONNXLauncher();
 
     std::string get_framework_name() const override;

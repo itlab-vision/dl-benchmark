@@ -5,9 +5,10 @@ The tool allows to measure deep learning models inference performance with vario
 ## Common prerequisites
 
 The tool was tested on Ubuntu 20.04 (64-bit) with default GCC* 9.4.0
-1. CMake 3.16 or higher
+1. CMake 3.22 or higher
 1. GCC 9.4 or higher
 1. nlohmann-json library
+1. OpenCV 4.7.0 or higher (required for loading and pre-processing input images)
 
     ```
     sudo apt install nlohmann-json3-dev
@@ -35,10 +36,10 @@ Options:
         [-h]                                          show the help message and exit
         [-help]                                       print help on all arguments
          -m <MODEL FILE>                              path to a file with a trained model or a config file.
-                                                      available formats
+                                                      available formats (depends on benchmark build):
                                                           ONNX Runtime - .onnx
-                                                          OpenCV - .xml, .onnx, .pb, .protoxt.
-                                                          TF Lite - .tflite,
+                                                          OpenCV - .xml, .onnx, .pb, .protoxt
+                                                          TF Lite - .tflite
                                                           Pytorch - .pt
                                                           RKNN - .rknn
         [-w <WEIGHTS FILE>]                           path to a model weights file.
@@ -54,19 +55,26 @@ Options:
                                                       ex., "input1[1,128],input2[1,128],input3[1,128]" or just "[1,3,224,224]"
         [--layout <[NCHW]>]                           layout for network input.
                                                       ex.: "input1[NCHW],input2[NC]" or just "[NCHW]"
+        [--dtype <[FP32]>]                            data type of network input.
+                                                      ex.: "input1[FP32],input2[FP32]" or just "[FP32]"
         [--mean <R G B>]                              mean values per channel for input image.
                                                       applicable only for models with image input.
                                                       ex.: [123.675,116.28,103.53] or with specifying inputs src[255,255,255]
         [--scale <R G B>]                             scale values per channel for input image.
                                                       applicable only for models with image inputs.
                                                       ex.: [58.395,57.12,57.375] or with specifying inputs src[255,255,255]
+        [--channel_swap]                              switch the input channels order from BGR to RGB.
+                                                      applicable only for models with image inputs.
+                                                      image are uploaded in BGR format by default
         [--nthreads <NUMBER>]                         number of threads to utilize.
         [--nireq <NUMBER>]                            number of inference requests. If not provided, default value is set.
         [--niter <NUMBER>]                            number of iterations. If not provided, default time limit is set.
         [-t <NUMBER>]                                 time limit for inference in seconds
+        [--fps <NUMBER>]                              fps limit for inference; if actual model inference is faster than the desired fps, it slows down with a condvar wait_for call.
         [--save_report]                               save report in JSON format.
         [--report_path <PATH>]                        destination path for report.
         [--dump_output]                               save final tensor value.
+        [--output_path <PATH>]                        destination path for output
 ```
 
 <!-- LINKS -->

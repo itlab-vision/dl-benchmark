@@ -80,7 +80,7 @@ inline void check_throw_error(int ret_code, const std::string& msg) {
 }
 }  // namespace
 
-RKNNLauncher::RKNNLauncher(const std::string& model_file, const int nthreads) : Launcher(nthreads, "NPU") {
+RKNNLauncher::RKNNLauncher(const std::string& model_file, const int nthreads, const int fps) : Launcher(nthreads, fps, "NPU") {
     read(model_file);  // we need to create context to be able to query framework information
 }
 

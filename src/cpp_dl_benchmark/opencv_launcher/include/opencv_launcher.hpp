@@ -16,7 +16,7 @@
 
 class OCVLauncher : public Launcher {
 public:
-    OCVLauncher(const int nthreads, const std::string& device);
+    OCVLauncher(const int nthreads, const int fps, const std::string& device);
     virtual ~OCVLauncher(){};
 
     std::string get_framework_name() const override;

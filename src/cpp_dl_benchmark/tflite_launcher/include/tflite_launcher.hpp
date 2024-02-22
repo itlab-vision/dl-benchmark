@@ -1,10 +1,10 @@
 #pragma once
 #include "common_launcher/launcher.hpp"
 #include "inputs_preparation/tensor_utils.hpp"
+#include "tflite_profiler.hpp"
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
 
-#include <tensorflow/lite/delegates/gpu/delegate.h>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/model.h>
@@ -16,9 +16,13 @@
 #include <string>
 #include <vector>
 
-class TFLiteLauncher : public Launcher {
+class TFLiteLauncher final : public Launcher {
 public:
-    TFLiteLauncher(const int nthreads, const std::string& device);
+    TFLiteLauncher(const int nthreads,
+                   const int fps,
+                   const std::string& device,
+                   bool enableProfiling = false,
+                   const std::string& profilingReportFilePath = "");
     virtual ~TFLiteLauncher();
 
     std::string get_framework_name() const override;
@@ -37,6 +41,9 @@ public:
     std::vector<OutputTensors> get_output_tensors() override;
 
 private:
+    const bool enableProfiling;
+    const std::string profilingReportFilePath;
+
     // Note that the model instance must outlive the
     // interpreter instance.
     std::unique_ptr<tflite::FlatBufferModel> model = nullptr;
@@ -49,6 +56,8 @@ private:
     TfLiteDelegate* gpu_delegate = nullptr;
     TfLiteDelegate* xnnpack_delegate = nullptr;
 
+    std::unique_ptr<TFLiteProfiler> profiler;
+
     std::vector<std::string> input_names;
     std::vector<std::vector<int>> input_shapes;
     std::vector<TfLiteType> input_data_precisions;
@@ -56,6 +65,12 @@ private:
     std::vector<std::string> output_names;
     std::vector<std::vector<int>> output_shapes;
     std::vector<TfLiteType> output_data_precisions;
+
+    void onEvaluationStart() override;
+    void onEvaluationEnd() override;
+
+    void onSingleRunStart();
+    void onSingleRunEnd();
 
     void run(const int input_idx) override;
 };
