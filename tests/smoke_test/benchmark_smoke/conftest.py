@@ -142,30 +142,50 @@ def convert_models_to_tvm(use_caffe: bool = False):
         except ImportError:
             log.info('No tvm module found, skip tvm converters')
 
+def convert_models_to_tvm(use_caffe: bool = False):
+    pytorch_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn efficientnet_b0 '
+                                f'-w {OUTPUT_DIR}/public/efficientnet-b0-pytorch/efficientnet-b0.pth '
+                                f'-is 1 3 224 224 -f pytorch -op {OUTPUT_DIR}/public/efficientnet-b0-pytorch/')
+    mxnet_to_tvm_converter = f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn alexnet -is 1 3 224 224 -f mxnet'
+    caffe_to_tvm_converter = (f'cd {OUTPUT_DIR} && python3 {TVM_CONVERTER} -mn googlenet-v1 -is 1 3 224 224 '
+                              f'-m {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.prototxt '
+                              f'-w {OUTPUT_DIR}/public/googlenet-v1/googlenet-v1.caffemodel '
+                              f'-op {OUTPUT_DIR}/public/googlenet-v1/ -f caffe')
+    tvm_compiler = (f'cd {OUTPUT_DIR} && python3 {TVM_COMPILER} -m alexnet.json '
+                    '-p alexnet.params -t llvm --lib_name alexnet_vm.so -vm')
+
+    if use_caffe:
+        execute_process(command_line=caffe_to_tvm_converter, log=log)
+    else:
+        try:
+            import tvm  # noqa: F401
+            execute_process(command_line=pytorch_to_tvm_converter, log=log)
+            execute_process(command_line=mxnet_to_tvm_converter, log=log)
+            execute_process(command_line=tvm_compiler, log=log)
+        except ImportError:
+            log.info('No tvm module found, skip tvm converters')
+
 
 @pytest.fixture(scope='session', autouse=True)
 def prepare_dl_models(request, overrided_models):
     use_caffe = check_used_mark(request, 'caffe')
-    use_spektral = check_used_mark(request, 'spektral')
 
     models_per_mark = DL_CAFFE_MODELS if use_caffe else DL_MODELS
     enabled_models = overrided_models if overrided_models else models_per_mark
 
-    if not use_spektral:
-        download_models(models_list=enabled_models)
+    download_models(models_list=enabled_models)
 
-        if not use_caffe:
-            convert_models(models_list=enabled_models)
+    if not use_caffe:
+        convert_models(models_list=enabled_models)
 
-            download_resnet50()
-            download_old_instance_segmentation()
-            download_yolov2_tiny_tf()
-            download_yolov7_onnx()
-            download_facedet_full()
-
-        convert_models_to_tvm(use_caffe)
-    else:
+        download_resnet50()
+        download_old_instance_segmentation()
+        download_yolov2_tiny_tf()
+        download_yolov7_onnx()
+        download_facedet_full()
         download_citation_gcn()
+
+    convert_models_to_tvm(use_caffe)
 
 
 def pytest_generate_tests(metafunc):
@@ -198,7 +218,5 @@ def pytest_generate_tests(metafunc):
     for i, test_param in enumerate(param_list):
         if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM']:
             param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
-        if test_param.config_name in ['citation-gcn_Spektral']:
-            param_list[i] = pytest.param(test_param, marks=pytest.mark.spektral)
 
     metafunc.parametrize('test_configuration', param_list, ids=id_list)

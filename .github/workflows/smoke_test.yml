@@ -89,38 +89,3 @@ jobs:
           name: benchmark_caffe_results
           path: tests/smoke_test/benchmark_smoke/report.html
           retention-days: 1
-
-  smoke_test_spectral:
-    strategy:
-      matrix:
-        os: [ubuntu-20.04]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Code checkout
-        uses: actions/checkout@v3
-
-      - name: Setting up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Setting up Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements_ci.txt
-          python -m pip install -r requirements.txt
-          python -m pip install spektral
-
-      - name: Run smoke test for inference benchmark
-        shell: bash -el {0}
-        run: |
-          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="spektral"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: benchmark_spektral_report
-          path: tests/smoke_test/benchmark_smoke/report.html
-          retention-days: 1
-
