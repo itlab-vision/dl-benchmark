@@ -1,6 +1,7 @@
 from .graph_adapter import IOGraphAdapter
 import pandas as pd
 
+
 class NodeClassification(IOGraphAdapter):
     def __init__(self, args, io_model_wrapper):
         super().__init__(args, io_model_wrapper)

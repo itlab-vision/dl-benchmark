@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import numpy as np
 
+
 class IOGraphAdapter():
     def __init__(self, args, io_model_wrapper):
         self._batch_size = args.batch_size
