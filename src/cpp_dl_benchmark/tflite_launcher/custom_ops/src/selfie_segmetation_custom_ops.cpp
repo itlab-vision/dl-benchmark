@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "selfie_segmetation_custom_ops.hpp"
+#include "custom_ops/selfie_segmetation_custom_ops.hpp"
 
 #include <tensorflow/lite/kernels/internal/tensor.h>
 #include <tensorflow/lite/kernels/internal/types.h>

@@ -34,8 +34,8 @@ class TVMConverterPyTorchFormat(TVMConverter):
         if weights is None or weights == '':
             self.log.info('Loading pretrained model')
             if self.model_name == 'maskrcnn_resnet50_fpn':
-                sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-                from src.inference.configs.tvm_configs.mask_rcnn_config import TraceWrapper, do_trace
+                sys.path.append(str(Path(__file__).resolve().parents[3]))
+                from inference.configs.tvm_configs.mask_rcnn_config import TraceWrapper, do_trace
                 model = TraceWrapper(model_cls(pretrained=True))
                 model.eval()
                 with self.torch.no_grad():

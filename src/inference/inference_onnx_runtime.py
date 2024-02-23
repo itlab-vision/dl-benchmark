@@ -263,22 +263,24 @@ def inference_onnx_runtime(session_or_pipeline, task_type, model_name, output_na
         t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer, num_tokens = loop_inference(number_iter,
-                                                test_duration)(inference_iteration)(get_slice, model_name,
-                                                                                    output_names, session_or_pipeline,
-                                                                                    task_type, device, tokenizer)
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model_name,
+                                                                                       output_names,
+                                                                                       session_or_pipeline,
+                                                                                       task_type, device, tokenizer)
+        time_infer = loop_results['time_infer']
+        num_tokens = loop_results['num_tokens']
     return result, time_infer, num_tokens
 
 
 def inference_iteration(get_slice, model_name, output_names, session, task_type, device, tokenizer=None):
-    num_tokens = None
+    iter_tokens = None
     inputs = get_slice()
     res, exec_time = infer_slice(output_names, model_name, session, task_type, device, inputs, tokenizer)
 
     if isinstance(res, tuple):
-        _, num_tokens = res
+        _, iter_tokens = res
 
-    return (exec_time, num_tokens)
+    return {'exec_time': exec_time, 'iter_tokens': iter_tokens}
 
 
 @get_exec_time()

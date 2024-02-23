@@ -1,7 +1,8 @@
 #!/bin/bash
 
 
-WORK_DIR="/home/itmm/Documents/kustikova_v/origin-valentina"
+#WORK_DIR="/home/itmm/Documents/kustikova_v/origin-valentina"
+WORK_DIR="/home/vanya/projects"
 cd "${WORK_DIR}"
 
 OMZ_DIR="${WORK_DIR}/public"
@@ -23,7 +24,7 @@ conda create --name tvm_convert_python3.7 python=3.7 -y
 echo "Activating virtual environment..."
 conda activate tvm_convert_python3.7
 echo "Installing packages..."
-pip install openvino-dev
+pip install openvino-dev==2022.3.0
 pip install apache-tvm
 conda install -y caffe
 echo "Deactivating virtual environment..."
@@ -34,18 +35,29 @@ conda create --name tvm_convert_python3.9 python=3.9 -y
 echo "Activating virtual environment..."
 conda activate tvm_convert_python3.9
 echo "Installing packages..."
-pip install openvino-dev
-pip install openvino-dev[caffe,tensorflow2,pytorch]
+pip install openvino-dev[caffe,tensorflow2,pytorch,onnx]==2023.3.0
 pip install tensorflow==2.12.0
-pip install onnx==1.14.0
-pip install torch==2.1.0
-pip install tf-keras
+pip install tf-keras==2.15.0
 pip install apache-tvm==0.14.dev264
-pip install tf2onnx
+pip install tf2onnx==1.16.0
 # dependencies for tf_converter.py
-pip install onnx-tf
-pip install tensorflow-addons
-pip install tensorflow-probability
+pip install onnx-tf==1.10.0
+pip install tensorflow-addons==0.22.0
+pip install tensorflow-probability==0.22.0
+echo "Deactivating virtual environment..."
+conda deactivate
+
+echo "Creating virtual environment for MXNet(Python 3.9)..."
+conda create --name tvm_convert_mxnet_python3.9 python=3.9 -y
+echo "Activating virtual environment..."
+conda activate tvm_convert_mxnet_python3.9
+echo "Installing packages..."
+pip install mxnet==1.9.1
+pip install gluoncv[full]
+pip install openvino-dev==2023.3.0
+pip uninstall -y numpy
+pip install numpy==1.23.1
+pip install apache-tvm==0.14.dev264
 echo "Deactivating virtual environment..."
 conda deactivate
 
@@ -53,6 +65,8 @@ conda deactivate
 model_names=(
 "efficientnet-b0" "densenet-121-tf" "googlenet-v1"
 "googlenet-v4-tf" "squeezenet1.1" "resnet-50-pytorch"
+"ssd_512_resnet50_v1_coco" "ssd_512_vgg16_atrous_voc"
+"ssd_300_vgg16_atrous_voc" "ssd_512_mobilenet1.0_coco"
 )
 batch_sizes=(
 1 2 4 8
@@ -68,10 +82,14 @@ src_models=(
 src_frameworks=(
 "onnx" "onnx" "caffe"
 "onnx" "caffe" "pytorch"
+"mxnet" "mxnet"
+"mxnet" "mxnet"
 )
 input_shapes=(
 "224 224 3" "224 224 3" "3 224 224"
 "299 299 3" "3 227 227" "3 224 224"
+"3 512 512" "3 512 512"
+"3 300 300" "3 512 512"
 )
 
 conda activate tvm_convert_python3.9
@@ -88,20 +106,6 @@ for model in ${model_names[@]}; do
     omz_downloader --name ${model}
     # omz_converter creates TensorFlow models in the intermediate format (.pb)
     omz_converter --name ${model}
-done
-
-echo "Creating output directories for each model and batch size..."
-for model in ${model_names[@]}; do
-    echo "Creating directory ${OUTPUT_DIR}/${model}"
-    if [ ! -d "${OUTPUT_DIR}/${model}" ]; then
-        mkdir -p "${OUTPUT_DIR}/${model}";
-    fi
-    for batch in ${batch_sizes[@]}; do
-        echo -e "\tCreating directory ${OUTPUT_DIR}/${model}/batch_size${batch}"
-        if [ ! -d "${OUTPUT_DIR}/${model}/batch_size${batch}" ]; then
-            mkdir -p "${OUTPUT_DIR}/${model}/batch_size${batch}";
-        fi
-    done
 done
 
 echo "Converting TensorFlow models to the ONNX format using tf2onnx"
@@ -156,6 +160,17 @@ for model_idx in ${!model_names[@]}; do
             conda activate tvm_convert_python3.9
             ${command_line[@]}
             conda deactivate
+        elif [ "${src_frameworks[$model_idx]}" = "mxnet" ]; then
+            command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
+                          "-mn ${model_names[$model_idx]}"
+                          "-is ${batch} ${input_shapes[$model_idx]}"
+                          "-b ${batch}"
+                          "-f mxnet"
+                          "-op ${OUTPUT_DIR}/${model_names[$model_idx]}/batch_size${batch}")
+            echo -e "\t${command_line[@]}"
+            conda activate tvm_convert_mxnet_python3.9
+            ${command_line[@]}
+            conda deactivate
         elif [ "${src_frameworks[$model_idx]}" = "pytorch" ]; then
             if [ "${model_names[$model_idx]}" = "resnet-50-pytorch" ]; then
                 command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
@@ -182,7 +197,22 @@ for model_idx in ${!model_names[@]}; do
     done
 done
 
+echo "Converting maskrcnn-resnet50-fpn to the TVM format..."
+
+command_line=("python ${TVM_CONVERTER_DIR}/tvm_converter.py"
+              "-mn maskrcnn_resnet50_fpn"
+              "-mm torchvision.models.detection"
+              "-is 1 3 300 300"
+              "-f pytorch"
+              "-b 1"
+              "-op ${OUTPUT_DIR}/maskrcnn_resnet50_fpn/batch_size1")
+echo -e "\t${command_line[@]}"
+conda activate tvm_convert_python3.9
+${command_line[@]}
+conda deactivate
+
 echo "Removing virtual environments..."
 conda env remove --name tvm_convert_python3.7
 conda env remove --name tvm_convert_python3.9
+conda env remove --name tvm_convert_mxnet_python3.9
 echo "----------------------------------------"
