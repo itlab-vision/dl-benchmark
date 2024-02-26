@@ -34,7 +34,6 @@ for model_name in ${model_names[@]}; do
                       "--target=\"${MODEL_COMPILER_OPTIONS}\"")
             echo -e "${command_line[@]}"
             eval ${command_line[@]}
-            return
         done
     done
 done
