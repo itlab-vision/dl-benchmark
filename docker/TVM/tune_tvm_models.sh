@@ -37,7 +37,6 @@ for model_name in ${model_names[@]}; do
                       "--max_trials_per_task=${MAX_TRIALS_PER_TASK}")
             echo -e "${command_line[@]}"
             eval ${command_line[@]}
-            return
         done
     done
 done
