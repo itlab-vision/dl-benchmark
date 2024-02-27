@@ -1,10 +1,18 @@
 #!/bin/bash
 
 WORK_DIR="$1"
+echo "WORK_DIR: $WORK_DIR"
 OUTPUT_DIR="${WORK_DIR}/tvm_models"
 TVM_COMPILER_DIR="${WORK_DIR}/dl-benchmark/src/model_converters/tvm_converter"
 
-MODEL_COMPILER_OPTIONS="llvm -mtriple=riscv64-unknown-linux-gnu -mcpu=generic-rv64 -mabi=lp64d -mattr=+64bit,+m,+a,+f,+d,+c"
+MODEL_COMPILER_OPTIONS=$2
+if [ -z "$MODEL_COMPILER_OPTIONS" ]
+then
+      MODEL_COMPILER_OPTIONS="llvm -mtriple=riscv64-unknown-linux-gnu -mcpu=generic-rv64 -mabi=lp64d -mattr=+64bit,+m,+a,+f,+d,+c"
+      echo "MODEL_COMPILER_OPTIONS: $MODEL_COMPILER_OPTIONS"
+else
+      echo "MODEL_COMPILER_OPTIONS: $MODEL_COMPILER_OPTIONS"
+fi
 DIR_SUFFIX_NAME="tar_riscv"
 
 
@@ -34,6 +42,7 @@ for model_name in ${model_names[@]}; do
                       "--target=\"${MODEL_COMPILER_OPTIONS}\"")
             echo -e "${command_line[@]}"
             eval ${command_line[@]}
+            return
         done
     done
 done
