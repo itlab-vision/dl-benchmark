@@ -35,7 +35,7 @@
    git clone --recursive https://github.com/apache/tvm -b v0.15.0 tvm
    cd tvm
 
-   git apply fix_relay_init_0.15.diff
+   git apply <path>/fix_relay_init_0.15.diff
    
    mkdir build
    cd build
