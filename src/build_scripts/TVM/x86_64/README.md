@@ -32,8 +32,11 @@
 1. Downloading and building Apache TVM or you can run ```./build_tvm_x86.sh <tvm_dir>```.
 
    ```bash
-   git clone --recursive https://github.com/apache/tvm tvm
+   git clone --recursive https://github.com/apache/tvm -b v0.15.0 tvm
    cd tvm
+
+   git apply fix_relay_init_0.15.diff
+   
    mkdir build
    cd build
 
