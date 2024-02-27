@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORK_DIR="/home/vanya/projects"
+WORK_DIR="$1"
 OUTPUT_DIR="${WORK_DIR}/tvm_models"
 TVM_COMPILER_DIR="${WORK_DIR}/dl-benchmark/src/model_converters/tvm_converter"
 
