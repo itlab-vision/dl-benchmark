@@ -1,6 +1,7 @@
 #!/bin/bash
 
 WORK_DIR="$1"
+echo "WORK_DIR: $WORK_DIR"
 OUTPUT_DIR="${WORK_DIR}/tvm_models"
 TVM_TUNING_DIR="${WORK_DIR}/dl-benchmark/src/tvm_autotuning"
 

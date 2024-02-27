@@ -2,6 +2,7 @@
 
 
 WORK_DIR="$1"
+echo "WORK_DIR: $WORK_DIR"
 cd "${WORK_DIR}"
 
 OMZ_DIR="${WORK_DIR}/public"
