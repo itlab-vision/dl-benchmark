@@ -1,0 +1,14 @@
+diff --git a/python/tvm/__init__.py b/python/tvm/__init__.py
+index 5b6fbe7..18061e3 100644
+--- a/python/tvm/__init__.py
++++ b/python/tvm/__init__.py
+@@ -75,6 +75,9 @@ from . import support
+ # Contrib initializers
+ from .contrib import rocm as _rocm, nvcc as _nvcc, sdaccel as _sdaccel
+ 
++if not _RUNTIME_ONLY:
++    from . import relay
++
+ if not _RUNTIME_ONLY and support.libinfo().get("USE_MICRO", "OFF") == "ON":
+     from . import micro
+ 

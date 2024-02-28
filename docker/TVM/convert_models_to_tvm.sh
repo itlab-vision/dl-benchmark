@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-#WORK_DIR="/home/itmm/Documents/kustikova_v/origin-valentina"
-WORK_DIR="/home/vanya/projects"
+WORK_DIR="$1"
+echo "WORK_DIR: $WORK_DIR"
 cd "${WORK_DIR}"
 
 OMZ_DIR="${WORK_DIR}/public"
