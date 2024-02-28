@@ -23,7 +23,7 @@ class TVMQuantizationConfigParser:
         for config in xml:
             model = config.find('Model')
             dataset = config.find('Dataset')
-            quantparam = config.find('QuantizationParametrs')
+            quantparam = config.find('QuantizationParameters')
             res.append(self._create_list_from_xml_nodes([model, dataset, quantparam]))
         return res
 
