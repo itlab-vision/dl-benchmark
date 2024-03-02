@@ -89,9 +89,10 @@ def cli_argument_parser():
     return args
 
 
-def prepare_input(input_path):
+def prepare_input(input_path, device):
     graph = dgl.data.utils.load_graphs(input_path)  # load graph
     g = graph[0][0]
+    g = g.to(device)
     return g
 
 
@@ -190,7 +191,7 @@ def main():
         io = IOGraphAdapter.get_io_adapter(args, model_wrapper)
 
         log.info(f'Preparing input data {args.input}')
-        input_data = prepare_input(args.input[0])
+        input_data = prepare_input(args.input[0], device)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter,
