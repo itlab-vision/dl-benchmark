@@ -261,6 +261,19 @@ class ONNXIOModelWrapper(IOModelWrapper):
         from numpy import float32
         return float32
 
+class PaddlePaddleIOModelWrapper(IOModelWrapper):
+    def __init__(self, predictor):
+        self._input_names = predictor.get_input_names()
+
+    def get_input_layer_names(self, model):
+        return list(self._input_names)
+
+    def get_input_layer_shape(self, predictor, layer_name):
+        return predictor.get_input_handle(layer_name).shape()
+
+    def get_input_layer_dtype(self, predictor, layer_name):
+        from numpy import float32
+        return float32
 
 class TVMIOModelWrapper(IOModelWrapper):
     def __init__(self, args):

@@ -266,6 +266,10 @@ class PyTorchTransformer(TensorFlowLiteTransformer):
     pass
 
 
+class PaddlePaddleTransformer(TensorFlowLiteTransformer):
+    pass
+
+
 class ONNXRuntimeTransformer(TensorFlowLiteTransformer):
     pass
 
