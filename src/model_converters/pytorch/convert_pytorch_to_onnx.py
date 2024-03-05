@@ -66,6 +66,8 @@ def cli_argument_parser():
 
 if __name__ == "__main__":
     args = cli_argument_parser()
+    if not (os.path.exists("./converted_models")):
+        os.makedirs("./converted_models")
 
     try:
         torch_model = get_model_by_name(args.model_name)
