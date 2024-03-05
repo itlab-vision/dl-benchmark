@@ -77,10 +77,14 @@ def overrided_models(pytestconfig):
 
 def download_dgl_models(output_dir: Path = OUTPUT_DIR):
     dgl_dir = Path(output_dir, 'dgl')
-    dgl_pt_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/dgl/models/classification/GCN/gcn_model.pt')
+    dgl_pt_link = ('https://raw.githubusercontent.com/itlab-vision/'
+                   'itlab-vision-dl-benchmark-models/main/dgl/models/'
+                   'classification/GCN/gcn_model.pt')
     download_file(dgl_pt_link, dgl_dir, 'gcn_model.pt')
 
-    dgl_py_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/dgl/models/classification/GCN/GCN.py')
+    dgl_py_link = ('https://raw.githubusercontent.com/itlab-vision/'
+                   'itlab-vision-dl-benchmark-models/main/dgl/models/'
+                   'classification/GCN/GCN.py')
     download_file(dgl_py_link, dgl_dir, 'GCN.py')
 
 

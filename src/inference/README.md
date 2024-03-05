@@ -1185,6 +1185,8 @@ inference_dgl_pytorch.py
 - `-d / --device` - оборудование, на котором выполняется вывод сети.
   Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
   (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
+  При запуске на `GPU` необходимо установить пакет под конкретную платформу
+  в соответсвии с [документацией][dgl].
 - `--time` - время выполнение инференса в секундах. Этот параметр можно 
   задать вместо задать вместо параметра `-ni / --number_iter`. Если 
   одновременно указать и `-ni / --number_iter` и `--time`,
@@ -1308,3 +1310,5 @@ python inference_pytorch_cpp.py --model_name <model_name> \
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
 
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
+
+[dgl]: https://www.dgl.ai/pages/start.html
