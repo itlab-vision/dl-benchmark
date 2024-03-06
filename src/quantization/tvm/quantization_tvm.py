@@ -1,7 +1,6 @@
 import argparse
 import sys
 import traceback
-#import logging as log
 from pathlib import Path
 from config_parser import TVMQuantizationConfigParser
 from parameters import TVMModelReader, TVMDatasetReader, TVMQuantParamReader, TVMQuantizationProcess
@@ -9,11 +8,6 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from utils.logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
-#log.basicConfig(
-#        format='[ %(levelname)s ] %(message)s',
-#        level=log.INFO,
-#        stream=sys.stdout,
-#    )
 
 
 def cli_argument_parser():
