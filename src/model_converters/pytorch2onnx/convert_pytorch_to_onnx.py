@@ -4,17 +4,17 @@ import torchvision.models as models
 import os
 
 
-def parse_floats(value, count):
-    stripped_value = value.strip("[] ")
+def parse_nums(value, count):
+    stripped_value = value.strip('[] ')
     try:
         nums = [int(item) for item in stripped_value.split(',')]
         if len(nums) != count:
-            raise argparse.ArgumentTypeError(f"The length should be {count}")
+            raise argparse.ArgumentTypeError(f'The length should be {count}')
         return nums
     except ValueError:
-        errStr = "float: " * (count - 1) + "float"
+        errStr = 'float: ' * (count - 1) + 'float'
         raise argparse.ArgumentTypeError(
-            f"The parameter must be in the format [{errStr}]")
+            f'The parameter must be in the format [{errStr}]')
 
 
 def get_model_by_name(model_name):
@@ -23,7 +23,7 @@ def get_model_by_name(model_name):
         model = model_constructor()
         return model
     except AttributeError:
-        raise ValueError(f"Model {model_name} is not found in torchvision.models")
+        raise ValueError(f'Model {model_name} is not found in torchvision.models')
 
 
 def cli_argument_parser():
@@ -59,22 +59,29 @@ def cli_argument_parser():
                         type=int,
                         dest='channels_size')
 
+    parser.add_argument('-od', '--output_dir',
+                        help='The path to the folder with the output weights',
+                        default='./converted_models',
+                        type=str,
+                        dest='output_dir')
+
     args = parser.parse_args()
 
     return args
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = cli_argument_parser()
-    if not (os.path.exists("./converted_models")):
-        os.makedirs("./converted_models")
+    exitPath = args.output_dir
+    if not (os.path.exists(args.output_dir)):
+        os.makedirs(args.output_dir)
 
     try:
         torch_model = get_model_by_name(args.model_name)
-        nums = parse_floats(args.input_size, 2)
+        nums = parse_nums(args.input_size, 2)
 
-        my_converter = model_converter.Converter(save_dir="./converted_models",
-                                                 simplify_exported_model=False
+        my_converter = model_converter.Converter(save_dir=f'{args.output_dir}',
+                                                 simplify_exported_model=False,
                                                  )
 
         converted_model = my_converter.convert(
@@ -82,11 +89,11 @@ if __name__ == "__main__":
             batch_size=args.batch_size,
             input_size=nums,
             channels=args.channels_size,
-            fmt="onnx",
+            fmt='onnx',
             force=True,
-            torch_weights=args.weights
+            torch_weights=args.weights,
         )
 
-        os.rename('./converted_models/model.onnx', f'./converted_models/{args.model_name}.onnx')
+        os.rename(f'{args.output_dir}/model.onnx', f'{args.output_dir}/{args.model_name}.onnx')
     except ValueError as e:
         print(e)
