@@ -1,7 +1,6 @@
 from xml.etree import ElementTree as ET
 
 
-
 class TVMQuantizationConfigParser:
     def __init__(self, config_path):
         self.config_path = config_path
@@ -26,10 +25,3 @@ class TVMQuantizationConfigParser:
             quantparam = config.find('QuantizationParameters')
             res.append(self._create_list_from_xml_nodes([model, dataset, quantparam]))
         return res
-
-
-
-
-
-
-

@@ -22,6 +22,10 @@
             <CalibMode>global_scale</CalibMode>
             <WeightsScale>max</WeightsScale>
             <GlobalScale>8</GlobalScale>
+            <dtype_input></dtype_input>
+            <dtype_weight></dtype_weight>
+            <dtype_activation></dtype_activation>
+            <partition_conversions></partition_conversions>
             <OutputDirectory></OutputDirectory>
         </QuantizationParameters>
     </Config>

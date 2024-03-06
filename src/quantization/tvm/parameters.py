@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
-from inference.transformer import TVMTransformer
+from inference.transformer import TVMTransformer  # noqa: E402
 
 
 class TVMReader(metaclass=abc.ABCMeta):
@@ -83,7 +83,7 @@ class TVMDatasetReader(TVMReader):
             return result
         else:
             raise StopIteration
-    
+
 
 class TVMModelReader(TVMReader):
     def __init__(self, log):
@@ -112,9 +112,15 @@ class TVMQuantParamReader(TVMReader):
 
     def _get_arguments(self):
         self.calib_mode = self.args['CalibMode']
-        self.calib_samples = int(self.args['CalibSamples'])
+        self.calib_samples = (int(self.args['CalibSamples'])
+                              if self.args['CalibSamples'] is not None else None)
         self.weights_scale = self.args['WeightsScale']
-        self.global_scale = float(self.args['GlobalScale'])
+        self.dtype_input = self.args['dtype_input']
+        self.dtype_weight = self.args['dtype_weight']
+        self.dtype_activation = self.args['dtype_activation']
+        self.partition_conversions = self.args['partition_conversions']
+        self.global_scale = (float(self.args['GlobalScale'])
+                             if self.args['GlobalScale'] is not None else None)
         self.output_dir = self.args['OutputDirectory']
 
 
@@ -136,7 +142,11 @@ class TVMQuantizationProcess:
         self.log.info(f'Starting quantization with calibration mode {self.quant_params.calib_mode}')
         if self.quant_params.calib_mode.lower() == 'kl_divergence':
             with tvm.relay.quantize.qconfig(calibrate_mode=self.quant_params.calib_mode.lower(),
-                                            weight_scale=self.quant_params.weights_scale.lower()):
+                                            weight_scale=self.quant_params.weights_scale.lower(),
+                                            dtype_input=self.quant_params.dtype_input,
+                                            dtype_weight=self.quant_params.dtype_weight,
+                                            dtype_activation=self.quant_params.dtype_activation,
+                                            partition_conversions=self.quant_params.partition_conversions):
 
                 self.quant_model = tvm.relay.quantize.quantize(self.model.mod,
                                                                self.model.params,
@@ -144,7 +154,12 @@ class TVMQuantizationProcess:
 
         elif self.quant_params.calib_mode.lower() == 'global_scale':
             with tvm.relay.quantize.qconfig(calibrate_mode=self.quant_params.calib_mode.lower(),
-                                            global_scale=self.quant_params.global_scale):
+                                            global_scale=self.quant_params.global_scale,
+                                            weight_scale=self.quant_params.weights_scale.lower(),
+                                            dtype_input=self.quant_params.dtype_input,
+                                            dtype_weight=self.quant_params.dtype_weight,
+                                            dtype_activation=self.quant_params.dtype_activation,
+                                            partition_conversions=self.quant_params.partition_conversions):
 
                 self.quant_model = tvm.relay.quantize.quantize(self.model.mod,
                                                                self.model.params)
