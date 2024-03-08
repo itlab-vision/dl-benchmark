@@ -1298,17 +1298,10 @@ python inference_pytorch_cpp.py --model_name <model_name> \
 ```
 
 <!-- LINKS -->
-
 [execution_providers]: https://onnxruntime.ai/docs/execution-providers
-
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
-
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
-
 [torchvision]: https://pytorch.org/vision/stable/models.html
-
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
-
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
-
 [dgl]: https://www.dgl.ai/pages/start.html
