@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <ModelName></ModelName>
+            <ModelJson></ModelJson>
+            <WeightsParams></WeightsParams>
+            <InputName></InputName>
+            <OutputName></OutputName>
+            <InputShape></InputShape>
+            <Module></Module>
+            <Device></Device>
+            <Framework></Framework>
+        </Model>
+        <Dataset>
+            <DatasetName>ImageNet</DatasetName>
+            <DatasetPath></DatasetPath>
+            <Mean>123.68, 116.779, 103.939</Mean>
+            <Std>58.393, 57.12, 57.375</Std>
+            <ImageSize>224, 224</ImageSize>
+            <BatchSize>1</BatchSize>
+            <Layout>NHWC</Layout>
+            <Normalization>False</Normalization>
+            <ChannelSwap></ChannelSwap>
+        </Dataset>
+        <QuantizationParameters>
+            <ModelType></ModelType>
+            <Preset></Preset>
+            <SubsetSize></SubsetSize>
+            <OutputDirectory></OutputDirectory>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>
