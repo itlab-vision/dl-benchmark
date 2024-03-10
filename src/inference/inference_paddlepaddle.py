@@ -17,6 +17,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
+
 def main():
     args = cli_argument_parser()
 
