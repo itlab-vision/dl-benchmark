@@ -1,7 +1,7 @@
+import paddle.inference as paddle_infer
 import argparse
 import json
 import sys
-import traceback
 from pathlib import Path
 
 import postprocessing_data as pp
@@ -12,12 +12,11 @@ from io_adapter import IOAdapter
 from io_model_wrapper import PaddlePaddleIOModelWrapper
 from reporter.report_writer import ReportWriter
 from transformer import PaddlePaddleTransformer
-from numpy import float32
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
-import paddle.inference as paddle_infer
 log = configure_logger()
+
 def main():
     args = cli_argument_parser()
 
@@ -27,10 +26,13 @@ def main():
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
 
-    config = paddle_infer.Config(args.model_file, args.params_file)
+    config = paddle_infer.Config(args.model_path, args.params_path)
     config.enable_memory_optim()
     predictor = paddle_infer.create_predictor(config)
     args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
+    print(args.input_shapes)
+    for name in predictor.get_input_names():
+        predictor.get_input_handle(name).reshape(args.input_shapes[name])
     model_wrapper = PaddlePaddleIOModelWrapper(predictor)
 
     args.mean = prep.parse_input_arg(args.mean, args.input_names)
@@ -69,11 +71,8 @@ def main():
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
 
-
-
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
-
     parser.add_argument('-m', '--model',
                         help='Path to a .pdmodel file.',
                         required=True,
@@ -113,11 +112,6 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
-    parser.add_argument('--channel_swap',
-                        help='Parameter channel swap',
-                        default=None,
-                        type=str,
-                        dest='channel_swap')
     parser.add_argument('--mean',
                         help='Parameter mean',
                         default=None,
@@ -147,7 +141,8 @@ def cli_argument_parser():
                         help='Input tensor shapes',
                         default=None,
                         type=str,
-                        dest='input_shapes')
+                        dest='input_shapes',
+                        required=True)
     parser.add_argument('--input_names',
                         help='Names of the input tensors',
                         default=None,
@@ -215,7 +210,6 @@ def inference_paddlepaddle(predictor, number_iter, get_slice, test_duration):
 def inference_iteration(get_slice, input_info, predictor):
     for name, data in get_slice().items():
         input_tensor = predictor.get_input_handle(name)
-        input_tensor.reshape(data.shape)
         input_tensor.copy_from_cpu(data)
     _, exec_time = infer_slice(predictor)
     return exec_time
@@ -244,6 +238,7 @@ def prepare_output(result, output_names, task):
         return {output_names[i]: result[i] for i in range(len(result))}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
+
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
