@@ -26,15 +26,19 @@ class SpektralProcess(ProcessHandler):
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
+        device = self._test.indep_parameters.device
+        raw_output = self._test.indep_parameters.raw_output
 
-        common_params = (f'-m {model} -b {batch_size} -ni {iteration} '
+        common_params = (f'-m {model} -b {batch_size} -d {device} -ni {iteration} '
                          f'--report_path {self.report_path}')
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--time', time_limit)
 
-        common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        if raw_output:
+            common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        common_params = self._add_flag_to_cmd_line(common_params, '--restrisct_gpu_usage')
 
         command_line = f'{python} {path_to_spektral_script} {common_params}'
 

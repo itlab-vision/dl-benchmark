@@ -1111,11 +1111,17 @@ inference_spektral.py
 
 - `-b / --batch_size` - количество графов, которые будут обработаны
   за один проход сети. По умолчанию равно `1`.
+- `-d / --device` - оборудование, на котором будет выполнен проход сети.
+  Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
+  (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
+  Для запуска на GPU необходимо установить tensorflow с поддержкой GPU в
+  соответствии с [документацией][tensorflow-gpu].
 - `-ni / --number_iter` - количество прямых проходов по сети. По умолчанию
   выполняется один проход по сети.
 - `-t / --task` - наименование решаемой задачи (`node-classification`).
   По умолчанию обработка выхода не выполняется.
 - `--raw_output` - работа скрипта без логов. По умолчанию не установлен.
+- `--restrisct_gpu_usage` - ограничение использования видеокарт до 1-й. По умолчанию не установлен.
 
 #### Примеры запуска
 
@@ -1294,3 +1300,5 @@ python inference_pytorch_cpp.py --model_name <model_name> \
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
 
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
+
+[tensorflow-gpu]: https://www.tensorflow.org/install/pip

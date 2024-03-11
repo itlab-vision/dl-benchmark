@@ -19,6 +19,7 @@
             <Device>CPU</Device>
             <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
         </FrameworkIndependent>
         <FrameworkDependent>
         </FrameworkDependent>

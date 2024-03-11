@@ -76,9 +76,10 @@ def overrided_models(pytestconfig):
 
 
 def download_citation_gcn(output_dir: Path = OUTPUT_DIR):
-    citation_gcn_dir = Path(output_dir, 'citation-gcn')
-    citation_gcn_link = ('https://raw.githubusercontent.com/ArchiMikael/spektral/main/citation-gcn.keras')
-    download_file(citation_gcn_link, citation_gcn_dir, 'citation-gcn.keras')
+    cit_gcn_dir = Path(output_dir, 'citation-gcn')
+    cit_gcn_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
+                         'spektral/models/classification/citation-gcn/citation-gcn.keras')
+    download_file(cit_gcn_link, cit_gcn_dir, 'citation-gcn.keras')
 
 
 def download_resnet50(output_dir: Path = OUTPUT_DIR):

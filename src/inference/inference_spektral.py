@@ -11,6 +11,9 @@ from inference_tools.loop_tools import loop_inference, get_exec_time
 from reporter.report_writer import ReportWriter
 import spektral_auxiliary
 
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.model_converters.tf2tflite.tensorflow_common import (get_gpu_devices, is_gpu_available, restrisct_gpu_usage)  # noqa
+
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger   # noqa: E402
 
@@ -62,6 +65,14 @@ def cli_argument_parser():
                         default='feedforward_spektral',
                         type=str,
                         dest='task')
+    parser.add_argument('-d', '--device',
+                        help='Specify the target device to infer on (CPU by default)',
+                        default='CPU',
+                        type=str,
+                        dest='device')
+    parser.add_argument('--restrisct_gpu_usage',
+                        action='store_true',
+                        help='Restrict TensorFlow to only use the first GPU')
     args = parser.parse_args()
 
     return args
@@ -120,7 +131,19 @@ def main():
     report_writer.update_framework_info(name='Spektral', version=spektral.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
-                                             target_device='CPU')
+                                             target_device=args.device)
+
+    if args.device == 'NVIDIA_GPU':
+        if is_gpu_available():
+            if args.restrisct_gpu_usage:
+                log.info('Restruct GPU usage to 1 GPU device')
+                restrisct_gpu_usage()
+        else:
+            raise AssertionError('NVIDIA_GPU device not found on hostmachine, unable to infer on NVIDIA_GPU')
+
+    if args.device == 'CPU' and is_gpu_available():
+        log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
+                    f' tensorflow will use NVIDIA_GPU by default')
 
     io = spektral_auxiliary.SpektralIO.get_io_adapter(args, None, None)
     model = model_load(Path(args.model_path))

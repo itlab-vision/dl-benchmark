@@ -774,12 +774,12 @@
             <Name>citation-gcn</Name>
             <Precision>FP32</Precision>
             <SourceFramework>Spektral</SourceFramework>
-            <ModelPath>./working_dir_smoke/spektral/model.keras</ModelPath>
+            <ModelPath>../models_dir/citation-gcn/citation-gcn.keras</ModelPath>
             <WeightsPath></WeightsPath>
         </Model>
         <Dataset>
             <Name>Cora</Name>
-            <Path>./test_graph.bin</Path>
+            <Path>../test_images/test_graph.bin</Path>
         </Dataset>
         <FrameworkIndependent>
             <InferenceFramework>Spektral</InferenceFramework>
@@ -787,6 +787,7 @@
             <Device>CPU</Device>
             <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
         </FrameworkIndependent>
         <FrameworkDependent>
         </FrameworkDependent>
