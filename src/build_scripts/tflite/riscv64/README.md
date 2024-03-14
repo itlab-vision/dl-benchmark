@@ -46,7 +46,7 @@
 
 Tested for Python3.10
 
-1. Install dependensies
+1. Install dependencies
 
    ```bash
    python3 -m pip install pybind11
