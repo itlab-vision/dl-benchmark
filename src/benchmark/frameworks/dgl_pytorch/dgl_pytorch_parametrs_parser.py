@@ -20,7 +20,6 @@ class DGLPyTorchParametersParser(DependentParametersParser):
             _num_intra_threads = dep_parameters_tag.getElementsByTagName(
                 CONFIG_FRAMEWORK_DEPENDENT_num_intra_threads_TAG)[0].firstChild
 
-
         return DGLPyTorchParameters(
             num_inter_threads=_num_inter_threads.data if _num_inter_threads else None,
             num_intra_threads=_num_intra_threads.data if _num_intra_threads else None,
