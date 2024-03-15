@@ -1,6 +1,7 @@
 import abc
 import ast
 import os
+import nncf
 import sys
 import cv2
 import numpy as np
@@ -91,9 +92,24 @@ class NNCFQuantParamReader(TVMReader):
     def _get_arguments(self):
         self.model_type = self.args['ModelType']
         self.preset = self.args['Preset']
-        self.subset_size = self.args['SubsetSize']
+        self.subset_size = ast.literal_eval(self.args['SubsetSize'])
         self.output_dir = self.args['OutputDirectory']
 
 
 class NNCFQuantizationProcess:
-    pass
+    def __init__(self, log, model_reader, dataset, quant_params):
+        self.log = log
+        self.quant_model = None
+        self.model_reader = model_reader
+        self.dataset = dataset
+        self.quant_params = quant_params
+    
+    def transform_fn(self, data_item):
+        images = data_item
+        return {self.model_reader.model.graph.input[0].name: images}
+
+
+    def quantization_nncf(self):
+        calibration_dataset = nncf.Dataset(self.dataset, transform_func=self.transform_fn)
+        self.quant_model = nncf.quantize(model=self.model_reader.model, calibration_dataset=calibration_dataset)
+        print(self.quant_model)

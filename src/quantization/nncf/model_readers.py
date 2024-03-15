@@ -10,6 +10,17 @@ class NNCFModelReader(TVMReader):
     def __init__(self, log):
         super().__init__(log)
 
+    @staticmethod
+    def get_reader(framework, log):
+        if framework.lower() == 'tensorflow':
+            return NNCFModelReaderTensorFLowFormat(log)
+        elif framework.lower() == 'pytorch':
+            return NNCFModelReaderPyTorchFormat(log)
+        elif framework.lower() == 'onnx':
+            return NNCFModelReaderONNXFormat(log)
+        elif framework.lower() == 'openvino':
+            return NNCFModelReaderOpenVINOFormat(log)
+
     def _get_arguments(self):
         self.model_name = self.args['ModelName']
         self.model_path = self.args['ModelJson']
@@ -32,14 +43,21 @@ class NNCFModelReaderTensorFLowFormat(NNCFModelReader):
     
     def _read_model(self):
         sys.path.append(str(Path(__file__).parent.parent.parent))
-        from src.model_converters.tf2tflite.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
+        import tensorflow as tf
+        from tensorflow.python.saved_model import signature_constants
+        from model_converters.tf2tflite.tensorflow_common import (load_model, get_gpu_devices, is_gpu_available,  # noqa
                                                                       get_input_operation_name, restrisct_gpu_usage)  # noqa
         input_op_names = get_input_operation_name(self.input_name)
-        self.model, _ = load_model(model_path=self.model_path,
+        self.model, _ = load_model(model_path=Path(self.model_path),
                                    input_names=input_op_names,
                                    output_names=self.output_name,
                                    const_inputs=[],
                                    log=self._log)
+        print(type(self.model))
+        signature_key = signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        func = self.model._backref_to_saved_model.signatures[signature_key]
+        self.model = func.graph
+        print(type(self.model))
 
 
 class NNCFModelReaderONNXFormat(NNCFModelReader):
@@ -49,6 +67,18 @@ class NNCFModelReaderONNXFormat(NNCFModelReader):
     def _read_model(self):
         import onnx
         self.model = onnx.load(self.model_path)
+
+
+class NNCFModelReaderOpenVINOFormat(NNCFModelReader):
+    def __init__(self, log):
+        super().__init__(log)
+    
+    def _read_model(self):
+        sys.path.append(str(Path(__file__).parent.parent.parent))
+        from openvino import Core
+        core = Core()
+        self.model = core.read_model(self.model_path)
+        print(self.model)
 
 
 class NNCFModelReaderPyTorchFormat(NNCFModelReader):
