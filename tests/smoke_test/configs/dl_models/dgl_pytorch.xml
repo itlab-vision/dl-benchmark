@@ -20,6 +20,8 @@
             <Device>CPU</Device>
             <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
+            <InterOpThreads></InterOpThreads>
+            <IntraOpThreads></IntraOpThreads>
         </FrameworkIndependent>
         <FrameworkDependent>
         </FrameworkDependent>

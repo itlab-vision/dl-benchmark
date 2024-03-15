@@ -19,7 +19,7 @@ from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import PyTorchTransformer
-from pytorch_auxiliary import get_device_to_infer
+from pytorch_auxiliary import get_device_to_infer, set_thread_num
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
@@ -205,21 +205,6 @@ def cli_argument_parser():
     args = parser.parse_args()
 
     return args
-
-
-def set_thread_num(num_inter_threads, num_intra_threads):
-    def validate(num):
-        if num < 0:
-            raise ValueError(f'Incorrect thread count: {num}')
-
-    if num_inter_threads:
-        validate(num_inter_threads)
-        torch.set_num_interop_threads(num_inter_threads)
-        log.info(f'The number of threads for inter-op parallelism: {num_inter_threads}')
-    if num_intra_threads:
-        validate(num_intra_threads)
-        torch.set_num_threads(num_intra_threads)
-        log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
 
 
 def is_gpu_available():

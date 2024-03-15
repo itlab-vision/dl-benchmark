@@ -13,7 +13,7 @@ import dgl
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
 from inference_tools.loop_tools import loop_inference
-from pytorch_auxiliary import get_device_to_infer, infer_slice
+from pytorch_auxiliary import get_device_to_infer, infer_slice, set_thread_num
 from io_model_wrapper import DGLPyTorchWrapper
 from io_graphs_adapter.graph_adapter import IOGraphAdapter
 
@@ -83,6 +83,16 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'dgl_pytorch_inference_report.json',
                         dest='report_path',
                         help='Path to json benchmark report path, default: ./dgl_pytorch_inference_report.json')
+    parser.add_argument('--num_inter_threads',
+                        help='Number of threads used for parallelism between independent operations',
+                        default=None,
+                        type=int,
+                        dest='num_inter_threads')
+    parser.add_argument('--num_intra_threads',
+                        help='Number of threads used within an individual op for parallelism',
+                        default=None,
+                        type=int,
+                        dest='num_intra_threads')
 
     args = parser.parse_args()
 
@@ -189,6 +199,8 @@ def main():
 
         model_wrapper = DGLPyTorchWrapper(compiled_model)
         io = IOGraphAdapter.get_io_adapter(args, model_wrapper)
+
+        set_thread_num(args.num_inter_threads, args.num_intra_threads)
 
         log.info(f'Preparing input data {args.input}')
         input_data = prepare_input(args.input[0], device)

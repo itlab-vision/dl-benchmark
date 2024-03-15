@@ -48,6 +48,16 @@ class DGLPyTorchProcess(ProcessHandler):
 
         common_params = DGLPyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
+        num_inter_threads = self._test.dep_parameters.num_inter_threads
+        if num_inter_threads:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--num_inter_threads', num_inter_threads)
+
+        num_intra_threads = self._test.dep_parameters.num_intra_threads
+        if num_intra_threads:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(
+                common_params, '--num_intra_threads', num_intra_threads)
+
         command_line = f'{python} {path_to_pytorch_script} {common_params}'
 
         return command_line

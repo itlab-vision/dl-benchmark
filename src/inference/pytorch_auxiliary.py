@@ -32,3 +32,18 @@ def get_device_to_infer(device):
     else:
         log.info(f'The device {device} is not supported')
         raise ValueError('The device is not supported')
+
+
+def set_thread_num(num_inter_threads, num_intra_threads):
+    def validate(num):
+        if num < 0:
+            raise ValueError(f'Incorrect thread count: {num}')
+
+    if num_inter_threads:
+        validate(num_inter_threads)
+        torch.set_num_interop_threads(num_inter_threads)
+        log.info(f'The number of threads for inter-op parallelism: {num_inter_threads}')
+    if num_intra_threads:
+        validate(num_intra_threads)
+        torch.set_num_threads(num_intra_threads)
+        log.info(f'The number of threads for intra-op parallelism: {num_intra_threads}')
