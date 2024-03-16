@@ -1,0 +1,25 @@
+diff --git a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+index 7ca118b89f9..faab24a0ece 100755
+--- a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
++++ b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+@@ -81,6 +81,20 @@ case "${TENSORFLOW_TARGET}" in
+       -DTFLITE_ENABLE_XNNPACK=OFF \
+       "${TENSORFLOW_LITE_DIR}"
+     ;;
++  rv64gc)
++    eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
++    ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE} -I${PYTHON_INCLUDE}"
++    cmake \
++      -DCMAKE_C_COMPILER=gcc \
++      -DCMAKE_CXX_COMPILER=g++ \
++      -DCMAKE_C_FLAGS="${ARMCC_FLAGS} -march=rv64imafdc -mabi=lp64d" \
++      -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS} -march=rv64imafdc -mabi=lp64d" \
++      -DCMAKE_SYSTEM_NAME=Linux \
++      -DCMAKE_SYSTEM_PROCESSOR=riscv64 \
++      -DCMAKE_BUILD_TYPE=Release \
++      -DTFLITE_ENABLE_GPU=OFF \
++      "${TENSORFLOW_LITE_DIR}"
++    ;;
+   rpi0)
+     eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
+     ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
