@@ -1,7 +1,14 @@
 import argparse
+import sys
+
 import model_converter
 import torchvision.models as models
 import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
+from logger_conf import configure_logger
+
+log = configure_logger()
 
 
 def parse_nums(value, count):
@@ -95,5 +102,6 @@ if __name__ == '__main__':
         )
 
         os.rename(f'{args.output_dir}/model.onnx', f'{args.output_dir}/{args.model_name}.onnx')
+        log.info(f'Модель сохранена в {args.output_dir}/{args.model_name}.onnx')
     except ValueError as e:
-        print(e)
+        log.error(e)
