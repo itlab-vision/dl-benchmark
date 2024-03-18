@@ -5,7 +5,7 @@ import model_converter
 import torchvision.models as models
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))  # noqa: E402
 from logger_conf import configure_logger
 
 log = configure_logger()
