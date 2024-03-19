@@ -18,60 +18,6 @@ from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
 
-def main():
-    args = cli_argument_parser()
-
-    report_writer = ReportWriter()
-    report_writer.update_framework_info(name='PaddlePaddle', version=paddle_infer.get_version())
-    report_writer.update_configuration_setup(batch_size=args.batch_size,
-                                             iterations_num=args.number_iter,
-                                             target_device=args.device)
-
-    config = paddle_infer.Config(args.model_path, args.params_path)
-    config.enable_memory_optim()
-    predictor = paddle_infer.create_predictor(config)
-    args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
-    print(args.input_shapes)
-    for name in predictor.get_input_names():
-        predictor.get_input_handle(name).reshape(args.input_shapes[name])
-    model_wrapper = PaddlePaddleIOModelWrapper(predictor)
-
-    args.mean = prep.parse_input_arg(args.mean, args.input_names)
-    args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
-    args.layout = prep.parse_layout_arg(args.layout, args.input_names)
-
-    data_transformer = PaddlePaddleTransformer(prep.create_dict_for_transformer(args, 'NHWC'))
-    io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
-
-    if args.input and args.input != ['None']:
-        log.info(f'Preparing input data: {args.input}')
-        io.prepare_input(predictor, args.input)
-    else:
-        io.fill_unset_inputs(predictor, log)
-
-    log.info(f'Starting inference ({args.number_iter} iterations)')
-    result, inference_time = inference_paddlepaddle(predictor, args.number_iter, io.get_slice_input, args.time)
-
-    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
-
-    report_writer.update_execution_results(**inference_result)
-    log.info(f'Write report to {args.report_path}')
-    report_writer.write_report(args.report_path)
-
-    if not args.raw_output:
-        if args.number_iter == 1:
-            try:
-                log.info('Converting output tensor to print results')
-                result = prepare_output(result, args.output_names, args.task)
-
-                log.info('Inference results')
-                io.process_output(result, log)
-            except Exception as ex:
-                log.warning('Error when printing inference results. {0}'.format(str(ex)))
-
-        log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
-
-
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model',
@@ -133,11 +79,6 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='color_map')
-    parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on (CPU by default)',
-                        default='CPU',
-                        type=str,
-                        dest='device')
     parser.add_argument('--input_shapes',
                         help='Input tensor shapes',
                         default=None,
@@ -172,6 +113,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='output_names')
+    parser.add_argument('-d', '--device',
+                        help='Specify the target device to infer on (CPU by default)',
+                        default='CPU',
+                        type=str,
+                        dest='device')
     parser.add_argument('-nt', '--number_top',
                         help='Number of top results to print',
                         default=5,
@@ -239,6 +185,61 @@ def prepare_output(result, output_names, task):
         return {output_names[i]: result[i] for i in range(len(result))}
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
+
+
+def main():
+    args = cli_argument_parser()
+
+    report_writer = ReportWriter()
+    report_writer.update_framework_info(name='PaddlePaddle', version=paddle_infer.get_version())
+    report_writer.update_configuration_setup(batch_size=args.batch_size,
+                                             iterations_num=args.number_iter,
+                                             target_device=args.device)
+
+    config = paddle_infer.Config(args.model_path, args.params_path)
+    config.enable_memory_optim()
+    if args.device == "GPU":
+        config.enable_use_gpu(1000, 0)
+    predictor = paddle_infer.create_predictor(config)
+    args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
+    for name in predictor.get_input_names():
+        predictor.get_input_handle(name).reshape(args.input_shapes[name])
+    model_wrapper = PaddlePaddleIOModelWrapper(predictor)
+
+    args.mean = prep.parse_input_arg(args.mean, args.input_names)
+    args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
+    args.layout = prep.parse_layout_arg(args.layout, args.input_names)
+
+    data_transformer = PaddlePaddleTransformer(prep.create_dict_for_transformer(args, 'NHWC'))
+    io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
+
+    if args.input and args.input != ['None']:
+        log.info(f'Preparing input data: {args.input}')
+        io.prepare_input(predictor, args.input)
+    else:
+        io.fill_unset_inputs(predictor, log)
+
+    log.info(f'Starting inference ({args.number_iter} iterations)')
+    result, inference_time = inference_paddlepaddle(predictor, args.number_iter, io.get_slice_input, args.time)
+
+    inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time)
+
+    report_writer.update_execution_results(**inference_result)
+    log.info(f'Write report to {args.report_path}')
+    report_writer.write_report(args.report_path)
+
+    if not args.raw_output:
+        if args.number_iter == 1:
+            try:
+                log.info('Converting output tensor to print results')
+                result = prepare_output(result, args.output_names, args.task)
+
+                log.info('Inference results')
+                io.process_output(result, log)
+            except Exception as ex:
+                log.warning('Error when printing inference results. {0}'.format(str(ex)))
+
+        log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
 
 if __name__ == '__main__':
