@@ -198,7 +198,7 @@ def main():
 
     config = paddle_infer.Config(args.model_path, args.params_path)
     config.enable_memory_optim()
-    if args.device == "GPU":
+    if args.device == 'GPU':
         config.enable_use_gpu(1000, 0)
     predictor = paddle_infer.create_predictor(config)
     args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
