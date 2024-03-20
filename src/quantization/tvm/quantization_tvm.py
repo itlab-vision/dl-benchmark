@@ -2,10 +2,10 @@ import argparse
 import sys
 import traceback
 from pathlib import Path
-from config_parser import TVMQuantizationConfigParser
-from parameters import TVMModelReader, TVMDatasetReader, TVMQuantParamReader, TVMQuantizationProcess
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-from utils.logger_conf import configure_logger  # noqa: E402
+from parameters import TVMModelReader, TVMQuantParamReader, TVMQuantizationProcess
+sys.path.append(str(Path(__file__).resolve().parents[3]))
+from src.utils.logger_conf import configure_logger  # noqa: E402
+from src.quantization.utils import DatasetReader, ConfigParser  # noqa: E402
 
 log = configure_logger()
 
@@ -38,9 +38,9 @@ def iter_log(model_reader, data_reader, quant_params):
 def main():
     args = cli_argument_parser()
     try:
-        parser = TVMQuantizationConfigParser(args.config)
+        parser = ConfigParser(args.config)
         model_reader = TVMModelReader(log)
-        data_reader = TVMDatasetReader(log)
+        data_reader = DatasetReader(log)
         quant_params = TVMQuantParamReader(log)
         proc = TVMQuantizationProcess(log, model_reader, data_reader, quant_params)
 

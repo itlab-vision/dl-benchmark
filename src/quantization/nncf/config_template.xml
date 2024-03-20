@@ -2,31 +2,30 @@
 <QuantizationConfigs>
     <Config>
         <Model>
-            <ModelName>densenet-121-tf</ModelName>
-            <ModelJson>/home/vanya/projects/dl-benchmark/src/model_converters/tf2tflite/efficientnet-b0.onnx</ModelJson>
-            <WeightsParams></WeightsParams>
-            <InputName>input_1</InputName>
+            <ModelName></ModelName>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+            <InputName></InputName>
             <OutputName></OutputName>
-            <InputShape>1, 224, 224, 3</InputShape>
-            <Module></Module>
-            <Device>CPU</Device>
-            <Framework>onnx</Framework>
+            <InputShape></InputShape>
+            <Device></Device>
+            <Framework></Framework> <!--Supported frameworks: onnx, tensorflow, openvino-->
         </Model>
         <Dataset>
-            <DatasetName>ImageNet</DatasetName>
-            <DatasetPath>/home/vanya/mnt/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</DatasetPath>
-            <Mean>127.68, 116.779, 103.939</Mean>
-            <Std>58.393, 57.12, 57.375</Std>
-            <ImageSize>224, 224</ImageSize>
-            <BatchSize>1</BatchSize>
-            <Layout>NHWC</Layout>
-            <Normalization>False</Normalization>
+            <DatasetName></DatasetName>
+            <DatasetPath></DatasetPath>
+            <Mean></Mean>
+            <Std></Std>
+            <ImageSize></ImageSize>
+            <BatchSize></BatchSize>
+            <Layout></Layout>
+            <Normalization></Normalization>
             <ChannelSwap></ChannelSwap>
         </Dataset>
         <QuantizationParameters>
             <ModelType></ModelType>
             <Preset></Preset>
-            <SubsetSize>20</SubsetSize>
+            <SubsetSize></SubsetSize>
             <OutputDirectory></OutputDirectory>
         </QuantizationParameters>
     </Config>
