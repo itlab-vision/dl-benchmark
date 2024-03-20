@@ -1,4 +1,3 @@
-import abc
 import ast
 import nncf
 import sys
@@ -26,7 +25,7 @@ class NNCFQuantizationProcess:
         self.model_reader = model_reader
         self.dataset = dataset
         self.quant_params = quant_params
-    
+
     def transform_fn(self, data_item):
         images = data_item
         return {self.model_reader.model.graph.input[0].name: images}

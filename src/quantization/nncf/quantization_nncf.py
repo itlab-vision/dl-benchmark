@@ -6,7 +6,7 @@ from model_readers import NNCFModelReader
 from parameters import NNCFQuantParamReader, NNCFQuantizationProcess
 sys.path.append(str(Path(__file__).resolve().parents[3]))
 from src.utils.logger_conf import configure_logger  # noqa: E402
-from src.quantization.utils import DatasetReader, ConfigParser  # noqa: E402 
+from src.quantization.utils import DatasetReader, ConfigParser  # noqa: E402
 
 
 log = configure_logger()
@@ -36,7 +36,7 @@ def iter_log(model_reader, data_reader, quant_params):
              f'Model type: {quant_params.model_type}\n\t\t'
              f'Subset size: {quant_params.subset_size}\n\t\t'
              f'Preset: {quant_params.preset}\n\t\t'
-    )
+            )
 
 
 def main():

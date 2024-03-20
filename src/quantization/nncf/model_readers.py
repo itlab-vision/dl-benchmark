@@ -55,10 +55,10 @@ class NNCFModelReaderTensorFLowFormat(NNCFModelReader):
     def __init__(self, log):
         super().__init__(log)
         self.tf = importlib.import_module('tensorflow')
-    
+
     def _read_model(self):
         self.model = self.tf.keras.models.load_model(Path(self.model_path))
-    
+
     def _save_model(self, quant_model, output_directory):
         self.tf.keras.saving.save_model(quant_model, f'{output_directory}/probe_model', save_format='tf')
 
@@ -79,7 +79,7 @@ class NNCFModelReaderOpenVINOFormat(NNCFModelReader):
     def __init__(self, log):
         super().__init__(log)
         self.ov = importlib.import_module('openvino')
-    
+
     def _read_model(self):
         core = self.ov.Core()
         self.model = core.read_model(self.model_path)
