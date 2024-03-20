@@ -35,8 +35,7 @@ def iter_log(model_reader, data_reader, quant_params):
              f'Quantization parameters:\n\t\t'
              f'Model type: {quant_params.model_type}\n\t\t'
              f'Subset size: {quant_params.subset_size}\n\t\t'
-             f'Preset: {quant_params.preset}\n\t\t'
-            )
+             f'Preset: {quant_params.preset}\n\t\t')
 
 
 def main():
