@@ -11,7 +11,7 @@ from logger_conf import configure_logger  # noqa: E402
 log = configure_logger()
 
 
-def parse_nums(value, count):
+def parse_input_shape(value, count):
     stripped_value = value.strip('[] ')
     try:
         nums = [int(item) for item in stripped_value.split(',')]
@@ -19,7 +19,7 @@ def parse_nums(value, count):
             raise argparse.ArgumentTypeError(f'The length should be {count}')
         return nums
     except ValueError:
-        errStr = 'float: ' * (count - 1) + 'float'
+        errStr = 'int: ' * (count - 1) + 'int'
         raise argparse.ArgumentTypeError(
             f'The parameter must be in the format [{errStr}]')
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     try:
         torch_model = get_model_by_name(args.model_name)
-        nums = parse_nums(args.input_size, 2)
+        nums = parse_input_shape(args.input_size, 2)
 
         my_converter = model_converter.Converter(save_dir=f'{args.output_dir}',
                                                  simplify_exported_model=False,
@@ -102,6 +102,6 @@ if __name__ == '__main__':
         )
 
         os.rename(f'{args.output_dir}/model.onnx', f'{args.output_dir}/{args.model_name}.onnx')
-        log.info(f'Модель сохранена в {args.output_dir}/{args.model_name}.onnx')
+        log.info(f'The model was saved in {args.output_dir}/{args.model_name}.onnx')
     except ValueError as e:
         log.error(e)
