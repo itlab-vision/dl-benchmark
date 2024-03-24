@@ -1,7 +1,5 @@
 import argparse
-import os
 from mxnet.onnx import export_model
-import logging
 
 
 def cli_argument_parser():
