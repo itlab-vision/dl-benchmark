@@ -44,8 +44,7 @@ def cli_argument_parser():
                         dest='batch_size')
     parser.add_argument('-t', '--task',
                         help='Output processing method. Default: without postprocess',
-                        choices=['segmentation', 'classification', 'detection', 'yolo_tiny_voc', 'yolo_v2_coco',
-                                 'yolo_v2_tiny_coco', 'yolo_v3_tf', 'mask-rcnn'],
+                        choices=['classification'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -74,11 +73,6 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='layout')
-    parser.add_argument('--color_map',
-                        help='Color mapping file',
-                        default=None,
-                        type=str,
-                        dest='color_map')
     parser.add_argument('--input_shapes',
                         help='Input tensor shapes',
                         default=None,
@@ -90,23 +84,6 @@ def cli_argument_parser():
                         default=None,
                         type=prep.names_arg,
                         dest='input_names')
-    parser.add_argument('-nthreads', '--number_threads',
-                        help='Number of threads to use for inference on the CPU. (Max by default)',
-                        default=None,
-                        type=int,
-                        dest='number_threads')
-    parser.add_argument('--delegate_ext',
-                        help='Path to delegate library',
-                        default=None,
-                        type=str,
-                        nargs=1,
-                        dest='delegate_ext')
-    parser.add_argument('--delegate_options',
-                        help='Delegate options, format: "option1: value1; option2: value2"',
-                        default=None,
-                        type=str,
-                        nargs=1,
-                        dest='delegate_options')
     parser.add_argument('--output_names',
                         help='Name of the output tensor',
                         default=None,
@@ -123,18 +100,15 @@ def cli_argument_parser():
                         default=5,
                         type=int,
                         dest='number_top')
-    parser.add_argument('-l', '--labels',
-                        help='Labels mapping file',
-                        default=None,
-                        type=str,
-                        dest='labels')
     parser.add_argument('--report_path',
                         type=Path,
-                        default=Path(__file__).parent / 'tflite_inference_report.json',
+                        default=Path(__file__).parent / 'paddle_inference_report.json',
                         dest='report_path')
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
                         help='Optional. Time in seconds to execute topology.')
+    parser.add_argument('--memory_pool_init_size_mb', required=False, default=1000, type=int,
+                        dest='memory_pool_init_size_mb', help='Initial size of the the allocated gpu memory, in MB')
 
     args = parser.parse_args()
 
@@ -149,7 +123,12 @@ def inference_paddlepaddle(predictor, number_iter, get_slice, test_duration):
         time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
                                                                                         input_info, predictor)
     else:
-        result, exec_time = inference_with_output(get_slice, input_info, predictor, outputs)
+        exec_time = inference_iteration(get_slice, input_info, predictor)
+        result = {}
+        for name in outputs:
+            output_tensor = predictor.get_output_handle(name)
+            output_data = output_tensor.copy_to_cpu()
+            result[name] = output_data
         time_infer = [exec_time]
     return result, time_infer
 
@@ -162,17 +141,6 @@ def inference_iteration(get_slice, input_info, predictor):
     return exec_time
 
 
-def inference_with_output(get_slice, input_info, predictor, outputs):
-    exec_time = inference_iteration(get_slice, input_info, predictor)
-    result = []
-    for name in outputs:
-        output_tensor = predictor.get_output_handle(name)
-        output_data = output_tensor.copy_to_cpu()
-        result.append(output_data)
-
-    return result, exec_time
-
-
 @get_exec_time()
 def infer_slice(predictor):
     predictor.run()
@@ -182,7 +150,7 @@ def prepare_output(result, output_names, task):
     if (output_names is None) or (len(result) != len(output_names)):
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
     if task == 'classification':
-        return {output_names[i]: result[i] for i in range(len(result))}
+        return result
     else:
         raise ValueError(f'Unsupported task {task} to print inference results')
 
@@ -199,7 +167,7 @@ def main():
     config = paddle_infer.Config(args.model_path, args.params_path)
     config.enable_memory_optim()
     if args.device == 'GPU':
-        config.enable_use_gpu(1000, 0)
+        config.enable_use_gpu(args.memory_pool_init_size_mb, 0)
     predictor = paddle_infer.create_predictor(config)
     args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
     for name in predictor.get_input_names():
