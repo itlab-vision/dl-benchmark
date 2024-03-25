@@ -5,7 +5,6 @@ import tensorflow as tf
 import tf2onnx
 import logging
 
-# Настройка логгирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -13,7 +12,7 @@ def cli_argument_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--graphdef',
-                        help='Path to the TensorFlow model graphdef file (.pb)',
+                        help='Path to the TensorFlow model graphdef file',
                         required=True,
                         type=str,
                         dest='graphdef')
