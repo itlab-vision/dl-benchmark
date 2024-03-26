@@ -43,7 +43,12 @@ python convert_tf_to_onnx.py \
 |mobilenet-v2-1.0-224|0.8931149 Granny Smith<br/>0.0335340 piggy bank, penny bank<br/>0.0027360 saltshaker, salt shaker<br/>0.0021255 vase<br/>0.0016607 pitcher, ewer|0.8931142 Granny Smith<br/>0.0335344 piggy bank, penny bank<br/>0.0027360 saltshaker, salt shaker<br/>0.0021255 vase<br/>0.0016607 pitcher, ewer|
 |mobilenet-v2-1.4-224|0.7240419 Granny Smith<br/>0.0312108 vase<br/>0.0237106 fig<br/>0.0122461 piggy bank, penny bank<br/>0.0118887 saltshaker, salt shaker|0.7240421 Granny Smith<br/>0.0312106 vase<br/>0.0237107 fig<br/>0.0122460 piggy bank, penny bank<br/>0.0118887 saltshaker, salt shaker|
 |googlenet-v3|0.8757076 Granny Smith<br/>0.0051826 ping-pong ball<br/>0.0043108 web site, website, internet site, site<br/>0.0029748 lemon<br/>0.0022498 dumbbell|0.8757075 Granny Smith<br/>0.0051826 ping-pong ball<br/>0.0043109 web site, website, internet site, site<br/>0.0029748 lemon<br/>0.0022498 dumbbell|
-
+|mixnet-l|9.9219437 Granny Smith<br/>5.3626161 piggy bank, penny bank<br/>3.6792562 tennis ball<br/>3.5010076 syringe<br/>3.3666766 orange|Error parsing message with type 'tensorflow.GraphDef'|
+|efficientnet-b0|10.7337656 Granny Smith<br/>4.8936868 lemon<br/>4.3447986 bell pepper<br/>4.3027477 orange<br/>4.2535620 piggy bank, penny bankenny bank|Error parsing message with type 'tensorflow.GraphDef'|
+|densenet-121-tf|0.9505768 Granny Smith<br/>0.0134135 orange<br/>0.0113246 lemon<br/>0.0029127 banana<br/>0.0024542 piggy bank, penny bank|Error parsing message with type 'tensorflow.GraphDef'|
+|googlenet-v1-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v2-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v4-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
 
 ### Тестовое изображение 2
 
@@ -57,7 +62,12 @@ python convert_tf_to_onnx.py \
 |mobilenet-v2-1.0-224|0.8770279 junco, snowbird<br/>0.0143870 water ouzel, dipper<br/>0.0103317 chickadee<br/>0.0063064 brambling, Fringilla montifringilla<br/>0.0013868 red-backed sandpiper, dunlin, Erolia alpina|0.8770282 junco, snowbird<br/>0.0143869 water ouzel, dipper<br/>0.0103318 chickadee<br/>0.0063063 brambling, Fringilla montifringilla<br/>0.0013868 red-backed sandpiper, dunlin, Erolia alpina|
 |mobilenet-v2-1.4-224|0.6637318 junco, snowbird<br/>0.0811646 chickadee<br/>0.0119593 water ouzel, dipper<br/>0.0038528 brambling, Fringilla montifringilla<br/>0.0022499 goldfinch, Carduelis carduelis|0.6637312 junco, snowbird<br/>0.0811648 chickadee<br/>0.0119593 water ouzel, dipper<br/>0.0038528 brambling, Fringilla montifringilla<br/>0.0022499 goldfinch, Carduelis carduelis|
 |googlenet-v3|0.6899885 junco, snowbird<br/>0.0630564 brambling, Fringilla montifringilla<br/>0.0239512 goldfinch, Carduelis carduelis<br/>0.0160590 water ouzel, dipper<br/>0.0052343 chickadee|0.6899880 junco, snowbird<br/>0.0630565 brambling, Fringilla montifringilla<br/>0.0239513 goldfinch, Carduelis carduelis<br/>0.0160590 water ouzel, dipper<br/>0.0052343 chickadee|
-
+|mixnet-l|8.8130970 junco, snowbird<br/>6.1616135 brambling, Fringilla montifringilla<br/>6.1076593 water ouzel, dipper<br/>5.8892832 chickadee<br/>3.9943492 jay| Error parsing message with type 'tensorflow.GraphDef'|
+|efficientnet-b0|7.7920890 junco, snowbird<br/>5.7337265 chickadee<br/>5.4845700 water ouzel, dipper<br/>3.9789391 brambling, Fringilla montifringilla<br/>3.1936715 bulbul|Error parsing message with type 'tensorflow.GraphDef'|
+|densenet-121-tf|0.9821593 junco, snowbird<br/>0.0083621 chickadee<br/>0.0040121 brambling, Fringilla montifringilla<br/>0.0016480 water ouzel, dipper<br/>0.0015073 indigo bunting, indigo finch, indigo bird, Passerina cyanea|Error parsing message with type 'tensorflow.GraphDef'|
+|googlenet-v1-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v2-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v4-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
 
 ### Тестовое изображение 3
 
@@ -71,4 +81,9 @@ python convert_tf_to_onnx.py \
 |mobilenet-v2-1.0-224|0.1885895 beacon, lighthouse, beacon light, pharos<br/>0.1434041 liner, ocean liner<br/>0.0768167 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0497301 drilling platform, offshore rig<br/>0.0225758 container ship, containership, container vessel|0.1885887 beacon, lighthouse, beacon light, pharos<br/>0.1434043 liner, ocean liner<br/>0.0768168 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0497301 drilling platform, offshore rig<br/>0.0225758 container ship, containership, container vessel|
 |mobilenet-v2-1.4-224|0.1300137 container ship, containership, container vessel<br/>0.0765783 lifeboat<br/>0.0406069 dock, dockage, docking facility<br/>0.0393022 drilling platform, offshore rig<br/>0.0381022 liner, ocean liner|0.1300134 container ship, containership, container vessel<br/>0.0765785 lifeboat<br/>0.0406070 dock, dockage, docking facility<br/>0.0393022 drilling platform, offshore rig<br/>0.0381023 liner, ocean liner|
 |googlenet-v3|0.5695390 beacon, lighthouse, beacon light, pharos<br/>0.2797679 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0335406 liner, ocean liner<br/>0.0090760 submarine, pigboat, sub, U-boat<br/>0.0064661 wreck|0.5695392 beacon, lighthouse, beacon light, pharos<br/>0.2797675 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0335406 liner, ocean liner<br/>0.0090761 submarine, pigboat, sub, U-boat<br/>0.0064661 wreck|
-
+|mixnet-l|9.2674913 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>8.2079716 beacon, lighthouse, beacon light, pharos<br/>4.3137717 container ship, containership, container vessel<br/>4.1218119 submarine, pigboat, sub, U-boat<br/>3.9396579 promontory, headland, head, foreland| Error parsing message with type 'tensorflow.GraphDef'|
+|efficientnet-b0|6.3308716 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>5.6206541 beacon, lighthouse, beacon light, pharos<br/>5.5816445 liner, ocean liner<br/>5.2046542 submarine, pigboat, sub, U-boat<br/>5.1616168 lifeboat|Error parsing message with type 'tensorflow.GraphDef'|
+|densenet-121-tf|0.3172949 liner, ocean liner<br/>0.1268195 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.1153852 container ship, containership, container vessel<br/>0.0765769 drilling platform, offshore rig<br/>0.0727640 dock, dockage, docking facility|Error parsing message with type 'tensorflow.GraphDef'|  
+|googlenet-v1-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v2-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
+|googlenet-v4-tf|Failed to send event with the following error: Object of type type is not JSON serializable||
