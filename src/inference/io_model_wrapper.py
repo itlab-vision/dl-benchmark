@@ -298,6 +298,22 @@ class ONNXIOModelWrapperCpp(IOModelWrapper):
         return float32
 
 
+class DGLPyTorchWrapper(IOModelWrapper):
+    def __init__(self, model):
+        self._input_shape = next(model.parameters()).size()
+        self._input_name = list(model.state_dict())[0]
+        self._input_dtype = next(model.parameters()).dtype
+
+    def get_input_layer_names(self, model):
+        return self._input_name
+
+    def get_input_layer_shape(self, model, layer_name):
+        return self._input_shape
+
+    def get_input_layer_dtype(self, model, layer_name):
+        return self._input_dtype
+
+
 class TFLiteIOModelWrapperCpp(IOModelWrapper):
     def __init__(self, batch_size):
         self._batch = batch_size

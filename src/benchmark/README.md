@@ -17,6 +17,7 @@ the following frameworks:
 - [MXNet][mxnet] (Python Gluon API).
 - [OpenCV DNN][opencv] (C++ and Python APIs).
 - [PyTorch][pytorch] (C++ and Python APIs).
+- [Deep Graph Library][dgl-pytorch] (PyTorch-based).
 - [Apache TVM][tvm] (Python API).
 - [RKNN][rknn].
 
@@ -142,8 +143,6 @@ for calculating performance indicators is available in the documentation.
 
 ## Using the inference_benchmark.py script
 
-Command line:
-
 ```bash
 python3 inference_benchmark.py <arguments>
 ```
@@ -268,5 +267,6 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [mxnet]: https://mxnet.apache.org
 [opencv]: https://opencv.org
 [pytorch]: https://pytorch.org
+[dgl-pytorch]: https://www.dgl.ai
 [tvm]: https://tvm.apache.org
 [rknn]: https://github.com/rockchip-linux/rknpu2
