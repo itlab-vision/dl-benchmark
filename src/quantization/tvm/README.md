@@ -1,0 +1,58 @@
+# Apache TVM quantization script
+
+Name of script:
+
+```bash
+quantization_tvm.py
+```
+
+Required arguments:
+
+- `-c / --config` - path to the file containing information
+  about quantization process in `xml` format. Template of the config
+  located in `config_template.xml` file.
+
+Description of parameters:
+
+`Model` node contains information about model to be quantized:
+- `ModelName` - name of the model.
+- `ModelJson` - path to model in `.json` format.
+- `ModelParams` - path to weights in `.params` format.
+
+`Dataset` node contains information about dataset for model calibration:
+- `DatasetName` - name of dataset.
+- `DatasetPath` - path to folder with input data.
+- `Mean` - mean value for preprocessing data.
+- `Std` - mean value for preprocessing data.
+- `ImageSize` - image size value for preprocessing data. Example: 224, 224.
+- `BatchSize` - size of input pack for model.
+- `Layout` - dimension sequence for model input. NCHW, NHWC and etc.
+- `Normalization` - flag to normalize input data.
+- `ChannelSwap` - transpose for image channels. For RGB - 2, 1, 0. For BGR - 0, 1, 2.
+
+`QuantizationParameters` node contains information about quantization parameters:
+- `CalibSamples` - number of input data for model calibration.
+- `CalibMode` - mode of the quantization. Supported modes: kl_divergence, global_scale.
+- `WeightsScale` - parameter for weights scaling. Supported modes: power2, max.
+- `GlobalScale` - parameter for global_scale calibration mode.
+- `dtype_input`, `dtype_weight`, `dtype_activation` - data types for quantization.
+  Supported types: int8, int16, int32.
+- `partition_conversions` -  parameter for TVM specific partition conversion.
+  Supported modes: enabled, disabled, fully_integral.
+- `OutputDirectory` - directory for saving quantized model.
+
+Note:
+Currently, Apache TVM quantization does not work as expected. This is due to
+several reasons:
+- `kl_divergence` mode in the quantization process takes a lot of RAM at each
+  new iteration of the calibration cycle. The problem is described [here][memory_leak].
+  It means that you won't be able to use a lot of data for calibration.
+- quantization in most cases breaks model because the validation results are not true.
+  But the `resnet` class of models work almost as expected.
+- TVM quantization slows down inference time. This is due to an internal
+  problem of the framework.
+
+
+
+[memory_leak]: https://ru.stackoverflow.com/questions/1569600/%d0%a3%d1%82%d0%b5%d1%87%d0%ba%d0%b0-%d0%bf%d0%b0%d0%bc%d1%8f%d1%82%d0%b8-%d0%b2-%d0%b8%d1%82%d0%b5%d1%80%d0%b0%d1%82%d0%be%d1%80%d0%b5-%d0%bf%d0%be-%d0%b4%d0%b0%d1%82%d0%b0%d1%81%d0%b5%d1%82%d1%83-python
+
