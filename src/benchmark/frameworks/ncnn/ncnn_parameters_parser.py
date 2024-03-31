@@ -7,7 +7,7 @@ class NCNNParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG = 'InputShape'
-        CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG  = 'ThreadCount'
+        CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -16,7 +16,7 @@ class NCNNParametersParser(DependentParametersParser):
         _input_shape = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_INPUT_SHAPE_TAG)[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName(
-            CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG )[0].firstChild
+            CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
 
         return NcnnParameters(
             input_name=_input_name.data if _input_name else None,

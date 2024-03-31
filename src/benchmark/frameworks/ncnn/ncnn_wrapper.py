@@ -1,5 +1,5 @@
 from .ncnn_process import NcnnProcess
-from .ncnn_test import NcnnTest
+from ..config_parser.test_reporter import Test
 from ..framework_wrapper import FrameworkWrapper
 from ..known_frameworks import KnownFrameworks
 
@@ -13,4 +13,4 @@ class NcnnWrapper(FrameworkWrapper):
 
     @staticmethod
     def create_test(model, dataset, indep_parameters, dep_parameters):
-        return NcnnTest(model, dataset, indep_parameters, dep_parameters)
+        return Test(model, dataset, indep_parameters, dep_parameters)
