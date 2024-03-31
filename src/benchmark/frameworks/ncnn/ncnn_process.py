@@ -30,7 +30,7 @@ class NcnnProcess(ProcessHandler):
         time_limit = self._test.indep_parameters.test_time_limit
         raw_output = self._test.indep_parameters.raw_output
         common_params = (f'-m {name} -i {dataset} -is {input_shape} -b {batch_size} '
-                        f'-ni {iteration} --report_path {self.report_path}')
+                         f'-ni {iteration} --report_path {self.report_path}')
 
         input_name = self._test.dep_parameters.input_name
         if input_name:
