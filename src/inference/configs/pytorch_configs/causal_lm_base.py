@@ -52,12 +52,14 @@ def tokenize(tokenizer, prompt):
     return tokenizer(prompt, return_tensors='pt', padding=True)
 
 
-def generate(model, inputs, device):
+def generate(model, inputs, device, tokenizer):
     return model.generate(
         input_ids=inputs['input_ids'].to(device),
         attention_mask=inputs['attention_mask'].to(device),
         do_sample=True,
-        max_length=MAX_TEXT_LEN,
+        max_new_tokens=MAX_TEXT_LEN,
+        pad_token_id=tokenizer.pad_token_id,
+        eos_token_id=tokenizer.eos_token_id,
         top_k=0,
         temperature=0.8,
     )

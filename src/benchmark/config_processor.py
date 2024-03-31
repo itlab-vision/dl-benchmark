@@ -89,6 +89,10 @@ class TestConfigParser:
         iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data.strip()
         test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)
         timeout_overhead_element = indep_parameters_tag.getElementsByTagName('TimeoutOverhead')
+        raw_output_element = indep_parameters_tag.getElementsByTagName('RawOutput')
+        raw_output = True
+        if raw_output_element:
+            raw_output = raw_output_element[0].firstChild.data.strip() == 'True'
         if timeout_overhead_element:
             timeout_overhead = int(timeout_overhead_element[0].firstChild.data)
         else:
@@ -99,23 +103,32 @@ class TestConfigParser:
         if links_tag and links_tag[0].firstChild:
             custom_models_links = links_tag[0].firstChild.data.strip()
 
+        num_gpu_devices_element = indep_parameters_tag.getElementsByTagName('GPUDevicesNumber')
+        num_gpu_devices = None
+        if num_gpu_devices_element and num_gpu_devices_element[0].firstChild:
+            num_gpu_devices = int(num_gpu_devices_element[0].firstChild.data.strip())
+
         self._log.info(f'Framework independent parameters:\n\t'
                        f'Inference framework - {inference_framework}\n\t'
                        f'Batch size - {batch_size}\n\t'
                        f'Device - {device}\n\t'
+                       f'GPU devices number - {num_gpu_devices}\n\t'
                        f'Number of iterations - {iteration_count}\n\t'
                        f'Time limit of test execution - {test_time_limit}\n\t'
                        f'Timeout overhead - {timeout_overhead}\n\t'
-                       f'Custom models links = {custom_models_links}')
+                       f'Custom models links - {custom_models_links}\n\t'
+                       f'Raw output - {raw_output}')
 
         return FrameworkIndependentParameters(
             inference_framework=inference_framework,
             batch_size=batch_size,
             device=device,
+            num_gpu_devices=num_gpu_devices,
             iterarion_count=iteration_count,
             test_time_limit=test_time_limit,
             timeout_overhead=timeout_overhead,
             custom_models_links=custom_models_links,
+            raw_output=raw_output,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):

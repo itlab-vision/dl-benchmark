@@ -52,6 +52,7 @@
 - Устройство, на котором будет запущен вывод, описывается внутри тега `Device`.
 - Количество итераций цикла тестирования описывается внутри тега `IterationCount`.
 - Максимальное время выполнения теста в минутах описывается внутри тега `TestTimeLimit`.
+- Вывод результатов инференса при числе итераций, равном 1, осуществляется отключением raw_output (False) внутри тега `RawOutput`.
 
 Заполнение информации о параметрах теста, зависящих от используемого
 для вывода фреймворка:
@@ -96,9 +97,8 @@
     и используется версия OpenVINO >= 2023.0.0; может отсуствовать. 
     Дает возможность переименования некоторых опций препроцессинга,
     так как список аргументов коммандной строки benchmark_app может отличаться для разных версий OpenVINO.
-  - `NumOutputTokensLLM`- тег, необязательный для заполнения; может отсуствовать.
-    Задает длину последовательности токенов на выходе больших языковых моделей (LLM) для расчета метрики
-    latency per token.
+  - `UseLatencyPerTokenLLM`- тег, необязательный для заполнения; может отсуствовать.
+    Переопределяет метрику Latency для языковых моделей на метрику Latency per Token.
 
 - Набор тегов для тестирования вывода средствами Intel Optimization for Caffe:
 
@@ -224,6 +224,7 @@
     [Возможные значения][https://pytorch.org/docs/stable/dynamo/get-started.html]. По умолчанию не установлен.
   - `TimeoutOverhead` - опциональный тег для задания дополнительного времени поверх установленного timeout.
     Например, для скачивания тяжелой модели из внешних репозиториев, по умолчанию 300 секунд. 
+
 - Набор тегов для тестирования вывода средствами ONNX Runtime Python API:
 
   - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
@@ -265,6 +266,24 @@
   - `TensorRTPrecision` - тег, необязательный для заполнения. Определяет тип данных весов
     для случая машины с NVIDIA GPU и PyTorch, построенного с поддержкой TensorRT.
     Возможные значения: FP16, FP32. По умолчанию не установлен.
+
+- Набор тегов для тестирования вывода средствами RKNN:
+
+  - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
+    входном изображении.
+  - `Mean` - тег, необязательный для заполнения. Определяет средние значения, которые будут вычитаться
+    по каждому из каналов входного изображения.
+  - `InputScale` - тег, необязательный для заполнения. Определяет коэффициент масштабирования входного
+    изображения.
+  - `Layout` - тег, необязательный для заполнения. Определяет формат входного изображения.
+    По умолчанию будет установлен NCHW.
+  - `InputShape` - тег, необязательный для заполнения. Определяет размеры входного тензора. По умолчанию не установлен.
+  - `InferenceRequestsCount` - тег, необязательный для заполнения. Определяет число запросов на вывод. По умолчанию
+    не установлен и выбирается фреймворком автоматически.
+  - `ThreadCount` - опциональный тег. Описывает максимальное количество физических
+    потоков для выполнения вывода.
+  - `InputType` - тег, необязательный для заполнения. Определяет формат входных данных
+    (в виде `[U8]` или `input1[U8],input2[U8]`)
 
 - Набор тегов для тестирования вывода средсвами MXNet Python API:
 
@@ -662,6 +681,86 @@
     </FrameworkDependent>
   </Test>
 </Tests>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами Apache TVM Python API
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Test>
+    <Model>
+        <Task>classification</Task>
+        <Name>efficientnet_b0</Name>
+        <Precision>FP32</Precision>
+        <SourceFramework>TVM</SourceFramework>
+        <ModelPath>./working_dir/efficientnet_b0/efficientnet_b0.json</ModelPath>
+        <WeightsPath>./working_dir/efficientnet_b0/efficientnet_b0.params</WeightsPath>
+    </Model>
+    <Dataset>
+        <Name>Data</Name>
+        <Path>./black_square.jpg</Path>
+    </Dataset>
+    <FrameworkIndependent>
+        <InferenceFramework>TVM</InferenceFramework>
+        <BatchSize>1</BatchSize>
+        <Device>CPU</Device>
+        <IterationCount>5</IterationCount>
+        <TestTimeLimit>1</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+        <InputName>data</InputName>
+        <Framework>TVM</Framework>
+        <InputShape>1 3 224 224</InputShape>
+        <Normalize>True</Normalize>
+        <Mean>0.485 0.456 0.406</Mean>
+        <Std>0.229 0.224 0.225</Std>
+        <ChannelSwap></ChannelSwap>
+        <Layout>NCHW</Layout>
+        <Target>llvm</Target>
+        <VirtualMachine>True</VirtualMachine>
+        <OptimizationLevel>3</OptimizationLevel>
+    </FrameworkDependent>
+</Test>
+```
+
+#### Пример заполнения конфигурации для измерения производительности вывода средствами RKNN C++ API
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+  <Test>
+      <Model>
+          <Task>N/A</Task>
+          <Name>blaze_face_short_range</Name>
+          <Precision>FP16</Precision>
+          <SourceFramework>rknn</SourceFramework>
+          <ModelPath>./working_dir/blaze_face_short_range/blaze_face_short_range.rknn</ModelPath>
+          <WeightsPath>none</WeightsPath>
+      </Model>
+      <Dataset>
+          <Name>Wider_face</Name>
+          <Path>/datasets/wider_face</Path>
+      </Dataset>
+      <FrameworkIndependent>
+          <InferenceFramework>RKNN</InferenceFramework>
+          <BatchSize></BatchSize>
+          <Device>NPU</Device>
+          <GPUDevicesNumber></GPUDevicesNumber>
+          <IterationCount>10</IterationCount>
+          <TestTimeLimit>60</TestTimeLimit>
+          <TimeoutOverhead>300</TimeoutOverhead>
+          <CustomModelsLinks>None</CustomModelsLinks>
+      </FrameworkIndependent>
+      <FrameworkDependent>
+          <ChannelSwap></ChannelSwap>
+          <InputShape></InputShape>
+          <Layout></Layout>
+          <Mean></Mean>
+          <InputScale></InputScale>
+          <ThreadCount></ThreadCount>
+          <InferenceRequestsCount>10</InferenceRequestsCount>
+          <InputType>[U8]</InputType>
+      </FrameworkDependent>
+  </Test>
 ```
 
 ## Заполнение файла конфигурации для скрипта оценки точности

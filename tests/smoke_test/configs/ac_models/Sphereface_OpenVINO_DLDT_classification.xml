@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>Classification</Task>
+            <Name>Sphereface</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>caffe</SourceFramework>
+            <Directory>../models_dir/public/Sphereface/FP32</Directory>
+        </Model>
+        <Parameters>
+            <Device>CPU</Device>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <Config>../configs/ac_models/models.yml</Config>
+        </Parameters>
+    </Test>
+</Tests>

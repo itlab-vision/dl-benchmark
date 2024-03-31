@@ -2,23 +2,23 @@ import argparse
 import json
 import sys
 import traceback
-import tvm
-
 
 from pathlib import Path
-
 
 import postprocessing_data as pp
 from io_adapter import IOAdapter
 from io_model_wrapper import TVMIOModelWrapper
 from transformer import TVMTransformer
 from reporter.report_writer import ReportWriter
-from tvm_auxiliary import (create_dict_for_converter_mxnet,
+from tvm_auxiliary import (create_dict_for_converter,
                            prepare_output, create_dict_for_modelwrapper,
-                           create_dict_for_transformer, inference_tvm)
+                           create_dict_for_transformer, inference_tvm,
+                           create_dict_for_output_preparer)
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.model_converters.tvm_converter.tvm_converter import TVMConverter  # noqa: E402
+sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('model_converters',
+                                                                 'tvm_converter',
+                                                                 'tvm_auxiliary')))
+from converter import TVMConverter  # noqa: E402
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))
 from logger_conf import configure_logger  # noqa: E402
@@ -33,14 +33,18 @@ def cli_argument_parser():
                         type=str,
                         dest='model_name')
     parser.add_argument('-m', '--model',
-                        help='Path to an .json file with a trained model or to an .so file.',
+                        help='Path to an .json, .tflite, .onnx, .pt, .prototxt, .so file with a trained model.',
                         type=str,
-                        required=True,
                         dest='model_path')
     parser.add_argument('-w', '--weights',
-                        help='Path to an .params file with a trained weights.',
+                        help='Path to an .params, .caffemodel, .pth, .ro file with a trained weights.',
                         type=str,
                         dest='model_params')
+    parser.add_argument('-mm', '--module',
+                        help='Module with model architecture.',
+                        default='torchvision.models',
+                        type=str,
+                        dest='module')
     parser.add_argument('-d', '--device',
                         help='Specify the target device to infer (CPU by default)',
                         default='CPU',
@@ -57,12 +61,17 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='output_names')
+    parser.add_argument('-f', '--source_framework',
+                        help='Source model framework',
+                        default='tvm',
+                        type=str,
+                        dest='source_framework')
     parser.add_argument('-t', '--task',
                         help='Task type determines the type of output processing '
                              'method. Available values: feedforward - without'
                              'postprocessing (by default), classification - output'
                              'is a vector of probabilities.',
-                        choices=['feedforward', 'classification'],
+                        choices=['feedforward', 'classification', 'detection'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -72,6 +81,11 @@ def cli_argument_parser():
                         type=str,
                         nargs='+',
                         dest='input')
+    parser.add_argument('--color_map',
+                        help='Classes color map',
+                        type=str,
+                        default=None,
+                        dest='color_map')
     parser.add_argument('-in', '--input_name',
                         help='Input name.',
                         default='data',
@@ -147,6 +161,15 @@ def cli_argument_parser():
                         type=int,
                         nargs=3,
                         dest='channel_swap')
+    parser.add_argument('--threshold',
+                        help='Probability threshold for detections filtering',
+                        default=0.5,
+                        type=float,
+                        dest='threshold')
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
     parser.add_argument('--raw_output',
                         help='Raw output without logs.',
                         default=False,
@@ -157,13 +180,13 @@ def cli_argument_parser():
                         default=Path(__file__).parent / 'tvm_inference_report.json',
                         dest='report_path')
     args = parser.parse_args()
+
     return args
 
 
 def main():
     args = cli_argument_parser()
     report_writer = ReportWriter()
-    report_writer.update_framework_info(name='TVM', version=tvm.__version__)
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
@@ -173,7 +196,8 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        converter = TVMConverter(create_dict_for_converter_mxnet(args))
+        converter = TVMConverter.get_converter(create_dict_for_converter(args))
+        report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
         graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')
@@ -184,13 +208,18 @@ def main():
                                            args.number_iter,
                                            args.input_name,
                                            io.get_slice_input,
-                                           args.time)
+                                           args.time,
+                                           args.vm)
 
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
                     log.info('Converting output tensor to print results')
-                    res = prepare_output(result, args.task, args.output_names, args.not_softmax)
+                    res = prepare_output(result, args.task,
+                                         args.output_names,
+                                         args.not_softmax,
+                                         source_framework=args.source_framework,
+                                         params=create_dict_for_output_preparer(args))
 
                     log.info('Inference results')
                     io.process_output(res, log)

@@ -1,34 +1,36 @@
 import argparse
 import importlib
 import json
-import logging as log
 import re
 import sys
 import traceback
+
 from functools import partial
 from pathlib import Path
 from time import time
 
 import torch
 
-try:
-    import torch_tensorrt
-except ImportError:
-    log.info('No torch_tensorrt module, it is ok')
-
 import postprocessing_data as pp
 import preprocessing_data as prep
+
+from transformer import PyTorchTransformer
+
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import PyTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
 from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
-from transformer import PyTorchTransformer
 
 sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # noqa: E402
 from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
+
+try:
+    import torch_tensorrt
+except ImportError:
+    log.info('No torch_tensorrt module, it is ok')
 
 SCRIPT_DIR = Path(__file__).parent
 MODEL_CONFIGS_PATH = Path.joinpath(SCRIPT_DIR, 'configs', 'pytorch_configs')
@@ -111,9 +113,11 @@ def cli_argument_parser():
                              'method. Available values: feedforward - without'
                              'postprocessing (by default); classification - output'
                              'is a vector of probabilities; text-generation - predicted string;'
-                             'text-translation - translated string.',
-                        choices=['feedforward', 'classification', 'text-to-image',
-                                 'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation'],
+                             'text-translation - translated string; speech-to-text - '
+                             'output is a recognized text.',
+                        choices=['feedforward', 'classification', 'text-to-image', 'named-entity-recognition',
+                                 'yolo_v7', 'text-generation', 'batch-text-generation', 'text-translation',
+                                 'speech-to-text'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -133,6 +137,11 @@ def cli_argument_parser():
                         default='CPU',
                         type=str,
                         dest='device')
+    parser.add_argument('-nd', '--num_gpu_devices',
+                        help='Number of devices to infer on',
+                        default=None,
+                        type=int,
+                        dest='num_gpu_devices')
     parser.add_argument('--model_type',
                         help='Model type for inference',
                         choices=['scripted', 'baseline', None],
@@ -278,15 +287,16 @@ def load_model_from_file(model_path):
     return model
 
 
-def load_model_from_config(model_name, model_config, module, weights, device='cpu', precision='FP32',
-                           should_be_traced=False, custom_models_links=None):
+def load_model_from_config(model_name, model_config, module, weights, device='cpu', num_gpu_devices=None,
+                           precision='FP32', should_be_traced=False, custom_models_links=None):
     with prepend_to_path([str(MODEL_CONFIGS_PATH)]):
         model_obj = importlib.import_module(model_config.stem).__getattribute__(to_camel_case(model_name))
     model_cls = model_obj()
     model_cls.set_model_name(model_name)
     model_cls.set_model_weights(weights=weights, module=module)
-    model = model_cls.create_model(device=device, precision=precision, should_be_traced=should_be_traced,
-                                   custom_models_links=custom_models_links)
+    model = model_cls.create_model(device=device, num_gpu_devices=num_gpu_devices, precision=precision,
+                                   should_be_traced=should_be_traced, custom_models_links=custom_models_links,
+                                   log=log)
 
     weights = model_cls.weights if model_cls.weights and not model_cls.pretrained else None
 
@@ -363,23 +373,62 @@ def compile_model(model, device, model_type, shapes, input_type, tensor_rt_dtype
         return model
 
 
+def get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2):
+    """
+    LLM's output is shaped like [batch_size, MAX_TEXT_LEN].
+    However, when batch_size > 1, every output of the model which is less
+    than MAX_TEXT_LENGTH is extended by dot tokens to meet the shape of [1, MAX_TEXT_LEN]
+    """
+    num_tokens = []
+    lengths = []
+    for i in range(generated_output.shape[0]):
+        length = 1  # All model-generated sentences have dot at the end
+        for j in range(generated_output.shape[1]):
+            if generated_output[i][j] != dot_token:
+                length += 1
+        lengths.append(length - input_size)
+    num_tokens.extend(lengths)
+    return num_tokens
+
+
 def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, inference_mode, device, test_duration):
     with torch.inference_mode(inference_mode):
         output = None
+        audio_sampling_rate = None
         time_infer = []
-        num_tokens = None
+        num_tokens = []
+        audios_lengths = []
+
+        tokenizer = None
+        processor = None
+
+        input_size = 0
 
         if task_type in ['text-generation', 'batch-text-generation']:
             from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize
 
             tokenizer = create_tokenizer(model.name_or_path)
             encodings_dict = tokenize(tokenizer, get_slice())
-            if task_type == 'text-generation':
-                from configs.pytorch_configs.causal_lm_base import MAX_TEXT_LEN
-                num_tokens = MAX_TEXT_LEN
-            elif task_type == 'batch-text-generation':
+
+            if task_type in ['text-generation']:
+                input_size = encodings_dict['input_ids'].size(1)
+                log.debug(f'Encoded input tokens: {input_size}')
+            elif task_type in ['batch-text-generation']:
                 from configs.onnx_configs.gpt_2 import MAX_TEXT_LEN
-                num_tokens = MAX_TEXT_LEN
+                num_tokens.append(MAX_TEXT_LEN)
+        elif task_type in ['named-entity-recognition']:
+            from configs.pytorch_configs.bert_base_ner import create_tokenizer
+
+            tokenizer = create_tokenizer()
+        elif task_type in ['speech-to-text']:
+            from configs.pytorch_configs.speech_to_sequence_base import create_processor, process_audio
+
+            processor = create_processor(model)
+            waveform, sampling_rate, audio_length = get_slice()
+            audios_lengths.append(audio_length)
+            encodings_dict = process_audio(processor, waveform, sampling_rate)
+            audio_sampling_rate = processor.feature_extractor.sampling_rate
+
         if num_iterations == 1:
             if task_type in ['classification', 'feedforward', 'yolo_v7']:
                 inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
@@ -388,106 +437,165 @@ def inference_pytorch(model, num_iterations, task_type, get_slice, input_names, 
 
             if task_type in ['classification', 'feedforward']:
                 output = torch.nn.functional.softmax(model(*inputs), dim=1).to('cpu')
-            elif task_type == 'text-to-image':
+            elif task_type in ['text-to-image']:
                 output = model(prompt=get_slice())
-            elif task_type == 'yolo_v7':
+            elif task_type in ['yolo_v7']:
                 output = model(*inputs)[0].to('cpu')
-            elif task_type == 'text-generation':
-                from configs.pytorch_configs.causal_lm_base import generate, decode
-
-                output = decode(tokenizer, generate(model=model, inputs=encodings_dict, device=device))
-            elif task_type == 'batch-text-generation':
-                from configs.onnx_configs.gpt_2 import batch_text_generation
-
-                output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
-                                               encodings_dict=encodings_dict)
-            elif task_type == 'text-translation':
+            elif task_type in ['text-translation']:
                 inputs = get_slice()
                 output = model.translate_batch(inputs)
+            elif task_type in ['named-entity-recognition']:
+                from configs.pytorch_configs.bert_base_ner import tokenize, decode
+
+                tokenized_sentence = tokenize(tokenizer, get_slice())['input_ids'].to(device)
+
+                model_output = model(tokenized_sentence)
+                tokens, label_indices = decode(tokenizer, tokenized_sentence, model_output)
+                num_tokens.append(len(tokens))
+
+                output = (tokens, label_indices)
+            elif task_type in ['text-generation']:
+                from configs.pytorch_configs.causal_lm_base import generate, decode
+
+                generated_output = generate(model=model, inputs=encodings_dict, device=device, tokenizer=tokenizer)
+                output = decode(tokenizer, generated_output)
+                num_tokens.extend(get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2))
+                log.info(f'Generated tokens num: {num_tokens}')
+            elif task_type in ['batch-text-generation']:
+                from configs.onnx_configs.gpt_2 import batch_text_generation, decode
+
+                model_output = batch_text_generation(torch_model=model, tokenizer=tokenizer, device=device,
+                                                     encodings_dict=encodings_dict)
+                output = decode(tokenizer, model_output)
+            elif task_type in ['speech-to-text']:
+                from configs.pytorch_configs.speech_to_sequence_base import generate, decode
+
+                generated_output = generate(model=model, inputs=encodings_dict, device=device, processor=processor)
+                output = decode(processor, generated_output)
+                num_tokens.extend(get_meaning_tokens_from_batch(generated_output, input_size, dot_token=2))
+                log.info(f'Generated tokens num: {num_tokens}')
 
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
-            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, get_slice,
-                                                                                            input_names, model,
-                                                                                            task_type)
-    return output, time_infer, num_tokens
+            loop_results = loop_inference(num_iterations,
+                                          test_duration)(inference_iteration)(device, get_slice, input_names, model,
+                                                                              task_type, tokenizer, processor,
+                                                                              input_size)
+            time_infer = loop_results['time_infer']
+            num_tokens = loop_results['num_tokens']
+            audios_lengths = loop_results['audios_lengths']
+            audio_sampling_rate = loop_results['audio_sampling_rate']
+    return output, time_infer, num_tokens, audios_lengths, audio_sampling_rate
 
 
 @get_exec_time()
-def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None):
+def infer_slice(device, inputs, model, input_kwarg_name=None, task_type=None, tokenizer=None):
     if task_type in ['text-translation']:
         infer_func = model.translate_batch
     else:
         infer_func = model
 
     if input_kwarg_name:
-        infer_func(**{input_kwarg_name: inputs})
+        params = {input_kwarg_name: inputs}
+        if tokenizer and task_type not in ['named-entity-recognition']:
+            params['tokenizer'] = tokenizer
+        res = infer_func(**params)
     else:
-        infer_func(*inputs)
+        res = infer_func(*inputs)
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
+    return res
 
-def inference_iteration(device, get_slice, input_names, model, task_type):
+
+def inference_iteration(device, get_slice, input_names, model, task_type, tokenizer=None,
+                        processor=None, input_size=0):
     inputs = None
     input_kwarg_name = None
 
-    if task_type in ['text-generation', 'batch-text-generation']:
-        from configs.pytorch_configs.causal_lm_base import create_tokenizer, tokenize, generate
+    iter_tokens = None
+    audio_length = None
+    audio_sampling_rate = None
 
-        tokenizer = create_tokenizer(model.name_or_path)
+    if task_type in ['text-generation', 'batch-text-generation']:
+        from configs.pytorch_configs.causal_lm_base import tokenize, generate
+
         inputs = tokenize(tokenizer, get_slice())
 
     if task_type in ['classification', 'feedforward']:
         inputs = [torch.tensor(get_slice()[input_name], device=device) for input_name in input_names]
-    elif task_type == 'text-generation':
+    elif task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import tokenize
+
+        inputs = tokenize(tokenizer, get_slice())['input_ids'].to(device)
+        input_kwarg_name = 'input_ids'
+    elif task_type in ['text-generation']:
         model = partial(generate, model=model, device=device)
         input_kwarg_name = 'inputs'
-    elif task_type == 'batch-text-generation':
+    elif task_type in ['speech-to-text']:
+        from configs.pytorch_configs.speech_to_sequence_base import process_audio, generate
+
+        waveform, sampling_rate, audio_length = get_slice()
+        inputs = process_audio(processor, waveform, sampling_rate)
+        audio_sampling_rate = processor.feature_extractor.sampling_rate
+        model = partial(generate, model=model, device=device, processor=processor)
+        input_kwarg_name = 'inputs'
+    elif task_type in ['batch-text-generation']:
         from configs.onnx_configs.gpt_2 import batch_text_generation
 
         model = partial(batch_text_generation, torch_model=model, tokenizer=tokenizer, device=device)
         input_kwarg_name = 'encodings_dict'
-    elif task_type == 'text-to-image':
+    elif task_type in ['text-to-image']:
         input_kwarg_name = 'prompt'
         inputs = get_slice()
-    elif task_type == 'text-translation':
+    elif task_type in ['text-translation']:
         input_kwarg_name = 'txt'
         inputs = get_slice()
 
     if device.type == 'cuda':
         torch.cuda.synchronize()
 
-    _, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type)
+    res, exec_time = infer_slice(device, inputs, model, input_kwarg_name, task_type, tokenizer)
 
-    return exec_time
+    if task_type in ['text-generation', 'speech-to-text']:
+        iter_tokens = get_meaning_tokens_from_batch(res, input_size, dot_token=2)
+        log.debug(f'Generated tokens num: {iter_tokens}')
+
+    if task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import decode
+
+        tokens, _ = decode(tokenizer, inputs, res)
+        iter_tokens = len(tokens)
+
+    return {'exec_time': exec_time, 'iter_tokens': iter_tokens, 'audio_length': audio_length,
+            'audio_sampling_rate': audio_sampling_rate}
 
 
-def prepare_output(result, model, output_names, task):
+def prepare_output(result, output_names, task_type):
     if (output_names is None) or len(output_names) == 0:
         raise ValueError('The number of output tensors does not match the number of corresponding output names')
 
-    if task == 'feedforward':
+    if task_type in ['feedforward']:
         return {}
-    elif task in ['text-generation', 'yolo_v7', 'text-translation']:
+    elif task_type in ['text-generation', 'batch-text-generation', 'yolo_v7', 'text-translation', 'speech-to-text']:
         return result
-    elif task == 'batch-text-generation':
-        from configs.pytorch_configs.causal_lm_base import create_tokenizer, decode
+    elif task_type in ['named-entity-recognition']:
+        from configs.pytorch_configs.bert_base_ner import get_decode_result
 
-        tokenizer = create_tokenizer(model.name_or_path)
-        decoded_result = decode(tokenizer, result)
+        tokens, label_indices = result
+        decoded_result = get_decode_result(tokens, label_indices)
 
         return decoded_result
-    elif task == 'text-to-image':
+    elif task_type in ['text-to-image']:
         return result.images
-    elif task == 'classification':
+    elif task_type in ['classification']:
         log.info('Converting output tensor to print results')
         return {output_names[0]: result.detach().numpy()}
     else:
-        raise ValueError(f'Unsupported task {task} to print inference results')
+        raise ValueError(f'Unsupported task {task_type} to print inference results')
 
 
 def main():
@@ -557,6 +665,7 @@ def main():
                     module=args.module,
                     weights=args.weights,
                     device=device,
+                    num_gpu_devices=args.num_gpu_devices,
                     precision=args.precision,
                     should_be_traced=tensor_rt_dtype is not None,
                     custom_models_links=custom_models_dict)
@@ -564,7 +673,7 @@ def main():
                 model = load_model_from_module(model_name=args.model_name, module=args.module,
                                                weights=args.weights, device=args.device)
 
-        if args.task not in ['text-translation']:
+        if args.task not in ['text-translation'] and (args.num_gpu_devices is None or args.num_gpu_devices == 1):
             compiled_model = compile_model(model=model, device=device, model_type=model_type,
                                            shapes=args.input_shapes, input_type=args.input_type,
                                            tensor_rt_dtype=tensor_rt_dtype,
@@ -587,17 +696,21 @@ def main():
             io.fill_unset_inputs(compiled_model, log)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
-        result, inference_time, num_tokens = inference_pytorch(model=compiled_model,
-                                                               num_iterations=args.number_iter,
-                                                               get_slice=io.get_slice_input,
-                                                               input_names=args.input_names,
-                                                               inference_mode=args.inference_mode,
-                                                               device=device, test_duration=args.time,
-                                                               task_type=args.task)
+        result, inference_time, num_tokens, audios_lengths, audio_sampling_rate = inference_pytorch(
+            model=compiled_model,
+            num_iterations=args.number_iter,
+            get_slice=io.get_slice_input,
+            input_names=args.input_names,
+            inference_mode=args.inference_mode,
+            device=device, test_duration=args.time,
+            task_type=args.task,
+        )
 
         log.info('Computing performance metrics')
         inference_result = pp.calculate_performance_metrics_sync_mode(args.batch_size, inference_time,
-                                                                      num_tokens=num_tokens)
+                                                                      num_tokens=num_tokens,
+                                                                      audios_lengths=audios_lengths,
+                                                                      audio_sampling_rate=audio_sampling_rate)
         report_writer.update_execution_results(**inference_result)
 
         log.info(f'Write report to {args.report_path}')
@@ -606,9 +719,7 @@ def main():
         if not args.raw_output:
             if args.number_iter == 1:
                 try:
-                    log.info('Converting output tensor to process results')
-                    result = prepare_output(result, compiled_model, args.output_names, args.task)
-
+                    result = prepare_output(result, args.output_names, args.task)
                     log.info('Inference results')
                     io.process_output(result, log)
                 except Exception as ex:

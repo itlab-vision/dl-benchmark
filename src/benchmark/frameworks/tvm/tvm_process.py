@@ -9,6 +9,7 @@ class TVMProcess(ProcessHandler):
 
     def __init__(self, test, executor, log):
         super().__init__(test, executor, log)
+        self.path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm.py')
 
     @staticmethod
     def create_process(test, executor, log):
@@ -28,6 +29,8 @@ class TVMProcess(ProcessHandler):
                 return TVMProcessTVMFormat(test, executor, log)
             elif framework == 'caffe':
                 return TVMProcessCaffeFormat(test, executor, log)
+            elif framework == 'tflite':
+                return TVMProcessTFLiteFormat(test, executor, log)
             else:
                 raise AssertionError(f'Unknown framework {framework}')
 
@@ -54,6 +57,11 @@ class TVMProcess(ProcessHandler):
             common_params = TVMProcess._add_flag_to_cmd_line(
                 common_params, '--norm')
 
+        vm = self._test.dep_parameters.vm
+        if vm == 'True':
+            common_params = TVMProcess._add_flag_to_cmd_line(
+                common_params, '-vm')
+
         mean = self._test.dep_parameters.mean
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--mean', mean)
@@ -73,6 +81,10 @@ class TVMProcess(ProcessHandler):
         opt_level = self._test.dep_parameters.optimization_level
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--opt_level', opt_level)
+
+        target = self._test.dep_parameters.target
+        common_params = TVMProcess._add_optional_argument_to_cmd_line(
+            common_params, '--target', target)
 
         return f'{common_params}'
 
@@ -96,12 +108,12 @@ class TVMProcessMXNetFormat(TVMProcess):
             common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_mxnet.py')
+        common_params += '-f mxnet '
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_script} {common_params}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
 
         return command_line
 
@@ -118,7 +130,7 @@ class TVMProcessPyTorchFormat(TVMProcess):
         model_pt = self._test.model.model
         model_pth = self._test.model.weight
         module = self._test.model.module
-        common_params = ''
+        common_params = '-f pytorch '
         if (module is not None and module != ''):
             common_params += (f'-mm {module} ')
         if ((name is not None)
@@ -133,12 +145,11 @@ class TVMProcessPyTorchFormat(TVMProcess):
             common_params += (f'-m {model_pt} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_pytorch.py')
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_script} {common_params}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
 
         return command_line
 
@@ -152,13 +163,12 @@ class TVMProcessONNXFormat(TVMProcess):
 
     def _fill_command_line(self):
         model = self._test.model.model
-        common_params = f'-m {model} '
-        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_onnx.py')
+        common_params = f'-m {model} -f onnx '
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_script} {common_params}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
 
         return command_line
 
@@ -173,13 +183,12 @@ class TVMProcessCaffeFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         weight = self._test.model.weight
-        common_params = f'-m {model} -w {weight} '
-        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm_caffe.py')
+        common_params = f'-m {model} -w {weight} -f caffe '
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_script} {common_params}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
 
         return command_line
 
@@ -195,18 +204,44 @@ class TVMProcessTVMFormat(TVMProcess):
         model_json = self._test.model.model
         model_params = self._test.model.weight
 
-        if model_json.split('.')[-1] == 'json':
+        model_type = model_json.split('.')[-1]
+        if model_params is not None and model_params != '':
+            params_type = model_params.split('.')[-1]
+        else:
+            params_type = None
+
+        if model_type == 'json' and params_type == 'params':
             common_params = (f'-m {model_json} -w {model_params} ')
-        elif model_json.split('.')[-1] == 'so':
+        elif (model_type == 'so' or model_type == 'tar') and params_type is None:
             common_params = (f'-m {model_json} ')
+        elif model_type == 'so' and params_type == 'ro':
+            common_params = (f'-m {model_json} -w {model_params} ')
         else:
             raise ValueError('Wrong arguments.')
-
-        path_to_script = Path.joinpath(self.inference_script_root, 'inference_tvm.py')
+        common_params += '-f tvm '
         python = ProcessHandler.get_cmd_python_version()
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
-        command_line = f'{python} {path_to_script} {common_params}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
+
+        return command_line
+
+
+class TVMProcessTFLiteFormat(TVMProcess):
+    def __init__(self, test, executor, log):
+        super().__init__(test, executor, log)
+
+    def get_performance_metrics(self):
+        return self.get_performance_metrics_from_json_report()
+
+    def _fill_command_line(self):
+        model = self._test.model.model
+        common_params = f'-m {model} -f tflite '
+        python = ProcessHandler.get_cmd_python_version()
+        time_limit = self._test.indep_parameters.test_time_limit
+        common_params += super()._fill_command_line()
+        common_params += f' --time {time_limit}'
+        command_line = f'{python} {self.path_to_script} {common_params}'
 
         return command_line

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>face-detection</Task>
+            <Name>face-detection-0206</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>tf</SourceFramework>
+            <ModelPath>../models_dir/intel/face-detection-0206/FP32/face-detection-0206.xml</ModelPath>
+            <WeightsPath>../models_dir/intel/face-detection-0206/FP32/face-detection-0206.bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>../test_images/detection_images/thispersondoesntexist.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>sync</Mode>
+            <Runtime>python</Runtime>
+            <CodeSource></CodeSource>
+            <Hint>latency</Hint>
+            <Frontend></Frontend>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <InferenceRequestsCount></InferenceRequestsCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+            <InputShape></InputShape>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <ChangePreprocessOptions></ChangePreprocessOptions>
+        </FrameworkDependent>
+    </Test>
+</Tests>

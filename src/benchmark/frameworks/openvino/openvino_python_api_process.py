@@ -12,13 +12,18 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
     def _fill_command_line(self):
         model_xml = self._test.model.model
         model_bin = self._test.model.weight
+        task = self._test.model.task
         dataset = self._test.dataset.path if self._test.dataset else None
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
         iteration = self._test.indep_parameters.iteration
+        raw_output = self._test.indep_parameters.raw_output
 
         command_line = (f'-m {model_xml} -w {model_bin} -b {batch} -d {device}'
                         f' -ni {iteration} --report_path {self.report_path}')
+
+        if task:
+            command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-t', task)
 
         if dataset:
             command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-i', dataset)
@@ -31,7 +36,8 @@ class OpenVINOPythonAPIProcess(OpenVINOProcess):
         if nthreads:
             command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '-nthreads', nthreads)
 
-        command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '--raw_output', 'true')
+        if raw_output:
+            command_line = OpenVINOPythonAPIProcess._add_argument_to_cmd_line(command_line, '--raw_output', 'true')
 
         return command_line
 

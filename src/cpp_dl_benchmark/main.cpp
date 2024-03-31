@@ -10,6 +10,8 @@
 #include "tflite_launcher.hpp"
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
 #include "pytorch_launcher.hpp"
+#elif RKNN
+#include "rknn_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -29,14 +31,17 @@ DEFINE_bool(h, false, help_msg);
 
 constexpr char model_msg[] =
     "path to a file with a trained model or a config file.\n"
-    "                                                      available formats\n"
+    "                                                      available formats (depends on benchmark build):\n"
     "                                                          ONNX Runtime - .onnx\n"
-    "                                                          OpenCV - .xml, .onnx, .pb, .protoxt.";
+    "                                                          OpenCV - .xml, .onnx, .pb, .protoxt\n"
+    "                                                          TF Lite - .tflite\n"
+    "                                                          Pytorch - .pt\n"
+    "                                                          RKNN - .rknn";
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
-                               "                          available formats:\n"
-                               "                          OpenCV - .caffemodel, .bin";
+                               "                                                      available formats:\n"
+                               "                                                          OpenCV - .caffemodel, .bin";
 DEFINE_string(w, "", weights_msg);
 
 constexpr char input_msg[] =
@@ -50,7 +55,7 @@ constexpr char device_msg[] =
     "target device to infer on. Avalaibale devices depends on the framework:\n"
     "                                                          ONNX Runtime: CPU, CUDA (CUDA EP)\n"
     "                                                          OpenCV: CPU, GPU";
-DEFINE_string(d, "CPU", device_msg);
+DEFINE_string(d, "", device_msg);
 
 constexpr char batch_size_msg[] = "batch size value. If not provided, batch size value is determined from the model";
 DEFINE_uint32(b, 0, batch_size_msg);
@@ -102,6 +107,10 @@ DEFINE_uint32(niter, 0, iterations_num_msg);
 constexpr char time_msg[] = "time limit for inference in seconds";
 DEFINE_uint32(t, 0, time_msg);
 
+constexpr char fps_msg[] = "fps limit for inference; if actual model inference is faster than the desired fps, "
+                           "it slows down with a condvar wait_for call.";
+DEFINE_uint32(fps, 0, fps_msg);
+
 constexpr char save_report_msg[] = "save report in JSON format.";
 DEFINE_bool(save_report, false, save_report_msg);
 
@@ -113,6 +122,13 @@ DEFINE_bool(dump_output, false, dump_output_msg);
 
 constexpr char output_path_msg[] = "destination path for output.";
 DEFINE_string(output_path, "", output_path_msg);
+
+constexpr char enable_profiling_msg[] =
+    "enable operators profiling (tflite only). By default, profiling summary outputs to console.";
+DEFINE_bool(enable_profiling, false, enable_profiling_msg);
+
+constexpr char profiling_output_path_msg[] = "output path for .csv file with profile report to store.";
+DEFINE_string(profiling_output_path, "", profiling_output_path_msg);
 
 void parse(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, false);
@@ -138,6 +154,8 @@ void parse(int argc, char* argv[]) {
             "pytorch"
 #elif PYTORCH_TENSORRT
             "pytorch_tensorrt"
+#elif RKNN
+            "rknn"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -158,10 +176,13 @@ void parse(int argc, char* argv[]) {
                   << "\n\t[--nireq <NUMBER>]                            " << requests_num_msg
                   << "\n\t[--niter <NUMBER>]                            " << iterations_num_msg
                   << "\n\t[-t <NUMBER>]                                 " << time_msg
+                  << "\n\t[--fps <NUMBER>]                              " << fps_msg
                   << "\n\t[--save_report]                               " << save_report_msg
                   << "\n\t[--report_path <PATH>]                        " << report_path_msg
                   << "\n\t[--dump_output]                               " << dump_output_msg
-                  << "\n\t[--output_path <PATH>]                        " << output_path_msg << "\n";
+                  << "\n\t[--output_path <PATH>]                        " << output_path_msg
+                  << "\n\t[--enable_profiling]                          " << enable_profiling_msg
+                  << "\n\t[--profiling_output_path]                     " << profiling_output_path_msg << "\n";
         exit(0);
     }
     if (FLAGS_m.empty()) {
@@ -218,30 +239,43 @@ int main(int argc, char* argv[]) {
 
         std::string device = FLAGS_d;
         if (device.empty()) {
-#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT)
+#if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT) || defined(PYTORCH) ||                        \
+    defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND)
             device = "CPU";
-#elif defined(ORT_CUDA) || defined(ORT_TENSORRT)
+#elif defined(TFLITE_WITH_GPU_DELEGATE)
+            device = "GPU";
+#elif defined(ORT_CUDA) || defined(ORT_TENSORRT) || defined(PYTORCH_TENSORRT)
             device = "NVIDIA_GPU";
+#elif defined(RKNN)
+            device = "NPU";
 #endif
             logger::info << "Device wasn't specified. Default will be used: " << device << logger::endl;
         }
 
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV)
-        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<OCVLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif defined(ORT_DEFAULT) || defined(ORT_CUDA) || defined(ORT_TENSORRT)
-        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<ONNXLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(TFLITE_WITH_GPU_DELEGATE)
-        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<TFLiteLauncher>(FLAGS_nthreads,
+                                                    FLAGS_fps,
+                                                    device,
+                                                    FLAGS_enable_profiling,
+                                                    FLAGS_profiling_output_path);
 #elif defined(PYTORCH) || defined(PYTORCH_TENSORRT)
-        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, device);
+        launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
+#elif RKNN
+        launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads, FLAGS_fps);
 #endif
-
+        auto framework_name = launcher->get_framework_name();
+        auto framework_version = launcher->get_framework_version();
+        auto backend_name = launcher->get_backend_name();
         if (FLAGS_save_report) {
             report = std::make_shared<Report>(FLAGS_report_path);
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", launcher->get_framework_name()}});
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", launcher->get_framework_version()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"name", framework_name}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"version", framework_version}});
             report->add_record(Report::Category::FRAMEWORK_INFO, {{"device", device}});
-            report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", launcher->get_backend_name()}});
+            report->add_record(Report::Category::FRAMEWORK_INFO, {{"backend", backend_name}});
         }
 
         logger::info << "Checking input files" << logger::endl;
@@ -257,8 +291,8 @@ int main(int argc, char* argv[]) {
         auto input_files = args::parse_input_files_arguments(gflags::GetArgvs());
 
         log_step();  // Loading framework
-        logger::info << launcher->get_framework_name() << " " << launcher->get_framework_version() << logger::endl;
-        logger::info << "\tEnabled backend: " << launcher->get_backend_name() << logger::endl;
+        logger::info << framework_name << " " << framework_version << logger::endl;
+        logger::info << "\tEnabled backend: " << backend_name << logger::endl;
 
         log_step();  // Reading model files
         logger::info << "Reading model " << FLAGS_m << logger::endl;
@@ -355,10 +389,17 @@ int main(int argc, char* argv[]) {
         launcher->prepare_input_tensors(std::move(tensors_buffers));
         launcher->compile();
 
-        log_step(std::to_string(num_requests) + " inference requests, limits: " +
-                 (num_iterations > 0
-                      ? std::to_string(num_iterations) + " iterations"
-                      : std::to_string(utils::sec_to_ms(time_limit_sec)) + " ms"));  // Measuring model performance
+        std::string step_msg = std::to_string(num_requests) + " inference requests, limits: ";
+        if (num_iterations > 0) {
+            step_msg += std::to_string(num_iterations) + " iterations";
+        }
+        else {
+            step_msg += utils::format_double(utils::sec_to_ms(time_limit_sec)) + " ms";
+        }
+        if (FLAGS_fps > 0) {
+            step_msg += ", fps: " + std::to_string(FLAGS_fps);
+        }
+        log_step(step_msg);  // Measuring model performance
 
         if (FLAGS_dump_output) {
             std::vector<OutputTensors> output = launcher->get_output_tensors();
@@ -388,6 +429,11 @@ int main(int argc, char* argv[]) {
         logger::info << "\tMin:     " << utils::format_double(metrics.latency.min) << " ms" << logger::endl;
         logger::info << "\tMax:     " << utils::format_double(metrics.latency.max) << " ms" << logger::endl;
         logger::info << "Throughput: " << utils::format_double(metrics.fps) << " FPS" << logger::endl;
+
+        if (FLAGS_fps > 0) {
+            float fps = 1000 * launcher->get_latencies().size() / total_time;
+            logger::info << "Throughput was limited to: " << utils::format_double(fps) << " FPS" << logger::endl;
+        }
 
         if (report) {
             report->add_record(Report::Category::EXECUTION_RESULTS,

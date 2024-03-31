@@ -2,10 +2,13 @@ import argparse
 import json
 import sys
 import traceback
+
 from pathlib import Path
 
 import postprocessing_data as pp
-import utils
+
+from utils import (set_input_to_blobs, get_request_result, create_core, create_model,
+                   configure_model, get_input_shape, reshape_input, compile_model)
 from inference_tools.loop_tools import loop_inference
 from io_adapter import IOAdapter
 from io_model_wrapper import OpenVINOIOModelWrapper
@@ -119,8 +122,7 @@ def cli_argument_parser():
                             'action-recognition-encoder', 'driver-action-recognition-encoder', 'reidentification',
                             'driver-action-recognition-decoder', 'action-recognition-decoder', 'face-detection',
                             'mask-rcnn', 'yolo_tiny_voc', 'yolo_v2_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco',
-                            'yolo_v3', 'yolo_v3_tf',
-                        ],
+                            'yolo_v3', 'yolo_v3_tf'],
                         default='feedforward',
                         type=str,
                         dest='task')
@@ -131,7 +133,7 @@ def cli_argument_parser():
                         dest='color_map')
     parser.add_argument('--prob_threshold',
                         help='Probability threshold for detections filtering',
-                        default=0.5,
+                        default=0.3,
                         type=float,
                         dest='threshold')
     parser.add_argument('-mi', '--mininfer',
@@ -160,14 +162,15 @@ def cli_argument_parser():
 def infer_sync(compiled_model, number_iter, get_slice, test_duration):
     request = compiled_model.create_infer_request()
     result = None
-    time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, request)
+    loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, request)
+    time_infer = loop_results['time_infer']
     if number_iter == 1:
-        result = utils.get_request_result(request)
+        result = get_request_result(request)
     return result, time_infer
 
 
 def inference_iteration(get_slice, request):
-    utils.set_input_to_blobs(request, get_slice())
+    set_input_to_blobs(request, get_slice())
     exec_time = infer_slice(request)
     return exec_time
 
@@ -189,7 +192,7 @@ def main():
         model_wrapper = OpenVINOIOModelWrapper()
         data_transformer = OpenVINOTransformer()
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
-        core = utils.create_core(
+        core = create_core(
             args.extension,
             args.intel_gpu_config,
             args.device,
@@ -199,14 +202,14 @@ def main():
             'sync',
             log,
         )
-        model = utils.create_model(core, args.model_xml, args.model_bin, log)
-        utils.configure_model(core, model, args.device, args.default_device, args.affinity)
-        input_shapes = utils.get_input_shape(model_wrapper, model)
+        model = create_model(core, args.model_xml, args.model_bin, log)
+        configure_model(core, model, args.device, args.default_device, args.affinity)
+        input_shapes = get_input_shape(model_wrapper, model)
 
         for layer in input_shapes:
             log.info('Shape for input layer {0}: {1}'.format(layer, input_shapes[layer]))
 
-        utils.reshape_input(model, args.batch_size)
+        reshape_input(model, args.batch_size)
 
         if args.input:
             log.info(f'Preparing input data: {args.input}')
@@ -215,7 +218,7 @@ def main():
             io.fill_unset_inputs(model, log)
 
         log.info('Create executable network')
-        compiled_model = utils.compile_model(core, model, args.device, args.priority)
+        compiled_model = compile_model(core, model, args.device, args.priority)
 
         log.info(f'Starting inference ({args.number_iter} iterations) on {args.device}')
         result, inference_time = infer_sync(compiled_model, args.number_iter, io.get_slice_input, args.time)
@@ -235,7 +238,6 @@ def main():
                 except Exception as ex:
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
-            log.info('Performance results')
         log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
 
         del model

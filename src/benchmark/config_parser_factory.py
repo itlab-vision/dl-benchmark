@@ -41,4 +41,6 @@ def get_parameters_parser(framework):
         return TVMParametersParser()
     if framework == KnownFrameworks.ncnn:
         return NCNNParametersParser()
+    if framework == KnownFrameworks.rknn:
+        return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

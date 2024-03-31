@@ -67,7 +67,7 @@ def cli_argument_parser():
                         dest='color_map')
     parser.add_argument('--prob_threshold',
                         help='Probability threshold for detections filtering',
-                        default=0.5,
+                        default=0.3,
                         type=float,
                         dest='threshold')
     parser.add_argument('-ni', '--number_iter',
@@ -168,7 +168,7 @@ def prepare_output(result, outputs_name, task):
     if task in ['classification']:
         result = [result[outputs_name[0]].numpy()]
     if task in ['yolo_tiny_voc', 'yolo_v2_coco', 'yolo_v2_tiny_coco', 'yolo_v3_tf']:
-        result = [res.transpose(0, 3, 1, 2) for res in result]
+        result = [result[outputs_name[0]].numpy().transpose(0, 3, 1, 2)]
     elif task in ['detection']:
         outputs_name = ['detection_output']
         batch = len(result[0])
@@ -214,7 +214,8 @@ def inference_tensorflow(model, number_iter, get_slice, test_duration):
         result, exec_time = infer_slice(model, slice_input)
         time_infer.append(exec_time)
     else:
-        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model)
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, model)
+        time_infer = loop_results['time_infer']
     log.info('Inference completed')
     return result, time_infer
 
@@ -313,7 +314,6 @@ def main():
             try:
                 log.info('Converting output tensor to process results')
                 result = prepare_output(result, outputs_names, args.task)
-
                 log.info('Inference results')
                 io.process_output(result, log)
             except Exception as ex:

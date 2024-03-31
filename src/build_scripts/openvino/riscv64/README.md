@@ -14,7 +14,7 @@
    copy the installed OpenVINO libraries on host machine.
 
    ```bash
-   docker run -t openvino_riscv
+   docker run -d openvino_riscv
    docker cp <container_name>:/openvino_riscv64_gnu .
    ```
 
@@ -44,7 +44,7 @@
 1. Clone [OpenVINO][ov_repo] repository.
 
    ```bash
-   git clone https://github.com/openvinotoolkit/openvino.git --branch 2023.2.0 && cd openvino
+   git clone https://github.com/openvinotoolkit/openvino.git --branch 2023.3.0 && cd openvino
    git submodule update --init \
        ./thirdparty/pugixml \
        ./thirdparty/ade \
@@ -80,6 +80,12 @@
 
    ```bash
    cp <path>/custom_riscv64.toolchain.cmake <path>/openvino/cmake/toolchains/custom_riscv64.toolchain.cmake
+   ```
+
+1. Apply changes to support wheel building for RISC-V.
+
+   ```bash
+   git apply <path>/riscv64.wheel.diff
    ```
 
 1. Build OpenVINO from source.

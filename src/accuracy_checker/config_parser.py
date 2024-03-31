@@ -64,6 +64,8 @@ class Test:
             return 'OpenCV'
         elif framework == 'pytorch':
             return 'PyTorch'
+        elif framework == 'tvm':
+            return 'TVM'
         else:
             return 'Unsupported framework'
 

@@ -229,7 +229,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
                 self._labels_map = [line.strip() for line in f]
 
     @staticmethod
-    def _not_valid_result(result):
+    def _is_result_invalid(result):
         return result is None
 
     @abc.abstractmethod
@@ -248,11 +248,11 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'face-detection':
             return FaceDetectionIO(args, io_model_wrapper, transformer)
         elif task == 'segmentation':
-            return SegmenatationIO(args, io_model_wrapper, transformer)
+            return SegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'adas-segmentation':
-            return AdasSegmenatationIO(args, io_model_wrapper, transformer)
+            return AdasSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'road-segmentation':
-            return RoadSegmenatationIO(args, io_model_wrapper, transformer)
+            return RoadSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'recognition-face':
             return RecognitionFaceIO(args, io_model_wrapper, transformer)
         elif task == 'person-attributes':
@@ -268,7 +268,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
         elif task == 'license-plate':
             return LicensePlateIO(args, io_model_wrapper, transformer)
         elif task == 'instance-segmentation':
-            return InstanceSegmenatationIO(args, io_model_wrapper, transformer)
+            return InstanceSegmentationIO(args, io_model_wrapper, transformer)
         elif task == 'single-image-super-resolution':
             return SingleImageSuperResolutionIO(args, io_model_wrapper, transformer)
         elif task == 'sphereface':
@@ -309,6 +309,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV3TFIO(args, io_model_wrapper, transformer)
         elif task in ['text-generation', 'text-translation', 'batch-text-generation']:
             return CausalLMIO(args, io_model_wrapper, transformer)
+        elif task in ['speech-to-text']:
+            return Speech2SequenceIO(args, io_model_wrapper, transformer)
+        elif task in ['named-entity-recognition']:
+            return BertNERIO(args, io_model_wrapper, transformer)
         elif task == 'text-to-image':
             return TextToImageIO(args, io_model_wrapper, transformer)
         elif task == 'yolo_v7':
@@ -317,10 +321,18 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return YoloV7ONNX(args, io_model_wrapper, transformer)
         elif task == 'segmentation_tflite_cpp':
             return SegmentationTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_detection_tflite_cpp':
-            return FaceDetectionTFLiteCppIO(args, io_model_wrapper, transformer)
-        elif task == 'face_recognition_tflite_cpp':
-            return FaceRecognitionTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'blaze_face':
+            return BlazeFaceShortRangeCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_detection':
+            return FaceDetectionFullRangeCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_recognition':
+            return FaceRecognitionCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_mesh_tflite_cpp':
+            return FaceMeshTFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'face_mesh_v2':
+            return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
+        elif task == 'minifasnet_v2_tflite_cpp':
+            return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -342,6 +354,35 @@ class TextPromtIO(IOAdapter):
                     self._prompts.append(line.strip())
         except Exception as ex:
             raise ValueError(f'Unable to read prompt file {input_[0]}. Exception occurred: {str(ex)}')
+
+    @abc.abstractmethod
+    def get_slice_input(self, result, log):
+        pass
+
+    @abc.abstractmethod
+    def process_output(self, result, log):
+        pass
+
+
+class AudioIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.audio_data = None
+        self.sampling_rate = None
+        self.audio_length = None
+
+    def prepare_input(self, model, input_):
+        """
+        Set self.audio_data and self.audio_length from audio file.
+        Warning: currently supports only single-channel audios.
+        """
+        import torchaudio
+        try:
+            waveform, self.sampling_rate = torchaudio.load(input_[0])
+            self.audio_data = waveform[0]
+            self.audio_length = len(self.audio_data) / self.sampling_rate
+        except Exception as ex:
+            raise ValueError(f'Unable to read audio file {input_[0]}. Exception occurred: {str(ex)}')
 
     @abc.abstractmethod
     def get_slice_input(self, result, log):
@@ -374,12 +415,32 @@ class CausalLMIO(TextPromtIO):
         log.info(f'Generated results: \n{output_text}')
 
 
+class Speech2SequenceIO(AudioIO):
+    def get_slice_input(self, *args, **kwargs):
+        # TODO: add batch input based on self._batch_size
+        return self.audio_data, self.sampling_rate, self.audio_length
+
+    def process_output(self, result, log):
+        output_text = '\n'.join([f'{i+1}) {text} ... \n' for i, text in enumerate(result)])
+        log.info(f'Generated results: \n{output_text}')
+
+
+class BertNERIO(CausalLMIO):
+    def process_output(self, result, log):
+        """
+        @result: zip(token, label)
+        """
+        log.info('Label | Token')
+        for token, label in result:
+            log.info(f'{label}\t{token}')
+
+
 class ClassificationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -403,7 +464,7 @@ class DetectionIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -458,16 +519,16 @@ class FaceDetectionIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
-    def process_output(self, result, log):
-        if self._not_valid_result(result):
+    def process_output(self, result, log, face_label=0):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
         labels = result['labels']
         count_of_detected_faces = 0
         for i, label in enumerate(labels):
-            if label == -1:
-                count_of_detected_faces = i
+            if label == face_label:
+                count_of_detected_faces = max(1, i)
                 break
         boxes = result['boxes'][:count_of_detected_faces]
         input_ = self._input[input_layer_name]
@@ -494,12 +555,12 @@ class FaceDetectionIO(IOAdapter):
         log.info('Result image was saved to {0}'.format(out_img))
 
 
-class SegmenatationIO(IOAdapter):
+class SegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -523,12 +584,12 @@ class SegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class AdasSegmenatationIO(IOAdapter):
+class AdasSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -554,12 +615,12 @@ class AdasSegmenatationIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(out_img))
 
 
-class RoadSegmenatationIO(IOAdapter):
+class RoadSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -570,11 +631,12 @@ class RoadSegmenatationIO(IOAdapter):
         shapes = self._original_shapes[next(iter(self._original_shapes))]
         c = 3
         h, w = result.shape[2:]
+
         for batch, data in enumerate(result):
             classes_map = np.zeros(shape=(h, w, c), dtype=np.uint8)
             for i in range(h):
                 for j in range(w):
-                    pixel_class = np.argmax(data[i][j])
+                    pixel_class = np.argmax(data[:, i, j])
                     classes_map[i, j, :] = self._classes_color_map[pixel_class]
             out_img = os.path.join(os.path.dirname(__file__), 'out_segmentation_{0}.bmp'.format(batch + 1))
             orig_h, orig_w = shapes[batch % self._batch_size]
@@ -588,7 +650,7 @@ class RecognitionFaceIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -624,7 +686,7 @@ class PersonAttributesIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -694,7 +756,7 @@ class AgeGenderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         layer_iter = iter(result)
@@ -713,7 +775,7 @@ class GazeIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -756,7 +818,7 @@ class HeadPoseIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -829,12 +891,12 @@ class PersonDetectionAslIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
         input_ = self._input[input_layer_name]
-        result = result['17701/Split.0']
+        result = result['boxes']
         _, h, w, c = input_.shape
         images = np.ndarray(shape=(1, h, w, c))
         images[0] = input_[0]
@@ -869,7 +931,7 @@ class LicensePlateIO(IOAdapter):
         return slice_input
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -885,12 +947,12 @@ class LicensePlateIO(IOAdapter):
             log.info(f'Plate: {s}')
 
 
-class InstanceSegmenatationIO(IOAdapter):
+class InstanceSegmentationIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -945,7 +1007,7 @@ class SingleImageSuperResolutionIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -967,7 +1029,7 @@ class SpherefaceIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result = result[next(iter(result))]
@@ -1137,7 +1199,7 @@ class DetectionSSDOldFormat(DetectionSSD):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1215,7 +1277,7 @@ class DetectionSSDNewFormat(DetectionSSD):
         return encoded_xmin, encoded_ymin, encoded_xmax, encoded_ymax
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         input_layer_name = next(iter(self._input))
@@ -1241,7 +1303,7 @@ class DetectionSSDNewFormat(DetectionSSD):
             encoded_data = result['ActionNet/out_detection_loc'][batch].flatten()
             detection_conf_data = result['ActionNet/out_detection_conf'][batch].flatten()
             main_action_data = result['ActionNet/action_heads/out_head_1_anchor_1'][batch].flatten()
-            action_blobs = np.ndarray(shape=(4, 6, 25, 43))
+            action_blobs = np.ndarray(shape=(4, 25, 43, 6))
             for i in range(4):
                 action_blobs[i] = result[f'ActionNet/action_heads/out_head_2_anchor_{i + 1}'][batch]
             detections = []
@@ -1461,7 +1523,7 @@ class HumanPoseEstimationIO(IOAdapter):
         return frame
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         edges = [
@@ -1522,7 +1584,7 @@ class ActionRecognitionEncoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1547,7 +1609,7 @@ class DriverActionRecognitionEncoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1572,7 +1634,7 @@ class ReidentificationIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -1597,7 +1659,7 @@ class ActionRecognitionDecoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1619,7 +1681,7 @@ class DriverActionRecognitionDecoderIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1641,7 +1703,7 @@ class MaskRCNNIO(IOAdapter):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
 
@@ -1813,11 +1875,9 @@ class yolo(IOAdapter):
         return None
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
-
-        self.load_labels_map('pascal_voc.txt')
 
         anchors = self._get_anchors()
         shapes = self._get_shapes()
@@ -1843,7 +1903,7 @@ class yolo(IOAdapter):
                 for cx in range(dy):
                     for cy in range(dx):
                         for anchor_box_number, detection in enumerate(cells[:, :, cy, cx]):
-                            if detection[4] >= 0.5:
+                            if detection[4] >= self._threshold:
                                 prediction = self._get_cell_predictions(cx, cy, dx, dy, detection, anchor_box_number,
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
@@ -1859,6 +1919,7 @@ class yolo(IOAdapter):
 class YoloV2VocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('pascal_voc.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1876,6 +1937,7 @@ class YoloV2VocIO(yolo):
 class YoloTinyVocIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('pascal_voc.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1893,6 +1955,7 @@ class YoloTinyVocIO(yolo):
 class YoloV2CocoIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1910,6 +1973,7 @@ class YoloV2CocoIO(yolo):
 class YoloV2TinyCocoIO(YoloV2CocoIO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_shapes(self):
         shapes = [
@@ -1921,6 +1985,7 @@ class YoloV2TinyCocoIO(YoloV2CocoIO):
 class YoloV3IO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
@@ -1963,6 +2028,7 @@ class YoloV3IO(yolo):
 class YoloV3TFIO(YoloV3IO):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
 
     def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_weight, anchors):
         predictions = []
@@ -1988,7 +2054,7 @@ class YoloV3TFIO(YoloV3IO):
 
 
 class YoloV7(IOAdapter):
-    def process_output(self, result, log):
+    def process_output(self, result, log, threshold=0.5):
         from configs.pytorch_configs.yolo_v7 import non_max_suppression, plot_one_box
 
         self.load_color_map('mscoco_color_map.txt')
@@ -2005,8 +2071,10 @@ class YoloV7(IOAdapter):
         for det in result:
             if len(det):
                 for *xyxy, conf, cls in reversed(det):
-                    label = f'{self._labels_map[int(cls)]} {conf:.2f}'
-                    plot_one_box(xyxy, image, label=label, color=self._classes_color_map[int(cls)], line_thickness=1)
+                    if conf >= threshold:
+                        label = f'{self._labels_map[int(cls)]} {conf:.2f}'
+                        plot_one_box(xyxy, image, label=label, color=self._classes_color_map[int(cls)],
+                                     line_thickness=1)
 
         out_img = os.path.join(os.path.dirname(__file__), 'out_detection.bmp')
         cv2.imwrite(out_img, image)
@@ -2054,7 +2122,7 @@ class SegmentationTFLiteCppIO(IOAdapter):
         self._image = cv2.imread(input_image[0])
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
+        if self._is_result_invalid(result):
             log.warning('Model output is processed only for the number iteration = 1')
             return
         result_layer_name = next(iter(result))
@@ -2101,42 +2169,53 @@ class SegmentationTFLiteCppIO(IOAdapter):
         log.info(f'Result image was saved to {self.file_name}')
 
 
-class FaceDetectionTFLiteCppIO(IOAdapter):
+class FaceDetectionCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_detection.bmp')
-        self.net_width = 128.
-        self.net_height = 128.
-        self._base_repeats = 2
-        self._strides = (8, 16, 16, 16)
 
-    def convert_input_to_bin_file(self, args):
+    @abc.abstractmethod
+    def _get_net_shape(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_result_layer_names(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_anchors_parameters(self):
+        pass
+
+    def convert_input_to_bin_file(self, args, normalize=True, data_type=np.float32):
+        net_width, net_height = self._get_net_shape()
+
         img = cv2.imread(args.input[0])
 
         orig_width, orig_height = img.shape[1], img.shape[0]
-        scale = min(self.net_width / img.shape[1], self.net_height / img.shape[0])
+        scale = min(net_width / img.shape[1], net_height / img.shape[0])
         img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
 
-        dx = (int(self.net_width) - img.shape[1]) // 2
-        dy = (int(self.net_height) - img.shape[0]) // 2
+        dx = (int(net_width) - img.shape[1]) // 2
+        dy = (int(net_height) - img.shape[0]) // 2
 
         img = cv2.copyMakeBorder(img,
-                                 dy, int(int(self.net_height) - img.shape[0] - dy),
-                                 dx, int(int(self.net_width) - img.shape[1] - dx),
+                                 dy, int(int(net_height) - img.shape[0] - dy),
+                                 dx, int(int(net_width) - img.shape[1] - dx),
                                  cv2.BORDER_CONSTANT)
 
-        self.img_scale = min(self.net_width / orig_width, self.net_height / orig_height)
-        self.padding_x = (self.net_width - orig_width * self.img_scale) / 2
-        self.padding_y = (self.net_height - orig_height * self.img_scale) / 2
+        self.img_scale = min(net_width / orig_width, net_height / orig_height)
+        self.padding_x = (net_width - orig_width * self.img_scale) / 2
+        self.padding_y = (net_height - orig_height * self.img_scale) / 2
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
-        img -= 127.5
-        img /= 127.5
+        if normalize:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(data_type)
+            img -= 127.5
+            img /= 127.5
 
         bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
         bin_dir.mkdir(parents=True, exist_ok=True)
         bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
-        img.astype(np.float32).tofile(bin_path)
+        img.astype(data_type).tofile(bin_path)
 
         return str(bin_path)
 
@@ -2144,14 +2223,16 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         self._image = cv2.imread(input_image[0])
 
     def get_anchors(self):
+        net_width, net_height = self._get_net_shape()
+        base_repeats, strides = self._get_anchors_parameters()
         anchors = []
-        repeats = self._base_repeats
-        for idx, stride in enumerate(self._strides):
-            if (idx + 1 != len(self._strides)) and (stride == self._strides[idx + 1]):
-                repeats += self._base_repeats
+        repeats = base_repeats
+        for idx, stride in enumerate(strides):
+            if (idx + 1 != len(strides)) and (stride == strides[idx + 1]):
+                repeats += base_repeats
                 continue
-            feature_map_width = int(self.net_width) // stride
-            feature_map_height = int(self.net_height) // stride
+            feature_map_width = int(net_width) // stride
+            feature_map_height = int(net_height) // stride
             for y in range(feature_map_height):
                 center_y = (y + 0.5) / feature_map_height
                 for x in range(feature_map_width):
@@ -2161,17 +2242,20 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         return anchors
 
     def process_output(self, result, log):
+        classifier, regressor = self._get_result_layer_names()
+        net_width, net_height = self._get_net_shape()
+
         anchors = self.get_anchors()
         self._original_shapes = self._image.shape[:2]
 
-        probs = result['classificators'].flatten()
+        probs = result[classifier].flatten()
         probs = 1. / (1. + np.exp(-probs))
 
-        bboxes = np.zeros(shape=result['regressors'][0].shape, dtype=np.float32)
-        for i, bbox in enumerate(result['regressors'][0]):
+        bboxes = np.zeros(shape=result[regressor][0].shape, dtype=np.float32)
+        for i, bbox in enumerate(result[regressor][0]):
             for idx in range(0, bbox.shape[0] // 2):
-                bbox[2 * idx] = bbox[2 * idx] / self.net_width
-                bbox[2 * idx + 1] = bbox[2 * idx + 1] / self.net_height
+                bbox[2 * idx] = bbox[2 * idx] / net_width
+                bbox[2 * idx + 1] = bbox[2 * idx + 1] / net_height
                 if idx == 1:
                     continue
                 bbox[2 * idx] += anchors[i]['x']
@@ -2234,46 +2318,46 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
         circle_width = 3
         for bbox in bboxes[indexes]:
             # face
-            xmin = int((bbox[0] * self.net_width - self.padding_x) / self.img_scale)
-            ymin = int((bbox[1] * self.net_height - self.padding_y) / self.img_scale)
-            xmax = int((bbox[2] * self.net_width - self.padding_x) / self.img_scale)
-            ymax = int((bbox[3] * self.net_height - self.padding_y) / self.img_scale)
+            xmin = int((bbox[0] * net_width - self.padding_x) / self.img_scale)
+            ymin = int((bbox[1] * net_height - self.padding_y) / self.img_scale)
+            xmax = int((bbox[2] * net_width - self.padding_x) / self.img_scale)
+            ymax = int((bbox[3] * net_height - self.padding_y) / self.img_scale)
             cv2.rectangle(self._image, (xmin, ymin), (xmax, ymax), color, 2)
             log.info(f'Face:\ttop left - ({xmin}, {ymin}),\tbottom right - ({xmax}, {ymax})')
 
             # left eye
-            x = int((bbox[4] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[5] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[4] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[5] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Left Eye: ({x}, {y})')
 
             # right eye
-            x = int((bbox[6] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[7] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[6] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[7] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Right Eye: ({x}, {y})')
 
             # nose tip
-            x = int((bbox[8] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[9] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[8] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[9] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Nose Tip: ({x}, {y})')
 
             # mouth
-            x = int((bbox[10] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[11] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[10] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[11] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Mouth: ({x}, {y})')
 
             # left eye tragion
-            x = int((bbox[12] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[13] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[12] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[13] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Left Eye Tragion: ({x}, {y})')
 
             # right eye tragion
-            x = int((bbox[14] * self.net_width - self.padding_x) / self.img_scale)
-            y = int((bbox[15] * self.net_height - self.padding_y) / self.img_scale)
+            x = int((bbox[14] * net_width - self.padding_x) / self.img_scale)
+            y = int((bbox[15] * net_height - self.padding_y) / self.img_scale)
             cv2.circle(self._image, (x, y), circle_width, color, -1)
             log.info(f'Right Eye Tragion: ({x}, {y})')
 
@@ -2281,7 +2365,39 @@ class FaceDetectionTFLiteCppIO(IOAdapter):
             log.info('Result image was saved to {0}'.format(self.file_name))
 
 
-class FaceRecognitionTFLiteCppIO(IOAdapter):
+class BlazeFaceShortRangeCppIO(FaceDetectionCppIO):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (128., 128.)
+
+    def _get_result_layer_names(self):
+        return ('classificators', 'regressors')
+
+    def _get_anchors_parameters(self):
+        base_repeats = 2
+        strides = [8, 16, 16, 16]
+        return (base_repeats, strides)
+
+
+class FaceDetectionFullRangeCppIO(FaceDetectionCppIO):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (192., 192.)
+
+    def _get_result_layer_names(self):
+        return ('reshaped_classifier_face_4', 'reshaped_regressor_face_4')
+
+    def _get_anchors_parameters(self):
+        base_repeats = 1
+        strides = [4]
+        return (base_repeats, strides)
+
+
+class FaceRecognitionCppIO(IOAdapter):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
         self.file_name = self.get_result_filename(args.output_path, 'out_face_recognition.csv')
@@ -2289,23 +2405,25 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
         self.net_width = 112
         self.net_height = 112
 
-    def convert_input_to_bin_file(self, args):
+    def convert_input_to_bin_file(self, args, normalize=True, data_type=np.float32):
         img = cv2.imread(args.input[0])
-
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
         img = cv2.resize(img, (self.net_height, self.net_width))
-        img -= 127.5
-        img /= 127.5
+
+        if normalize:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(data_type)
+            img -= 127.5
+            img /= 127.5
 
         bin_dir = Path(__file__).parent / '_validation' / 'bin_input'
         bin_dir.mkdir(parents=True, exist_ok=True)
         bin_path = bin_dir / Path(args.input[0]).with_suffix('.bin').name
-        img.astype(np.float32).tofile(bin_path)
+        img.astype(data_type).tofile(bin_path)
 
         return str(bin_path)
 
     def process_output(self, result, log):
-        result = result['embeddings'][0]
+        result_layer_name = next(iter(result))
+        result = result[result_layer_name][0]
         file = os.path.join(os.path.dirname(__file__), self.file_name)
         with open(file, 'w'):
             np.savetxt(
@@ -2323,3 +2441,137 @@ class FaceRecognitionTFLiteCppIO(IOAdapter):
             ref_vec = ref_vec[1:].astype(np.float32)
             cos_sim = (result @ ref_vec) / (np.linalg.norm(result) * np.linalg.norm(ref_vec))
             log.info(f'COSINE SIMILARITY: {cos_sim}')
+
+
+class FaceMesh(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_face_mesh.bmp')
+
+    @abc.abstractmethod
+    def _get_net_shape(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_result_layer_name(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_landmarks_indices(self):
+        pass
+
+    def set_image(self, input_image):
+        self._image = cv2.imread(input_image[0])
+        self._orig_h, self._orig_w = self._image.shape[:-1]
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        result = result[self._get_result_layer_name()][0]
+        mesh_3D = result[0][0].reshape((-1, 3))
+        mesh_2D_proj = mesh_3D[:, :2]
+        landmark_points = []
+
+        net_width, net_height = self._get_net_shape()
+        for landmark_point in mesh_2D_proj:
+            landmark_points.append((int(landmark_point[0] * self._orig_w / net_width),
+                                    int(landmark_point[1] * self._orig_h / net_height)))
+
+        for landmark_point in landmark_points:
+            cv2.circle(self._image, landmark_point, radius=1, color=(235, 0, 125))
+
+        for points_idx in self._get_landmarks_indices().values():
+            points = np.array([landmark_points[idx] for idx in points_idx])
+            cv2.polylines(self._image, [points], True, color=(235, 225, 125), thickness=2)
+
+        cv2.imwrite(self.file_name, self._image)
+        log.info('Result image was saved to {0}'.format(self.file_name))
+
+
+class FaceMeshTFLiteCppIO(FaceMesh):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (192, 192)
+
+    def _get_result_layer_name(self):
+        return 'conv2d_21'
+
+    def _get_landmarks_indices(self):
+        # landmarks indices from https://github.com/google/mediapipe/issues/1615#issuecomment-989818087
+        return {
+            'face_oval': [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                          397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                          172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
+            'left_eye': [130, 7, 163, 144, 145, 153, 154, 155,
+                         133, 173, 56, 28, 27, 29, 30, 247],
+            'left_brow': [70, 63, 105, 66, 107, 55, 65, 52, 53, 46],
+            'right_eye': [362, 382, 381, 380, 374, 373, 373, 390, 249,
+                          359, 467, 260, 259, 257, 258, 286, 414, 463],
+            'right_brow': [336, 296, 334, 293, 300, 276, 283, 282, 295, 285],
+            'lips': [61, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+                     291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
+        }
+
+
+class FaceMeshV2CppIO(FaceMesh):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def _get_net_shape(self):
+        return (256, 256)
+
+    def _get_result_layer_name(self):
+        return 'Identity'
+
+    def _get_landmarks_indices(self):
+        # landmarks indices from https://github.com/google/mediapipe/issues/1615#issuecomment-1112818663
+        return {
+            'face_oval': [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                          397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                          172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
+            'left_eye': [130, 7, 163, 144, 145, 153, 154, 155,
+                         133, 173, 56, 28, 27, 29, 30, 247],
+            'left_eye_iris': [469, 470, 471, 472],
+            'left_brow': [70, 63, 105, 66, 107, 55, 65, 52, 53, 46],
+            'right_eye': [362, 382, 381, 380, 374, 373, 373, 390, 249,
+                          359, 467, 260, 259, 257, 258, 286, 414, 463],
+            'right_eye_iris': [474, 475, 476, 477],
+            'right_brow': [336, 296, 334, 293, 300, 276, 283, 282, 295, 285],
+            'lips': [61, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+                     291, 409, 270, 269, 267, 0, 37, 39, 40, 185],
+        }
+
+
+class MiniFASNetV2TFLiteCppIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.file_name = self.get_result_filename(args.output_path, 'out_minifasnet.csv')
+        self._classes = ['fake2d image', 'real face', 'fake3d image']
+
+    def set_image(self, input_image):
+        self._image = cv2.imread(input_image[0])
+        self._orig_h, self._orig_w = self._image.shape[:-1]
+
+    def process_output(self, result, log):
+        result_layer_name = next(iter(result))
+        scores = result[result_layer_name][0]
+        probs = np.exp(scores) / np.sum(np.exp(scores))
+
+        with open(self.file_name, 'w'):
+            np.savetxt(
+                self.file_name,
+                [probs],
+                fmt='%1.7f',
+                delimiter=';',
+                header=';'.join(self._classes),
+                comments='',
+            )
+        log.info(f'Result was saved to {self.file_name}')
+
+        max_idx = np.argmax(probs)
+
+        log.info('Information for image:')
+        log.info(f'\t{self._classes[max_idx]} (score: {probs[max_idx]:.5f})')

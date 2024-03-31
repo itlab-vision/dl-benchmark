@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>yolo_v2_tiny_coco</Task>
+            <Name>yolo-v2-tiny-tf</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>tf</SourceFramework>
+            <ModelPath>../models_dir/yolo-v2-tiny-tf/yolo-v2-tiny.pb</ModelPath>
+            <WeightsPath>none</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>../test_images/detection_images/coco_plane.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TensorFlow</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape>416 416 3</InputShape>
+            <InputName>image_input:0</InputName>
+            <OutputNames></OutputNames>
+            <ThreadCount></ThreadCount>
+            <InterOpParallelismThreads></InterOpParallelismThreads>
+            <IntraOpParallelismThreads></IntraOpParallelismThreads>
+            <KmpAffinity></KmpAffinity>
+        </FrameworkDependent>
+    </Test>
+</Tests>

@@ -11,9 +11,11 @@ class TVMParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_NORMALIZE_TAG = 'Normalize'
         CONFIG_FRAMEWORK_DEPENDENT_MEAN_TAG = 'Mean'
         CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL = 'OptimizationLevel'
+        CONFIG_FRAMEWORK_DEPENDENT_TARGET = 'Target'
         CONFIG_FRAMEWORK_DEPENDENT_STD_TAG = 'Std'
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
         CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG = 'Layout'
+        CONFIG_FRAMEWORK_DEPENDENT_VIRTUAL_MACHINE = 'VirtualMachine'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -35,6 +37,10 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_OPTIMIZATION_LEVEL)[0].firstChild
         _layout = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG)[0].firstChild
+        _target = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_TARGET)[0].firstChild
+        _vm = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_VIRTUAL_MACHINE)[0].firstChild
 
         return TVMParameters(
             framework=_framework.data if _framework else None,
@@ -46,12 +52,15 @@ class TVMParametersParser(DependentParametersParser):
             channel_swap=_channel_swap.data if _channel_swap else None,
             optimization_level=_optimization_level.data if _optimization_level else None,
             layout=_layout.data if _layout else None,
+            target=_target.data if _target else None,
+            vm=_vm.data if _vm else None,
         )
 
 
 class TVMParameters(FrameworkParameters):
     def __init__(self, framework, input_name, input_shape,
-                 normalize, mean, std, channel_swap, optimization_level, layout):
+                 normalize, mean, std, channel_swap,
+                 optimization_level, layout, target, vm):
         self.framework = None
         self.input_name = None
         self.input_shape = None
@@ -61,6 +70,8 @@ class TVMParameters(FrameworkParameters):
         self.channel_swap = None
         self.optimization_level = None
         self.layout = None
+        self.target = 'llvm'
+        self.vm = None
 
         if self._framework_is_correct(framework):
             self.framework = framework
@@ -80,11 +91,15 @@ class TVMParameters(FrameworkParameters):
             self.optimization_level = optimization_level
         if self._parameter_is_not_none(layout):
             self.layout = layout
+        if self._parameter_is_not_none(target):
+            self.target = target
+        if self._parameter_is_not_none(vm):
+            self.vm = vm
 
     @staticmethod
     def _framework_is_correct(framework):
         correct_frameworks = ['mxnet', 'onnx', 'tvm',
-                              'pytorch', 'caffe']
+                              'pytorch', 'caffe', 'tflite']
         if framework.lower() in correct_frameworks:
             return True
         else:

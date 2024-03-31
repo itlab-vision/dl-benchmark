@@ -2,11 +2,11 @@ import argparse
 import json
 import sys
 import traceback
-from pathlib import Path
-from time import time
-
 import cv2
 import numpy as np
+
+from pathlib import Path
+from time import time
 
 import postprocessing_data as pp
 from inference_tools.loop_tools import get_exec_time, loop_inference
@@ -200,8 +200,9 @@ def inference_opencv(net, input_name, output_names, number_iter, get_slice, test
             t1 = time()
         time_infer.append(t1 - t0)
     else:
-        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_name, net,
-                                                                                     output_names, result)
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_name, net,
+                                                                                       output_names, result)
+        time_infer = loop_results['time_infer']
     return result, time_infer
 
 

@@ -30,6 +30,7 @@ class PyTorchProcess(ProcessHandler):
         batch_size = self._test.indep_parameters.batch_size
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
+        raw_output = self._test.indep_parameters.raw_output
         common_params = (f'-mn {name} -b {batch_size} -ni {iteration} --report_path {self.report_path}')
 
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
@@ -45,8 +46,7 @@ class PyTorchProcess(ProcessHandler):
 
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--module', module)
 
-        use_model_config = self._test.dep_parameters.use_model_config
-        if use_model_config:
+        if self._test.dep_parameters.use_model_config:
             common_params = PyTorchProcess._add_flag_to_cmd_line(common_params, '--use_model_config')
 
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--weights', weights)
@@ -77,7 +77,13 @@ class PyTorchProcess(ProcessHandler):
         device = self._test.indep_parameters.device
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--device', device)
 
-        common_params = PyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
+        num_gpu_devices = self._test.indep_parameters.num_gpu_devices
+        if num_gpu_devices:
+            common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--num_gpu_devices',
+                                                                              num_gpu_devices)
+
+        if raw_output:
+            common_params = PyTorchProcess._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
         model_type = self._test.dep_parameters.model_type
         common_params = PyTorchProcess._add_optional_argument_to_cmd_line(common_params, '--model_type', model_type)
