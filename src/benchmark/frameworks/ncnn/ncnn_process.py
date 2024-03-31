@@ -29,7 +29,8 @@ class NcnnProcess(ProcessHandler):
         iteration = self._test.indep_parameters.iteration
         time_limit = self._test.indep_parameters.test_time_limit
         raw_output = self._test.indep_parameters.raw_output
-        common_params = (f'-m {name} -i {dataset} -is {input_shape} -b {batch_size} -ni {iteration}')
+        common_params = (f'-m {name} -i {dataset} -is {input_shape} -b {batch_size} \
+                           -ni {iteration} --report_path {self.report_path}')
 
         input_name = self._test.dep_parameters.input_name
         if input_name:
@@ -56,6 +57,4 @@ class NcnnProcess(ProcessHandler):
 
         command_line = f'{python} {path_to_ncnn_script} {common_params}'
 
-        print('HERE')
-        print(command_line)
         return command_line

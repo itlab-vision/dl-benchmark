@@ -122,10 +122,11 @@ def inference_ncnn(net, number_iter, input_name, batch_size, get_slice, test_dur
         result, exec_time = infer_slice(input_name, batch_size, net, slice_input)
         time_infer.append(exec_time)
     else:
-        time_infer = loop_inference(number_iter, test_duration)(inference_iteration)(input_name,
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(input_name,
                                                                                      batch_size,
                                                                                      net,
                                                                                      get_slice)
+        time_infer = loop_results['time_infer']
     log.info('Inference completed')
     return result, time_infer
 
