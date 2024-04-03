@@ -308,3 +308,26 @@ python3 convert_mxnet_to_onnx.py \
 |vgg19|0.4434193 liner, ocean liner<br/>0.1207933 container ship, containership, container vessel<br/>0.0979090 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0852779 drilling platform, offshore rig<br/>0.0730739 dock, dockage, docking facility|11.4403629 liner, ocean liner<br/>10.1399298 container ship, containership, container vessel<br/>9.9298859 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>9.7917614 drilling platform, offshore rig<br/>9.6373186 dock, dockage, docking facility|
 |vgg19_bn|0.5504531 fireboat<br/>0.1722970 liner, ocean liner<br/>0.0720538 container ship, containership, container vessel<br/>0.0406804 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0388017 drilling platform, offshore rig|12.6074982 fireboat<br/>11.4459743 liner, ocean liner<br/>10.5741711 container ship, containership, container vessel<br/>10.0025024 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>9.9552202 drilling platform, offshore rig|
 |xception|0.9181097 water bottle<br/>0.0309580 sandbar, sand bar<br/>0.0148073 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.0098892 seashore, coast, seacoast, sea-coast<br/>0.0050070 lifeboat|17.0956974 water bottle<br/>13.7060061 sandbar, sand bar<br/>12.9685116 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>12.5648193 seashore, coast, seacoast, sea-coast<br/>11.8842249 lifeboat|
+
+### Ошибки
+
+|Model|Script|Error|
+|-|-|-|
+|mobilenet1.0_int8|convert_mxnet_to_onnx.py|AttributeError: No conversion function registered for op type _contrib_quantize_v2 yet.|
+|residualattentionnet128|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet164|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet200|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet236|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet452|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet56|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|residualattentionnet92|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'residualattentionmodel0_hybridsequential0_conv0_weight' because it has not been initialized.|
+|resnet101_v1e|inference_mxnet_sync_mode.py|AssertionError: Failed loading Parameter 'resnetv1e_batchnorm2_gamma' from saved params: shape incompatible expected (128,) vs saved (64,)|
+|resnet152_v1e|inference_mxnet_sync_mode.py|AssertionError: Failed loading Parameter 'resnetv1e_batchnorm2_gamma' from saved params: shape incompatible expected (128,) vs saved (64,)|
+|resnet18_v1b_custom|convert_mxnet_to_onnx.py|onnx.onnx_cpp2py_export.checker.ValidationError: Unrecognized attribute: axes for operator ReduceMean|
+|resnet50_v1_int8|convert_mxnet_to_onnx.py|AttributeError: No conversion function registered for op type _contrib_quantize_v2 yet.|
+|resnet50_v1b_custom|convert_mxnet_to_onnx.py|onnx.onnx_cpp2py_export.checker.ValidationError: Unrecognized attribute: axes for operator ReduceMean|
+|resnet50_v1b_gn|inference_mxnet_sync_mode.py|RuntimeError: MXNetError: Invalid Parameter format for keep_highest expect boolean but value='-1', in operator Reshape(name="", keep_highest="-1", target_shape="32", reverse="0", shape="0")|
+|resnet50_v1e|inference_mxnet_sync_mode.py|AssertionError: Failed loading Parameter 'resnetv1e_batchnorm0_gamma' from saved params: shape incompatible expected (64,) vs saved (32,)|
+|senet_154e|inference_mxnet_sync_mode.py|AssertionError: Parameter 'features.11.0.downsample.1.weight' is missing in file 'senet_154-b5538ef1.params', which contains parameters: 'features.10.1.body.4.running_var', 'features.12.7.body.4.gamma', 'features.10.0.se.2.weight', ..., 'features.11.3.body.3.weight', 'features.12.11.body.3.weight', 'features.12.2.body.1.gamma', 'features.12.1.body.7.running_mean'. Set allow_missing=True to ignore missing parameters.|
+|shufflenet_v1|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'shufflenetv10_conv0_weight' because it has not been initialized.|
+|shufflenet_v2|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'shufflenetv20_conv0_weight' because it has not been initialized.|

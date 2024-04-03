@@ -1,13 +1,14 @@
 import argparse
 import os
 import sys
+import traceback
 
 from mxnet.onnx import export_model
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
 from logger_conf import configure_logger
 
-logger = configure_logger()
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -43,23 +44,25 @@ def cli_argument_parser():
 
 
 def convert_model(args):
-    try:
-        logger.info('Starting model conversion...')
-        export_model(
-            sym=args.model_json,
-            params=args.model_params,
-            in_shapes=[tuple(args.input_shape)],
-            onnx_file_path=args.path_save_model
-        )
-        logger.info(f'Model successfully converted and saved.')
-    except Exception as e:
-        logger.error(f'Error occurred during model conversion to ONNX format: {e}')
+    log.info('Starting model conversion...')
+    export_model(
+        sym=args.model_json,
+        params=args.model_params,
+        in_shapes=[tuple(args.input_shape)],
+        onnx_file_path=args.path_save_model,
+        verbose=True
+    )
+    log.info(f'Model successfully converted and saved.')
 
 
 def main():
     args = cli_argument_parser()
-    convert_model(args)
+    try:
+        convert_model(args)
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main() or 0)

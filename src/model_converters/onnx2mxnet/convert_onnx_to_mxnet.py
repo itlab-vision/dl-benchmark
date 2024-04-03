@@ -2,6 +2,7 @@ import argparse
 import os
 import shutil
 import sys
+import traceback
 
 import mxnet as mx
 from mxnet.contrib.onnx.onnx2mx.import_model import import_model
@@ -9,7 +10,7 @@ from mxnet.contrib.onnx.onnx2mx.import_model import import_model
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
 from logger_conf import configure_logger
 
-logger = configure_logger()
+log = configure_logger()
 
 
 def cli_argument_parser():
@@ -36,34 +37,42 @@ def cli_argument_parser():
 
 
 def convert_model(args: argparse.Namespace):
-    try:
-        logger.info('Starting model conversion...')
-        sym, arg, aux = import_model(args.model)
-        mx.model.save_checkpoint(f'{args.model_name}', 0, sym, arg, aux)
-        logger.info('Model successfully converted.')
+    log.info('Starting model conversion...')
+    sym, arg, aux = import_model(args.model)
+    mx.model.save_checkpoint(f'{args.model_name}', 0, sym, arg, aux)
+    log.info('Model successfully converted.')
 
-        if args.path_save_model is not None:
-            move_files(args)
-        logger.info('Model successfully saved.')
-    except Exception as e:
-        logger.error(f'Error occurred during model conversion: {e}')
+    log.info('Saving model...')
+    if args.path_save_model is not None:
+        move_files(args)
+    log.info('Model successfully saved.')
 
 
 def move_files(args: argparse.Namespace):
-    try:
-        if not os.path.exists(args.path_save_model):
-            os.makedirs(args.path_save_model, exist_ok=True)
+    if not os.path.exists(args.path_save_model):
+        os.makedirs(args.path_save_model, exist_ok=True)
+    else:
+        symbol_path = os.path.join(args.path_save_model, f'{args.model_name}-symbol.json')
+        params_path = os.path.join(args.path_save_model, f'{args.model_name}-0000.params')
 
-        shutil.move(f'{args.model_name}-symbol.json', args.path_save_model)
-        shutil.move(f'{args.model_name}-0000.params', args.path_save_model)
-    except Exception as e:
-        logger.error(f'Error occurred while moving files: {e}')
+        if os.path.exists(symbol_path):
+            os.remove(symbol_path)
+
+        if os.path.exists(params_path):
+            os.remove(params_path)
+
+    shutil.move(f'{args.model_name}-symbol.json', args.path_save_model)
+    shutil.move(f'{args.model_name}-0000.params', args.path_save_model)
 
 
 def main():
     args = cli_argument_parser()
-    convert_model(args)
+    try:
+        convert_model(args)
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main() or 0)
