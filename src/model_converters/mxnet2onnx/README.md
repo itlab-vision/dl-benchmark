@@ -30,7 +30,7 @@ convert_mxnet_to_onnx.py
 - `-p / --path_save_model` – путь для сохранения модели в файл с расширением `.onnx`. По умолчанию модель в
   файле `model.onnx` сохраняется в текущей директории.
 
-**Пример запуска**
+**Пример запуска:**
 
 ```bash
 python3 convert_mxnet_to_onnx.py \
@@ -41,6 +41,8 @@ python3 convert_mxnet_to_onnx.py \
 ```
 
 ## Валидация моделей
+
+Все модели загружаются из [Gluon Model Zoo][gluon_modelzoo].
 
 ### Тестовое изображение 1
 
@@ -331,3 +333,7 @@ python3 convert_mxnet_to_onnx.py \
 |senet_154e|inference_mxnet_sync_mode.py|AssertionError: Parameter 'features.11.0.downsample.1.weight' is missing in file 'senet_154-b5538ef1.params', which contains parameters: 'features.10.1.body.4.running_var', 'features.12.7.body.4.gamma', 'features.10.0.se.2.weight', ..., 'features.11.3.body.3.weight', 'features.12.11.body.3.weight', 'features.12.2.body.1.gamma', 'features.12.1.body.7.running_mean'. Set allow_missing=True to ignore missing parameters.|
 |shufflenet_v1|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'shufflenetv10_conv0_weight' because it has not been initialized.|
 |shufflenet_v2|inference_mxnet_sync_mode.py|ValueError: Cannot reset context for Parameter 'shufflenetv20_conv0_weight' because it has not been initialized.|
+
+<!-- LINKS -->
+
+[gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html

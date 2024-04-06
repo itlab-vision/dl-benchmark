@@ -7,8 +7,8 @@ import traceback
 import mxnet as mx
 from mxnet.contrib.onnx.onnx2mx.import_model import import_model
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
-from logger_conf import configure_logger
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))  # noqa: E402
+from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
 

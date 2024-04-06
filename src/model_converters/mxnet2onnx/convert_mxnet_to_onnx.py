@@ -5,8 +5,8 @@ import traceback
 
 from mxnet.onnx import export_model
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))
-from logger_conf import configure_logger
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'utils'))  # noqa: E402
+from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
 
@@ -50,9 +50,9 @@ def convert_model(args):
         params=args.model_params,
         in_shapes=[tuple(args.input_shape)],
         onnx_file_path=args.path_save_model,
-        verbose=True
+        verbose=True,
     )
-    log.info(f'Model successfully converted and saved.')
+    log.info('Model successfully converted and saved.')
 
 
 def main():
