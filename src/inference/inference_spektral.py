@@ -88,7 +88,7 @@ def model_load(model_path):
     return compiled_model
 
 
-def prepare_output(result, model, output_names, task):
+def prepare_output(result, task):
     if task == 'feedforward':
         return {}
     elif task == 'node-classification':
@@ -162,7 +162,7 @@ def main():
         if args.number_iter == 1:
             try:
                 log.info('Converting output tensor to print results')
-                result = prepare_output(result, args.output_names, args.model_name, args.task, args)
+                result = prepare_output(result, args.task)
                 log.info('Inference results')
                 io.process_output(result, log)
             except Exception as ex:

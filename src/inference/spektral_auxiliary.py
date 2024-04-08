@@ -113,10 +113,6 @@ class NodeClassification_SpektralIO(SpektralIO):
         super().__init__(args, io_model_wrapper, transformer)
 
     def process_output(self, result, log):
-        if self._not_valid_result(result):
-            log.warning('Model output is processed only for the number iteration = 1')
-            return
-
         self.load_labels_map('cora.txt')
 
         _result = result.numpy()
