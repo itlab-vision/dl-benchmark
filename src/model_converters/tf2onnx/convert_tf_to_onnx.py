@@ -1,5 +1,4 @@
 import argparse
-import os
 import ast
 import tensorflow as tf
 import tf2onnx
@@ -7,6 +6,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -31,7 +31,7 @@ def cli_argument_parser():
 
     parser.add_argument('--input_shape',
                         help=('Shape of the input tensor as a Python list. '
-                          'Should be in the format "[batch_size, height, width, channels]".'),
+                        'Should be in the format "[batch_size, height, width, channels]".'),
                         required=True,
                         type=str,
                         dest='input_shape')
@@ -44,6 +44,7 @@ def cli_argument_parser():
 
     args = parser.parse_args()
     return args
+
 
 def main():
     args = cli_argument_parser()
@@ -62,15 +63,15 @@ def main():
             input_names=[args.input_name],
             output_names=[args.output_name],
             shape_override={args.input_name: input_shape},
-            output_path=args.output
+            output_path=args.output,
         )
         # Print conversion success message and output path
-        logger.info("Model successfully converted to ONNX.")
-        logger.info(f"ONNX model saved at: {args.output}")
+        logger.info('Model successfully converted to ONNX.')
+        logger.info(f'ONNX model saved at: {args.output}')
     except Exception as e:
         # If conversion fails, print error message
-        logger.error(f"Conversion to ONNX failed: {e}")
+        logger.error(f'Conversion to ONNX failed: {e}')
+
 
 if __name__ == '__main__':
     main()
-
