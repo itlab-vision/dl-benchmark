@@ -180,7 +180,7 @@ def main():
                     log.info('Inference results')
                     io.process_output(result, log)
                 except Exception as ex:
-                    log.warning(f"Error when printing inference results. {str(ex)}")
+                    log.warning(f'Error when printing inference results. {str(ex)}')
 
     except Exception:
         log.error(traceback.format_exc())
