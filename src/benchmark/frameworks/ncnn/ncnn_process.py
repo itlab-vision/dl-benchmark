@@ -42,7 +42,6 @@ class NcnnProcess(ProcessHandler):
             common_params = NcnnProcess._add_optional_argument_to_cmd_line(
                 common_params, '--task', task)
 
-
         input_name = self._test.dep_parameters.input_name
         if input_name:
             common_params = NcnnProcess._add_optional_argument_to_cmd_line(
