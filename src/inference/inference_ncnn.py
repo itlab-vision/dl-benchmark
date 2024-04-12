@@ -174,8 +174,12 @@ def main():
         report_writer.write_report(args.report_path)
 
         if not args.raw_output:
-            result = prepare_output(result, args.task, model_wrapper)
-            io.process_output(result, log)
+            if args.number_iter == 1:
+                result = prepare_output(result, args.task, model_wrapper)
+                log.info('Inference results')
+                io.process_output(result, log)
+            except Exception as ex:
+                log.warning(f"Error when printing inference results. {str(ex)}")
 
     except Exception:
         log.error(traceback.format_exc())
