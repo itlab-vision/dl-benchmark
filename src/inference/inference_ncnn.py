@@ -175,11 +175,12 @@ def main():
 
         if not args.raw_output:
             if args.number_iter == 1:
-                result = prepare_output(result, args.task, model_wrapper)
-                log.info('Inference results')
-                io.process_output(result, log)
-            except Exception as ex:
-                log.warning(f"Error when printing inference results. {str(ex)}")
+                try:
+                    result = prepare_output(result, args.task, model_wrapper)
+                    log.info('Inference results')
+                    io.process_output(result, log)
+                except Exception as ex:
+                    log.warning(f"Error when printing inference results. {str(ex)}")
 
     except Exception:
         log.error(traceback.format_exc())
