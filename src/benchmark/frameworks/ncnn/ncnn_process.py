@@ -23,6 +23,7 @@ class NcnnProcess(ProcessHandler):
         python = ProcessHandler.get_cmd_python_version()
 
         name = self._test.model.name
+        model = self._test.model.model
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
         batch_size = self._test.indep_parameters.batch_size
@@ -31,6 +32,16 @@ class NcnnProcess(ProcessHandler):
         raw_output = self._test.indep_parameters.raw_output
         common_params = (f'-m {name} -i {dataset} -is {input_shape} -b {batch_size} '
                          f'-ni {iteration} --report_path {self.report_path}')
+
+        if model and model != 'none':
+            common_params = NcnnProcess._add_optional_argument_to_cmd_line(
+                common_params, '--model', model)
+
+        task = self._test.model.task
+        if task and task.lower() != 'n/a':
+            common_params = NcnnProcess._add_optional_argument_to_cmd_line(
+                common_params, '--task', task)
+
 
         input_name = self._test.dep_parameters.input_name
         if input_name:
