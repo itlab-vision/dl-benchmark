@@ -10,4 +10,5 @@ protobuf==4.25.3
 requests==2.31.0
 typing_extensions==4.10.0
 urllib3==2.2.1
-gluoncv
+# downloading models
+gluoncv==0.10.5.post0

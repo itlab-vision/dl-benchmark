@@ -42,7 +42,7 @@ python3 convert_mxnet_to_onnx.py \
 
 ## Валидация моделей
 
-Все модели загружаются из [Gluon Model Zoo][gluon_modelzoo].
+Все модели загружены из [Gluon Model Zoo][gluon_modelzoo].
 
 ### Тестовое изображение 1
 
