@@ -44,14 +44,13 @@ def main():
         parser = ConfigParser(args.config)
         data_reader = DatasetReader(log)
         quant_params = NNCFQuantParamReader(log)
-        model_reader = None
+        model_reader = NNCFModelReader(log)
 
         log.info('Parsing xml config')
         config = parser.parse()
         for quant_iter in config:
             exit_code = 0
             try:
-                model_reader = NNCFModelReader.get_reader(framework=quant_iter[0]['Model']['Framework'], log=log)
                 model_reader.add_arguments(quant_iter[0]['Model'])
                 data_reader.add_arguments(quant_iter[1]['Dataset'])
                 quant_params.add_arguments(quant_iter[2]['QuantizationParameters'])
