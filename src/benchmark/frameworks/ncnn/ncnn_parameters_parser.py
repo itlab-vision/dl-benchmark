@@ -2,7 +2,7 @@ from ..config_parser.dependent_parameters_parser import DependentParametersParse
 from ..config_parser.framework_parameters_parser import FrameworkParameters
 
 
-class NCNNParametersParser(DependentParametersParser):
+class NcnnParametersParser(DependentParametersParser):
     def parse_parameters(self, curr_test):
         CONFIG_FRAMEWORK_DEPENDENT_TAG = 'FrameworkDependent'
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAME_TAG = 'InputName'

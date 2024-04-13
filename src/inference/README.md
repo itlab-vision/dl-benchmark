@@ -1314,7 +1314,6 @@ python inference_ncnn.py --model <model_name> \
 ```
 
 <!-- LINKS -->
-
 [execution_providers]: https://onnxruntime.ai/docs/execution-providers
 
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
