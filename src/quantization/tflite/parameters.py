@@ -24,6 +24,7 @@ SUPPORTED_TYPES = {
     'int8': tf.int8,
 }
 
+
 class TFLiteModelReader(Reader):
     def __init__(self, log):
         super().__init__(log)
@@ -64,6 +65,7 @@ class TFLiteQuantParamReader(Reader):
             result.append(dictionary[key])
         return result
 
+
 class TFLiteQuantizationProcess:
     def __init__(self, log, model_reader, dataset, quant_params):
         self.log = log
@@ -88,7 +90,7 @@ class TFLiteQuantizationProcess:
         model_name = self.model_reader.model_name
         output_dir = self.quant_params.output_dir
         if output_dir is None:
-            output_dir= os.getcwd()
+            output_dir = os.getcwd()
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)

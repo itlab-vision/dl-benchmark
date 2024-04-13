@@ -3,12 +3,12 @@
     <Config>
         <Model>
             <ModelName>resnet-50-pytorch</ModelName>
-            <ModelJson>./models_dir/public/resnet-50-pytorch/resnet50.json</ModelJson>
-            <WeightsParams>./models_dir/public/resnet-50-pytorch/resnet50.params</WeightsParams>
+            <ModelJson>../models_dir/public/resnet-50-pytorch/resnet50.json</ModelJson>
+            <WeightsParams>../models_dir/public/resnet-50-pytorch/resnet50.params</WeightsParams>
         </Model>
         <Dataset>
             <DatasetName>Test</DatasetName>
-            <DatasetPath>./test_images/classification_images</DatasetPath>
+            <DatasetPath>../test_images/classification_images</DatasetPath>
             <Mean>123.68, 116.779, 103.939</Mean>
             <Std>58.393, 57.12, 57.375</Std>
             <ImageSize>224, 224</ImageSize>

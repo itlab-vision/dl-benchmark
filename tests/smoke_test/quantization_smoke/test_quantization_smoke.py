@@ -1,17 +1,14 @@
-import pytest
-
-from collections import namedtuple
 from pathlib import Path
 
-from tests.smoke_test.utils import execute_process, create_empty_folder
-from tests.smoke_test.conftest import (SCRIPT_DIR, log,
-                                       download_models, convert_models)
+from tests.smoke_test.utils import execute_process
+from tests.smoke_test.conftest import (SCRIPT_DIR, log)
 
 QUANTIZATION_TFLITE = Path.joinpath(SCRIPT_DIR.parents[1], 'src/quantization/tflite/quantization_tflite.py')
 QUANTIZATION_TVM = Path.joinpath(SCRIPT_DIR.parents[1], 'src/quantization/tvm/quantization_tvm.py')
 QUANTIZATION_NNCF = Path.joinpath(SCRIPT_DIR.parents[1], 'src/quantization/nncf/quantization_nncf.py')
 
 TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
+
 
 def test_smoke_dl_models(test_configuration):
     if test_configuration.framework == 'NNCF':

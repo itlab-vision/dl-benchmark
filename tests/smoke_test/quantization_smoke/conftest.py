@@ -3,7 +3,7 @@ import pytest
 from collections import namedtuple
 from pathlib import Path
 
-from tests.smoke_test.utils import execute_process, create_empty_folder
+from tests.smoke_test.utils import execute_process
 from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
                                        download_models, convert_models)
 
@@ -11,6 +11,7 @@ QUANTIZATION_CONFIG_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'quantization_models'
 TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
 
 DL_MODELS = ['resnet-50-pytorch', 'densenet-121-tf']
+
 
 def pytest_addoption(parser):
     parser.addoption('--models',
@@ -28,7 +29,8 @@ def pytest_addoption(parser):
                      default=None,
                      required=False,
                      help='Path to models config dir')
-    
+
+
 @pytest.fixture(scope='session')
 def overrided_models(pytestconfig):
     """Fixture function for command-line option."""
@@ -44,6 +46,7 @@ def prepare_dl_models(request, overrided_models):
     download_models(models_list=enabled_models)
     convert_models(models_list=enabled_models)
     convert_models_to_tvm()
+
 
 @pytest.fixture(scope='session')
 def res_dir(pytestconfig):
@@ -61,6 +64,7 @@ def convert_models_to_tvm():
         execute_process(command_line=onnx_to_tvm, log=log)
     except ImportError:
         log.info('No tvm module found, skip tvm converter.')
+
 
 def pytest_generate_tests(metafunc):
     param_list = []
@@ -87,6 +91,4 @@ def pytest_generate_tests(metafunc):
         param_list.append(smoke_test_params(**params))
         id_list.append(config_file.stem)
 
-
     metafunc.parametrize('test_configuration', param_list, ids=id_list)
-    

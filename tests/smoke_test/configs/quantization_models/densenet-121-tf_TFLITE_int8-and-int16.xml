@@ -3,11 +3,11 @@
     <Config>
         <Model>
             <ModelName>densenet-121-tf</ModelName>
-            <ModelPath>./models_dir/public/densenet-121-tf/densenet-121.savedmodel</ModelPath>
+            <ModelPath>../models_dir/public/densenet-121-tf/densenet-121.savedmodel</ModelPath>
         </Model>
         <Dataset>
             <DatasetName>Test</DatasetName>
-            <DatasetPath>./test_images/classification_images</DatasetPath>
+            <DatasetPath>../test_images/classification_images</DatasetPath>
             <Mean>123.675, 116.28, 103.53</Mean>
             <Std>58.395, 57.12, 57.375</Std>
             <ImageSize>224, 224</ImageSize>

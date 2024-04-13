@@ -9,7 +9,7 @@ on:
   pull_request:
 
 jobs:
-  smoke_test:
+  smoke_test_benchmark:
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -51,7 +51,7 @@ jobs:
           path: tests/smoke_test/ac_smoke/report.html
           retention-days: 1
 
-  smoke_test_caffe:
+  smoke_test_benchmark_caffe:
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -113,7 +113,7 @@ jobs:
       - name: Run smoke tests for quantization
         run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py
 
-      - name: Upload benchmark artifacts
+      - name: Upload quantization artifacts
         uses: actions/upload-artifact@v3
         if: always()
         with:

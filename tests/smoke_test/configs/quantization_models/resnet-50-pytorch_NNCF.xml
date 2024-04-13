@@ -3,7 +3,7 @@
     <Config>
         <Model>
             <ModelName>resnet50-pytorch</ModelName>
-            <ModelPath>./models_dir/public/resnet-50-pytorch/resnet-v1-50.onnx</ModelPath>
+            <ModelPath>../models_dir/public/resnet-50-pytorch/resnet-v1-50.onnx</ModelPath>
             <WeightsPath></WeightsPath>
             <InputName>data</InputName>
             <OutputName></OutputName>
@@ -13,7 +13,7 @@
         </Model>
         <Dataset>
             <DatasetName>Test</DatasetName>
-            <DatasetPath>./test_images/classification_images</DatasetPath>
+            <DatasetPath>../test_images/classification_images</DatasetPath>
             <Mean>123.675, 116.28, 103.53</Mean>
             <Std>58.395, 57.12, 57.375</Std>
             <ImageSize>224, 224</ImageSize>
