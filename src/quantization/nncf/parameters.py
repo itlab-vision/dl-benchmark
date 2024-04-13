@@ -6,9 +6,9 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from utils import Reader  # noqa: E402
 
 PRESET = {'performance': nncf.QuantizationPreset.PERFORMANCE,
-          'mixed': nncf.QuantizationPreset.MIXED,}
+          'mixed': nncf.QuantizationPreset.MIXED}
 
-MODEL_TYPE = {'transformer': nncf.ModelType.TRANSFORMER,}
+MODEL_TYPE = {'transformer': nncf.ModelType.TRANSFORMER}
 
 
 class NNCFQuantParamReader(Reader):
