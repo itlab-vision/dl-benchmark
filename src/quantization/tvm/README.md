@@ -8,38 +8,38 @@ quantization_tvm.py
 
 Required arguments:
 
-- `-c / --config` - path to the file containing information
+- `-c / --config` is a path to the file containing information
   about quantization process in `xml` format. Template of the config
   located in `config_template.xml` file.
 
 Description of parameters:
 
-`Model` node contains information about model to be quantized:
-- `ModelName` - name of the model.
-- `ModelJson` - path to model in `.json` format.
-- `ModelParams` - path to weights in `.params` format.
+`Model` contains information about model to be quantized:
+- `ModelName` is a name of the model.
+- `ModelJson` is a path to the model in `.json` format.
+- `ModelParams` is a path to weights in `.params` format.
 
-`Dataset` node contains information about dataset for model calibration:
-- `DatasetName` - name of dataset.
-- `DatasetPath` - path to folder with input data.
-- `Mean` - mean value for preprocessing data.
-- `Std` - mean value for preprocessing data.
-- `ImageSize` - image size value for preprocessing data. Example: 224, 224.
-- `BatchSize` - size of input pack for model.
-- `Layout` - dimension sequence for model input. NCHW, NHWC and etc.
-- `Normalization` - flag to normalize input data.
-- `ChannelSwap` - transpose for image channels. For RGB - 2, 1, 0. For BGR - 0, 1, 2.
+`Dataset` contains information about dataset for model calibration:
+- `DatasetName` is a dataset name.
+- `DatasetPath` is a path to the folder with input data.
+- `Mean` is a mean value for preprocessing data.
+- `Std` is a scale value for preprocessing data.
+- `ImageSize` is an image size value for preprocessing data. Example: 224, 224.
+- `BatchSize` is an input batch size.
+- `Layout` is a dimension sequence for the model input. NCHW, NHWC and etc.
+- `Normalization` is a flag to normalize input data.
+- `ChannelSwap` is a flag to transpose for image channels. For RGB - 2, 1, 0. For BGR - 0, 1, 2.
 
-`QuantizationParameters` node contains information about quantization parameters:
-- `CalibSamples` - number of input data for model calibration.
-- `CalibMode` - mode of the quantization. Supported modes: kl_divergence, global_scale.
-- `WeightsScale` - parameter for weights scaling. Supported modes: power2, max.
-- `GlobalScale` - parameter for global_scale calibration mode.
+`QuantizationParameters` information about quantization parameters:
+- `CalibSamples` is a number of input data for model calibration.
+- `CalibMode` is a mode of the quantization. Supported modes: kl_divergence, global_scale.
+- `WeightsScale` is a parameter for weights scaling. Supported modes: power2, max.
+- `GlobalScale` is a parameter for global_scale calibration mode.
 - `dtype_input`, `dtype_weight`, `dtype_activation` - data types for quantization.
   Supported types: int8, int16, int32.
-- `partition_conversions` -  parameter for TVM specific partition conversion.
+- `partition_conversions` is a parameter for TVM specific partition conversion.
   Supported modes: enabled, disabled, fully_integral.
-- `OutputDirectory` - directory for saving quantized model.
+- `OutputDirectory` is a directory for saving quantized model.
 
 Note:
 Currently, Apache TVM quantization does not work as expected. This is due to

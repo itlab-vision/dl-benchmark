@@ -1,9 +1,9 @@
-# NNCF quantization script
+# TFLITE quantization script
 
 Name of script:
 
 ```bash
-quantization_nncf.py
+quantization_tflite.py
 ```
 
 Required arguments:
@@ -16,13 +16,7 @@ Description of parameters:
 
 `Model` contains information about model to be quantized:
 - `ModelName` is a name of the model.
-- `ModelPath` is a path to the model in `.onnx`, `.xml` or `saved_model` formats.
-- `WeightsPath` is a path to weights in `.bin` format.
-- `InputName` is an input name of the model.
-- `OutputName` is an output name of the model.
-- `InputShape` is an input shape of the model.
-- `Framework` is a source framework of the model.
-  Supported frameworks: onnx, tensorflow, openvino.
+- `ModelPath` is a path to the model in tensorflow `saved_model` format.
 
 `Dataset` contains information about dataset for model calibration:
 - `DatasetName` is a dataset name.
@@ -36,10 +30,9 @@ Description of parameters:
 - `ChannelSwap` is a flag to transpose for image channels. For RGB - 2, 1, 0. For BGR - 0, 1, 2.
 
 `QuantizationParameters` contains information about quantization parameters:
-- `ModelType` is a parameter used to specify quantization scheme required for specific type of the model.
-  For example, Transformer models (BERT, distillBERT, etc.) require a special quantization
-  scheme to preserve accuracy after quantization.
-- `Preset` is a parameter defines quantization scheme for the model.
-  Two types of presets are available: MIXED, PERFORMANCE.
-- `SubsetSize` is a parameter defines the number of samples from the calibration dataset
-  that will be used to estimate quantization parameters of activations. 
+- `Optimizations` is a parameter used to specify quantization optimization.
+  Supported optimizations: `['default'], ['latency'], ['size']`.
+- `SupportedOperations` is a parameter defines data type of operations inside graph.
+  Supported operations: `['int8'], ['int16']`.
+- `SupportedTypes` is a parameter defines data type that will be the main one in the
+  calculation process inside graph. Supported types: `['float16'], ['int8']`.
