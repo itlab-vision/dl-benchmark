@@ -47,6 +47,7 @@ def main():
         log.info('Parsing xml config')
         config = parser.parse()
         for quant_iter in config:
+            exit_code = 0
             try:
                 model_reader.add_arguments(quant_iter[0]['Model'])
                 data_reader.add_arguments(quant_iter[1]['Dataset'])
@@ -56,6 +57,9 @@ def main():
                 proc.save_quant_model()
             except Exception:
                 log.error(traceback.format_exc())
+                exit_code += 1
+        if exit_code:
+            sys.exit(1)
     except Exception:
         log.error(traceback.format_exc())
         sys.exit(1)

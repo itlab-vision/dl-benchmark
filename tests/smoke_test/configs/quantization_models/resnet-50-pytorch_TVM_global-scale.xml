@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <ModelName>resnet-50-pytorch</ModelName>
+            <ModelJson>./models_dir/public/resnet-50-pytorch/resnet50.json</ModelJson>
+            <WeightsParams>./models_dir/public/resnet-50-pytorch/resnet50.params</WeightsParams>
+        </Model>
+        <Dataset>
+            <DatasetName>Test</DatasetName>
+            <DatasetPath>./test_images/classification_images</DatasetPath>
+            <Mean>123.68, 116.779, 103.939</Mean>
+            <Std>58.393, 57.12, 57.375</Std>
+            <ImageSize>224, 224</ImageSize>
+            <BatchSize>1</BatchSize>
+            <Layout>NCHW</Layout>
+            <Normalization>False</Normalization>
+            <ChannelSwap></ChannelSwap>
+        </Dataset>
+        <QuantizationParameters>
+            <CalibSamples>3</CalibSamples>
+            <CalibMode>global_scale</CalibMode>
+            <WeightsScale>max</WeightsScale>
+            <GlobalScale>8</GlobalScale>
+            <dtype_input>int32</dtype_input>
+            <dtype_weight>int32</dtype_weight>
+            <dtype_activation>int32</dtype_activation>
+            <partition_conversions>disabled</partition_conversions>
+            <OutputDirectory></OutputDirectory>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>
