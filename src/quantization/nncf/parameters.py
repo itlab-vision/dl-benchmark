@@ -5,6 +5,11 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from utils import Reader  # noqa: E402
 
+PRESET = {'performance': nncf.QuantizationPreset.PERFORMANCE,
+          'mixed': nncf.QuantizationPreset.MIXED,}
+
+MODEL_TYPE = {'transformer': nncf.ModelType.TRANSFORMER,}
+
 
 class NNCFQuantParamReader(Reader):
     def __init__(self, log):
@@ -12,8 +17,12 @@ class NNCFQuantParamReader(Reader):
 
     def _get_arguments(self):
         self._log.info('Parsing parameters of quantization.')
-        self.model_type = self.args['ModelType']
-        self.preset = self.args['Preset']
+        self.model_type = (MODEL_TYPE[self.args['ModelType']]
+                           if self.args['ModelType'] is not None
+                           else None)
+        self.preset = (PRESET[self.args['Preset']]
+                       if self.args['Preset'] is not None
+                       else None)
         self.subset_size = ast.literal_eval(self.args['SubsetSize'])
         self.output_dir = self.args['OutputDirectory']
 
