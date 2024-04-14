@@ -56,8 +56,9 @@ if __name__ == '__main__':
         os.makedirs(args.output_dir)
     try:
         model_name = (re.split('/|\\\\', args.path_to_prototxt)[-1]).split('.')[-2]
-        call_caffe_to_onnx_converter(args.path_to_prototxt, args.weights, 
-                                    os.path.join(args.output_dir, f'{model_name}.onnx'))
+        call_caffe_to_onnx_converter(
+            args.path_to_prototxt, args.weights,
+            os.path.join(args.output_dir, f'{model_name}.onnx')
+        )
     except ValueError as e:
         log.error(e)
-        
