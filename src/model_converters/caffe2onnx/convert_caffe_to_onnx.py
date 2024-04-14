@@ -39,7 +39,8 @@ def cli_argument_parser():
 
 
 def call_caffe_to_onnx_converter(path_to_caffe_proto_file, path_to_caffe_weight_file, onnx_file_name):
-    script_path = 'caffe2onnx/caffe2onnx/convert.py'
+    current_script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_path = os.path.join(current_script_dir, 'caffe2onnx', 'caffe2onnx', 'convert.py')
     
     command = [
         'python', script_path, 
@@ -50,7 +51,7 @@ def call_caffe_to_onnx_converter(path_to_caffe_proto_file, path_to_caffe_weight_
     
     try:
         result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        log.ingo(result.stdout)
+        log.info(result.stdout)
         
         if result.stderr:
             raise ValueError(f"{result.stderr}")
@@ -67,9 +68,7 @@ if __name__ == '__main__':
 
 
     try:
-       model_name = (re.split('/|\\', args.path_to_prototxt)[-1]).split('.')[-2]
-       call_caffe_to_onnx_converter(args.path_to_prototxt, args.weights, args.output_dir+f'{model_name}.onnx')
+       model_name = (re.split('/|\\\\', args.path_to_prototxt)[-1]).split('.')[-2]
+       call_caffe_to_onnx_converter(args.path_to_prototxt, args.weights, os.path.join(args.output_dir, f'{model_name}.onnx'))
     except ValueError as e:
         log.error(e)
-        
-
