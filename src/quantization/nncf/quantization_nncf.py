@@ -48,8 +48,8 @@ def main():
 
         log.info('Parsing xml config')
         config = parser.parse()
+        exit_code = 0
         for quant_iter in config:
-            exit_code = 0
             try:
                 model_reader.add_arguments(quant_iter[0]['Model'])
                 data_reader.add_arguments(quant_iter[1]['Dataset'])

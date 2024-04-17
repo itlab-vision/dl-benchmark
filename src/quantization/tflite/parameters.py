@@ -60,10 +60,7 @@ class TFLiteQuantParamReader(Reader):
         self.output_dir = self.args['OutputDirectory']
 
     def _convert_to_list_of_tf_objects(self, keys, dictionary):
-        result = []
-        for key in keys:
-            result.append(dictionary[key])
-        return result
+        return [dictionary[key] for key in keys]
 
 
 class TFLiteQuantizationProcess:
