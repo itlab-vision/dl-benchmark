@@ -30,8 +30,8 @@ def cli_argument_parser():
                         dest='input_name')
 
     parser.add_argument('--input_shape',
-                        help=('Shape of the input tensor as a Python list. '
-                        'Should be in the format "[batch_size, height, width, channels]".'),
+                        help='Shape of the input tensor as a Python list. '
+                             'Should be in the format "[batch_size, height, width, channels]".',
                         required=True,
                         type=str,
                         dest='input_shape')
@@ -49,14 +49,13 @@ def cli_argument_parser():
 def main():
     args = cli_argument_parser()
 
-    # Convert input_shape string to a Python list
-    input_shape = ast.literal_eval(args.input_shape)
-
     # Load the TensorFlow graph from the .pb file
     with tf.io.gfile.GFile(args.graphdef, 'rb') as f:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(f.read())
     try:
+        # Convert input_shape string to a Python list
+        input_shape = ast.literal_eval(args.input_shape)
         # Call tf2onnx convert function with provided arguments
         model_proto, _ = tf2onnx.convert.from_graph_def(
             graph_def,
