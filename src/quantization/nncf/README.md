@@ -1,6 +1,6 @@
 # NNCF quantization script
 
-Name of script:
+Script name:
 
 ```bash
 quantization_nncf.py
@@ -9,12 +9,12 @@ quantization_nncf.py
 Required arguments:
 
 - `-c / --config` is a path to the file containing information
-  about quantization process in `xml` format. Template of the config
-  located in `config_template.xml` file.
+  about quantization process in the xml-format. Template of the configuration file
+  located in `config_template.xml`.
 
 Description of parameters:
 
-`Model` contains information about model to be quantized:
+`Model` contains information about the model to be quantized:
 - `ModelName` is a name of the model.
 - `ModelPath` is a path to the model in `.onnx`, `.xml` or `saved_model` formats.
 - `WeightsPath` is a path to weights in `.bin` format.
@@ -24,7 +24,7 @@ Description of parameters:
 - `Framework` is a source framework of the model.
   Supported frameworks: onnx, tensorflow, openvino.
 
-`Dataset` contains information about dataset for model calibration:
+`Dataset` contains information about the dataset for the model calibration:
 - `DatasetName` is a dataset name.
 - `DatasetPath` is a path to the folder with input data.
 - `Mean` is a mean value for preprocessing data.
@@ -35,11 +35,11 @@ Description of parameters:
 - `Normalization` is a flag to normalize input data.
 - `ChannelSwap` is a flag to transpose for image channels. For RGB - 2, 1, 0. For BGR - 0, 1, 2.
 
-`QuantizationParameters` contains information about quantization parameters:
+`QuantizationParameters` contains information about the quantization parameters:
 - `ModelType` is a parameter used to specify quantization scheme required for specific type of the model.
   For example, Transformer models (BERT, distillBERT, etc.) require a special quantization
   scheme to preserve accuracy after quantization.
-- `Preset` is a parameter defines quantization scheme for the model.
-  Two types of presets are available: MIXED, PERFORMANCE.
-- `SubsetSize` is a parameter defines the number of samples from the calibration dataset
-  that will be used to estimate quantization parameters of activations. 
+- `Preset` is a parameter which determines quantization scheme for the model.
+  Two types of presets are available: `MIXED`, `PERFORMANCE`.
+- `SubsetSize` is a parameter which determines the number of samples of the calibration dataset
+  that will be used to estimate quantization parameters.
