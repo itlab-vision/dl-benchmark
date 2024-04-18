@@ -38,7 +38,7 @@ python convert_tf_to_onnx.py \
 ## Результаты валидации OMZ моделей 
 Ниже приведены результаты запуска вывода исходных моделей в формате TensorFlow,
 моделей, сконвертированных в ONNX-формат, а также моделей, заново сконвертированнх в TensorFlow-фомат,
-с использованием скриптов `inference_pytorch.py` и `inference_onnx_runtime.py`
+с использованием скриптов `inference_tensorflow.py` и `inference_onnx_runtime.py`
 
 ### Тестовое изображение 1
 
