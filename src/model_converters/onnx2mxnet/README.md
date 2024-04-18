@@ -24,7 +24,7 @@ convert_onnx_to_mxnet.py
 
 **Опциональные аргументы:**
 
-- `-mn / --model_name` – название модели для сохранения. (по умолчанию `model`)
+- `-mn / --model_name` – название модели для сохранения (по умолчанию `model`).
 - `-p / --path_save_model` – путь для сохранения файлов модели. В процессе сохранения внутри указанной директории
   создается вложенная директория с названием модели `<model_name>`. Формируется два файла:
     - `<model_name>-0000.params` - бинарный файл с обученными параметрами модели
@@ -94,5 +94,4 @@ python3 convert_onnx_to_mxnet.py \
 |SqueezeNet 1.0|inference_mxnet_sync_mode.py|Segmentation fault: 11<br/>libc++abi: terminating|
 
 <!-- LINKS -->
-
 [onnx_models]: https://github.com/onnx/models
