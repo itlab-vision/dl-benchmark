@@ -16,26 +16,22 @@ def cli_argument_parser():
                         required=True,
                         type=str,
                         dest='graphdef')
-
     parser.add_argument('--output',
                         help='Path to save the converted ONNX model',
                         required=True,
                         type=str,
                         dest='output')
-
     parser.add_argument('--input_name',
                         help='Name of the input tensor',
                         required=True,
                         type=str,
                         dest='input_name')
-
     parser.add_argument('--input_shape',
                         help='Shape of the input tensor as a Python list. '
                              'Should be in the format "[batch_size, height, width, channels]".',
                         required=True,
                         type=str,
                         dest='input_shape')
-
     parser.add_argument('--output_name',
                         help='Name of the output tensor',
                         required=True,
