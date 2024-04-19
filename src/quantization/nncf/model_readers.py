@@ -28,7 +28,7 @@ class NNCFModelReader(Reader):
 
     def get_reader(self, log):
         if self.framework.lower() == 'tensorflow':
-            return NNCFModelReaderTensorFLowFormat(log, self)
+            return NNCFModelReaderTensorFlowFormat(log, self)
         elif self.framework.lower() == 'onnx':
             return NNCFModelReaderONNXFormat(log, self)
         elif self.framework.lower() == 'openvino':
@@ -59,7 +59,7 @@ class NNCFModelReader(Reader):
         self.reader._save_model(quant_model, output_directory)
 
 
-class NNCFModelReaderTensorFLowFormat(ReaderHelper):
+class NNCFModelReaderTensorFlowFormat(ReaderHelper):
     def __init__(self, log, reader):
         super().__init__(log, reader)
         self.tf = importlib.import_module('tensorflow')

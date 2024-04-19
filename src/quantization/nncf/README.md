@@ -10,7 +10,7 @@ Required arguments:
 
 - `-c / --config` is a path to the file containing information
   about quantization process in the xml-format. Template of the configuration file
-  located in `config_template.xml`.
+  located [here][config_path].
 
 Description of parameters:
 
@@ -43,3 +43,7 @@ Description of parameters:
   Two types of presets are available: `MIXED`, `PERFORMANCE`.
 - `SubsetSize` is a parameter which determines the number of samples of the calibration dataset
   that will be used to estimate quantization parameters.
+
+
+<!-- LINKS -->
+[config_path]: ../../configs/nncf_quantization_config_template.xml

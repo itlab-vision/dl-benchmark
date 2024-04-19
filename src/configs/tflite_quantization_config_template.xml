@@ -10,7 +10,7 @@
             <DatasetPath></DatasetPath>
             <Mean></Mean>
             <Std></Std>
-            <ImageSize>224, 224</ImageSize>
+            <ImageSize>[224, 224]</ImageSize>
             <BatchSize>1</BatchSize>
             <Layout>NHWC</Layout>
             <Normalization>False</Normalization>

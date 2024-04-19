@@ -10,7 +10,7 @@ Required arguments:
 
 - `-c / --config` is a path to the file containing information
   about quantization process in the xml-format. Template of the configuration file
-  located in `config_template.xml`.
+  located [here][config_path].
 
 Description of parameters:
 
@@ -36,3 +36,7 @@ Description of parameters:
   Supported operations: `['int8'], ['int16']`.
 - `SupportedTypes` is a parameter which determines the data type that will be used for
   calculations inside graph. Supported types: `['float16'], ['int8']`.
+
+
+<!-- LINKS -->
+[config_path]: ../../configs/tflite_quantization_config_template.xml

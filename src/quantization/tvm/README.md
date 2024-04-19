@@ -10,7 +10,7 @@ Required arguments:
 
 - `-c / --config` is a path to the file containing information
   about quantization in the xml-format. Template of the configuration file
-  located in `config_template.xml`.
+  located [here][config_path].
 
 Description of parameters:
 
@@ -54,3 +54,4 @@ the several reasons:
 
 <!-- LINKS -->
 [memory_leak]: https://ru.stackoverflow.com/questions/1569600/%d0%a3%d1%82%d0%b5%d1%87%d0%ba%d0%b0-%d0%bf%d0%b0%d0%bc%d1%8f%d1%82%d0%b8-%d0%b2-%d0%b8%d1%82%d0%b5%d1%80%d0%b0%d1%82%d0%be%d1%80%d0%b5-%d0%bf%d0%be-%d0%b4%d0%b0%d1%82%d0%b0%d1%81%d0%b5%d1%82%d1%83-python
+[config_path]: ../../configs/tvm_quantization_config_template.xml

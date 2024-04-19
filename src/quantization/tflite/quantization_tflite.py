@@ -47,11 +47,11 @@ def main():
         log.info('Parsing xml config')
         config = parser.parse()
         exit_code = 0
-        for quant_iter in config:
+        for model_quant_config in config:
             try:
-                model_reader.add_arguments(quant_iter[0]['Model'])
-                data_reader.add_arguments(quant_iter[1]['Dataset'])
-                quant_params.add_arguments(quant_iter[2]['QuantizationParameters'])
+                model_reader.add_arguments(model_quant_config[0]['Model'])
+                data_reader.add_arguments(model_quant_config[1]['Dataset'])
+                quant_params.add_arguments(model_quant_config[2]['QuantizationParameters'])
                 proc = TFLiteQuantizationProcess(log, model_reader, data_reader, quant_params)
                 iter_log(model_reader, data_reader, quant_params)
                 proc.quantization_tflite()

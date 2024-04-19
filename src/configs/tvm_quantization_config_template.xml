@@ -9,9 +9,9 @@
         <Dataset>
             <DatasetName>ImageNet</DatasetName>
             <DatasetPath></DatasetPath>
-            <Mean>123.68, 116.779, 103.939</Mean>
-            <Std>58.393, 57.12, 57.375</Std>
-            <ImageSize>224, 224</ImageSize>
+            <Mean>[123.68, 116.779, 103.939]</Mean>
+            <Std>[58.393, 57.12, 57.375]</Std>
+            <ImageSize>[224, 224]</ImageSize>
             <BatchSize>1</BatchSize>
             <Layout>NHWC</Layout>
             <Normalization>False</Normalization>
