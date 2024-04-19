@@ -22,7 +22,7 @@ Description of parameters:
 - `OutputName` is an output name of the model.
 - `InputShape` is an input shape of the model.
 - `Framework` is a source framework of the model.
-  Supported frameworks: onnx, tensorflow, openvino.
+  Supported frameworks: `onnx`, `tensorflow`, `openvino`.
 
 `Dataset` contains information about the dataset for the model calibration:
 - `DatasetName` is a dataset name.
