@@ -1,6 +1,6 @@
 # Apache TVM quantization script
 
-Name of script:
+Script name:
 
 ```bash
 quantization_tvm.py
@@ -9,17 +9,17 @@ quantization_tvm.py
 Required arguments:
 
 - `-c / --config` is a path to the file containing information
-  about quantization process in `xml` format. Template of the config
-  located in `config_template.xml` file.
+  about quantization in the xml-format. Template of the configuration file
+  located in `config_template.xml`.
 
 Description of parameters:
 
-`Model` contains information about model to be quantized:
+`Model` contains information about the model to be quantized:
 - `ModelName` is a name of the model.
-- `ModelJson` is a path to the model in `.json` format.
-- `ModelParams` is a path to weights in `.params` format.
+- `ModelJson` is a path to the model architecture (`.json` file).
+- `ModelParams` is a path to the model weights (`.params` file).
 
-`Dataset` contains information about dataset for model calibration:
+`Dataset` contains information about the dataset for model calibration:
 - `DatasetName` is a dataset name.
 - `DatasetPath` is a path to the folder with input data.
 - `Mean` is a mean value for preprocessing data.
@@ -32,27 +32,25 @@ Description of parameters:
 
 `QuantizationParameters` information about quantization parameters:
 - `CalibSamples` is a number of input data for model calibration.
-- `CalibMode` is a mode of the quantization. Supported modes: kl_divergence, global_scale.
-- `WeightsScale` is a parameter for weights scaling. Supported modes: power2, max.
-- `GlobalScale` is a parameter for global_scale calibration mode.
+- `CalibMode` is a mode of the quantization. Supported modes: `kl_divergence`, `global_scale`.
+- `WeightsScale` is a parameter for weights scaling. Supported modes: `power2`, `max`.
+- `GlobalScale` is a parameter for the `global_scale` calibration mode.
 - `dtype_input`, `dtype_weight`, `dtype_activation` - data types for quantization.
-  Supported types: int8, int16, int32.
+  Supported types: `int8`, `int16`, `int32`.
 - `partition_conversions` is a parameter for TVM specific partition conversion.
-  Supported modes: enabled, disabled, fully_integral.
+  Supported modes: `enabled`, `disabled`, `fully_integral`.
 - `OutputDirectory` is a directory for saving quantized model.
 
-Note:
-Currently, Apache TVM quantization does not work as expected. This is due to
-several reasons:
+**Note:** currently, quantization based on Apache TVM does not work as expected due to
+the several reasons:
 - `kl_divergence` mode in the quantization process takes a lot of RAM at each
   new iteration of the calibration cycle. The problem is described [here][memory_leak].
   It means that you won't be able to use a lot of data for calibration.
-- quantization in most cases breaks model because the validation results are not true.
-  But the `resnet` class of models work almost as expected.
+- quantization in most cases breaks model which confirms the incorrectness of validation results.
+  The `resnet` class of deep models work almost as expected.
 - TVM quantization slows down inference time. This is due to an internal
   problem of the framework.
 
 
-
+<!-- LINKS -->
 [memory_leak]: https://ru.stackoverflow.com/questions/1569600/%d0%a3%d1%82%d0%b5%d1%87%d0%ba%d0%b0-%d0%bf%d0%b0%d0%bc%d1%8f%d1%82%d0%b8-%d0%b2-%d0%b8%d1%82%d0%b5%d1%80%d0%b0%d1%82%d0%be%d1%80%d0%b5-%d0%bf%d0%be-%d0%b4%d0%b0%d1%82%d0%b0%d1%81%d0%b5%d1%82%d1%83-python
-
