@@ -58,6 +58,11 @@ def cli_argument_parser():
                         default=False,
                         type=bool,
                         dest='raw_output')
+    parser.add_argument('-nthreads', '--number_threads',
+                        help='Number of threads to use for inference on the CPU. (1 by default)',
+                        default=1,
+                        type=int,
+                        dest='number_threads')
     parser.add_argument('--mean',
                         help='Parameter mean',
                         default=None,
@@ -165,6 +170,7 @@ def main():
                                              target_device=args.device)
 
     config = paddle_infer.Config(args.model_path, args.params_path)
+    config.set_cpu_math_library_num_threads(args.number_threads)
     config.enable_memory_optim()
     if args.device == 'GPU':
         config.enable_use_gpu(args.memory_pool_init_size_mb, 0)
