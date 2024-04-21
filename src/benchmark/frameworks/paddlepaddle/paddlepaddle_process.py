@@ -47,10 +47,10 @@ class PaddlePaddleProcess(ProcessHandler):
         input_shape = self._test.dep_parameters.input_shape
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_shapes', input_shape)
 
-        input_names = self._test.dep_parameters.input_names
-        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_names', input_names)
+        input_name = self._test.dep_parameters.input_name
+        common_params = self._add_optional_argument_to_cmd_line(common_params, '--input_names', input_name)
 
-        output_names = self._test.dep_parameters.input_name
+        output_names = self._test.dep_parameters.output_names
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--output_names', output_names)
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')

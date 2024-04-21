@@ -42,7 +42,7 @@ class PaddlePaddleParametersParser(DependentParametersParser):
 
 
 class PaddlePaddleParameters(FrameworkParameters):
-    def __init__(self, channel_swap, mean, input_scale, input_shapes, output_names, input_names,
+    def __init__(self, channel_swap, mean, input_scale, input_shapes, output_names, input_name,
                  thread_count):
         self.channel_swap = None
         self.mean = None
@@ -62,8 +62,8 @@ class PaddlePaddleParameters(FrameworkParameters):
             self.input_scale = self._process_sequence_arg(input_scale)
         if self._parameter_is_not_none(input_shapes):
             self.input_shape = self._process_sequence_arg(input_shapes)
-        if self._parameter_is_not_none(input_names):
-            self.input_name = input_names
+        if self._parameter_is_not_none(input_name):
+            self.input_name = input_name
         if self._parameter_is_not_none(output_names):
             self.layout = output_names
         if self._parameter_is_not_none(thread_count):
