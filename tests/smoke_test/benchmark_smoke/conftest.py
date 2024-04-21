@@ -91,7 +91,7 @@ def download_dgl_models(output_dir: Path = OUTPUT_DIR):
 def download_resnet50_paddle(output_dir: Path = OUTPUT_DIR):
     resnet_dir = Path(output_dir, 'resnet50_paddle')
     resnet_paddle_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
-                      'paddlepaddle_models/resnet50/resnet50/')
+                          'paddlepaddle_models/resnet50/resnet50/')
     download_file(resnet_paddle_link + '/inference.pdiparams', resnet_dir, 'resnet50.pdiparams')
     download_file(resnet_paddle_link + '/inference.pdmodel', resnet_dir, 'resnet50.pdmodel')
 
