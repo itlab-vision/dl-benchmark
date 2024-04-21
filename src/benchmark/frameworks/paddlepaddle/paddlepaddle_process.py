@@ -22,7 +22,7 @@ class PaddlePaddleProcess(ProcessHandler):
         python = ProcessHandler.get_cmd_python_version()
 
         model = self._test.model.model
-        params = self._test.params.params
+        params = self._test.model.weight
         dataset = self._test.dataset.path if self._test.dataset else None
         task = self._test.task.task if self._test.task.task else None
         batch = self._test.indep_parameters.batch_size
