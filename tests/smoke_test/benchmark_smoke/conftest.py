@@ -88,6 +88,14 @@ def download_dgl_models(output_dir: Path = OUTPUT_DIR):
     download_file(dgl_py_link, dgl_dir, 'GCN.py')
 
 
+def download_resnet50_paddle(output_dir: Path = OUTPUT_DIR):
+    resnet_dir = Path(output_dir, 'resnet50_paddle')
+    resnet_paddle_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
+                      'paddlepaddle_models/resnet50/resnet50/')
+    download_file(resnet_paddle_link + '/inference.pdiparams', resnet_dir, 'resnet50.pdiparams')
+    download_file(resnet_paddle_link + '/inference.pdmodel', resnet_dir, 'resnet50.pdmodel')
+
+
 def download_resnet50(output_dir: Path = OUTPUT_DIR):
     resnet_dir = Path(output_dir, 'resnet50')
     resnet_so_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
@@ -168,6 +176,7 @@ def prepare_dl_models(request, overrided_models):
         download_yolov2_tiny_tf()
         download_yolov7_onnx()
         download_facedet_full()
+        download_resnet50_paddle()
 
     convert_models_to_tvm(use_caffe)
 

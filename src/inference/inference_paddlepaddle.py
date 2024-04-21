@@ -170,10 +170,12 @@ def main():
                                              target_device=args.device)
 
     config = paddle_infer.Config(args.model_path, args.params_path)
-    config.set_cpu_math_library_num_threads(args.number_threads)
+
     config.enable_memory_optim()
     if args.device == 'GPU':
         config.enable_use_gpu(args.memory_pool_init_size_mb, 0)
+    else:
+        config.set_cpu_math_library_num_threads(args.number_threads)
     predictor = paddle_infer.create_predictor(config)
     args.input_shapes = prep.parse_input_arg(args.input_shapes, args.input_names)
     for name in predictor.get_input_names():
