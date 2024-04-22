@@ -1,0 +1,12 @@
+# Python 3.9.13 (conda)
+certifi==2024.2.2
+charset-normalizer==3.3.2
+graphviz==0.8.4
+idna==3.6
+mxnet==1.9.1
+numpy==1.23.5
+onnx==1.14.1
+protobuf==4.25.3
+requests==2.31.0
+typing_extensions==4.10.0
+urllib3==2.2.1
