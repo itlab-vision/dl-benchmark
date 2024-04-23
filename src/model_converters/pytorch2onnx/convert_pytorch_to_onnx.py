@@ -19,7 +19,7 @@ def parse_input_shape(value, count):
             raise argparse.ArgumentTypeError(f'The length should be {count}')
         return nums
     except ValueError:
-        errStr = 'int: ' * (count - 1) + 'int'
+        errStr = ': '.join(['int'] * count)
         raise argparse.ArgumentTypeError(
             f'The parameter must be in the format [{errStr}]')
 
