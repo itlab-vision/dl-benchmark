@@ -11,5 +11,6 @@ class KnownFrameworks:
     opencv_dnn_cpp = 'OpenCV DNN Cpp'
     pytorch = 'PyTorch'
     pytorch_cpp = 'PyTorch Cpp'
+    dgl_pytorch = 'DGL PyTorch'
     tvm = 'TVM'
     rknn = 'RKNN'

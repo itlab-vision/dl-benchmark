@@ -12,6 +12,7 @@
 1. PyTorch.
 1. ONNX Runtime.
 1. Apache TVM.
+1. Deep Graph Library (DGL, PyTorch-based).
 1. RKNN.
 
 ## Вывод глубоких моделей с использованием Inference Engine
@@ -1148,7 +1149,64 @@ python3 quantization_mxnet.py \
 ```bash
 python3 quantization_mxnet.py \
         -mn <name_of_model> \
-        -is <input_shape> \ 
+        -is <input_shape> \
+```
+
+## Вывод графовых глубоких моделей с использованием Deep Graph Library (DGL, PyTorch-based)
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_dgl_pytorch.py
+```
+
+Обязательные аргументы:
+
+- `-mn / --model_name` - название модели.
+- `-mm / --module` - путь до Python-модуля или относительный путь
+  до Python-файла с архитектурой модели.
+- `-i / --input` - путь до графа (расширение файла `.bin`).
+- `-m / --model` - путь до описания архитектуры модели
+  в формате `.pt`.
+
+Опциональные аргументы:
+
+- `--report_path` - путь до отчета работы бенчмарка.
+- `-ni / --number_iter` - количество прямых проходов по сети. По умолчанию
+  выполняется один проход по сети.
+- `-t / --task` - название задачи. Текущая реализация поддерживает
+  решение задачи классификации вершин графа. По умолчанию принимает значение
+  `feedforward`.
+- `-b / --batch_size` - количество графов, которые будут обработаны
+  за один проход сети. По умолчанию равно `1`.
+- `--raw_output` - работа скрипта без логов. По умолчанию не установлен.
+- `-d / --device` - оборудование, на котором выполняется вывод сети.
+  Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
+  (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
+  При запуске на `GPU` необходимо установить пакет под конкретную платформу
+  в соответсвии с [документацией][dgl].
+- `--time` - время выполнение инференса в секундах. Этот параметр можно 
+  задать вместо задать вместо параметра `-ni / --number_iter`. Если 
+  одновременно указать и `-ni / --number_iter` и `--time`,
+  то будет учитываться тот параметр, при котором инферес работает дольше.
+- `--num_inter_threads` - количество потоков, используемых для параллелизма
+  между независимыми операциями. По умолчанию не установлен и выбирается
+  PyTorch автоматически.
+- `--num_intra_threads` - количество потоков, используемых для параллелизма
+  внутри операций. По умолчанию не установлен и выбирается
+  PyTorch автоматически.
+
+#### Примеры запуска
+
+**Запуск вывода для модели, которая загружается из файла и модуля**
+
+```bash
+python inference_dgl_pytorch.py --model_name <model_name> \
+                                --module <module_name> \
+                                --model <file_name>.pt \
+                                --input <path_to_data>
 ```
 
 ## Валидация вывода глубоких моделей с использованием PyTorch (C++ API)
@@ -1246,15 +1304,10 @@ python inference_pytorch_cpp.py --model_name <model_name> \
 ```
 
 <!-- LINKS -->
-
 [execution_providers]: https://onnxruntime.ai/docs/execution-providers
-
 [gluon_modelzoo]: https://cv.gluon.ai/model_zoo/index.html
-
 [tflite_delegates]: https://www.tensorflow.org/lite/performance/delegates
-
 [torchvision]: https://pytorch.org/vision/stable/models.html
-
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
-
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
+[dgl]: https://www.dgl.ai/pages/start.html

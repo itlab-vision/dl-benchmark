@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>node-classification</Task>
+            <Name>GCN</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>DGL (PyTorch)</SourceFramework>
+            <ModelPath>../models_dir/dgl/gcn_model.pt</ModelPath>
+            <WeightsPath></WeightsPath>
+            <Module>../models_dir/dgl/GCN.py</Module>
+        </Model>
+        <Dataset>
+            <Name>Cora</Name>
+            <Path>../test_graph/dgl/default_graph.bin</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>DGL PyTorch</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>5</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <InterOpThreads></InterOpThreads>
+            <IntraOpThreads></IntraOpThreads>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+        </FrameworkDependent>
+    </Test>
+</Tests>
