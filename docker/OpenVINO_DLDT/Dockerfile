@@ -1,8 +1,8 @@
 FROM ubuntu_for_dli
 
 # Install OpenVINO
-ARG OV_SHORT_VERSION=2023.3.0
-ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.13775.ceeafaf64f3_x86_x64"
+ARG OV_SHORT_VERSION=2023.3
+ARG OV_LONG_VERSION="${OV_SHORT_VERSION}.0.13775.ceeafaf64f3_x86_x64"
 RUN sudo mkdir /opt/intel && \
     wget -q https://storage.openvinotoolkit.org/repositories/openvino/packages/${OV_SHORT_VERSION}/linux/l_openvino_toolkit_ubuntu22_${OV_LONG_VERSION}.tgz \
         -O /tmp/openvino.tgz --no-check-certificate --quiet && \
