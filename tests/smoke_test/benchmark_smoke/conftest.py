@@ -75,6 +75,19 @@ def overrided_models(pytestconfig):
     return pytestconfig.getoption('models')
 
 
+def download_dgl_models(output_dir: Path = OUTPUT_DIR):
+    dgl_dir = Path(output_dir, 'dgl')
+    dgl_pt_link = ('https://raw.githubusercontent.com/itlab-vision/'
+                   'itlab-vision-dl-benchmark-models/main/dgl/models/'
+                   'classification/GCN/gcn_model.pt')
+    download_file(dgl_pt_link, dgl_dir, 'gcn_model.pt')
+
+    dgl_py_link = ('https://raw.githubusercontent.com/itlab-vision/'
+                   'itlab-vision-dl-benchmark-models/main/dgl/models/'
+                   'classification/GCN/GCN.py')
+    download_file(dgl_py_link, dgl_dir, 'GCN.py')
+
+
 def download_citation_gcn(output_dir: Path = OUTPUT_DIR):
     cit_gcn_dir = Path(output_dir, 'citation-gcn')
     cit_gcn_link = ('https://raw.githubusercontent.com/itlab-vision/itlab-vision-dl-benchmark-models/main/'
@@ -156,6 +169,7 @@ def prepare_dl_models(request, overrided_models):
     if not use_caffe:
         convert_models(models_list=enabled_models)
 
+        download_dgl_models()
         download_resnet50()
         download_old_instance_segmentation()
         download_yolov2_tiny_tf()
@@ -196,5 +210,7 @@ def pytest_generate_tests(metafunc):
     for i, test_param in enumerate(param_list):
         if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM']:
             param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
+        if test_param.config_name in ['dgl']:
+            param_list[i] = pytest.param(test_param)
 
     metafunc.parametrize('test_configuration', param_list, ids=id_list)

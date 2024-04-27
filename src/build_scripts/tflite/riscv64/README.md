@@ -40,3 +40,38 @@
    ```bash
    ./builded_launcher/cpp_tflite_launcher_riscv_build/bin/tflite_benchmark -m mobilenet_v1_1.0_224/mobilenet_v1_1.0_224.tflite
    ```
+
+   
+# Create pip package of TensorFlow Lite with Python API for Linux RISC-V platform
+
+Tested for Python3.10
+
+1. Install dependencies
+
+   ```bash
+   python3 -m pip install pybind11
+   ```
+   
+1. Clone TensorFlow sources and apply patch
+
+   ```bash
+   git clone https://github.com/tensorflow/tensorflow -b v2.14.0
+   cd tensorflow
+   git apply <path>/riscv64.pip.patch
+   ```
+   
+1. Build TensorFlow pip package and copy it to root directory
+
+   ```bash
+   cd tensorflow/tensorflow/lite/tools/pip_package/
+   BUILD_NUM_JOBS=2 bash build_pip_package_with_cmake.sh rv64gc
+   cp gen/tflite_pip/python3/dist/tflite_runtime-2.14.0-cp310-cp310-linux_riscv64.whl ../../../../../
+   ```
+   
+1. Install TensorFlow pip package
+
+   ```bash
+   python3 -m pip install tflite_runtime-2.14.0-cp310-cp310-linux_riscv64.whl
+   ```
+
+
