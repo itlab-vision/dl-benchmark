@@ -87,11 +87,11 @@ if __name__ == '__main__':
         torch_model = get_model_by_name(args.model_name)
         nums = parse_input_shape(args.input_size, 2)
 
-        my_converter = model_converter.Converter(save_dir=f'{args.output_dir}',
+        converter = model_converter.Converter(save_dir=f'{args.output_dir}',
                                                  simplify_exported_model=False,
                                                  )
 
-        converted_model = my_converter.convert(
+        converted_model = converter.convert(
             torch_model=torch_model,
             batch_size=args.batch_size,
             input_size=nums,
