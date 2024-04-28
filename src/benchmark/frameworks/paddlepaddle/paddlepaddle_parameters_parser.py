@@ -49,7 +49,7 @@ class PaddlePaddleParameters(FrameworkParameters):
         self.input_scale = None
         self.input_shape = None
         self.input_name = None
-        self.layout = None
+        self.output_names = None
         self.nthreads = None
         self.delegate = None
         self.delegate_options = None
@@ -65,7 +65,7 @@ class PaddlePaddleParameters(FrameworkParameters):
         if self._parameter_is_not_none(input_name):
             self.input_name = input_name
         if self._parameter_is_not_none(output_names):
-            self.layout = output_names
+            self.output_names = output_names
         if self._parameter_is_not_none(thread_count):
             if self._int_value_is_correct(thread_count):
                 self.nthreads = thread_count
