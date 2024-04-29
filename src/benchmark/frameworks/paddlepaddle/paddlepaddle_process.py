@@ -27,7 +27,7 @@ class PaddlePaddleProcess(ProcessHandler):
         batch = self._test.indep_parameters.batch_size
         device = self._test.indep_parameters.device
 
-        common_params = (f'-m {model} -p {params} -i {dataset} -b {batch} -d {device}'
+        common_params = (f'-m {model} -p {params} -i {dataset} -b {batch} -d {device} '
                          f'--report_path {self.report_path}')
 
         common_params = self._add_optional_argument_to_cmd_line(common_params, '-i', dataset)
