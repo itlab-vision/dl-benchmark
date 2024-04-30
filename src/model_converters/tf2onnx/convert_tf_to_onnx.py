@@ -37,7 +37,6 @@ def cli_argument_parser():
                         dest='input_shape')
     parser.add_argument('--output_name',
                         help='Name of the output tensor',
-                        required=True,
                         type=str,
                         dest='output_name')
 
@@ -85,10 +84,8 @@ def main():
                     tf.TensorSpec(shape=ast.literal_eval(args.input_shape), dtype=tf.float32, name=args.input_name)
                 ],
                 opset=13,  # Adjust opset version as needed
+                output_path=args.output,
             )
-
-            # Save the ONNX model to the specified output path
-            tf2onnx.save_model(model_proto, args.output)
 
             # Print conversion success message and output path
             logger.info('Model successfully converted to ONNX.')
