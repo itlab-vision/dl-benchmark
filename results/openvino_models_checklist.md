@@ -9,7 +9,7 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 alexnet|-|+|+|+|+|+|+|
 ***anti-spoof-mn3***|+|-|-|-|-|-|-|
 caffenet|-|+|+|+|+|+|+|
-***convnext-tiny***|+|-|-|-|-|-|+|
+convnext-tiny|+|-|-|-|-|-|+|
 densenet-121|-|+|+|+|+|+|+|
 densenet-121-caffe2|-|+|-|+|-|-|-|
 densenet-121-tf|+|+|-|+|+|+|+|
@@ -41,7 +41,7 @@ googlenet-v4|-|+|+|-|-|-|-|
 googlenet-v4-tf|+|+|-|+|+|+|+|
 inception-resnet-v2|-|+|+|-*|-|-|-|
 inception-resnet-v2-tf|+|+|-|+|+|-|+|
-***levit-128s***|+|-|-|-|-|-|+|
+levit-128s|+|-|-|-|-|-|+|
 mixnet-l|+|+|-|-*|-|-|+|
 mobilenet-v1-0.25-128|+|+|+|+|+|+|+|
 mobilenet-v1-0.50-160|-|+|+|+|-|-|-|
@@ -70,7 +70,7 @@ regnetx-3.2gf|+|+|-|-|-|-|+|
 repvgg-a0|+|+|-|-|-|-|+|
 repvgg-b1|+|+|-|-|-|-|+|
 repvgg-b3|+|+|-|-|-|-|+|
-***resnest-50-pytorch***|+|-|-|-|-|-|+|
+resnest-50-pytorch|+|-|-|-|-|-|+|
 resnet-101|-|called resnet-v1-101|+|-|-|-|-|
 resnet-152|-|called resnet-v1-152|+|-|-|-|-|
 resnet-18-pytorch|+|+|-|+|+|+|+|
@@ -91,7 +91,7 @@ shufflenet-v2-x1.0|+|+|-|-|-|-|+|
 squeezenet1.0|-|+|+|+|+|+|+|
 squeezenet1.1|-|+|+|+|+|+|+|
 squeezenet1.1-caffe2|-|+|-|+|-|-|-|
-***swin-tiny-patch4-window7-224***|+|-|-|-|-|-|+|
+swin-tiny-patch4-window7-224|+|-|-|-|-|-|+|
 t2t-vit-14|+|+|-|-|-|-|+|
 vgg16|-|+|+|+|+|+|+|
 vgg19|-|+|+|+|+|+|+|
@@ -154,7 +154,7 @@ retinanet-tf|+|+|-|-*|+|+|-|
 ssd300|-|+|+|+|+|+|+|
 ssd512|-|+|+|+|+|+|+|
 mobilenet-ssd|-|+|+|+|+|+|+|
-***ssd_mobilenet_v1_coco***|+|-|-|-|-|-|+|
+ssd_mobilenet_v1_coco|+|-|-|-|-|-|+|
 ssd_mobilenet_v1_fpn_coco|+|+|+|+|+|+|+|
 ssdlite_mobilenet_v2|+|+|-|-|-|-|-|
 ssd_mobilenet_v2_coco|-|+|+|+|-|-|-|
@@ -397,7 +397,7 @@ facial-landmarks-35-adas-0002|+|+|+|+|-|-|+|
 license-plate-recognition-barrier-0001|+|+|-|+|+|-|+|
 ***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|-|-|-|
 ***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|-|-|-|
-emotions-recognition-retail-0003|+|there is no data (AffectNet)|-|-|-|-|-|
+***emotions-recognition-retail-0003***|+|there is no data (AffectNet)|-|-|-|-|-|
 landmarks-regression-retail-0009|+|+|+|+|+|+|+|
 ***facial-landmarks-98-detection-0001***|+|-|-|-|-|-|-|
 facial-landmarks-35-adas-0002|+|+|+|+|+|-|+|
@@ -487,9 +487,9 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
 -|-|-|-|-|-|-|-|
 ***text-spotting-0005***|+|pipeline|-|-|-|-|-|
-text-spotting-0005-detector|-|pipeline|-|-|-|-|-|
-text-spotting-0005-recognizer-decoder|-|-|-|-|-|-|-|
-text-spotting-0005-recognizer-encoder|-|-|-|-|-|-|-|
+***text-spotting-0005-detector***|-|pipeline|-|-|-|-|-|
+***text-spotting-0005-recognizer-decoder***|-|-|-|-|-|-|-|
+***text-spotting-0005-recognizer-encoder***|-|-|-|-|-|-|-|
 
 ### Action recognition
 
@@ -505,7 +505,7 @@ action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|-|-|-|
 
 ### Image retrieval
 
-Model | Availability in OMZ (2021.10.19)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
 -|-|-|-|-|-|-|-|
 image-retrieval-0001|+|+|-|-*|+|-|+|
 
@@ -576,15 +576,15 @@ the performance table.
 ### Intel models
 
 1. asl-recognition-0004
+1. bert-large-uncased-whole-word-masking-squad-0001
+1. bert-large-uncased-whole-word-masking-squad-emb-0001
+1. bert-large-uncased-whole-word-masking-squad-int8-0001
 1. bert-small-uncased-whole-word-masking-squad-0001
 1. bert-small-uncased-whole-word-masking-squad-0002
 1. bert-small-uncased-whole-word-masking-squad-emb-int8-0001
 1. bert-small-uncased-whole-word-masking-squad-int8-0002
-1. bert-large-uncased-whole-word-masking-squad-emb-0001
-1. bert-large-uncased-whole-word-masking-squad-int8-0001
-1. bert-large-uncased-whole-word-masking-squad-fp32-0001
 1. common-sign-language-0002
-1. faster-rcnn-resnet101-coco-sparse-60-0001
+1. emotions-recognition-retail-0003
 1. face-detection-0200
 1. face-detection-0202
 1. face-detection-0204
@@ -594,8 +594,10 @@ the performance table.
 1. faster-rcnn-resnet101-coco-sparse-60-0001
 1. formula-recognition-medium-scan-0001
 1. formula-recognition-polynomials-handwritten-0001
+1. handwritten-english-recognition-0001
+1. handwritten-japanese-recognition-0001
+1. handwritten-score-recognition-0003
 1. handwritten-simplified-chinese-recognition-0001
-1. handwritten-english-recognition-0001-0001
 1. horizontal-text-detection-0001
 1. human-pose-estimation-0005
 1. human-pose-estimation-0006
@@ -610,8 +612,8 @@ the performance table.
 1. machine-translation-nar-en-de-0002
 1. machine-translation-nar-en-ru-0001
 1. machine-translation-nar-ru-en-0001
-1. noise-suppression-poconetlike-0001
 1. noise-suppression-denseunet-ll-0001
+1. noise-suppression-poconetlike-0001
 1. person-attributes-recognition-crossroad-0234
 1. person-attributes-recognition-crossroad-0238
 1. person-detection-0106
@@ -628,29 +630,35 @@ the performance table.
 1. person-vehicle-bike-detection-2003
 1. person-vehicle-bike-detection-2004
 1. person-vehicle-bike-detection-crossroad-yolov3-1020
+1. resnet50-binary-0001
+1. smartlab-action-recognition-0001-decoder
+1. smartlab-action-recognition-0001-encoder-side
+1. smartlab-action-recognition-0001-encoder-top
 1. smartlab-object-detection-0001
 1. smartlab-object-detection-0002
 1. smartlab-object-detection-0003
 1. smartlab-object-detection-0004
 1. smartlab-sequence-modelling-0001
 1. smartlab-sequence-modelling-0002
-1. smartlab-action-recognition-0001-encoder-side
-1. smartlab-action-recognition-0001-encoder-top
-1. smartlab-action-recognition-0001-decoder
+1. text-detection-0003
+1. text-detection-0004
+1. text-image-super-resolution-0001
 1. text-recognition-0012
 1. text-recognition-0014
 1. text-recognition-0015
 1. text-recognition-0016
-1. text-to-speech-en-0001
+1. text-spotting-0005
+1. text-spotting-0005-detector
+1. text-spotting-0005-recognizer-decoder
+1. text-spotting-0005-recognizer-encoder
 1. text-to-speech-en-multi-0001
 1. time-series-forecasting-electricity-0001
+1. vehicle-attributes-recognition-barrier-0039
 1. vehicle-attributes-recognition-barrier-0042
 1. vehicle-detection-0200
 1. vehicle-detection-0201
 1. vehicle-detection-0202
 1. weld-porosity-detection-0001
-1. resnet50-binary-0001
-1. text-spotting-0005
 1. yolo-v2-tiny-vehicle-detection-0001
 
 ### Public models
@@ -658,50 +666,62 @@ the performance table.
 1. aclnet
 1. aclnet-int8
 1. anti-spoof-mn3
+1. background-matting-mobilenetv2
 1. bert-base-ner
+1. brain-tumor-segmentation-0001
+1. brain-tumor-segmentation-0002
 1. cocosnet
 1. colorization-siggraph
 1. colorization-v2
 1. common-sign-language-0001
-1. ctdet_coco_dlav0_384
 1. ctdet_coco_dlav0_512
+1. ctpn
 1. deblurgan-v2
 1. detr-resnet50
 1. drn-d-38
 1. efficientdet-d0-tf
 1. efficientdet-d1-tf
+1. efficientnet-v2-b0
+1. efficientnet-v2-s
 1. erfnet
-1. fbcnn
 1. f3net
-1. faceboxes-pytorch
 1. face-recognition-resnet100-arcface-onnx
+1. faceboxes-pytorch
+1. facenet-20180408-102900
+1. fast-neural-style-mosaic-onnx
 1. fastseg-large
 1. fastseg-small
-1. fast-neural-style-mosaic-onnx
+1. fbcnn
 1. fcrn-dp-nyu-depth-v2-tf
 1. forward-tacotron
 1. gmcnn-places2-tf
 1. gpt-2
 1. higher-hrnet-w32-human-pose-estimation
+1. hrnet-v2-c1-segmentation
 1. human-pose-estimation-3d-0001
 1. hybrid-cs-model-mri
 1. i3d-rgb-tf
 1. license-plate-recognition-barrier-0007
 1. midasnet
 1. mobilefacedet-v1-mxnet
-1. mobilenet-yolo-v4-syg
+1. mobilenet-v3-large-1.0-224-paddle
 1. mobilenet-v3-small-1.0-paddle
+1. mobilenet-yolo-v4-syg
+1. modnet-photographic-portrait-matting
+1. modnet-webcam-portrait-matting
 1. mozilla-deepspeech-0.6.1
 1. mozilla-deepspeech-0.8.2
+1. mtcnn
 1. nanodet-m-1.5x-416
 1. nanodet-plus-m-1.5x-416
 1. netvlad-tf
 1. ocrnet-hrnet-w48-paddle
 1. pspnet-pytorch
 1. quartznet-15x5-en
-1. resnest-50-pytorch
+1. retinaface-resnet50-pytorch
 1. retinaface-resnet50-pytorch
 1. rfcn-resnet101-coco-tf
+1. robust-video-matting-mobilenetv3
 1. single-human-pose-estimation-0001
 1. ssd-resnet34-1200-onnx
 1. text-recognition-resnet-fc
@@ -713,23 +733,10 @@ the performance table.
 1. wav2vec2-base
 1. wavernn
 1. yolact-resnet50-fpn-pytorch
-1. yolo-v3-tiny-tf
+1. yolo-v3-onnx
 1. yolo-v3-tiny-onnx
-1. yolo-v4-tiny-tf
+1. yolo-v3-tiny-tf
 1. yolo-v4-tf
+1. yolo-v4-tiny-tf
 1. yolof
 1. yolox-tiny
-1. convnext-tiny
-1. efficientnet-v2-b0
-1. efficientnet-v2-s
-1. levit-128s
-1. mobilenet-v3-small-1.0-paddle
-1. mobilenet-v3-large-1.0-224-paddle
-1. swin-tiny-patch4-window7-224
-1. retinaface-resnet50-pytorch
-1. ssd_mobilenet_v1_coco
-1. yolo-v3-onnx
-1. background-matting-mobilenetv2
-1. modnet-photographic-portrait-matting
-1. modnet-webcam-portrait-matting
-1. robust-video-matting-mobilenetv3
