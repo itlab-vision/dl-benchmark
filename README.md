@@ -62,6 +62,14 @@ Please consider citing the following papers.
    inference on the example of an image classification problem //
    Russian Supercomputing Days (RSD-2023). - 2023. (In Russian)
 
+1. Alibekov M.R., Berezina N.E., Vasiliev E.P., Vikhrev I.B., Kamelina Yu.D.,
+   Kustikova V.D., Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
+   Performance analysis methodology of deep neural networks inference
+   on the example of an image classification problem // Numerical Methods
+   and Programming. 25(2), 127-141 (2024). doi 10.26089/NumMet.v25r211. -
+   [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
+   (In Russian)
+
 ## Repo structure
 
 - `demo` directory contains demos for different frameworks
