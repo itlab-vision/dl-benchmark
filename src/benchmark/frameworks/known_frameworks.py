@@ -14,3 +14,4 @@ class KnownFrameworks:
     dgl_pytorch = 'DGL PyTorch'
     tvm = 'TVM'
     rknn = 'RKNN'
+    ncnn = 'ncnn'

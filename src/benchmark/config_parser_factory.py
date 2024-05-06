@@ -10,6 +10,7 @@ from frameworks.onnx_runtime_python.onnx_runtime_python_parameters_parser import
 from frameworks.config_parser.dependent_parameters_parser_cpp import CppParametersParser
 from frameworks.dgl_pytorch.dgl_pytorch_parametrs_parser import DGLPyTorchParametersParser
 from frameworks.tvm.tvm_parameters_parser import TVMParametersParser
+from frameworks.ncnn.ncnn_parameters_parser import NcnnParametersParser
 
 
 def get_parameters_parser(framework):
@@ -41,6 +42,8 @@ def get_parameters_parser(framework):
         return DGLPyTorchParametersParser()
     if framework == KnownFrameworks.tvm:
         return TVMParametersParser()
+    if framework == KnownFrameworks.ncnn:
+        return NcnnParametersParser()
     if framework == KnownFrameworks.rknn:
         return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

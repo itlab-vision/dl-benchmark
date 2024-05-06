@@ -15,3 +15,4 @@ dgl==2.0.0
 dglgo==0.0.2
 
 tflite
+ncnn
