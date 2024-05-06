@@ -66,7 +66,7 @@ Please consider citing the following papers.
    Kustikova V.D., Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
    Performance analysis methodology of deep neural networks inference
    on the example of an image classification problem // Numerical Methods
-   and Programming. 25(2), 127-141 (2024). doi 10.26089/NumMet.v25r211. -
+   and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
    [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
    (In Russian)
 
