@@ -256,6 +256,7 @@ Report questions, issues and suggestions, using:
 [gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
 [torchvision]: https://pytorch.org/vision/stable/models.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
+[nummeth2023]: https://num-meth.ru/index.php/journal/article/view/1332/1264
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
 [dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
