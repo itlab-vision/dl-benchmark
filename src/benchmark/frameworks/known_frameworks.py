@@ -15,3 +15,4 @@ class KnownFrameworks:
     tvm = 'TVM'
     spektral = 'Spektral'
     rknn = 'RKNN'
+    ncnn = 'ncnn'
