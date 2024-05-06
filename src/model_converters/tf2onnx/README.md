@@ -18,33 +18,36 @@ convert_tf_to_onnx.py
 
 **Аргументы:**
 
-- `--graphdef` - Path to the TensorFlow model graphdef file.
-- `--output` - Path to save the converted ONNX model.
-- `--input_name` - Name of the input tensor.
-- `--input_shape` - Shape of the input tensor as a Python list. Should be in the format "[batch_size, height, width, channels]".
-- `--output_name` - Name of the output tensor.
+- `--graphdef` is a path to the TensorFlow model graphdef file.
+- `--output` is a path to save the converted ONNX model.
+- `--input_name` is an input tensor name.
+- `--input_shape` is a shape of the input tensor as a Python list. Should be in the format
+  `[batch_size, height, width, channels]`.
+- `--output_name` is an output tensor name.
 
 **Пример запуска для resnet-50-tf**
 
 ```bash
 python convert_tf_to_onnx.py \
---graphdef ./public/resnet-50-tf/resnet_v1-50.pb \
---output ./resnet_v1-50.onnx \
---input_name map/TensorArrayStack/TensorArrayGatherV3:0 \
---input_shape [3,224,224,3] \
---output_name softmax_tensor:0
+         --graphdef ./public/resnet-50-tf/resnet_v1-50.pb \
+         --output ./resnet_v1-50.onnx \
+         --input_name map/TensorArrayStack/TensorArrayGatherV3:0 \
+         --input_shape [3,224,224,3] \
+         --output_name softmax_tensor:0
 ```
 
 ## Результаты валидации OMZ моделей 
+
 Ниже приведены результаты запуска вывода исходных моделей в формате TensorFlow,
-моделей, сконвертированных в ONNX-формат, а также моделей, заново сконвертированнх в TensorFlow-фомат,
-с использованием скриптов `inference_tensorflow.py` и `inference_onnx_runtime.py`
+моделей, сконвертированных в ONNX-формат, а также моделей, сконвертированных обратно
+в TensorFlow-формат, с использованием скриптов `inference_tensorflow.py`
+и `inference_onnx_runtime.py`
 
 ### Тестовое изображение 1
 
 <img width="150" src="..\..\..\results\validation\images\ILSVRC2012_val_00000023.JPEG"></img>
 
-|Model|TensorFlow|ONNX|TensorFlow|
+|Model|TensorFlow (tf)|ONNX (tf->onnx)|TensorFlow (onnx->tf)|
 |-|-|-|-|
 |densenet-121-tf|0.9505768 Granny Smith<br/>0.0134135 orange<br/>0.0113246 lemon<br/>0.0029127 banana<br/>0.0024542 piggy bank, penny bank|0.9505770 Granny Smith<br/>0.0134135 orange<br/>0.0113245 lemon<br/>0.0029127 banana<br/>0.0024542 piggy bank, penny bank|0.9505768 Granny Smith<br/>0.0134136 orange<br/>0.0113246 lemon<br/>0.0029127 banana<br/>0.0024542 piggy bank, penny bank|
 |efficientnet-b0|10.7337656 Granny Smith<br/>4.8936868 lemon<br/>4.3447986 bell pepper<br/>4.3027477 orange<br/>4.2535620 piggy bank, penny bankenny bank|TypeError: 'name: "_make_dataset_0Demu56M10g"' is not an accepted attribute value.|
@@ -65,7 +68,7 @@ python convert_tf_to_onnx.py \
 
 <img width="150" src="..\..\..\results\validation\images\ILSVRC2012_val_00000247.JPEG"></img>
 
-|Model|TensorFlow|ONNX|TensorFlow|
+|Model|TensorFlow (tf)|ONNX (tf->onnx)|TensorFlow (onnx->tf)|
 |-|-|-|-|
 |densenet-121-tf|0.9821593 junco, snowbird<br/>0.0083621 chickadee<br/>0.0040121 brambling, Fringilla montifringilla<br/>0.0016480 water ouzel, dipper<br/>0.0015073 indigo bunting, indigo finch, indigo bird, Passerina cyanea|0.9821594 junco, snowbird<br/>0.0083621 chickadee<br/>0.0040121 brambling, Fringilla montifringilla<br/>0.0016479 water ouzel, dipper<br/>0.0015073 indigo bunting, indigo finch, indigo bird, Passerina cyanea|0.9821593 junco, snowbird<br/>0.0083621 chickadee<br/>0.0040121 brambling, Fringilla montifringilla<br/>0.0016480 water ouzel, dipper<br/>0.0015073 indigo bunting, indigo finch, indigo bird, Passerina cyanea|
 |efficientnet-b0|7.7920890 junco, snowbird<br/>5.7337265 chickadee<br/>5.4845700 water ouzel, dipper<br/>3.9789391 brambling, Fringilla montifringilla<br/>3.1936715 bulbul|TypeError: 'name: "_make_dataset_0Demu56M10g"' is not an accepted attribute value.|
@@ -86,7 +89,7 @@ python convert_tf_to_onnx.py \
 
 <img width="150" src="..\..\..\results\validation\images\ILSVRC2012_val_00018592.JPEG"></img>
 
-|Model|TensorFlow|ONNX|TensorFlow|
+|Model|TensorFlow (tf)|ONNX (tf->onnx)|TensorFlow (onnx->tf)|
 |-|-|-|-|
 |densenet-121-tf|0.3172949 liner, ocean liner<br/>0.1268195 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.1153852 container ship, containership, container vessel<br/>0.0765769 drilling platform, offshore rig<br/>0.0727640 dock, dockage, docking facility|0.3172937 liner, ocean liner<br/>0.1268198 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.1153852 container ship, containership, container vessel<br/>0.0765764 drilling platform, offshore rig<br/>0.0727642 dock, dockage, docking facility|0.3172949 liner, ocean liner<br/>0.1268195 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>0.1153848 container ship, containership, container vessel<br/>0.0765768 drilling platform, offshore rig<br/>0.0727641 dock, dockage, docking facility|
 |efficientnet-b0|6.3308716 breakwater, groin, groyne, mole, bulwark, seawall, jetty<br/>5.6206541 beacon, lighthouse, beacon light, pharos<br/>5.5816445 liner, ocean liner<br/>5.2046542 submarine, pigboat, sub, U-boat<br/>5.1616168 lifeboat|TypeError: 'name: "_make_dataset_0Demu56M10g"' is not an accepted attribute value.|
