@@ -15,6 +15,7 @@
 1. Deep Graph Library (DGL, PyTorch-based).
 1. RKNN.
 1. ncnn.
+1. Spektral.
 
 ## Вывод глубоких моделей с использованием Inference Engine
 
@@ -1093,6 +1094,47 @@ python3 inference_rknn.py \
     --output_path <output_json_path>
 ```
 
+## Вывод глубоких моделей с использованием Spektral
+
+#### Аргументы командной строки
+
+Название скрипта:
+
+```bash
+inference_spektral.py
+```
+
+Обязательные аргументы:
+
+- `-m / --model` - путь до keras-файла с обученной глубокой моделью.
+- `-i / --input` - путь до графа (расширение `.bin`).
+
+Опциональные аргументы:
+
+- `-b / --batch_size` - количество графов, которые будут обработаны
+  за один проход сети. По умолчанию равно `1`.
+- `-d / --device` - оборудование, на котором будет выполнен проход сети.
+  Поддерживается вывод на CPU (значение параметра `CPU`) и NVIDIA GPU
+  (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
+  Для запуска на GPU необходимо установить tensorflow с поддержкой GPU в
+  соответствии с [документацией][tensorflow-gpu].
+- `-ni / --number_iter` - количество прямых проходов по сети. По умолчанию
+  выполняется один проход по сети.
+- `-t / --task` - наименование решаемой задачи (`node-classification`).
+  По умолчанию обработка выхода не выполняется.
+- `--raw_output` - работа скрипта без логов. По умолчанию не установлен.
+- `--restrisct_gpu_usage` - ограничение использования видеокарт до 1-й. По умолчанию не установлен.
+
+#### Примеры запуска
+
+**Командная строка для решения задачи классификации вершин**
+
+```bash
+python3 inference_spektral.py \
+    -i <path_to_graph>/<graph_name> \
+    -m <path_to_model>/<model_name>.keras
+```
+
 ## Квантизация глубоких моделей с использованием MXNet
 
 #### Аргументы командной строки
@@ -1379,3 +1421,4 @@ python inference_ncnn.py --model <model_name> \
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
 [dgl]: https://www.dgl.ai/pages/start.html
+[tensorflow-gpu]: https://www.tensorflow.org/install/pip

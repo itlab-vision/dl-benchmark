@@ -16,3 +16,4 @@ dglgo==0.0.2
 
 tflite
 ncnn
+spektral==1.3.0

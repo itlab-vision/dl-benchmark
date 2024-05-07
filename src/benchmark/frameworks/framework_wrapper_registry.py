@@ -16,6 +16,7 @@ from .pytorch.pytorch_wrapper import PyTorchWrapper
 from .pytorch_cpp.pytorch_cpp_wrapper import PyTorchCppWrapper
 from .ncnn.ncnn_wrapper import NcnnWrapper
 from .dgl_pytorch.dgl_pytorch_wrapper import DGLPyTorchWrapper
+from .spektral.spektral_wrapper import SpektralWrapper
 from .rknn.rknn_wrapper import RknnWrapper
 
 
@@ -53,4 +54,5 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[DGLPyTorchWrapper.framework_name] = DGLPyTorchWrapper()
         self._framework_wrappers[TVMWrapper.framework_name] = TVMWrapper()
         self._framework_wrappers[NcnnWrapper.framework_name] = NcnnWrapper()
+        self._framework_wrappers[SpektralWrapper.framework_name] = SpektralWrapper()
         self._framework_wrappers[RknnWrapper.framework_name] = RknnWrapper()

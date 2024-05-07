@@ -27,6 +27,7 @@ DLI supports inference using the following frameworks:
 - [PyTorch][pytorch] (C++ and Python APIs).
 - [Apache TVM][tvm] (Python API).
 - [Deep Graph Library][dgl-pytorch] (PyTorch-based).
+- [Spektral][spektral] (Python API).
 - [RKNN][rknn] (C++ API).
 - [ncnn][ncnn] (Python API).
 
@@ -249,6 +250,7 @@ Report questions, issues and suggestions, using:
 [pytorch]: https://pytorch.org
 [tvm]: https://tvm.apache.org
 [dgl-pytorch]: https://www.dgl.ai
+[spektral]: https://graphneural.network
 [rknn]: https://github.com/rockchip-linux/rknn-toolkit2
 [ncnn]: https://github.com/Tencent/ncnn
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
