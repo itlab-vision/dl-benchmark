@@ -6,8 +6,8 @@
             <Name>resnet-50</Name>
             <Precision>FP32</Precision>
             <SourceFramework>PaddlePaddle</SourceFramework>
-            <ModelPath>../models_dir/public/resnet50_paddle/resnet50.pdmodel</ModelPath>
-            <WeightsPath>../models_dir/public/resnet50_paddle/resnet50.pdiparams</WeightsPath>
+            <ModelPath>../models_dir/resnet50_paddle/resnet50.pdmodel</ModelPath>
+            <WeightsPath>../models_dir/resnet50_paddle/resnet50.pdiparams</WeightsPath>
         </Model>
         <Dataset>
             <Name>Data</Name>
@@ -25,7 +25,7 @@
             <ChannelSwap></ChannelSwap>
             <Mean></Mean>
             <InputScale></InputScale>
-            <InputShape></InputShape>
+            <InputShape>[64,3,7,7]</InputShape>
             <InputName>inputs</InputName>
             <OutputNames></OutputNames>
             <ThreadCount></ThreadCount>
