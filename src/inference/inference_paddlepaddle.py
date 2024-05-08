@@ -83,7 +83,7 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='input_shapes',
-                        required=False)
+                        required=True)
     parser.add_argument('--input_names',
                         help='Names of the input tensors',
                         default=None,
