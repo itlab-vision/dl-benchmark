@@ -20,6 +20,7 @@ the following frameworks:
 - [Deep Graph Library][dgl-pytorch] (PyTorch-based).
 - [Apache TVM][tvm] (Python API).
 - [RKNN][rknn].
+- [Spektral][spektral] (Python API).
 
 ### Implemented algorithm
 
@@ -270,3 +271,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [dgl-pytorch]: https://www.dgl.ai
 [tvm]: https://tvm.apache.org
 [rknn]: https://github.com/rockchip-linux/rknpu2
+[spektral]: https://graphneural.network

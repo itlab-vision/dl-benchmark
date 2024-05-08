@@ -457,4 +457,30 @@
             <InputType>[U8]</InputType>
         </FrameworkDependent>
     </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework>ncnn</SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>ncnn</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit> 
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName></InputName>
+            <InputShape></InputShape>
+            <ThreadCount></ThreadCount>
+        </FrameworkDependent>
+    </Test>
 </Tests>
