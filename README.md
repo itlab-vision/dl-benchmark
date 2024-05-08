@@ -27,7 +27,9 @@ DLI supports inference using the following frameworks:
 - [PyTorch][pytorch] (C++ and Python APIs).
 - [Apache TVM][tvm] (Python API).
 - [Deep Graph Library][dgl-pytorch] (PyTorch-based).
+- [Spektral][spektral] (Python API).
 - [RKNN][rknn] (C++ API).
+- [ncnn][ncnn] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -61,6 +63,14 @@ Please consider citing the following papers.
    Performance analysis methodology of deep neural networks
    inference on the example of an image classification problem //
    Russian Supercomputing Days (RSD-2023). - 2023. (In Russian)
+
+1. Alibekov M.R., Berezina N.E., Vasiliev E.P., Vikhrev I.B., Kamelina Yu.D.,
+   Kustikova V.D., Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
+   Performance analysis methodology of deep neural networks inference
+   on the example of an image classification problem // Numerical Methods
+   and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
+   [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
+   (In Russian)
 
 ## Repo structure
 
@@ -240,7 +250,9 @@ Report questions, issues and suggestions, using:
 [pytorch]: https://pytorch.org
 [tvm]: https://tvm.apache.org
 [dgl-pytorch]: https://www.dgl.ai
+[spektral]: https://graphneural.network
 [rknn]: https://github.com/rockchip-linux/rknn-toolkit2
+[ncnn]: https://github.com/Tencent/ncnn
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
@@ -248,6 +260,7 @@ Report questions, issues and suggestions, using:
 [gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
 [torchvision]: https://pytorch.org/vision/stable/models.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
+[nummeth2023]: https://num-meth.ru/index.php/journal/article/view/1332/1264
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
 [dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
