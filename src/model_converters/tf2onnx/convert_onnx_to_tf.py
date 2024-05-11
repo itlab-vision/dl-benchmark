@@ -1,5 +1,4 @@
 import argparse
-import tensorflow as tf
 import onnx2tf
 import logging
 
