@@ -36,6 +36,59 @@ python convert_tf_to_onnx.py \
          --output_name softmax_tensor:0
 ```
 
+# Конвертер моделей из формата ONNX в TensorFlow 
+
+## Установка библиотеки onnx2tf
+
+Командная строка:
+
+```bash
+pip install -U onnx==1.15.0 \
+&& pip install -U nvidia-pyindex \
+&& pip install -U onnx-graphsurgeon \
+&& pip install -U onnxruntime==1.17.1 \
+&& pip install -U onnxsim==0.4.33 \
+&& pip install -U simple_onnx_processing_tools \
+&& pip install -U sne4onnx>=1.0.13 \
+&& pip install -U sng4onnx>=1.0.4 \
+&& pip install -U tensorflow==2.16.1 \
+&& pip install -U protobuf==3.20.3 \
+&& pip install -U onnx2tf \
+&& pip install -U h5py==3.11.0 \
+&& pip install -U psutil==5.9.5 \
+&& pip install -U ml_dtypes==0.3.2 \
+&& pip install -U tf-keras~=2.16
+```
+
+## Запуск скрипта конвертации
+
+Название скрипта:
+
+```bash
+convert_onnx_to_tf.py
+```
+
+**Аргументы:**
+
+- `--onnx_model` is a path to the ONNX model file.
+- `--output` is a path to save the converted TensorFlow model.
+- `--output_keras_v3` Output like keras_v3 model. Should be true or false.
+- `--output_tfv1_pb` Output like tfv1_model model. Should be true or false.
+- `--input_shape` is a shape of the input tensor as a Python list. Should be in the format
+  `[batch_size, height, width, channels]`.
+- `--input_name` is an input tensor name.
+
+**Пример запуска для mobilenet-v3-large-1.0-224-tf.onnx**
+
+```bash
+python /content/drive/MyDrive/dl/convert_onnx_to_tf.py \
+--onnx_model /content/drive/MyDrive/dl/onnx_models_conv/mobilenet-v3-large-1.0-224-tf.onnx \
+--output /content/drive/MyDrive/dl/test_5 \
+--output_tfv1_pb true \
+--input_shape "1, 224, 224, 3" \
+--input_name "input_1"
+```
+
 ## Результаты валидации OMZ моделей 
 
 Ниже приведены результаты запуска вывода исходных моделей в формате TensorFlow,
