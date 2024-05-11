@@ -80,9 +80,7 @@ def main():
             # Convert the Keras model to ONNX format
             model_proto, _ = tf2onnx.convert.from_keras(
                 model,
-                input_signature=[
-                    tf.TensorSpec(shape=ast.literal_eval(args.input_shape), dtype=tf.float32, name=args.input_name)
-                ],
+                input_signature=[tf.TensorSpec(shape=ast.literal_eval(args.input_shape), dtype=tf.float32, name=args.input_name)],
                 opset=13,  # Adjust opset version as needed
                 output_path=args.output,
             )
