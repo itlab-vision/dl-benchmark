@@ -11,7 +11,8 @@ def check_classification(output: list, model_name: str):
     classification_top_res = {'resnet-50-pytorch': 'baseball player',
                               'efficientnet-b0-pytorch': 'palace',
                               'mobilenet-v1-1.0-224-tf': 'window shade',
-                              'mobilenet-v1-1.0-224-tflite': 'damselfly'}
+                              'mobilenet-v1-1.0-224-tflite': 'damselfly',
+                              'squeezenet': 'ballplayer, baseball player'}
     start_search_index = output.index('[ INFO ] Result for image 1\n')
     search_area = output[start_search_index + 1:start_search_index + 5]
 
