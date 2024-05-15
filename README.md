@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a repo of deep learning inference benchmark, called DLI.
+This is a repo of the deep learning inference benchmark, called DLI.
 DLI is a benchmark for deep learning inference on various hardware.
 The goal of the project is to develop a software for measuring
 the performance of a wide range of deep learning models
@@ -44,7 +44,8 @@ This project is licensed under the terms of the [Apache 2.0 license](LICENSE).
 Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
-   Kogteva N. DLI: Deep Learning Inference Benchmark //
+   Kogteva N. DLI: Dee
+p Learning Inference Benchmark //
    Communications in Computer and Information Science.
    V.1129. 2019. P. 542-553.
 
