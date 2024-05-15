@@ -35,7 +35,7 @@ def cli_argument_parser():
     parser.add_argument('--input_name',
                         help='Name of the input tensor',
                         type=str,
-                        dest='input_name')       
+                        dest='input_name')
 
     args = parser.parse_args()
     return args
@@ -53,7 +53,7 @@ def main():
             non_verbose=False,
             output_tfv1_pb=args.output_tfv1_pb,
             output_keras_v3=args.output_keras_v3,
-            overwrite_input_shape=[''.join(args.input_name.split()+':'.split(' ') + args.input_shape.split(' '))],
+            overwrite_input_shape=[''.join(args.input_name.split() + ':'.split(' ') + args.input_shape.split(' '))],
         )
 
         # Print conversion success message and output path
@@ -63,6 +63,6 @@ def main():
         # If conversion fails, print error message
         logger.error(f'Conversion to TF failed: {e}')
 
-    
+
 if __name__ == '__main__':
     main()
