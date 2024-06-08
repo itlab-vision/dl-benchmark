@@ -44,8 +44,7 @@ This project is licensed under the terms of the [Apache 2.0 license](LICENSE).
 Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
-   Kogteva N. DLI: Dee
-p Learning Inference Benchmark //
+   Kogteva N. DLI: Deep Learning Inference Benchmark //
    Communications in Computer and Information Science.
    V.1129. 2019. P. 542-553.
 
