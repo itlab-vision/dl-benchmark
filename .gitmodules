@@ -2,3 +2,7 @@
     path = src/cpp_dl_benchmark/thirdparty/gflags
     url = https://github.com/gflags/gflags.git
     branch = master
+[submodule "src/output_processing/thirdparty/pybind11"]
+	path = src/output_processing/thirdparty/pybind11
+	url = https://github.com/pybind/pybind11.git
+    branch = master
