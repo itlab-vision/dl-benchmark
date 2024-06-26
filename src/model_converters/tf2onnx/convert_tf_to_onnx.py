@@ -85,7 +85,7 @@ def main():
                         shape=ast.literal_eval(args.input_shape),
                         dtype=tf.float32,
                         name=args.input_name,
-                    )
+                    ),
                 ],
                 opset=13,  # Adjust opset version as needed
                 output_path=args.output,
