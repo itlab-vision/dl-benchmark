@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a repo of deep learning inference benchmark, called DLI.
+This is a repo of the deep learning inference benchmark, called DLI.
 DLI is a benchmark for deep learning inference on various hardware.
 The goal of the project is to develop a software for measuring
 the performance of a wide range of deep learning models
@@ -27,7 +27,9 @@ DLI supports inference using the following frameworks:
 - [PyTorch][pytorch] (C++ and Python APIs).
 - [Apache TVM][tvm] (Python API).
 - [Deep Graph Library][dgl-pytorch] (PyTorch-based).
+- [Spektral][spektral] (Python API).
 - [RKNN][rknn] (C++ API).
+- [ncnn][ncnn] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -42,7 +44,8 @@ This project is licensed under the terms of the [Apache 2.0 license](LICENSE).
 Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
-   Kogteva N. DLI: Deep Learning Inference Benchmark //
+   Kogteva N. DLI: Dee
+p Learning Inference Benchmark //
    Communications in Computer and Information Science.
    V.1129. 2019. P. 542-553.
 
@@ -61,6 +64,14 @@ Please consider citing the following papers.
    Performance analysis methodology of deep neural networks
    inference on the example of an image classification problem //
    Russian Supercomputing Days (RSD-2023). - 2023. (In Russian)
+
+1. Alibekov M.R., Berezina N.E., Vasiliev E.P., Vikhrev I.B., Kamelina Yu.D.,
+   Kustikova V.D., Maslova Z.A., Mukhin I.S., Sidorova A.K., Suchkov V.N.
+   Performance analysis methodology of deep neural networks inference
+   on the example of an image classification problem // Numerical Methods
+   and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
+   [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
+   (In Russian)
 
 ## Repo structure
 
@@ -103,6 +114,9 @@ Please consider citing the following papers.
     - [`validation_results_mxnet_gluon_modelzoo.md`](results/validation/validation_results_mxnet_gluon_modelzoo.md)
       is a table that confirms correctness of inference implementation
       based on MXNet for [GluonCV-models][gluoncv-omz].
+    - [`validation_results_ncnn.md`](results/validation/validation_results_ncnn.md)
+      is a table that confirms correctness of inference implementation
+      based on ncnn for available models.
     - [`validation_results_onnxruntime.md`](results/validation/validation_results_onnxruntime.md)
       is a table that confirms correctness of inference implementation
       based on ONNX Runtime.
@@ -119,6 +133,9 @@ Please consider citing the following papers.
     - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
       is a table that confirms correctness of inference implementation
       based on PyTorch for [TorchVision][torchvision].
+    - [`validation_results_spektral.md`](results/validation/validation_results_spektral.md)
+      is a table that confirms correctness of inference implementation
+      based on Spektral.
     - [`validation_results_tensorflow.md`](results/validation/validation_results_tensorflow.md)
       is a table that confirms correctness of inference implementation
       based on Intel® Optimizations for TensorFlow for several public models.
@@ -131,6 +148,8 @@ Please consider citing the following papers.
 
   - [`mxnet_models_checklist.md`](results/mxnet_models_checklist.md) contains a list
     of deep models inferred by MXNet checked in the DLI benchmark.
+  - [`ncnn_models_checklist.md`](results/ncnn_models_checklist.md) contains a list
+    of deep models inferred by the ncnn framework checked in the DLI benchmark.
   - [`onnxruntime_models_checklist.md`](results/onnxruntime_models_checklist.md) contains a list
     of deep models inferred by ONNX Runtime checked in the DLI benchmark.
   - [`opencv_models_checklist.md`](results/opencv_models_checklist.md) contains a list
@@ -240,7 +259,9 @@ Report questions, issues and suggestions, using:
 [pytorch]: https://pytorch.org
 [tvm]: https://tvm.apache.org
 [dgl-pytorch]: https://www.dgl.ai
+[spektral]: https://graphneural.network
 [rknn]: https://github.com/rockchip-linux/rknn-toolkit2
+[ncnn]: https://github.com/Tencent/ncnn
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
@@ -248,6 +269,7 @@ Report questions, issues and suggestions, using:
 [gluoncv-omz]: https://cv.gluon.ai/model_zoo/index.html
 [torchvision]: https://pytorch.org/vision/stable/models.html
 [mmst-2021]: https://hpc-education.unn.ru/files/conference_hpc/2021/MMST2021_Proceedings.pdf
+[nummeth2023]: https://num-meth.ru/index.php/journal/article/view/1332/1264
 [dli-wiki]: https://github.com/itlab-vision/dl-benchmark/wiki
 [dli-wiki-build]: https://github.com/itlab-vision/dl-benchmark/wiki#how-to-build
 [dli-wiki-contribute]: https://github.com/itlab-vision/dl-benchmark/wiki#developer-documentation
