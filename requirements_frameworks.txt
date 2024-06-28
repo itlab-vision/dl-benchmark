@@ -15,5 +15,9 @@ dgl==2.0.0
 dglgo==0.0.2
 
 tflite
+
+paddlepaddle==2.6.0
+--extra-index-url https://mirror.baidu.com/pypi/simple
+
 ncnn
 spektral==1.3.0
