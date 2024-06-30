@@ -5,7 +5,7 @@ from pathlib import Path
 from parameters import TVMModelReader, TVMQuantParamReader, TVMQuantizationProcess
 sys.path.append(str(Path(__file__).resolve().parents[3]))
 from src.utils.logger_conf import configure_logger  # noqa: E402
-from src.quantization.utils import DatasetReader, ConfigParser  # noqa: E402
+from src.quantization.utils import DatasetReader, ConfigParser, iter_log  # noqa: E402
 
 log = configure_logger()
 
@@ -20,19 +20,6 @@ def cli_argument_parser():
     args = parser.parse_args()
     return args
 
-
-def iter_log(model_reader, data_reader, quant_params):
-    log.info(f'Quantization config:\n\n\t'
-             f'Model:\n\t\t'
-             f'Path to json: {model_reader.model_path}\n\t\t'
-             f'Path to params: {model_reader.model_params}\n\t'
-             f'Dataset:\n\t\t'
-             f'Name: {data_reader.dataset_name}\n\t\t'
-             f'Path to folder: {data_reader.dataset_path}\n\t\t'
-             f'Number of images: {data_reader.max}\n\t'
-             f'Quantization parameters:\n\t\t'
-             f'Calibration mode: {quant_params.calib_mode}\n\t\t'
-             f'Weights scale: {quant_params.weights_scale}\n\t\t')
 
 
 def main():
@@ -52,7 +39,10 @@ def main():
                 model_reader.add_arguments(model_quant_config[0]['Model'])
                 data_reader.add_arguments(model_quant_config[1]['Dataset'])
                 quant_params.add_arguments(model_quant_config[2]['QuantizationParameters'])
-                iter_log(model_reader, data_reader, quant_params)
+                iter_log(model_reader.dict_for_iter_log(),
+                         data_reader.dict_for_iter_log(),
+                         quant_params.dict_for_iter_log(),
+                         log)
                 proc.quantization_tvm()
                 proc.save_quant_model()
             except Exception:

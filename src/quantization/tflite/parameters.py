@@ -5,7 +5,7 @@ import os
 import tensorflow as tf
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from utils import Reader  # noqa: E402
+from utils import ArgumentsParser  # noqa: E402
 
 
 OPTIMIZATIONS = {
@@ -25,7 +25,7 @@ SUPPORTED_TYPES = {
 }
 
 
-class TFLiteModelReader(Reader):
+class TFLiteModelReader(ArgumentsParser):
     def __init__(self, log):
         super().__init__(log)
 
@@ -35,13 +35,22 @@ class TFLiteModelReader(Reader):
         self.model_path = self.args['ModelPath']
         self._read_model()
 
+    def dict_for_iter_log(self):
+        return {'Name': self.model_name,
+                'Path to model': self.model_path,}
+
     def _read_model(self):
         self.converter = tf.lite.TFLiteConverter.from_saved_model(self.model_path)
 
 
-class TFLiteQuantParamReader(Reader):
+class TFLiteQuantParamReader(ArgumentsParser):
     def __init__(self, log):
         super().__init__(log)
+
+    def dict_for_iter_log(self):
+        return {'Optimizations': self.optimizations,
+                'Supported operations': self.supported_ops,
+                'Supported types':self.supported_types}
 
     def _get_arguments(self):
         self._log.info('Parsing parameters of quantization.')

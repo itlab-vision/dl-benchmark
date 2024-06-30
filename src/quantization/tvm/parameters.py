@@ -3,10 +3,10 @@ import os
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from utils import Reader  # noqa: E402
+from utils import ArgumentsParser  # noqa: E402
 
 
-class TVMModelReader(Reader):
+class TVMModelReader(ArgumentsParser):
     def __init__(self, log):
         super().__init__(log)
 
@@ -15,6 +15,11 @@ class TVMModelReader(Reader):
         self.model_path = self.args['ModelJson']
         self.model_params = self.args['WeightsParams']
         self._read_model()
+
+    def dict_for_iter_log(self):
+        return {'Name': self.model_name,
+                'Path to json': self.model_path,
+                'Path to params': self.model_params,}
 
     def _read_model(self):
         with open(self.model_params, 'rb') as fo:
@@ -27,9 +32,13 @@ class TVMModelReader(Reader):
         self.params = params
 
 
-class TVMQuantParamReader(Reader):
+class TVMQuantParamReader(ArgumentsParser):
     def __init__(self, log):
         super().__init__(log)
+
+    def dict_for_iter_log(self):
+        return {'Calibration mode': self.calib_mode,
+                'Weights scale': self.weights_scale,}
 
     def _get_arguments(self):
         self.calib_mode = self.args['CalibMode']
