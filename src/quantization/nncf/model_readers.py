@@ -27,9 +27,11 @@ class NNCFModelHandlerWrapper(ArgumentsParser):
         super().__init__(log)
 
     def dict_for_iter_log(self):
-        return {'Name': self.handler.model_name,
-                'Path to model': self.handler.model_path,
-                'Path to weights': self.handler.model_params,}
+        return {
+            'Name': self.handler.model_name,
+            'Path to model': self.handler.model_path,
+            'Path to weights': self.handler.model_params,
+        }
 
     def _get_arguments(self):
         self.handler = ModelHandlerFactory.get_source_framework_handler(self.args,
@@ -53,7 +55,7 @@ class Handler:
     @abc.abstractmethod
     def read_model_from_source_framework(self):
         pass
-    
+
     def save_model(self, quant_model, output_directory):
         if output_directory is None:
             output_directory = os.getcwd()
@@ -62,12 +64,12 @@ class Handler:
             os.makedirs(output_directory)
         self.log.info(f'Saving model to {output_directory}')
         self._save_model_to_source_framework(quant_model,
-                                             output_directory)        
+                                             output_directory)      
 
     @abc.abstractmethod
     def _save_model_to_source_framework(self,
-                                       quant_model,
-                                       output_directory):
+                                        quant_model,
+                                        output_directory):
         pass
 
 
@@ -80,8 +82,8 @@ class NNCFModelHandlerTensorFlowFormat(Handler):
         return self.tf.keras.models.load_model(Path(self.model_path))
 
     def _save_model_to_source_framework(self,
-                                       quant_model,
-                                       output_directory):
+                                        quant_model,
+                                        output_directory):
         self.tf.keras.saving.save_model(quant_model,
                                         f'{output_directory}/{self.model_name}',
                                         save_format='tf')
@@ -96,8 +98,8 @@ class NNCFModelHandlerONNXFormat(Handler):
         return self.onnx.load(self.model_path)
 
     def _save_model_to_source_framework(self,
-                                       quant_model,
-                                       output_directory):
+                                        quant_model,
+                                        output_directory):
         self.onnx.save(quant_model, f'{output_directory}/{self.model_name}.onnx')
 
 
@@ -111,6 +113,6 @@ class NNCFModelHandlerOpenVINOFormat(Handler):
         return core.read_model(self.model_path)
 
     def _save_model_to_source_framework(self,
-                                       quant_model,
-                                       output_directory):
+                                        quant_model,
+                                        output_directory):
         self.ov.runtime.save_model(quant_model, f'{output_directory}/{self.model_name}.xml')

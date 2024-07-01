@@ -11,14 +11,14 @@ from collections import namedtuple
 
 
 def iter_log(model_reader, data_reader, quant_params, log):
-    log_string = f'Quantization config:\n\n\t'
-    log_string += f'Model:'
+    log_string = 'Quantization config:\n\n\t'
+    log_string += 'Model:'
     for name in model_reader:
         log_string += f'\n\t\t{name}: {model_reader[name]}'
-    log_string += f'\n\tDataset'
+    log_string += '\n\tDataset'
     for name in data_reader:
         log_string += f'\n\t\t{name}: {data_reader[name]}'
-    log_string += f'\n\tQuantization parameters:'
+    log_string += '\n\tQuantization parameters:'
     for name in quant_params:
         log_string += f'\n\t\t{name}: {quant_params[name]}'
     log.info(log_string)
@@ -47,9 +47,11 @@ class DatasetReader(ArgumentsParser):
         self.cv2 = importlib.import_module('cv2')
 
     def dict_for_iter_log(self):
-        return {'Name': self.dataset_name,
-                'Path to folder': self.dataset_path,
-                'Number of images': self.max,}
+        return {
+            'Name': self.dataset_name,
+            'Path to folder': self.dataset_path,
+            'Number of images': self.max,
+        }
 
     def _get_arguments(self):
         self._log.info('Parsing dataset arguments.')

@@ -16,9 +16,11 @@ class NNCFQuantParamReader(ArgumentsParser):
         super().__init__(log)
 
     def dict_for_iter_log(self):
-        return {'Model type': self.model_type,
-                'Subset size': self.subset_size,
-                'Preset': self.preset,}
+        return {
+            'Model type': self.model_type,
+            'Subset size': self.subset_size,
+            'Preset': self.preset,
+        }
 
     def _get_arguments(self):
         self._log.info('Parsing parameters of quantization.')

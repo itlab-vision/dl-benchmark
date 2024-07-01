@@ -17,9 +17,11 @@ class TVMModelReader(ArgumentsParser):
         self._read_model()
 
     def dict_for_iter_log(self):
-        return {'Name': self.model_name,
-                'Path to json': self.model_path,
-                'Path to params': self.model_params,}
+        return {
+            'Name': self.model_name,
+            'Path to json': self.model_path,
+            'Path to params': self.model_params,
+        }
 
     def _read_model(self):
         with open(self.model_params, 'rb') as fo:
@@ -37,8 +39,10 @@ class TVMQuantParamReader(ArgumentsParser):
         super().__init__(log)
 
     def dict_for_iter_log(self):
-        return {'Calibration mode': self.calib_mode,
-                'Weights scale': self.weights_scale,}
+        return {
+            'Calibration mode': self.calib_mode,
+            'Weights scale': self.weights_scale,
+        }
 
     def _get_arguments(self):
         self.calib_mode = self.args['CalibMode']

@@ -21,7 +21,6 @@ def cli_argument_parser():
     return args
 
 
-
 def main():
     args = cli_argument_parser()
     try:

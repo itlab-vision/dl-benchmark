@@ -36,8 +36,10 @@ class TFLiteModelReader(ArgumentsParser):
         self._read_model()
 
     def dict_for_iter_log(self):
-        return {'Name': self.model_name,
-                'Path to model': self.model_path,}
+        return {
+            'Name': self.model_name,
+            'Path to model': self.model_path,
+        }
 
     def _read_model(self):
         self.converter = tf.lite.TFLiteConverter.from_saved_model(self.model_path)
@@ -48,9 +50,11 @@ class TFLiteQuantParamReader(ArgumentsParser):
         super().__init__(log)
 
     def dict_for_iter_log(self):
-        return {'Optimizations': self.optimizations,
-                'Supported operations': self.supported_ops,
-                'Supported types':self.supported_types}
+        return {
+            'Optimizations': self.optimizations,
+            'Supported operations': self.supported_ops,
+            'Supported types':self.supported_types,
+        }
 
     def _get_arguments(self):
         self._log.info('Parsing parameters of quantization.')
