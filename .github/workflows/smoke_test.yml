@@ -9,7 +9,7 @@ on:
   pull_request:
 
 jobs:
-  smoke_test:
+  smoke_test_benchmark:
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -51,7 +51,7 @@ jobs:
           path: tests/smoke_test/ac_smoke/report.html
           retention-days: 1
 
-  smoke_test_caffe:
+  smoke_test_benchmark_caffe:
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -88,4 +88,35 @@ jobs:
         with:
           name: benchmark_caffe_results
           path: tests/smoke_test/benchmark_smoke/report.html
+          retention-days: 1
+
+  smoke_test_quantization:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Setting up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Setting up Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements_ci.txt
+          python -m pip install -r requirements_frameworks.txt
+
+      - name: Run smoke tests for quantization
+        run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py
+
+      - name: Upload quantization artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: benchmark_report
+          path: tests/smoke_test/quantization_smoke/report.html
           retention-days: 1
