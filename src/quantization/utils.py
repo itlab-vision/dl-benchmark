@@ -7,7 +7,6 @@ import importlib
 import random
 from pathlib import Path
 from xml.etree import ElementTree as ET
-from collections import namedtuple
 
 
 def iter_log(model_reader, data_reader, quant_params, log):

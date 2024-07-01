@@ -64,7 +64,7 @@ class Handler:
             os.makedirs(output_directory)
         self.log.info(f'Saving model to {output_directory}')
         self._save_model_to_source_framework(quant_model,
-                                             output_directory) 
+                                             output_directory)
 
     @abc.abstractmethod
     def _save_model_to_source_framework(self,
