@@ -53,7 +53,7 @@ class TFLiteQuantParamReader(ArgumentsParser):
         return {
             'Optimizations': self.optimizations,
             'Supported operations': self.supported_ops,
-            'Supported types':self.supported_types,
+            'Supported types': self.supported_types,
         }
 
     def _get_arguments(self):
