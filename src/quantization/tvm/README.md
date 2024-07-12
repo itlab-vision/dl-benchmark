@@ -15,16 +15,16 @@ Required arguments:
 Description of parameters:
 
 `Model` contains information about the model to be quantized:
-- `ModelName` is a name of the model.
+- `Name` is a name of the model.
 - `ModelJson` is a path to the model architecture (`.json` file).
 - `ModelParams` is a path to the model weights (`.params` file).
 
 `Dataset` contains information about the dataset for model calibration:
-- `DatasetName` is a dataset name.
-- `DatasetPath` is a path to the folder with input data.
+- `Name` is a dataset name.
+- `Path` is a path to the folder with input data.
 - `Mean` is a mean value for preprocessing data.
 - `Std` is a scale value for preprocessing data.
-- `ImageSize` is an image size value for preprocessing data. Example: 224, 224.
+- `ImageResolution` is an image size value for preprocessing data. Example: 224, 224.
 - `BatchSize` is an input batch size.
 - `Layout` is a dimension sequence for the model input. NCHW, NHWC and etc.
 - `Normalization` is a flag to normalize input data.
@@ -35,9 +35,9 @@ Description of parameters:
 - `CalibMode` is a mode of the quantization. Supported modes: `kl_divergence`, `global_scale`.
 - `WeightsScale` is a parameter for weights scaling. Supported modes: `power2`, `max`.
 - `GlobalScale` is a parameter for the `global_scale` calibration mode.
-- `dtype_input`, `dtype_weight`, `dtype_activation` - data types for quantization.
+- `DtypeInput`, `DtypeWeight`, `DtypeActivation` - data types for quantization.
   Supported types: `int8`, `int16`, `int32`.
-- `partition_conversions` is a parameter for TVM specific partition conversion.
+- `PartitionConversions` is a parameter for TVM specific partition conversion.
   Supported modes: `enabled`, `disabled`, `fully_integral`.
 - `OutputDirectory` is a directory for saving quantized model.
 

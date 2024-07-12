@@ -15,8 +15,8 @@ Required arguments:
 Description of parameters:
 
 `Model` contains information about the model to be quantized:
-- `ModelName` is a name of the model.
-- `ModelPath` is a path to the model in `.onnx`, `.xml` or `saved_model` formats.
+- `Name` is a name of the model.
+- `Path` is a path to the model in `.onnx`, `.xml` or `saved_model` formats.
 - `WeightsPath` is a path to weights in `.bin` format.
 - `InputName` is an input name of the model.
 - `OutputName` is an output name of the model.
@@ -25,11 +25,11 @@ Description of parameters:
   Supported frameworks: `onnx`, `tensorflow`, `openvino`.
 
 `Dataset` contains information about the dataset for the model calibration:
-- `DatasetName` is a dataset name.
-- `DatasetPath` is a path to the folder with input data.
+- `Name` is a dataset name.
+- `Path` is a path to the folder with input data.
 - `Mean` is a mean value for preprocessing data.
 - `Std` is a scale value for preprocessing data.
-- `ImageSize` is an image size value for preprocessing data. Example: 224, 224.
+- `ImageResolution` is an image size value for preprocessing data. Example: 224, 224.
 - `BatchSize` is an input batch size.
 - `Layout` is a dimension sequence for the model input. NCHW, NHWC and etc.
 - `Normalization` is a flag to normalize input data.

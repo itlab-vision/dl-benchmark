@@ -31,8 +31,8 @@ class TFLiteModelReader(ArgumentsParser):
 
     def _get_arguments(self):
         self._log.info('Parsing model arguments.')
-        self.model_name = self.args['ModelName']
-        self.model_path = self.args['ModelPath']
+        self.model_name = self.args['Name']
+        self.model_path = self.args['Path']
         self._read_model()
 
     def dict_for_iter_log(self):

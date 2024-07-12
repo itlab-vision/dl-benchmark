@@ -43,8 +43,8 @@ class Handler:
     def __init__(self, log, args):
         self.log = log
         self.log.info('Parsing model arguments.')
-        self.model_name = args['ModelName']
-        self.model_path = args['ModelPath']
+        self.model_name = args['Name']
+        self.model_path = args['Path']
         self.model_params = args['WeightsPath']
         self.input_name = args['InputName']
         self.output_name = args['OutputName']

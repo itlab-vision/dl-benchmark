@@ -15,15 +15,15 @@ Required arguments:
 Description of parameters:
 
 `Model` contains information about model to be quantized:
-- `ModelName` is a name of the model.
-- `ModelPath` is a path to the model in the TensorFlow format `saved_model`.
+- `Name` is a name of the model.
+- `Path` is a path to the model in the TensorFlow format `saved_model`.
 
 `Dataset` contains information about dataset for the model calibration:
-- `DatasetName` is a dataset name.
-- `DatasetPath` is a path to the folder with input data.
+- `Name` is a dataset name.
+- `Path` is a path to the folder with input data.
 - `Mean` is a mean value for preprocessing data.
 - `Std` is a scale value for preprocessing data.
-- `ImageSize` is an image size for preprocessing data. Example: 224, 224.
+- `ImageResolution` is an image size for preprocessing data. Example: 224, 224.
 - `BatchSize` is an input batch size.
 - `Layout` is a dimension sequence for the model input. NCHW, NHWC and etc.
 - `Normalization` is a flag to normalize input data.

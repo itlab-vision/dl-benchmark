@@ -2,15 +2,15 @@
 <QuantizationConfigs>
     <Config>
         <Model>
-            <ModelName></ModelName>
-            <ModelPath></ModelPath>
+            <Name></Name>
+            <Path></Path>
         </Model>
         <Dataset>
-            <DatasetName>ImageNet</DatasetName>
-            <DatasetPath></DatasetPath>
+            <Name>ImageNet</Name>
+            <Path></Path>
             <Mean></Mean>
             <Std></Std>
-            <ImageSize>[224, 224]</ImageSize>
+            <ImageResolution>[224, 224]</ImageResolution>
             <BatchSize>1</BatchSize>
             <Layout>NHWC</Layout>
             <Normalization>False</Normalization>

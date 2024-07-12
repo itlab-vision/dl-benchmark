@@ -11,7 +11,7 @@ class TVMModelReader(ArgumentsParser):
         super().__init__(log)
 
     def _get_arguments(self):
-        self.model_name = self.args['ModelName']
+        self.model_name = self.args['Name']
         self.model_path = self.args['ModelJson']
         self.model_params = self.args['WeightsParams']
         self._read_model()
@@ -49,10 +49,10 @@ class TVMQuantParamReader(ArgumentsParser):
         self.calib_samples = (int(self.args['CalibSamples'])
                               if self.args['CalibSamples'] is not None else None)
         self.weights_scale = self.args['WeightsScale']
-        self.dtype_input = self.args['dtype_input']
-        self.dtype_weight = self.args['dtype_weight']
-        self.dtype_activation = self.args['dtype_activation']
-        self.partition_conversions = self.args['partition_conversions']
+        self.dtype_input = self.args['DtypeInput']
+        self.dtype_weight = self.args['DtypeWeight']
+        self.dtype_activation = self.args['DtypeActivation']
+        self.partition_conversions = self.args['PartitionConversions']
         self.global_scale = (float(self.args['GlobalScale'])
                              if self.args['GlobalScale'] is not None else None)
         self.output_dir = self.args['OutputDirectory']

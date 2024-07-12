@@ -54,8 +54,8 @@ class DatasetReader(ArgumentsParser):
 
     def _get_arguments(self):
         self._log.info('Parsing dataset arguments.')
-        self.dataset_name = self.args['DatasetName']
-        self.dataset_path = self.args['DatasetPath']
+        self.dataset_name = self.args['Name']
+        self.dataset_path = self.args['Path']
 
         self.channel_swap = (np.asarray(ast.literal_eval(self.args['ChannelSwap']), dtype=np.float32)
                              if self.args['ChannelSwap'] is not None else [2, 1, 0])
@@ -71,7 +71,7 @@ class DatasetReader(ArgumentsParser):
         self.std = (np.asarray(ast.literal_eval(self.args['Std']), dtype=np.float32)
                     if self.args['Std'] is not None else [1., 1., 1.])
 
-        self.image_size = ast.literal_eval(self.args['ImageSize'])
+        self.image_size = ast.literal_eval(self.args['ImageResolution'])
 
         self.dataset = list(Path(self.dataset_path).glob('*'))
         random.shuffle(self.dataset)
