@@ -2,8 +2,8 @@
 <QuantizationConfigs>
     <Config>
         <Model>
-            <ModelName>resnet50-pytorch</ModelName>
-            <ModelPath>../models_dir/public/resnet-50-pytorch/FP32/resnet-50-pytorch.xml</ModelPath>
+            <Name>resnet50-pytorch</Name>
+            <Path>../models_dir/public/resnet-50-pytorch/FP32/resnet-50-pytorch.xml</Path>
             <WeightsPath>../models_dir/public/resnet-50-pytorch/FP32/resnet-50-pytorch.xml</WeightsPath>
             <InputName>data</InputName>
             <OutputName></OutputName>
@@ -12,11 +12,11 @@
             <Framework>openvino</Framework>
         </Model>
         <Dataset>
-            <DatasetName>Test</DatasetName>
-            <DatasetPath>../test_images/classification_images</DatasetPath>
+            <Name>Test</Name>
+            <Path>../test_images/classification_images</Path>
             <Mean>[123.675, 116.28, 103.53]</Mean>
             <Std>[58.395, 57.12, 57.375]</Std>
-            <ImageSize>[224, 224]</ImageSize>
+            <ImageResolution>[224, 224]</ImageResolution>
             <BatchSize>1</BatchSize>
             <Layout>NCHW</Layout>
             <Normalization>False</Normalization>

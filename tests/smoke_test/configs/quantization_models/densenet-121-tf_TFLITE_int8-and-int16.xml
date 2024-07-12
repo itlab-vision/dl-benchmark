@@ -2,15 +2,15 @@
 <QuantizationConfigs>
     <Config>
         <Model>
-            <ModelName>densenet-121-tf</ModelName>
-            <ModelPath>../models_dir/public/densenet-121-tf/densenet-121.savedmodel</ModelPath>
+            <Name>densenet-121-tf</Name>
+            <Path>../models_dir/public/densenet-121-tf/densenet-121.savedmodel</Path>
         </Model>
         <Dataset>
-            <DatasetName>Test</DatasetName>
-            <DatasetPath>../test_images/classification_images</DatasetPath>
+            <Name>Test</Name>
+            <Path>../test_images/classification_images</Path>
             <Mean>[123.675, 116.28, 103.53]</Mean>
             <Std>[58.395, 57.12, 57.375]</Std>
-            <ImageSize>[224, 224]</ImageSize>
+            <ImageResolution>[224, 224]</ImageResolution>
             <BatchSize>1</BatchSize>
             <Layout>NHWC</Layout>
             <Normalization>False</Normalization>
