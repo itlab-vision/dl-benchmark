@@ -17,7 +17,7 @@ Description of parameters:
 `Model` contains information about the model to be quantized:
 - `Name` is a name of the model.
 - `ModelJson` is a path to the model architecture (`.json` file).
-- `ModelParams` is a path to the model weights (`.params` file).
+- `WeightsParams` is a path to the model weights (`.params` file).
 
 `Dataset` contains information about the dataset for model calibration:
 - `Name` is a dataset name.
