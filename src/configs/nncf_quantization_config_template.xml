@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name></Name>
+            <Path></Path>
+            <WeightsPath></WeightsPath>
+            <InputName></InputName>
+            <OutputName></OutputName>
+            <InputShape></InputShape>
+            <Device></Device>
+            <Framework></Framework> <!--Supported frameworks: onnx, tensorflow, openvino-->
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+            <Mean></Mean>
+            <Std></Std>
+            <ImageResolution></ImageResolution>
+            <BatchSize></BatchSize>
+            <Layout></Layout>
+            <Normalization></Normalization>
+            <ChannelSwap></ChannelSwap>
+        </Dataset>
+        <QuantizationParameters>
+            <ModelType></ModelType>
+            <Preset></Preset>
+            <SubsetSize></SubsetSize>
+            <OutputDirectory></OutputDirectory>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>

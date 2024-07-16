@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name>resnet50-pytorch</Name>
+            <Path>../models_dir/public/resnet-50-pytorch/resnet-v1-50.onnx</Path>
+            <WeightsPath></WeightsPath>
+            <InputName>data</InputName>
+            <OutputName></OutputName>
+            <InputShape>1, 3, 224, 224</InputShape>
+            <Device>CPU</Device>
+            <Framework>onnx</Framework>
+        </Model>
+        <Dataset>
+            <Name>Test</Name>
+            <Path>../test_images/classification_images</Path>
+            <Mean>[123.675, 116.28, 103.53]</Mean>
+            <Std>[58.395, 57.12, 57.375]</Std>
+            <ImageResolution>[224, 224]</ImageResolution>
+            <BatchSize>1</BatchSize>
+            <Layout>NCHW</Layout>
+            <Normalization>False</Normalization>
+            <ChannelSwap></ChannelSwap>
+        </Dataset>
+        <QuantizationParameters>
+            <ModelType></ModelType>
+            <Preset></Preset>
+            <SubsetSize>3</SubsetSize>
+            <OutputDirectory>res_dir</OutputDirectory>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>

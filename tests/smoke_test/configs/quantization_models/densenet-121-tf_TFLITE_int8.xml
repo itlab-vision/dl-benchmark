@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name>densenet-121-tf</Name>
+            <Path>../models_dir/public/densenet-121-tf/densenet-121.savedmodel</Path>
+        </Model>
+        <Dataset>
+            <Name>Test</Name>
+            <Path>../test_images/classification_images</Path>
+            <Mean>[123.675, 116.28, 103.53]</Mean>
+            <Std>[58.395, 57.12, 57.375]</Std>
+            <ImageResolution>[224, 224]</ImageResolution>
+            <BatchSize>1</BatchSize>
+            <Layout>NHWC</Layout>
+            <Normalization>False</Normalization>
+            <ChannelSwap></ChannelSwap>
+        </Dataset>
+        <QuantizationParameters>
+            <Optimizations>['default']</Optimizations>
+            <SupportedOperations>['int8']</SupportedOperations>
+            <SupportedTypes>['int8']</SupportedTypes>
+            <OutputDirectory>res_dir</OutputDirectory>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>
