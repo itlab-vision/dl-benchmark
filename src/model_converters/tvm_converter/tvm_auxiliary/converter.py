@@ -34,6 +34,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.params = None
         self.log = log
         self.tvm = importlib.import_module('tvm')
+        self.tvm.relay = importlib.import_module('tvm.relay')
         self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     def get_file_type(self, file_path):

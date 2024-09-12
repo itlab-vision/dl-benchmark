@@ -323,7 +323,6 @@ class TVMTransformer(Transformer):
         return transformed_image
 
     def transform_images(self, images, shape, element_type, input_name):
-        transformed_images = np.zeros(shape=shape)
         transformed_images = self._transform(images, input_name)
         return transformed_images.astype(element_type)
 
