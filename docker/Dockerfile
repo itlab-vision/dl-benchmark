@@ -46,7 +46,7 @@ RUN apt-get update && \
 
 # Install openvino
 RUN pip3 install --upgrade pip
-ARG OV_SHORT_VERSION=2023.0.2
+ARG OV_SHORT_VERSION=2024.3.0
 RUN pip3 install openvino==${OV_SHORT_VERSION}
 
 # Install openvino-dev
