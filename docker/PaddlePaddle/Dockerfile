@@ -13,6 +13,6 @@ RUN mkdir resnet50_paddle
 RUN curl -o .\resnet50_paddle\resnet50.pdmodel https://github.com/itlab-vision/itlab-vision-dl-benchmark-models/main/paddlepaddle_models/resnet50/resnet50/resnet50.pdmodel
 RUN curl -o .\resnet50_paddle\resnet50.pdiparams https://github.com/itlab-vision/itlab-vision-dl-benchmark-models/main/paddlepaddle_models/resnet50/resnet50/resnet50.pdiparams
 
-RUN pip3 install paddlepaddle==${PADDLE_VERSION} -i https://mirror.baidu.com/pypi/simple
+RUN python3 -m pip install paddlepaddle==${PADDLE_VERSION} -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 WORKDIR /tmp/
