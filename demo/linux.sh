@@ -12,7 +12,7 @@ done
 
 echo "[ INFO ] Demo application has been started"
 demo_folder="$PWD"
-root_folder="${demo_folder}/../.."
+root_folder="${demo_folder}/.."
 openvino_version="2022.1.0"
 
 
@@ -136,7 +136,7 @@ cd $demo_folder
 benchmark_config="benchmark_config.xml"
 benchmark_config_path="${PWD}/${benchmark_config}"
 [ -f $benchmark_config_path ] && rm -rf $benchmark_config_path
-template_benchmark_config="openvino_inference_config.xml"
+template_benchmark_config="benchmark_configs/OpenVINO_DLDT.xml"
 echo "[ INFO ] Using template config file ${template_benchmark_config}"
 sed "s@{DLI_DATASET_REPO_NAME}@$dli_dataset_repo_name@g" $template_benchmark_config > $benchmark_config_path
 echo "[ INFO ] Copying of benchmark configuration file ${benchmark_config_path} to server"
@@ -150,8 +150,8 @@ echo "[ INFO ] Preparing configuration for accuracy checker"
 accuracy_checker_config="accuracy_checker_config.xml"
 accuracy_checker_config_path="${PWD}/${accuracy_checker_config}"
 [ -f $accuracy_checker_config_path ] && rm -rf $accuracy_checker_config_path
-config_path="${omz_client}/tools/accuracy_checker/sample/sample_config.yml"
-template_accuracy_checker_config="openvino_accuracy_checker_config.xml"
+config_path="${PWD}/accuracy_checker_configs/OpenVINO_DLDT.yml"
+template_accuracy_checker_config="accuracy_checker_configs/OpenVINO_DLDT.xml"
 echo "[ INFO ] Using template config file ${template_accuracy_checker_config}"
 sed "s@{CONFIG_PATH}@$config_path@g" $template_accuracy_checker_config > $accuracy_checker_config_path
 echo "[ INFO ] Copying of accuracy checker configuration ${accuracy_checker_config_path} file to server"
