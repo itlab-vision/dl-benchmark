@@ -24,6 +24,8 @@ class Executor(metaclass=abc.ABCMeta):
         raise ValueError('Executor type must be from list: host_machine, docker_container')
 
     def set_target_framework(self, target_framework):
+        if target_framework == 'ONNX Runtime Python' or target_framework == 'ONNX Runtime CPP':
+            target_framework = 'ONNXRuntime'
         self.target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod

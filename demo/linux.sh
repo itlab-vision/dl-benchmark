@@ -1,13 +1,50 @@
 #!/bin/bash
 
-while getopts l:p:d: flag
+supported_frameworks="OpenVINO_DLDT ONNXRuntime"
+
+usage() {
+    echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
+    echo "Options:"
+    echo "  -l          Login of the current user."
+    echo "  -p          Password of the current user."
+    echo "  -f          Framework (supported: $supported_frameworks)."
+    echo "  -d          The address to the GitHub repository, which contains datasets for benchmarking."
+    echo "              It is required that the Databases/ImageNet/ directory be created"
+    echo "              in the repository, which stores at least one image."
+}
+
+exit_abnormal() {
+    usage
+    exit 1
+}
+
+
+while getopts :l:p:d:f: flag;
 do
     case "${flag}" in
-        l) login=${OPTARG};;
-        p) password=${OPTARG};;
-        d) benchmark_datasets=${OPTARG};;
+        l)  login=${OPTARG}
+            ;;
+        p)  password=${OPTARG}
+            ;;
+        d)  benchmark_datasets=${OPTARG}
+            ;;
+        f)  framework=${OPTARG}
+            ;;
+        :)  echo "Error: -${OPTARG} requires an argument."
+            exit_abnormal
+      ;;
     esac
 done
+
+if [[(-z $login) || (-z $password) || (-z $benchmark_datasets) || (-z $framework)]]; then
+    echo "One or more of required parameters is not specified."
+    exit_abnormal
+fi
+
+if [[ ! " $supported_frameworks " =~ " $framework " ]]; then
+    echo "Framework '$framework' is not supported."
+    exit_abnormal
+fi
 
 
 echo "[ INFO ] Demo application has been started"
@@ -84,15 +121,19 @@ echo "[ INFO ] The name of repository with datasets is $dli_dataset_repo_name"
 echo "[ INFO ] Build a base image has been started"
 docker build -t ubuntu_for_dli --build-arg DATASET_DOWNLOAD_LINK=$benchmark_datasets .
 echo "[ INFO ] Build a base image has been completed"
-
-cd ./OpenVINO_DLDT
-image_name="openvino_${openvino_version}"
+cd ./$framework
+if [ "$framework" = "OpenVINO_DLDT" ]; then
+    docker_name="openvino_${openvino_version}"
+else
+    docker_name=${framework,,}
+fi
+image_name=${docker_name}
 echo "[ INFO ] Build a $image_name image has been started"
 docker build -t $image_name .
 echo "[ INFO ] Build a $image_name image has been completed"
 
 echo "[ INFO ] Creation of archive with Docker image"
-archive_name="openvino_${openvino_version}.tar"
+archive_name="$docker_name.tar"
 docker save $image_name -o $archive_name
 archive_path="$PWD/$archive_name"
 echo "[ INFO ] Archive ${archive_path} has been created"
@@ -125,18 +166,17 @@ cd $dlb_server/src/deployment
 $PYTHON deploy.py -s $ip_address -l $login -p itmm \
                      -i $archive_path \
                      -d $server_folder \
-                     -n OpenVINO_DLDT \
+                     -n $framework \
                      --machine_list $deployment_config \
                      --project_folder $dlb_client
 echo "[ INFO ] Deployment of DLI Benchmark system has been completed"
-
 
 echo "[ INFO ] Preparing configuration for benchmarking"
 cd $demo_folder
 benchmark_config="benchmark_config.xml"
 benchmark_config_path="${PWD}/${benchmark_config}"
 [ -f $benchmark_config_path ] && rm -rf $benchmark_config_path
-template_benchmark_config="benchmark_configs/OpenVINO_DLDT.xml"
+template_benchmark_config="benchmark_configs/${framework}.xml"
 echo "[ INFO ] Using template config file ${template_benchmark_config}"
 sed "s@{DLI_DATASET_REPO_NAME}@$dli_dataset_repo_name@g" $template_benchmark_config > $benchmark_config_path
 echo "[ INFO ] Copying of benchmark configuration file ${benchmark_config_path} to server"
@@ -150,8 +190,8 @@ echo "[ INFO ] Preparing configuration for accuracy checker"
 accuracy_checker_config="accuracy_checker_config.xml"
 accuracy_checker_config_path="${PWD}/${accuracy_checker_config}"
 [ -f $accuracy_checker_config_path ] && rm -rf $accuracy_checker_config_path
-config_path="${PWD}/accuracy_checker_configs/OpenVINO_DLDT.yml"
-template_accuracy_checker_config="accuracy_checker_configs/OpenVINO_DLDT.xml"
+config_path="${PWD}/accuracy_checker_configs/${framework}.yml"
+template_accuracy_checker_config="accuracy_checker_configs/${framework}.xml"
 echo "[ INFO ] Using template config file ${template_accuracy_checker_config}"
 sed "s@{CONFIG_PATH}@$config_path@g" $template_accuracy_checker_config > $accuracy_checker_config_path
 echo "[ INFO ] Copying of accuracy checker configuration ${accuracy_checker_config_path} file to server"

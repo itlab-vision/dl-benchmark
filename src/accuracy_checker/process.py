@@ -11,7 +11,7 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         self._status = None
         self.supported_frameworks = {'OpenVINO DLDT': 'dlsdk', 'Caffe': 'caffe', 'TensorFlow': 'tf',
                                      'TensorFlow_Lite': 'tf_lite', 'MXNet': 'mxnet', 'OpenCV': 'opencv',
-                                     'PyTorch': 'pytorch', 'TVM': 'tvm'}
+                                     'PyTorch': 'pytorch', 'TVM': 'tvm', 'ONNXRuntime': 'onnx_runtime'}
         self.csv_name = executor.get_csv_file()
 
     @staticmethod
