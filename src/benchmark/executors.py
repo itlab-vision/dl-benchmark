@@ -26,6 +26,8 @@ class Executor(metaclass=abc.ABCMeta):
     def set_target_framework(self, target_framework):
         if target_framework == 'ONNX Runtime Python' or target_framework == 'ONNX Runtime CPP':
             target_framework = 'ONNXRuntime'
+        elif target_framework == 'OpenCV DNN Python' or target_framework == 'OpenCV DNN CPP':
+            target_framework = 'OpenCV'
         self.target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod

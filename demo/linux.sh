@@ -1,6 +1,6 @@
 #!/bin/bash
 
-supported_frameworks="OpenVINO_DLDT MXNet ONNXRuntime"
+supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV"
 
 usage() {
     echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
