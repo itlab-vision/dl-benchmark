@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>/media/models/SampLeNet.xml</ModelPath>
+            <WeightsPath>/media/models/SampLeNet.bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>0</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>sync</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <ModelPath>/media/models/SampLeNet.xml</ModelPath>
+            <WeightsPath>/media/models/SampLeNet.bin</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>0</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <Mode>async</Mode>
+            <Extension></Extension>
+            <AsyncRequestCount></AsyncRequestCount>
+            <ThreadCount></ThreadCount>
+            <StreamCount></StreamCount>
+        </FrameworkDependent>
+    </Test>
+</Tests>

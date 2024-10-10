@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>Caffe</SourceFramework>
+            <Directory>/media/models</Directory>
+        </Model>
+        <Parameters>
+            <InferenceFramework>OpenVINO DLDT</InferenceFramework>
+            <Device>CPU</Device>
+            <Config>{CONFIG_PATH}</Config>
+        </Parameters>
+    </Test>
+</Tests>

@@ -71,8 +71,7 @@ COPY config.yml config.yml
 ARG MODELS_DIR=$ACCURACY_CHECKER_PATH/data/test_models
 RUN sed -i 's|MODELS_DIR|'${MODELS_DIR}'|g' config.yml
 
-# please uncomment out when OMZ version will be >=2023.0 (see commit: a89aade)
-# RUN python3 setup.py install_core; \
-#    accuracy_check -c config.yml -m data/test_models -s sample
+RUN python3 setup.py install_core; \
+    accuracy_check -c config.yml -m data/test_models -s sample
 
 WORKDIR /tmp/

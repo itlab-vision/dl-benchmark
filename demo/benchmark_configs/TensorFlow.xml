@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>TensorFlow</SourceFramework>
+            <ModelPath>/media/models/samplenet_tf2/saved_model.pb</ModelPath>
+            <WeightsPath>/media/models/samplenet_tf2/saved_model.pb</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TensorFlow</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>0</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape>32 32 3</InputShape>
+            <InputName></InputName>
+            <OutputNames></OutputNames>
+            <ThreadCount></ThreadCount>
+            <InterOpParallelismThreads></InterOpParallelismThreads>
+            <IntraOpParallelismThreads></IntraOpParallelismThreads>
+            <KmpAffinity></KmpAffinity>
+        </FrameworkDependent>
+    </Test>
+</Tests>

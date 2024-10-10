@@ -17,5 +17,6 @@ RUN pip uninstall -y numpy && pip install numpy==1.23.1
 # Download Accuracy Checker
 WORKDIR /tmp/
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN python3 setup.py install_core
 RUN /bin/bash -c 'accuracy_check -c /tmp/dl-benchmark/docker/MXNet/config.yml -m data/test_models -s sample'
 WORKDIR /tmp/

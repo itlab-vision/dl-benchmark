@@ -1,0 +1,30 @@
+models:
+  - name: resnet-50-pytorch
+    launchers:
+      - framework: pytorch
+        device: cpu
+        module: torchvision.models.resnet50
+        adapter: classification
+        batch: 1
+
+    datasets:
+      - name: sample_dataset
+        data_source: sample_dataset/test
+        annotation_conversion:
+          converter: cifar
+          data_batch_file: cifar-10-batches-py/test_batch
+          convert_images: True
+          converted_images_dir: sample_dataset/test
+          num_classes: 10
+
+        preprocessing:
+          - type: resize
+            size: 32
+          - type: bgr_to_rgb
+          - type: normalization
+            mean: (123.675, 116.28, 103.53)
+            std: (58.395, 57.12, 57.375)
+
+        metrics:
+          - type: accuracy
+            top_k: 1
