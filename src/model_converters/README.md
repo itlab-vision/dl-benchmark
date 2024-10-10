@@ -2,12 +2,20 @@
 
 ## Supported converters
 
+- `caffe2onnx` contains script to convert Caffe models to the ONNX format
+  using [the caffe2onnx converter][caffe2onnx-2].
+- `mmdnn_converter` contains script to install [MMdnn][mmdnn]. Be carefull,
+  MMdnn supports old formats that is why you should validate inference results.
+- `mxnet2onnx` contains script to convert MXNet models to the ONNX format
+  using [the mxnet.onnx package][mxnet2onnx].
+- `onnx2mxnet` contains script to convert ONNX models to the MXNet format
+  using [the following guide][onnx2mxnet-guide].
+- `pytorch2onnx` contains script to convert PyTorch models to the ONNX format
+  using [the OpenCV AI model converter][opencv-ai-model_converter].
 - `tf2tflite` contains converter to the TensorFlow Lite
   format from TensorFlow and ONNX formats.
 - `tvm_converter` contains converter and compiler
   to the TVM format.
-- `mmdnn_converter` contains script to install [MMdnn][mmdnn]. Be carefull,
-  MMdnn supports old formats that is why you should validate inference results.
 
 ## An overview of existing model converters
 
