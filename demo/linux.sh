@@ -50,7 +50,7 @@ fi
 echo "[ INFO ] Demo application has been started"
 demo_folder="$PWD"
 root_folder="${demo_folder}/.."
-openvino_version="2022.1.0"
+openvino_version="2024.4.0"
 
 
 echo "[ INFO ] System environment creation has been started"
