@@ -328,243 +328,244 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 
 ### Object detection
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***faster-rcnn-resnet101-coco-sparse-60-0001***|+|-|-|-|-|-|-|
-face-detection-0100|-|+|-|-|-|-|-|
-face-detection-0102|-|+|-|-|-|-|-|
-face-detection-0104|-|+|-|-|-|-|-|
-face-detection-0105|-|+|-|-|-|-|-|
-face-detection-adas-0001|+|+|+|+|+|+|+|
-face-detection-adas-binary-0001|-|+|-|-|-|-|-|
-face-detection-retail-0004|+|+|+|+|+|+|+|
-face-detection-retail-0005|+|+|+|+|+|+|+|
-***face-detection-0200***|+|-|-|-|-|-|-|
-***face-detection-0202***|+|-|-|-|-|-|-|
-***face-detection-0204***|+|-|-|-|-|-|-|
-***face-detection-0205***|+|-|-|-|-|-|-|
-***face-detection-0206***|+|-|-|-|-|-|-|
-person-detection-retail-0002|+|+|-|+|+|+|+|
-person-detection-retail-0013|+|+|+|+|+|+|+|
-person-detection-action-recognition-0005|+|+|-|+|+|-|+|
-person-detection-action-recognition-0006|+|+|-|+|+|+|+|
-person-detection-action-recognition-teacher-0002|+|+|-|+|+|+|+|
-person-detection-raisinghand-recognition-0001|+|+|-|-*|+|+|+|
-***person-detection-0200***|+|-|-|-|-|-|-|
-***person-detection-0201***|+|-|-|-|-|-|-|
-***person-detection-0202***|+|-|-|-|-|-|-|
-***person-detection-0203***|+|-|-|-|-|-|-|
-***person-detection-0301***|+|-|-|-|-|-|-|
-***person-detection-0302***|+|-|-|-|-|-|-|
-***person-detection-0303***|+|-|-|-|-|-|-|
-***person-detection-0106***|+|-|-|-|-|-|-|
-pedestrian-detection-adas-0002|+|+|+|+|+|+|+|
-pedestrian-and-vehicle-detector-adas-0001|+|+|+|+|+|+|+|
-vehicle-detection-adas-0002|+|+|+|+|+|+|+|
-***vehicle-detection-0200***|+|-|-|-|-|-|-|
-***vehicle-detection-0201***|+|-|-|-|-|-|-|
-***vehicle-detection-0202***|+|-|-|-|-|-|-|
-person-vehicle-bike-detection-crossroad-0078|+|+|+|+|+|+|+|
-person-vehicle-bike-detection-crossroad-1016|+|+|+|+|+|+|+|
-***person-vehicle-bike-detection-crossroad-yolov3-1020***|+|-|-|-|-|-|-|
-***person-vehicle-bike-detection-2000***|+|-|-|-|-|-|-|
-***person-vehicle-bike-detection-2001***|+|-|-|-|-|-|-|
-***person-vehicle-bike-detection-2002***|+|-|-|-|-|-|-|
-***person-vehicle-bike-detection-2003***|+|-|-|-|-|-|-|
-***person-vehicle-bike-detection-2004***|+|-|-|-|-|-|-|
-vehicle-license-plate-detection-barrier-0106|+|+|+|-*|-|-|-|
-product-detection-0001|+|+|-|+|+|+|+|
-person-detection-asl-0001|+|+|-|-|-|-|-|
-yolo-v2-ava-0001|+|+|-|+|+|+|+|
-yolo-v2-ava-sparse-35-0001|+|+|-|+|+|+|+|
-yolo-v2-ava-sparse-70-0001|+|+|-|+|+|+|+|
-yolo-v2-tiny-ava-0001|+|+|-|+|+|+|+|
-yolo-v2-tiny-ava-sparse-30-0001|+|+|-|+|+|+|+|
-yolo-v2-tiny-ava-sparse-60-0001|+|+|-|+|+|+|+|
-***yolo-v2-tiny-vehicle-detection-0001***|+|-|-|-|-|-|-|
-***smartlab-object-detection-0001***|+|-|-|-|-|-|-|
-***smartlab-object-detection-0002***|+|-|-|-|-|-|-|
-***smartlab-object-detection-0003***|+|-|-|-|-|-|-|
-***smartlab-object-detection-0004***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***faster-rcnn-resnet101-coco-sparse-60-0001***|+|-|-|-|-|-|-|+|
+face-detection-0100|-|+|-|-|-|-|-|-|
+face-detection-0102|-|+|-|-|-|-|-|-|
+face-detection-0104|-|+|-|-|-|-|-|-|
+face-detection-0105|-|+|-|-|-|-|-|-|
+face-detection-adas-0001|+|+|+|+|+|+|+|+|
+face-detection-adas-binary-0001|-|+|-|-|-|-|-|-|
+face-detection-retail-0004|+|+|+|+|+|+|+|+|
+face-detection-retail-0005|+|+|+|+|+|+|+|+|
+***face-detection-0200***|+|-|-|-|-|-|-|+|
+***face-detection-0202***|+|-|-|-|-|-|-|+|
+***face-detection-0204***|+|-|-|-|-|-|-|+|
+***face-detection-0205***|+|-|-|-|-|-|-|+|
+***face-detection-0206***|+|-|-|-|-|-|-|+|
+person-detection-retail-0002|+|+|-|+|+|+|+|+|
+person-detection-retail-0013|+|+|+|+|+|+|+|+|
+person-detection-action-recognition-0005|+|+|-|+|+|-|+|+|
+person-detection-action-recognition-0006|+|+|-|+|+|+|+|+|
+person-detection-action-recognition-teacher-0002|+|+|-|+|+|+|+|+|
+person-detection-raisinghand-recognition-0001|+|+|-|-*|+|+|+|+|
+***person-detection-0200***|+|-|-|-|-|-|-|+|
+***person-detection-0201***|+|-|-|-|-|-|-|+|
+***person-detection-0202***|+|-|-|-|-|-|-|+|
+***person-detection-0203***|+|-|-|-|-|-|-|+|
+***person-detection-0301***|+|-|-|-|-|-|-|+|
+***person-detection-0302***|+|-|-|-|-|-|-|+|
+***person-detection-0303***|+|-|-|-|-|-|-|+|
+***person-detection-0106***|+|-|-|-|-|-|-|+|
+pedestrian-detection-adas-0002|+|+|+|+|+|+|+|+|
+pedestrian-and-vehicle-detector-adas-0001|+|+|+|+|+|+|+|+|
+vehicle-detection-adas-0002|+|+|+|+|+|+|+|+|
+***vehicle-detection-0200***|+|-|-|-|-|-|-|+|
+***vehicle-detection-0201***|+|-|-|-|-|-|-|+|
+***vehicle-detection-0202***|+|-|-|-|-|-|-|+|
+person-vehicle-bike-detection-crossroad-0078|+|+|+|+|+|+|+|+|
+person-vehicle-bike-detection-crossroad-1016|+|+|+|+|+|+|+|+|
+***person-vehicle-bike-detection-crossroad-yolov3-1020***|+|-|-|-|-|-|-|+|
+***person-vehicle-bike-detection-2000***|+|-|-|-|-|-|-|+|
+***person-vehicle-bike-detection-2001***|+|-|-|-|-|-|-|+|
+***person-vehicle-bike-detection-2002***|+|-|-|-|-|-|-|+|
+***person-vehicle-bike-detection-2003***|+|-|-|-|-|-|-|+|
+***person-vehicle-bike-detection-2004***|+|-|-|-|-|-|-|+|
+vehicle-license-plate-detection-barrier-0106|+|+|+|-*|-|-|-|+|
+product-detection-0001|+|+|-|+|+|+|+|+|
+person-detection-asl-0001|+|+|-|-|-|-|-|+|
+yolo-v2-ava-0001|+|+|-|+|+|+|+|+|
+yolo-v2-ava-sparse-35-0001|+|+|-|+|+|+|+|+|
+yolo-v2-ava-sparse-70-0001|+|+|-|+|+|+|+|+|
+yolo-v2-tiny-ava-0001|+|+|-|+|+|+|+|+|
+yolo-v2-tiny-ava-sparse-30-0001|+|+|-|+|+|+|+|+|
+yolo-v2-tiny-ava-sparse-60-0001|+|+|-|+|+|+|+|+|
+***yolo-v2-tiny-vehicle-detection-0001***|+|-|-|-|-|-|-|+|
+***smartlab-object-detection-0001***|+|-|-|-|-|-|-|+|
+***smartlab-object-detection-0002***|+|-|-|-|-|-|-|+|
+***smartlab-object-detection-0003***|+|-|-|-|-|-|-|+|
+***smartlab-object-detection-0004***|+|-|-|-|-|-|-|+|
 
 ### Object recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-age-gender-recognition-retail-0013|+|+|+|+|+|+|+|
-head-pose-estimation-adas-0001|+|+|+|+|+|+|+|
-facial-landmarks-35-adas-0002|+|+|+|+|-|-|+|
-license-plate-recognition-barrier-0001|+|+|-|+|+|-|+|
-***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|-|-|-|
-***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|-|-|-|
-***emotions-recognition-retail-0003***|+|there is no data (AffectNet)|-|-|-|-|-|
-landmarks-regression-retail-0009|+|+|+|+|+|+|+|
-***facial-landmarks-98-detection-0001***|+|-|-|-|-|-|-|
-facial-landmarks-35-adas-0002|+|+|+|+|+|-|+|
-person-attributes-recognition-crossroad-0230|+|+|+|+|+|+|+|
-***person-attributes-recognition-crossroad-0234***|+|-|-|-|-|-|-|
-***person-attributes-recognition-crossroad-0238***|+|-|-|-|-|-|-|
-gaze-estimation-adas-0002|+|+|-|+|+|+|+|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+age-gender-recognition-retail-0013|+|+|+|+|+|+|+|+|
+head-pose-estimation-adas-0001|+|+|+|+|+|+|+|+|
+facial-landmarks-35-adas-0002|+|+|+|+|-|-|+|-|
+license-plate-recognition-barrier-0001|+|+|-|+|+|-|+|+|
+***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|-|-|-|+|
+***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|-|-|-|+|
+***emotions-recognition-retail-0003***|+|there is no data (AffectNet)|-|-|-|-|-|+|
+landmarks-regression-retail-0009|+|+|+|+|+|+|+|+|
+***facial-landmarks-98-detection-0001***|+|-|-|-|-|-|-|+|
+facial-landmarks-35-adas-0002|+|+|+|+|+|-|+|+|
+person-attributes-recognition-crossroad-0230|+|+|+|+|+|+|+|+|
+***person-attributes-recognition-crossroad-0234***|+|-|-|-|-|-|-|+|
+***person-attributes-recognition-crossroad-0238***|+|-|-|-|-|-|-|+|
+gaze-estimation-adas-0002|+|+|-|+|+|+|+|+|
 
 ### Reidentification
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-face-reidentification-retail-0095|+|+|-|+|+|+|+|
-person-reidentification-retail-0277|+|+|-|-|-|-|-|
-person-reidentification-retail-0286|+|+|-|-|-|-|-|
-person-reidentification-retail-0287|+|+|-|-|-|-|-|
-person-reidentification-retail-0288|+|+|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+face-reidentification-retail-0095|+|+|-|+|+|+|+|+|
+person-reidentification-retail-0277|+|+|-|-|-|-|-|+|
+person-reidentification-retail-0286|+|+|-|-|-|-|-|+|
+person-reidentification-retail-0287|+|+|-|-|-|-|-|+|
+person-reidentification-retail-0288|+|+|-|-|-|-|-|+|
 
 ### Semantic segmentation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-road-segmentation-adas-0001|+|+|+|+|+|+|+|
-semantic-segmentation-adas-0001|+|+|+|+|+|+|+|
-unet-camvid-onnx-0001|+|+|-|-*|-|-|-|
-icnet-camvid-ava-0001|+|+|-|-*|-|-|-|
-icnet-camvid-ava-sparse-30-0001|+|+|-|-*|-|-|-|
-icnet-camvid-ava-sparse-60-0001|+|+|-|-*|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+road-segmentation-adas-0001|+|+|+|+|+|+|+|+|
+semantic-segmentation-adas-0001|+|+|+|+|+|+|+|+|
+unet-camvid-onnx-0001|+|+|-|-*|-|-|-|+|
+icnet-camvid-ava-0001|+|+|-|-*|-|-|-|+|
+icnet-camvid-ava-sparse-30-0001|+|+|-|-*|-|-|-|+|
+icnet-camvid-ava-sparse-60-0001|+|+|-|-*|-|-|-|+|
 
 ### Instance segmentation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***instance-segmentation-security-0002***|+|-|-|-|-|-|-|
-instance-segmentation-security-0010|-|+|-|-|-|-|-|
-instance-segmentation-security-0050|-|+|-|-|-|-|-|
-instance-segmentation-security-0083|-|+|-|-|-|-|-|
-***instance-segmentation-security-0091***|+|-|-|-|-|-|-|
-***instance-segmentation-security-0228***|+|-|-|-|-|-|-|
-instance-segmentation-security-1025|-|+|-|-|-|-|-|
-***instance-segmentation-security-1039***|+|-|-|-|-|-|-|
-***instance-segmentation-security-1040***|+|-|-|-|-|-|-|
-***instance-segmentation-person-0007***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***instance-segmentation-security-0002***|+|-|-|-|-|-|-|+|
+instance-segmentation-security-0010|-|+|-|-|-|-|-|-|
+instance-segmentation-security-0050|-|+|-|-|-|-|-|-|
+instance-segmentation-security-0083|-|+|-|-|-|-|-|-|
+***instance-segmentation-security-0091***|+|-|-|-|-|-|-|+|
+***instance-segmentation-security-0228***|+|-|-|-|-|-|-|+|
+instance-segmentation-security-1025|-|+|-|-|-|-|-|-|
+***instance-segmentation-security-1039***|+|-|-|-|-|-|-|+|
+***instance-segmentation-security-1040***|+|-|-|-|-|-|-|+|
+***instance-segmentation-person-0007***|+|-|-|-|-|-|-|+|
 
 ### Human pose estimation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-human-pose-estimation-0001|+|+|-|+|+|+|+|
-***human-pose-estimation-0005***|+|-|-|-|-|-|-|
-***human-pose-estimation-0006***|+|-|-|-|-|-|-|
-***human-pose-estimation-0007***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+human-pose-estimation-0001|+|+|-|+|+|+|+|+|
+***human-pose-estimation-0005***|+|-|-|-|-|-|-|+|
+***human-pose-estimation-0006***|+|-|-|-|-|-|-|+|
+***human-pose-estimation-0007***|+|-|-|-|-|-|-|+|
 
 ### Image processing
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-single-image-super-resolution-1032|+|+|-|+|+|+|+|
-single-image-super-resolution-1033|+|+|-|+|+|+|+|
-***text-image-super-resolution-0001***|+|there is no data|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+single-image-super-resolution-1032|+|+|-|+|+|+|+|+|
+single-image-super-resolution-1033|+|+|-|+|+|+|+|+|
+***text-image-super-resolution-0001***|+|there is no data|-|-|-|-|-|+|
 
 ### Text detection
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***text-detection-0003***|+|there is no data (ICDAR)|-|-|-|-|-|
-***text-detection-0004***|+|there is no data (ICDAR)|-|-|-|-|-|
-***horizontal-text-detection-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***text-detection-0003***|+|there is no data (ICDAR)|-|-|-|-|-|+|
+***text-detection-0004***|+|there is no data (ICDAR)|-|-|-|-|-|+|
+***horizontal-text-detection-0001***|+|-|-|-|-|-|-|+|
 
 ### Text recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***text-recognition-0012***|+|there is no data (ICDAR)|-|-|-|-|-|
-***text-recognition-0014***|+|-|-|-|-|-|-|
-***text-recognition-0015***|+|-|-|-|-|-|-|
-***text-recognition-0016***|+|-|-|-|-|-|-|
-***handwritten-score-recognition-0003***|+|there is no data|-|-|-|-|-|
-***handwritten-japanese-recognition-0001***|+|there is no data (HANDS-nakayosi_t-98-09, HANDS-kondate-14-09-01)|-|-|-|-|-|
-***handwritten-simplified-chinese-recognition-0001***|+|-|-|-|-|-|-|
-***handwritten-english-recognition-0001***|+|-|-|-|-|-|-|
-***formula-recognition-medium-scan-0001***|+|-|-|-|-|-|-|
-***formula-recognition-polynomials-handwritten-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***text-recognition-0012***|+|there is no data (ICDAR)|-|-|-|-|-|+|
+***text-recognition-0014***|+|-|-|-|-|-|-|+|
+***text-recognition-0015***|+|-|-|-|-|-|-|+|
+***text-recognition-0016***|+|-|-|-|-|-|-|+|
+***handwritten-score-recognition-0003***|+|there is no data|-|-|-|-|-|+|
+***handwritten-japanese-recognition-0001***|+|there is no data (HANDS-nakayosi_t-98-09, HANDS-kondate-14-09-01)|-|-|-|-|-|+|
+***handwritten-simplified-chinese-recognition-0001***|+|-|-|-|-|-|-|+|
+***handwritten-english-recognition-0001***|+|-|-|-|-|-|-|+|
+***formula-recognition-medium-scan-0001***|+|-|-|-|-|-|-|+|
+***formula-recognition-polynomials-handwritten-0001***|+|-|-|-|-|-|-|+|
 
 ### Text spotting
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***text-spotting-0005***|+|pipeline|-|-|-|-|-|
-***text-spotting-0005-detector***|-|pipeline|-|-|-|-|-|
-***text-spotting-0005-recognizer-decoder***|-|-|-|-|-|-|-|
-***text-spotting-0005-recognizer-encoder***|-|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***text-spotting-0005***|+|pipeline|-|-|-|-|-|+|
+***text-spotting-0005-detector***|-|pipeline|-|-|-|-|-|+|
+***text-spotting-0005-recognizer-decoder***|-|-|-|-|-|-|-|+|
+***text-spotting-0005-recognizer-encoder***|-|-|-|-|-|-|-|+|
 
 ### Action recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|
-driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|
-action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|-|-|-|
-action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|-|-|-|
-***asl-recognition-0004***|+|-|-|-|-|-|-|
-***common-sign-language-0002***|+|-|-|-|-|-|-|
-***weld-porosity-detection-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|+|
+driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|+|
+action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|-|-|-|+|
+action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|-|-|-|+|
+***asl-recognition-0004***|+|-|-|-|-|-|-|+|
+***common-sign-language-0002***|+|-|-|-|-|-|-|+|
+***weld-porosity-detection-0001***|+|-|-|-|-|-|-|+|
 
 ### Image retrieval
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-image-retrieval-0001|+|+|-|-*|+|-|+|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+image-retrieval-0001|+|+|-|-*|+|-|+|+|
 
 ### Compressed models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-resnet18-xnor-binary-onnx-0001|+|+|-|-*|+|-|+|
-***resnet50-binary-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+resnet18-xnor-binary-onnx-0001|+|+|-|-*|+|-|+|+|
+***resnet50-binary-0001***|+|-|-|-|-|-|-|+|
 
 ### Question answering
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***bert-large-uncased-whole-word-masking-squad-0001***|+|-|-|-|-|-|-|
-***bert-large-uncased-whole-word-masking-squad-int8-0001***|+|-|-|-|-|-|-|
-***bert-large-uncased-whole-word-masking-squad-emb-0001***|+|-|-|-|-|-|-|
-***bert-small-uncased-whole-word-masking-squad-0001***|+|-|-|-|-|-|-|
-***bert-small-uncased-whole-word-masking-squad-0002***|+|-|-|-|-|-|-|
-***bert-small-uncased-whole-word-masking-squad-int8-0002***|+|-|-|-|-|-|-|
-***bert-small-uncased-whole-word-masking-squad-emb-int8-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***bert-large-uncased-whole-word-masking-squad-0001***|+|-|-|-|-|-|-|+|
+***bert-large-uncased-whole-word-masking-squad-int8-0001***|+|-|-|-|-|-|-|+|
+***bert-large-uncased-whole-word-masking-squad-emb-0001***|+|-|-|-|-|-|-|+|
+***bert-small-uncased-whole-word-masking-squad-0001***|+|-|-|-|-|-|-|+|
+***bert-small-uncased-whole-word-masking-squad-0002***|+|-|-|-|-|-|-|+|
+***bert-small-uncased-whole-word-masking-squad-int8-0002***|+|-|-|-|-|-|-|+|
+***bert-small-uncased-whole-word-masking-squad-emb-int8-0001***|+|-|-|-|-|-|-|+|
 
 ### Machine translation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***machine-translation-nar-en-ru-0001***|-|-|-|-|-|-|-|
-***machine-translation-nar-ru-en-0001***|-|-|-|-|-|-|-|
-***machine-translation-nar-de-en-0002***|+|-|-|-|-|-|-|
-***machine-translation-nar-en-de-0002***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***machine-translation-nar-en-ru-0001***|-|-|-|-|-|-|-|+|
+***machine-translation-nar-ru-en-0001***|-|-|-|-|-|-|-|+|
+***machine-translation-nar-de-en-0002***|+|-|-|-|-|-|-|+|
+***machine-translation-nar-en-de-0002***|+|-|-|-|-|-|-|+|
 
 ### Text to speech
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***text-to-speech-en-multi-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+text-to-speech-en-0001||||||||+|
+***text-to-speech-en-multi-0001***|+|-|-|-|-|-|-|+|
 
 ### Speech noise suppression
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***noise-suppression-poconetlike-0001***|+|-|-|-|-|-|-|
-***noise-suppression-denseunet-ll-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***noise-suppression-poconetlike-0001***|+|-|-|-|-|-|-|+|
+***noise-suppression-denseunet-ll-0001***|+|-|-|-|-|-|-|+|
 
 ### Time series forecasting
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***time-series-forecasting-electricity-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***time-series-forecasting-electricity-0001***|+|-|-|-|-|-|-|+|
 
 ### Action sequence modeling
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***smartlab-sequence-modelling-0001***|+|-|-|-|-|-|-|
-***smartlab-sequence-modelling-0002***|+|-|-|-|-|-|-|
-***smartlab-action-recognition-0001-encoder-side***|+|-|-|-|-|-|-|
-***smartlab-action-recognition-0001-encoder-top***|+|-|-|-|-|-|-|
-***smartlab-action-recognition-0001-decoder***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***smartlab-sequence-modelling-0001***|+|-|-|-|-|-|-|+|
+***smartlab-sequence-modelling-0002***|+|-|-|-|-|-|-|+|
+***smartlab-action-recognition-0001-encoder-side***|+|-|-|-|-|-|-|+|
+***smartlab-action-recognition-0001-encoder-top***|+|-|-|-|-|-|-|+|
+***smartlab-action-recognition-0001-decoder***|+|-|-|-|-|-|-|+|
 
 
 \* "-\*" in the column "Availability in the html table..."
