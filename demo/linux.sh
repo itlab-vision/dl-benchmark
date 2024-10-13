@@ -123,18 +123,19 @@ docker build -t ubuntu_for_dli --build-arg DATASET_DOWNLOAD_LINK=$benchmark_data
 echo "[ INFO ] Build a base image has been completed"
 
 cd ./$framework
+docker_name=${framework}
 if [ "$framework" = "OpenVINO_DLDT" ]; then
-    docker_name="openvino_${openvino_version}"
-elif [ "$framework" = "ONNXRuntime" ]; then
-    docker_name="ONNX_Runtime_Python"
-elif [ "$framework" = "OpenCV" ]; then
-    docker_name="OpenCV_DNN_Python"
-elif [ "$framework" = "PyTorch" ]; then
-    docker_name="PyTorch"
+    image_name="openvino_${openvino_version}"
 else
-    docker_name=${framework}
+    if [ "$framework" = "ONNXRuntime" ]; then
+        docker_name="ONNX_Runtime_Python"
+    elif [ "$framework" = "OpenCV" ]; then
+        docker_name="OpenCV_DNN_Python"
+    elif [ "$framework" = "PyTorch" ]; then
+        docker_name="PyTorch"
+    fi
+    image_name=${docker_name,,}
 fi
-image_name=${docker_name,,}
 echo "[ INFO ] Build a $image_name image has been started"
 docker build -t $image_name .
 echo "[ INFO ] Build a $image_name image has been completed"
