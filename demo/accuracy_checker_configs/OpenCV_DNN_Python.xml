@@ -9,7 +9,7 @@
             <Directory>/media/models</Directory>
         </Model>
         <Parameters>
-            <InferenceFramework>OpenCV</InferenceFramework>
+            <InferenceFramework>OpenCV DNN Python</InferenceFramework>
             <Device>CPU</Device>
             <Config>{CONFIG_PATH}</Config>
         </Parameters>

@@ -24,10 +24,6 @@ class Executor(metaclass=abc.ABCMeta):
         raise ValueError('Executor type must be from list: host_machine, docker_container')
 
     def set_target_framework(self, target_framework):
-        if target_framework == 'ONNX Runtime Python' or target_framework == 'ONNX Runtime':
-            target_framework = 'ONNXRuntime'
-        elif target_framework == 'OpenCV DNN Python' or target_framework == 'OpenCV DNN Cpp':
-            target_framework = 'OpenCV'
         self.target_framework = target_framework.replace(' ', '_')
 
     @abc.abstractmethod

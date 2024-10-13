@@ -1,6 +1,6 @@
 #!/bin/bash
 
-supported_frameworks="OpenVINO_DLDT TensorFlow MXNet PyTorch ONNXRuntime OpenCV"
+supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV PyTorch"
 
 usage() {
     echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
@@ -121,19 +121,26 @@ echo "[ INFO ] The name of repository with datasets is $dli_dataset_repo_name"
 echo "[ INFO ] Build a base image has been started"
 docker build -t ubuntu_for_dli --build-arg DATASET_DOWNLOAD_LINK=$benchmark_datasets .
 echo "[ INFO ] Build a base image has been completed"
+
 cd ./$framework
 if [ "$framework" = "OpenVINO_DLDT" ]; then
     docker_name="openvino_${openvino_version}"
+elif [ "$framework" = "ONNXRuntime" ]; then
+    docker_name="ONNX_Runtime_Python"
+elif [ "$framework" = "OpenCV" ]; then
+    docker_name="OpenCV_DNN_Python"
+elif [ "$framework" = "PyTorch" ]; then
+    docker_name="PyTorch"
 else
-    docker_name=${framework,,}
+    docker_name=${framework}
 fi
-image_name=${docker_name}
+image_name=${docker_name,,}
 echo "[ INFO ] Build a $image_name image has been started"
 docker build -t $image_name .
 echo "[ INFO ] Build a $image_name image has been completed"
 
 echo "[ INFO ] Creation of archive with Docker image"
-archive_name="$docker_name.tar"
+archive_name="$image_name.tar"
 docker save $image_name -o $archive_name
 archive_path="$PWD/$archive_name"
 echo "[ INFO ] Archive ${archive_path} has been created"
@@ -166,7 +173,7 @@ cd $dlb_server/src/deployment
 $PYTHON deploy.py -s $ip_address -l $login -p itmm \
                      -i $archive_path \
                      -d $server_folder \
-                     -n $framework \
+                     -n $docker_name \
                      --machine_list $deployment_config \
                      --project_folder $dlb_client
 echo "[ INFO ] Deployment of DLI Benchmark system has been completed"
@@ -176,7 +183,7 @@ cd $demo_folder
 benchmark_config="benchmark_config.xml"
 benchmark_config_path="${PWD}/${benchmark_config}"
 [ -f $benchmark_config_path ] && rm -rf $benchmark_config_path
-template_benchmark_config="benchmark_configs/${framework}.xml"
+template_benchmark_config="benchmark_configs/${docker_name}.xml"
 echo "[ INFO ] Using template config file ${template_benchmark_config}"
 sed "s@{DLI_DATASET_REPO_NAME}@$dli_dataset_repo_name@g" $template_benchmark_config > $benchmark_config_path
 echo "[ INFO ] Copying of benchmark configuration file ${benchmark_config_path} to server"
@@ -190,8 +197,8 @@ echo "[ INFO ] Preparing configuration for accuracy checker"
 accuracy_checker_config="accuracy_checker_config.xml"
 accuracy_checker_config_path="${PWD}/${accuracy_checker_config}"
 [ -f $accuracy_checker_config_path ] && rm -rf $accuracy_checker_config_path
-config_path="${PWD}/accuracy_checker_configs/${framework}.yml"
-template_accuracy_checker_config="accuracy_checker_configs/${framework}.xml"
+config_path="${PWD}/accuracy_checker_configs/${docker_name}.yml"
+template_accuracy_checker_config="accuracy_checker_configs/${docker_name}.xml"
 echo "[ INFO ] Using template config file ${template_accuracy_checker_config}"
 sed "s@{CONFIG_PATH}@$config_path@g" $template_accuracy_checker_config > $accuracy_checker_config_path
 echo "[ INFO ] Copying of accuracy checker configuration ${accuracy_checker_config_path} file to server"
