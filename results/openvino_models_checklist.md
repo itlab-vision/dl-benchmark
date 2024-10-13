@@ -4,325 +4,325 @@
 
 ### Image classification
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-alexnet|-|+|+|+|+|+|+|
-***anti-spoof-mn3***|+|-|-|-|-|-|-|
-caffenet|-|+|+|+|+|+|+|
-convnext-tiny|+|-|-|-|-|-|+|
-densenet-121|-|+|+|+|+|+|+|
-densenet-121-caffe2|-|+|-|+|-|-|-|
-densenet-121-tf|+|+|-|+|+|+|+|
-densenet-161|-|+|+|+|-|-|-|
-densenet-161-tf|-|+|-|-|-|-|-|
-densenet-169|-|+|+|+|-|-|-|
-densenet-169-tf|-|+|-|+|-|-|-|
-densenet-201|-|+|+|+|-|-|-|
-densenet-201-tf|-|+|-|-|-|-|-|
-dla-34|+|+|-|-*|-|-|+|
-efficientnet-b0|+|+|-|+|+|+|+|
-efficientnet-b0_auto_aug|-|+|-|+|-|-|-|
-efficientnet-b0-pytorch|+|+|-|+|+|+|+|
-efficientnet-b5|-|+|-|+|-|-|-|
-efficientnet-b5-pytorch|-|+|-|+|-|-|-|
-efficientnet-b7_auto_aug|-|+|-|+|-|-|-|
-efficientnet-b7-pytorch|-|+|-|+|-|-|-|
-***efficientnet-v2-b0***|+|-|-|-|-|-|-|
-***efficientnet-v2-s***|+|-|-|-|-|-|-|
-hbonet-1.0|+|+|-|-|-|-|+|
-hbonet-0.25|+|+|-|-*|+|+|+|
-googlenet-v1|-|+|+|+|+|+|+|
-googlenet-v1-tf|+|+|-|+|+|+|+|
-googlenet-v2|-|+|+|+|+|+|+|
-googlenet-v2-tf|+|+|-|+|+|+|+|
-googlenet-v3|+|+|+|+|+|+|+|
-googlenet-v3-pytorch|+|+|-|+|+|+|+|
-googlenet-v4|-|+|+|-|-|-|-|
-googlenet-v4-tf|+|+|-|+|+|+|+|
-inception-resnet-v2|-|+|+|-*|-|-|-|
-inception-resnet-v2-tf|+|+|-|+|+|-|+|
-levit-128s|+|-|-|-|-|-|+|
-mixnet-l|+|+|-|-*|-|-|+|
-mobilenet-v1-0.25-128|+|+|+|+|+|+|+|
-mobilenet-v1-0.50-160|-|+|+|+|-|-|-|
-mobilenet-v1-0.50-224|-|+|+|+|-|-|-|
-mobilenet-v1-1.0-224|-|+|+|+|+|+|+|
-mobilenet-v1-1.0-224-tf|+|+|-|+|+|+|+|
-mobilenet-v2|-|+|+|+|+|+|+|
-mobilenet-v2-1.0-224|+|+|-|+|-|+|+|
-mobilenet-v2-pytorch|+|+|-|+|+|+|+|
-mobilenet-v2-1.4-224|+|+|-|+|-|+|+|
-mobilenet-v3-small-1.0-224-tf|+|+|-|+|+|+|+|
-***mobilenet-v3-small-1.0-paddle***|-|-|-|-|-|-|-|
-mobilenet-v3-large-1.0-224-tf|+|+|-|+|+|+|+|
-***mobilenet-v3-large-1.0-224-paddle***|-|-|-|-|-|-|-|
-nfnet-f0|+|+|-|-|-|-|+|
-octave-densenet-121-0.125|-|+|-|+|-|-|-|
-octave-resnet-101-0.125|-|+|-|+|-|-|-|
-octave-resnet-200-0.125|-|+|-|+|-|-|-|
-octave-resnet-26-0.25|-|+|-|+|+|+|+|
-octave-resnet-50-0.125|-|+|-|+|-|-|-|
-octave-resnext-101-0.25|-|+|-|+|-|-|-|
-octave-resnext-50-0.25|-|+|-|+|-|-|-|
-octave-se-resnet-50-0.125|-|+|-|+|-|-|-|
-open-closed-eye-0001|+|+|-|-*|-|-|-|
-regnetx-3.2gf|+|+|-|-|-|-|+|
-repvgg-a0|+|+|-|-|-|-|+|
-repvgg-b1|+|+|-|-|-|-|+|
-repvgg-b3|+|+|-|-|-|-|+|
-resnest-50-pytorch|+|-|-|-|-|-|+|
-resnet-101|-|called resnet-v1-101|+|-|-|-|-|
-resnet-152|-|called resnet-v1-152|+|-|-|-|-|
-resnet-18-pytorch|+|+|-|+|+|+|+|
-resnet-34-pytorch|+|+|-|-*|+|+|+|
-resnet-50|-|called resnet-v1-50|+|-|-|-|-|
-resnet-50-caffe2|-|+|-|+|-|-|-|
-resnet-50-pytorch|+|+|-|+|+|+|+|
-resnet-50-tf|+|+|-|+|+|+|+|
-rexnet-v1-x1.0|+|+|-|-|-|-|+|
-se-inception|-|+|+|+|+|+|+|
-se-resnet-50|-|+|+|-*|+|+|+|
-se-resnet-101|-|+|+|+|-|-|-|
-se-resnet-152|-|+|+|+|-|-|-|
-se-resnext-50|-|+|+|-*|+|+|+|
-se-resnext-101|-|+|+|-*|-|-|-|
-shufflenet-v2-x0.5|-|+|-|-|-|-|+|
-shufflenet-v2-x1.0|+|+|-|-|-|-|+|
-squeezenet1.0|-|+|+|+|+|+|+|
-squeezenet1.1|-|+|+|+|+|+|+|
-squeezenet1.1-caffe2|-|+|-|+|-|-|-|
-swin-tiny-patch4-window7-224|+|-|-|-|-|-|+|
-t2t-vit-14|+|+|-|-|-|-|+|
-vgg16|-|+|+|+|+|+|+|
-vgg19|-|+|+|+|+|+|+|
-vgg19-caffe2|-|+|-|+|-|-|-|
+Model | Availability in OMZ (2024.09.03)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+alexnet|-|+|+|+|+|+|+|+|
+***anti-spoof-mn3***|+|-|-|-|-|-|-|+|
+caffenet|-|+|+|+|+|+|+|+|
+convnext-tiny|+|-|-|-|-|-|+|+|
+densenet-121|-|+|+|+|+|+|+|+|
+densenet-121-caffe2|-|+|-|+|-|-|-|-|
+densenet-121-tf|+|+|-|+|+|+|+|+|
+densenet-161|-|+|+|+|-|-|-|-|
+densenet-161-tf|-|+|-|-|-|-|-|-|
+densenet-169|-|+|+|+|-|-|-|-|
+densenet-169-tf|-|+|-|+|-|-|-|-|
+densenet-201|-|+|+|+|-|-|-|-|
+densenet-201-tf|-|+|-|-|-|-|-|-|
+dla-34|+|+|-|-*|-|-|+|+|
+efficientnet-b0|+|+|-|+|+|+|+|+|
+efficientnet-b0_auto_aug|-|+|-|+|-|-|-|-|
+efficientnet-b0-pytorch|+|+|-|+|+|+|+|+|
+efficientnet-b5|-|+|-|+|-|-|-|-|
+efficientnet-b5-pytorch|-|+|-|+|-|-|-|-|
+efficientnet-b7_auto_aug|-|+|-|+|-|-|-|-|
+efficientnet-b7-pytorch|-|+|-|+|-|-|-|-|
+***efficientnet-v2-b0***|+|-|-|-|-|-|-|+|
+***efficientnet-v2-s***|+|-|-|-|-|-|-|+|
+hbonet-1.0|+|+|-|-|-|-|+|+|
+hbonet-0.25|+|+|-|-*|+|+|+|+|
+googlenet-v1|-|+|+|+|+|+|+|+|
+googlenet-v1-tf|+|+|-|+|+|+|+|+|
+googlenet-v2|-|+|+|+|+|+|+|+|
+googlenet-v2-tf|+|+|-|+|+|+|+|+|
+googlenet-v3|+|+|+|+|+|+|+|+|
+googlenet-v3-pytorch|+|+|-|+|+|+|+|+|
+googlenet-v4|-|+|+|-|-|-|-|-|
+googlenet-v4-tf|+|+|-|+|+|+|+|+|
+inception-resnet-v2|-|+|+|-*|-|-|-|-|
+inception-resnet-v2-tf|+|+|-|+|+|-|+|+|
+levit-128s|+|-|-|-|-|-|+|+|
+mixnet-l|+|+|-|-*|-|-|+|+|
+mobilenet-v1-0.25-128|+|+|+|+|+|+|+|+|
+mobilenet-v1-0.50-160|-|+|+|+|-|-|-|-|
+mobilenet-v1-0.50-224|-|+|+|+|-|-|-|-|
+mobilenet-v1-1.0-224|-|+|+|+|+|+|+|+|
+mobilenet-v1-1.0-224-tf|+|+|-|+|+|+|+|+|
+mobilenet-v2|-|+|+|+|+|+|+|+|
+mobilenet-v2-1.0-224|+|+|-|+|-|+|+|+|
+mobilenet-v2-pytorch|+|+|-|+|+|+|+|+|
+mobilenet-v2-1.4-224|+|+|-|+|-|+|+|+|
+mobilenet-v3-small-1.0-224-tf|+|+|-|+|+|+|+|+|
+***mobilenet-v3-small-1.0-paddle***|-|-|-|-|-|-|-|+|
+mobilenet-v3-large-1.0-224-tf|+|+|-|+|+|+|+|+|
+***mobilenet-v3-large-1.0-224-paddle***|-|-|-|-|-|-|-|+|
+nfnet-f0|+|+|-|-|-|-|+|+|
+octave-densenet-121-0.125|-|+|-|+|-|-|-|-
+octave-resnet-101-0.125|-|+|-|+|-|-|-|-
+octave-resnet-200-0.125|-|+|-|+|-|-|-|-
+octave-resnet-26-0.25|-|+|-|+|+|+|+|-|
+octave-resnet-50-0.125|-|+|-|+|-|-|-|-|
+octave-resnext-101-0.25|-|+|-|+|-|-|-|-|
+octave-resnext-50-0.25|-|+|-|+|-|-|-|-|
+octave-se-resnet-50-0.125|-|+|-|+|-|-|-|-|
+open-closed-eye-0001|+|+|-|-*|-|-|-|+|
+regnetx-3.2gf|+|+|-|-|-|-|+|+|
+repvgg-a0|+|+|-|-|-|-|+|+|
+repvgg-b1|+|+|-|-|-|-|+|+|
+repvgg-b3|+|+|-|-|-|-|+|+|
+resnest-50-pytorch|+|-|-|-|-|-|+|+|
+resnet-101|-|called resnet-v1-101|+|-|-|-|-|-|
+resnet-152|-|called resnet-v1-152|+|-|-|-|-|-|
+resnet-18-pytorch|+|+|-|+|+|+|+|+|
+resnet-34-pytorch|+|+|-|-*|+|+|+|+|
+resnet-50|-|called resnet-v1-50|+|-|-|-|-|-|
+resnet-50-caffe2|-|+|-|+|-|-|-|-|
+resnet-50-pytorch|+|+|-|+|+|+|+|+|
+resnet-50-tf|+|+|-|+|+|+|+|+|
+rexnet-v1-x1.0|+|+|-|-|-|-|+|+|
+se-inception|-|+|+|+|+|+|+|+|
+se-resnet-50|-|+|+|-*|+|+|+|+|
+se-resnet-101|-|+|+|+|-|-|-|-|
+se-resnet-152|-|+|+|+|-|-|-|-|
+se-resnext-50|-|+|+|-*|+|+|+|+|
+se-resnext-101|-|+|+|-*|-|-|-|-|
+shufflenet-v2-x0.5|-|+|-|-|-|-|+|+|
+shufflenet-v2-x1.0|+|+|-|-|-|-|+|+|
+squeezenet1.0|-|+|+|+|+|+|+|+|
+squeezenet1.1|-|+|+|+|+|+|+|+|
+squeezenet1.1-caffe2|-|+|-|+|-|-|-|-|
+swin-tiny-patch4-window7-224|+|-|-|-|-|-|+|+|
+t2t-vit-14|+|+|-|-|-|-|+|+|
+vgg16|-|+|+|+|+|+|+|+|
+vgg19|-|+|+|+|+|+|+|+|
+vgg19-caffe2|-|+|-|+|-|-|-|-|
 
 ### Semantic segmentation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-deeplabv3|+|+|+|+|+|+|+|
-***drn-d-38***|+|-|-|-|-|-|-|
-***erfnet***|+|-|-|-|-|-|-|
-***hrnet-v2-c1-segmentation***|+|-|-|-|-|-|-|
-***fastseg-large***|+|-|-|-|-|-|-|
-***fastseg-small***|+|-|-|-|-|-|-|
-***pspnet-pytorch***|+|-|-|-|-|-|-|
-***ocrnet-hrnet-w48-paddle***|-|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |  Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+deeplabv3|+|+|+|+|+|+|+|+|
+***drn-d-38***|+|-|-|-|-|-|-|+|
+***erfnet***|+|-|-|-|-|-|-|+|
+***hrnet-v2-c1-segmentation***|+|-|-|-|-|-|-|+|
+***fastseg-large***|+|-|-|-|-|-|-|+|
+***fastseg-small***|+|-|-|-|-|-|-|+|
+***pspnet-pytorch***|+|-|-|-|-|-|-|+|
+***ocrnet-hrnet-w48-paddle***|-|-|-|-|-|-|-|+|
 
 ### Instance segmentation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|
-mask_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|
-mask_rcnn_resnet101_atrous_coco|-|+|-|-|-|-|-|
-mask_rcnn_resnet50_atrous_coco|+|+|-|-*|-|-|-|
-***yolact-resnet50-fpn-pytorch***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |  Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|+|
+mask_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|-|
+mask_rcnn_resnet101_atrous_coco|-|+|-|-|-|-|-|-|
+mask_rcnn_resnet50_atrous_coco|+|+|-|-*|-|-|-|+|
+***yolact-resnet50-fpn-pytorch***|+|-|-|-|-|-|-|+|
 
 ### 3D segmentation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***brain-tumor-segmentation-0001***|-|there is no data|-|-|-|-|-|
-***brain-tumor-segmentation-0002***|+|there is no data|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |  Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***brain-tumor-segmentation-0001***|-|there is no data|-|-|-|-|-|+|
+***brain-tumor-segmentation-0002***|+|there is no data|-|-|-|-|-|+|
 
 ### Object detection
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***ctpn***|+|there is no data|-|-|-|-|-|
-***ctdet_coco_dlav0_512***|+|-|-|-|-|-|-|
-***detr-resnet50***|+|-|-|-|-|-|-|
-***efficientdet-d0-tf***|+|-|-|-|-|-|-|
-***efficientdet-d1-tf***|+|-|-|-|-|-|-|
-***faceboxes-pytorch***|+|-|-|-|-|-|-|
-face-detection-retail-0044|-|+|-|-|-|-|-|
-faster_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|
-faster_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|
-faster_rcnn_resnet101_coco|-|+|-|-*|-|-|-|
-faster_rcnn_resnet50_coco|+|+|-|-*|-|-|-|
-***mobilefacedet-v1-mxnet***|-|-|-|-|-|-|-|
-***mobilenet-yolo-v4-syg***|+|-|-|-|-|-|-|
-***mtcnn***|-|pipeline|-|-|-|-|-|
-***nanodet-m-1.5x-416***|+|-|-|-|-|-|-|
-***nanodet-plus-m-1.5x-416***|+|-|-|-|-|-|-|
-pelee-coco|-|+|+|-*|+|+|+|
-***retinaface-resnet50-pytorch***|+|-|-|-|-|-|-|
-retinanet-tf|+|+|-|-*|+|+|-|
-***rfcn-resnet101-coco-tf***|+|-|-|-|-|-|-|
-ssd300|-|+|+|+|+|+|+|
-ssd512|-|+|+|+|+|+|+|
-mobilenet-ssd|-|+|+|+|+|+|+|
-ssd_mobilenet_v1_coco|+|-|-|-|-|-|+|
-ssd_mobilenet_v1_fpn_coco|+|+|+|+|+|+|+|
-ssdlite_mobilenet_v2|+|+|-|-|-|-|-|
-ssd_mobilenet_v2_coco|-|+|+|+|-|-|-|
-***ssd-resnet34-1200-onnx***|+|-|-|-|-|-|-|
-ssd_resnet50_v1_fpn_coco|-|+|+|+|-|-|-|
-***ultra-lightweight-face-detection-rfb-320***|+|-|-|-|-|-|-|
-***ultra-lightweight-face-detection-slim-320***|+|-|-|-|-|-|-|
-***vehicle-license-plate-detection-barrier-0123***|+|-|-|-|-|-|-|
-yolo-v1-tiny-tf|+|+|-|+|+|+|+|
-yolo-v2-tiny-tf|+|+|-|+|+|+|+|
-yolo-v2-tf|+|+|-|+|+|+|+|
-yolo-v3-tf|+|+|-|-*|+|+|+|
-***yolo-v3-onnx***|+|-|-|-|-|-|-|
-***yolo-v3-tiny-tf***|+|-|-|-|-|-|-|
-***yolo-v3-tiny-onnx***|+|-|-|-|-|-|-|
-***yolo-v4-tf***|+|-|-|-|-|-|-|
-***yolo-v4-tiny-tf***|+|-|-|-|-|-|-|
-***yolof***|+|-|-|-|-|-|-|
-***yolox-tiny***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |  Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***ctpn***|+|there is no data|-|-|-|-|-|+|
+***ctdet_coco_dlav0_512***|+|-|-|-|-|-|-|+|
+***detr-resnet50***|+|-|-|-|-|-|-|+|
+***efficientdet-d0-tf***|+|-|-|-|-|-|-|+|
+***efficientdet-d1-tf***|+|-|-|-|-|-|-|+|
+***faceboxes-pytorch***|+|-|-|-|-|-|-|+|
+face-detection-retail-0044|-|+|-|-|-|-|-|+|
+faster_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|+|
+faster_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|-|
+faster_rcnn_resnet101_coco|-|+|-|-*|-|-|-|-|
+faster_rcnn_resnet50_coco|+|+|-|-*|-|-|-|+|
+***mobilefacedet-v1-mxnet***|-|-|-|-|-|-|-|+|
+***mobilenet-yolo-v4-syg***|+|-|-|-|-|-|-|+|
+***mtcnn***|-|pipeline|-|-|-|-|-|+|
+***nanodet-m-1.5x-416***|+|-|-|-|-|-|-|+|
+***nanodet-plus-m-1.5x-416***|+|-|-|-|-|-|-|+|
+pelee-coco|-|+|+|-*|+|+|+|+|
+***retinaface-resnet50-pytorch***|+|-|-|-|-|-|-|+|
+retinanet-tf|+|+|-|-*|+|+|-|+|
+***rfcn-resnet101-coco-tf***|+|-|-|-|-|-|-|+|
+ssd300|-|+|+|+|+|+|+|+|
+ssd512|-|+|+|+|+|+|+|+|
+mobilenet-ssd|-|+|+|+|+|+|+|+|
+ssd_mobilenet_v1_coco|+|-|-|-|-|-|+|+|
+ssd_mobilenet_v1_fpn_coco|+|+|+|+|+|+|+|+|
+ssdlite_mobilenet_v2|+|+|-|-|-|-|-|+|
+ssd_mobilenet_v2_coco|-|+|+|+|-|-|-|-|
+***ssd-resnet34-1200-onnx***|+|-|-|-|-|-|-|+|
+ssd_resnet50_v1_fpn_coco|-|+|+|+|-|-|-|-|
+***ultra-lightweight-face-detection-rfb-320***|+|-|-|-|-|-|-|+|
+***ultra-lightweight-face-detection-slim-320***|+|-|-|-|-|-|-|+|
+***vehicle-license-plate-detection-barrier-0123***|+|-|-|-|-|-|-|+|
+yolo-v1-tiny-tf|+|+|-|+|+|+|+|+|
+yolo-v2-tiny-tf|+|+|-|+|+|+|+|+|
+yolo-v2-tf|+|+|-|+|+|+|+|+|
+yolo-v3-tf|+|+|-|-*|+|+|+|+|
+***yolo-v3-onnx***|+|-|-|-|-|-|-|+|
+***yolo-v3-tiny-tf***|+|-|-|-|-|-|-|+|
+***yolo-v3-tiny-onnx***|+|-|-|-|-|-|-|+|
+***yolo-v4-tf***|+|-|-|-|-|-|-|+|
+***yolo-v4-tiny-tf***|+|-|-|-|-|-|-|+|
+***yolof***|+|-|-|-|-|-|-|+|
+***yolox-tiny***|+|-|-|-|-|-|-|+|
 
 ### Face recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***facenet-20180408-102900***|+|there is no data|-|-|-|-|-|
-***face-recognition-resnet100-arcface-onnx***|+|-|-|-|-|-|-|
-Sphereface|-|+|-|-*|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***facenet-20180408-102900***|+|there is no data|-|-|-|-|-|+|
+***face-recognition-resnet100-arcface-onnx***|+|-|-|-|-|-|-|+|
+Sphereface|-|+|-|-*|-|-|-|+|
 
 ### Human pose estimation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***human-pose-estimation-3d-0001***|+|-|-|-|-|-|-|
-***single-human-pose-estimation-0001***|+|-|-|-|-|-|-|
-***higher-hrnet-w32-human-pose-estimation***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***human-pose-estimation-3d-0001***|+|-|-|-|-|-|-|+|
+***single-human-pose-estimation-0001***|+|-|-|-|-|-|-|+|
+***higher-hrnet-w32-human-pose-estimation***|+|-|-|-|-|-|-|+|
 
 ### Monodepth
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***midasnet***|+|-|-|-|-|-|-|
-***fcrn-dp-nyu-depth-v2-tf***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***midasnet***|+|-|-|-|-|-|-|+|
+***fcrn-dp-nyu-depth-v2-tf***|+|-|-|-|-|-|-|+|
 
 ### Image inpainting
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***gmcnn-places2-tf***|+|-|-|-|-|-|-|
-***hybrid-cs-model-mri***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***gmcnn-places2-tf***|+|-|-|-|-|-|-|+|
+***hybrid-cs-model-mri***|+|-|-|-|-|-|-|+|
 
 ### Style transfer
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***fast-neural-style-mosaic-onnx***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***fast-neural-style-mosaic-onnx***|+|-|-|-|-|-|-|+|
 
 ### Action recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***i3d-rgb-tf***|+|-|-|-|-|-|-|
-***common-sign-language-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***i3d-rgb-tf***|+|-|-|-|-|-|-|+|
+***common-sign-language-0001***|+|-|-|-|-|-|-|+|
 
 ### Colorization
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***colorization-siggraph***|+|-|-|-|-|-|-|
-***colorization-v2***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***colorization-siggraph***|+|-|-|-|-|-|-|+|
+***colorization-v2***|+|-|-|-|-|-|-|+|
 
 ### Sound classification
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***aclnet***|+|-|-|-|-|-|-|
-***aclnet-int8***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***aclnet***|+|-|-|-|-|-|-|+|
+***aclnet-int8***|+|-|-|-|-|-|-|+|
 
 ### Speech recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***mozilla-deepspeech-0.6.1***|+|-|-|-|-|-|-|
-***mozilla-deepspeech-0.8.2***|+|-|-|-|-|-|-|
-***quartznet-15x5-en***|+|-|-|-|-|-|-|
-***wav2vec2-base***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***mozilla-deepspeech-0.6.1***|+|-|-|-|-|-|-|+|
+***mozilla-deepspeech-0.8.2***|+|-|-|-|-|-|-|+|
+***quartznet-15x5-en***|+|-|-|-|-|-|-|+|
+***wav2vec2-base***|+|-|-|-|-|-|-|+|
 
 ### Image translation
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***cocosnet***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***cocosnet***|+|-|-|-|-|-|-|+|
 
 ### Optical Character Recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|
-***license-plate-recognition-barrier-0007***|+|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|
+***license-plate-recognition-barrier-0007***|+|-|-|-|-|-|+|
 
 ### Place recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***netvlad-tf***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***netvlad-tf***|+|-|-|-|-|-|-|+|
 
 ### Debluring models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***deblurgan-v2***|-|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***deblurgan-v2***|-|-|-|-|-|-|-|+|
 
 ### JPEG artifacts removal models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***fbcnn***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***fbcnn***|+|-|-|-|-|-|-|+|
 
 ### Salient object detection
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***f3net***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***f3net***|+|-|-|-|-|-|-|+|
 
 ### Text prediction models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***gpt-2***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***gpt-2***|+|-|-|-|-|-|-|+|
 
 ### Text recognition models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***text-recognition-resnet-fc***|+|-|-|-|-|-|-|
-***vitstr-small-patch16-224***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***text-recognition-resnet-fc***|+|-|-|-|-|-|-|+|
+***vitstr-small-patch16-224***|+|-|-|-|-|-|-|+|
 
 ### Text to speech models
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***forward-tacotron***|+|-|-|-|-|-|-|
-***wavernn***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***forward-tacotron***|+|-|-|-|-|-|-|+|
+***wavernn***|+|-|-|-|-|-|-|+|
 
 ### Named entity recognition
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***bert-base-ner***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***bert-base-ner***|+|-|-|-|-|-|-|+|
 
 ### Face Localization
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***retinaface-resnet50-pytorch***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***retinaface-resnet50-pytorch***|+|-|-|-|-|-|-|+|
 
 ### Vehicle reidentification
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***vehicle-reid-0001***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***vehicle-reid-0001***|+|-|-|-|-|-|-|+|
 
 ### Background Matting
 
-Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) |
--|-|-|-|-|-|-|-|
-***background-matting-mobilenetv2***|+|-|-|-|-|-|-|
-***modnet-photographic-portrait-matting***|+|-|-|-|-|-|-|
-***modnet-webcam-portrait-matting***|+|-|-|-|-|-|-|
-***robust-video-matting-mobilenetv3***|+|-|-|-|-|-|-|
+Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in OMZ (2023.12.27)|
+-|-|-|-|-|-|-|-|-|
+***background-matting-mobilenetv2***|+|-|-|-|-|-|-|+|
+***modnet-photographic-portrait-matting***|+|-|-|-|-|-|-|+|
+***modnet-webcam-portrait-matting***|+|-|-|-|-|-|-|+|
+***robust-video-matting-mobilenetv3***|+|-|-|-|-|-|-|+|
 
 ## Intel models
 
