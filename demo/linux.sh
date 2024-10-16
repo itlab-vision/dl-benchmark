@@ -1,6 +1,6 @@
 #!/bin/bash
 
-supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV PyTorch"
+supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV PyTorch TVM"
 
 usage() {
     echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
@@ -104,7 +104,21 @@ echo "[ INFO ] Cloning of OMZ repository"
 omz_client="${client_folder}/open_model_zoo"
 [ -d $omz_client ] && rm -rf $omz_client
 git clone https://github.com/openvinotoolkit/open_model_zoo.git --recursive --branch $openvino_version --single-branch --depth 1
-models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
+
+if [ "$framework" = "TVM" ]; then
+    $PYTHON -m pip install apache-tvm==0.14.dev264 gluoncv[full] mxnet==1.9.1
+    $PYTHON -m pip uninstall -y numpy && $PYTHON -m pip install numpy==1.23.1
+    models_dir="${client_folder}/tvm_models"
+    [ -d $models_dir ] && rm -rf $models_dir
+    mkdir $models_dir
+    $PYTHON ${dlb_client}/src/model_converters/tvm_converter/tvm_converter.py \
+                    -mn "SampleNet_from_MXNet" -f mxnet -is 1 3 32 32 -b 1 -op "${models_dir}" \
+                    -m "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-symbol.json" \
+                    -w "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-0000.params"
+else
+    models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
+fi
+
 echo "[ INFO ] Downloading of dataset 'cifar-10-python'"
 wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 mkdir dataset && tar xvf cifar-10-python.tar.gz -C dataset
@@ -171,7 +185,7 @@ echo \
     >> $deployment_config
 echo "[ INFO ] Launch deploy.py script"
 cd $dlb_server/src/deployment
-$PYTHON deploy.py -s $ip_address -l $login -p itmm \
+$PYTHON deploy.py -s $ip_address -l $login -p $password \
                      -i $archive_path \
                      -d $server_folder \
                      -n $docker_name \
