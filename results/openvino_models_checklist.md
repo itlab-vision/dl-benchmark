@@ -53,9 +53,9 @@ mobilenet-v2-1.0-224|+|+|-|+|-|+|+|+|
 mobilenet-v2-pytorch|+|+|-|+|+|+|+|+|
 mobilenet-v2-1.4-224|+|+|-|+|-|+|+|+|
 mobilenet-v3-small-1.0-224-tf|+|+|-|+|+|+|+|+|
-***mobilenet-v3-small-1.0-paddle***|-|-|-|-|-|-|-|-|
+mobilenet-v3-small-1.0-paddle|-|-|-|-|-|-|-|-|
 mobilenet-v3-large-1.0-224-tf|+|+|-|+|+|+|+|+|
-***mobilenet-v3-large-1.0-224-paddle***|-|-|-|-|-|-|-|-|
+mobilenet-v3-large-1.0-224-paddle|-|-|-|-|-|-|-|-|
 nfnet-f0|+|+|-|-|-|-|+|+|
 octave-densenet-121-0.125|-|+|-|+|-|-|-|-
 octave-resnet-101-0.125|-|+|-|+|-|-|-|-
@@ -65,7 +65,7 @@ octave-resnet-50-0.125|-|+|-|+|-|-|-|-|
 octave-resnext-101-0.25|-|+|-|+|-|-|-|-|
 octave-resnext-50-0.25|-|+|-|+|-|-|-|-|
 octave-se-resnet-50-0.125|-|+|-|+|-|-|-|-|
-open-closed-eye-0001|+|+|-|-*|-|-|-|-|
+***open-closed-eye-0001***|+|+|-|-*|-|-|-|-|
 regnetx-3.2gf|+|+|-|-|-|-|+|+|
 repvgg-a0|+|+|-|-|-|-|+|+|
 repvgg-b1|+|+|-|-|-|-|+|+|
@@ -108,23 +108,23 @@ deeplabv3|+|+|+|+|+|+|+|+|
 ***fastseg-large***|+|-|-|-|-|-|-|-|
 ***fastseg-small***|+|-|-|-|-|-|-|-|
 ***pspnet-pytorch***|+|-|-|-|-|-|-|-|
-***ocrnet-hrnet-w48-paddle***|-|-|-|-|-|-|-|-|
+ocrnet-hrnet-w48-paddle|-|-|-|-|-|-|-|-|
 
 ### Instance segmentation
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-mask_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|-|
+***mask_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|-*|-|-|-|-|
 mask_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|-|
 mask_rcnn_resnet101_atrous_coco|-|+|-|-|-|-|-|-|
-mask_rcnn_resnet50_atrous_coco|+|+|-|-*|-|-|-|-|
+***mask_rcnn_resnet50_atrous_coco***|+|+|-|-*|-|-|-|-|
 ***yolact-resnet50-fpn-pytorch***|+|-|-|-|-|-|-|-|
 
 ### 3D segmentation
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-***brain-tumor-segmentation-0001***|-|there is no data|-|-|-|-|-|-|
+brain-tumor-segmentation-0001|-|there is no data|-|-|-|-|-|-|
 ***brain-tumor-segmentation-0002***|+|there is no data|-|-|-|-|-|-|
 
 ### Object detection
@@ -138,18 +138,18 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 ***efficientdet-d1-tf***|+|-|-|-|-|-|-|-|
 ***faceboxes-pytorch***|+|-|-|-|-|-|-|-|
 face-detection-retail-0044|-|+|-|-|-|-|-|-|
-faster_rcnn_inception_resnet_v2_atrous_coco|+|+|-|-*|-|-|-|-|
+***faster_rcnn_inception_resnet_v2_atrous_coco***|+|+|-|-*|-|-|-|-|
 faster_rcnn_inception_v2_coco|-|+|-|-*|-|-|-|-|
 faster_rcnn_resnet101_coco|-|+|-|-*|-|-|-|-|
-faster_rcnn_resnet50_coco|+|+|-|-*|-|-|-|-|
-***mobilefacedet-v1-mxnet***|-|-|-|-|-|-|-|-|
+***faster_rcnn_resnet50_coco***|+|+|-|-*|-|-|-|-|
+mobilefacedet-v1-mxnet|-|-|-|-|-|-|-|-|
 ***mobilenet-yolo-v4-syg***|+|-|-|-|-|-|-|-|
-***mtcnn***|-|pipeline|-|-|-|-|-|-|
+mtcnn|-|pipeline|-|-|-|-|-|-|
 ***nanodet-m-1.5x-416***|+|-|-|-|-|-|-|-|
 ***nanodet-plus-m-1.5x-416***|+|-|-|-|-|-|-|-|
 pelee-coco|-|+|+|-*|+|+|+|+|
 ***retinaface-resnet50-pytorch***|+|-|-|-|-|-|-|-|
-retinanet-tf|+|+|-|-*|+|+|-|-|
+***retinanet-tf***|+|+|-|-*|+|+|-|-|
 ***rfcn-resnet101-coco-tf***|+|-|-|-|-|-|-|-|
 ssd300|-|+|+|+|+|+|+|+|
 ssd512|-|+|+|+|+|+|+|+|
@@ -263,7 +263,7 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-***deblurgan-v2***|-|-|-|-|-|-|-|-|
+deblurgan-v2|-|-|-|-|-|-|-|-|
 
 ### JPEG artifacts removal models
 
@@ -344,7 +344,7 @@ face-detection-retail-0005|+|+|+|+|+|+|+|+|
 ***face-detection-0204***|+|-|-|-|-|-|-|-|
 ***face-detection-0205***|+|-|-|-|-|-|-|-|
 ***face-detection-0206***|+|-|-|-|-|-|-|-|
-person-detection-retail-0002|+|+|-|+|+|+|+|-|
+***person-detection-retail-0002***|+|+|-|+|+|+|+|-|
 person-detection-retail-0013|+|+|+|+|+|+|+|+|
 person-detection-action-recognition-0005|+|+|-|+|+|-|+|+|
 person-detection-action-recognition-0006|+|+|-|+|+|+|+|+|
@@ -359,7 +359,7 @@ person-detection-raisinghand-recognition-0001|+|+|-|-*|+|+|+|+|
 ***person-detection-0303***|+|-|-|-|-|-|-|-|
 ***person-detection-0106***|+|-|-|-|-|-|-|-|
 pedestrian-detection-adas-0002|+|+|+|+|+|+|+|+|
-pedestrian-and-vehicle-detector-adas-0001|+|+|+|+|+|+|+|-|
+***pedestrian-and-vehicle-detector-adas-0001***|+|+|+|+|+|+|+|-|
 vehicle-detection-adas-0002|+|+|+|+|+|+|+|+|
 ***vehicle-detection-0200***|+|-|-|-|-|-|-|-|
 ***vehicle-detection-0201***|+|-|-|-|-|-|-|-|
@@ -372,9 +372,9 @@ person-vehicle-bike-detection-crossroad-1016|+|+|+|+|+|+|+|+|
 ***person-vehicle-bike-detection-2002***|+|-|-|-|-|-|-|-|
 ***person-vehicle-bike-detection-2003***|+|-|-|-|-|-|-|-|
 ***person-vehicle-bike-detection-2004***|+|-|-|-|-|-|-|-|
-vehicle-license-plate-detection-barrier-0106|+|+|+|-*|-|-|-|-|
+***vehicle-license-plate-detection-barrier-0106***|+|+|+|-*|-|-|-|-|
 product-detection-0001|+|+|-|+|+|+|+|+|
-person-detection-asl-0001|+|+|-|-|-|-|-|-|
+***person-detection-asl-0001***|+|+|-|-|-|-|-|-|
 yolo-v2-ava-0001|+|+|-|+|+|+|+|+|
 yolo-v2-ava-sparse-35-0001|+|+|-|+|+|+|+|+|
 yolo-v2-ava-sparse-70-0001|+|+|-|+|+|+|+|+|
@@ -394,7 +394,7 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 age-gender-recognition-retail-0013|+|+|+|+|+|+|+|+|
 head-pose-estimation-adas-0001|+|+|+|+|+|+|+|+|
 facial-landmarks-35-adas-0002|+|+|+|+|-|-|+|+|
-license-plate-recognition-barrier-0001|+|+|-|+|+|-|+|-|
+***license-plate-recognition-barrier-0001***|+|+|-|+|+|-|+|-|
 ***vehicle-attributes-recognition-barrier-0039***|+|there is no data|-|-|-|-|-|-|
 ***vehicle-attributes-recognition-barrier-0042***|+|-|-|-|-|-|-|-|
 ***emotions-recognition-retail-0003***|+|there is no data (AffectNet)|-|-|-|-|-|-|
@@ -411,10 +411,10 @@ gaze-estimation-adas-0002|+|+|-|+|+|+|+|+|
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
 face-reidentification-retail-0095|+|+|-|+|+|+|+|+|
-person-reidentification-retail-0277|+|+|-|-|-|-|-|-|
-person-reidentification-retail-0286|+|+|-|-|-|-|-|-|
-person-reidentification-retail-0287|+|+|-|-|-|-|-|-|
-person-reidentification-retail-0288|+|+|-|-|-|-|-|-|
+***person-reidentification-retail-0277***|+|+|-|-|-|-|-|-|
+***person-reidentification-retail-0286***|+|+|-|-|-|-|-|-|
+***person-reidentification-retail-0287***|+|+|-|-|-|-|-|-|
+***person-reidentification-retail-0288***|+|+|-|-|-|-|-|-|
 
 ### Semantic segmentation
 
@@ -422,10 +422,10 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 -|-|-|-|-|-|-|-|-|
 road-segmentation-adas-0001|+|+|+|+|+|+|+|+|
 semantic-segmentation-adas-0001|+|+|+|+|+|+|+|+|
-unet-camvid-onnx-0001|+|+|-|-*|-|-|-|-|
-icnet-camvid-ava-0001|+|+|-|-*|-|-|-|-|
-icnet-camvid-ava-sparse-30-0001|+|+|-|-*|-|-|-|-|
-icnet-camvid-ava-sparse-60-0001|+|+|-|-*|-|-|-|-|
+***unet-camvid-onnx-0001***|+|+|-|-*|-|-|-|-|
+***icnet-camvid-ava-0001***|+|+|-|-*|-|-|-|-|
+***icnet-camvid-ava-sparse-30-0001***|+|+|-|-*|-|-|-|-|
+***icnet-camvid-ava-sparse-60-0001***|+|+|-|-*|-|-|-|-|
 
 ### Instance segmentation
 
@@ -487,18 +487,18 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
 ***text-spotting-0005***|+|pipeline|-|-|-|-|-|-|
-***text-spotting-0005-detector***|-|pipeline|-|-|-|-|-|-|
-***text-spotting-0005-recognizer-decoder***|-|-|-|-|-|-|-|-|
-***text-spotting-0005-recognizer-encoder***|-|-|-|-|-|-|-|-|
+text-spotting-0005-detector|-|pipeline|-|-|-|-|-|-|
+text-spotting-0005-recognizer-decoder|-|-|-|-|-|-|-|-|
+text-spotting-0005-recognizer-encoder|-|-|-|-|-|-|-|-|
 
 ### Action recognition
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-driver-action-recognition-adas-0002-decoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|-|
-driver-action-recognition-adas-0002-encoder|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|-|
-action-recognition-0001-decoder|+ (action-recognition-0001)|+|-|-*|-|-|-|-|
-action-recognition-0001-encoder|+ (action-recognition-0001)|+|-|-*|-|-|-|-|
+***driver-action-recognition-adas-0002-decoder***|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|-|
+***driver-action-recognition-adas-0002-encoder***|+ (driver-action-recognition-adas-0002)|+|-|-*|-|-|-|-|
+***action-recognition-0001-decoder***|+ (action-recognition-0001)|+|-|-*|-|-|-|-|
+***action-recognition-0001-encoder***|+ (action-recognition-0001)|+|-|-*|-|-|-|-|
 ***asl-recognition-0004***|+|-|-|-|-|-|-|-|
 ***common-sign-language-0002***|+|-|-|-|-|-|-|-|
 ***weld-porosity-detection-0001***|+|-|-|-|-|-|-|-|
@@ -532,8 +532,8 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-***machine-translation-nar-en-ru-0001***|-|-|-|-|-|-|-|-|
-***machine-translation-nar-ru-en-0001***|-|-|-|-|-|-|-|-|
+machine-translation-nar-en-ru-0001|-|-|-|-|-|-|-|-|
+machine-translation-nar-ru-en-0001|-|-|-|-|-|-|-|-|
 ***machine-translation-nar-de-en-0002***|+|-|-|-|-|-|-|-|
 ***machine-translation-nar-en-de-0002***|+|-|-|-|-|-|-|-|
 
@@ -541,7 +541,7 @@ Model | Availability in OMZ (2024.05.01)| Availability in the validation table |
 
 Model | Availability in OMZ (2024.05.01)| Availability in the validation table | Availability in the html table (R3) | Availability in the html table (2021.4) | Availability in the html table (2022.1) | Availability in the html table (2022.2) | Availability in the html table (2023.0) | Availability in the html table (2023.3) |
 -|-|-|-|-|-|-|-|-|
-text-to-speech-en-0001|+|||||||-|
+***text-to-speech-en-0001***|+|||||||-|
 ***text-to-speech-en-multi-0001***|+|-|-|-|-|-|-|-|
 
 ### Speech noise suppression
