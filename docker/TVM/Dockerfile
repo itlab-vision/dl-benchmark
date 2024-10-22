@@ -56,7 +56,7 @@ RUN if [ "$ONNX" = "true"  ]; then \
     git checkout v${ONNX_VERSION}; \ 
     git submodule update --init --recursive && mkdir build && cd build; \
     cmake -DCMAKE_INSTALL_PREFIX=install \
-       	-DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_TYPE=Release \
         -Donnxruntime_BUILD_FOR_NATIVE_MACHINE=ON \
         -Donnxruntime_BUILD_UNIT_TESTS=OFF \
         -Donnxruntime_BUILD_SHARED_LIB=ON \
@@ -72,5 +72,12 @@ RUN if [ "$CAFFE" = "true"  ]; then \
     /bin/bash -c "conda install -n tvm-env -y -c anaconda libgcc-ng=11.2.0"; \
     /bin/bash -c "conda install -n tvm-env -y -c defaults protobuf=3.17.2 libprotobuf=3.17.2 requests=2.27.1"; \
     fi
-    
+
+WORKDIR /tmp/open_model_zoo/
+RUN git remote add omz_custom_tvm https://github.com/a-sidorova/open_model_zoo.git && \ 
+    git fetch omz_custom_tvm && \
+    git checkout omz_custom_tvm/tvm
+WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN python3 setup.py install_core
+
 WORKDIR /tmp/
