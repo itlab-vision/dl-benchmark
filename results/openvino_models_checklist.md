@@ -57,9 +57,9 @@ mobilenet-v3-small-1.0-paddle|-|-|-|-|-|-|-|-|
 mobilenet-v3-large-1.0-224-tf|+|+|-|+|+|+|+|+|
 mobilenet-v3-large-1.0-224-paddle|-|-|-|-|-|-|-|-|
 nfnet-f0|+|+|-|-|-|-|+|+|
-octave-densenet-121-0.125|-|+|-|+|-|-|-|-
-octave-resnet-101-0.125|-|+|-|+|-|-|-|-
-octave-resnet-200-0.125|-|+|-|+|-|-|-|-
+octave-densenet-121-0.125|-|+|-|+|-|-|-|-|
+octave-resnet-101-0.125|-|+|-|+|-|-|-|-|
+octave-resnet-200-0.125|-|+|-|+|-|-|-|-|
 octave-resnet-26-0.25|-|+|-|+|+|+|+|+|
 octave-resnet-50-0.125|-|+|-|+|-|-|-|-|
 octave-resnext-101-0.25|-|+|-|+|-|-|-|-|
