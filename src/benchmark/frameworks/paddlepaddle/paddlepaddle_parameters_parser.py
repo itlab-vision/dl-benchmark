@@ -12,6 +12,7 @@ class PaddlePaddleParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_INPUT_NAMES_TAG = 'InputName'
         CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG = 'OutputNames'
         CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG = 'ThreadCount'
+        CONFIG_FRAMEWORK_DEPENDENT_GPU_MEM_SIZE_TAG = 'GPUMemSize'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -29,6 +30,8 @@ class PaddlePaddleParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_OUTPUT_NAMES_TAG)[0].firstChild
         _thread_count = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_THREAD_COUNT_TAG)[0].firstChild
+        _gpu_mem_size = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_GPU_MEM_SIZE_TAG)[0].firstChild
 
         return PaddlePaddleParameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
@@ -38,12 +41,13 @@ class PaddlePaddleParametersParser(DependentParametersParser):
             input_name=_input_names.data if _input_names else None,
             output_names=_output_names.data if _output_names else None,
             thread_count=_thread_count.data if _thread_count else None,
+            gpu_mem_size=_gpu_mem_size.data if _gpu_mem_size else None,
         )
 
 
 class PaddlePaddleParameters(FrameworkParameters):
     def __init__(self, channel_swap, mean, input_scale, input_shapes, output_names, input_name,
-                 thread_count):
+                 thread_count, gpu_mem_size):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
@@ -51,8 +55,7 @@ class PaddlePaddleParameters(FrameworkParameters):
         self.input_name = None
         self.output_names = None
         self.nthreads = None
-        self.delegate = None
-        self.delegate_options = None
+        self.gpu_mem_size = None
 
         if self._parameter_is_not_none(channel_swap):
             self.channel_swap = self._process_sequence_arg(channel_swap)
@@ -71,6 +74,8 @@ class PaddlePaddleParameters(FrameworkParameters):
                 self.nthreads = thread_count
             else:
                 raise ValueError('Threads count can only take integer value')
+        if self._parameter_is_not_none(gpu_mem_size):
+            self.output_names = gpu_mem_size
 
     @staticmethod
     def _process_sequence_arg(sequence):

@@ -4,7 +4,6 @@ WORKDIR /root/
 ARG PADDLE_VERSION=2.5.2
 RUN pip3 install --upgrade pip && \
     pip3 install opencv-python requests PyYAML docker
-RUN export LD_LIBRARY_PATH=/root/miniconda3/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /tmp/
 RUN mkdir resnet50_paddle
@@ -17,11 +16,11 @@ RUN tar xzf resnet50.tgz
 RUN python3 -m pip install paddlepaddle==${PADDLE_VERSION} -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
-COPY config_tf2.yml config_tf2.yml
+COPY config_paddle.yml config_paddle.yml
 
 RUN python3 setup.py install_core
 
-RUN accuracy_check -c config_tf2.yml -m ../../../resnet50 -s sample
+RUN accuracy_check -c config_paddle.yml -m ../../../resnet50 -s sample
 
 WORKDIR /tmp/
 

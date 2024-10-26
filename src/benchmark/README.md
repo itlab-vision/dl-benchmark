@@ -21,7 +21,7 @@ the following frameworks:
 - [Apache TVM][tvm] (Python API).
 - [RKNN][rknn].
 - [Spektral][spektral] (Python API).
-- [PaddlePaddle][paddlepaddle] (PythonAPI).
+- [PaddlePaddle][paddlepaddle] (Python API).
 
 ### Implemented algorithm
 

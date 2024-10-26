@@ -29,9 +29,7 @@
             <InputName>inputs</InputName>
             <OutputNames></OutputNames>
             <ThreadCount></ThreadCount>
-            <InterOpParallelismThreads></InterOpParallelismThreads>
-            <IntraOpParallelismThreads></IntraOpParallelismThreads>
-            <KmpAffinity></KmpAffinity>
+            <GPUMemSize></GPUMemSize>
         </FrameworkDependent>
     </Test>
 </Tests>

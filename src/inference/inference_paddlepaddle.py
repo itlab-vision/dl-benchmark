@@ -59,7 +59,7 @@ def cli_argument_parser():
                         type=bool,
                         dest='raw_output')
     parser.add_argument('-nthreads', '--number_threads',
-                        help='Number of threads to use for inference on the CPU. (1 by default)',
+                        help='Number of threads to use for inference on the CPU (1 by default)',
                         default=1,
                         type=int,
                         dest='number_threads')
@@ -111,7 +111,7 @@ def cli_argument_parser():
                         dest='report_path')
     parser.add_argument('--time', required=False, default=0, type=int,
                         dest='time',
-                        help='Optional. Time in seconds to execute topology.')
+                        help='Optional. Time in seconds to execute topology')
     parser.add_argument('--memory_pool_init_size_mb', required=False, default=1000, type=int,
                         dest='memory_pool_init_size_mb', help='Initial size of the the allocated gpu memory, in MB')
 
@@ -186,7 +186,7 @@ def main():
     args.input_scale = prep.parse_input_arg(args.input_scale, args.input_names)
     args.layout = prep.parse_layout_arg(args.layout, args.input_names)
 
-    data_transformer = PaddlePaddleTransformer(prep.create_dict_for_transformer(args, 'NHWC'))
+    data_transformer = PaddlePaddleTransformer(prep.create_dict_for_transformer(args, 'NCHW'))
     io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
     if args.input and args.input != ['None']:
