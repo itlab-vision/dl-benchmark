@@ -54,7 +54,8 @@ class PaddlePaddleProcess(ProcessHandler):
         common_params = self._add_optional_argument_to_cmd_line(common_params, '--output_names', output_names)
 
         gpu_mem_size = self._test.dep_parameters.gpu_mem_size
-        common_params = self._add_optional_argument_to_cmd_line(common_params, '--memory_pool_init_size_mb', gpu_mem_size)
+        common_params = (
+            self._add_optional_argument_to_cmd_line(common_params, '--memory_pool_init_size_mb', gpu_mem_size))
 
         common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
 
