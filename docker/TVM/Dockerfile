@@ -74,9 +74,9 @@ RUN if [ "$CAFFE" = "true"  ]; then \
     fi
 
 WORKDIR /tmp/open_model_zoo/
-RUN git remote add omz_custom_tvm https://github.com/a-sidorova/open_model_zoo.git && \ 
+RUN git remote add omz_custom_tvm https://github.com/itlab-vision/open_model_zoo_tvm.git && \ 
     git fetch omz_custom_tvm && \
-    git checkout omz_custom_tvm/tvm
+    git checkout omz_custom_tvm/24.3.0/tvm
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
 RUN python3 setup.py install_core
 
