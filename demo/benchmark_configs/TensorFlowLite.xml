@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test>
+    <Model>
+      <Task>classification</Task>
+      <Name>SampleNet_from_TensorFlow</Name>
+      <Precision>FP32</Precision>
+      <SourceFramework>TensorFlow</SourceFramework>
+      <ModelPath>/media/models/samplenet_tf2.tflite</ModelPath>
+      <WeightsPath>/media/models/samplenet_tf2.tflite</WeightsPath>
+    </Model>
+    <Dataset>
+      <Name>ImageNet</Name>
+      <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+    </Dataset>
+    <FrameworkIndependent>
+      <InferenceFramework>TensorFlowLite</InferenceFramework>
+      <BatchSize>1</BatchSize>
+      <Device>CPU</Device>
+      <IterationCount>10</IterationCount>
+      <TestTimeLimit>0</TestTimeLimit>
+    </FrameworkIndependent>
+    <FrameworkDependent>
+      <ChannelSwap></ChannelSwap>
+      <Mean>[123.675,116.28,103.53]</Mean>
+      <InputScale>[58.395,57.12,57.375]</InputScale>
+      <Layout>NHWC</Layout>
+      <InputShape></InputShape>
+      <InputName></InputName>
+      <ThreadCount></ThreadCount>
+      <Delegate></Delegate>
+      <DelegateOptions></DelegateOptions>
+    </FrameworkDependent>
+  </Test>
+</Tests>
