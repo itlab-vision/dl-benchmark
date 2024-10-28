@@ -1,8 +1,8 @@
 # Model validation and performance analysis status for PaddlePaddle
 
-## Public models (Open Model Zoo)
+## Public models (PaddleClas)
 
-Represented deep models are available in [Open Model Zoo][omz].
+Represented deep models are available in [PaddleClas Repository][pcr].
 
 ### Image classification
 
@@ -12,4 +12,4 @@ resnet-50|-|+|
 PPLCNet_x1_0_infer|-|+|
 
 <!-- LINKS -->
-[omz]: https://github.com/PaddlePaddle/PaddleClas/blob/release/2.5.2/docs/en/models/index.rst
+[pcr]: https://github.com/PaddlePaddle/PaddleClas/blob/release/2.5.2/docs/en/models/index.rst

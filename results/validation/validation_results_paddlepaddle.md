@@ -15,8 +15,7 @@ Image resolution: 709 x 510
 Model | Parameters | Python API |
 -|-|-|
 resnet-50 |Mean values - [123.675,116.28,103.53],<br>scale value - [58.395,57.12,57.375]|0.9931559 Granny Smith<br>0.0009120 piggy bank, penny bank<br>0.0007721 bell pepper<br>0.0007689 tennis ball<br>0.0005548 candle, taper, wax light|
-PPLCNet_x1_0_infer |Mean values - [123.675,116.28,103.53],<br>scale value - [58.395,57.12,57.375]|0.2785943 Granny Smith<br>0.2241544 piggy bank, penny bank<br>0.0404602 saltshaker, salt shaker<br>0.0131707 soap dispenser<br>0.0114298 lemon
-|
+PPLCNet_x1_0_infer |Mean values - [123.675,116.28,103.53],<br>scale value - [58.395,57.12,57.375]|0.2785943 Granny Smith<br>0.2241544 piggy bank, penny bank<br>0.0404602 saltshaker, salt shaker<br>0.0131707 soap dispenser<br>0.0114298 lemon|
 
 ### Test image #2
 
