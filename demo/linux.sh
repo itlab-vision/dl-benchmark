@@ -1,6 +1,6 @@
 #!/bin/bash
 
-supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV PyTorch TVM"
+supported_frameworks="OpenVINO_DLDT TensorFlow TensorFlowLite MXNet ONNXRuntime OpenCV PyTorch TVM"
 
 usage() {
     echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
@@ -115,6 +115,15 @@ if [ "$framework" = "TVM" ]; then
                     -mn "SampleNet_from_MXNet" -f mxnet -is 1 3 32 32 -b 1 -op "${models_dir}" \
                     -m "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-symbol.json" \
                     -w "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-0000.params"
+elif [ "$framework" = "TensorFlowLite" ]; then
+    $PYTHON -m pip install -r ${dlb_client}/src/model_converters/tf2tflite/requirements.txt
+    models_dir="${client_folder}/tflite_models"
+    [ -d $models_dir ] && rm -rf $models_dir
+    mkdir $models_dir
+    $PYTHON ${dlb_client}/src/model_converters/tf2tflite/tflite_converter.py \
+                    --model-path "${omz_client}/tools/accuracy_checker/data/test_models/samplenet_tf2/" \
+                    --source-framework tf --input-names input --input-shapes "[1, 32, 32, 3]"
+    mv "${omz_client}/tools/accuracy_checker/data/test_models/samplenet_tf2.tflite" $models_dir
 else
     models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
 fi
@@ -147,6 +156,8 @@ else
         docker_name="OpenCV_DNN_Python"
     elif [ "$framework" = "PyTorch" ]; then
         docker_name="PyTorch"
+    elif [ "$framework" = "TensorFlowLite" ]; then
+        docker_name="TensorFlowLite"
     fi
     image_name=${docker_name,,}
 fi
