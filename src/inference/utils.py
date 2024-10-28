@@ -2,6 +2,8 @@ from copy import copy
 
 try:
     from openvino.runtime import Core, Tensor, PartialShape
+    import openvino.properties as props
+    import openvino.properties.hint as hints
     _ov_runtime_supported = True
 except ImportError:
     _ov_runtime_supported = False
@@ -84,21 +86,23 @@ def set_property(core, devices, nthreads, nstreams, dump, mode):
     for device in device_list:
         if device == 'CPU':
             if nthreads:
-                core.set_property('CPU', {'CPU_THREADS_NUM': str(nthreads)})
+                core.set_property('CPU', {props.inference_num_threads: nthreads})
             if 'MULTI' in devices and 'GPU' in devices:
                 core.set_property({'CPU_BIND_THREAD': 'NO'}, 'CPU')
             if mode == 'async':
-                cpu_throughput = {'CPU_THROUGHPUT_STREAMS': 'CPU_THROUGHPUT_AUTO'}
+                core.set_property('CPU', {hints.performance_mode: hints.PerformanceMode.THROUGHPUT})
+                cpu_throughput = {props.num_streams: props.streams.Num.AUTO}
                 if device in streams_dict.keys() and streams_dict[device]:
-                    cpu_throughput['CPU_THROUGHPUT_STREAMS'] = streams_dict['CPU']
+                    cpu_throughput[props.num_streams] = streams_dict['CPU']
                 core.set_property('CPU', cpu_throughput)
         if device == 'GPU':
             if 'MULTI' in devices and 'СPU' in devices:
                 core.set_property('GPU', {'GPU_QUEUE_THROTTLE': '1'})
             if mode == 'async':
-                gpu_throughput = {'GPU_THROUGHPUT_STREAMS': 'GPU_THROUGHPUT_AUTO'}
+                core.set_property('GPU', {hints.performance_mode: hints.PerformanceMode.THROUGHPUT})
+                gpu_throughput = {props.num_streams: props.streams.Num.AUTO}
                 if device in streams_dict.keys() and streams_dict[device]:
-                    gpu_throughput['GPU_THROUGHPUT_STREAMS'] = streams_dict['GPU']
+                    gpu_throughput[props.num_streams] = streams_dict['GPU']
                 core.set_property('GPU', gpu_throughput)
     if dump:
         if 'HETERO' in devices:
