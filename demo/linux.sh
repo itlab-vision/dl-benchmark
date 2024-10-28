@@ -1,19 +1,56 @@
 #!/bin/bash
 
-while getopts l:p:d: flag
+supported_frameworks="OpenVINO_DLDT TensorFlow MXNet ONNXRuntime OpenCV PyTorch TVM"
+
+usage() {
+    echo "Usage: $0 [-l LOGIN] [-p PASSWORD] [-f FRAMEWORK] [-d GIT_LINK_TO_DATASET]"
+    echo "Options:"
+    echo "  -l          Login of the current user."
+    echo "  -p          Password of the current user."
+    echo "  -f          Framework (supported: $supported_frameworks)."
+    echo "  -d          The address to the GitHub repository, which contains datasets for benchmarking."
+    echo "              It is required that the Databases/ImageNet/ directory be created"
+    echo "              in the repository, which stores at least one image."
+}
+
+exit_abnormal() {
+    usage
+    exit 1
+}
+
+
+while getopts :l:p:d:f: flag;
 do
     case "${flag}" in
-        l) login=${OPTARG};;
-        p) password=${OPTARG};;
-        d) benchmark_datasets=${OPTARG};;
+        l)  login=${OPTARG}
+            ;;
+        p)  password=${OPTARG}
+            ;;
+        d)  benchmark_datasets=${OPTARG}
+            ;;
+        f)  framework=${OPTARG}
+            ;;
+        :)  echo "Error: -${OPTARG} requires an argument."
+            exit_abnormal
+      ;;
     esac
 done
+
+if [[(-z $login) || (-z $password) || (-z $benchmark_datasets) || (-z $framework)]]; then
+    echo "One or more of required parameters is not specified."
+    exit_abnormal
+fi
+
+if [[ ! " $supported_frameworks " =~ " $framework " ]]; then
+    echo "Framework '$framework' is not supported."
+    exit_abnormal
+fi
 
 
 echo "[ INFO ] Demo application has been started"
 demo_folder="$PWD"
-root_folder="${demo_folder}/../.."
-openvino_version="2022.1.0"
+root_folder="${demo_folder}/.."
+openvino_version="2024.4.0"
 
 
 echo "[ INFO ] System environment creation has been started"
@@ -21,6 +58,7 @@ venv_path="${demo_folder}/.venv"
 [ -d $venv_path ] && rm -rf $venv_path
 python3 -m venv .venv
 PYTHON="${venv_path}/bin/python3"
+$PYTHON -m pip install --upgrade pip
 $PYTHON -m pip install -r $root_folder/requirements.txt
 echo "[ INFO ] Python environment ${python3} has been created"
 declare -A packages
@@ -66,7 +104,21 @@ echo "[ INFO ] Cloning of OMZ repository"
 omz_client="${client_folder}/open_model_zoo"
 [ -d $omz_client ] && rm -rf $omz_client
 git clone https://github.com/openvinotoolkit/open_model_zoo.git --recursive --branch $openvino_version --single-branch --depth 1
-models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
+
+if [ "$framework" = "TVM" ]; then
+    $PYTHON -m pip install apache-tvm==0.14.dev264 gluoncv[full] mxnet==1.9.1
+    $PYTHON -m pip uninstall -y numpy && $PYTHON -m pip install numpy==1.23.1
+    models_dir="${client_folder}/tvm_models"
+    [ -d $models_dir ] && rm -rf $models_dir
+    mkdir $models_dir
+    $PYTHON ${dlb_client}/src/model_converters/tvm_converter/tvm_converter.py \
+                    -mn "SampleNet_from_MXNet" -f mxnet -is 1 3 32 32 -b 1 -op "${models_dir}" \
+                    -m "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-symbol.json" \
+                    -w "${omz_client}/tools/accuracy_checker/data/test_models/samplenet-0000.params"
+else
+    models_dir="${omz_client}/tools/accuracy_checker/data/test_models"
+fi
+
 echo "[ INFO ] Downloading of dataset 'cifar-10-python'"
 wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 mkdir dataset && tar xvf cifar-10-python.tar.gz -C dataset
@@ -76,14 +128,34 @@ echo "[ INFO ] Creation of client has been been completed"
 
 
 echo "[ INFO ] Creation of Docker image has been started"
-cd $root_folder/docker/OpenVINO_DLDT
-image_name="openvino_${openvino_version}"
-dli_dataset_repo_name=${path##*/}
+cd $root_folder/docker/
+dli_dataset_repo_name=${benchmark_datasets##*/}
 dli_dataset_repo_name=${dli_dataset_repo_name%.git}
 echo "[ INFO ] The name of repository with datasets is $dli_dataset_repo_name"
-docker build -t $image_name --build-arg DATASET_DOWNLOAD_LINK=$benchmark_datasets .
+echo "[ INFO ] Build a base image has been started"
+docker build -t ubuntu_for_dli --build-arg DATASET_DOWNLOAD_LINK=$benchmark_datasets .
+echo "[ INFO ] Build a base image has been completed"
+
+cd ./$framework
+docker_name=${framework}
+if [ "$framework" = "OpenVINO_DLDT" ]; then
+    image_name="openvino_${openvino_version}"
+else
+    if [ "$framework" = "ONNXRuntime" ]; then
+        docker_name="ONNX_Runtime_Python"
+    elif [ "$framework" = "OpenCV" ]; then
+        docker_name="OpenCV_DNN_Python"
+    elif [ "$framework" = "PyTorch" ]; then
+        docker_name="PyTorch"
+    fi
+    image_name=${docker_name,,}
+fi
+echo "[ INFO ] Build a $image_name image has been started"
+docker build -t $image_name .
+echo "[ INFO ] Build a $image_name image has been completed"
+
 echo "[ INFO ] Creation of archive with Docker image"
-archive_name="openvino_${openvino_version}.tar"
+archive_name="$image_name.tar"
 docker save $image_name -o $archive_name
 archive_path="$PWD/$archive_name"
 echo "[ INFO ] Archive ${archive_path} has been created"
@@ -113,92 +185,22 @@ echo \
     >> $deployment_config
 echo "[ INFO ] Launch deploy.py script"
 cd $dlb_server/src/deployment
-$PYTHON deploy.py -s $ip_address -l $login -p itmm \
+$PYTHON deploy.py -s $ip_address -l $login -p $password \
                      -i $archive_path \
                      -d $server_folder \
-                     -n OpenVINO_DLDT \
+                     -n $docker_name \
                      --machine_list $deployment_config \
                      --project_folder $dlb_client
 echo "[ INFO ] Deployment of DLI Benchmark system has been completed"
-
 
 echo "[ INFO ] Preparing configuration for benchmarking"
 cd $demo_folder
 benchmark_config="benchmark_config.xml"
 benchmark_config_path="${PWD}/${benchmark_config}"
 [ -f $benchmark_config_path ] && rm -rf $benchmark_config_path
-task="test"
-model_name="SampleNet"
-model_xml="/media/models/SampLeNet.xml"
-model_bin="/media/models/SampLeNet.bin"
-framework="OpenVINO DLDT"
-device="CPU"
-echo \
-"<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Tests>
-    <Test>
-        <Model>
-            <Task>${task}</Task>
-            <Name>${model_name}</Name>
-            <Precision>FP32</Precision>
-            <SourceFramework>Caffe</SourceFramework>
-            <ModelPath>${model_xml}</ModelPath>
-            <WeightsPath>${model_bin}</WeightsPath>
-        </Model>
-        <Dataset>
-            <Name>ImageNET</Name>
-            <Path>/tmp/${dli_dataset_repo_name}/Datasets/ImageNET/</Path>
-        </Dataset>
-        <FrameworkIndependent>
-            <InferenceFramework>${framework}</InferenceFramework>
-            <BatchSize>1</BatchSize>
-            <Device>${device}</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>180</TestTimeLimit>
-        </FrameworkIndependent>
-        <FrameworkDependent>
-            <Mode>sync</Mode>
-            <Extension></Extension>
-            <AsyncRequestCount></AsyncRequestCount>
-            <ThreadCount></ThreadCount>
-            <StreamCount></StreamCount>
-        </FrameworkDependent>
-    </Test>
-    <Test>
-        <Model>
-            <Task>${task}</Task>
-            <Name>${model_name}</Name>
-            <Precision>FP32</Precision>
-            <SourceFramework>Caffe</SourceFramework>
-            <ModelPath>${model_xml}</ModelPath>
-            <WeightsPath>${model_bin}</WeightsPath>
-        </Model>
-        <Dataset>
-            <Name>ImageNET</Name>
-            <Path>/tmp/itlab-vision-dl-benchmark-data/Datasets/ImageNET/</Path>
-        </Dataset>
-        <FrameworkIndependent>
-            <InferenceFramework>${framework}</InferenceFramework>
-            <BatchSize>1</BatchSize>
-            <Device>${device}</Device>
-            <IterationCount>10</IterationCount>
-            <TestTimeLimit>180</TestTimeLimit>
-        </FrameworkIndependent>
-        <FrameworkDependent>
-            <Mode>async</Mode>
-            <Extension></Extension>
-            <AsyncRequestCount></AsyncRequestCount>
-            <ThreadCount></ThreadCount>
-            <StreamCount></StreamCount>
-        </FrameworkDependent>
-    </Test>
-</Tests>" \
-    >> $benchmark_config_path
-echo "[ INFO ] Model: ${model_xml}"
-echo "[ INFO ] Weights: ${model_bin}"
-echo "[ INFO ] Framework: ${framework}"
-echo "[ INFO ] Device: ${device}"
-echo "[ INFO ] Modes: latency, throughput"
+template_benchmark_config="benchmark_configs/${docker_name}.xml"
+echo "[ INFO ] Using template config file ${template_benchmark_config}"
+sed "s@{DLI_DATASET_REPO_NAME}@$dli_dataset_repo_name@g" $template_benchmark_config > $benchmark_config_path
 echo "[ INFO ] Copying of benchmark configuration file ${benchmark_config_path} to server"
 # use cp instead of scp because scp asks password
 [ -f $server_folder/$benchmark_config ] && rm -rf $server_folder/$benchmark_config
@@ -210,31 +212,10 @@ echo "[ INFO ] Preparing configuration for accuracy checker"
 accuracy_checker_config="accuracy_checker_config.xml"
 accuracy_checker_config_path="${PWD}/${accuracy_checker_config}"
 [ -f $accuracy_checker_config_path ] && rm -rf $accuracy_checker_config_path
-model_path="/media/models"
-config_path="${omz_client}/tools/accuracy_checker/sample/sample_config.yml"
-echo \
-"<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Tests>
-    <Test>
-        <Model>
-            <Task>${task}</Task>
-            <Name>${model_name}</Name>
-            <Precision>FP32</Precision>
-            <SourceFramework>Caffe</SourceFramework>
-            <Directory>${model_path}</Directory>
-        </Model>
-        <Parameters>
-            <InferenceFramework>${framework}</InferenceFramework>
-            <Device>${device}</Device>
-            <Config>${config_path}</Config>
-        </Parameters>
-    </Test>
-</Tests>" \
-    >> $accuracy_checker_config_path
-echo "[ INFO ] Model: ${model_name}"
-echo "[ INFO ] Framework: ${framework}"
-echo "[ INFO ] Device: ${device}"
-echo "[ INFO ] Config: ${config_path}"
+config_path="${PWD}/accuracy_checker_configs/${docker_name}.yml"
+template_accuracy_checker_config="accuracy_checker_configs/${docker_name}.xml"
+echo "[ INFO ] Using template config file ${template_accuracy_checker_config}"
+sed "s@{CONFIG_PATH}@$config_path@g" $template_accuracy_checker_config > $accuracy_checker_config_path
 echo "[ INFO ] Copying of accuracy checker configuration ${accuracy_checker_config_path} file to server"
 # use cp instead of scp because scp asks password
 [ -f $server_folder/$accuracy_checker_config ] && rm -rf $server_folder/$accuracy_checker_config
@@ -324,9 +305,9 @@ echo "[ INFO ] System cleaning has been started"
 for pkg in "${!packages[@]}";
 do
     echo "$pkg - ${packages[$pkg]}"
-    if [ $pkg_ok -eq 0 ];
+    if [ ${packages[$pkg]} -eq 0 ];
     then
-      sudo apt-get remove -y $pkg
+      sudo apt-get autoremove --purge -y $pkg
       echo "[ INFO ] The package $pkg has been removed"
     fi
 done

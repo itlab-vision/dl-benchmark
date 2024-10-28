@@ -1,0 +1,38 @@
+models:
+  - name: SampleNet_from_MXNet
+    launchers:
+      - framework: tvm
+        device: cpu
+        vm: false
+        model:   SampleNet_from_MXNet.json
+        adapter: classification
+        inputs:
+        - name: data
+          type: INPUT
+          shape: 3, 32, 32
+        _input_precision:
+            - data:FP32
+        outputs:
+          - prob
+
+    datasets:
+      - name: sample_dataset
+        data_source: sample_dataset/test
+        annotation_conversion:
+          converter: cifar
+          data_batch_file: cifar-10-batches-py/test_batch
+          convert_images: True
+          converted_images_dir: sample_dataset/test
+          num_classes: 10
+
+        preprocessing:
+          - type: resize
+            size: 32
+          - type: bgr_to_rgb
+          - type: normalization
+            mean: (125.307, 122.961, 113.8575)
+            std: (51.5865, 50.847, 51.255)
+
+        metrics:
+          - type: accuracy
+            top_k: 1
