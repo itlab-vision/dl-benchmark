@@ -1,0 +1,30 @@
+models:
+  - name: resnet50
+    launchers:
+      - framework: paddle_paddle
+        device: cpu
+        model: inference.pdmodel
+        params: inference.pdiparams
+        adapter: classification
+
+    datasets:
+      - name: sample_dataset
+        data_source: sample_dataset/test
+        annotation_conversion:
+          converter: cifar
+          data_batch_file: cifar-10-batches-py/test_batch
+          convert_images: True
+          converted_images_dir: sample_dataset/test
+          num_classes: 10
+
+        preprocessing:
+          - type: resize
+            size: 224
+          - type: bgr_to_rgb
+          - type: normalization
+            mean: (127.5, 127.5, 127.5)
+            std: (127.5, 127.5, 127.5)
+
+        metrics:
+          - type: accuracy
+            top_k: 1

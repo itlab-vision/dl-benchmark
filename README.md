@@ -30,6 +30,7 @@ DLI supports inference using the following frameworks:
 - [Spektral][spektral] (Python API).
 - [RKNN][rknn] (C++ API).
 - [ncnn][ncnn] (Python API).
+- [PaddlePaddle][PaddlePaddle] (Python API).
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -95,6 +96,7 @@ p Learning Inference Benchmark //
   - `TVM` is a directory of Dockerfiles for Apache TVM.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
+  - `PaddlePaddle` is a directory of Dockerfiles for PaddlePaddle.
 
 - `docs` directory contains auxiliary documentation. Please, find
   complete documentation at the [Wiki page][dli-wiki].
@@ -262,6 +264,7 @@ Report questions, issues and suggestions, using:
 [spektral]: https://graphneural.network
 [rknn]: https://github.com/rockchip-linux/rknn-toolkit2
 [ncnn]: https://github.com/Tencent/ncnn
+[PaddlePaddle]: https://www.paddlepaddle.org.cn/en
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
