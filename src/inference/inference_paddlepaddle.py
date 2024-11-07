@@ -3,6 +3,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+import traceback
 
 import postprocessing_data as pp
 import preprocessing_data as prep
@@ -217,8 +218,9 @@ def main():
                     log.warning('Error when printing inference results. {0}'.format(str(ex)))
 
             log.info(f'Performance results:\n{json.dumps(inference_result, indent=4)}')
-    except Exception as e:
-        log.warning('uncaught error: {0}'.format(str(e)))
+    except Exception:
+        log.error(traceback.format_exc())
+        sys.exit(1)
 
 
 if __name__ == '__main__':
