@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>resnet-50</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>PaddlePaddle</SourceFramework>
+            <ModelPath>../models_dir/resnet50_paddle/resnet50.pdmodel</ModelPath>
+            <WeightsPath>../models_dir/resnet50_paddle/resnet50.pdiparams</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>Data</Name>
+            <Path>../test_images/classification_images/fly.jpg</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PaddlePaddle</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>1</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+            <RawOutput>False</RawOutput>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape>[64,3,7,7]</InputShape>
+            <InputName>inputs</InputName>
+            <OutputNames></OutputNames>
+            <ThreadCount></ThreadCount>
+            <GPUMemSize></GPUMemSize>
+        </FrameworkDependent>
+    </Test>
+</Tests>
