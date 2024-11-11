@@ -68,6 +68,10 @@ class TensorFlowProcess(ProcessHandler):
             common_params = self._add_argument_to_cmd_line(common_params, '--raw_output', 'true')
         common_params = self._add_flag_to_cmd_line(common_params, '--restrisct_gpu_usage')
 
+        use_xla = self._test.dep_parameters.use_xla
+        if use_xla:
+            common_params = self._add_optional_argument_to_cmd_line(common_params, '--use_xla', 'true')
+
         command_line = f'{python} {path_to_tensorflow_script} {common_params}'
 
         nthreads = self._test.dep_parameters.nthreads
@@ -75,6 +79,10 @@ class TensorFlowProcess(ProcessHandler):
             command_line = self._add_env_to_cmd_line(command_line, 'OMP_NUM_THREADS', nthreads)
         kmp_affinity = self._test.dep_parameters.kmp_affinity
         if kmp_affinity:
-            command_line = TensorFlowProcess._add_env_to_cmd_line(command_line, 'KMP_AFFINITY', kmp_affinity)
+            command_line = self._add_env_to_cmd_line(command_line, 'KMP_AFFINITY', kmp_affinity)
+        if use_xla:
+            command_line = self._add_env_to_cmd_line(command_line, 'TF_XLA_FLAGS',
+                                                     '--tf_xla_auto_jit=2 \
+                                                     --tf_xla_cpu_global_jit')
 
         return command_line
