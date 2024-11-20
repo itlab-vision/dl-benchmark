@@ -183,6 +183,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
             data_gen = self._transformed_input[key]
             slice_data = [copy.deepcopy(next(data_gen)) for _ in range(self._batch_size)]
             slice_input[key] = np.stack(slice_data)
+
         return slice_input
 
     def get_slice_input_mxnet(self, *args, **kwargs):
@@ -333,6 +334,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'retinanet-tf':
+            return RetinaNetDetectionIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2575,3 +2578,122 @@ class MiniFASNetV2TFLiteCppIO(IOAdapter):
 
         log.info('Information for image:')
         log.info(f'\t{self._classes[max_idx]} (score: {probs[max_idx]:.5f})')
+
+
+class RetinaNetDetectionIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
+        input_ = self._input[input_layer_name]
+        result = result[result_layer_name]
+        shapes = self._original_shapes[input_layer_name]
+        ib = input_.shape[0]
+        b = result.shape[0]
+        N = result.shape[2] // ib
+        images = []
+        for i in range(b * ib):
+            orig_h, orig_w = shapes[i % ib]
+            image = input_[i % ib]
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+
+        boxes_dict = {i: [] for i in range(b * ib)}
+
+        for batch in range(b):
+            boxes = []
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch][0][out_num * N: (out_num + 1) * N]:
+                    image_number = int(obj[0])
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch * ib]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        score = obj[2]
+                        color = (
+                            min(int(class_id * 12.5), 255),
+                            min(class_id * 7, 255),
+                            min(class_id * 5, 255),
+                        )
+                        boxes_dict[image_number].append(((xmin, ymin), (xmax, ymax), score, class_id, color))
+                if isbreak:
+                    break
+
+
+        for image_number, boxes in boxes_dict.items():
+            if not boxes:
+                continue
+
+            filtered_boxes = self._non_max_suppression(boxes)
+
+            for (xmin, ymin), (xmax, ymax), _, class_id, color in filtered_boxes:
+                cv2.rectangle(images[image_number], (xmin, ymin), (xmax, ymax), color, 2)
+                log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{0}.bmp'.format(count + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {0}'.format(out_img))
+            count += 1
+
+    def _non_max_suppression(self, boxes, iou_threshold=0.3):
+            if len(boxes) == 0:
+                return []
+
+            boxes_by_class = {}
+            for box in boxes:
+                _, _, _, class_id, _ = box
+                if class_id not in boxes_by_class:
+                    boxes_by_class[class_id] = []
+                boxes_by_class[class_id].append(box)
+
+            filtered_boxes = []
+            for class_id, class_boxes in boxes_by_class.items():
+                class_boxes = sorted(class_boxes, key=lambda x: x[2], reverse=True)
+
+                while class_boxes:
+                    best_box = class_boxes.pop(0)
+                    filtered_boxes.append(best_box)
+
+                    class_boxes = [
+                        box for box in class_boxes
+                        if self._iou(best_box, box) < iou_threshold
+                    ]
+
+            return filtered_boxes
+
+    def _iou(self, box1, box2):
+        xymin1, xymax1, _, _, _ = box1
+        xmin1, ymin1 = xymin1
+        xmax1, ymax1 = xymax1
+
+        xymin2, xymax2, _, _, _ = box2
+        xmin2, ymin2 = xymin2
+        xmax2, ymax2 = xymax2
+
+        inter_xmin = max(xmin1, xmin2)
+        inter_ymin = max(ymin1, ymin2)
+        inter_xmax = min(xmax1, xmax2)
+        inter_ymax = min(ymax1, ymax2)
+        inter_area = max(0, inter_xmax - inter_xmin) * max(0, inter_ymax - inter_ymin)
+
+        area1 = (xmax1 - xmin1) * (ymax1 - ymin1)
+        area2 = (xmax2 - xmin2) * (ymax2 - ymin2)
+        union_area = area1 + area2 - inter_area
+
+        return inter_area / union_area if union_area > 0 else 0
