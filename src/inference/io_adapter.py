@@ -2631,7 +2631,6 @@ class RetinaNetDetectionIO(IOAdapter):
                 if isbreak:
                     break
 
-
         for image_number, boxes in boxes_dict.items():
             if not boxes:
                 continue
@@ -2652,30 +2651,30 @@ class RetinaNetDetectionIO(IOAdapter):
             count += 1
 
     def _non_max_suppression(self, boxes, iou_threshold=0.3):
-            if len(boxes) == 0:
-                return []
+        if len(boxes) == 0:
+            return []
 
-            boxes_by_class = {}
-            for box in boxes:
-                _, _, _, class_id, _ = box
-                if class_id not in boxes_by_class:
-                    boxes_by_class[class_id] = []
-                boxes_by_class[class_id].append(box)
+        boxes_by_class = {}
+        for box in boxes:
+            _, _, _, class_id, _ = box
+            if class_id not in boxes_by_class:
+                boxes_by_class[class_id] = []
+            boxes_by_class[class_id].append(box)
 
-            filtered_boxes = []
-            for class_id, class_boxes in boxes_by_class.items():
-                class_boxes = sorted(class_boxes, key=lambda x: x[2], reverse=True)
+        filtered_boxes = []
+        for _, class_boxes in boxes_by_class.items():
+            class_boxes = sorted(class_boxes, key=lambda x: x[2], reverse=True)
 
-                while class_boxes:
-                    best_box = class_boxes.pop(0)
-                    filtered_boxes.append(best_box)
+            while class_boxes:
+                best_box = class_boxes.pop(0)
+                filtered_boxes.append(best_box)
 
-                    class_boxes = [
-                        box for box in class_boxes
-                        if self._iou(best_box, box) < iou_threshold
-                    ]
+                class_boxes = [
+                    box for box in class_boxes
+                    if self._iou(best_box, box) < iou_threshold
+                ]
 
-            return filtered_boxes
+        return filtered_boxes
 
     def _iou(self, box1, box2):
         xymin1, xymax1, _, _, _ = box1
