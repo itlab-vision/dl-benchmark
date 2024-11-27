@@ -82,7 +82,7 @@ class TensorFlowProcess(ProcessHandler):
             command_line = self._add_env_to_cmd_line(command_line, 'KMP_AFFINITY', kmp_affinity)
         if use_xla:
             command_line = self._add_env_to_cmd_line(command_line, 'TF_XLA_FLAGS',
-                                                     '--tf_xla_auto_jit=2 \
-                                                     --tf_xla_cpu_global_jit')
+                                                     '"--tf_xla_auto_jit=2 \
+                                                     --tf_xla_cpu_global_jit"')
 
         return command_line
