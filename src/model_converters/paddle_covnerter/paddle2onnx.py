@@ -42,7 +42,7 @@ def cli_argument_parser():
 
 def convert_paddle_to_onnx(model_dir: str, model_filename: str, params_filename: str,
                            model_path: str, opset_version: str):
-    os.system(f"""paddle2onnx --model_dir {model_dir} --model_filename {model_filename} 
+    os.system(f"""paddle2onnx --model_dir {model_dir} --model_filename {model_filename}
     --params_filename {params_filename}
     --save_file {model_path}
     --opset_version {opset_version}

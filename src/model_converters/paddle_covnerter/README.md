@@ -7,17 +7,17 @@ PaddlePaddle converter supports conversion to Paddle format from Pytorch and ONN
 Usage of the script:
 
 ```sh
-python converter.py -m <path/to/input/model> -f <source_framework> -p <Pytorch/module/name> -d <output_directory>
+python converter.py -m <path/to/input/model> -f <source_framework> -p <PyTorch/module/name> -d <output_directory>
 ```
 
 This will convert model from `<source_framework>` to Paddle format.
 
 ### Paddle converter parameters
 
-- `--model_path` Path to an .onnx or .pth file with the original model.
+- `--model_path` is a path to an .onnx or .pth file with the original model.
 - `--framework` is a source framework for convertion to PaddlePaddle format.
-- `--pytorch_module_name` Module name for PyTorch model (necessary if source framework is Pytorch).
-- `--save_dir` Directory for converted model to be saved to.
+- `--pytorch_module_name` is a module name for PyTorch model (necessary if source framework is Pytorch).
+- `--save_dir` is a directory for converted model to be saved to.
 
 ### Examples of usage
 
@@ -41,15 +41,15 @@ Usage of the script:
 python paddle2onnx.py -d .\pd_pth\inference_model -f model.pdmodel -p model.pdiparams -m inference.onnx -o 11
 ```
 
-This will convert model from Paddle to ONNX format.
+This script will convert model from Paddle to ONNX format.
 
 ### Converter parameters
 
-- `--model_dir` Path to the directory with the original model.
-- `--model_filename` Name of the model file name.
-- `--params_filename` Name of the parameters file name.
-- `--model_path` Path to the resulting .onnx file.
-- `--opset_version` Desired opset version of the resulting ONNX model.
+- `--model_dir` is a path to the directory with the original model.
+- `--model_filename` is a name of the model file name.
+- `--params_filename` is a name of the parameters file name.
+- `--model_path` is a path to the resulting .onnx file.
+- `--opset_version` is a desired opset version of the resulting ONNX model.
 
 ### Examples of usage
 
