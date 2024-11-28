@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-from torchvision.models import *
+from torchvision.models import (AlexNet, VGG, ResNet, SqueezeNet, DenseNet,
+                                Inception3, GoogLeNet, ShuffleNetV2, MobileNetV2, MobileNetV3, MNASNet)
 from x2paddle.convert import pytorch2paddle
 import argparse
 import logging as log
@@ -41,6 +42,7 @@ def cli_argument_parser():
 
     return args
 
+
 def convert_pytorch_to_paddle(model_path: str, module_name, save_dir: str):
 
     modules = {'AlexNet': AlexNet,
@@ -59,11 +61,12 @@ def convert_pytorch_to_paddle(model_path: str, module_name, save_dir: str):
     torch_module.load_state_dict(torch.load(model_path))
     torch_module.eval()
 
-    input_data = np.random.rand(1, 3, 224, 224).astype("float32")
+    input_data = np.random.rand(1, 3, 224, 224).astype('float32')
     pytorch2paddle(torch_module,
                    save_dir=save_dir,
-                   jit_type="trace",
+                   jit_type='trace',
                    input_examples=[torch.tensor(input_data)])
+
 
 def convert_onnx_to_paddle(model_path: str, save_dir: str):
     print(f'x2paddle --framework=onnx --model={model_path} --save_dir={save_dir}')
