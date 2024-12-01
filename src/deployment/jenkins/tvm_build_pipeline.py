@@ -4,20 +4,16 @@ import os
 import subprocess
 
 
-class EnvCreator:
-    def __init__(self, frameworks, py_version):
-        self.frameworks = frameworks.split(',')
-        self.py_version = py_version
+class TVMBuilder:
+    def __init__(self, branch):
+        self.branch = branch
 
     def _run(self, cmd):
         return subprocess.run(cmd, shell=True)
 
-    def create_envs(self):
-        self._run(f'conda create -y -n tvm_main python=={self.py_version}')
-        self._run(f'$CONDA_ROOT/envs/tvm_main/bin/pip3 install -r requirements.txt')
-        for framework in self.frameworks:
-            self._run(f'conda create -y --name tvm_{framework} --clone tvm_main')
-            self._run(f'$CONDA_ROOT/envs/tvm_{framework}/bin/pip3 install {framework}')
+    def build_tvm(self):
+        self._run(f'git clone --recursive https://github.com/apache/tvm -b {self.branch}')
+        self._run(f'cd tvm && mkdir build && cd build && cmake -DUSE_LLVM=ON ../ && make -j2 && cd ../python && $CONDA_ROOT/envs/tvm_main/bin/python setup.py install --user')
 
 
 def cli_arguments_parse():
@@ -28,24 +24,14 @@ def cli_arguments_parse():
                         dest='branch',
                         required=True,
                         type=str)
-    parser.add_argument('-f', '--frameworks',
-                        help='Frameworks to create pyenv.',
-                        dest='frameworks',
-                        required=True,
-                        type=str)
-    parser.add_argument('-p', '--python_version',
-                        help='Python version to create pyenv.',
-                        dest='py',
-                        required=True,
-                        type=str)
 
     return parser.parse_args()
 
 def main():
     args = cli_arguments_parse()
-    cr = EnvCreator(args.frameworks, args.py)
-    cr.create_envs()
+    cr = TVMBuilder(args.branch)
+    cr.build_tvm()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     sys.exit(main() or 0)

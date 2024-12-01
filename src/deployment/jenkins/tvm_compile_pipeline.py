@@ -28,12 +28,12 @@ class TXTParser:
         return self.lines
 
 
-class TVMConverterProcess:
+class TVMCompilerProcess:
     def __init__(self, models_dir):
         self.converter = Path(__file__).parents[2]
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
-        self.converter = str(self.converter.joinpath('tvm_converter.py'))
+        self.converter = str(self.converter.joinpath('tvm_compiler.py'))
         self.models_dir = models_dir.absolute().as_posix()
         self._command_line = f''
 
@@ -44,25 +44,18 @@ class TVMConverterProcess:
     def _add_option(self, name_of_arg):
         self._command_line += f' {name_of_arg}'      
 
-    def create_command_line(self, model_name, model, weights,
-                            framework, input_shape, batch, input_name):
-        self._command_line = (f'$CONDA_ROOT/envs/tvm_{framework}/bin/python3 ' + f'{self.converter}')
-        self._add_argument('-mn', model_name)
-        if model != '':
-            self._add_argument('-m', f'{self.models_dir}/{model}')
-        if weights != '':            
-            self._add_argument('-w', f'{self.models_dir}/{weights}')
-        self._add_argument('-f', framework)
-        self._add_argument('-is', f'{batch} {input_shape}')
-        self._add_argument('-b', f'{batch}')
-        self._add_argument('-op', f'{self.models_dir}/{model_name}/batch_{batch}')
-        if input_name != '':
-            self._add_argument('-in', f'{input_name}')
+    def create_command_line(self, model_name, target, batch, opt_level):
+        self._command_line = (f'$CONDA_ROOT/envs/tvm_main/bin/python3 ' + f'{self.converter}')
+        self._add_argument('-m', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.json')            
+        self._add_argument('-p', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.params')
+        self._add_argument('-t', f'{target}')
+        self._add_argument('--opt_level', f'{opt_level}')
+        self._add_argument('--lib_name', f'{model_name}.so')
+        self._add_argument('-op', f'{self.models_dir}/{model_name}/batch_{batch}/opt_level{opt_level}')
 
     def execute(self):
         log.info(f'Starting process: {self._command_line}\n')
-        proc = subprocess.run(self._command_line, shell=True, capture_output=True)
-        log.info(f'Subprocess logs: \n\n{proc.stdout.decode()}')
+        proc = subprocess.run(self._command_line, shell=True)
         self.exit_code = proc.returncode
         self._command_line = ''
 
@@ -81,6 +74,16 @@ def cli_arguments_parse():
                         dest='models_info',
                         required=True,
                         type=Path)
+    parser.add_argument('-op', '--output_dir',
+                        help='Path to save the model.',
+                        default=None,
+                        type=str,
+                        dest='output_dir')
+    parser.add_argument('--opt_level',
+                        help='The optimization level of the task extractions.',
+                        type=list,
+                        default=[0, 1, 2, 3],
+                        dest='opt_levels')
 
     return parser.parse_args()
 
@@ -89,17 +92,16 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMConverterProcess(args.models_dir)
-    for (model_name, model, weights,
-         framework, input_shape, batches, input_name) in models:
+    proc = TVMCompilerProcess(args.models_dir)
+    for (model_name, _, _,
+         _, _, batches, _) in models:
         for batch in batches:
-            proc.create_command_line(
-                model_name, model,
-                weights, framework,
-                input_shape, batch,
-                input_name
-            )
-            proc.execute()
+            for level in args.opt_level:
+                proc.create_command_line(
+                    model_name, args.target,
+                    batch, level
+                )
+                proc.execute()
 
 
 
