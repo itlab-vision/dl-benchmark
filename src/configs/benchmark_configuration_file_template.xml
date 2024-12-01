@@ -97,6 +97,7 @@
             <InterOpParallelismThreads></InterOpParallelismThreads>
             <IntraOpParallelismThreads></IntraOpParallelismThreads>
             <KmpAffinity></KmpAffinity>
+            <UseXLA></UseXLA>
         </FrameworkDependent>
     </Test>
     <Test>
