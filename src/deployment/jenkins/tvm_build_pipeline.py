@@ -14,7 +14,7 @@ class TVMBuilder:
 
     def build_tvm(self):
         self._run(f'git clone --recursive https://github.com/apache/tvm -b {self.branch}')
-        self._run(f'cd tvm && mkdir build && cd build && cmake -DUSE_LLVM=ON ../ && make -j2 && cd ../python && {self.conda}/envs/tvm_main/bin/python setup.py install --user')
+        self._run(f'cd tvm && mkdir build && cd build && cmake -DUSE_LLVM=ON ../ && make -j{{nproc --all}} && cd ../python && {self.conda}/envs/tvm_main/bin/python setup.py install --user')
 
 
 def cli_arguments_parse():
