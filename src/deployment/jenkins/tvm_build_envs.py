@@ -18,9 +18,10 @@ class EnvCreator:
         self._run(f'{self.conda_prefix}/bin/conda install -n tvm_main -c conda-forge -y gcc=12.1.0')
         self._run(f'{self.conda_prefix}/bin/conda install -n tvm_main -c conda-forge -y gxx_linux-64')
         self._run(f'{self.conda_prefix}/envs/tvm_main/bin/pip3 install -r requirements.txt')
-        for framework in self.frameworks:
-            self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main')
-            self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install {framework}')
+        if framework != '':
+            for framework in self.frameworks:
+                self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main')
+                self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install {framework}')
 
 
 def cli_arguments_parse():
@@ -34,7 +35,8 @@ def cli_arguments_parse():
     parser.add_argument('-f', '--frameworks',
                         help='Frameworks to create conda envs.',
                         dest='frameworks',
-                        required=True,
+                        default='',
+                        required=False,
                         type=str)
     parser.add_argument('-p', '--python_version',
                         help='Python version to create conda env.',
