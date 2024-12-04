@@ -18,6 +18,12 @@ def cli_argument_parser():
                         type=str,
                         help='Path to configuration file',
                         required=True)
+    parser.add_argument('-pi', '--python_interpreter',
+                        type=str,
+                        dest='python',
+                        default='python3',
+                        help='Path to specific python interpreter',
+                        required=False)
     parser.add_argument('-s', '--server_ip',
                         type=str,
                         help='FTP server IP',

@@ -4,8 +4,9 @@ from remote_helper import RemoteHelper
 
 
 class LinuxRemoteHelper(RemoteHelper):
-    def __init__(self, log):
+    def __init__(self, python, log):
         super().__init__(log)
+        self.python = python
 
     def connect(self, machine_ip, login, password):
         new_connection = paramiko.SSHClient()
@@ -29,7 +30,7 @@ class LinuxRemoteHelper(RemoteHelper):
         return channel
 
     def execute_python(self, con, command):
-        return self.execute(con, f'python3 {command}')
+        return self.execute(con, f'{self.python} {command}')
 
     def wait(self, process):
         channel_id = process.get_id()
