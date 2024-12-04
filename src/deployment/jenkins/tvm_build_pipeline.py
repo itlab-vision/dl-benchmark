@@ -5,15 +5,16 @@ import subprocess
 
 
 class TVMBuilder:
-    def __init__(self, branch):
+    def __init__(self, branch, conda):
         self.branch = branch
+        self.conda = conda
 
     def _run(self, cmd):
         return subprocess.run(cmd, shell=True)
 
     def build_tvm(self):
         self._run(f'git clone --recursive https://github.com/apache/tvm -b {self.branch}')
-        self._run(f'cd tvm && mkdir build && cd build && cmake -DUSE_LLVM=ON ../ && make -j2 && cd ../python && $CONDA_ROOT/envs/tvm_main/bin/python setup.py install --user')
+        self._run(f'cd tvm && mkdir build && cd build && cmake -DUSE_LLVM=ON ../ && make -j2 && cd ../python && {self.conda}/envs/tvm_main/bin/python setup.py install --user')
 
 
 def cli_arguments_parse():
@@ -24,12 +25,18 @@ def cli_arguments_parse():
                         dest='branch',
                         required=True,
                         type=str)
+    parser.add_argument('-cp', '--conda_prefix',
+                        help='Path to miniconda3 directory.',
+                        dest='conda',
+                        required=True,
+                        type=str)
 
     return parser.parse_args()
 
+
 def main():
     args = cli_arguments_parse()
-    cr = TVMBuilder(args.branch)
+    cr = TVMBuilder(args.branch, args.conda)
     cr.build_tvm()
 
 
