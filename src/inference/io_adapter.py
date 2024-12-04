@@ -2653,9 +2653,9 @@ class RetinaNetDetectionIO(IOAdapter):
                         ymax = ymin + height
 
                         cv2.rectangle(images[image_number], (xmin, ymin), (xmax, ymax), (57, 255, 20), 4)
-                        log.info(f'Bounding boxes for image {image_number} for object {class_id}')
-                        log.info(f'Top left: ({xmin}, {ymin})')
-                        log.info(f'Bottom right: ({xmax}, {ymax})')
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
 
         count = 0
         for image in images:
