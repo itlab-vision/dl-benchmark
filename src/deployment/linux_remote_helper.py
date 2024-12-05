@@ -30,6 +30,7 @@ class LinuxRemoteHelper(RemoteHelper):
         return channel
 
     def execute_python(self, con, command):
+        print(self.python)
         return self.execute(con, f'{self.python} {command}')
 
     def wait(self, process):
