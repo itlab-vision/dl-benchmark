@@ -1,7 +1,6 @@
 import torch
 import numpy as np
-from torchvision.models import (AlexNet, VGG, ResNet, SqueezeNet, DenseNet,
-                                Inception3, GoogLeNet, ShuffleNetV2, MobileNetV2, MobileNetV3, MNASNet)
+import torchvision.models as models
 from x2paddle.convert import pytorch2paddle
 import argparse
 import logging as log
@@ -10,6 +9,15 @@ from pathlib import Path
 import os
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+
+
+def get_model_by_name(model_name):
+    try:
+        model_constructor = getattr(models, model_name)
+        model = model_constructor()
+        return model
+    except AttributeError:
+        raise ValueError(f'Model {model_name} is not found in torchvision.models')
 
 
 def cli_argument_parser():
@@ -21,7 +29,7 @@ def cli_argument_parser():
                         type=str,
                         dest='model_path')
     parser.add_argument('-f', '--framework',
-                        help='Original model framework (ONNX or Pytorch)',
+                        help='Original model framework (ONNX or PyTorch)',
                         required=True,
                         type=str,
                         choices=['onnx', 'pytorch'],
@@ -31,7 +39,7 @@ def cli_argument_parser():
                         required=False,
                         type=str,
                         choices=['AlexNet', 'VGG', 'ResNet', 'SqueezeNet', 'DenseNet', 'InceptionV3', 'GoogLeNet',
-                                 'ShuffleNetV2', 'MobileNetV2', 'MobileNetV3', 'MNASNet'],
+                                 'ShuffleNetV2', 'MobileNetV2', 'MobileNetV3', 'MNASNet', 'EfficientNet'],
                         dest='module_name')
     parser.add_argument('-d', '--save_dir',
                         help='Directory for converted model to be saved to.',
@@ -45,24 +53,12 @@ def cli_argument_parser():
 
 def convert_pytorch_to_paddle(model_path: str, module_name, save_dir: str):
 
-    modules = {'AlexNet': AlexNet,
-               'VGG': VGG,
-               'ResNet': ResNet,
-               'SqueezeNet': SqueezeNet,
-               'DenseNet': DenseNet,
-               'InceptionV3': Inception3,
-               'GoogLeNet': GoogLeNet,
-               'ShuffleNetV2': ShuffleNetV2,
-               'MobileNetV2': MobileNetV2,
-               'MobileNetV3': MobileNetV3,
-               'MNASNet': MNASNet}
-
-    torch_module = modules[module_name]()
-    torch_module.load_state_dict(torch.load(model_path))
-    torch_module.eval()
+    model = get_model_by_name(module_name)
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
 
     input_data = np.random.rand(1, 3, 224, 224).astype('float32')
-    pytorch2paddle(torch_module,
+    pytorch2paddle(model,
                    save_dir=save_dir,
                    jit_type='trace',
                    input_examples=[torch.tensor(input_data)])
