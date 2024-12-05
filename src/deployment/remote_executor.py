@@ -3,7 +3,7 @@ from remote_helper import RemoteHelper
 
 
 class RemoteExecutor:
-    def __init__(self, os_type, python ,log):
+    def __init__(self, os_type, python, log):
         self.my_active_connection = None
         self.my_machine_ip = None
         self.my_process_list = []
