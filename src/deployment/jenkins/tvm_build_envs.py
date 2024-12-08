@@ -14,7 +14,7 @@ class EnvCreator:
         return subprocess.run(cmd, shell=True)
 
     def create_envs(self):
-        if framework != '':
+        if len(self.frameworks) != 0:
             for framework in self.frameworks:
                 self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main')
                 if framework != 'mxnet':
