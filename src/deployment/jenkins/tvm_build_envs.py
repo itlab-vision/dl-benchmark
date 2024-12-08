@@ -21,7 +21,13 @@ class EnvCreator:
         if framework != '':
             for framework in self.frameworks:
                 self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main')
-                self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install {framework}')
+                if framework != 'mxnet':
+                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install {framework}')
+                else:
+                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install {framework}==1.9.1')
+                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install gluoncv[full]')
+                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 uninstall -y numpy')
+                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}/bin/pip3 install numpy==1.23.1')
 
 
 def cli_arguments_parse():
