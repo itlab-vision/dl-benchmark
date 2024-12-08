@@ -61,8 +61,8 @@ class TVMConverterProcess:
 
     def execute(self):
         log.info(f'Starting process: {self._command_line}\n')
-        proc = subprocess.run(self._command_line, shell=True, capture_output=True)
-        log.info(f'Subprocess logs: \n\n{proc.stdout.decode()}')
+        proc = subprocess.run(self._command_line, shell=True)
+        #log.info(f'Subprocess logs: \n\n{proc.stdout.decode()}')
         self.exit_code = proc.returncode
         self._command_line = ''
 
