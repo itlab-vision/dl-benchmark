@@ -14,10 +14,6 @@ class EnvCreator:
         return subprocess.run(cmd, shell=True)
 
     def create_envs(self):
-        self._run(f'{self.conda_prefix}/bin/conda create -y -n tvm_main python=={self.py_version}')
-        self._run(f'{self.conda_prefix}/bin/conda install -n tvm_main -c conda-forge -y gcc=12.1.0')
-        self._run(f'{self.conda_prefix}/bin/conda install -n tvm_main -c conda-forge -y gxx_linux-64')
-        self._run(f'{self.conda_prefix}/envs/tvm_main/bin/pip3 install -r requirements.txt')
         if framework != '':
             for framework in self.frameworks:
                 self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main')
