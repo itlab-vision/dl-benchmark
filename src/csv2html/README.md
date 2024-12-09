@@ -3,7 +3,7 @@
 Общий вид командной строки:
 
 ```bash
-python3 srcf2paddle.py -t <inf_table.csv> -r <result_file.html> -k <table_kind>
+python3 converter.py -t <inf_table.csv> -r <result_file.html> -k <table_kind>
 ```
 
 Аргументы командной строки:
