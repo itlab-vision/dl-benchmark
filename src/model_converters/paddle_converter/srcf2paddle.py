@@ -38,8 +38,9 @@ def cli_argument_parser():
                         help='Module name for PyTorch model.',
                         required=False,
                         type=str,
-                        choices=['AlexNet', 'VGG', 'ResNet', 'SqueezeNet', 'DenseNet', 'InceptionV3', 'GoogLeNet',
-                                 'ShuffleNetV2', 'MobileNetV2', 'MobileNetV3', 'MNASNet', 'EfficientNet'],
+                        choices=['AlexNet', 'VGG', 'ResNet', 'SqueezeNet', 'DenseNet',
+                                 'InceptionV3', 'GoogLeNet', 'ShuffleNetV2', 'MobileNetV2',
+                                 'MobileNetV3', 'MNASNet', 'EfficientNet'],
                         dest='module_name')
     parser.add_argument('-d', '--save_dir',
                         help='Directory for converted model to be saved to.',
