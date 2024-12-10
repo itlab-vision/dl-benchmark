@@ -183,6 +183,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
             data_gen = self._transformed_input[key]
             slice_data = [copy.deepcopy(next(data_gen)) for _ in range(self._batch_size)]
             slice_input[key] = np.stack(slice_data)
+
         return slice_input
 
     def get_slice_input_mxnet(self, *args, **kwargs):
@@ -333,6 +334,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'retinanet-tf':
+            return RetinaNetDetectionIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -2575,3 +2578,88 @@ class MiniFASNetV2TFLiteCppIO(IOAdapter):
 
         log.info('Information for image:')
         log.info(f'\t{self._classes[max_idx]} (score: {probs[max_idx]:.5f})')
+
+
+class RetinaNetDetectionIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
+        input_ = self._input[input_layer_name]
+        result = result[result_layer_name]
+        shapes = self._original_shapes[input_layer_name]
+        ib = input_.shape[0]
+        b = result.shape[0]
+        N = result.shape[2] // ib
+        images = []
+        for i in range(b * ib):
+            orig_h, orig_w = shapes[i % ib]
+            image = input_[i % ib]
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+
+        boxes_dict = {i: {} for i in range(b * ib)}
+
+        for batch in range(b):
+            boxes = []
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch][0][out_num * N: (out_num + 1) * N]:
+                    image_number = int(obj[0])
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch * ib]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        score = obj[2]
+                        box = [xmin, ymin, xmax - xmin, ymax - ymin]
+
+                        if class_id not in boxes_dict[image_number]:
+                            boxes_dict[image_number][class_id] = {'boxes': [], 'scores': []}
+                        boxes_dict[image_number][class_id]['boxes'].append(box)
+                        boxes_dict[image_number][class_id]['scores'].append(score)
+                if isbreak:
+                    break
+
+        for image_number, classes in boxes_dict.items():
+            if not classes:
+                continue
+
+            for class_id, data in classes.items():
+                boxes = data['boxes']
+                scores = data['scores']
+
+                if len(boxes) == 0:
+                    continue
+
+                indices = cv2.dnn.NMSBoxes(boxes, scores, self._threshold, 0.3)
+
+                if len(indices) > 0:
+                    for i in indices.flatten():
+                        box = boxes[i]
+                        score = scores[i]
+                        xmin, ymin, width, height = box
+                        xmax = xmin + width
+                        ymax = ymin + height
+
+                        cv2.rectangle(images[image_number], (xmin, ymin), (xmax, ymax), (57, 255, 20), 4)
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{0}.bmp'.format(count + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {0}'.format(out_img))
+            count += 1
