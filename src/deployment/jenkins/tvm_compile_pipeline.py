@@ -85,6 +85,11 @@ def cli_arguments_parse():
                         type=list,
                         default=[0, 1, 2, 3],
                         dest='opt_levels')
+    parser.add_argument('--target',
+                        help='Parameter for hardware-dependent optimizations.',
+                        default='llvm',
+                        type=str,
+                        dest='target')
     parser.add_argument('-cp', '--conda_prefix',
                         help='Path to miniconda3 directory.',
                         dest='conda',
