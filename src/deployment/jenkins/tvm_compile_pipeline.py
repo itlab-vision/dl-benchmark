@@ -107,7 +107,7 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMCompilerProcess(args.models_dir, args.conda)
+    proc = TVMCompilerProcess(args.models_dir, args.conda, args.output_dir)
     for (model_name, _, _,
          _, _, batches, _) in models:
         for batch in batches:
