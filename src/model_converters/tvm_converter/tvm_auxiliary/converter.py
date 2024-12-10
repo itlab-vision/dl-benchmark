@@ -28,6 +28,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.mod_type = self.get_file_type(self.model_path)
         self.params_type = self.get_file_type(self.model_params)
+        print(self.mod_type, ' ', self.params_type)
 
         self.graph = None
         self.mod = None
