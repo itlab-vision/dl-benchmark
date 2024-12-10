@@ -29,13 +29,17 @@ class TXTParser:
 
 
 class TVMCompilerProcess:
-    def __init__(self, models_dir, conda):
+    def __init__(self, models_dir, conda, output_dir):
         self.converter = Path(__file__).parents[2]
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
         self.converter = str(self.converter.joinpath('tvm_compiler.py'))
         self.conda = conda
         self.models_dir = models_dir.absolute().as_posix()
+        if output_dir is not None:
+            self.output_dir = output_dir
+        else:
+            self.output_dir = models_dir
         self._command_line = f''
 
     def _add_argument(self, name_of_arg, value_of_arg):
@@ -52,7 +56,7 @@ class TVMCompilerProcess:
         self._add_argument('-t', f'{target}')
         self._add_argument('--opt_level', f'{opt_level}')
         self._add_argument('--lib_name', f'{model_name}.so')
-        self._add_argument('-op', f'{self.models_dir}/{model_name}/batch_{batch}/opt_level{opt_level}')
+        self._add_argument('-op', f'{self.output_dir}/{model_name}/batch_{batch}/opt_level{opt_level}')
 
     def execute(self):
         log.info(f'Starting process: {self._command_line}\n')
