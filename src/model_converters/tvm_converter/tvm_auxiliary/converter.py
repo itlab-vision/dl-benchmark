@@ -25,7 +25,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.output_dir = args.get('output_dir', None)
         self.lib_name = args.get('lib_name', None)
-
+        print(f'model path = {self.model_path}')
         self.mod_type = self.get_file_type(self.model_path)
         self.params_type = self.get_file_type(self.model_params)
         print(self.mod_type, ' ', self.params_type)
