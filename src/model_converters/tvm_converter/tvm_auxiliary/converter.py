@@ -135,7 +135,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Saving library of model \"{self.lib_name}\" to \"{self.output_dir}\"')
         if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+            os.mkdir(self.output_dir)
 
         lib = self.get_lib()
         if len(lib) == 1:
