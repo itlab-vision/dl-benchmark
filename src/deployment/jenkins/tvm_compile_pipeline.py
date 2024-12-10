@@ -107,7 +107,7 @@ def main():
     for (model_name, _, _,
          _, _, batches, _) in models:
         for batch in batches:
-            for level in args.opt_level:
+            for level in args.opt_levels:
                 proc.create_command_line(
                     model_name, args.target,
                     batch, level
