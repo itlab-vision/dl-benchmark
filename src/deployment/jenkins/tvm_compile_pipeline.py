@@ -29,11 +29,12 @@ class TXTParser:
 
 
 class TVMCompilerProcess:
-    def __init__(self, models_dir):
+    def __init__(self, models_dir, conda):
         self.converter = Path(__file__).parents[2]
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
         self.converter = str(self.converter.joinpath('tvm_compiler.py'))
+        self.conda = conda
         self.models_dir = models_dir.absolute().as_posix()
         self._command_line = f''
 
@@ -45,7 +46,7 @@ class TVMCompilerProcess:
         self._command_line += f' {name_of_arg}'      
 
     def create_command_line(self, model_name, target, batch, opt_level):
-        self._command_line = (f'$CONDA_ROOT/envs/tvm_main/bin/python3 ' + f'{self.converter}')
+        self._command_line = (f'{self.conda}/envs/tvm_main/bin/python3 ' + f'{self.converter}')
         self._add_argument('-m', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.json')            
         self._add_argument('-p', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.params')
         self._add_argument('-t', f'{target}')
@@ -84,6 +85,11 @@ def cli_arguments_parse():
                         type=list,
                         default=[0, 1, 2, 3],
                         dest='opt_levels')
+    parser.add_argument('-cp', '--conda_prefix',
+                        help='Path to miniconda3 directory.',
+                        dest='conda',
+                        required=True,
+                        type=str)
 
     return parser.parse_args()
 
@@ -92,7 +98,7 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMCompilerProcess(args.models_dir)
+    proc = TVMCompilerProcess(args.models_dir, args.conda)
     for (model_name, _, _,
          _, _, batches, _) in models:
         for batch in batches:
