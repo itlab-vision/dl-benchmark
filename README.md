@@ -12,7 +12,8 @@ as well as regularly publishing the obtained measurements.
 The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
 of deep models inferred on Intel-platforms (Intel CPUs, Intel
-Processor Graphics, Intel Movidius Neural Compute Stick).
+Processor Graphics). In addition, there are benchmarking results
+for several models inferred on RISC-V platform
 
 DLI supports inference using the following frameworks:
 
@@ -72,6 +73,10 @@ Please consider citing the following papers.
    and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
    [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
    (In Russian)
+1. Mukhin I., Rodimkov Y., Vasiliev E., Volokitin V., Sidorova A.,
+   Kozinov E., Meyerov I., Kustikova V. Benchmarking Deep Learning
+   Inference on RISC-V CPUs // Springer Lecture Notes in Computer
+   Science. – 2024. – Accepted.
 
 ## Repo structure
 
