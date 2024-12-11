@@ -13,7 +13,7 @@ The main advantage of DLI from the existing benchmarks
 is the availability of performance results for a large number
 of deep models inferred on Intel-platforms (Intel CPUs, Intel
 Processor Graphics). In addition, there are benchmarking results
-for several models inferred on RISC-V platform
+for several models inferred on RISC-V platform.
 
 DLI supports inference using the following frameworks:
 
@@ -91,6 +91,7 @@ Please consider citing the following papers.
   - `Dockerfile` is the main Dockerfile.
   - `Caffe` is a directory of Dockerfiles for Intel® Optimization
     for Caffe.
+  - `DGL` is a directory of Dockerfiles for Deep Graph Library (DGL).
   - `MXNet` is a directory of Dockerfiles for MXNet.
   - `ONNXRuntime` is a directory of Dockerfiles for ONNX Runtime.
   - `OpenCV` is a directory of Dockerfiles for OpenCV.
@@ -100,6 +101,7 @@ Please consider citing the following papers.
   - `TVM` is a directory of Dockerfiles for Apache TVM.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
+  - `TensorFlowLite` is a directory of Dockerfiles for TensorFlow Lite.
   - `PaddlePaddle` is a directory of Dockerfiles for PaddlePaddle.
 
 - `docs` directory contains auxiliary documentation. Please, find
