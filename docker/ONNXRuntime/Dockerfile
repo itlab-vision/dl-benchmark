@@ -48,6 +48,7 @@ RUN pip install onnxruntime==${ONNX_VERSION} && pip install onnx==${ONNX_VERSION
 
 # accuracy-check
 WORKDIR /tmp/open_model_zoo/tools/accuracy_checker
+RUN python3 setup.py install_core
 RUN accuracy_check -c /tmp/dl-benchmark/docker/ONNXRuntime/config.yml -m data/test_models -s sample
 
 WORKDIR /tmp/
