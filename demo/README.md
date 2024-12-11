@@ -1,43 +1,50 @@
-# Демонистрационное приложение
+# Demo
 
-## Описание приложения
+## Description
 
-### Основная информация
+### Basic information
 
-Скрипт позволяет запускать полный цикл работы системы DLI Benchmark, демонстрируя работоспособность всей системы целиком,
-начиная от развертывания системы и заканчивая конвертацией таблиц с результатами.
-На данный момент реализована версия для Linux систем с развертыванием системы DLI Benchmark с помощью Docker-контейнеров.
+The script allows you to run the full cycle of the DLI
+Benchmark system, demonstrating the operability of the entire
+system, from system deployment to conversion of tables with
+results. At the moment, a version for Linux systems with
+the deployment of the DLI Benchmark using Docker containers
+has been implemented.
 
-### Алгоритм работы приложения
+### Algorithm
 
-Приложение создает на локальной машине две директории `server` и `client`, которые представляют собой
-окружения для FTP-сервера и клиента соответственно. Результатом работы приложения являются CSV, HTML и XLSX таблицы с
-результатами экспериментов измерения производительности и оценки качества работы глубокой модели `SampleNet`,
-которая является тестовой моделью для инструмента [AccuracyChecker][accuracy-checker]
-в составе пакета [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
+The application creates two directories on the local machine,
+`server` and `client`, which represent the environments
+for the FTP server and client, respectively. The output
+of the application is CSV, HTML, and XLSX tables with
+the results of the experiments measuring the performance
+and assessing the quality of the deep `SampleNet` model,
+which is a test model for the [AccuracyChecker][accuracy-checker]
+tool in [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 
-### Результаты работы приложения
+### Application results
 
-Результатом работы приложения является набор CSV, HTML и XLSX таблиц с результатами
-экспериментов измерения производительности и оценки качества работы.
+The output of the application is a set of CSV, HTML and XLSX
+tables with the results of the experiments on measuring performance
+and assessing the quality of the test model.
 
-## Использование скрипта
+## Usage
 
 ```bash
 chmod a+x linux.sh
 ./linux.sh -l <login> -p <password> -d <benchmark_datasets>
 ```
 
-Аргументы командной строки:
+Command line arguments:
 
-- `-l` - логин для подключения к текущей машине.
-- `-p` - пароль для подключения к текущей машине.
-- `-d` - адрес до GitHub-репозитория, который содержит в себе наборы данных для бенчмаркинга.
-  Требуется, чтобы в репозитории была создана директория `Datasets/ImageNET/`, в которой
-  хранится, по крайней мере, одно изображение.
-  Необходим для развертывания системы. 
+- `-l` corresponds to the login to connect to the current machine.
+- `-p` corresponds to the password to connect to the current machine.
+- `-d` corresponds to the GitHub repository that contains
+  the benchmarking datasets. It is required that the repository
+  contains the directory `Datasets/ImageNET/`, in which at least
+  one image is stored. It is necessary for system deployment. 
 
-Пример запуска в текущем окружении:
+Example:
 
 ```bash
 chmod a+x linux.sh
