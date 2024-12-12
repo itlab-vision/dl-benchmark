@@ -29,12 +29,13 @@ class TXTParser:
 
 
 class TVMCompilerProcess:
-    def __init__(self, models_dir, conda, output_dir):
+    def __init__(self, models_dir, conda, output_dir, vm):
         self.converter = Path(__file__).parents[2]
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
         self.converter = str(self.converter.joinpath('tvm_compiler.py'))
         self.conda = conda
+        self.vm = vm
         self.models_dir = models_dir.absolute().as_posix()
         if output_dir is not None:
             self.output_dir = output_dir
@@ -57,6 +58,8 @@ class TVMCompilerProcess:
         self._add_argument('--opt_level', f'{opt_level}')
         self._add_argument('--lib_name', f'{model_name}.so')
         self._add_argument('-op', f'{self.output_dir}/{model_name}/batch_{batch}/opt_level{opt_level}')
+        if self.vm:
+            self._add_option('-vm')
 
     def execute(self):
         log.info(f'Starting process: {self._command_line}\n')
@@ -99,6 +102,10 @@ def cli_arguments_parse():
                         dest='conda',
                         required=True,
                         type=str)
+    parser.add_argument('-vm', '--virtual_machine',
+                        help='Flag to use VirtualMachine API',
+                        action='store_true',
+                        dest='vm')
 
     return parser.parse_args()
 
@@ -107,7 +114,7 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMCompilerProcess(args.models_dir, args.conda, args.output_dir)
+    proc = TVMCompilerProcess(args.models_dir, args.conda, args.output_dir, args.vm)
     for (model_name, _, _,
          _, _, batches, _) in models:
         for batch in batches:
