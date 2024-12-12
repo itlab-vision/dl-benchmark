@@ -47,6 +47,8 @@ class TVMConverterProcess:
 
     def create_command_line(self, model_name, model, weights,
                             framework, input_shape, batch, input_name):
+        if framework == 'torch':
+            framework = 'pytorch'
         self._command_line = (f'{self.conda}/envs/tvm_{framework}/bin/python3 ' + f'{self.converter}')
         self._add_argument('-mn', model_name)
         if model != '':
