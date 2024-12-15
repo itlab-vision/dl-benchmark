@@ -340,6 +340,7 @@ ssd300                    | - | - | Bounding box: (380,165), (595,425) | Boundin
 ssd512                    | - | - | Bounding box: (377,163), (595,425) | Bounding box: (380,165), (595,425) |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |  Bounding boxes: (295, 131), (439, 291),<br> (375, 217), (582, 425),<br> (436, 153), (611, 301) |
 ssdlite_mobilenet_v2      | - | - | - | - |
+yolo-v3-tiny-tf      | - | - | Bounding box: (127, 161), (228, 325),<br> (43, 139), (127, 286), <br> (212, 147), (345, 341), <br> (175, 110), (251, 243) | Bounding box: (127, 161), (228, 325),<br> (43, 139), (127, 286), <br> (212, 147), (345, 341), <br> (175, 110), (251, 243) |
 
 ### Test image #2
 
@@ -366,6 +367,7 @@ ssd300                    | - | - | Bounding box: (68,100), (336,452) | Bounding
 ssd512                    | - | - | Bounding box: (75,100), (355,445) | Bounding box: (75,100), (355,445)|
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (89, 98), (345, 440)| Bounding box: (89, 98), (345, 440)|
 ssdlite_mobilenet_v2      | - | - | Bounding box: (47, 59), (206, 272)| Bounding box: (47, 59), (206, 272)|
+yolo-v3-tiny-tf      | - | - | Bounding box: (39, 36), (324, 452)| Bounding box: (39, 36), (324, 452)|
 
 ### Test image #3
 
@@ -392,6 +394,7 @@ ssd300                    | - | - | Bounding box: (80,155), (270,375)  | Boundin
 ssd512                    | - | - | Bounding box: (75,170), (172,370)  | Bounding box: (73,170), (173,371)  |
 ssd_mobilenet_v1_fpn_coco | - | - | Bounding box: (90, 135), (260, 375)| Bounding box: (90, 135), (260, 375)|
 ssdlite_mobilenet_v2      | - | - | Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)| Bounding boxes: (74, 155), (242, 226), (75, 102), (242, 225)|
+yolo-v3-tiny-tf      | - | - | Bounding boxes: (134, 105), (288, 319), <br>(127, 280), (299, 330)| Bounding boxes: (134, 105), (288, 319), <br>(127, 280), (299, 330)|
 
 ### Test image #4
 Data source: [MS COCO][ms_coco]
@@ -424,6 +427,7 @@ pelee-coco |-|-| Bounding box:<br>TV (103, 41), (402, 289)<br>MOUSE (not detecte
 retinanet-tf |-|-| Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455) | Bounding box:<br>TV (104, 40), (390, 298)<br>MOUSE (507, 337), (559, 373)<br>KEYBOARD (231, 331), (497, 455)<br>|
 ssd_resnet50_v1_fpn_coco |-|-| Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461) | Bounding box:<br>TV (113, 40), (396, 305)<br>MOUSE (508, 337), (559, 373)<br>KEYBOARD (223, 340), (499, 461)<br>|
 ssdlite_mobilenet_v2 |-|-| Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287) | Bounding box:<br>TV (45, 23), (182, 181)<br>MOUSE (238, 209), (261, 229)<br>KEYBOARD (108, 212), (235, 287)<br>|
+yolo-v3-tiny-tf |-|-| Bounding box:<br>TV (87, 29), (265, 267)<br>MOUSE (330, 292), (362, 332)<br>KEYBOARD (156, 305), (313, 388) | Bounding box:<br>TV (87, 29), (265, 267)<br>MOUSE (330, 292), (362, 332)<br>KEYBOARD (156, 305), (313, 388)<br>|
 
 ### Test image #5
 Data source: [MS COCO][ms_coco]
@@ -448,6 +452,7 @@ pelee-coco                    |-|-| Bounding box:<br>PERSON (95, 72), (207, 397)
 retinanet-tf                  |-|-| Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378) | Bounding box:<br>PERSON (90, 73), (205, 384)<br>HORSE (145, 61), (542, 378)<br>|
 ssd_resnet50_v1_fpn_coco                   |-|-| Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389) | Bounding box:<br>PERSON (not detected)<br>HORSE (134, 57), (534, 389)<br>|
 ssdlite_mobilenet_v2          |-|-| Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271) | Bounding box:<br>PERSON (43, 48), (98, 281)<br>HORSE (57, 42), (251, 271)<br>|
+yolo-v3-tiny-tf          |-|-| Bounding box: HORSE (74, 44), (352, 382) | Bounding box: HORSE (74, 44), (352, 382)|
 
 
 ### Test image #6
@@ -467,6 +472,7 @@ Bounding box (upper left and	 bottom right corners):<br>AEROPLANE (131, 21), (24
 efficientdet-d0-tf                   |-|-| Bounding box:<br>AIRPLANE (64, 173), (449, 333)<br>| Bounding box:<br>AIRPLANE (64, 173), (449, 333)<br>|
 efficientdet-d1-tf                   |-|-| Bounding box:<br>AIRPLANE (71, 212), (551, 412)<br>| Bounding box:<br>AIRPLANE (71, 212), (551, 412)<br>|
 yolo-v1-tiny-tf                   |-|-| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>| Bounding box:<br>AEROPLANE (131, 21), (248, 414)<br>|
+yolo-v3-tiny-tf                 |-|-| Bounding box:<br>AEROPLANE (-16, 138), (438, 281)<br>| Bounding box:<br>AEROPLANE (-16, 138), (438, 281)<br>|
 
 ### Test image #7
 Data source: [WIDER FACE Dataset][wider_face_dataset]

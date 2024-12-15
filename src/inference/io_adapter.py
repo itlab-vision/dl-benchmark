@@ -336,6 +336,8 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
         elif task == 'retinanet-tf':
             return RetinaNetDetectionIO(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v3_tiny':
+            return YoloV3TinyIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -1797,7 +1799,7 @@ class yolo(IOAdapter):
     def _get_shapes(self):
         pass
 
-    def __non_max_supression(self, predictions, score_threshold, nms_threshold):
+    def _non_max_supression(self, predictions, score_threshold, nms_threshold):
         predictions.sort(key=lambda prediction: prediction[0], reverse=True)
         valid_detections = []
         while len(predictions) > 0:
@@ -1832,7 +1834,7 @@ class yolo(IOAdapter):
         return valid_detections
 
     @staticmethod
-    def __print_detections(detections, labels_map, image, scales, orig_shape, batch, log):
+    def _print_detections(detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0] * scales['W'])
@@ -1843,8 +1845,8 @@ class yolo(IOAdapter):
             color = (min(int(class_id / 25 % 5) * 50, 255), min(int(class_id / 5 % 5) * 50, 255),
                      min(int(class_id % 5) * 50, 255))
             log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
-            log.info('Top left: ({0}, {1})'.format(top, left))
-            log.info('Bottom right: ({0}, {1})'.format(bottom, right))
+            log.info('Top left: ({0}, {1})'.format(left, top))
+            log.info('Bottom right: ({0}, {1})'.format(right, bottom))
             label = '<' + labels_map[class_id] + '>'
             image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
@@ -2054,6 +2056,119 @@ class YoloV3TFIO(YoloV3IO):
                 predictions.append(prediction)
 
         return predictions
+
+class YoloV3TinyIO(yolo):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
+
+    def _get_anchors(self):
+        return [
+            ((81, 82), (135, 169), (344, 319)),
+            ((23, 27), (37, 58), (81, 82)),
+        ]
+
+    def _get_shapes(self):
+        return [
+            (3, 85, 13, 13),
+            (3, 85, 26, 26),
+        ]
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+
+        anchors = self._get_anchors()
+        shapes = self._get_shapes()
+        outputs = [
+            result.get("conv2d_9/Conv2D/YoloRegion"),
+            result.get("conv2d_12/Conv2D/YoloRegion"),
+        ]
+
+        if outputs[0] is None or outputs[1] is None:
+            print("Expected output layers not found in the result")
+            return
+
+        input_layer_name = next(iter(self._input))
+        input_ = self._input[input_layer_name]
+        ib, h, w, c = input_.shape
+
+        b = outputs[0].shape[0]
+        images = np.empty((b, h, w, c), dtype=input_.dtype)
+
+        for i in range(b):
+            images[i] = input_[i % ib]
+
+        for batch in range(b):
+            image = images[batch].copy()
+            predictions = []
+            orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch % ib]
+            scales = {'W': orig_w / w, 'H': orig_h / h}
+
+            for output, shape, anchor_set in zip(outputs, shapes, anchors):
+                num_anchors, num_attributes, grid_size_x, grid_size_y = shape
+                output = output[batch].reshape(num_anchors, num_attributes, grid_size_x, grid_size_y)
+
+                for anchor_idx in range(num_anchors):
+                    for cx in range(grid_size_x):
+                        for cy in range(grid_size_y):
+                            detection = output[anchor_idx, :, cy, cx]
+                            prediction = self._get_cell_predictions(
+                                cx, cy, grid_size_x, grid_size_y,
+                                detection, anchor_idx,
+                                h, w,
+                                anchor_set,
+                                scales
+                            )
+
+                            if prediction:
+                                predictions.extend(prediction)
+
+            valid_detections = self._non_max_supression(predictions, self._threshold, 0.2)
+
+            processed_image = self._print_detections(
+                valid_detections,
+                self._labels_map,
+                image,
+                scales,
+                (orig_w, orig_h),
+                batch,
+                log,
+            )
+
+            out_img = Path(__file__).parent / f'out_detection_{batch + 1}.bmp'
+            cv2.imwrite(str(out_img), processed_image)
+            log.info(f"Result image was saved to {out_img}")
+
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_width, anchors, scales):
+        tx, ty, tw, th, box_score = detection[:5]
+        class_logits = detection[5:]
+
+        bbox_center_x = (cx + self._sigmoid(tx)) * (image_width / dx)
+        bbox_center_y = (cy + self._sigmoid(ty)) * (image_height / dy)
+
+        prior_width, prior_height = anchors[anchor_box_number]
+        bbox_width = np.exp(tw) * prior_width * scales['W']
+        bbox_height = np.exp(th) * prior_height * scales['H']
+
+        box_confidence = self._sigmoid(box_score)
+
+        class_probs = self._sigmoid(class_logits)
+        class_confidences = box_confidence * class_probs
+
+        predictions = []
+        for class_id, confidence in enumerate(class_confidences):
+            if confidence >= 0.5:
+                bbox = [
+                    float(bbox_center_x - bbox_width / 2),
+                    float(bbox_center_y - bbox_height / 2),
+                    float(bbox_width),
+                    float(bbox_height),
+                ]
+                predictions.append([confidence, class_id, bbox])
+
+        return predictions if predictions else None
 
 
 class YoloV7(IOAdapter):
