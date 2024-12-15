@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>ONNXRuntime</SourceFramework>
+            <ModelPath>/media/models/samplenet.onnx</ModelPath>
+            <WeightsPath>/media/models/samplenet.onnx</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>ONNX Runtime Python</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>0</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape></InputShape>
+            <InputName></InputName>
+            <Layout></Layout>
+            <ExecutionProviders></ExecutionProviders>
+            <ThreadCount></ThreadCount>
+            <InterThreadCount></InterThreadCount>
+            <ExecutionMode></ExecutionMode>
+        </FrameworkDependent>
+    </Test>
+</Tests>

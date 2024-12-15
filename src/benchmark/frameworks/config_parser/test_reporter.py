@@ -65,6 +65,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['kmp_affinity'] = 'KMP_AFFINITY'
         match_parameter_description['num_inter_threads'] = 'Inter threads'
         match_parameter_description['num_intra_threads'] = 'Intra threads'
+        match_parameter_description['use_xla'] = 'Using XLA'
 
         match_parameter_description['execution_providers'] = 'Execution Providers'
         match_parameter_description['execution_mode'] = 'Execution Mode'

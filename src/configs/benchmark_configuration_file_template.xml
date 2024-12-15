@@ -97,6 +97,7 @@
             <InterOpParallelismThreads></InterOpParallelismThreads>
             <IntraOpParallelismThreads></IntraOpParallelismThreads>
             <KmpAffinity></KmpAffinity>
+            <UseXLA></UseXLA>
         </FrameworkDependent>
     </Test>
     <Test>
@@ -354,6 +355,36 @@
             <ThreadCount></ThreadCount>
             <Delegate></Delegate>
             <DelegateOptions></DelegateOptions>
+        </FrameworkDependent>
+    </Test>
+    <Test>
+        <Model>
+            <Task></Task>
+            <Name></Name>
+            <Precision></Precision>
+            <SourceFramework></SourceFramework>
+            <ModelPath></ModelPath>
+            <WeightsPath></WeightsPath>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>PaddlePaddle</InferenceFramework>
+            <BatchSize></BatchSize>
+            <Device></Device>
+            <IterationCount></IterationCount>
+            <TestTimeLimit></TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <ChannelSwap></ChannelSwap>
+            <Layout></Layout>
+            <Mean></Mean>
+            <InputScale></InputScale>
+            <InputShape></InputShape>
+            <InputName></InputName>
+            <ThreadCount></ThreadCount>
         </FrameworkDependent>
     </Test>
     <Test>
