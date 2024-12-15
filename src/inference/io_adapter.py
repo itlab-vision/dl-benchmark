@@ -2057,6 +2057,7 @@ class YoloV3TFIO(YoloV3IO):
 
         return predictions
 
+
 class YoloV3TinyIO(yolo):
     def __init__(self, args, io_model_wrapper, transformer):
         super().__init__(args, io_model_wrapper, transformer)
@@ -2082,12 +2083,12 @@ class YoloV3TinyIO(yolo):
         anchors = self._get_anchors()
         shapes = self._get_shapes()
         outputs = [
-            result.get("conv2d_9/Conv2D/YoloRegion"),
-            result.get("conv2d_12/Conv2D/YoloRegion"),
+            result.get('conv2d_9/Conv2D/YoloRegion'),
+            result.get('conv2d_12/Conv2D/YoloRegion'),
         ]
 
         if outputs[0] is None or outputs[1] is None:
-            print("Expected output layers not found in the result")
+            print('Expected output layers not found in the result')
             return
 
         input_layer_name = next(iter(self._input))
@@ -2119,7 +2120,7 @@ class YoloV3TinyIO(yolo):
                                 detection, anchor_idx,
                                 h, w,
                                 anchor_set,
-                                scales
+                                scales,
                             )
 
                             if prediction:
@@ -2139,9 +2140,10 @@ class YoloV3TinyIO(yolo):
 
             out_img = Path(__file__).parent / f'out_detection_{batch + 1}.bmp'
             cv2.imwrite(str(out_img), processed_image)
-            log.info(f"Result image was saved to {out_img}")
+            log.info(f'Result image was saved to {out_img}')
 
-    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number, image_height, image_width, anchors, scales):
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number,
+                              image_height, image_width, anchors, scales):
         tx, ty, tw, th, box_score = detection[:5]
         class_logits = detection[5:]
 
