@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+    <Test>
+        <Model>
+            <Task>classification</Task>
+            <Name>SampleNet_from_MXNet</Name>
+            <Precision>FP32</Precision>
+            <SourceFramework>MXNet</SourceFramework>
+            <ModelPath>/media/models/SampleNet_from_MXNet.json</ModelPath>
+            <WeightsPath>/media/models/SampleNet_from_MXNet.params</WeightsPath>
+        </Model>
+        <Dataset>
+            <Name>ImageNET</Name>
+            <Path>/tmp/{DLI_DATASET_REPO_NAME}/Datasets/ImageNET/</Path>
+        </Dataset>
+        <FrameworkIndependent>
+            <InferenceFramework>TVM</InferenceFramework>
+            <BatchSize>1</BatchSize>
+            <Device>CPU</Device>
+            <IterationCount>10</IterationCount>
+            <TestTimeLimit>1</TestTimeLimit>
+        </FrameworkIndependent>
+        <FrameworkDependent>
+            <InputName>data</InputName>
+            <Framework>TVM</Framework>
+            <InputShape>1 3 32 32</InputShape>
+            <Normalize>True</Normalize>
+            <Mean></Mean>
+            <Std></Std>
+            <ChannelSwap></ChannelSwap>
+            <Target>llvm</Target>
+            <Layout>NCHW</Layout>
+            <VirtualMachine>False</VirtualMachine>
+            <OptimizationLevel>3</OptimizationLevel>
+        </FrameworkDependent>
+    </Test>
+</Tests>

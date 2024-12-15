@@ -144,6 +144,12 @@ def cli_argument_parser():
     parser.add_argument('--restrisct_gpu_usage',
                         action='store_true',
                         help='Restrict TensorFlow to only use the first GPU')
+    parser.add_argument('--use_xla',
+                        help='Enable XLA-compiler',
+                        required=False,
+                        default=False,
+                        type=bool,
+                        dest='use_xla')
     args = parser.parse_args()
 
     return args
@@ -248,7 +254,6 @@ def main():
     report_writer.update_configuration_setup(batch_size=args.batch_size,
                                              iterations_num=args.number_iter,
                                              target_device=args.device)
-
     if args.device == 'NVIDIA_GPU':
         if is_gpu_available():
             if args.restrisct_gpu_usage:
@@ -260,6 +265,9 @@ def main():
     if args.device == 'CPU' and is_gpu_available():
         log.warning(f'NVIDIA_GPU device(s) {get_gpu_devices()} available on machine,'
                     f' tensorflow will use NVIDIA_GPU by default')
+    if args.use_xla:
+        tf.config.optimizer.set_jit(True)
+    log.info(f'Current XLA status: {tf.config.optimizer.get_jit()}')
 
     input_name = args.input_name
     input_op_name = get_input_operation_name(input_name)

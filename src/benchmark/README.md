@@ -21,6 +21,7 @@ the following frameworks:
 - [Apache TVM][tvm] (Python API).
 - [RKNN][rknn].
 - [Spektral][spektral] (Python API).
+- [PaddlePaddle][paddlepaddle] (Python API).
 
 ### Implemented algorithm
 
@@ -115,7 +116,7 @@ For **the throughput mode**, performance metrics are provided below.
 **Note:** published tables contain only FPS indicators (until 06.2023
 the table contained Batch FPS indicators).
 
-### Metrics for Intel® Optimization for Caffe, Intel® Optimizations for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch and ONNX Runtime
+### Metrics for Intel® Optimization for Caffe, Intel® Optimizations for TensorFlow, TensorFlow Lite, OpenCV, MXNet, PyTorch, PaddlePaddle and ONNX Runtime
 
 Inference performance evaluations for Intel® Optimization for Caffe,
 Intel® Optimizations for TensorFlow, TensorFlow Lite, OpenCV, MXNet,
@@ -272,3 +273,4 @@ pip install openvino_dev[mxnet,caffe,caffe2,onnx,pytorch,tensorflow2]==<your ver
 [tvm]: https://tvm.apache.org
 [rknn]: https://github.com/rockchip-linux/rknpu2
 [spektral]: https://graphneural.network
+[paddlepaddle]: https://www.paddlepaddle.org.cn/en
