@@ -1913,8 +1913,8 @@ class yolo(IOAdapter):
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
-            valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
-            image = self.__print_detections(valid_detections, self._labels_map, cv2.UMat(image),
+            valid_detections = self._non_max_supression(predictions, self._threshold, 0.4)
+            image = self._print_detections(valid_detections, self._labels_map, cv2.UMat(image),
                                             scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
             cv2.imwrite(out_img, image)
