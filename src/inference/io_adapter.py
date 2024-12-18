@@ -1915,7 +1915,7 @@ class yolo(IOAdapter):
                                     predictions += prediction
             valid_detections = self._non_max_supression(predictions, self._threshold, 0.4)
             image = self._print_detections(valid_detections, self._labels_map, cv2.UMat(image),
-                                            scales, (orig_w, orig_h), batch, log)
+                                           scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
             cv2.imwrite(out_img, image)
             log.info(f'Result image was saved to {out_img}')
