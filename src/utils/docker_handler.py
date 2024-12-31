@@ -11,7 +11,7 @@ class DockerHandler(metaclass=abc.ABCMeta):
         self.docker_client = client
         self.output = []
         self.container_id = container_id
-        self.return_code = Status.EXIT_SUCCESS.value
+        self.exit_code = Status.EXIT_SUCCESS.value
         self.print_output = print_output
 
     def run(self):
