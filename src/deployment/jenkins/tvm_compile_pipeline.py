@@ -29,7 +29,7 @@ class TXTParser:
 
 
 class TVMCompilerProcess:
-    def __init__(self, models_dir, conda, output_dir, vm):
+    def __init__(self, models_dir, conda, output_dir, vm, branch):
         self.converter = Path(__file__).parents[2]
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
@@ -37,6 +37,7 @@ class TVMCompilerProcess:
         self.conda = conda
         self.vm = vm
         self.models_dir = models_dir.absolute().as_posix()
+        self.branch = branch
         if output_dir is not None:
             self.output_dir = output_dir
         else:
@@ -51,7 +52,7 @@ class TVMCompilerProcess:
         self._command_line += f' {name_of_arg}'      
 
     def create_command_line(self, model_name, target, batch, opt_level):
-        self._command_line = (f'{self.conda}/envs/tvm_main/bin/python3 ' + f'{self.converter}')
+        self._command_line = (f'{self.conda}/envs/tvm_main_{self.branch}/bin/python3 ' + f'{self.converter}')
         self._add_argument('--mod', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.json')            
         self._add_argument('--params', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.params')
         self._add_argument('-t', f'"{target}"')
@@ -106,6 +107,11 @@ def cli_arguments_parse():
                         help='Flag to use VirtualMachine API',
                         action='store_true',
                         dest='vm')
+    parser.add_argument('-b', '--branch',
+                        help='Branch to build tvm.',
+                        dest='branch',
+                        required=True,
+                        type=str)
 
     return parser.parse_args()
 
@@ -114,7 +120,8 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMCompilerProcess(args.models_dir, args.conda, args.output_dir, args.vm)
+    proc = TVMCompilerProcess(args.models_dir, args.conda,
+                              args.output_dir, args.vm, args.branch)
     for (model_name, _, _,
          _, _, batches, _) in models:
         for batch in batches:

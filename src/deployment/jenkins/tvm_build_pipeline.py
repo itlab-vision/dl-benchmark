@@ -14,12 +14,12 @@ class TVMBuilder:
         return subprocess.run(cmd, shell=True)
 
     def build_tvm(self):
-        self._run(f'{self.conda}/bin/conda create -y -n tvm_main python=={self.py_version}')
-        self._run(f'{self.conda}/bin/conda install -n tvm_main -c conda-forge -y gcc=12.1.0')
-        self._run(f'{self.conda}/bin/conda install -n tvm_main -c conda-forge -y gxx_linux-64')
-        self._run(f'{self.conda}/envs/tvm_main/bin/pip3 install -r requirements.txt')
+        self._run(f'{self.conda}/bin/conda create -y -n tvm_main_{self.branch} python=={self.py_version}')
+        self._run(f'{self.conda}/bin/conda install -n tvm_main_{self.branch} -c conda-forge -y gcc=12.1.0')
+        self._run(f'{self.conda}/bin/conda install -n tvm_main_{self.branch} -c conda-forge -y gxx_linux-64')
+        self._run(f'{self.conda}/envs/tvm_main_{self.branch}/bin/pip3 install -r requirements.txt')
         self._run(f'git clone --recursive https://github.com/apache/tvm -b {self.branch}')
-        self._run(f'cd tvm && mkdir -p build && cd build && cmake -DUSE_LLVM=ON ../ && make -j$(nproc --all) && cd ../python && {self.conda}/envs/tvm_main/bin/python setup.py install --user')
+        self._run(f'cd tvm && mkdir -p build && cd build && cmake -DUSE_LLVM=ON ../ && make -j$(nproc --all) && cd ../python && {self.conda}/envs/tvm_main_{self.branch}/bin/python setup.py install --user')
 
 
 def cli_arguments_parse():

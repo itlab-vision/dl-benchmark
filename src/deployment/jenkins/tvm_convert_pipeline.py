@@ -29,13 +29,14 @@ class TXTParser:
 
 
 class TVMConverterProcess:
-    def __init__(self, models_dir, conda):
+    def __init__(self, models_dir, conda, branch):
         self.converter = Path(__file__).parents[2]
         self.conda = conda
         self.converter = self.converter.joinpath('model_converters')
         self.converter = self.converter.joinpath('tvm_converter')
         self.converter = str(self.converter.joinpath('tvm_converter.py'))
         self.models_dir = models_dir.absolute().as_posix()
+        self.branch = branch
         self._command_line = f''
 
     def _add_argument(self, name_of_arg, value_of_arg):
@@ -47,7 +48,7 @@ class TVMConverterProcess:
 
     def create_command_line(self, model_name, model, weights,
                             framework, input_shape, batch, input_name):
-        self._command_line = (f'{self.conda}/envs/tvm_{framework}/bin/python3 ' + f'{self.converter}')
+        self._command_line = (f'{self.conda}/envs/tvm_{framework}_{self.branch}/bin/python3 ' + f'{self.converter}')
         self._add_argument('-mn', model_name)
         if model != '':
             self._add_argument('-m', f'{self.models_dir}/{model}')
@@ -65,7 +66,6 @@ class TVMConverterProcess:
     def execute(self):
         log.info(f'Starting process: {self._command_line}\n')
         proc = subprocess.run(self._command_line, shell=True)
-        #log.info(f'Subprocess logs: \n\n{proc.stdout.decode()}')
         self.exit_code = proc.returncode
         self._command_line = ''
 
@@ -89,6 +89,11 @@ def cli_arguments_parse():
                         dest='conda',
                         required=True,
                         type=str)
+    parser.add_argument('-b', '--branch',
+                        help='Branch to build tvm.',
+                        dest='branch',
+                        required=True,
+                        type=str)
 
     return parser.parse_args()
 
@@ -97,7 +102,7 @@ def main():
     args = cli_arguments_parse()
     parser = TXTParser(args.models_info)
     models = parser.parse()
-    proc = TVMConverterProcess(args.models_dir, args.conda)
+    proc = TVMConverterProcess(args.models_dir, args.conda, args.branch)
     for (model_name, model, weights,
          framework, input_shape, batches, input_name) in models:
         for batch in batches:
