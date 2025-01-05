@@ -17,7 +17,7 @@ class EnvCreator:
     def create_envs(self):
         if len(self.frameworks) != 0:
             for framework in self.frameworks:
-                self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework} --clone tvm_main_{self.branch}')
+                self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework}_{self.branch} --clone tvm_main_{self.branch}')
                 if framework != 'mxnet':
                     self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 install {framework}')
                 else:
