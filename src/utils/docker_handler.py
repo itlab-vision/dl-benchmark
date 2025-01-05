@@ -11,7 +11,7 @@ class DockerHandler(metaclass=abc.ABCMeta):
         self.docker_client = client
         self.output = []
         self.container_id = container_id
-        self.exit_code = Status.EXIT_SUCCESS.value
+        self.return_code = Status.EXIT_SUCCESS.value
         self.print_output = print_output
 
     def run(self):
@@ -32,6 +32,6 @@ class DockerHandler(metaclass=abc.ABCMeta):
 
         exit_metadata = self.docker_client.api.exec_inspect(exec_instance['Id'])
         exit_code = exit_metadata['ExitCode']
-        self.exit_code = exit_code if Status.has_value(exit_code) else Status.PROCESS_CMD_ERROR.value
+        self.return_code = exit_code if Status.has_value(exit_code) else Status.PROCESS_CMD_ERROR.value
 
-        self.log.info(f'Docker returncode = {self.exit_code}')
+        self.log.info(f'Docker returncode = {self.return_code}')
