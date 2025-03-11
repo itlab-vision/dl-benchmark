@@ -12,6 +12,8 @@
 #include "pytorch_launcher.hpp"
 #elif RKNN
 #include "rknn_launcher.hpp"
+#elif EXECUTORCH
+#include "executorch_launcher.hpp"
 #endif
 
 #include "utils/report.hpp"
@@ -36,7 +38,8 @@ constexpr char model_msg[] =
     "                                                          OpenCV - .xml, .onnx, .pb, .protoxt\n"
     "                                                          TF Lite - .tflite\n"
     "                                                          Pytorch - .pt\n"
-    "                                                          RKNN - .rknn";
+    "                                                          RKNN - .rknn\n"
+    "                                                          ExecuTorch - .pte";
 DEFINE_string(m, "", model_msg);
 
 constexpr char weights_msg[] = "path to a model weights file.\n"
@@ -156,6 +159,8 @@ void parse(int argc, char* argv[]) {
             "pytorch_tensorrt"
 #elif RKNN
             "rknn"
+#elif EXECUTORCH
+            "executorch"
 #endif
                   << "_benchmark"
                   << "\nOptions:"
@@ -240,7 +245,7 @@ int main(int argc, char* argv[]) {
         std::string device = FLAGS_d;
         if (device.empty()) {
 #if defined(OCV_DNN) || defined(OCV_DNN_WITH_OV) || defined(ORT_DEFAULT) || defined(PYTORCH) ||                        \
-    defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND)
+    defined(TFLITE_WITH_DEFAULT_BACKEND) || defined(TFLITE_WITH_XNNPACK_BACKEND) || defined(EXECUTORCH)
             device = "CPU";
 #elif defined(TFLITE_WITH_GPU_DELEGATE)
             device = "GPU";
@@ -266,6 +271,8 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif RKNN
         launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads, FLAGS_fps);
+#elif EXECUTORCH
+        launcher = std::make_unique<ExecuTorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #endif
         auto framework_name = launcher->get_framework_name();
         auto framework_version = launcher->get_framework_version();
