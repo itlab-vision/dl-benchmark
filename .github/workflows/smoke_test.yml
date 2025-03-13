@@ -32,14 +32,6 @@ jobs:
       - name: Run smoke tests for inference benchmark
         run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="not caffe"
 
-      - name: Upload benchmark artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: benchmark_report
-          path: tests/smoke_test/benchmark_smoke/report.html
-          retention-days: 1
-
       - name: Run smoke tests for accuracy checker
         run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
 
