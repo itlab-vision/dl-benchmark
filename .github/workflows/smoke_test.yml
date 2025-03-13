@@ -43,14 +43,6 @@ jobs:
       - name: Run smoke tests for accuracy checker
         run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
 
-      - name: Upload accuracy artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: accuracy_report
-          path: tests/smoke_test/ac_smoke/report.html
-          retention-days: 1
-
   smoke_test_benchmark_caffe:
     strategy:
       matrix:
@@ -82,14 +74,6 @@ jobs:
         run: |
           cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe"
 
-      - name: Upload benchmark caffe artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: benchmark_caffe_results
-          path: tests/smoke_test/benchmark_smoke/report.html
-          retention-days: 1
-
   smoke_test_quantization:
     strategy:
       matrix:
@@ -112,11 +96,3 @@ jobs:
 
       - name: Run smoke tests for quantization
         run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py
-
-      - name: Upload quantization artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: benchmark_report
-          path: tests/smoke_test/quantization_smoke/report.html
-          retention-days: 1
