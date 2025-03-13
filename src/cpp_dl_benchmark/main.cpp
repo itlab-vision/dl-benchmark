@@ -12,7 +12,7 @@
 #include "pytorch_launcher.hpp"
 #elif RKNN
 #include "rknn_launcher.hpp"
-#elif EXECUTORCH
+#elif defined(EXECUTORCH_XNNPACK) || defined(EXECUTORCH_DEFAULT)
 #include "executorch_launcher.hpp"
 #endif
 
@@ -159,7 +159,7 @@ void parse(int argc, char* argv[]) {
             "pytorch_tensorrt"
 #elif RKNN
             "rknn"
-#elif EXECUTORCH
+#elif defined(EXECUTORCH_DEFAULT) || defined(EXECUTORCH_XNNPACK)
             "executorch"
 #endif
                   << "_benchmark"
@@ -271,7 +271,7 @@ int main(int argc, char* argv[]) {
         launcher = std::make_unique<PytorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #elif RKNN
         launcher = std::make_unique<RKNNLauncher>(FLAGS_m, FLAGS_nthreads, FLAGS_fps);
-#elif EXECUTORCH
+#elif defined(EXECUTORCH_DEFAULT) || defined(EXECUTORCH_XNNPACK)
         launcher = std::make_unique<ExecuTorchLauncher>(FLAGS_nthreads, FLAGS_fps, device);
 #endif
         auto framework_name = launcher->get_framework_name();

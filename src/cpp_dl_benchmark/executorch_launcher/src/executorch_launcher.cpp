@@ -46,9 +46,7 @@ ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads, const int fps, const 
     }
 }
 
-ExecuTorchLauncher::~ExecuTorchLauncher() {
-    delete module;
-}
+ExecuTorchLauncher::~ExecuTorchLauncher() {}
 
 std::string ExecuTorchLauncher::get_framework_name() const {
     return "ExecuTorch";
@@ -59,11 +57,15 @@ std::string ExecuTorchLauncher::get_framework_version() const {
 }
 
 std::string ExecuTorchLauncher::get_backend_name() const {
+#ifdef EXECUTORCH_DEFAULT
     return "default";
+#elif EXECUTORCH_XNNPACK
+    return "XNNPACK";
+#endif
 }
 
 void ExecuTorchLauncher::read(const std::string& model_file, const std::string& weights_file) {
-    module = new executorch::extension::Module(model_file);
+    module = std::make_shared<executorch::extension::Module>(model_file);
 }
 
 void ExecuTorchLauncher::fill_inputs_outputs_info() {}
@@ -95,9 +97,9 @@ void ExecuTorchLauncher::compile() {}
 
 std::vector<OutputTensors> ExecuTorchLauncher::get_output_tensors() {
     const auto out = module->execute("forward", tensors[0]);
-    //if (out.isTuple()) {
-    //    throw std::runtime_error("Output dumping is supported only for models with one output!");
-    //}
+    if (!out.ok()) {
+        throw std::runtime_error("Output dumping is supported only for models with one output!");
+    }
 
     OutputTensors output;
     const auto result = out->at(0).toTensor();
@@ -111,7 +113,7 @@ std::vector<OutputTensors> ExecuTorchLauncher::get_output_tensors() {
     std::vector<int> int_shape(shape.begin(), shape.end());
     output.emplace_back(static_cast<size_t>(size), int_shape, name, data);
 
-    return {output};;
+    return {output};
 }
 
 void ExecuTorchLauncher::run(const int input_idx) {

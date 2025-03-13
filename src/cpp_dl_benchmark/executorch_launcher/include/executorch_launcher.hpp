@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-using executorch::extension::TensorPtr;
-
 class ExecuTorchLauncher : public Launcher {
 public:
     ExecuTorchLauncher(const int nthreads, const int fps, const std::string& device);
@@ -40,15 +38,14 @@ public:
     std::vector<OutputTensors> get_output_tensors() override;
 
 private:
-    executorch::extension::Module *module;
+    std::shared_ptr<executorch::extension::Module> module;
 
     std::vector<std::string> input_names;
     std::vector<std::vector<int>> input_shapes;
-    //std::vector<torch::Dtype> input_data_precisions;
 
     std::vector<std::string> output_names;
     std::vector<std::vector<int>> output_shapes;
-    //std::vector<torch::Dtype> output_data_precisions;
+
     std::vector<std::vector<executorch::runtime::EValue>> tensors;
 
     void run(const int input_idx);
