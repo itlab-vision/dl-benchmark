@@ -5,7 +5,7 @@ import sys
 import traceback
 from pathlib import Path
 
-from executorch.runtime import Runtime, Program, Method, Verification
+from executorch.runtime import Runtime, Verification
 import numpy as np
 
 from io_adapter import IOAdapter
