@@ -242,7 +242,7 @@ def main():
         data_transformer = Transformer()
         io = IOAdapter.get_io_adapter(args, model_wrapper, data_transformer)
 
-        log.info('Initializing tflite process')
+        log.info('Initializing ExecuTorch process')
         process = ExecuTorchProcess()
         process.create_command_line(create_dict_from_args_for_process(args, io))
 

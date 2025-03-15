@@ -5,14 +5,15 @@
 using namespace executorch::aten;
 
 namespace {
-    const std::map<ScalarType, utils::DataPrecision> dtype_to_precision_map{{ScalarType::Half, utils::DataPrecision::FP16},
-                                                                            {ScalarType::Float, utils::DataPrecision::FP32},
-                                                                            {ScalarType::Double, utils::DataPrecision::FP64},
-                                                                            {ScalarType::Char, utils::DataPrecision::I8},
-                                                                            {ScalarType::Short, utils::DataPrecision::I16},
-                                                                            {ScalarType::Int, utils::DataPrecision::I32},
-                                                                            {ScalarType::Long, utils::DataPrecision::I64},
-                                                                            {ScalarType::Byte, utils::DataPrecision::U8}};
+    const std::map<ScalarType, utils::DataPrecision> \
+          dtype_to_precision_map{{ScalarType::Half, utils::DataPrecision::FP16},
+                                 {ScalarType::Float, utils::DataPrecision::FP32},
+                                 {ScalarType::Double, utils::DataPrecision::FP64},
+                                 {ScalarType::Char, utils::DataPrecision::I8},
+                                 {ScalarType::Short, utils::DataPrecision::I16},
+                                 {ScalarType::Int, utils::DataPrecision::I32},
+                                 {ScalarType::Long, utils::DataPrecision::I64},
+                                 {ScalarType::Byte, utils::DataPrecision::U8}};
     
     utils::DataPrecision get_data_precision(ScalarType type) {
         if (dtype_to_precision_map.count(type) > 0) {
@@ -32,9 +33,6 @@ namespace {
         throw std::invalid_argument("Does not support element data type " + utils::get_data_precision_str(precision));
     }
 }  // namespace
-
-
-
 
 ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads, const int fps, const std::string& device) : Launcher(nthreads, fps, device) {
     if (nthreads > 0) {
@@ -77,18 +75,22 @@ IOTensorsInfo ExecuTorchLauncher::get_io_tensors_info() const {
 void ExecuTorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuffer>>&& tbuffers) {
     tensor_buffers = std::move(tbuffers);
     tensors.resize(tensor_buffers.size());
-    for (int i = 0; i < tensor_buffers.size(); ++i) {
-        if (i == 0) {
-            input_shapes.resize(tensor_buffers[0].size());
-        }
+    input_shapes.resize(tensor_buffers[0].size());
+
+    for (int i = 0; i < tensor_buffers[0].size(); ++i) {
+        auto& buffer = tensor_buffers[0][i];
+        std::vector<int> shape(buffer.shape().begin(), buffer.shape().end());
+        tensors[0].push_back(
+            executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision())));
+        input_shapes[i] = shape;
+    }
+
+    for (int i = 1; i < tensor_buffers.size(); ++i) {
         for (int j = 0; j < tensor_buffers[i].size(); ++j) {
             auto& buffer = tensor_buffers[i][j];
             std::vector<int> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(
                 executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision())));
-            if (i == 0) {
-                input_shapes[j] = shape;
-            }
         }
     }
 }
