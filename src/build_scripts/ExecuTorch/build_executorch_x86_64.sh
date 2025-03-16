@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# BUILD_DIR - directory for build ncnn
-# INSTALL_PREFIX - directory for install ncnn
+# BUILD_DIR - directory for build ExecuTorch
+# INSTALL_PREFIX - directory for install ExecuTorch
 
 BUILD_DIR=${1:-""}
 INSTALL_PREFIX=${2:-""}
