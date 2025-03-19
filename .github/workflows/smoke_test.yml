@@ -38,7 +38,6 @@ jobs:
         with:
           name: benchmark_report
           path: tests/smoke_test/benchmark_smoke/report.html
-          merge-multiple: true
           retention-days: 1
 
       - name: Run smoke tests for accuracy checker
@@ -50,7 +49,6 @@ jobs:
         with:
           name: accuracy_report
           path: tests/smoke_test/ac_smoke/report.html
-          merge-multiple: true
           retention-days: 1
 
   smoke_test_benchmark_caffe:
@@ -90,7 +88,6 @@ jobs:
         with:
           name: benchmark_caffe_results
           path: tests/smoke_test/benchmark_smoke/report.html
-          merge-multiple: true
           retention-days: 1
 
   smoke_test_quantization:
@@ -122,5 +119,4 @@ jobs:
         with:
           name: benchmark_report
           path: tests/smoke_test/quantization_smoke/report.html
-          merge-multiple: true
           retention-days: 1
