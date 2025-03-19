@@ -118,6 +118,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: benchmark_report
+          name: quantization_report
           path: tests/smoke_test/quantization_smoke/quantization_report.html
           retention-days: 1
