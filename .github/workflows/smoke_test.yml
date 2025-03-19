@@ -30,7 +30,7 @@ jobs:
           python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke tests for inference benchmark
-        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="not caffe"
+        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py --html="report.html" -m="not caffe"
 
       - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -42,7 +42,7 @@ jobs:
 
       - name: Run smoke tests for accuracy checker
         if: false
-        run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
+        run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py --html="report.html"
 
       - name: Upload accuracy artifacts
         uses: actions/upload-artifact@v4
@@ -81,14 +81,14 @@ jobs:
       - name: Run smoke test for inference benchmark
         shell: bash -el {0}
         run: |
-          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe"
+          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe" --html="report_caffe.html"
 
       - name: Upload benchmark caffe artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: benchmark_caffe_results
-          path: tests/smoke_test/benchmark_smoke/caffe_report.html
+          path: tests/smoke_test/benchmark_smoke/report_caffe.html
           retention-days: 1
 
   smoke_test_quantization:
@@ -112,7 +112,7 @@ jobs:
           python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke tests for quantization
-        run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py
+        run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py --html="report.html"
 
       - name: Upload quantization artifacts
         uses: actions/upload-artifact@v4
