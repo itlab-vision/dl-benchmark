@@ -30,7 +30,7 @@ jobs:
           python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke tests for inference benchmark
-        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py --html="not_caffe/benchmark_report_not_caffe.html" -m="not caffe"
+        run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py --html="not_caffe/benchmark_report_not_caffe.html" --junitxml="./not_caffe/junit.xml" -m="not caffe"
 
       - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
       - name: Run smoke test for inference benchmark
         shell: bash -el {0}
         run: |
-          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe" --html="caffe/benchmark_report_caffe.html"
+          cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe" --html="caffe/benchmark_report_caffe.html" --junitxml="./caffe/junit.xml"
 
       - name: Upload benchmark caffe artifacts
         uses: actions/upload-artifact@v4
@@ -112,7 +112,7 @@ jobs:
           python -m pip install -r requirements_frameworks.txt
 
       - name: Run smoke tests for quantization
-        run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py --html="quantization_report.html"
+        run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py --html="quantization_report.html" --junitxml=./junit.xml
 
       - name: Upload quantization artifacts
         uses: actions/upload-artifact@v4
