@@ -219,7 +219,7 @@ def pytest_generate_tests(metafunc):
     for i, test_param in enumerate(param_list):
         if test_param.config_name in ['googlenet-v1_Caffe', 'googlenet-v1_TVM_Caffe', 'googlenet-v1_TVM']:
             param_list[i] = pytest.param(test_param, marks=pytest.mark.caffe)
-            config.option.htmlpath = f'caffe_{config.option.htmlpath}'
+            config.option.htmlpath = 'caffe_' + config.option.htmlpath
         if test_param.config_name in ['dgl']:
             param_list[i] = pytest.param(test_param)
 
