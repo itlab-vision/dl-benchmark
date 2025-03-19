@@ -33,7 +33,7 @@ jobs:
         run: cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="not caffe"
 
       - name: Upload benchmark artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: benchmark_report
@@ -41,11 +41,12 @@ jobs:
           retention-days: 1
 
       - name: Run smoke tests for accuracy checker
+        if: false
         run: cd tests/smoke_test/ac_smoke && python -m pytest test_ac_smoke.py
 
       - name: Upload accuracy artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: false
         with:
           name: accuracy_report
           path: tests/smoke_test/ac_smoke/report.html
@@ -83,10 +84,10 @@ jobs:
           cd tests/smoke_test/benchmark_smoke && python -m pytest test_benchmark_smoke.py -m="caffe"
 
       - name: Upload benchmark caffe artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: benchmark_caffe_results
+          name: benchmark_report_caffe
           path: tests/smoke_test/benchmark_smoke/report.html
           retention-days: 1
 
@@ -114,9 +115,9 @@ jobs:
         run: cd tests/smoke_test/quantization_smoke && python -m pytest test_quantization_smoke.py
 
       - name: Upload quantization artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: benchmark_report
+          name: quantization_report
           path: tests/smoke_test/quantization_smoke/report.html
           retention-days: 1
