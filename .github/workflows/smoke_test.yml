@@ -37,7 +37,7 @@ jobs:
         if: always()
         with:
           name: benchmark_report
-          path: tests/smoke_test/benchmark_smoke/report_benchmark_smoke.html
+          path: tests/smoke_test/benchmark_smoke/report.html
           retention-days: 1
 
       - name: Run smoke tests for accuracy checker
@@ -48,7 +48,8 @@ jobs:
         if: always()
         with:
           name: accuracy_report
-          path: tests/smoke_test/ac_smoke/report_ac_smoke.html
+          path: tests/smoke_test/ac_smoke/report.html
+          merge-multiple: true
           retention-days: 1
 
   smoke_test_benchmark_caffe:
@@ -87,7 +88,8 @@ jobs:
         if: always()
         with:
           name: benchmark_caffe_results
-          path: tests/smoke_test/benchmark_smoke_caffe/report_benchmark_smoke_caffe.html
+          path: tests/smoke_test/benchmark_smoke_caffe/report.html
+          merge-multiple: true
           retention-days: 1
 
   smoke_test_quantization:
@@ -118,5 +120,6 @@ jobs:
         if: always()
         with:
           name: benchmark_report
-          path: tests/smoke_test/quantization_smoke/report_quantization_smoke.html
+          path: tests/smoke_test/quantization_smoke/report.html
+          merge-multiple: true
           retention-days: 1
