@@ -38,7 +38,6 @@ jobs:
         with:
           name: benchmark_report
           path: tests/smoke_test/benchmark_smoke/report.html
-          separate-directories: true
           retention-days: 1
 
       - name: Run smoke tests for accuracy checker
@@ -88,8 +87,7 @@ jobs:
         if: always()
         with:
           name: benchmark_caffe_results
-          path: tests/smoke_test/benchmark_smoke/report.html
-          separate-directories: true
+          path: tests/smoke_test/benchmark_smoke_caffe/report.html
           retention-days: 1
 
   smoke_test_quantization:
