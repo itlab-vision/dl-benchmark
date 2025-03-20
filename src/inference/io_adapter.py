@@ -183,6 +183,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
             data_gen = self._transformed_input[key]
             slice_data = [copy.deepcopy(next(data_gen)) for _ in range(self._batch_size)]
             slice_input[key] = np.stack(slice_data)
+
         return slice_input
 
     def get_slice_input_mxnet(self, *args, **kwargs):
@@ -333,6 +334,10 @@ class IOAdapter(metaclass=abc.ABCMeta):
             return FaceMeshV2CppIO(args, io_model_wrapper, transformer)
         elif task == 'minifasnet_v2_tflite_cpp':
             return MiniFASNetV2TFLiteCppIO(args, io_model_wrapper, transformer)
+        elif task == 'retinanet-tf':
+            return RetinaNetDetectionIO(args, io_model_wrapper, transformer)
+        elif task == 'yolo_v3_tiny':
+            return YoloV3TinyIO(args, io_model_wrapper, transformer)
 
 
 class FeedForwardIO(IOAdapter):
@@ -1794,7 +1799,7 @@ class yolo(IOAdapter):
     def _get_shapes(self):
         pass
 
-    def __non_max_supression(self, predictions, score_threshold, nms_threshold):
+    def _non_max_supression(self, predictions, score_threshold, nms_threshold):
         predictions.sort(key=lambda prediction: prediction[0], reverse=True)
         valid_detections = []
         while len(predictions) > 0:
@@ -1829,7 +1834,7 @@ class yolo(IOAdapter):
         return valid_detections
 
     @staticmethod
-    def __print_detections(detections, labels_map, image, scales, orig_shape, batch, log):
+    def _print_detections(detections, labels_map, image, scales, orig_shape, batch, log):
         image = cv2.resize(image, orig_shape)
         for detection in detections:
             left = int(detection[2][0] * scales['W'])
@@ -1840,8 +1845,8 @@ class yolo(IOAdapter):
             color = (min(int(class_id / 25 % 5) * 50, 255), min(int(class_id / 5 % 5) * 50, 255),
                      min(int(class_id % 5) * 50, 255))
             log.info('Bounding boxes for image {0} for object {1}'.format(batch, class_id))
-            log.info('Top left: ({0}, {1})'.format(top, left))
-            log.info('Bottom right: ({0}, {1})'.format(bottom, right))
+            log.info('Top left: ({0}, {1})'.format(left, top))
+            log.info('Bottom right: ({0}, {1})'.format(right, bottom))
             label = '<' + labels_map[class_id] + '>'
             image = cv2.rectangle(image, (left, top), (right, bottom), color, 3)
             label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 1)
@@ -1908,9 +1913,9 @@ class yolo(IOAdapter):
                                                                         h, w, anchors_boxes)
                                 if prediction is not None:
                                     predictions += prediction
-            valid_detections = self.__non_max_supression(predictions, self._threshold, 0.4)
-            image = self.__print_detections(valid_detections, self._labels_map, cv2.UMat(image),
-                                            scales, (orig_w, orig_h), batch, log)
+            valid_detections = self._non_max_supression(predictions, self._threshold, 0.4)
+            image = self._print_detections(valid_detections, self._labels_map, cv2.UMat(image),
+                                           scales, (orig_w, orig_h), batch, log)
             out_img = os.path.join(os.path.dirname(__file__), f'out_yolo_detection_{batch + 1}.bmp')
             cv2.imwrite(out_img, image)
             log.info(f'Result image was saved to {out_img}')
@@ -2051,6 +2056,121 @@ class YoloV3TFIO(YoloV3IO):
                 predictions.append(prediction)
 
         return predictions
+
+
+class YoloV3TinyIO(yolo):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+        self.load_labels_map('mscoco_names.txt')
+
+    def _get_anchors(self):
+        return [
+            ((81, 82), (135, 169), (344, 319)),
+            ((23, 27), (37, 58), (81, 82)),
+        ]
+
+    def _get_shapes(self):
+        return [
+            (3, 85, 13, 13),
+            (3, 85, 26, 26),
+        ]
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+
+        anchors = self._get_anchors()
+        shapes = self._get_shapes()
+        outputs = [
+            result.get('conv2d_9/Conv2D/YoloRegion'),
+            result.get('conv2d_12/Conv2D/YoloRegion'),
+        ]
+
+        if outputs[0] is None or outputs[1] is None:
+            print('Expected output layers not found in the result')
+            return
+
+        input_layer_name = next(iter(self._input))
+        input_ = self._input[input_layer_name]
+        ib, h, w, c = input_.shape
+
+        b = outputs[0].shape[0]
+        images = np.empty((b, h, w, c), dtype=input_.dtype)
+
+        for i in range(b):
+            images[i] = input_[i % ib]
+
+        for batch in range(b):
+            image = images[batch].copy()
+            predictions = []
+            orig_h, orig_w = self._original_shapes[next(iter(self._original_shapes))][batch % ib]
+            scales = {'W': orig_w / w, 'H': orig_h / h}
+
+            for output, shape, anchor_set in zip(outputs, shapes, anchors):
+                num_anchors, num_attributes, grid_size_x, grid_size_y = shape
+                output = output[batch].reshape(num_anchors, num_attributes, grid_size_x, grid_size_y)
+
+                for anchor_idx in range(num_anchors):
+                    for cx in range(grid_size_x):
+                        for cy in range(grid_size_y):
+                            detection = output[anchor_idx, :, cy, cx]
+                            prediction = self._get_cell_predictions(
+                                cx, cy, grid_size_x, grid_size_y,
+                                detection, anchor_idx,
+                                h, w,
+                                anchor_set,
+                                scales,
+                            )
+
+                            if prediction:
+                                predictions.extend(prediction)
+
+            valid_detections = self._non_max_supression(predictions, self._threshold, 0.2)
+
+            processed_image = self._print_detections(
+                valid_detections,
+                self._labels_map,
+                image,
+                scales,
+                (orig_w, orig_h),
+                batch,
+                log,
+            )
+
+            out_img = Path(__file__).parent / f'out_detection_{batch + 1}.bmp'
+            cv2.imwrite(str(out_img), processed_image)
+            log.info(f'Result image was saved to {out_img}')
+
+    def _get_cell_predictions(self, cx, cy, dx, dy, detection, anchor_box_number,
+                              image_height, image_width, anchors, scales):
+        tx, ty, tw, th, box_score = detection[:5]
+        class_logits = detection[5:]
+
+        bbox_center_x = (cx + self._sigmoid(tx)) * (image_width / dx)
+        bbox_center_y = (cy + self._sigmoid(ty)) * (image_height / dy)
+
+        prior_width, prior_height = anchors[anchor_box_number]
+        bbox_width = np.exp(tw) * prior_width * scales['W']
+        bbox_height = np.exp(th) * prior_height * scales['H']
+
+        box_confidence = self._sigmoid(box_score)
+
+        class_probs = self._sigmoid(class_logits)
+        class_confidences = box_confidence * class_probs
+
+        predictions = []
+        for class_id, confidence in enumerate(class_confidences):
+            if confidence >= 0.5:
+                bbox = [
+                    float(bbox_center_x - bbox_width / 2),
+                    float(bbox_center_y - bbox_height / 2),
+                    float(bbox_width),
+                    float(bbox_height),
+                ]
+                predictions.append([confidence, class_id, bbox])
+
+        return predictions if predictions else None
 
 
 class YoloV7(IOAdapter):
@@ -2575,3 +2695,88 @@ class MiniFASNetV2TFLiteCppIO(IOAdapter):
 
         log.info('Information for image:')
         log.info(f'\t{self._classes[max_idx]} (score: {probs[max_idx]:.5f})')
+
+
+class RetinaNetDetectionIO(IOAdapter):
+    def __init__(self, args, io_model_wrapper, transformer):
+        super().__init__(args, io_model_wrapper, transformer)
+
+    def process_output(self, result, log):
+        if self._is_result_invalid(result):
+            log.warning('Model output is processed only for the number iteration = 1')
+            return
+        input_layer_name = next(iter(self._input))
+        result_layer_name = next(iter(result))
+        input_ = self._input[input_layer_name]
+        result = result[result_layer_name]
+        shapes = self._original_shapes[input_layer_name]
+        ib = input_.shape[0]
+        b = result.shape[0]
+        N = result.shape[2] // ib
+        images = []
+        for i in range(b * ib):
+            orig_h, orig_w = shapes[i % ib]
+            image = input_[i % ib]
+            images.append(cv2.resize(image, (orig_w, orig_h)))
+
+        boxes_dict = {i: {} for i in range(b * ib)}
+
+        for batch in range(b):
+            boxes = []
+            for out_num in range(ib):
+                isbreak = False
+                for obj in result[batch][0][out_num * N: (out_num + 1) * N]:
+                    image_number = int(obj[0])
+                    if image_number < 0:
+                        isbreak = True
+                        break
+                    if obj[2] > self._threshold:
+                        image = images[image_number + batch * ib]
+                        initial_h, initial_w = image.shape[:2]
+                        xmin = int(obj[3] * initial_w)
+                        ymin = int(obj[4] * initial_h)
+                        xmax = int(obj[5] * initial_w)
+                        ymax = int(obj[6] * initial_h)
+                        class_id = int(obj[1])
+                        score = obj[2]
+                        box = [xmin, ymin, xmax - xmin, ymax - ymin]
+
+                        if class_id not in boxes_dict[image_number]:
+                            boxes_dict[image_number][class_id] = {'boxes': [], 'scores': []}
+                        boxes_dict[image_number][class_id]['boxes'].append(box)
+                        boxes_dict[image_number][class_id]['scores'].append(score)
+                if isbreak:
+                    break
+
+        for image_number, classes in boxes_dict.items():
+            if not classes:
+                continue
+
+            for class_id, data in classes.items():
+                boxes = data['boxes']
+                scores = data['scores']
+
+                if len(boxes) == 0:
+                    continue
+
+                indices = cv2.dnn.NMSBoxes(boxes, scores, self._threshold, 0.3)
+
+                if len(indices) > 0:
+                    for i in indices.flatten():
+                        box = boxes[i]
+                        score = scores[i]
+                        xmin, ymin, width, height = box
+                        xmax = xmin + width
+                        ymax = ymin + height
+
+                        cv2.rectangle(images[image_number], (xmin, ymin), (xmax, ymax), (57, 255, 20), 4)
+                        log.info('Bounding boxes for image {0} for object {1}'.format(image_number, class_id))
+                        log.info('Top left: ({0}, {1})'.format(xmin, ymin))
+                        log.info('Bottom right: ({0}, {1})'.format(xmax, ymax))
+
+        count = 0
+        for image in images:
+            out_img = os.path.join(os.path.dirname(__file__), 'out_detection_{0}.bmp'.format(count + 1))
+            cv2.imwrite(out_img, image)
+            log.info('Result image was saved to {0}'.format(out_img))
+            count += 1
