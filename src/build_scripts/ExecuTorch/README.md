@@ -37,4 +37,4 @@
 
    ```bash
    make "-j$(nproc)" && make install
-  ```
+   ```
