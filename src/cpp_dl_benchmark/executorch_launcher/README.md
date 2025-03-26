@@ -1,4 +1,5 @@
 # ExecuTorch Benchmark
+
 The tool allows to measure deep learning models inference performance with [ExecuTorch][executorch].
 
 ## Build ExecuTorch for Linux
