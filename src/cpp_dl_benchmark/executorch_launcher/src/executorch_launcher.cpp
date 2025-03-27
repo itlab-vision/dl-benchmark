@@ -30,11 +30,15 @@ namespace {
                 return type;
             }
         }
-        throw std::invalid_argument("Does not support element data type " + utils::get_data_precision_str(precision));
+        throw std::invalid_argument("Does not support element data type " +
+                                    utils::get_data_precision_str(precision));
     }
 }  // namespace
 
-ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads, const int fps, const std::string& device) : Launcher(nthreads, fps, device) {
+ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads,
+                                       const int fps,
+                                       const std::string& device) : 
+                                       Launcher(nthreads, fps, device) {
     if (nthreads > 0) {
         executorch::extension::threadpool::get_threadpool()->_unsafe_reset_threadpool(nthreads);
     }
