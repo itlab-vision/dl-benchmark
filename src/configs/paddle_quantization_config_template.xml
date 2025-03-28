@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <PathPrefix>D:\ws\dl-benchmark\resnet50\inference</PathPrefix>
+            <ModelDir>D:\ws\dl-benchmark\resnet50</ModelDir>
+            <ModelFileName>inference.pdmodel</ModelFileName>
+            <ParamsFileName>inference.pdiparams</ParamsFileName>
+            <SaveDir>D:\ws\dl-benchmark\quant1</SaveDir>
+        </Model>
+        <Dataset>
+            <Name>ImageNet</Name>
+            <Path>D:\ws\dl-benchmark\imagenet</Path>
+            <Mean>[0.485, 0.456, 0.406]</Mean>
+            <Std>[0.229, 0.224, 0.225]</Std>
+            <ImageResolution>[224, 224]</ImageResolution>
+            <ResizeResolution>[256, 256]</ResizeResolution>
+        </Dataset>
+        <Parameters>
+            <InputShape>[3, 224, 224]</InputShape>
+            <InputName>inputs</InputName>
+        </Parameters>
+    </Config>
+</QuantizationConfigs>
