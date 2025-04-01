@@ -21,6 +21,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.opt_level = args.get('opt_level', None)
         self.target_str = args.get('target', None)
         self.module = args.get('module', None)
+        self.high_level_ir = args.get('high_level_ir', None)
         self.vm = args.get('vm', None)
 
         self.output_dir = args.get('output_dir', None)
@@ -34,7 +35,12 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.params = None
         self.log = log
         self.tvm = importlib.import_module('tvm')
-        self.tvm.relay = importlib.import_module('tvm.relay')
+        if self.high_level_ir == 'relay':
+            self.tvm.relay = importlib.import_module('tvm.relay')
+        elif self.high_level_ir == 'relax':
+            self.tvm.relax = importlib.import_module('tvm.relax')
+        else:
+            raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
         self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     def get_file_type(self, file_path):
@@ -146,22 +152,31 @@ class TVMConverter(metaclass=abc.ABCMeta):
             with open(f'{self.output_dir}/{lib_name}.ro', 'wb') as fo:
                 fo.write(lib[0])
 
-    def get_graph_module_from_vm(self, mod, params, target, dev):
-        rly_vm = self.tvm.relay.vm
-        vm = self.tvm.runtime.vm
-        if self.mod_type == 'so' and self.params_type == 'ro':
-            executable = vm.Executable.load_exec(params, mod)
+    def get_graph_module_from_relay(self, mod, params, target, dev):
+        if self.vm:
+            vm = self.tvm.runtime.vm
+            rly_vm = self.tvm.relay.vm
+            if self.mod_type == 'so' and self.params_type == 'ro':
+                executable = vm.Executable.load_exec(params, mod)
+            else:
+                with self.tvm.transform.PassContext(opt_level=self.opt_level):
+                    executable = rly_vm.compile(mod, target=target, params=params)
+            des_vm = vm.VirtualMachine(executable, dev)
+            return des_vm
         else:
             with self.tvm.transform.PassContext(opt_level=self.opt_level):
-                executable = rly_vm.compile(mod, target=target, params=params)
-        des_vm = vm.VirtualMachine(executable, dev)
-        return des_vm
+                lib = self.tvm.relay.build(mod, target=target, params=params)
+            self.graph = self.graph_executor.GraphModule(lib['default'](dev))
+            return self.graph
 
-    def get_graph_module_from_relay(self, mod, params, target, dev):
-        with self.tvm.transform.PassContext(opt_level=self.opt_level):
-            lib = self.tvm.relay.build(mod, target=target, params=params)
-        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
-        return self.graph
+    def get_graph_module_from_relax(self, mod, params, target, dev):
+        if self.vm:
+            with self.tvm.transform.PassContext(opt_level=self.opt_level):
+                executable = self.tvm.relax.build(mod, target=target, params=params)
+            des_vm = self.tvm.relax.VirtualMachine(executable, dev)
+            return des_vm
+        else:
+            raise ValueError(f'Intermediate representation Relax supports execution only via VirtualMachine')
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -170,9 +185,11 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Creating graph module from {self.source_framework} model')
         if len(model) == 2:
-            if self.vm:
-                return self.get_graph_module_from_vm(model[0], model[1], target, dev)
-            else:
+            if self.high_level_ir == 'relay':
                 return self.get_graph_module_from_relay(model[0], model[1], target, dev)
+            elif self.high_level_ir == 'relax':
+                return self.get_graph_module_from_relax(model[0], model[1], target, dev)
+            else:
+                raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
         else:
             return self.get_graph_module_from_lib(model[0])
