@@ -15,7 +15,6 @@ class TVMConverterPyTorchFormat(TVMConverter):
 
     def __get_model_from_path(self):
         self.log.info(f'Loading model from path {self.model_path}')
-        input_data = self.torch.randn(self.input_shape)
         file_type = self.model_path.split('.')[-1]
         supported_extensions = ['pt']
         if file_type not in supported_extensions:
@@ -72,7 +71,7 @@ class TVMConverterPyTorchFormat(TVMConverter):
             model, params = self.tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
             return model, params
         elif self.high_level_ir == 'relax':
-            input_info = [(self.input_shape, "float32")]
+            input_info = [(self.input_shape, 'float32')]
             from tvm.relax.frontend.torch import from_fx
             model = from_fx(scripted_model, input_info)
             return model, None

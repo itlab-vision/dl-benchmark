@@ -176,7 +176,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
             des_vm = self.tvm.relax.VirtualMachine(executable, dev)
             return des_vm
         else:
-            raise ValueError(f'Intermediate representation Relax supports execution only via VirtualMachine')
+            raise ValueError('Intermediate representation Relax supports execution only via VirtualMachine')
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
