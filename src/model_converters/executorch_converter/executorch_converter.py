@@ -48,7 +48,7 @@ def cli_argument_parser():
     parser.add_argument('-p', '--partitioner',
                         help='Partitioner to export model.',
                         default='None',
-                        choices=['xnnpack', 'vulkan', 'arm', None],
+                        choices=['xnnpack', 'vulkan', None],
                         type=str,
                         dest='partitioner')
     parser.add_argument('--print_list_of_models',
