@@ -52,4 +52,6 @@ def get_parameters_parser(framework):
         return SpektralParametersParser()
     if framework == KnownFrameworks.rknn:
         return CppParametersParser()
+    if framework == KnownFrameworks.executorch_cpp:
+        return CppParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')
