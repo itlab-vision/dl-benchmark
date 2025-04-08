@@ -12,7 +12,7 @@ jobs:
   smoke_test_benchmark:
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -55,7 +55,7 @@ jobs:
   smoke_test_benchmark_caffe:
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -94,7 +94,7 @@ jobs:
   smoke_test_quantization:
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
