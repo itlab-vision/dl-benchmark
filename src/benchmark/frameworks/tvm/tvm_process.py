@@ -85,6 +85,10 @@ class TVMProcess(ProcessHandler):
         target = self._test.dep_parameters.target
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--target', target)
+        
+        high_level_ir = self._test.dep_parameters.high_level_ir
+        common_params = TVMProcess._add_optional_argument_to_cmd_line(
+            common_params, '--high_level_ir', high_level_ir)
 
         return f'{common_params}'
 
