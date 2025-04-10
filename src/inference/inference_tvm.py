@@ -166,6 +166,12 @@ def cli_argument_parser():
                         default=0.5,
                         type=float,
                         dest='threshold')
+    parser.add_argument('--high_level_ir',
+                        help='Type of high lever Intermediate Representation (IR)',
+                        choices=['relay', 'relax'],
+                        default='relay',
+                        type=str,
+                        dest='high_level_ir')
     parser.add_argument('-vm', '--virtual_machine',
                         help='Flag to use VirtualMachine API',
                         action='store_true',
@@ -209,8 +215,8 @@ def main():
                                            args.input_name,
                                            io.get_slice_input,
                                            args.time,
+                                           args.high_level_ir,
                                            args.vm)
-
         if not args.raw_output:
             if args.number_iter == 1:
                 try:

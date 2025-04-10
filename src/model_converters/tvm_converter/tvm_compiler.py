@@ -45,6 +45,12 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='output_dir')
+    parser.add_argument('--high_level_ir',
+                        help='Type of high lever Intermediate Representation (IR)',
+                        choices=['relay', 'relax'],
+                        default='relay',
+                        type=str,
+                        dest='high_level_ir')
     args = parser.parse_args()
     return args
 
@@ -59,6 +65,7 @@ def create_dict_for_compilation(args):
         'vm': args.vm,
         'lib_name': args.lib_name,
         'output_dir': args.output_dir,
+        'high_level_ir': args.high_level_ir,
     }
     return dictionary
 

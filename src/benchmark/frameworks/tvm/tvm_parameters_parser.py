@@ -16,6 +16,7 @@ class TVMParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_CHANNEL_SWAP_TAG = 'ChannelSwap'
         CONFIG_FRAMEWORK_DEPENDENT_LAYOUT_TAG = 'Layout'
         CONFIG_FRAMEWORK_DEPENDENT_VIRTUAL_MACHINE = 'VirtualMachine'
+        CONFIG_FRAMEWORK_DEPENDENT_HIGH_LEVEL_IR = 'HighLevelIR'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -41,6 +42,8 @@ class TVMParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_TARGET)[0].firstChild
         _vm = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_VIRTUAL_MACHINE)[0].firstChild
+        _high_level_ir = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_HIGH_LEVEL_IR)[0].firstChild
 
         return TVMParameters(
             framework=_framework.data if _framework else None,
@@ -54,13 +57,15 @@ class TVMParametersParser(DependentParametersParser):
             layout=_layout.data if _layout else None,
             target=_target.data if _target else None,
             vm=_vm.data if _vm else None,
+            high_level_ir=_high_level_ir.data if _high_level_ir else None,
         )
 
 
 class TVMParameters(FrameworkParameters):
     def __init__(self, framework, input_name, input_shape,
                  normalize, mean, std, channel_swap,
-                 optimization_level, layout, target, vm):
+                 optimization_level, layout, target, vm,
+                 high_level_ir):
         self.framework = None
         self.input_name = None
         self.input_shape = None
@@ -72,6 +77,7 @@ class TVMParameters(FrameworkParameters):
         self.layout = None
         self.target = 'llvm'
         self.vm = None
+        self.high_level_ir = None
 
         if self._framework_is_correct(framework):
             self.framework = framework
@@ -95,6 +101,8 @@ class TVMParameters(FrameworkParameters):
             self.target = target
         if self._parameter_is_not_none(vm):
             self.vm = vm
+        if self._parameter_is_not_none(high_level_ir):
+            self.high_level_ir = high_level_ir
 
     @staticmethod
     def _framework_is_correct(framework):

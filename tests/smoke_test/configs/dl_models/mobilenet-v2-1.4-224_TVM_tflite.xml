@@ -29,6 +29,7 @@
             <Layout>NHWC</Layout>
             <Target>llvm</Target>
             <VirtualMachine>False</VirtualMachine>
+            <HighLevelIR></HighLevelIR>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>

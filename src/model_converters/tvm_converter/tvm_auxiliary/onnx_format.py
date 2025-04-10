@@ -19,5 +19,13 @@ class TVMConverterONNXFormat(TVMConverter):
         model_onnx = self.onnx.load(self.model_path)
         self.model_onnx = model_onnx
         shape_dict = {self.get_input_name(): self.input_shape}
-        model, params = self.tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
+        if self.high_level_ir == 'relay':
+            model, params = self.tvm.relay.frontend.from_onnx(model_onnx, shape_dict)
+        elif self.high_level_ir == 'relax':
+            from tvm.relax.frontend.onnx import from_onnx
+            from tvm.relax.frontend import detach_params
+            model = from_onnx(model_onnx, shape_dict)
+            model, params = detach_params(model)
+        else:
+            raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
         return model, params

@@ -11,7 +11,7 @@ class TVMConverterTVMFormat(TVMConverter):
 
     def _get_deserialized_tvm_model(self):
         with open(self.model_params, 'rb') as fo:
-            params = self.tvm.relay.load_param_dict(fo.read())
+            params = self.tvm.runtime.load_param_dict(fo.read())
 
         with open(self.model_path, 'r') as fo:
             mod = fo.read()
