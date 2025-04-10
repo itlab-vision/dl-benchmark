@@ -45,18 +45,12 @@ def main():
                 inference_program, feed_target_names, fetch_targets = paddle.static.load_inference_model(
                     model_quant_config[0]['Model']['PathPrefix'], exe)
 
-                train_reader = paddle.batch(
-                    reader.train(), batch_size=128, drop_last=True)
-                test_reader = paddle.batch(
-                    reader.train(), batch_size=128, drop_last=True)
-                train_feeder = DataFeeder.DataFeeder(feed_target_names, paddle.CPUPlace(), program=inference_program)
+                val_dataset = (
+                    ImageNetDataset(mode='test',
+                                    crop_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
+                                    resize_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
+                                    data_dir=model_quant_config[1]['Dataset']['Path']))
 
-                val_dataset = ImageNetDataset(mode='test',
-                                              crop_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
-                                              resize_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
-                                              data_dir=model_quant_config[1]['Dataset']['Path'])
-
-                image_shape = [3, 224, 224]
                 image_shape = ast.literal_eval(model_quant_config[2]['Parameters']['InputShape'])
                 image = paddle.static.data(
                     name=model_quant_config[2]['Parameters']['InputName'], shape=[None] + image_shape, dtype='float32')
@@ -98,4 +92,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
-

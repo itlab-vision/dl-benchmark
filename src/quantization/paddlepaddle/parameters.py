@@ -7,8 +7,6 @@ import paddle
 from PIL import Image, ImageEnhance
 from paddle.io import Dataset
 from src.quantization.utils import ArgumentsParser
-import ast
-from pathlib import Path
 
 
 random.seed(0)
@@ -25,6 +23,9 @@ DATA_DIR = r'D:\ws\dl-benchmark\imagenet'
 img_mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
 img_std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
 
+default_crop_scale = (0.08, 1.0)
+default_crop_ratio = (3. / 4., 4. / 3.)
+
 
 def resize_short(img, target_size):
     percent = float(target_size) / min(img.size[0], img.size[1])
@@ -37,7 +38,7 @@ def resize_short(img, target_size):
 def crop_image(img, target_size, center):
     width, height = img.size
     size = target_size
-    if center == True:
+    if center:
         w_start = (width - size) // 2
         h_start = (height - size) // 2
     else:
@@ -49,7 +50,7 @@ def crop_image(img, target_size, center):
     return img
 
 
-def random_crop(img, size, scale=[0.08, 1.0], ratio=[3. / 4., 4. / 3.]):
+def random_crop(img, size, scale=default_crop_scale, ratio=default_crop_ratio):
     aspect_ratio = math.sqrt(np.random.uniform(*ratio))
     w = 1. * aspect_ratio
     h = 1. / aspect_ratio
@@ -112,11 +113,12 @@ def process_image(sample,
 
     try:
         img = Image.open(img_path)
-    except:
-        print(img_path, "not exists!")
+    except Exception:
+        print(img_path, 'does not exist!')
         return None
     if mode == 'train':
-        if rotate: img = rotate_image(img)
+        if rotate:
+            img = rotate_image(img)
         img = random_crop(img, crop_size)
     else:
         img = resize_short(img, target_size=resize_size)
@@ -165,7 +167,7 @@ def _reader_creator(file_list,
                         img_path = os.path.join(data_dir, line)
                         yield [img_path]
         except Exception as e:
-            print("Reader failed!\n{}".format(str(e)))
+            print(f'Reader failed!\n{str(e)}')
             os._exit(1)
 
     mapper = functools.partial(
@@ -212,7 +214,6 @@ class ImageNetDataset(Dataset):
         self.resize_size = resize_size
         train_file_list = os.path.join(data_dir, 'train_loc.txt')
         val_file_list = os.path.join(data_dir, 'val.txt')
-        test_file_list = os.path.join(data_dir, 'test.txt')
         self.mode = mode
         if mode == 'train':
             with open(train_file_list) as flist:
@@ -258,6 +259,7 @@ class ImageNetDataset(Dataset):
 
     def __len__(self):
         return len(self.data)
+
 
 class PaddleModelReader(ArgumentsParser):
     def __init__(self, log):
