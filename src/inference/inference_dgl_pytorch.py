@@ -9,6 +9,7 @@ import importlib.util
 
 import torch
 import dgl
+import ogb
 
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
@@ -52,7 +53,7 @@ def cli_argument_parser():
                         dest='model_name')
     parser.add_argument('-i', '--input',
                         help='Path to data.',
-                        required=True,
+                        required=False,
                         type=str,
                         nargs='+',
                         dest='input')
@@ -75,9 +76,20 @@ def cli_argument_parser():
                         dest='task')
     parser.add_argument('-b', '--batch_size',
                         help='Batch size.',
-                        default=1,
+                        default=1000,
                         type=int,
                         dest='batch_size')
+    parser.add_argument('-nw', '--num_workers',
+                        help='Num workers in data loading.',
+                        default=1,
+                        type=int,
+                        dest='num_workers')
+    parser.add_argument('-ogbd', '--ogb_data',
+                        help='Loading ogb data.',
+                        choices=['ogbn-products'],
+                        default=None,
+                        type=str,
+                        dest='ogb_data')
     parser.add_argument('--report_path',
                         type=Path,
                         default=Path(__file__).parent / 'dgl_pytorch_inference_report.json',
@@ -97,6 +109,14 @@ def cli_argument_parser():
     args = parser.parse_args()
 
     return args
+
+
+def auto_load_from_ogb(task, device):
+    data = DglNodePropPredDataset(name=task)
+    graph, _ = data[0]
+    g = graph[0][0]
+    g = g.to(device)
+    return g
 
 
 def prepare_input(input_path, device):
@@ -119,13 +139,13 @@ def inference_dgl_pytorch(model, num_iterations, input_graph, device, test_durat
         time_infer = []
         if num_iterations == 1:
             t0 = time()
-            predictions = model(input_graph, features).argmax(dim=1)
+            predictions = model.inference(input_graph, features, device).argmax(dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
-            inputs = [input_graph, features]
-            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model)
+            inputs = [input_graph, features, device]
+            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model.inference)
     return predictions, time_infer
 
 
@@ -152,6 +172,7 @@ def load_model_from_file(model_path, module_path, model_name):
     import __main__
     setattr(__main__, model_name, getattr(foo, model_name))
     model = torch.load(model_path)
+
     return model
 
 
@@ -203,7 +224,10 @@ def main():
         set_thread_num(args.num_inter_threads, args.num_intra_threads)
 
         log.info(f'Preparing input data {args.input}')
-        input_data = prepare_input(args.input[0], device)
+        if args.ogb_data:
+            input_data = auto_load_from_ogb(args.ogb_data, device)
+        else:
+            input_data = prepare_input(args.input[0], device)
 
         log.info(f'Starting inference (max {args.number_iter} iterations or {args.time} sec) on {args.device}')
         result, inference_time = inference_dgl_pytorch(compiled_model, args.number_iter,
