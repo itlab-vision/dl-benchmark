@@ -73,7 +73,9 @@ class TVMConverterPyTorchFormat(TVMConverter):
         elif self.high_level_ir == 'relax':
             input_info = [(self.input_shape, 'float32')]
             from tvm.relax.frontend.torch import from_fx
+            from tvm.relax.frontend import detach_params
             model = from_fx(scripted_model, input_info)
-            return model, None
+            model, params = detach_params(model)
+            return model, params
         else:
             raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
