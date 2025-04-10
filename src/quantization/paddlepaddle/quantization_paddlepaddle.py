@@ -6,8 +6,6 @@ from ...utils.logger_conf import configure_logger  # noqa: E402
 from ...quantization.utils import ConfigParser  # noqa: E402
 from paddleslim.quant import quant_post_static
 import paddle
-import paddle.dataset.mnist as reader
-import paddle.base.data_feeder as DataFeeder
 from paddle.io import DataLoader
 from parameters import PaddleModelReader, ImageNetDataset
 import ast
