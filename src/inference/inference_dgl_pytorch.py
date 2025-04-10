@@ -9,7 +9,7 @@ import importlib.util
 
 import torch
 import dgl
-import ogb
+from ogb.nodeproppred import DglNodePropPredDataset
 
 import postprocessing_data as pp
 from reporter.report_writer import ReportWriter
@@ -113,8 +113,8 @@ def cli_argument_parser():
 
 def auto_load_from_ogb(task, device):
     data = DglNodePropPredDataset(name=task)
-    graph, _ = data[0]
-    g = graph[0][0]
+    g, _ = data[0]
+    g.create_formats_()
     g = g.to(device)
     return g
 
@@ -126,7 +126,9 @@ def prepare_input(input_path, device):
     return g
 
 
-def compile_model(model, device):
+def compile_model(model, device, batch_size, num_workers):
+    model.batch_size = batch_size
+    model.num_workers = num_workers
     model.to(device)
     model.eval()
     return model
@@ -171,7 +173,7 @@ def load_model_from_file(model_path, module_path, model_name):
 
     import __main__
     setattr(__main__, model_name, getattr(foo, model_name))
-    model = torch.load(model_path)
+    model = torch.load(model_path, map_location=torch.device('cpu'))
 
     return model
 
@@ -216,7 +218,7 @@ def main():
     try:
         model = load_model_from_file(args.model, args.module_path, args.model_name)
         device = get_device_to_infer(args.device)
-        compiled_model = compile_model(model, device)
+        compiled_model = compile_model(model, device, args.batch_size, args.num_workers)
 
         model_wrapper = DGLPyTorchWrapper(compiled_model)
         io = IOGraphAdapter.get_io_adapter(args, model_wrapper)
