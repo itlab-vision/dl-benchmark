@@ -107,7 +107,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Saving weights of the model {self.model_name}')
         with open(f'{self.output_dir}/{self.model_name}.params', 'wb') as fo:
-            fo.write(self.tvm.relay.save_param_dict(self.params))
+            fo.write(self.tvm.runtime.save_param_dict(self.params))
 
         self.log.info(f'Saving model {self.model_name}')
         with open(f'{self.output_dir}/{self.model_name}.json', 'w') as fo:
