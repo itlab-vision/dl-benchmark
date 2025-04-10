@@ -30,6 +30,7 @@
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
             <VirtualMachine>False</VirtualMachine>
+            <HighLevelIR></HighLevelIR>
             <Target>llvm</Target>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>

@@ -31,6 +31,7 @@
             <Layout>NCHW</Layout>
             <Target>llvm</Target>
             <VirtualMachine>True</VirtualMachine>
+            <HighLevelIR></HighLevelIR>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>
     </Test>
