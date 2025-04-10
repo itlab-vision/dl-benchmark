@@ -57,7 +57,7 @@ class DatasetReader(ArgumentsParser):
         self.dataset_name = self.args['Name']
         self.dataset_path = self.args['Path']
 
-        self.channel_swap = (np.asarray(ast.literal_eval(self.args['ChannelSwap']), dtype=np.float32)
+        self.channel_swap = (ast.literal_eval(self.args['ChannelSwap'])
                              if self.args['ChannelSwap'] is not None else [2, 1, 0])
 
         self.norm = (ast.literal_eval(self.args['Normalization'])
