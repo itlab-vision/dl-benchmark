@@ -113,16 +113,32 @@ class TVMConverter(metaclass=abc.ABCMeta):
         with open(f'{self.output_dir}/{self.model_name}.json', 'w') as fo:
             fo.write(self.tvm.ir.save_json(self.mod))
 
-    def get_graph_module_from_lib(self, lib):
+    def get_graph_module_from_relay_lib(self, lib):
         _, dev = self._get_target_device()
         self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
+
+    def get_graph_module_from_relax_lib(self, lib):
+        if self.vm:
+            _, dev = self._get_target_device()
+            des_vm = self.tvm.relax.VirtualMachine(lib, dev)
+            return des_vm
+        else:
+            raise ValueError('Intermediate representation Relax supports execution only via VirtualMachine')
 
     def get_lib(self):
         target, _ = self._get_target_device()
         model = self._convert_model_from_framework()
 
         self.log.info('Model compilation')
+        if self.high_level_ir == 'relay':
+            return self.__get_lib_from_relay(target, model)
+        elif self.high_level_ir == 'relax':
+            return self.__get_lib_from_relax(target, model)
+        else:
+            raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
+
+    def __get_lib_from_relay(self, target, model):
         if self.vm:
             rly_vm = self.tvm.relay.vm
             with self.tvm.transform.PassContext(opt_level=self.opt_level):
@@ -133,6 +149,14 @@ class TVMConverter(metaclass=abc.ABCMeta):
             with self.tvm.transform.PassContext(opt_level=self.opt_level):
                 lib = self.tvm.relay.build(model[0], target=target, params=model[1])
             return [lib]
+
+    def __get_lib_from_relax(self, target, model):
+        if self.vm:
+            with self.tvm.transform.PassContext(opt_level=self.opt_level):
+                lib = self.tvm.relax.build(model[0], target=target, params=model[1])
+            return [lib]
+        else:
+            raise ValueError('Intermediate representation Relax supports execution only via VirtualMachine')
 
     def export_lib(self):
         if self.output_dir is None:
@@ -184,12 +208,12 @@ class TVMConverter(metaclass=abc.ABCMeta):
         model = self._convert_model_from_framework()
 
         self.log.info(f'Creating graph module from {self.source_framework} model')
-        if len(model) == 2:
-            if self.high_level_ir == 'relay':
+        if self.high_level_ir == 'relay':
+            if len(model) == 2:
                 return self.get_graph_module_from_relay(model[0], model[1], target, dev)
-            elif self.high_level_ir == 'relax':
+            return self.get_graph_module_from_relay_lib(model[0])
+        if self.high_level_ir == 'relax':
+            if len(model) == 2:
                 return self.get_graph_module_from_relax(model[0], model[1], target, dev)
-            else:
-                raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
-        else:
-            return self.get_graph_module_from_lib(model[0])
+            return self.get_graph_module_from_relax_lib(model[0])
+        raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
