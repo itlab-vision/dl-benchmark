@@ -29,7 +29,7 @@ def cli_argument_parser():
 def main():
     args = cli_argument_parser()
     try:
-        log.info('Parsing xml config')
+        log.info(f'Parsing the configuration file {args.config}')
         parser = ConfigParser(args.config)
         config = parser.parse()
         exit_code = 0
