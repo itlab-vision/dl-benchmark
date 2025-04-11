@@ -45,7 +45,7 @@ def main():
 
                 val_dataset = (
                     ImageNetDataset(mode='test',
-                                    crop_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
+                                    crop_size=ast.literal_eval(model_quant_config[1]['Dataset']['CropResolution']),
                                     resize_size=ast.literal_eval(model_quant_config[1]['Dataset']['ImageResolution']),
                                     data_dir=model_quant_config[1]['Dataset']['Path']))
 
@@ -69,7 +69,7 @@ def main():
                     data_loader=data_loader,
                     model_filename=model_quant_config[0]['Model']['ModelFileName'],
                     params_filename=model_quant_config[0]['Model']['ParamsFileName'],
-                    batch_size=32,
+                    batch_size=int(model_quant_config[1]['DataSet']['BatchSize']),
                     batch_nums=10,
                     algo='avg',
                     round_type='round',
