@@ -18,7 +18,7 @@ log = configure_logger()
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config',
-                        help='Path to xml config.',
+                        help='Path to the configuration file in the xml-format.',
                         type=str,
                         required=True,
                         dest='config')
@@ -29,7 +29,7 @@ def cli_argument_parser():
 def main():
     args = cli_argument_parser()
     try:
-        log.info('Parsing xml config')
+        log.info(f'Parsing the configuration file {args.config}')
         parser = ConfigParser(args.config)
         config = parser.parse()
         exit_code = 0
