@@ -13,6 +13,7 @@
             <Path>../test_images/classification_images</Path>
             <Mean>[123.675, 116.28, 103.53]</Mean>
             <Std>[58.395, 57.12, 57.375]</Std>
+            <BatchSize>1</BatchSize>
             <ImageResolution>[224, 224]</ImageResolution>
             <ResizeResolution>[256, 256]</ResizeResolution>
         </Dataset>

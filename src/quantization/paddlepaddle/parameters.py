@@ -1,13 +1,15 @@
 import os
 import math
 import random
-import functools
 import numpy as np
 import paddle
 from pathlib import Path
 from PIL import Image, ImageEnhance
 from paddle.io import Dataset
 from src.quantization.utils import ArgumentsParser
+import ast
+from paddle.io import DataLoader
+from paddleslim.quant import quant_post_static
 
 
 random.seed(0)
@@ -18,8 +20,6 @@ RESIZE_DIM = 256
 
 THREAD = 16
 BUF_SIZE = 10240
-
-DATA_DIR = r'D:\ws\dl-benchmark\imagenet'
 
 img_mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
 img_std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
@@ -143,78 +143,15 @@ def process_image(sample,
         return [img]
 
 
-def _reader_creator(file_list,
-                    mode,
-                    shuffle=False,
-                    color_jitter=False,
-                    rotate=False,
-                    data_dir=DATA_DIR,
-                    crop_size=DATA_DIM,
-                    resize_size=RESIZE_DIM,
-                    batch_size=1):
-    def reader():
-        try:
-            with open(file_list) as flist:
-                full_lines = [line.strip() for line in flist]
-                if shuffle:
-                    np.random.shuffle(full_lines)
-                lines = full_lines
-                for line in lines:
-                    if mode == 'train' or mode == 'val':
-                        img_path, label = line.split()
-                        img_path = os.path.join(data_dir, img_path) + '.JPEG'
-                        yield img_path, int(label)
-                    elif mode == 'test':
-                        img_path = os.path.join(data_dir, line)
-                        yield [img_path]
-        except Exception as e:
-            print(f'Reader failed!\n{str(e)}')
-            os._exit(1)
-
-    mapper = functools.partial(
-        process_image,
-        mode=mode,
-        color_jitter=color_jitter,
-        rotate=rotate,
-        crop_size=crop_size,
-        resize_size=resize_size)
-
-    return paddle.reader.xmap_readers(mapper, reader, THREAD, BUF_SIZE)
-
-
-def train(data_dir=DATA_DIR):
-    file_list = os.path.join(data_dir, 'train_loc.txt')
-    return _reader_creator(
-        file_list,
-        'train',
-        shuffle=True,
-        color_jitter=False,
-        rotate=False,
-        data_dir=data_dir)
-
-
-def val(data_dir=DATA_DIR):
-    file_list = os.path.join(data_dir, 'val.txt')
-    return _reader_creator(file_list, 'val', shuffle=False, data_dir=data_dir)
-
-
-def test(data_dir=DATA_DIR):
-    file_list = os.path.join(data_dir, 'test.txt')
-    return _reader_creator(file_list, 'test', shuffle=False, data_dir=data_dir)
-
-
-class ImageNetDataset(Dataset):
-    def __init__(self,
-                 data_dir=DATA_DIR,
-                 mode='train',
-                 crop_size=DATA_DIM,
-                 resize_size=RESIZE_DIM):
-        super(ImageNetDataset, self).__init__()
-        self.data_dir = data_dir
-        self.crop_size = crop_size
-        self.resize_size = resize_size
+class PaddleDatasetReader(Dataset):
+    def __init__(self, args, mode='train'):
+        super(PaddleDatasetReader, self).__init__()
+        self.data_dir = ast.literal_eval(args['Path'])
+        self.crop_size = ast.literal_eval(args['CropResolution'])
+        self.resize_size = ast.literal_eval(args['ImageResolution'])
         self.mode = mode
-        self.dataset = list(Path(data_dir).glob('*'))
+        self.batch_size = int(args['BatchSize'])
+        self.dataset = list(Path(self.data_dir).glob('*'))
         random.shuffle(self.dataset)
         self.dataset_iter = iter(self.dataset)
 
@@ -249,7 +186,50 @@ class ImageNetDataset(Dataset):
             return data
 
     def __len__(self):
-        return len(self.data)
+        return len(self.dataset)
+
+
+class PaddleQuantizationProcess:
+    def __init__(self, log, model_reader, dataset, quant_params):
+        self.log = log
+        self.model_reader = model_reader
+        self.dataset = dataset
+        self.quant_params = quant_params
+
+    def transform_fn(self):
+        for data in self.dataset:
+            yield [data.astype(np.float32)]
+
+    def quantization_tflite(self):
+        paddle.enable_static()
+        place = paddle.CPUPlace()
+        exe = paddle.static.Executor(place)
+
+        data_loader = DataLoader(
+            self.dataset,
+            places=place,
+            feed_list=[self.quant_params.image],
+            drop_last=False,
+            return_list=False,
+            batch_size=self.dataset.batch_size,
+            shuffle=False)
+
+        quant_post_static(
+            executor=exe,
+            model_dir=self.model_reader.model_dir,
+            quantize_model_path=self.quant_params.save_dir,
+            data_loader=data_loader,
+            model_filename=self.model_reader.model_filename,
+            params_filename=self.model_reader.params_filename,
+            batch_size=self.dataset.batch_size,
+            batch_nums=10,
+            algo='avg',
+            round_type='round',
+            hist_percent=0.9999,
+            is_full_quantize=False,
+            bias_correction=False,
+            onnx_format=False)
+
 
 
 class PaddleModelReader(ArgumentsParser):
@@ -259,16 +239,33 @@ class PaddleModelReader(ArgumentsParser):
     def _get_arguments(self):
         self._log.info('Parsing model arguments.')
         self.path_prefix = self.args['PathPrefix']
-        self._read_model()
+        self.model_dir = self.args['ModelDir']
+        self.model_filename = self.args['ModelFileName']
+        self.params_filename = self.args['ParamsFileName']
 
     def dict_for_iter_log(self):
         return {
             'Model path prefix': self.path_prefix,
         }
 
-    def _read_model(self):
-        paddle.enable_static()
-        place = paddle.CPUPlace()
-        exe = paddle.static.Executor(place)
-        self.inference_program, self.feed_target_names, self.fetch_targets = paddle.static.load_inference_model(
-            self.path_prefix, exe)
+
+class PaddleQuantParamReader(ArgumentsParser):
+    def __init__(self, log):
+        super().__init__(log)
+
+    def dict_for_iter_log(self):
+        return {
+            'InputShape': self.input_shape,
+            'InputName': self.input_name,
+            'SaveDir': self.save_dir,
+        }
+
+    def _get_arguments(self):
+        self.image_shape = ast.literal_eval(self.args['InputShape'])
+        self.image = paddle.static.data(name=self.args['InputName'], shape=[None] + self.image_shape, dtype='float32')
+        self.input_shape = self.args['InputShape']
+        self.input_name = self.args['InputName']
+        self.save_dir = self.args['SaveDir']
+
+    def _convert_to_list_of_tf_objects(self, keys, dictionary):
+        return [dictionary[key] for key in keys]
