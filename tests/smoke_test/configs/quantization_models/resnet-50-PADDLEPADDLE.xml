@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name>resnet50-paddle</Name>
+            <PathPrefix>../models_dir/public/resnet50_paddle/inference</PathPrefix>
+            <ModelDir>../models_dir/public/resnet50_paddle</ModelDir>
+            <ModelFileName>inference.pdmodel</ModelFileName>
+            <ParamsFileName>inference.pdiparams</ParamsFileName>
+        </Model>
+        <Dataset>
+            <Name>test</Name>
+            <Path>../test_images/classification_images</Path>
+            <Mean>[123.675, 116.28, 103.53]</Mean>
+            <Std>[58.395, 57.12, 57.375]</Std>
+            <ImageResolution>[224, 224]</ImageResolution>
+            <ResizeResolution>[256, 256]</ResizeResolution>
+        </Dataset>
+        <Parameters>
+            <InputShape>[3, 224, 224]</InputShape>
+            <InputName>inputs</InputName>
+            <SaveDir>res_dir</SaveDir>
+        </Parameters>
+    </Config>
+</QuantizationConfigs>

@@ -33,16 +33,11 @@ def main():
         parser = ConfigParser(args.config)
         config = parser.parse()
         exit_code = 0
-        model_reader = PaddleModelReader(log)
         for model_quant_config in config:
             try:
-                model_reader.add_arguments(model_quant_config[0]['Model'])
                 paddle.enable_static()
                 place = paddle.CPUPlace()
                 exe = paddle.static.Executor(place)
-                inference_program, feed_target_names, fetch_targets = paddle.static.load_inference_model(
-                    model_quant_config[0]['Model']['PathPrefix'], exe)
-
                 val_dataset = (
                     ImageNetDataset(mode='test',
                                     crop_size=ast.literal_eval(model_quant_config[1]['Dataset']['CropResolution']),
@@ -65,7 +60,7 @@ def main():
                 quant_post_static(
                     executor=exe,
                     model_dir=model_quant_config[0]['Model']['ModelDir'],
-                    quantize_model_path=model_quant_config[0]['Model']['SaveDir'],
+                    quantize_model_path=model_quant_config[2]['Parameters']['SaveDir'],
                     data_loader=data_loader,
                     model_filename=model_quant_config[0]['Model']['ModelFileName'],
                     params_filename=model_quant_config[0]['Model']['ParamsFileName'],

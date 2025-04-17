@@ -4,6 +4,7 @@ import random
 import functools
 import numpy as np
 import paddle
+from pathlib import Path
 from PIL import Image, ImageEnhance
 from paddle.io import Dataset
 from src.quantization.utils import ArgumentsParser
@@ -212,26 +213,16 @@ class ImageNetDataset(Dataset):
         self.data_dir = data_dir
         self.crop_size = crop_size
         self.resize_size = resize_size
-        train_file_list = os.path.join(data_dir, 'train_loc.txt')
-        val_file_list = os.path.join(data_dir, 'val.txt')
         self.mode = mode
-        if mode == 'train':
-            with open(train_file_list) as flist:
-                full_lines = [line.strip() for line in flist]
-                np.random.shuffle(full_lines)
-                lines = full_lines
-            self.data = [line.split() for line in lines]
-        else:
-            with open(val_file_list) as flist:
-                lines = [line.strip() for line in flist]
-                self.data = [line.split() for line in lines]
+        self.dataset = list(Path(data_dir).glob('*'))
+        random.shuffle(self.dataset)
+        self.dataset_iter = iter(self.dataset)
 
     def __getitem__(self, index):
-        sample = self.data[index]
-        data_path = os.path.join(self.data_dir, sample[0]) + '.JPEG'
+        sample = str(self.dataset[index].absolute())
         if self.mode == 'train':
             data, label = process_image(
-                [data_path, sample[1]],
+                [sample, sample],
                 mode='train',
                 color_jitter=False,
                 rotate=False,
@@ -240,7 +231,7 @@ class ImageNetDataset(Dataset):
             return data, np.array([label]).astype('int64')
         elif self.mode == 'val':
             data, label = process_image(
-                [data_path, sample[1]],
+                [sample, sample],
                 mode='val',
                 color_jitter=False,
                 rotate=False,
@@ -249,7 +240,7 @@ class ImageNetDataset(Dataset):
             return data, np.array([label]).astype('int64')
         elif self.mode == 'test':
             data = process_image(
-                [data_path, sample[1]],
+                [sample, sample],
                 mode='test',
                 color_jitter=False,
                 rotate=False,
@@ -267,7 +258,7 @@ class PaddleModelReader(ArgumentsParser):
 
     def _get_arguments(self):
         self._log.info('Parsing model arguments.')
-        self.path_prefix = self.args['Name']
+        self.path_prefix = self.args['PathPrefix']
         self._read_model()
 
     def dict_for_iter_log(self):
