@@ -1,4 +1,3 @@
-import os
 import math
 import random
 import numpy as np
@@ -229,7 +228,6 @@ class PaddleQuantizationProcess:
             is_full_quantize=False,
             bias_correction=False,
             onnx_format=False)
-
 
 
 class PaddleModelReader(ArgumentsParser):
