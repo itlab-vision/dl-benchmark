@@ -1,3 +1,4 @@
+import sys
 import math
 import random
 import numpy as np
@@ -5,23 +6,15 @@ import paddle
 from pathlib import Path
 from PIL import Image, ImageEnhance
 from paddle.io import Dataset
-from src.quantization.utils import ArgumentsParser
 import ast
 from paddle.io import DataLoader
 from paddleslim.quant import quant_post_static
+sys.path.append(str(Path(__file__).resolve().parents[3]))
+from src.quantization.utils import ArgumentsParser
 
 
 random.seed(0)
 np.random.seed(0)
-
-DATA_DIM = 224
-RESIZE_DIM = 256
-
-THREAD = 16
-BUF_SIZE = 10240
-
-img_mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
-img_std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
 
 default_crop_scale = (0.08, 1.0)
 default_crop_ratio = (3. / 4., 4. / 3.)
@@ -107,8 +100,9 @@ def process_image(sample,
                   mode,
                   color_jitter,
                   rotate,
-                  crop_size=DATA_DIM,
-                  resize_size=RESIZE_DIM):
+                  crop_size,
+                  resize_size,
+                  img_mean, img_std):
     img_path = sample[0]
 
     try:
@@ -145,9 +139,14 @@ def process_image(sample,
 class PaddleDatasetReader(Dataset):
     def __init__(self, args, mode='train'):
         super(PaddleDatasetReader, self).__init__()
-        self.data_dir = ast.literal_eval(args['Path'])
-        self.crop_size = ast.literal_eval(args['CropResolution'])
+        self.data_dir = args['Path']
+        self.crop_size = ast.literal_eval(args['ResizeResolution'])
         self.resize_size = ast.literal_eval(args['ImageResolution'])
+        self.mean = (np.asarray(ast.literal_eval(args['Mean']), dtype=np.float32)
+                     if args['Mean'] is not None else [0., 0., 0.])
+
+        self.std = (np.asarray(ast.literal_eval(args['Std']), dtype=np.float32)
+                    if args['Std'] is not None else [1., 1., 1.])
         self.mode = mode
         self.batch_size = int(args['BatchSize'])
         self.dataset = list(Path(self.data_dir).glob('*'))
@@ -163,7 +162,9 @@ class PaddleDatasetReader(Dataset):
                 color_jitter=False,
                 rotate=False,
                 crop_size=self.crop_size,
-                resize_size=self.resize_size)
+                resize_size=self.resize_size,
+                img_mean=self.mean,
+                img_std=self.std)
             return data, np.array([label]).astype('int64')
         elif self.mode == 'val':
             data, label = process_image(
@@ -172,7 +173,9 @@ class PaddleDatasetReader(Dataset):
                 color_jitter=False,
                 rotate=False,
                 crop_size=self.crop_size,
-                resize_size=self.resize_size)
+                resize_size=self.resize_size,
+                img_mean=self.mean,
+                img_std=self.std)
             return data, np.array([label]).astype('int64')
         elif self.mode == 'test':
             data = process_image(
@@ -181,7 +184,9 @@ class PaddleDatasetReader(Dataset):
                 color_jitter=False,
                 rotate=False,
                 crop_size=self.crop_size,
-                resize_size=self.resize_size)
+                resize_size=self.resize_size,
+                img_mean=self.mean,
+                img_std=self.std)
             return data
 
     def __len__(self):
@@ -199,8 +204,8 @@ class PaddleQuantizationProcess:
         for data in self.dataset:
             yield [data.astype(np.float32)]
 
-    def quantization_tflite(self):
-        paddle.enable_static()
+    def quantization_paddle(self):
+
         place = paddle.CPUPlace()
         exe = paddle.static.Executor(place)
 

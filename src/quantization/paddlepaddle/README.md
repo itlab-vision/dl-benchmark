@@ -30,7 +30,7 @@ Description of parameters:
 - `ResizeResolution` is an image size for preprocessing data. Example: 224, 224.
 - `BatchSize` is a batch size.
 
-`Parameters` contains information about the model input layer:
+`QuantizationParameters` contains information about the model input layer:
 - `InputShape` is a shape of the model's input layer.
 - `InputName` is a name of the model's input layer.
 

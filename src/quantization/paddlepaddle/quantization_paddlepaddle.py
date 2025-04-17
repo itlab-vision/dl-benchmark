@@ -1,12 +1,13 @@
+import paddle
 import argparse
 import sys
 import traceback
 from pathlib import Path
-from ...utils.logger_conf import configure_logger  # noqa: E402
-from ...quantization.utils import ConfigParser  # noqa: E402
 from parameters import PaddleModelReader, PaddleDatasetReader, PaddleQuantizationProcess, PaddleQuantParamReader
-
 sys.path.append(str(Path(__file__).resolve().parents[3]))
+from src.utils.logger_conf import configure_logger  # noqa: E402
+from src.quantization.utils import ConfigParser  # noqa: E402
+
 
 log = configure_logger()
 
@@ -27,7 +28,7 @@ def main():
     try:
         log.info(f'Parsing the configuration file {args.config}')
         parser = ConfigParser(args.config)
-
+        paddle.enable_static()
         config = parser.parse()
         exit_code = 0
         quant_params = PaddleQuantParamReader(log)
@@ -38,7 +39,7 @@ def main():
                 model_reader.add_arguments(model_quant_config[0]['Model'])
                 quant_params.add_arguments(model_quant_config[2]['QuantizationParameters'])
                 proc = PaddleQuantizationProcess(log, model_reader, data_reader, quant_params)
-                proc.quantization_tflite()
+                proc.quantization_paddle()
 
             except Exception:
                 log.error(traceback.format_exc())
