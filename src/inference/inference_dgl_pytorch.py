@@ -141,13 +141,23 @@ def inference_dgl_pytorch(model, num_iterations, input_graph, device, test_durat
         time_infer = []
         if num_iterations == 1:
             t0 = time()
-            predictions = model.inference(input_graph, features, device).argmax(dim=1)
+            if 'inference' in dir(model):
+                predictions = model.inference(input_graph, features, device).argmax(dim=1)
+            else:
+                predictions = model(input_graph, features, device).argmax(dim=1)
             t1 = time()
             time_infer.append(t1 - t0)
         else:
             # several decorator calls in order to use variables as decorator parameters
             inputs = [input_graph, features, device]
-            time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model.inference)
+            if 'inference' in dir(model):
+                time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(
+                    device, 
+                    inputs, 
+                    model.inference
+                )
+            else:
+                time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model)
     return predictions, time_infer
 
 
