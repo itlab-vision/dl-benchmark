@@ -1,16 +1,17 @@
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[3]))
+from src.quantization.utils import ArgumentsParser
 import math
 import random
 import numpy as np
 import paddle
-from pathlib import Path
 from PIL import Image, ImageEnhance
 from paddle.io import Dataset
 import ast
 from paddle.io import DataLoader
 from paddleslim.quant import quant_post_static
-sys.path.append(str(Path(__file__).resolve().parents[3]))
-from src.quantization.utils import ArgumentsParser
+
 
 
 random.seed(0)
