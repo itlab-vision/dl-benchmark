@@ -23,9 +23,11 @@ class TVMConverterCaffeFormat(TVMConverter):
 
         with open(self.model_params, 'rb') as f:
             init_net.ParseFromString(f.read())
-
-        model, params = self.tvm.relay.frontend.from_caffe(init_net,
+        if self.high_level_api in ['Relay', 'RelayVM']:
+            model, params = self.tvm.relay.frontend.from_caffe(init_net,
                                                            predict_net,
                                                            shape_dict,
                                                            dtype_dict)
-        return model, params
+            return model, params
+        else:
+            raise ValueError(f'API {self.high_level_api} is not supported')
