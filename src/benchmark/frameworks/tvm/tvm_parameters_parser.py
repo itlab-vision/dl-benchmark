@@ -53,7 +53,7 @@ class TVMParametersParser(DependentParametersParser):
             optimization_level=_optimization_level.data if _optimization_level else None,
             layout=_layout.data if _layout else None,
             target=_target.data if _target else None,
-            high_level_api = _high_level_api.data if _high_level_api else None,
+            high_level_api=_high_level_api.data if _high_level_api else None,
         )
 
 

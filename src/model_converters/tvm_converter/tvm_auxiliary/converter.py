@@ -184,7 +184,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
             lib = self.tvm.relay.build(mod, target=target, params=params)
         self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
-     
+
     def __get_graph_module_from_relay_vm(self, mod, params, target, dev):
         vm = self.tvm.runtime.vm
         rly_vm = self.tvm.relay.vm
