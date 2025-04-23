@@ -114,9 +114,9 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
     def get_graph_module_from_lib(self, lib):
         if self.high_level_api in ['Relay', 'RelayVM']:
-            return self.__get_graph_module_from_relay_lib(self, lib)
+            return self.__get_graph_module_from_relay_lib(lib)
         elif self.high_level_api == 'RelaxVM':
-            return self.__get_graph_module_from_relax_vm_lib(self, lib)
+            return self.__get_graph_module_from_relax_vm_lib(lib)
         else:
             raise ValueError(f'API {self.high_level_api} is not supported')
 
