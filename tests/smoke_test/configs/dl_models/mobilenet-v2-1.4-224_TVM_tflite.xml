@@ -28,8 +28,7 @@
             <Std>127.5 127.5 127.5</Std>
             <Layout>NHWC</Layout>
             <Target>llvm</Target>
-            <VirtualMachine>False</VirtualMachine>
-            <HighLevelIR></HighLevelIR>
+            <HighLevelAPI>Relay</HighLevelAPI>
             <ChannelSwap></ChannelSwap>
             <OptimizationLevel>3</OptimizationLevel>
         </FrameworkDependent>

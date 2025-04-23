@@ -32,10 +32,6 @@ def cli_argument_parser():
                         type=int,
                         choices=[0, 1, 2, 3, 4],
                         default=2)
-    parser.add_argument('-vm', '--virtual_machine',
-                        help='Flag to use VirtualMachine API',
-                        action='store_true',
-                        dest='vm')
     parser.add_argument('--lib_name',
                         help='File name to save.',
                         required=True,
@@ -45,12 +41,12 @@ def cli_argument_parser():
                         default=None,
                         type=str,
                         dest='output_dir')
-    parser.add_argument('--high_level_ir',
-                        help='Type of high lever Intermediate Representation (IR)',
-                        choices=['relay', 'relax'],
-                        default='relay',
+    parser.add_argument('--high_level_api',
+                        help='Type of high level API',
+                        choices=['Relay', 'RelayVM', 'RelaxVM'],
+                        default='Relay',
                         type=str,
-                        dest='high_level_ir')
+                        dest='high_level_api')
     args = parser.parse_args()
     return args
 
@@ -62,10 +58,9 @@ def create_dict_for_compilation(args):
         'target': args.target,
         'opt_level': args.opt_level,
         'device': 'CPU',
-        'vm': args.vm,
         'lib_name': args.lib_name,
         'output_dir': args.output_dir,
-        'high_level_ir': args.high_level_ir,
+        'high_level_api': args.high_level_api,
     }
     return dictionary
 

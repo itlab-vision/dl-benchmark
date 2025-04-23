@@ -416,8 +416,7 @@
             <Std></Std>
             <Layout></Layout>
             <ChannelSwap></ChannelSwap>
-            <HighLevelIR></HighLevelIR>
-            <VirtualMachine></VirtualMachine>
+            <HighLevelAPI></HighLevelAPI>
             <Target></Target>
             <OptimizationLevel></OptimizationLevel>
         </FrameworkDependent>

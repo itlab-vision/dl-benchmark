@@ -44,7 +44,7 @@ class TVMConverterPyTorchFormat(TVMConverter):
 
     def _script_model(self, model):
         input_data = self.torch.randn(self.input_shape)
-        if self.high_level_ir == 'relay':
+        if self.high_level_api in ['Relay', 'RelayVM']:
             if self.model_name == 'maskrcnn_resnet50_fpn':
                 with self.torch.no_grad():
                     _ = model(input_data)
@@ -54,7 +54,7 @@ class TVMConverterPyTorchFormat(TVMConverter):
             else:
                 scripted_model = self.torch.jit.trace(model, input_data).eval()
                 return scripted_model
-        elif self.high_level_ir == 'relax':
+        elif self.high_level_api == 'RelaxVM':
             from torch import fx
             return fx.symbolic_trace(model)
 
@@ -66,11 +66,11 @@ class TVMConverterPyTorchFormat(TVMConverter):
 
     def _convert_model_from_framework(self):
         scripted_model = self._get_pytorch_model()
-        if self.high_level_ir == 'relay':
+        if self.high_level_api in ['Relay', 'RelayVM']:
             shape_list = [(self.input_name, self.input_shape)]
             model, params = self.tvm.relay.frontend.from_pytorch(scripted_model, shape_list)
             return model, params
-        elif self.high_level_ir == 'relax':
+        elif self.high_level_api == 'RelaxVM':
             input_info = [(self.input_shape, 'float32')]
             from tvm.relax.frontend.torch import from_fx
             from tvm.relax.frontend import detach_params
@@ -78,4 +78,4 @@ class TVMConverterPyTorchFormat(TVMConverter):
             model, params = detach_params(model)
             return model, params
         else:
-            raise ValueError(f'Intermediate representation {self.high_level_ir} is not supported')
+            raise ValueError(f'API {self.high_level_api} is not supported')

@@ -22,13 +22,12 @@ class InferenceHelper:
         pass
 
     @staticmethod
-    def get_helper(high_level_ir, vm):
-        if high_level_ir == 'relay':
-            if vm:
-                return InferenceRelayVMApi()
-            else:
-                return InferenceRelayAPI()
-        elif high_level_ir == 'relax':
+    def get_helper(high_level_api):
+        if high_level_api == 'Relay':
+            return InferenceRelayAPI()
+        elif high_level_api == 'RelayVM':
+            return InferenceRelayVMApi()
+        elif high_level_api == 'RelaxVM':
             return InferenceRelaxVMApi()
 
     @abc.abstractmethod
@@ -181,8 +180,7 @@ def create_dict_for_converter(args):
         'opt_level': args.opt_level,
         'target': args.target,
         'module': args.module,
-        'high_level_ir': args.high_level_ir,
-        'vm': args.vm,
+        'high_level_api': args.high_level_api,
         'source_framework': args.source_framework,
     }
     return dictionary
@@ -218,8 +216,8 @@ def create_dict_for_output_preparer(args):
     return dictionary
 
 
-def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, high_level_ir, vm):
-    inference_helper = InferenceHelper.get_helper(high_level_ir, vm)
+def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, high_level_api):
+    inference_helper = InferenceHelper.get_helper(high_level_api)
     return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
 
 
