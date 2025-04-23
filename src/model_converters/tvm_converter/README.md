@@ -82,7 +82,7 @@ for the Relay API or to the `.so`+`.ro` format for the VirtualMachine API.
 - `-p / --params` is a path to an `.params` file with a model parameters.
 - `-t / --target` is target device information, for example `llvm` for CPU.
 - `--opt_level` is the optimization level of the task extractions.
-- `--high_level_api` is a high level API: `Relay`, `RelayVM`, `Relax`.
+- `--high_level_api` is a high level API: `Relay`, `RelayVM`, `RelaxVM`.
 - `--lib_name` is a file name to save compiled model.
 - `-op / --output_dir` is a path to save the model.
 
