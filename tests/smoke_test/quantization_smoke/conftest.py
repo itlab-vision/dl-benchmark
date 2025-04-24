@@ -6,6 +6,7 @@ from pathlib import Path
 from tests.smoke_test.utils import execute_process
 from tests.smoke_test.conftest import (SCRIPT_DIR, OUTPUT_DIR, log,
                                        download_models, convert_models)
+from tests.smoke_test.benchmark_smoke.conftest import download_resnet50_paddle
 
 QUANTIZATION_CONFIG_DIR_PATH = Path(SCRIPT_DIR, 'configs', 'quantization_models')
 TVM_CONVERTER = Path.joinpath(SCRIPT_DIR.parents[1], 'src/model_converters/tvm_converter/tvm_converter.py')
@@ -45,6 +46,7 @@ def prepare_dl_models(request, overrided_models):
 
     download_models(models_list=enabled_models)
     convert_models(models_list=enabled_models)
+    download_resnet50_paddle()
     convert_models_to_tvm()
 
 
