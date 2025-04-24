@@ -44,9 +44,9 @@ def prepare_dl_models(request, overrided_models):
     models_per_mark = DL_MODELS
     enabled_models = overrided_models if overrided_models else models_per_mark
 
+    download_resnet50_paddle()
     download_models(models_list=enabled_models)
     convert_models(models_list=enabled_models)
-    download_resnet50_paddle()
     convert_models_to_tvm()
 
 

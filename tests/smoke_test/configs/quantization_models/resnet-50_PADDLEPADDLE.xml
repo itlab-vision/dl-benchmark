@@ -5,8 +5,8 @@
             <Name>resnet50-paddle</Name>
             <PathPrefix>../models_dir/public/resnet50_paddle/inference</PathPrefix>
             <ModelDir>../models_dir/public/resnet50_paddle</ModelDir>
-            <ModelFileName>inference.pdmodel</ModelFileName>
-            <ParamsFileName>inference.pdiparams</ParamsFileName>
+            <ModelFileName>resnet50.pdmodel</ModelFileName>
+            <ParamsFileName>resnet50.pdiparams</ParamsFileName>
         </Model>
         <Dataset>
             <Name>test</Name>
