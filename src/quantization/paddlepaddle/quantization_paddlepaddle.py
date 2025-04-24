@@ -35,7 +35,7 @@ def main():
         model_reader = PaddleModelReader(log)
         for model_quant_config in config:
             try:
-                data_reader = PaddleDatasetReader(model_quant_config[1]['Dataset'], mode='test')
+                data_reader = PaddleDatasetReader(model_quant_config[1]['Dataset'], log)
                 model_reader.add_arguments(model_quant_config[0]['Model'])
                 quant_params.add_arguments(model_quant_config[2]['QuantizationParameters'])
                 proc = PaddleQuantizationProcess(log, model_reader, data_reader, quant_params)
