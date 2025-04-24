@@ -10,8 +10,7 @@ import ast
 from paddle.io import DataLoader
 from paddleslim.quant import quant_post_static
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from ..utils import ArgumentsParser  # noqa: E402
-
+from utils import ArgumentsParser  # noqa: E402
 
 
 random.seed(0)
@@ -22,7 +21,7 @@ default_crop_ratio = (3. / 4., 4. / 3.)
 
 
 def resize_short(img, target_size):
-    percent = float(target_size) / min(img.size[0], img.size[1])
+    percent = float(target_size[0]) / min(img.size[0], img.size[1])
     resized_width = int(round(img.size[0] * percent))
     resized_height = int(round(img.size[1] * percent))
     img = img.resize((resized_width, resized_height), Image.LANCZOS)
@@ -31,7 +30,7 @@ def resize_short(img, target_size):
 
 def crop_image(img, target_size, center):
     width, height = img.size
-    size = target_size
+    size = target_size[0]
     if center:
         w_start = (width - size) // 2
         h_start = (height - size) // 2
@@ -141,13 +140,13 @@ class PaddleDatasetReader(Dataset):
     def __init__(self, args, mode='train'):
         super(PaddleDatasetReader, self).__init__()
         self.data_dir = args['Path']
+
         self.crop_size = ast.literal_eval(args['ResizeResolution'])
         self.resize_size = ast.literal_eval(args['ImageResolution'])
-        self.mean = (np.asarray(ast.literal_eval(args['Mean']), dtype=np.float32)
-                     if args['Mean'] is not None else [0., 0., 0.])
-
-        self.std = (np.asarray(ast.literal_eval(args['Std']), dtype=np.float32)
-                    if args['Std'] is not None else [1., 1., 1.])
+        self.mean = np.array((np.asarray(ast.literal_eval(args['Mean']), dtype=np.float32)
+                     if args['Mean'] is not None else [0., 0., 0.])).reshape((3, 1, 1))
+        self.std = np.array((np.asarray(ast.literal_eval(args['Std']), dtype=np.float32)
+                    if args['Std'] is not None else [1., 1., 1.])).reshape((3, 1, 1))
         self.mode = mode
         self.batch_size = int(args['BatchSize'])
         self.dataset = list(Path(self.data_dir).glob('*'))
@@ -206,10 +205,8 @@ class PaddleQuantizationProcess:
             yield [data.astype(np.float32)]
 
     def quantization_paddle(self):
-
         place = paddle.CPUPlace()
         exe = paddle.static.Executor(place)
-
         data_loader = DataLoader(
             self.dataset,
             places=place,
@@ -265,11 +262,7 @@ class PaddleQuantParamReader(ArgumentsParser):
         }
 
     def _get_arguments(self):
-        self.image_shape = ast.literal_eval(self.args['InputShape'])
-        self.image = paddle.static.data(name=self.args['InputName'], shape=[None] + self.image_shape, dtype='float32')
-        self.input_shape = self.args['InputShape']
+        self.input_shape = ast.literal_eval(self.args['InputShape'])
+        self.image = paddle.static.data(name=self.args['InputName'], shape=[None] + self.input_shape, dtype='float32')
         self.input_name = self.args['InputName']
         self.save_dir = self.args['SaveDir']
-
-    def _convert_to_list_of_tf_objects(self, keys, dictionary):
-        return [dictionary[key] for key in keys]

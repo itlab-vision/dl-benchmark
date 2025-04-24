@@ -10,7 +10,7 @@
         </Model>
         <Dataset>
             <Name>test</Name>
-            <Path>../test_images/classification_images</Path>
+            <Path>../../../tests/smoke_test/test_images/classification_images</Path>
             <Mean>[123.675, 116.28, 103.53]</Mean>
             <Std>[58.395, 57.12, 57.375]</Std>
             <BatchSize>1</BatchSize>
@@ -18,7 +18,7 @@
             <ResizeResolution>[256, 256]</ResizeResolution>
         </Dataset>
         <QuantizationParameters>
-            <InputShape>[1, 3, 224, 224]</InputShape>
+            <InputShape>[3, 224, 224]</InputShape>
             <InputName>inputs</InputName>
             <SaveDir>res_dir</SaveDir>
         </QuantizationParameters>
