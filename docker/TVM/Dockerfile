@@ -8,20 +8,45 @@ RUN wget -q --no-check-certificate -c https://repo.anaconda.com/miniconda/Minico
     ./miniconda3/bin/conda create -n tvm-env -y python=3.7.16 && \
     rm -rf /root/miniconda3/pkgs/* && \
     rm ~/Miniconda3-latest-Linux-x86_64.sh -f
-    
+
 ENV PATH /root/miniconda3/envs/tvm-env/bin:/root/miniconda3/bin:$PATH
 RUN echo "source activate tvm-env" > ~/.bashrc
 RUN export LD_LIBRARY_PATH=/root/miniconda3/envs/tvm-env/lib:${LD_LIBRARY_PATH}
 RUN conda config --add channels intel
 
 # Installing dependencies
-RUN python3 -m pip install pycocotools docker PyYAML
+RUN python3 -m pip install pycocotools docker PyYAML gluoncv[full] opencv-python Cython psutil
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
-RUN python3 -m pip install gluoncv[full]
-RUN python3 -m pip install opencv-python
-   
+RUN apt-get update && apt-get install -y -qq --no-install-recommends cmake software-properties-common
+RUN apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main" && \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+RUN apt-get update && \
+    apt-get install -y -qq --no-install-recommends llvm-19 llvm-19-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # Installing Apache-TVM 
-RUN python3 -m pip install apache-tvm==0.14.dev264
+ARG TVM_VERSION=v0.20.0
+
+RUN git clone --recursive https://github.com/apache/tvm tvm --branch ${TVM_VERSION} --single-branch
+ENV TVM_BUILD_DIR=/tmp/build-tvm
+RUN mkdir $TVM_BUILD_DIR && cd $TVM_BUILD_DIR
+RUN cp /root/tvm/cmake/config.cmake .
+RUN echo "set(CMAKE_BUILD_TYPE RelWithDebInfo)" >> config.cmake
+RUN echo "set(USE_LLVM /usr/bin/llvm-config-19)" >> config.cmake
+RUN echo "set(HIDE_PRIVATE_SYMBOLS ON)" >> config.cmake
+RUN echo "set(USE_CUDA    OFF)" >> config.cmake
+RUN echo "set(USE_METAL   OFF)" >> config.cmake
+RUN echo "set(USE_VULKAN  OFF)" >> config.cmake
+RUN echo "set(USE_OPENCL  OFF)" >> config.cmake
+RUN echo "set(USE_CUBLAS  OFF)" >> config.cmake
+RUN echo "set(USE_CUDNN   OFF)" >> config.cmake
+RUN echo "set(USE_CUTLASS OFF)" >> config.cmake
+
+RUN /bin/bash -c 'cmake /root/tvm/ && cmake --build . -- -j$(nproc --all)'
+
+WORKDIR /root/
+RUN export TVM_LIBRARY_PATH=$TVM_BUILD_DIR
+RUN python3 -m pip install -e /root/tvm/python
 
 # ARG
 ARG TORCH_VERSION=2.0.1
