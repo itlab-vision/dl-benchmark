@@ -48,8 +48,8 @@ Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
    Kogteva N. DLI: Deep Learning Inference Benchmark //
-   Communications in Computer and Information Science.
-   V.1129. 2019. P. 542-553.
+   Communications in Computer and Information
+   Science. - 2019. - V. 1129. - P. 542-553.
 
 1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
    Kustikova V.D. Automation of collecting performance indicators 
