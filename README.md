@@ -103,7 +103,7 @@ Please consider citing the following papers.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
   - `TensorFlowLite` is a directory of Dockerfiles for TensorFlow Lite.
-  - `TVM` is a directory of Dockerfiles for Apache TVM.  
+  - `TVM` is a directory of Dockerfiles for Apache TVM.
 
 - `docs` directory contains auxiliary documentation. Please, find
   complete documentation at the [Wiki page][dli-wiki].
