@@ -74,6 +74,7 @@ Please consider citing the following papers.
    and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
    [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
    (In Russian)
+
 1. Mukhin I., Rodimkov Y., Vasiliev E., Volokitin V., Sidorova A.,
    Kozinov E., Meyerov I., Kustikova V. Benchmarking Deep Learning
    Inference on RISC-V CPUs // Springer Lecture Notes in Computer
