@@ -54,13 +54,11 @@ ARG TORCHVISION_VERSION=0.15.2
 ARG TFLite_VERSION=2.14.0
 ARG MXNET_VERSION=1.9.1
 ARG ONNX_VERSION=1.15.0
-ARG CAFFE_VERSION=1.1.0
 
 ARG PyTorch
 ARG TFLite
 ARG MXNet
 ARG ONNX
-ARG CAFFE
 
 RUN if [ "${PyTorch}" = "true"  ]; then \
     python3 -m pip install torch==${TORCH_VERSION} torchvision==${TORCHVISION_VERSION}; \
@@ -88,14 +86,6 @@ RUN if [ "$ONNX" = "true"  ]; then \
         -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake; \ 
     make install -j$(nproc --all); \
     python3 -m pip install onnxruntime==${ONNX_VERSION} && python3 -m pip install onnx==${ONNX_VERSION}; \
-    fi
-
-RUN if [ "$CAFFE" = "true"  ]; then \
-    /bin/bash -c "conda install -n tvm-env -y -c intel openvino-ie4py-ubuntu20=2022.1.0"; \
-    /bin/bash -c "conda install -n tvm-env -y -c intel scikit-image=0.17.2"; \
-    /bin/bash -c "conda install -n tvm-env -y -c intel caffe"; \
-    /bin/bash -c "conda install -n tvm-env -y -c anaconda libgcc-ng=11.2.0"; \
-    /bin/bash -c "conda install -n tvm-env -y -c defaults protobuf=3.17.2 libprotobuf=3.17.2 requests=2.27.1"; \
     fi
 
 WORKDIR /tmp/open_model_zoo/
