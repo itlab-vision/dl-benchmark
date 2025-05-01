@@ -5,7 +5,7 @@ WORKDIR /root/
 # Installing miniconda
 RUN wget -q --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b && \
-    ./miniconda3/bin/conda create -n tvm-env -y python=3.7.16 && \
+    ./miniconda3/bin/conda create -n tvm-env -y python=3.8.20 && \
     rm -rf /root/miniconda3/pkgs/* && \
     rm ~/Miniconda3-latest-Linux-x86_64.sh -f
 
