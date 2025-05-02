@@ -152,9 +152,9 @@ def inference_dgl_pytorch(model, num_iterations, input_graph, device, test_durat
             inputs = [input_graph, features, device]
             if 'inference' in dir(model):
                 time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(
-                    device, 
-                    inputs, 
-                    model.inference
+                    device,
+                    inputs,
+                    model.inference,
                 )
             else:
                 time_infer = loop_inference(num_iterations, test_duration)(inference_iteration)(device, inputs, model)
