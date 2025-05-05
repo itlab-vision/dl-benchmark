@@ -1,0 +1,11 @@
+traitlets==5.9.0
+decorator
+attrs
+typing-extensions
+psutil
+scipy
+pybind11
+numpy
+opencv-python
+scipy
+openvino-dev==2024.3.0
