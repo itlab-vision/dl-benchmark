@@ -17,7 +17,7 @@ dglgo==0.0.2
 
 tflite
 
-paddleslim
+paddleslim==2.6.0
 paddlepaddle==2.6.0
 --extra-index-url https://mirror.baidu.com/pypi/simple
 

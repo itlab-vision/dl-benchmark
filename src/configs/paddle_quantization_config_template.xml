@@ -13,6 +13,7 @@
             <Path></Path>
             <Mean></Mean>
             <Std></Std>
+            <ChannelSwap></ChannelSwap>
             <BatchSize></BatchSize>
             <BatchNum></BatchNum>
             <ResizeResolution></ResizeResolution>
@@ -21,6 +22,7 @@
             <InputShape></InputShape>
             <InputName></InputName>
             <SaveDir></SaveDir>
+            <Algorithm></Algorithm>
         </QuantizationParameters>
     </Config>
 </QuantizationConfigs>

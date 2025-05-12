@@ -11,12 +11,6 @@ import importlib
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from utils import ArgumentsParser  # noqa: E402
 
-random.seed(0)
-np.random.seed(0)
-
-default_crop_scale = (0.08, 1.0)
-default_crop_ratio = (3. / 4., 4. / 3.)
-
 
 class PaddleDatasetReader(Dataset):
     def __init__(self, args, log):
@@ -31,7 +25,7 @@ class PaddleDatasetReader(Dataset):
                               if args['Mean'] is not None else [0., 0., 0.])).reshape((3, 1, 1))
         self.std = np.array((np.asarray(ast.literal_eval(args['Std']), dtype=np.float32)
                              if args['Std'] is not None else [1., 1., 1.])).reshape((3, 1, 1))
-
+        self.channel_swap = ast.literal_eval(args['ChannelSwap'] if args['ChannelSwap'] is not None else [2, 0, 1])
         self.batch_size = int(args['BatchSize'])
         self.batch_num = int(args['BatchNum'])
         self.dataset = list(Path(self.data_dir).glob('*'))
@@ -54,7 +48,7 @@ class PaddleDatasetReader(Dataset):
             return None
         img = self.cv2.resize(img, self.resize_size)
 
-        img = img.astype('float32').transpose((2, 0, 1)) / 255
+        img = img.astype('float32').transpose(tuple(self.channel_swap)) / 255
         img -= self.mean
         img /= self.std
 
@@ -93,7 +87,7 @@ class PaddleQuantizationProcess:
             params_filename=self.model_reader.params_filename,
             batch_size=self.dataset.batch_size,
             batch_nums=self.dataset.batch_num,
-            algo='avg',
+            algo=self.quant_params.algo,
             round_type='round',
             hist_percent=0.9999,
             is_full_quantize=False,
@@ -129,6 +123,7 @@ class PaddleQuantParamReader(ArgumentsParser):
             'InputShape': self.input_shape,
             'InputName': self.input_name,
             'SaveDir': self.save_dir,
+            'Algorithm': self.algo
         }
 
     def _get_arguments(self):
@@ -136,3 +131,4 @@ class PaddleQuantParamReader(ArgumentsParser):
         self.image = paddle.static.data(name=self.args['InputName'], shape=[None] + self.input_shape, dtype='float32')
         self.input_name = self.args['InputName']
         self.save_dir = self.args['SaveDir']
+        self.algo = self.args['Algorithm']
