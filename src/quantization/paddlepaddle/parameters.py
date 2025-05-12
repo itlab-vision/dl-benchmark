@@ -123,7 +123,7 @@ class PaddleQuantParamReader(ArgumentsParser):
             'InputShape': self.input_shape,
             'InputName': self.input_name,
             'SaveDir': self.save_dir,
-            'Algorithm': self.algo
+            'Algorithm': self.algo,
         }
 
     def _get_arguments(self):
