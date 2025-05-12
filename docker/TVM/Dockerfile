@@ -25,7 +25,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Installing Apache-TVM 
-ARG TVM_VERSION=v0.20.0
+ARG TVM_VERSION=v0.19.0
 
 RUN git clone --recursive https://github.com/apache/tvm tvm --branch ${TVM_VERSION} --single-branch
 ENV TVM_BUILD_DIR=/tmp/build-tvm
