@@ -36,11 +36,11 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.tvm = importlib.import_module('tvm')
         if self.high_level_api in ['Relay', 'RelayVM']:
             self.tvm.relay = importlib.import_module('tvm.relay')
+            self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
         elif self.high_level_api == 'RelaxVM':
             self.tvm.relax = importlib.import_module('tvm.relax')
         else:
             raise ValueError(f'API {self.high_level_api} is not supported')
-        self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
 
     def get_file_type(self, file_path):
         if file_path is not None:
