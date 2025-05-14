@@ -25,7 +25,7 @@ class PaddleDatasetReader(Dataset):
                               if args['Mean'] is not None else [0., 0., 0.])).reshape((3, 1, 1))
         self.std = np.array((np.asarray(ast.literal_eval(args['Std']), dtype=np.float32)
                              if args['Std'] is not None else [1., 1., 1.])).reshape((3, 1, 1))
-        self.channel_swap = ast.literal_eval(args['ChannelSwap'] if args['ChannelSwap'] is not None else [2, 0, 1])
+        self.channel_swap = ast.literal_eval(args['ChannelSwap']) if args['ChannelSwap'] is not None else [2, 0, 1]
         self.batch_size = int(args['BatchSize'])
         self.batch_num = int(args['BatchNum'])
         self.dataset = list(Path(self.data_dir).glob('*'))
