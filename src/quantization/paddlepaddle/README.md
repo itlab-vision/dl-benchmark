@@ -35,9 +35,14 @@ Description of parameters:
 - `InputShape` is a shape of the model's input layer.
 - `InputName` is a name of the model's input layer.
 - `SaveDir` is a directory for the quantized model to be saved.
-- `Algorithm` specifies method to calculate the quantization scale factor. 
-Available:  'KL', 'hist', 'mse', 'avg', 'abs_max'. Default: 'hist'.
+- `Algorithm` specifies method to calculate the quantization scale factor. Available:  'KL', 'hist', 'mse', 'avg',\
+- 'abs_max'. If algo='KL', use [KL-divergent method][KL] to get the scale factor. If algo='hist', use the hist_percent \
+- of histogram to get the scale factor. If algo='mse', search for the best scale factor which makes the \
+- [mse loss minimal][MSE]. Use one batch of data for mse is enough. If algo='avg', use the average of abs_max values \
+- to get the scale factor. If algo='abs_max', use abs_max method to get the scale factor. Default: 'hist'.
 
 
 <!-- LINKS -->
 [config_path]: ../../configs/paddle_quantization_config_template.xml
+[KL] https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
+[MSE] https://en.wikipedia.org/wiki/Minimum_mean_square_error

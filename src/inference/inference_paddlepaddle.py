@@ -126,8 +126,9 @@ def inference_paddlepaddle(predictor, number_iter, get_slice, test_duration):
     input_info = predictor.get_input_names()
     outputs = predictor.get_output_names()
     if number_iter > 1:
-        time_infer, _ = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
                                                                                         input_info, predictor)
+        time_infer = loop_results['time_infer']
     else:
         exec_time = inference_iteration(get_slice, input_info, predictor)
         result = {}
@@ -142,6 +143,7 @@ def inference_paddlepaddle(predictor, number_iter, get_slice, test_duration):
 def inference_iteration(get_slice, input_info, predictor):
     for name, data in get_slice().items():
         input_tensor = predictor.get_input_handle(name)
+        input_tensor.reshape(data.shape)
         input_tensor.copy_from_cpu(data)
     _, exec_time = infer_slice(predictor)
     return exec_time

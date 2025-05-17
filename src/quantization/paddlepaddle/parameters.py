@@ -7,7 +7,7 @@ from paddle.io import Dataset
 import ast
 from paddle.io import DataLoader
 from paddleslim.quant import quant_post_static
-import importlib
+import cv2
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from utils import ArgumentsParser  # noqa: E402
 
@@ -17,7 +17,6 @@ class PaddleDatasetReader(Dataset):
         super(PaddleDatasetReader, self).__init__()
         self.log = log
         self.log.info('Parsing dataset arguments.')
-        self.cv2 = importlib.import_module('cv2')
         self.data_dir = args['Path']
 
         self.resize_size = ast.literal_eval(args['ResizeResolution'])
@@ -28,7 +27,7 @@ class PaddleDatasetReader(Dataset):
         self.channel_swap = ast.literal_eval(args['ChannelSwap']) if args['ChannelSwap'] is not None else [2, 0, 1]
         self.batch_size = int(args['BatchSize'])
         self.batch_num = int(args['BatchNum'])
-        self.dataset = list(Path(self.data_dir).glob('*'))
+        self.dataset = list(Path(self.data_dir).glob('*.JPEG'))
         random.shuffle(self.dataset)
         self.dataset_iter = iter(self.dataset)
 
@@ -42,11 +41,11 @@ class PaddleDatasetReader(Dataset):
 
     def process_image(self, image_path):
 
-        img = self.cv2.imread(image_path)
+        img = cv2.imread(image_path)
         if img.size == 0:
             self.log.info('failed to read:', image_path)
             return None
-        img = self.cv2.resize(img, self.resize_size)
+        img = cv2.resize(img, self.resize_size)
 
         img = img.astype('float32').transpose(tuple(self.channel_swap)) / 255
         img -= self.mean
@@ -90,7 +89,7 @@ class PaddleQuantizationProcess:
             algo=self.quant_params.algo,
             round_type='round',
             hist_percent=0.9999,
-            is_full_quantize=False,
+            is_full_quantize=True,
             bias_correction=False,
             onnx_format=False)
 
