@@ -27,7 +27,7 @@ class PaddleDatasetReader(Dataset):
         self.channel_swap = ast.literal_eval(args['ChannelSwap']) if args['ChannelSwap'] is not None else [2, 0, 1]
         self.batch_size = int(args['BatchSize'])
         self.batch_num = int(args['BatchNum'])
-        self.dataset = list(Path(self.data_dir).glob('*.JPEG'))
+        self.dataset = list(Path(self.data_dir).glob('*'))
         random.shuffle(self.dataset)
         self.dataset_iter = iter(self.dataset)
 
