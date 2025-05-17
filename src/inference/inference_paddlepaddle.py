@@ -126,8 +126,7 @@ def inference_paddlepaddle(predictor, number_iter, get_slice, test_duration):
     input_info = predictor.get_input_names()
     outputs = predictor.get_output_names()
     if number_iter > 1:
-        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice,
-                                                                                        input_info, predictor)
+        loop_results = loop_inference(number_iter, test_duration)(inference_iteration)(get_slice, input_info, predictor)
         time_infer = loop_results['time_infer']
     else:
         exec_time = inference_iteration(get_slice, input_info, predictor)
