@@ -10,7 +10,7 @@ tensorflow==1.15.2
 keras==2.2.4
 coremltools==2.1.0
 h5py==2.7.1
-torch==1.5.1
+torch==2.7.0
 torchvision==0.2.1
 onnx==1.4.1
 onnx-tf==1.2.1
