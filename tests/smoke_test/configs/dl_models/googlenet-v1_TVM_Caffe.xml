@@ -29,7 +29,7 @@
             <Std>0.229 0.224 0.225</Std>
             <ChannelSwap></ChannelSwap>
             <Layout>NCHW</Layout>
-            <VirtualMachine>False</VirtualMachine>
+            <HighLevelAPI>Relay</HighLevelAPI>
             <Target>llvm</Target>
             <OptimizationLevel>0</OptimizationLevel>
         </FrameworkDependent>

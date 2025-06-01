@@ -20,7 +20,10 @@ class TVMConverterTFLiteFormat(TVMConverter):
         model_tf = self._get_tf_model(self.model_path)
         shape_dict = {self.input_name: self.input_shape}
         dtype = {self.input_name: 'float32'}
-        model, params = self.tvm.relay.frontend.from_tflite(model_tf,
-                                                            shape_dict=shape_dict,
-                                                            dtype_dict=dtype)
-        return model, params
+        if self.high_level_api in ['Relay', 'RelayVM']:
+            model, params = self.tvm.relay.frontend.from_tflite(model_tf,
+                                                                shape_dict=shape_dict,
+                                                                dtype_dict=dtype)
+            return model, params
+        else:
+            raise ValueError(f'API {self.high_level_api} is not supported')

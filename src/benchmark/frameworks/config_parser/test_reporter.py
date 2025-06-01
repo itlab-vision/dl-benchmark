@@ -76,6 +76,9 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
         match_parameter_description['compile_with_backend'] = 'Pytorch compile backend'
 
+        match_parameter_description['high_level_api'] = 'TVM HighLevelAPI'
+        match_parameter_description['opt_level'] = 'TVM OptimizationLevel'
+
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:
                 parameters.update({description: getattr(self.dep_parameters, parameter)})

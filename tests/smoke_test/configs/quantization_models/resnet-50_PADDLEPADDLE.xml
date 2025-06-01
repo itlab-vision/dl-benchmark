@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name>resnet50-paddle</Name>
+            <PathPrefix>../models_dir/resnet50_paddle/inference</PathPrefix>
+            <ModelDir>../models_dir/resnet50_paddle</ModelDir>
+            <ModelFileName>resnet50.pdmodel</ModelFileName>
+            <ParamsFileName>resnet50.pdiparams</ParamsFileName>
+        </Model>
+        <Dataset>
+            <Name>test</Name>
+            <Path>../test_images/classification_images</Path>
+            <Mean>[123.675, 116.28, 103.53]</Mean>
+            <Std>[58.395, 57.12, 57.375]</Std>
+            <ChannelSwap></ChannelSwap>
+            <BatchSize>1</BatchSize>
+            <BatchNum>10</BatchNum>
+            <ResizeResolution>[224, 224]</ResizeResolution>
+        </Dataset>
+        <QuantizationParameters>
+            <InputShape>[3, 224, 224]</InputShape>
+            <InputName>inputs</InputName>
+            <SaveDir>res_dir</SaveDir>
+            <Algorithm>avg</Algorithm>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>
