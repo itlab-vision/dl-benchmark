@@ -1,6 +1,8 @@
 #include "executorch_launcher.hpp"
+#include "memory_manager.hpp"
 #include <executorch/extension/tensor/tensor.h>
 #include <executorch/runtime/core/exec_aten/exec_aten.h>
+#include <executorch/extension/runner_util/inputs.h>
 
 using namespace executorch::aten;
 
@@ -39,6 +41,13 @@ ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads,
                                        const int fps,
                                        const std::string& device) : 
                                        Launcher(nthreads, fps, device) {
+#ifdef MODULE_API
+    inference_api = std::make_unique<HighLevelInferenceAPI>();
+    std::cout << "[ INFO ] Using module api" << std::endl;
+#elif LOW_LEVEL_API
+    inference_api = std::make_unique<LowLevelInferenceAPI>();
+    std::cout << "[ INFO ] Using low level api" << std::endl;
+#endif
     if (nthreads > 0) {
         executorch::extension::threadpool::get_threadpool()->_unsafe_reset_threadpool(nthreads);
     }
@@ -48,7 +57,9 @@ ExecuTorchLauncher::ExecuTorchLauncher(const int nthreads,
     }
 }
 
-ExecuTorchLauncher::~ExecuTorchLauncher() {}
+ExecuTorchLauncher::~ExecuTorchLauncher() {
+
+}
 
 std::string ExecuTorchLauncher::get_framework_name() const {
     return "ExecuTorch";
@@ -67,7 +78,7 @@ std::string ExecuTorchLauncher::get_backend_name() const {
 }
 
 void ExecuTorchLauncher::read(const std::string& model_file, const std::string& weights_file) {
-    module = std::make_shared<executorch::extension::Module>(model_file);
+    inference_api->read_model(model_file);
 }
 
 void ExecuTorchLauncher::fill_inputs_outputs_info() {}
@@ -84,8 +95,12 @@ void ExecuTorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuf
     for (int i = 0; i < tensor_buffers[0].size(); ++i) {
         auto& buffer = tensor_buffers[0][i];
         std::vector<int> shape(buffer.shape().begin(), buffer.shape().end());
+        for(int j = 0; j < shape.size(); j++) {
+            std::cout << shape[j];
+        }
         tensors[0].push_back(
-            executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision())));
+            executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision()))
+        );
         input_shapes[i] = shape;
     }
 
@@ -94,7 +109,8 @@ void ExecuTorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuf
             auto& buffer = tensor_buffers[i][j];
             std::vector<int> shape(buffer.shape().begin(), buffer.shape().end());
             tensors[i].push_back(
-                executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision())));
+                executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision()))
+            );
         }
     }
 }
@@ -102,16 +118,11 @@ void ExecuTorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuf
 void ExecuTorchLauncher::compile() {}
 
 std::vector<OutputTensors> ExecuTorchLauncher::get_output_tensors() {
-    const auto out = module->execute("forward", tensors[0]);
-    if (!out.ok()) {
-        throw std::runtime_error("Output dumping is supported only for models with one output!");
-    }
-
+    auto result = inference_api->dump_output(tensors);
     OutputTensors output;
-    const auto result = out->at(0).toTensor();
     auto* raw_data = result.const_data_ptr<float>();
     auto size = result.numel();
-
+   
     auto shape = result.sizes();
     std::string name = "output";
     std::vector<float> data(raw_data, raw_data + size);
@@ -123,7 +134,8 @@ std::vector<OutputTensors> ExecuTorchLauncher::get_output_tensors() {
 }
 
 void ExecuTorchLauncher::run(const int input_idx) {
+    inference_api->set_input(tensors, input_idx);
     infer_start_time = HighresClock::now();
-    module->execute("forward", tensors[input_idx]);
+    inference_api->inference();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
 }

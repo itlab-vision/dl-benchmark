@@ -19,6 +19,12 @@ else()
     set(BACKEND_DEF "XNNPACK")
 endif()
 
+if (BUILD_EXECUTORCH_LAUNCHER)
+    set(MODULE_API "MODULE_API")
+elseif (BUILD_EXECUTORCH_LAUNCHER_LOW_LEVEL_INFERENCE_API)
+    set(MODULE_API "LOW_LEVEL_API")
+endif()
+
 list(REMOVE_ITEM EXECUTORCH_LIBRARIES extension_module) # Dynamic library not working https://github.com/pytorch/executorch/issues/8870
 
 if (NOT ${EXECUTORCH_OPTIMIZED_OPS_FIND} STREQUAL EXECUTORCH_OPTIMIZED_OPS_FIND-NOTFOUND)
@@ -42,4 +48,4 @@ add_launcher(NAME executorch_benchmark
         -Wl,--whole-archive,--allow-multiple-definition
         ${EXECUTORCH_LIBRARIES}
         -Wl,--no-whole-archive
-    DEFINITIONS EXECUTORCH_${BACKEND_DEF})
+    DEFINITIONS EXECUTORCH_${BACKEND_DEF} ${MODULE_API})

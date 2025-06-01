@@ -4,11 +4,14 @@
 #include "inputs_preparation/tensor_utils.hpp"
 #include "utils/logger.hpp"
 #include "utils/utils.hpp"
+#include "memory_manager.hpp"
 
 #include <executorch/extension/module/module.h>
 #include <executorch/extension/tensor/tensor.h>
+#include <executorch/extension/memory_allocator/malloc_memory_allocator.h>
 #include <executorch/extension/threadpool/cpuinfo_utils.h>
 #include <executorch/extension/threadpool/threadpool.h>
+#include <executorch/extension/data_loader/file_data_loader.h>
 
 #include <chrono>
 #include <cstdint>
@@ -16,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+
 
 class ExecuTorchLauncher : public Launcher {
 public:
@@ -38,7 +42,7 @@ public:
     std::vector<OutputTensors> get_output_tensors() override;
 
 private:
-    std::shared_ptr<executorch::extension::Module> module;
+    std::unique_ptr<InferenceAPI> inference_api;
 
     std::vector<std::string> input_names;
     std::vector<std::vector<int>> input_shapes;
