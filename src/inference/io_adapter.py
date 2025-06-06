@@ -195,6 +195,15 @@ class IOAdapter(metaclass=abc.ABCMeta):
             slice_input[key] = mxnet.nd.stack(*slice_data)
         return slice_input
 
+    def get_slice_input_executorch(self, *args, **kwargs):
+        import torch
+        slice_input = dict.fromkeys(self._transformed_input.keys(), None)
+        for key in self._transformed_input:
+            data_gen = self._transformed_input[key]
+            slice_data = [torch.from_numpy(copy.deepcopy(next(data_gen))) for _ in range(self._batch_size)]
+            slice_input[key] = torch.stack(slice_data)
+        return slice_input        
+
     def get_result_filename(self, output_path, base_filename):
         base_suffix = '.' + base_filename.split('.')[-1]
         output_path_suffix = str(output_path)[-len(base_suffix):]
