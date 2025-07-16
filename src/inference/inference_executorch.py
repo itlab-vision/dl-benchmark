@@ -7,7 +7,6 @@ from pathlib import Path
 from time import time
 
 import postprocessing_data as pp
-from pathlib import Path
 from executorch.runtime import Verification, Runtime
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
@@ -158,21 +157,21 @@ def load_model(model_path):
          model_path,
          verification=Verification.Minimal,
     )
-    return program.load_method("forward")
+    return program.load_method('forward')
 
 
 def inference_executorch(net, num_iterations, get_slice, input_name, test_duration):
     predictions = None
     time_infer = []
     if num_iterations == 1:
-       t0 = time()
-       slice_input = get_slice()
-       predictions = net.execute((slice_input[input_name],))
-       t1 = time()
-       time_infer.append(t1 - t0)
+        t0 = time()
+        slice_input = get_slice()
+        predictions = net.execute((slice_input[input_name],))
+        t1 = time()
+        time_infer.append(t1 - t0)
     else:
-       loop_results = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
-       time_infer = loop_results['time_infer']
+        loop_results = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
+        time_infer = loop_results['time_infer']
     return predictions, time_infer
 
 
@@ -190,12 +189,12 @@ def infer_slice(input_name, net, slice_input):
 
 def prepare_output(result, output_names, task_type):
     if task_type in ['feedforward']:
-       return {}
+        return {}
     elif task_type in ['classification']:
-       log.info('Converting output tensor to print results')
-       return {output_names[0]: result[0].numpy()}
+        log.info('Converting output tensor to print results')
+        return {output_names[0]: result[0].numpy()}
     else:
-       raise ValueError(f'Unsupported task {task_type} to print inference results')    
+        raise ValueError(f'Unsupported task {task_type} to print inference results')
 
 
 def main():

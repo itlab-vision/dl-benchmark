@@ -202,7 +202,7 @@ class IOAdapter(metaclass=abc.ABCMeta):
             data_gen = self._transformed_input[key]
             slice_data = [torch.from_numpy(copy.deepcopy(next(data_gen))) for _ in range(self._batch_size)]
             slice_input[key] = torch.stack(slice_data)
-        return slice_input        
+        return slice_input
 
     def get_result_filename(self, output_path, base_filename):
         base_suffix = '.' + base_filename.split('.')[-1]
