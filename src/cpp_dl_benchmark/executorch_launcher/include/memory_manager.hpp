@@ -71,14 +71,23 @@ public:
 
     void set_input(const std::vector<std::vector<executorch::runtime::EValue>>& tens, const int input_idx) override {
         Error set_input_error = method.get()->get().set_input(tens[0][input_idx], 0);
+        if (set_input_error != Error::Ok) {
+            throw std::runtime_error("Error when setting input tensor.");
+        }
     }
 
     void inference() override {
         Error execute_error = method.get()->get().execute();
+        if (execute_error != Error::Ok) {
+            throw std::runtime_error("Inference error.");
+        }
     }
 
     const Tensor dump_output(const std::vector<std::vector<executorch::runtime::EValue>>& tens) override {
         Error set_input_error = method.get()->get().set_input(tens[0][0], 0);
+        if (set_input_error != Error::Ok) {
+            throw std::runtime_error("Error when setting input tensor.");
+        }
         method.get()->get().execute();
         const auto result = method.get()->get().get_output(0);
         return result.toTensor();
