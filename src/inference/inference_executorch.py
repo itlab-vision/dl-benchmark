@@ -1,24 +1,18 @@
 import argparse
-import importlib
 import json
-import re
 import sys
 import traceback
 
-from functools import partial
 from pathlib import Path
 from time import time
 
 import postprocessing_data as pp
-import preprocessing_data as prep
 from pathlib import Path
-import numpy as np
-from executorch.runtime import Verification, Runtime, Program, Method
+from executorch.runtime import Verification, Runtime
 from inference_tools.loop_tools import loop_inference, get_exec_time
 from io_adapter import IOAdapter
 from io_model_wrapper import ExecuTorchIOModelWrapper
 from reporter.report_writer import ReportWriter
-from configs.config_utils import prepend_to_path, to_camel_case, get_model_config
 from transformer import ExecuTorchTransformer
 from tvm_auxiliary import create_dict_for_transformer, create_dict_for_modelwrapper
 
@@ -26,6 +20,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1].joinpath('utils')))  # n
 from logger_conf import configure_logger  # noqa: E402
 
 log = configure_logger()
+
 
 def cli_argument_parser():
     parser = argparse.ArgumentParser()
@@ -158,27 +153,27 @@ def cli_argument_parser():
 
 
 def load_model(model_path):
-     et_runtime = Runtime.get()
-     program = et_runtime.load_program(
-          model_path,
-          verification=Verification.Minimal,
-     )
-     return program.load_method("forward")
+    et_runtime = Runtime.get()
+    program = et_runtime.load_program(
+         model_path,
+         verification=Verification.Minimal,
+    )
+    return program.load_method("forward")
 
 
 def inference_executorch(net, num_iterations, get_slice, input_name, test_duration):
-     predictions = None
-     time_infer = []
-     if num_iterations == 1:
-        t0 = time()
-        slice_input = get_slice()
-        predictions = net.execute((slice_input[input_name],))
-        t1 = time()
-        time_infer.append(t1 - t0)
-     else:
-        loop_results = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
-        time_infer = loop_results['time_infer']
-     return predictions, time_infer
+    predictions = None
+    time_infer = []
+    if num_iterations == 1:
+       t0 = time()
+       slice_input = get_slice()
+       predictions = net.execute((slice_input[input_name],))
+       t1 = time()
+       time_infer.append(t1 - t0)
+    else:
+       loop_results = loop_inference(num_iterations, test_duration)(inference_iteration)(get_slice, input_name, net)
+       time_infer = loop_results['time_infer']
+    return predictions, time_infer
 
 
 def inference_iteration(get_slice, input_name, net):
@@ -194,13 +189,13 @@ def infer_slice(input_name, net, slice_input):
 
 
 def prepare_output(result, output_names, task_type):
-     if task_type in ['feedforward']:
-        return {}
-     elif task_type in ['classification']:
-        log.info('Converting output tensor to print results')
-        return {output_names[0]: result[0].numpy()}
-     else:
-        raise ValueError(f'Unsupported task {task_type} to print inference results')    
+    if task_type in ['feedforward']:
+       return {}
+    elif task_type in ['classification']:
+       log.info('Converting output tensor to print results')
+       return {output_names[0]: result[0].numpy()}
+    else:
+       raise ValueError(f'Unsupported task {task_type} to print inference results')    
 
 
 def main():
@@ -215,7 +210,6 @@ def main():
         io = IOAdapter.get_io_adapter(args, wrapper, transformer)
 
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
-        #report_writer.update_framework_info(name='ExecuTorch', version=executorch.__version__)
         net = load_model(args.model_path)
 
         log.info(f'Preparing input data: {args.input}')
