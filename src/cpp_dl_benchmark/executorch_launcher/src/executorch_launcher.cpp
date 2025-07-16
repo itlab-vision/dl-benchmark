@@ -95,9 +95,6 @@ void ExecuTorchLauncher::prepare_input_tensors(std::vector<std::vector<TensorBuf
     for (int i = 0; i < tensor_buffers[0].size(); ++i) {
         auto& buffer = tensor_buffers[0][i];
         std::vector<int> shape(buffer.shape().begin(), buffer.shape().end());
-        for(int j = 0; j < shape.size(); j++) {
-            std::cout << shape[j];
-        }
         tensors[0].push_back(
             executorch::extension::from_blob(buffer.get(), shape, get_data_type(buffer.precision()))
         );
