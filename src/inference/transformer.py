@@ -364,3 +364,7 @@ class NcnnTransformer(Transformer):
         for i in range(dataset_size):
             transformed_images[i] = self._transform(images[i], shape)
         return transformed_images
+
+
+class ExecuTorchTransformer(TVMTransformer):
+    pass

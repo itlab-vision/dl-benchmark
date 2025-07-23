@@ -18,3 +18,4 @@ class KnownFrameworks:
     rknn = 'RKNN'
     ncnn = 'ncnn'
     executorch_cpp = 'ExecuTorch Cpp'
+    executorch = 'ExecuTorch'
