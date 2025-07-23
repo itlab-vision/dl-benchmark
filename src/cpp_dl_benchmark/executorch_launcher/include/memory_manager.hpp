@@ -35,7 +35,7 @@ public:
 
     virtual void set_input(const std::vector<std::vector<executorch::runtime::EValue>>& tens, const int input_idx) = 0;
 
-    virtual void inference() = 0;
+    virtual Error inference() = 0;
 
     virtual ~InferenceAPI() {}
 
@@ -55,9 +55,9 @@ public:
         program = std::make_unique<Result<Program>>(Program::load(&loader->get()));
         const char* method_name = "forward";
         method_meta = std::make_unique<Result<MethodMeta>>(program->get().method_meta(method_name));
-        size_t num_memory_planned_buffers1 = method_meta->get().num_memory_planned_buffers();
+        size_t num_memory_planned_buffers = method_meta->get().num_memory_planned_buffers();
 
-        for (size_t id = 0; id < num_memory_planned_buffers1; ++id) {
+        for (size_t id = 0; id < num_memory_planned_buffers; ++id) {
             size_t buffer_size =
                 static_cast<size_t>(method_meta->get().memory_planned_buffer_size(id).get());
             planned_buffers.push_back(std::make_unique<uint8_t[]>(buffer_size));
@@ -76,11 +76,8 @@ public:
         }
     }
 
-    void inference() override {
-        Error execute_error = method.get()->get().execute();
-        if (execute_error != Error::Ok) {
-            throw std::runtime_error("Inference error.");
-        }
+    Error inference() override {
+        return method.get()->get().execute();
     }
 
     const Tensor dump_output(const std::vector<std::vector<executorch::runtime::EValue>>& tens) override {
@@ -114,19 +111,29 @@ public:
 
     void read_model(const std::string& model_file) override {
         module = std::make_unique<executorch::extension::Module>(model_file);
+        const auto error = module->load();
+        if (!module->is_loaded()) {
+            throw std::runtime_error("Error when loading model " + model_file);
+        }
     }
 
     void set_input(const std::vector<std::vector<executorch::runtime::EValue>>& tens, const int input_idx) override {
-        module->set_input("forward", tens[0][input_idx], 0);
+        const auto err = module->set_input("forward", tens[0][input_idx], 0);
+        if (err != Error::Ok) {
+            throw std::runtime_error("Error when setting input.");
+        }
     }
 
-    void inference() override {
-        module->forward();
+    Error inference() override {
+        return module->forward().error();
     }
 
     const Tensor dump_output(const std::vector<std::vector<executorch::runtime::EValue>>& tens) override {
         module->set_input("forward", tens[0][0], 0);
         const auto result = module->forward();
+        if (!result.ok()) {
+            throw std::runtime_error("Error when getting output tensors.");
+        }
         return result->at(0).toTensor();
     }
 

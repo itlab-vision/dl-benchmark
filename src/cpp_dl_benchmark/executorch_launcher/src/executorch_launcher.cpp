@@ -133,6 +133,9 @@ std::vector<OutputTensors> ExecuTorchLauncher::get_output_tensors() {
 void ExecuTorchLauncher::run(const int input_idx) {
     inference_api->set_input(tensors, input_idx);
     infer_start_time = HighresClock::now();
-    inference_api->inference();
+    auto ok_status = inference_api->inference();
     latencies.push_back(utils::ns_to_ms(HighresClock::now() - infer_start_time));
+    if (ok_status != Error::Ok) {
+        throw std::runtime_error("Error when running inference.");
+    }
 }
