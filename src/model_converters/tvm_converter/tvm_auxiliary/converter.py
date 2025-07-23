@@ -25,7 +25,6 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.output_dir = args.get('output_dir', None)
         self.lib_name = args.get('lib_name', None)
-
         self.mod_type = self.get_file_type(self.model_path)
         self.params_type = self.get_file_type(self.model_params)
 
@@ -167,7 +166,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Saving library of model \"{self.lib_name}\" to \"{self.output_dir}\"')
         if not os.path.exists(self.output_dir):
-            os.mkdir(self.output_dir)
+            os.makedirs(self.output_dir)
 
         lib = self.get_lib()
         if len(lib) == 1:
