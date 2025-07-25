@@ -956,6 +956,7 @@ inference_tvm.py
   ImageNet.
 - `-ni / --number_iter` - количество прямых проходов по сети.
   По умолчанию выполняется один проход по сети.
+- `--high_level_api` - высокоуровневое API: `Relay`, `RelayVM` или `RelaxVM`. По умолчанию `Relay`.
 - `-ol / --opt_level` - параметр, определяющий уровень оптимизации
   графа вычислений нейронной сети для ускорения инференса. По умолчанию
   оптимизации не применяются.
@@ -1295,6 +1296,9 @@ inference_dgl_pytorch.py
   (значение параметра `NVIDIA_GPU`). По умолчанию принимает значение `CPU`.
   При запуске на `GPU` необходимо установить пакет под конкретную платформу
   в соответсвии с [документацией][dgl].
+- `-nw / --num_workers` - количество потоков для загрузки графа во время инференса.
+  По умолчанию стоит значение 1.
+- `-ogbd / --ogb_data` - название задачи с сайта [Open Graph Benchmark][ogb]
 - `--time` - время выполнение инференса в секундах. Этот параметр можно 
   задать вместо задать вместо параметра `-ni / --number_iter`. Если 
   одновременно указать и `-ni / --number_iter` и `--time`,
@@ -1486,4 +1490,5 @@ python inference_ncnn.py --model <model_name> \
 [torchvision_models]: https://pytorch.org/vision/0.15/models.html
 [tvm_target]: https://tvm.apache.org/docs/reference/api/python/target.html
 [dgl]: https://www.dgl.ai/pages/start.html
+[ogb]: https://ogb.stanford.edu/
 [tensorflow-gpu]: https://www.tensorflow.org/install/pip

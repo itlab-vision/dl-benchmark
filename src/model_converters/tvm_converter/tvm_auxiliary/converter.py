@@ -21,7 +21,7 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.opt_level = args.get('opt_level', None)
         self.target_str = args.get('target', None)
         self.module = args.get('module', None)
-        self.vm = args.get('vm', None)
+        self.high_level_api = args.get('high_level_api', None)
 
         self.output_dir = args.get('output_dir', None)
         self.lib_name = args.get('lib_name', None)
@@ -34,8 +34,13 @@ class TVMConverter(metaclass=abc.ABCMeta):
         self.params = None
         self.log = log
         self.tvm = importlib.import_module('tvm')
-        self.tvm.relay = importlib.import_module('tvm.relay')
-        self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
+        if self.high_level_api in ['Relay', 'RelayVM']:
+            self.tvm.relay = importlib.import_module('tvm.relay')
+            self.graph_executor = importlib.import_module('tvm.contrib.graph_executor')
+        elif self.high_level_api == 'RelaxVM':
+            self.tvm.relax = importlib.import_module('tvm.relax')
+        else:
+            raise ValueError(f'API {self.high_level_api} is not supported')
 
     def get_file_type(self, file_path):
         if file_path is not None:
@@ -101,32 +106,60 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Saving weights of the model {self.model_name}')
         with open(f'{self.output_dir}/{self.model_name}.params', 'wb') as fo:
-            fo.write(self.tvm.relay.save_param_dict(self.params))
+            fo.write(self.tvm.runtime.save_param_dict(self.params))
 
         self.log.info(f'Saving model {self.model_name}')
         with open(f'{self.output_dir}/{self.model_name}.json', 'w') as fo:
             fo.write(self.tvm.ir.save_json(self.mod))
 
     def get_graph_module_from_lib(self, lib):
+        if self.high_level_api in ['Relay', 'RelayVM']:
+            return self.__get_graph_module_from_relay_lib(lib)
+        elif self.high_level_api == 'RelaxVM':
+            return self.__get_graph_module_from_relax_vm_lib(lib)
+        else:
+            raise ValueError(f'API {self.high_level_api} is not supported')
+
+    def __get_graph_module_from_relay_lib(self, lib):
         _, dev = self._get_target_device()
         self.graph = self.graph_executor.GraphModule(lib['default'](dev))
         return self.graph
+
+    def __get_graph_module_from_relax_vm_lib(self, lib):
+        _, dev = self._get_target_device()
+        des_vm = self.tvm.relax.VirtualMachine(lib, dev)
+        return des_vm
 
     def get_lib(self):
         target, _ = self._get_target_device()
         model = self._convert_model_from_framework()
 
         self.log.info('Model compilation')
-        if self.vm:
-            rly_vm = self.tvm.relay.vm
-            with self.tvm.transform.PassContext(opt_level=self.opt_level):
-                executable = rly_vm.compile(model[0], target=target, params=model[1])
-            code, lib = executable.save()
-            return code, lib
+        if self.high_level_api == 'Relay':
+            return self.__get_lib_from_relay(target, model)
+        elif self.high_level_api == 'RelayVM':
+            return self.__get_lib_from_relay_vm(target, model)
+        elif self.high_level_api == 'RelaxVM':
+            return self.__get_lib_from_relax_vm(target, model)
         else:
-            with self.tvm.transform.PassContext(opt_level=self.opt_level):
-                lib = self.tvm.relay.build(model[0], target=target, params=model[1])
-            return [lib]
+            raise ValueError(f'API {self.high_level_api} is not supported')
+
+    def __get_lib_from_relay(self, target, model):
+        with self.tvm.transform.PassContext(opt_level=self.opt_level):
+            lib = self.tvm.relay.build(model[0], target=target, params=model[1])
+        return [lib]
+
+    def __get_lib_from_relay_vm(self, target, model):
+        rly_vm = self.tvm.relay.vm
+        with self.tvm.transform.PassContext(opt_level=self.opt_level):
+            executable = rly_vm.compile(model[0], target=target, params=model[1])
+        code, lib = executable.save()
+        return code, lib
+
+    def __get_lib_from_relax_vm(self, target, model):
+        with self.tvm.transform.PassContext(opt_level=self.opt_level):
+            lib = self.tvm.relax.build(model[0], target=target, params=model[1])
+        return [lib]
 
     def export_lib(self):
         if self.output_dir is None:
@@ -146,9 +179,15 @@ class TVMConverter(metaclass=abc.ABCMeta):
             with open(f'{self.output_dir}/{lib_name}.ro', 'wb') as fo:
                 fo.write(lib[0])
 
-    def get_graph_module_from_vm(self, mod, params, target, dev):
-        rly_vm = self.tvm.relay.vm
+    def __get_graph_module_from_relay(self, mod, params, target, dev):
+        with self.tvm.transform.PassContext(opt_level=self.opt_level):
+            lib = self.tvm.relay.build(mod, target=target, params=params)
+        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
+        return self.graph
+
+    def __get_graph_module_from_relay_vm(self, mod, params, target, dev):
         vm = self.tvm.runtime.vm
+        rly_vm = self.tvm.relay.vm
         if self.mod_type == 'so' and self.params_type == 'ro':
             executable = vm.Executable.load_exec(params, mod)
         else:
@@ -157,11 +196,11 @@ class TVMConverter(metaclass=abc.ABCMeta):
         des_vm = vm.VirtualMachine(executable, dev)
         return des_vm
 
-    def get_graph_module_from_relay(self, mod, params, target, dev):
+    def __get_graph_module_from_relax_vm(self, mod, params, target, dev):
         with self.tvm.transform.PassContext(opt_level=self.opt_level):
-            lib = self.tvm.relay.build(mod, target=target, params=params)
-        self.graph = self.graph_executor.GraphModule(lib['default'](dev))
-        return self.graph
+            executable = self.tvm.relax.build(mod, target=target, params=params)
+        des_vm = self.tvm.relax.VirtualMachine(executable, dev)
+        return des_vm
 
     def get_graph_module(self):
         target, dev = self._get_target_device()
@@ -170,9 +209,13 @@ class TVMConverter(metaclass=abc.ABCMeta):
 
         self.log.info(f'Creating graph module from {self.source_framework} model')
         if len(model) == 2:
-            if self.vm:
-                return self.get_graph_module_from_vm(model[0], model[1], target, dev)
+            if self.high_level_api == 'Relay':
+                return self.__get_graph_module_from_relay(model[0], model[1], target, dev)
+            elif self.high_level_api == 'RelayVM':
+                return self.__get_graph_module_from_relay_vm(model[0], model[1], target, dev)
+            elif self.high_level_api == 'RelaxVM':
+                return self.__get_graph_module_from_relax_vm(model[0], model[1], target, dev)
             else:
-                return self.get_graph_module_from_relay(model[0], model[1], target, dev)
+                raise ValueError(f'API {self.high_level_api} is not supported')
         else:
             return self.get_graph_module_from_lib(model[0])

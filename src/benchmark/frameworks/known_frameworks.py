@@ -17,3 +17,5 @@ class KnownFrameworks:
     spektral = 'Spektral'
     rknn = 'RKNN'
     ncnn = 'ncnn'
+    executorch_cpp = 'ExecuTorch Cpp'
+    executorch = 'ExecuTorch'

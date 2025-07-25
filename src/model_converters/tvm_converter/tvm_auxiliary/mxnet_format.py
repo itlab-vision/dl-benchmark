@@ -40,5 +40,8 @@ class TVMConverterMXNetFormat(TVMConverter):
     def _convert_model_from_framework(self):
         net = self._get_mxnet_network()
         shape_dict = {self.input_name: self.input_shape}
-        model, params = self.tvm.relay.frontend.from_mxnet(net, shape_dict)
-        return model, params
+        if self.high_level_api in ['Relay', 'RelayVM']:
+            model, params = self.tvm.relay.frontend.from_mxnet(net, shape_dict)
+            return model, params
+        else:
+            raise ValueError(f'API {self.high_level_api} is not supported')

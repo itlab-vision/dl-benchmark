@@ -354,6 +354,7 @@
     изображения.
   - `ChannelSwap` - тег, необязательный для заполнения. Описывает изменение порядка каналов на
     входном изображении. По умолчанию будет установлен порядок (2, 0, 1), что соответствует BGR.
+  - `HighLevelAPI` - тег, необязательный для заполнения. Определяет используемое высокоуровневое API: `Relay`, `RelayVM` или `RelaxVM`. По умолчанию задается значение `Relay`.
   - `OptimizationLevel` - тег, необязательный для заполнения. Определяет уровень оптимизаций для
     графа вычислений, которые ускоряют инференс. По умолчанию оптимизации не применяются.
   - `Framework` - тег, обязательный для заполнения. Определяет фреймворк, модели которого будут
@@ -766,7 +767,7 @@
         <ChannelSwap></ChannelSwap>
         <Layout>NCHW</Layout>
         <Target>llvm</Target>
-        <VirtualMachine>True</VirtualMachine>
+        <HighLevelAPI>RelaxVM</HighLevelAPI>
         <OptimizationLevel>3</OptimizationLevel>
     </FrameworkDependent>
 </Test>

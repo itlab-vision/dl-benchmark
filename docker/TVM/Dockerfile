@@ -5,23 +5,48 @@ WORKDIR /root/
 # Installing miniconda
 RUN wget -q --no-check-certificate -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b && \
-    ./miniconda3/bin/conda create -n tvm-env -y python=3.7.16 && \
+    ./miniconda3/bin/conda create -n tvm-env -y python=3.8.20 && \
     rm -rf /root/miniconda3/pkgs/* && \
     rm ~/Miniconda3-latest-Linux-x86_64.sh -f
-    
+
 ENV PATH /root/miniconda3/envs/tvm-env/bin:/root/miniconda3/bin:$PATH
 RUN echo "source activate tvm-env" > ~/.bashrc
 RUN export LD_LIBRARY_PATH=/root/miniconda3/envs/tvm-env/lib:${LD_LIBRARY_PATH}
 RUN conda config --add channels intel
 
 # Installing dependencies
-RUN python3 -m pip install pycocotools docker PyYAML
+RUN python3 -m pip install pycocotools docker PyYAML gluoncv[full] opencv-python Cython psutil
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
-RUN python3 -m pip install gluoncv[full]
-RUN python3 -m pip install opencv-python
-   
+RUN apt-get update && apt-get install -y -qq --no-install-recommends cmake software-properties-common
+RUN apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main" && \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+RUN apt-get update && \
+    apt-get install -y -qq --no-install-recommends llvm-19 llvm-19-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # Installing Apache-TVM 
-RUN python3 -m pip install apache-tvm==0.14.dev264
+ARG TVM_VERSION=v0.19.0
+
+RUN git clone --recursive https://github.com/apache/tvm tvm --branch ${TVM_VERSION} --single-branch
+ENV TVM_BUILD_DIR=/tmp/build-tvm
+RUN mkdir $TVM_BUILD_DIR && cd $TVM_BUILD_DIR
+RUN cp /root/tvm/cmake/config.cmake .
+RUN echo "set(CMAKE_BUILD_TYPE RelWithDebInfo)" >> config.cmake
+RUN echo "set(USE_LLVM /usr/bin/llvm-config-19)" >> config.cmake
+RUN echo "set(HIDE_PRIVATE_SYMBOLS ON)" >> config.cmake
+RUN echo "set(USE_CUDA    OFF)" >> config.cmake
+RUN echo "set(USE_METAL   OFF)" >> config.cmake
+RUN echo "set(USE_VULKAN  OFF)" >> config.cmake
+RUN echo "set(USE_OPENCL  OFF)" >> config.cmake
+RUN echo "set(USE_CUBLAS  OFF)" >> config.cmake
+RUN echo "set(USE_CUDNN   OFF)" >> config.cmake
+RUN echo "set(USE_CUTLASS OFF)" >> config.cmake
+
+RUN /bin/bash -c 'cmake /root/tvm/ && cmake --build . -- -j$(nproc --all)'
+
+WORKDIR /root/
+RUN export TVM_LIBRARY_PATH=$TVM_BUILD_DIR
+RUN python3 -m pip install -e /root/tvm/python
 
 # ARG
 ARG TORCH_VERSION=2.0.1
@@ -29,13 +54,11 @@ ARG TORCHVISION_VERSION=0.15.2
 ARG TFLite_VERSION=2.14.0
 ARG MXNET_VERSION=1.9.1
 ARG ONNX_VERSION=1.15.0
-ARG CAFFE_VERSION=1.1.0
 
 ARG PyTorch
 ARG TFLite
 ARG MXNet
 ARG ONNX
-ARG CAFFE
 
 RUN if [ "${PyTorch}" = "true"  ]; then \
     python3 -m pip install torch==${TORCH_VERSION} torchvision==${TORCHVISION_VERSION}; \
@@ -63,14 +86,6 @@ RUN if [ "$ONNX" = "true"  ]; then \
         -Donnxruntime_USE_FULL_PROTOBUF=ON ../cmake; \ 
     make install -j$(nproc --all); \
     python3 -m pip install onnxruntime==${ONNX_VERSION} && python3 -m pip install onnx==${ONNX_VERSION}; \
-    fi
-
-RUN if [ "$CAFFE" = "true"  ]; then \
-    /bin/bash -c "conda install -n tvm-env -y -c intel openvino-ie4py-ubuntu20=2022.1.0"; \
-    /bin/bash -c "conda install -n tvm-env -y -c intel scikit-image=0.17.2"; \
-    /bin/bash -c "conda install -n tvm-env -y -c intel caffe"; \
-    /bin/bash -c "conda install -n tvm-env -y -c anaconda libgcc-ng=11.2.0"; \
-    /bin/bash -c "conda install -n tvm-env -y -c defaults protobuf=3.17.2 libprotobuf=3.17.2 requests=2.27.1"; \
     fi
 
 WORKDIR /tmp/open_model_zoo/

@@ -20,6 +20,8 @@ option(BUILD_TFLITE_GPU_LAUNCHER "Build TensorFlow Lite with GPU Delegate launch
 option(BUILD_PYTORCH_LAUNCHER "Build PyTorch launcher" OFF)
 option(BUILD_PYTORCH_TENSORRT_LAUNCHER "Build PyTorch-TensorRT launcher" OFF)
 option(BUILD_RKNN_LAUNCHER "Build RKNN launcher" OFF)
+option(BUILD_EXECUTORCH_LAUNCHER "Build ExecuTorch launcher with high level inference API" OFF)
+option(BUILD_EXECUTORCH_LAUNCHER_LOW_LEVEL_INFERENCE_API "Build ExecuTorch launcher with low level inference API")
 
 include(CMakeParseArguments)
 
@@ -88,6 +90,7 @@ if (BUILD_ALL_LAUNCHERS)
     set(BUILD_TFLITE_LAUNCHER "ON")
     set(BUILD_TFLITE_XNNPACK_LAUNCHER "ON")
     set(BUILD_TFLITE_GPU_LAUNCHER "ON")
+    set(BUILD_EXECUTORCH_LAUNCHER "ON")
 endif()
 
 if (BUILD_OPENCV_LAUNCHER OR BUILD_OPENCV_OV_LAUNCHER)
@@ -108,4 +111,8 @@ endif()
 
 if (BUILD_RKNN_LAUNCHER)
     add_subdirectory(rknn_launcher)
+endif()
+
+if(BUILD_EXECUTORCH_LAUNCHER OR BUILD_EXECUTORCH_LAUNCHER_LOW_LEVEL_INFERENCE_API)
+    add_subdirectory(executorch_launcher)
 endif()

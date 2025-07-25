@@ -22,11 +22,13 @@ class InferenceHelper:
         pass
 
     @staticmethod
-    def get_helper(vm):
-        if vm:
-            return InferenceVMApi()
-        else:
+    def get_helper(high_level_api):
+        if high_level_api == 'Relay':
             return InferenceRelayAPI()
+        elif high_level_api == 'RelayVM':
+            return InferenceRelayVMApi()
+        elif high_level_api == 'RelaxVM':
+            return InferenceRelaxVMApi()
 
     @abc.abstractmethod
     def _inference_tvm(self, module, input_name, slice_input):
@@ -77,20 +79,35 @@ class InferenceRelayAPI(InferenceHelper):
         return [module.get_output(i) for i in range(num_of_outputs)]
 
 
-class InferenceVMApi(InferenceHelper):
+class InferenceRelayVMApi(InferenceHelper):
     def __init__(self):
         super().__init__()
 
     def _infer_slice(self, input_name, module, slice_input):
         module.set_input('main', slice_input[input_name])
         module.run()
-        res = module.get_outputs()
-        return res
+        return module.get_outputs()
 
     def _inference_tvm(self, module, input_name, slice_input):
         module.set_input('main', slice_input[input_name])
         module.run()
         return module.get_outputs()
+
+
+class InferenceRelaxVMApi(InferenceHelper):
+    def __init__(self):
+        super().__init__()
+
+    def _infer_slice(self, input_name, module, slice_input):
+        module.set_input('main', slice_input[input_name])
+        module.invoke_stateful('main')
+        return module.get_outputs('main')
+
+    def _inference_tvm(self, module, input_name, slice_input):
+        import tvm
+        module.set_input('main', slice_input[input_name])
+        module.invoke_stateful('main')
+        return [tvm.nd.array(module.get_outputs('main'))]
 
 
 class OutputPreparer:
@@ -163,7 +180,7 @@ def create_dict_for_converter(args):
         'opt_level': args.opt_level,
         'target': args.target,
         'module': args.module,
-        'vm': args.vm,
+        'high_level_api': args.high_level_api,
         'source_framework': args.source_framework,
     }
     return dictionary
@@ -199,8 +216,8 @@ def create_dict_for_output_preparer(args):
     return dictionary
 
 
-def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, vm):
-    inference_helper = InferenceHelper.get_helper(vm)
+def inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration, high_level_api):
+    inference_helper = InferenceHelper.get_helper(high_level_api)
     return inference_helper.inference_tvm(module, num_of_iterations, input_name, get_slice, test_duration)
 
 

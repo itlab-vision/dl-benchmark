@@ -32,6 +32,7 @@ DLI supports inference using the following frameworks:
 - [RKNN][rknn] (C++ API).
 - [ncnn][ncnn] (Python API).
 - [PaddlePaddle][PaddlePaddle] (Python API).
+- [ExecuTorch][executorch] (C++ API)
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
@@ -47,8 +48,8 @@ Please consider citing the following papers.
 
 1. Kustikova V., Vasilyev E., Khvatov A., Kumbrasiev P., Rybkin R.,
    Kogteva N. DLI: Deep Learning Inference Benchmark //
-   Communications in Computer and Information Science.
-   V.1129. 2019. P. 542-553.
+   Communications in Computer and Information
+   Science. - 2019. - V. 1129. - P. 542-553.
 
 1. Sidorova A.K.,  Alibekov M.R., Makarov A.A., Vasiliev E.P., 
    Kustikova V.D. Automation of collecting performance indicators 
@@ -73,10 +74,11 @@ Please consider citing the following papers.
    and Programming. - 2024. - Vol. 25(2). - P. 127-141. -
    [https://num-meth.ru/index.php/journal/article/view/1332/1264][nummeth2023].
    (In Russian)
+
 1. Mukhin I., Rodimkov Y., Vasiliev E., Volokitin V., Sidorova A.,
    Kozinov E., Meyerov I., Kustikova V. Benchmarking Deep Learning
    Inference on RISC-V CPUs // Springer Lecture Notes in Computer
-   Science. – 2024. – Accepted.
+   Science. – 2025. – Vol. 15406. - P. 331-346.
 
 ## Repo structure
 
@@ -97,12 +99,12 @@ Please consider citing the following papers.
   - `OpenCV` is a directory of Dockerfiles for OpenCV.
   - `OpenVINO_DLDT` is a directory of Dockerfiles for Intel®
     Distribution of OpenVINO™ Toolkit.
+  - `PaddlePaddle` is a directory of Dockerfiles for PaddlePaddle.
   - `PyTorch` is a directory of Dockerfiles for PyTorch.
-  - `TVM` is a directory of Dockerfiles for Apache TVM.
   - `TensorFlow` is a directory of Dockerfiles for Intel® Optimizations
     for TensorFlow.
   - `TensorFlowLite` is a directory of Dockerfiles for TensorFlow Lite.
-  - `PaddlePaddle` is a directory of Dockerfiles for PaddlePaddle.
+  - `TVM` is a directory of Dockerfiles for Apache TVM.
 
 - `docs` directory contains auxiliary documentation. Please, find
   complete documentation at the [Wiki page][dli-wiki].
@@ -138,6 +140,9 @@ Please consider citing the following papers.
       is a table that confirms correctness of inference implementation
       based on Intel® Distribution of OpenVINO™ toolkit for models trained
       by Intel engineers and available in [Open Model Zoo][open-model-zoo].
+    - [`validation_results_paddlepaddle.md`](results/validation/validation_results_paddlepaddle.md)
+      is a table that confirms correctness of inference implementation
+      based on PaddlePaddle.
     - [`validation_results_pytorch.md`](results/validation/validation_results_pytorch.md)
       is a table that confirms correctness of inference implementation
       based on PyTorch for [TorchVision][torchvision].
@@ -161,9 +166,11 @@ Please consider citing the following papers.
   - [`onnxruntime_models_checklist.md`](results/onnxruntime_models_checklist.md) contains a list
     of deep models inferred by ONNX Runtime checked in the DLI benchmark.
   - [`opencv_models_checklist.md`](results/opencv_models_checklist.md) contains a list
-    of deep models inferred by OpenCV DNN.
+    of deep models inferred by OpenCV DNN checked in the DLI benchmark.
   - [`openvino_models_checklist.md`](results/openvino_models_checklist.md) contains a list
     of deep models inferred by the OpenVINO toolkit checked in the DLI benchmark.
+  - [`paddlepaddle_models_checklist.md`](results/paddlepaddle_models_checklist.md)
+    containsa list deep models inferred by PaddlePaddle checked in the DLI benchmark.
   - [`pytorch_models_checklist.md`](results/pytorch_models_checklist.md) contains a list
     of deep models inferred by PyTorch checked in the DLI benchmark.
   - [`tensorflow_models_checklist.md`](results/tensorflow_models_checklist.md) contains a list
@@ -179,14 +186,17 @@ Please consider citing the following papers.
     using Accuracy Checker of Intel® Distribution of OpenVINO™ toolkit.
   - `benchmark` is a set of scripts to estimate inference
     performance of different models at the single local computer.
-  - `build_scripts` is a directory to build inference frameworks for different platforms.
+  - `build_scripts` is a directory to build inference frameworks for different
+    platforms.
   - `config_maker`contains GUI-application to make configuration files
-    of the benchmark components.
+    of the benchmark components. Application supports outdated version
+    of configuration files. It is required to update (one of the future tasks).
   - `configs` contains template configuration files.
   - `cpp_dl_benchmark` contains C++ tools that allow to measure
     deep learning models inference performance with
     [ONNX Runtime][onnx-runtime-github], [OpenCV DNN][opencv-dnn],
-    [PyTorch][pytorch] and [TensorFlow Lite][tensorflow-lite] in C++ API implementation.
+    [PyTorch][pytorch], [ExecuTorch][executorch] and 
+    [TensorFlow Lite][tensorflow-lite] in C++ API implementation.
     This implementation inspired by [OpenVINO Benchmark C++ tool][benchmark-app]
     as a reference and stick to its measurement methodology,
     thus provide consistent performance results.
@@ -199,15 +209,15 @@ Please consider citing the following papers.
   - `model_converters` contains converters of deep models.
   - `node_info` contains a set of functions to get information about
     computational node.
-  - `quantization` contains scripts to quantize model to INT8-precision
-    using Post-Training Optimization Tool (POT)
-    of Intel® Distribution of OpenVINO™ toolkit.
+  - `quantization` contains scripts to quantize model
+    using Post-Training Optimization Tool (POT) of Intel® Distribution
+    of OpenVINO™ toolkit, TensorFlow Lite and TVM internal tools.
   - `remote_control` contains scripts to execute benchmark
     remotely.
   - `tvm_autotuning` contains scripts to optimize Apache TVM models.
   - `utils` is a package of auxiliary utilities.
 
-- `test` contains smoke tests.
+- `tests` contains smoke tests.
 
 - `requirements.txt` is a list of special requirements for the DLI
   benchmark without inference frameworks.
@@ -271,6 +281,7 @@ Report questions, issues and suggestions, using:
 [rknn]: https://github.com/rockchip-linux/rknn-toolkit2
 [ncnn]: https://github.com/Tencent/ncnn
 [PaddlePaddle]: https://www.paddlepaddle.org.cn/en
+[executorch]: https://pytorch.org/executorch-overview
 [benchmark-app]: https://github.com/openvinotoolkit/openvino/tree/master/samples/cpp/benchmark_app
 [dli-ru-web-page]: http://hpc-education.unn.ru/dli-ru
 [dli-web-page]: http://hpc-education.unn.ru/dli
