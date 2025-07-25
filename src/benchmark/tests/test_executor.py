@@ -110,7 +110,7 @@ def test_infrastructure(executor_instance, mocker):
         assert re.match(r'CPU: .* CPU family: .* GPU: .* RAM size: .* OS family: .* OS version: .* Python version: .*',
                         ex.get_infrastructure())
     else:
-        assert ex.get_infrastructure() == 'test: test'
+        assert ex.get_infrastructure() == 'None'
 
 
 @pytest.mark.parametrize('executor_instance', [get_host_executor, get_docker_executor])
