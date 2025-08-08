@@ -37,17 +37,6 @@ class TVMProcess(ProcessHandler):
     def get_performance_metrics(self):
         return self.get_performance_metrics_from_json_report()
 
-    @staticmethod
-    def get_cmd_python_version():
-        cmd_python_version = ''
-        os_type = platform.system()
-        if os_type == 'Linux':
-            cmd_python_version = '/home/itmm/miniconda3/envs/tvm_main/bin/python3'
-        else:
-            cmd_python_version = 'python'
-
-        return cmd_python_version
-
     def _fill_command_line(self):
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
@@ -174,7 +163,7 @@ class TVMProcessONNXFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} -f onnx '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -194,7 +183,7 @@ class TVMProcessCaffeFormat(TVMProcess):
         model = self._test.model.model
         weight = self._test.model.weight
         common_params = f'-m {model} -w {weight} -f caffe '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -229,7 +218,7 @@ class TVMProcessTVMFormat(TVMProcess):
         else:
             raise ValueError('Wrong arguments.')
         common_params += '-f tvm '
-        python = TVMProcess.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -248,7 +237,7 @@ class TVMProcessTFLiteFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} -f tflite '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'

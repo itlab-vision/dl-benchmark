@@ -19,7 +19,7 @@ class ExecuTorchProcess(ProcessHandler):
         return self.get_performance_metrics_from_json_report()
 
     def _fill_command_line(self):
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         dataset = self._test.dataset.path
         input_shape = self._test.dep_parameters.input_shape
         layout = self._test.dep_parameters.layout

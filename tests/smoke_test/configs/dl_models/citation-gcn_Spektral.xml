@@ -20,6 +20,7 @@
             <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
             <RawOutput>False</RawOutput>
+            <PythonInterpreter>python3</PythonInterpreter>
         </FrameworkIndependent>
         <FrameworkDependent>
         </FrameworkDependent>
