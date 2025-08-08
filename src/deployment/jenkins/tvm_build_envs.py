@@ -1,6 +1,5 @@
 import sys
 import argparse
-import os
 import subprocess
 
 
@@ -17,14 +16,17 @@ class EnvCreator:
     def create_envs(self):
         if len(self.frameworks) != 0:
             for framework in self.frameworks:
-                self._run(f'{self.conda_prefix}/bin/conda create -y --name tvm_{framework}_{self.branch} --clone tvm_main_{self.branch}')
+                command1 = f'{self.conda_prefix}/bin/conda create -y '
+                command2 = f'--name tvm_{framework}_{self.branch} --clone tvm_main_{self.branch}'
+                self._run(command1 + command2)
                 if framework != 'mxnet':
                     self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 install {framework}')
                 else:
-                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 install {framework}==1.9.1')
-                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 install gluoncv[full]')
-                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 uninstall -y numpy')
-                    self._run(f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3 install numpy==1.23.1')
+                    pip_str = f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3'
+                    self._run(pip_str + f' install {framework}==1.9.1')
+                    self._run(pip_str + f' install gluoncv[full]')
+                    self._run(pip_str + f' uninstall -y numpy')
+                    self._run(pip_str + f' install numpy==1.23.1')
 
 
 def cli_arguments_parse():
@@ -54,11 +56,12 @@ def cli_arguments_parse():
 
     return parser.parse_args()
 
+
 def main():
     args = cli_arguments_parse()
     cr = EnvCreator(args.frameworks, args.py, args.conda, args.branch)
     cr.create_envs()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     sys.exit(main() or 0)

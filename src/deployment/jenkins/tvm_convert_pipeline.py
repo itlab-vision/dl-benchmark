@@ -2,7 +2,6 @@ import argparse
 import sys
 import subprocess
 from logger import configure_logger
-import traceback
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parents[3]))
@@ -18,7 +17,7 @@ class TXTParser:
 
     def parse(self):
         if not self.filepath.exists():
-            raise FileNotFoundError('File doesn\'t exist.')
+            raise FileNotFoundError('File not found.')
         log.info(f'Parsing file: {self.filepath.as_posix()}')
         with self.filepath.open() as file:
             self.lines = file.read().splitlines()
@@ -37,14 +36,14 @@ class TVMConverterProcess:
         self.converter = str(self.converter.joinpath('tvm_converter.py'))
         self.models_dir = models_dir.absolute().as_posix()
         self.branch = branch
-        self._command_line = f''
+        self._command_line = ''
 
     def _add_argument(self, name_of_arg, value_of_arg):
         if value_of_arg != '':
             self._command_line += f' {name_of_arg} {value_of_arg}'
 
     def _add_option(self, name_of_arg):
-        self._command_line += f' {name_of_arg}'      
+        self._command_line += f' {name_of_arg}'
 
     def create_command_line(self, model_name, model, weights,
                             framework, input_shape, batch, input_name):
@@ -52,7 +51,7 @@ class TVMConverterProcess:
         self._add_argument('-mn', model_name)
         if model != '':
             self._add_argument('-m', f'{self.models_dir}/{model}')
-        if weights != '':            
+        if weights != '':         
             self._add_argument('-w', f'{self.models_dir}/{weights}')
         if framework == 'torch':
             framework = 'pytorch'
@@ -68,7 +67,6 @@ class TVMConverterProcess:
         proc = subprocess.run(self._command_line, shell=True)
         self.exit_code = proc.returncode
         self._command_line = ''
-
 
 
 def cli_arguments_parse():
@@ -110,12 +108,10 @@ def main():
                 model_name, model,
                 weights, framework,
                 input_shape, batch,
-                input_name
+                input_name,
             )
             proc.execute()
 
 
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     sys.exit(main() or 0)

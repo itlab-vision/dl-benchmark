@@ -1,7 +1,6 @@
 import abc
 import json
 import os
-import platform
 from datetime import datetime
 from pathlib import Path
 

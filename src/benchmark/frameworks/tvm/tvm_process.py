@@ -1,5 +1,4 @@
 from pathlib import Path
-import platform
 from ..processes import ProcessHandler
 
 
@@ -108,7 +107,7 @@ class TVMProcessMXNetFormat(TVMProcess):
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
         common_params += '-f mxnet '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -144,7 +143,7 @@ class TVMProcessPyTorchFormat(TVMProcess):
             common_params += (f'-m {model_pt} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
