@@ -65,6 +65,7 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['kmp_affinity'] = 'KMP_AFFINITY'
         match_parameter_description['num_inter_threads'] = 'Inter threads'
         match_parameter_description['num_intra_threads'] = 'Intra threads'
+        match_parameter_description['use_xla'] = 'Using XLA'
 
         match_parameter_description['execution_providers'] = 'Execution Providers'
         match_parameter_description['execution_mode'] = 'Execution Mode'
@@ -74,6 +75,9 @@ class Test(metaclass=abc.ABCMeta):
         match_parameter_description['inference_mode'] = 'Inference mode'
         match_parameter_description['tensor_rt_precision'] = 'TensorRT precision'
         match_parameter_description['compile_with_backend'] = 'Pytorch compile backend'
+
+        match_parameter_description['high_level_api'] = 'TVM HighLevelAPI'
+        match_parameter_description['opt_level'] = 'TVM OptimizationLevel'
 
         for parameter, description in match_parameter_description.items():
             if hasattr(self.dep_parameters, parameter) and getattr(self.dep_parameters, parameter) is not None:

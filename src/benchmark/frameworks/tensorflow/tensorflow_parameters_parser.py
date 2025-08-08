@@ -15,6 +15,7 @@ class TensorFlowParametersParser(DependentParametersParser):
         CONFIG_FRAMEWORK_DEPENDENT_INTER_OP_PARALLELISM_THREADS_TAG = 'InterOpParallelismThreads'
         CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG = 'IntraOpParallelismThreads'
         CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG = 'KmpAffinity'
+        CONFIG_FRAMEWORK_DEPENDENT_USE_XLA_TAG = 'UseXLA'
 
         dep_parameters_tag = curr_test.getElementsByTagName(CONFIG_FRAMEWORK_DEPENDENT_TAG)[0]
 
@@ -38,6 +39,8 @@ class TensorFlowParametersParser(DependentParametersParser):
             CONFIG_FRAMEWORK_DEPENDENT_INTRA_OP_PARALLELISM_THREADS_TAG)[0].firstChild
         _kmp_affinity = dep_parameters_tag.getElementsByTagName(
             CONFIG_FRAMEWORK_DEPENDENT_KMP_AFFINITY_TAG)[0].firstChild
+        _use_xla = dep_parameters_tag.getElementsByTagName(
+            CONFIG_FRAMEWORK_DEPENDENT_USE_XLA_TAG)[0].firstChild
 
         return TensorFlowParameters(
             channel_swap=_channel_swap.data if _channel_swap else None,
@@ -50,12 +53,13 @@ class TensorFlowParametersParser(DependentParametersParser):
             inter_op_parallelism_threads=_inter_op_parallelism_threads.data if _inter_op_parallelism_threads else None,
             intra_op_parallelism_threads=_intra_op_parallelism_threads.data if _intra_op_parallelism_threads else None,
             kmp_affinity=_kmp_affinity.data if _kmp_affinity else None,
+            use_xla=_use_xla.data if _use_xla else None,
         )
 
 
 class TensorFlowParameters(FrameworkParameters):
     def __init__(self, channel_swap, mean, input_scale, input_shape, input_name, output_names, thread_count,
-                 inter_op_parallelism_threads, intra_op_parallelism_threads, kmp_affinity):
+                 inter_op_parallelism_threads, intra_op_parallelism_threads, kmp_affinity, use_xla):
         self.channel_swap = None
         self.mean = None
         self.input_scale = None
@@ -66,6 +70,7 @@ class TensorFlowParameters(FrameworkParameters):
         self.num_inter_threads = None
         self.num_intra_threads = None
         self.kmp_affinity = None
+        self.use_xla = None
 
         if self._parameter_is_not_none(channel_swap):
             if self._channel_swap_is_correct(channel_swap):
@@ -108,6 +113,8 @@ class TensorFlowParameters(FrameworkParameters):
                 raise ValueError('Intra op parallelism threads can only take integer value')
         if self._parameter_is_not_none(kmp_affinity):
             self.kmp_affinity = kmp_affinity
+        if self._parameter_is_not_none(use_xla):
+            self.use_xla = use_xla
 
     def _input_shape_is_correct(self, input_shape):
         shape_check = input_shape.split()

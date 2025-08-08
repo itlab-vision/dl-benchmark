@@ -7,6 +7,7 @@ from .tensorflow.tensorflow_wrapper import TensorFlowWrapper
 from .onnx_runtime.onnx_runtime_wrapper import OnnxRuntimeWrapper
 from .onnx_runtime_python.onnx_runtime_python_wrapper import ONNXRuntimePythonWrapper
 from .tensorflow_lite.tensorflow_lite_wrapper import TensorFlowLiteWrapper
+from .paddlepaddle.paddlepaddle_wrapper import PaddlePaddleWrapper
 from .tensorflow_lite_cpp.tensorflow_lite_cpp_wrapper import TensorFlowLiteCppWrapper
 from .opencv_dnn_python.opencv_dnn_python_wrapper import OpenCVDNNPythonWrapper
 from .mxnet.mxnet_wrapper import MXNetWrapper
@@ -18,6 +19,8 @@ from .ncnn.ncnn_wrapper import NcnnWrapper
 from .dgl_pytorch.dgl_pytorch_wrapper import DGLPyTorchWrapper
 from .spektral.spektral_wrapper import SpektralWrapper
 from .rknn.rknn_wrapper import RknnWrapper
+from .executorch_cpp.executorch_cpp_wrapper import ExecuTorchCppWrapper
+from .executorch.executorch_wrapper import ExecuTorchWrapper
 
 
 class FrameworkWrapperRegistry(metaclass=Singleton):
@@ -42,6 +45,7 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[IntelCaffeWrapper.framework_name] = IntelCaffeWrapper()
         self._framework_wrappers[TensorFlowWrapper.framework_name] = TensorFlowWrapper()
         self._framework_wrappers[OpenVINOWrapper.framework_name] = OpenVINOWrapper()
+        self._framework_wrappers[PaddlePaddleWrapper.framework_name] = PaddlePaddleWrapper()
         self._framework_wrappers[OnnxRuntimeWrapper.framework_name] = OnnxRuntimeWrapper()
         self._framework_wrappers[ONNXRuntimePythonWrapper.framework_name] = ONNXRuntimePythonWrapper()
         self._framework_wrappers[TensorFlowLiteWrapper.framework_name] = TensorFlowLiteWrapper()
@@ -56,3 +60,5 @@ class FrameworkWrapperRegistry(metaclass=Singleton):
         self._framework_wrappers[NcnnWrapper.framework_name] = NcnnWrapper()
         self._framework_wrappers[SpektralWrapper.framework_name] = SpektralWrapper()
         self._framework_wrappers[RknnWrapper.framework_name] = RknnWrapper()
+        self._framework_wrappers[ExecuTorchCppWrapper.framework_name] = ExecuTorchCppWrapper()
+        self._framework_wrappers[ExecuTorchWrapper.framework_name] = ExecuTorchWrapper()

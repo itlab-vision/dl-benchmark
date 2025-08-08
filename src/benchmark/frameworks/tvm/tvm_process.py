@@ -68,11 +68,6 @@ class TVMProcess(ProcessHandler):
             common_params = TVMProcess._add_flag_to_cmd_line(
                 common_params, '--norm')
 
-        vm = self._test.dep_parameters.vm
-        if vm == 'True':
-            common_params = TVMProcess._add_flag_to_cmd_line(
-                common_params, '-vm')
-
         mean = self._test.dep_parameters.mean
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--mean', mean)
@@ -96,6 +91,10 @@ class TVMProcess(ProcessHandler):
         target = self._test.dep_parameters.target
         common_params = TVMProcess._add_optional_argument_to_cmd_line(
             common_params, '--target', target)
+
+        high_level_api = self._test.dep_parameters.high_level_api
+        common_params = TVMProcess._add_optional_argument_to_cmd_line(
+            common_params, '--high_level_api', high_level_api)
 
         return f'{common_params}'
 

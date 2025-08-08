@@ -2,6 +2,7 @@ from frameworks.intel_caffe.intel_caffe_parameters_parser import IntelCaffeParam
 from frameworks.known_frameworks import KnownFrameworks
 from frameworks.openvino.openvino_parameters_parser import OpenVINOParametersParser
 from frameworks.tensorflow.tensorflow_parameters_parser import TensorFlowParametersParser
+from frameworks.paddlepaddle.paddlepaddle_parameters_parser import PaddlePaddleParametersParser
 from frameworks.tensorflow_lite.tensorflow_lite_parameters_parser import TensorFlowLiteParametersParser
 from frameworks.mxnet.mxnet_parameters_parser import MXNetParametersParser
 from frameworks.opencv_dnn_python.opencv_dnn_python_parameters_parser import OpenCVDNNPythonParametersParser
@@ -12,6 +13,7 @@ from frameworks.dgl_pytorch.dgl_pytorch_parametrs_parser import DGLPyTorchParame
 from frameworks.tvm.tvm_parameters_parser import TVMParametersParser
 from frameworks.ncnn.ncnn_parameters_parser import NcnnParametersParser
 from frameworks.spektral.spektral_parameters_parser import SpektralParametersParser
+from frameworks.executorch.executorch_parameters_parser import ExecuTorchParametersParser
 
 
 def get_parameters_parser(framework):
@@ -19,6 +21,8 @@ def get_parameters_parser(framework):
         return IntelCaffeParametersParser()
     if framework == KnownFrameworks.tensorflow:
         return TensorFlowParametersParser()
+    if framework == KnownFrameworks.paddlepaddle:
+        return PaddlePaddleParametersParser()
     if framework == KnownFrameworks.openvino_dldt:
         return OpenVINOParametersParser()
     if framework == KnownFrameworks.onnx_runtime:
@@ -49,4 +53,8 @@ def get_parameters_parser(framework):
         return SpektralParametersParser()
     if framework == KnownFrameworks.rknn:
         return CppParametersParser()
+    if framework == KnownFrameworks.executorch_cpp:
+        return CppParametersParser()
+    if framework == KnownFrameworks.executorch:
+        return ExecuTorchParametersParser()
     raise NotImplementedError(f'Unknown framework {framework}')

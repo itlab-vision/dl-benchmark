@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuantizationConfigs>
+    <Config>
+        <Model>
+            <Name></Name>
+            <PathPrefix></PathPrefix>
+            <ModelDir></ModelDir>
+            <ModelFileName></ModelFileName>
+            <ParamsFileName></ParamsFileName>
+        </Model>
+        <Dataset>
+            <Name></Name>
+            <Path></Path>
+            <Mean></Mean>
+            <Std></Std>
+            <ChannelSwap></ChannelSwap>
+            <BatchSize></BatchSize>
+            <BatchNum></BatchNum>
+            <ResizeResolution></ResizeResolution>
+        </Dataset>
+        <QuantizationParameters>
+            <InputShape></InputShape>
+            <InputName></InputName>
+            <SaveDir></SaveDir>
+            <Algorithm></Algorithm>
+        </QuantizationParameters>
+    </Config>
+</QuantizationConfigs>
