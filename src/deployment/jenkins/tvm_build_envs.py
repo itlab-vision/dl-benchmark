@@ -24,9 +24,9 @@ class EnvCreator:
                 else:
                     pip_str = f'{self.conda_prefix}/envs/tvm_{framework}_{self.branch}/bin/pip3'
                     self._run(pip_str + f' install {framework}==1.9.1')
-                    self._run(pip_str + f' install gluoncv[full]')
-                    self._run(pip_str + f' uninstall -y numpy')
-                    self._run(pip_str + f' install numpy==1.23.1')
+                    self._run(pip_str + ' install gluoncv[full]')
+                    self._run(pip_str + ' uninstall -y numpy')
+                    self._run(pip_str + ' install numpy==1.23.1')
 
 
 def cli_arguments_parse():

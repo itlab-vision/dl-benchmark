@@ -52,7 +52,7 @@ class TVMCompilerProcess:
 
     def create_command_line(self, model_name, target, batch, opt_level):
         self._command_line = (f'{self.conda}/envs/tvm_main_{self.branch}/bin/python3 ' + f'{self.converter}')
-        self._add_argument('--mod', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.json') 
+        self._add_argument('--mod', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.json')
         self._add_argument('--params', f'{self.models_dir}/{model_name}/batch_{batch}/{model_name}.params')
         self._add_argument('-t', f'"{target}"')
         self._add_argument('--opt_level', f'{opt_level}')

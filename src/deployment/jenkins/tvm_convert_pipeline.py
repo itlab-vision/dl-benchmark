@@ -51,7 +51,7 @@ class TVMConverterProcess:
         self._add_argument('-mn', model_name)
         if model != '':
             self._add_argument('-m', f'{self.models_dir}/{model}')
-        if weights != '':         
+        if weights != '':
             self._add_argument('-w', f'{self.models_dir}/{weights}')
         if framework == 'torch':
             framework = 'pytorch'

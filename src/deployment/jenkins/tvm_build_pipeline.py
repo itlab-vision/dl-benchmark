@@ -20,7 +20,7 @@ class TVMBuilder:
         self._run(f'git clone --recursive https://github.com/apache/tvm -b {self.branch}')
         command1 = 'cd tvm && mkdir -p build && cd build && cmake -DUSE_LLVM=ON -DUSE_BLAS=openblas ../ && '
         command2 = 'make -j$(nproc --all) && cd ../python && '
-        command3 = f'{self.conda}/envs/tvm_main_{self.branch}/bin/python setup.py install --user' 
+        command3 = f'{self.conda}/envs/tvm_main_{self.branch}/bin/python setup.py install --user'
         self._run(command1 + command2 + command3)
 
 

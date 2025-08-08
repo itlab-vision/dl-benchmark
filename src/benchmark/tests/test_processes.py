@@ -16,7 +16,6 @@ from src.benchmark.frameworks.openvino.openvino_benchmark_process import (OpenVI
                                                                           OpenVINOBenchmarkCppProcess)
 from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
 from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
-from src.benchmark.frameworks.processes import ProcessHandler
 from src.benchmark.frameworks.pytorch.pytorch_process import PyTorchProcess
 from src.benchmark.frameworks.pytorch_cpp.pytorch_cpp_process import PyTorchCppProcess
 from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
