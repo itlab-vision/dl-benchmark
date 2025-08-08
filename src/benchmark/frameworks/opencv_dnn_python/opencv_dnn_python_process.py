@@ -19,7 +19,7 @@ class OpenCVDNNPythonProcess(ProcessHandler):
 
     def _fill_command_line(self):
         path_to_opencv_script = Path.joinpath(self.inference_script_root, 'inference_opencv.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
 
         model = self._test.model.model
         weights = self._test.model.weight

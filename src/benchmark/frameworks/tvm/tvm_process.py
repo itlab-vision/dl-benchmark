@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from ..processes import ProcessHandler
 
 
@@ -108,7 +107,7 @@ class TVMProcessMXNetFormat(TVMProcess):
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
         common_params += '-f mxnet '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -144,7 +143,7 @@ class TVMProcessPyTorchFormat(TVMProcess):
             common_params += (f'-m {model_pt} ')
         else:
             raise Exception('Incorrect model parameters. Set model name or file names.')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -163,7 +162,7 @@ class TVMProcessONNXFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} -f onnx '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -183,7 +182,7 @@ class TVMProcessCaffeFormat(TVMProcess):
         model = self._test.model.model
         weight = self._test.model.weight
         common_params = f'-m {model} -w {weight} -f caffe '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -218,7 +217,7 @@ class TVMProcessTVMFormat(TVMProcess):
         else:
             raise ValueError('Wrong arguments.')
         common_params += '-f tvm '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -237,7 +236,7 @@ class TVMProcessTFLiteFormat(TVMProcess):
     def _fill_command_line(self):
         model = self._test.model.model
         common_params = f'-m {model} -f tflite '
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params += super()._fill_command_line()
         common_params += f' --time {time_limit}'

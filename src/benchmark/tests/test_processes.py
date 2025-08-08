@@ -16,7 +16,6 @@ from src.benchmark.frameworks.openvino.openvino_benchmark_process import (OpenVI
                                                                           OpenVINOBenchmarkCppProcess)
 from src.benchmark.frameworks.openvino.openvino_process import OpenVINOProcess
 from src.benchmark.frameworks.openvino.openvino_python_api_process import AsyncOpenVINOProcess, SyncOpenVINOProcess
-from src.benchmark.frameworks.processes import ProcessHandler
 from src.benchmark.frameworks.pytorch.pytorch_process import PyTorchProcess
 from src.benchmark.frameworks.pytorch_cpp.pytorch_cpp_process import PyTorchCppProcess
 from src.benchmark.frameworks.tensorflow.tensorflow_process import TensorFlowProcess
@@ -57,12 +56,6 @@ TEST_BASIC_LINE = DotDict({'indep_parameters': DotDict({'inference_framework': '
                            'model': DotDict({'model': 'model'})})
 
 WRAPPER_REGISTRY = FrameworkWrapperRegistry()
-
-
-@pytest.mark.parametrize('os', [['Linux', 'python3'], ['Windows', 'python']])
-def test_python_version(os, mocker):
-    mocker.patch('platform.system', return_value=os[0])
-    assert ProcessHandler.get_cmd_python_version() == os[1]
 
 
 @pytest.mark.parametrize('inference_framework', [['OpenVINO DLDT', OpenVINOProcess],

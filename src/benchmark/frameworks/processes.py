@@ -1,7 +1,6 @@
 import abc
 import json
 import os
-import platform
 from datetime import datetime
 from pathlib import Path
 
@@ -34,14 +33,8 @@ class ProcessHandler(metaclass=abc.ABCMeta):
         return report_path
 
     @staticmethod
-    def get_cmd_python_version():
-        cmd_python_version = ''
-        os_type = platform.system()
-        if os_type == 'Linux':
-            cmd_python_version = 'python3'
-        else:
-            cmd_python_version = 'python'
-
+    def get_cmd_python_version(test):
+        cmd_python_version = test.indep_parameters.python_path
         return cmd_python_version
 
     def get_model_shape(self):

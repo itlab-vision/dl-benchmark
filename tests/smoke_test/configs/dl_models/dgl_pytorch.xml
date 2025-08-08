@@ -22,6 +22,7 @@
             <TestTimeLimit>1</TestTimeLimit>
             <InterOpThreads></InterOpThreads>
             <IntraOpThreads></IntraOpThreads>
+            <PythonInterpreter>python3</PythonInterpreter>
         </FrameworkIndependent>
         <FrameworkDependent>
         </FrameworkDependent>

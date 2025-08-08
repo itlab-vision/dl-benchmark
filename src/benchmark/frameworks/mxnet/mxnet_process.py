@@ -97,7 +97,7 @@ class SyncMXNetProcess(MXNetProcess):
     def _fill_command_line(self):
         path_to_sync_script = Path.joinpath(self.inference_script_root,
                                             'inference_mxnet_sync_mode.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         time_limit = self._test.indep_parameters.test_time_limit
         common_params = super()._fill_command_line()
         common_params += f' --time {time_limit}'
@@ -116,7 +116,7 @@ class AsyncMXNetProcess(MXNetProcess):
     def _fill_command_line(self):
         path_to_async_script = Path.joinpath(self.inference_script_root,
                                              'inference_mxnet_async_mode.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
         common_params = super()._fill_command_line()
         command_line = f'{python} {path_to_async_script} {common_params}'
 

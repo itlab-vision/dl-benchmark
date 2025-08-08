@@ -86,6 +86,11 @@ class TestConfigParser:
         batch_size = _batch_size.data if (_batch_size and _batch_size.data != 'None') else None
 
         device = indep_parameters_tag.getElementsByTagName('Device')[0].firstChild.data.strip()
+        python_path = 'python3'
+
+        if indep_parameters_tag.getElementsByTagName('PythonInterpreter')[0].firstChild:
+            python_path = indep_parameters_tag.getElementsByTagName('PythonInterpreter')[0].firstChild.data.strip()
+
         iteration_count = indep_parameters_tag.getElementsByTagName('IterationCount')[0].firstChild.data.strip()
         test_time_limit = int(indep_parameters_tag.getElementsByTagName('TestTimeLimit')[0].firstChild.data)
         timeout_overhead_element = indep_parameters_tag.getElementsByTagName('TimeoutOverhead')
@@ -129,6 +134,7 @@ class TestConfigParser:
             timeout_overhead=timeout_overhead,
             custom_models_links=custom_models_links,
             raw_output=raw_output,
+            python_path=python_path,
         )
 
     def parse_dependent_parameters(self, curr_test, framework):

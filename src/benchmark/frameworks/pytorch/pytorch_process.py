@@ -20,7 +20,7 @@ class PyTorchProcess(ProcessHandler):
 
     def _fill_command_line(self):
         path_to_pytorch_script = Path.joinpath(self.inference_script_root, 'inference_pytorch.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
 
         name = self._test.model.name
         model = self._test.model.model

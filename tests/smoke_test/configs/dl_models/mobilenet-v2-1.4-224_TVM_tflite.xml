@@ -18,6 +18,7 @@
             <Device>CPU</Device>
             <IterationCount>5</IterationCount>
             <TestTimeLimit>1</TestTimeLimit>
+            <PythonInterpreter>python3</PythonInterpreter>
         </FrameworkIndependent>
         <FrameworkDependent>
             <InputName>input</InputName>

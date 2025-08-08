@@ -19,7 +19,7 @@ class ONNXRuntimePythonProcess(ProcessHandler):
 
     def _fill_command_line(self):
         path_to_onnx_script = Path.joinpath(self.inference_script_root, 'inference_onnx_runtime.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
 
         model = self._test.model.model
         dataset = self._test.dataset.path if self._test.dataset else None
