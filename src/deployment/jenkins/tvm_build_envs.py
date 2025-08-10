@@ -3,7 +3,7 @@ import argparse
 import subprocess
 
 
-class EnvCreator:
+class TVMEnvCreator:
     def __init__(self, frameworks, py_version, conda, branch):
         self.frameworks = frameworks.split(',')
         self.py_version = py_version
@@ -33,7 +33,7 @@ def cli_arguments_parse():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-b', '--branch',
-                        help='Branch to build tvm.',
+                        help='Branch to build TVM.',
                         dest='branch',
                         required=True,
                         type=str)
@@ -59,7 +59,7 @@ def cli_arguments_parse():
 
 def main():
     args = cli_arguments_parse()
-    cr = EnvCreator(args.frameworks, args.py, args.conda, args.branch)
+    cr = TVMEnvCreator(args.frameworks, args.py, args.conda, args.branch)
     cr.create_envs()
 
 

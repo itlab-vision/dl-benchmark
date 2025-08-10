@@ -28,7 +28,7 @@ def cli_arguments_parse():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-b', '--branch',
-                        help='Branch to build tvm.',
+                        help='Branch to build TVM.',
                         dest='branch',
                         required=True,
                         type=str)

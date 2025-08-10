@@ -200,7 +200,6 @@ def main():
         log.info(f'Shape for input layer {args.input_name}: {args.input_shape}')
         converter = TVMConverter.get_converter(create_dict_for_converter(args))
         report_writer.update_framework_info(name='TVM', version=converter.tvm.__version__)
-        print(f'TVM version: {converter.tvm.__version__}')
         graph_module = converter.get_graph_module()
 
         log.info(f'Preparing input data: {args.input}')

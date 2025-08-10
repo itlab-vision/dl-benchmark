@@ -3,28 +3,12 @@ import sys
 import subprocess
 from logger import configure_logger
 from pathlib import Path
+from tvm_convert_pipeline import TXTParser
 
 sys.path.append(str(Path(__file__).parents[3]))
 
 
 log = configure_logger('tvm_converter_log.txt')
-
-
-class TXTParser:
-    def __init__(self, filepath):
-        self.filepath = filepath
-        self.lines = None
-
-    def parse(self):
-        if not self.filepath.exists():
-            raise FileNotFoundError('File not found.')
-        log.info(f'Parsing file: {self.filepath.as_posix()}')
-        with self.filepath.open() as file:
-            self.lines = file.read().splitlines()
-        for i, line in enumerate(self.lines):
-            self.lines[i] = line.split(';')
-            self.lines[i][5] = [int(batch) for batch in self.lines[i][5].split(',')]
-        return self.lines
 
 
 class TVMCompilerProcess:
