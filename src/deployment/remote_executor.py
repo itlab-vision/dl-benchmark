@@ -3,11 +3,11 @@ from remote_helper import RemoteHelper
 
 
 class RemoteExecutor:
-    def __init__(self, os_type, log):
+    def __init__(self, os_type, python, log):
         self.my_active_connection = None
         self.my_machine_ip = None
         self.my_process_list = []
-        self.my_remote_helper = RemoteHelper.get_remote_helper(os_type.lower(), log)
+        self.my_remote_helper = RemoteHelper.get_remote_helper(os_type.lower(), python, log)
         self.my_wait_counter = 10  # seconds
         self.my_attempts_counter = 3
         self.my_status = ''

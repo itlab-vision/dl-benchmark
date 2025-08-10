@@ -19,7 +19,7 @@ class PaddlePaddleProcess(ProcessHandler):
 
     def _fill_command_line(self):
         path_to_paddlepaddle_script = Path.joinpath(self.inference_script_root, 'inference_paddlepaddle.py')
-        python = ProcessHandler.get_cmd_python_version()
+        python = ProcessHandler.get_cmd_python_version(self._test)
 
         model = self._test.model.model
         params = self._test.model.weight

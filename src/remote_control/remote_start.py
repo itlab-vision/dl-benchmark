@@ -18,6 +18,12 @@ def cli_argument_parser():
                         type=str,
                         help='Path to configuration file',
                         required=True)
+    parser.add_argument('-pi', '--python_interpreter',
+                        type=str,
+                        dest='python',
+                        default='python3',
+                        help='Path to specific python interpreter',
+                        required=False)
     parser.add_argument('-s', '--server_ip',
                         type=str,
                         help='FTP server IP',
@@ -51,8 +57,8 @@ def cli_argument_parser():
     return args
 
 
-def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log):
-    executor = RemoteExecutor(machine.os_type, log)
+def client_execution(machine, server_ip, server_login, server_psw, ftp_dir, log, python):
+    executor = RemoteExecutor(machine.os_type, python, log)
     executor.create_connection(machine.ip, machine.login, machine.password)
     command_line = (f'{machine.path_to_ftp_client} '
                     f'-ip {server_ip} '
@@ -114,6 +120,7 @@ def main():
             args.server_psw,
             args.ftp_dir,
             log,
+            args.python,
         ))
 
     log.info('Executor script is waiting for all experiments')
