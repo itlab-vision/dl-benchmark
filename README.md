@@ -32,7 +32,7 @@ DLI supports inference using the following frameworks:
 - [RKNN][rknn] (C++ API).
 - [ncnn][ncnn] (Python API).
 - [PaddlePaddle][PaddlePaddle] (Python API).
-- [ExecuTorch][executorch] (C++ API)
+- [ExecuTorch][executorch] (C++ and Python APIs)
 
 More information about DLI is available on the web-site
 ([here][dli-ru-web-page] (in Russian)
