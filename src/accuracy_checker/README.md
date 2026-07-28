@@ -5,7 +5,7 @@
 ### Основная информация
 
 Скрипт позволяет оценивать точность вывода глубоких моделей с использованием
-инструмента [AccuracyChecker][accuracy_checker] в составе пакета [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
+инструмента [AccuracyChecker][accuracy-checker] в составе пакета [Intel® Distribution of OpenVINO™ Toolkit][openvino-toolkit].
 На данный момент скрипт поддерживает полный список фреймворков,
 которые поддерживаются AccuracyChecker.
 
