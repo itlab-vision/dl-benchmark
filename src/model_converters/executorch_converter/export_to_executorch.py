@@ -111,17 +111,17 @@ class LightGlueFixedWrapper(torch.nn.Module):
         return filter_matches(scores, self.model.conf.filter_threshold)
 
 
-def load_model(model_name, weights, input_shape, num_keypoints, matcher_features):
+def load_model(model_name, weights, input_shape, matcher_features):
     if model_name.lower() in CUSTOM_MODELS:
         logger.info("Loading project model %s", model_name)
-        return load_custom_model(model_name, input_shape, num_keypoints, matcher_features)
+        return load_custom_model(model_name, input_shape, matcher_features)
 
     logger.info("Loading torchvision model %s", model_name)
     model = get_model(model_name, weights=weights)
     return model, model_name
 
 
-def load_custom_model(name, input_shape, num_keypoints, matcher_features):
+def load_custom_model(name, input_shape, matcher_features):
     name = name.lower()
 
     if name == "tfeat":
@@ -175,7 +175,8 @@ def fix_batchnorm_for_xnnpack(model):
     return model
 
 
-def build_lightglue_inputs(num_keypoints, matcher_features):
+def build_lightglue_inputs(matcher_features):
+    num_keypoints = 256
     descriptor_dim = 256 if matcher_features == "superpoint" else 128
 
     sample_inputs = (torch.randn(1, num_keypoints, 2), torch.randn(1, num_keypoints, 2),
@@ -188,16 +189,15 @@ def build_lightglue_inputs(num_keypoints, matcher_features):
     return sample_inputs, dynamic_shapes
 
 
-def export_to_executorch(model_name, weights, input_shape, partitioner_name, output_dir,
-                         num_keypoints=256, matcher_features="superpoint"):
-    model, output_stem = load_model(model_name, weights, input_shape, num_keypoints, matcher_features)
+def export_to_executorch(model_name, weights, input_shape, partitioner_name, output_dir, matcher_features="superpoint"):
+    model, output_stem = load_model(model_name, weights, input_shape, matcher_features)
     model = model.cpu().eval()
 
     if partitioner_name == "xnnpack":
         model = fix_batchnorm_for_xnnpack(model)
 
     if model_name == "lightglue":
-        sample_inputs, dynamic_shapes = build_lightglue_inputs(num_keypoints, matcher_features)
+        sample_inputs, dynamic_shapes = build_lightglue_inputs(matcher_features)
     else:
         sample_inputs = (torch.randn(tuple(input_shape), dtype=torch.float32),)
         dynamic_shapes = None
@@ -205,8 +205,10 @@ def export_to_executorch(model_name, weights, input_shape, partitioner_name, out
     exported_program = torch.export.export(model, sample_inputs, dynamic_shapes=dynamic_shapes, strict=True)
 
     partitioner = PARTITIONERS.get(partitioner_name)
-    partitioners = [partitioner] if partitioner is not None else None
-    logger.info("Lowering to ExecuTorch%s", f" with {partitioner_name}" if partitioner else "")
+    if partitioner is not None:
+        partitioners = [partitioner]
+    else:
+        partitioners = None
 
     edge_program = to_edge_transform_and_lower(exported_program, partitioner=partitioners)
     et_program = edge_program.to_executorch()
@@ -227,7 +229,6 @@ def parse_args():
     parser.add_argument("-w", "--weights", default="DEFAULT", help="torchvision weights enum, or 'none'")
     parser.add_argument("-p", "--partitioner", default="none", choices=("none", "xnnpack", "vulkan"))
     parser.add_argument("-o", "--output-dir", type=Path, default=Path("exported"))
-    parser.add_argument("--num-keypoints", type=int, default=256)
     parser.add_argument("--matcher-features", default="superpoint",
                         choices=("superpoint", "disk", "aliked", "sift", "doghardnet"))
     return parser.parse_args()
@@ -237,7 +238,7 @@ def main():
     try:
         args = parse_args()
         export_to_executorch(args.model_name, args.weights, args.input_shape, args.partitioner, args.output_dir,
-                             num_keypoints=args.num_keypoints, matcher_features=args.matcher_features)
+                             matcher_features=args.matcher_features)
     except Exception:
         logger.error(traceback.format_exc())
         return 1
